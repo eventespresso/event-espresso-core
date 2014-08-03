@@ -195,7 +195,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
 		$nonce = wp_create_nonce('checkin_nonce');
 		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
-		$toggle_active = !empty ( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() ) ? ' clickable trigger-checkin' : '';
+		$toggle_active = !empty ( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() ) ? ' clickable trigger-checkin' : '';
 
 		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
 	}

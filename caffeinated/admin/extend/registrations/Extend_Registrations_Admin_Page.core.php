@@ -76,7 +76,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
 					'noheader' => TRUE,
-					'capability' => 'edit_checkin',
+					'capability' => 'ee_edit_checkin',
 					'obj_id' => $reg_id
 				),
 			'event_registrations'=> array(
