@@ -134,7 +134,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( EEM_Venue::instance(), 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( EEM_Registration::instance(), '', 'ee_delete_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( EEM_Message_Template_Group::instance(), '', 'ee_delete_others_messages', 'delete_global_messages' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( EEM_Message_Template_Group::instance(), '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'delete_others_default_tickets', '' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
@@ -245,7 +245,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_message',
 				'ee_delete_messages',
 				'ee_delete_others_messages',
-				'delete_global_messages',
+				'ee_delete_global_messages',
 				'send_message',
 			//tickets
 				'read_default_ticket',
