@@ -123,7 +123,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_groups' ) ),
 			//reads
 			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( EEM_Event::instance(), '', 'ee_read_others_events', 'ee_read_private_events' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( EEM_Venue::instance(), '', 'ee_read_others_venues', 'read_private_venues' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( EEM_Venue::instance(), '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registrations' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Registration::instance(), '', '', 'read_others_checkins' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'read_others_messages', 'read_global_messages' ) ),
@@ -186,7 +186,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_read_venue',
 				'ee_read_venues',
 				'ee_read_others_venues',
-				'read_private_venues',
+				'ee_read_private_venues',
 				'edit_venue',
 				'edit_venues',
 				'edit_others_venues',
