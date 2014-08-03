@@ -169,7 +169,7 @@ class EE_Register_CPTs {
 						'delete_posts' => 'ee_delete_events',
 						'delete_private_posts' => 'ee_delete_private_events',
 						'delete_published_posts' => 'ee_delete_published_events',
-						'delete_others_posts' => 'delete_others_events',
+						'delete_others_posts' => 'ee_delete_others_events',
 						'edit_private_posts' => 'ee_edit_private_events',
 						'edit_published_posts' => 'ee_edit_published_events'
 						),
