@@ -216,7 +216,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'category_list' => array(
 				'func' => '_category_list_table',
-				'capability' => 'manage_venue_categories'
+				'capability' => 'ee_manage_venue_categories'
 				)
 		);
 	}

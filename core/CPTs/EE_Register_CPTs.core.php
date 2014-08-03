@@ -110,7 +110,7 @@ class EE_Register_CPTs {
 					'public'=>true,
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
 					'capabilities' => array(
-						'manage_terms' => 'manage_venue_categories',
+						'manage_terms' => 'ee_manage_venue_categories',
 						'edit_terms' => 'ee_edit_venue_category',
 						'delete_terms' => 'ee_delete_venue_category',
 						'assign_terms' => 'assign_venue_category'

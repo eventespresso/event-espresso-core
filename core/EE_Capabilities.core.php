@@ -198,7 +198,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_private_venues',
 				'ee_delete_published_venues',
 			//venue categories
-				'manage_venue_categories',
+				'ee_manage_venue_categories',
 				'ee_edit_venue_category',
 				'ee_delete_venue_category',
 				'assign_venue_category',
