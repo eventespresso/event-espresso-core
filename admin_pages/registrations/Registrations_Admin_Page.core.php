@@ -149,7 +149,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'func' => '_registration_details',
 						'args' => array( 'edit' ),
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -176,32 +176,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'update_attendee_registration_form'	=> array(
 						'func' => '_update_attendee_registration_form',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
 				'new_registration' => array(
 					'func' => 'new_registration',
-					'capability' => 'edit_registrations'
+					'capability' => 'ee_edit_registrations'
 					),
 
 				'process_registration_step'	=> array(
 						'func' => '_process_registration_step',
 						'noheader' => TRUE,
-						'capability' => 'edit_registrations'
+						'capability' => 'ee_edit_registrations'
 					),
 
 				'change_reg_status' => array(
 					'func' => '_change_reg_status',
 					'noheader' => TRUE,
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'approve_registration'	=> array(
 						'func' => 'approve_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -209,14 +209,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'approve_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'decline_registration'	=> array(
 						'func' => 'decline_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -224,14 +224,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'decline_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'pending_registration'	=> array(
 						'func' => 'pending_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -239,14 +239,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'pending_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'no_approve_registration' => array(
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE,
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -254,14 +254,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'cancel_registration'	=> array(
 						'func' => 'cancel_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -269,7 +269,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'cancel_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -771,7 +771,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registrations_overview_list_table() {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registrations', 'espresso_registrations_new_registration', $EVT_ID ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registrations', 'espresso_registrations_new_registration', $EVT_ID ) ) {
 				$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
 			}
 			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
