@@ -205,8 +205,8 @@ final class EE_Capabilities extends EE_Base {
 			//contacts
 				'ee_read_contact',
 				'ee_read_contacts',
-				'edit_contact',
-				'edit_contacts',
+				'ee_edit_contact',
+				'ee_edit_contacts',
 				'delete_contact',
 				'delete_contacts',
 			//registrations

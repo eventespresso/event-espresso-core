@@ -470,7 +470,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>' : '';
 
-	       $edit_lnk = EE_Registry::instance()->CAP->current_user_can('edit_contacts', 'espresso_registrations_edit_attendee' ) ?'
+	       $edit_lnk = EE_Registry::instance()->CAP->current_user_can('ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?'
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '" class="tiny-text">
 				<div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>

@@ -283,20 +283,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_create_new_cpt_item',
 					'args' => array(
 						'new_attendee' => TRUE,
-					'capability' => 'edit_contacts'
+					'capability' => 'ee_edit_contacts'
 					)
 				),
 
 				'edit_attendee'	=> array(
 					'func' => '_edit_cpt_item',
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 				),
 
 				'duplicate_attendee' => array(
 					'func' => '_duplicate_attendee',
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 					),
 
@@ -306,7 +306,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'new_attendee' => TRUE
 					),
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts'
+					'capability' => 'ee_edit_contacts'
 				),
 
 				'update_attendee'	=> array(
@@ -315,7 +315,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'new_attendee' => FALSE
 					),
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 				),
 

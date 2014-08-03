@@ -207,7 +207,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_ATT_name(EE_Registration $item) {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = EE_Registry::instance()->CAP->current_user_can( 'edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
 		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
 
 		$actions = array();
