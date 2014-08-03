@@ -201,7 +201,7 @@ class EE_Register_CPTs {
 						'delete_private_posts' => 'delete_private_venues',
 						'delete_published_posts' => 'delete_published_venues',
 						'delete_others_posts' => 'ee_edit_others_venues',
-						'edit_private_posts' => 'edit_private_venues',
+						'edit_private_posts' => 'ee_edit_private_venues',
 						'edit_published_posts' => 'ee_edit_published_venues'
 						),
 					'taxonomies'=> array(
