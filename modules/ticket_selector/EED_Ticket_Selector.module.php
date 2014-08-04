@@ -374,7 +374,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						} else {
 							EE_Registry::instance()->CART->save_cart();
 							EE_Registry::instance()->SSN->update();
-							wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+							wp_safe_redirect( get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 							exit();
 						}
 					} else {
@@ -607,13 +607,13 @@ class EED_Ticket_Selector extends  EED_Module {
 							// ensure that $input_value is an array
 							$input_value = is_array( $input_value ) ? $input_value : array( $input_value );
 							// cycle thru values
-							foreach ( $input_value as $row=>$value ) {
+							foreach ( $input_value as $row =>$value ) {
 								// decode and unserialize the ticket object
 								$ticket_obj = unserialize( base64_decode( $value ));
 								// vat is dis? i ask for TICKET !!!
 								if ( ! $ticket_obj instanceof EE_Ticket ) {
 									// get ticket via the ticket id we put in the form
-									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid_data['ticket_id'][$key] );
+									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid_data['ticket_id'][$row] );
 								}
 								$valid_data[$what][] = $ticket_obj;
 							}

@@ -1035,9 +1035,10 @@ final class EE_Config {
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	string 		$module - module name (classname without EED_ prefix)
 	 *  @param 	string 		$method_name - the actual module method to be routed to
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	bool
 	 */
-	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
+	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
 		$module_class = 'EED_' . $module;
@@ -1056,7 +1057,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
+		EE_Config::$_module_route_map[ $key ][ $route ] = array( 'EED_' . $module, $method_name );
 		return TRUE;
 	}
 
@@ -1067,15 +1068,28 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_route( $route = NULL ) {
+	public static function get_route( $route = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
 		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
-		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
-			return EE_Config::$_module_route_map[ $route ];
+		if ( isset( EE_Config::$_module_route_map[ $key ][ $route ] )) {
+			return EE_Config::$_module_route_map[ $key ][ $route ];
 		}
 		return NULL;
+	}
+
+
+
+	/**
+	 *    get_routes - get ALL module method routes
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_routes() {
+		return EE_Config::$_module_route_map;
 	}
 
 
@@ -1086,13 +1100,13 @@ final class EE_Config {
 	 * @access    public
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 * @param null       $forward
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    array|string  $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
+	public static function register_forward( $route = NULL, $status = 0, $forward = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1118,7 +1132,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
+		EE_Config::$_module_forward_map[ $key ][ $route ][ absint( $status ) ] = $forward;
 		return TRUE;
 	}
 
@@ -1130,12 +1144,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_forward( $route = NULL, $status = 0 ) {
+	public static function get_forward( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
-		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_forward_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_forward', EE_Config::$_module_forward_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1149,12 +1164,12 @@ final class EE_Config {
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
 	 * @param    string   $view
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
+	public static function register_view( $route = NULL, $status = 0, $view = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1164,7 +1179,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_view_map[ $route ][ absint( $status ) ] = $view;
+		EE_Config::$_module_view_map[ $key ][ $route ][ absint( $status ) ] = $view;
 		return TRUE;
 	}
 
@@ -1178,12 +1193,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_view( $route = NULL, $status = 0 ) {
+	public static function get_view( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
-		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_view_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_view', EE_Config::$_module_view_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1251,7 +1267,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
