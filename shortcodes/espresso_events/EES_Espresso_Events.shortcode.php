@@ -156,10 +156,7 @@ class EE_Event_List_Query extends WP_Query {
 	 * @return \EE_Event_List_Query
 	 */
 	function __construct( $args = array() ) {
-		//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		EE_Registry::instance()->load_helper( 'Event_Query' );
-		EEH_Event_Query::filter_query_parts();
-		EEH_Event_Query::get_post_data();
+//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
@@ -171,17 +168,14 @@ class EE_Event_List_Query extends WP_Query {
 				unset( $args[ $key ] );
 			}
 		}
-		// parse orderby attribute
-		if ( $this->_order_by !== NULL ) {
-			$this->_order_by = explode( ',', $this->_order_by );
-			$this->_order_by = array_map('trim', $this->_order_by);
-		}
-		$this->_sort = in_array( $this->_sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $this->_sort ) : 'ASC';
+		// setup the events list query
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::filter_query_parts();
+		EEH_Event_Query::set_query_params( $this->_month, $this->_category_slug, $this->_show_expired, $this->_order_by, $this->_sort );
 
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
 		remove_all_filters( 'FHEE__content_espresso_events__event_class' );
-
 		// Event List Title ?
 		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 );
 		// add the css class
@@ -197,74 +191,9 @@ class EE_Event_List_Query extends WP_Query {
 			'paged' => $paged,
 			'offset' => ( $paged - 1 ) * $this->_limit
 		));
-		// filter the query parts
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
-		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 10, 1 );
 
 		// run the query
 		parent::__construct( $args );
-	}
-
-
-
-	/**
-	 *    posts_join
-	 *
-	 * @access    public
-	 * @param    string $SQL
-	 * @return    string
-	 */
-	public function posts_join( $SQL = '' ) {
-		// first off, let's remove any filters from previous queries
-		remove_filter( 'posts_join', array( $this, 'posts_join' ));
-		// generate the SQL
-		if ( $this->_category_slug !== NULL ) {
-			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( TRUE );
-		}
-		if ( $this->_order_by !== NULL ) {
-			$SQL .= EEH_Event_Query::posts_join_for_orderby( $this->_order_by );
-		}
-		return $SQL;
-	}
-
-
-
-	/**
-	 *    posts_where
-	 *
-	 * @access    public
-	 * @param    string $SQL
-	 * @return    string
-	 */
-	public function posts_where( $SQL = '' ) {
-		// first off, let's remove any filters from previous queries
-		remove_filter( 'posts_where', array( $this, 'posts_where' ));
-		// Show Expired ?
-		$this->_show_expired = $this->_show_expired ? TRUE : FALSE;
-		$SQL .= EEH_Event_Query::posts_where_sql_for_show_expired( $this->_show_expired );
-		// Category
-		$SQL .=  EEH_Event_Query::posts_where_sql_for_event_category_slug( $this->_category_slug );
-		// Start Date
-		$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( $this->_month );
-		return $SQL;
-	}
-
-
-
-	/**
-	 *    posts_orderby
-	 *
-	 * @access    public
-	 * @param    string $SQL
-	 * @return    string
-	 */
-	public function posts_orderby( $SQL = '' ) {
-		// first off, let's remove any filters from previous queries
-		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ) );
-		// generate the SQL
-		$SQL =  EEH_Event_Query::posts_orderby_sql( $this->_order_by, $this->_sort );
-		return $SQL;
 	}
 
 
