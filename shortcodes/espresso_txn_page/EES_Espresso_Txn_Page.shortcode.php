@@ -99,15 +99,17 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		if($this->_current_txn){
-			printf(__("IPN successfully received for Transaction with ID '%d'", "event_espresso"),$this->_current_txn->ID());
-		}else{
-			printf(__("No IPN (or incomplete IPN) received.", "event_espresso"));
+		if ( $this->_current_txn ) {
+			return sprintf( __( 'IPN successfully received for Transaction with ID "%d"', 'event_espresso' ),$this->_current_txn->ID() );
+		} else {
+			return __( 'No IPN (or incomplete IPN) received', 'event_espresso' );
 		}
 	}
+
+
 
 }
 // End of file EES_Espresso_Txn_Page.shortcode.php
