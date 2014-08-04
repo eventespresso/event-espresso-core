@@ -823,4 +823,14 @@ class EE_Data_Migration_Manager{
 			return NULL;
 		}
 	}
+
+	/**
+	 * Gets whether or not this particular migration has run or not
+	 * @param string $version the version the DMS searched for migrates to. Usually just the content before the 3rd period. Eg '4.1.0'
+	 * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
+	 * @return boolean
+	 */
+	public function migration_has_ran( $version, $plugin_slug = 'Core' ) {
+		return $this->get_migration_ran( $version, $plugin_slug ) !== NULL;
+	}
 }

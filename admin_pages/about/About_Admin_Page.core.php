@@ -44,15 +44,15 @@ class About_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_whats_new',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			'overview' => array(
 				'func' => '_overview',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			'credits' => array(
 				'func' => '_credits',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			);
 	}
@@ -134,12 +134,12 @@ class About_Admin_Page extends EE_Admin_Page {
 			unset( $steps['organization'] );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_gateways', 'espresso_payment_settings_default' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_manage_gateways', 'espresso_payment_settings_default' ) ) {
 			unset( $steps['gateways'] );
 		}
 
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'espresso_events_create_new' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_events', 'espresso_events_create_new' ) ) {
 			unset( $steps['event'] );
 		}
 

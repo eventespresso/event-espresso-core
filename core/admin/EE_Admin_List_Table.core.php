@@ -453,7 +453,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		if ( empty( $views )) {
 			return;
 		}
-
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;

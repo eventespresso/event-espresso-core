@@ -491,6 +491,8 @@ class EE_messages {
 
 		$new_mtg->set('MTP_name', $template_name );
 		$new_mtg->set('MTP_description', $template_description );
+		//remove ALL relations on this template group so they don't get saved!
+		$new_mtg->_remove_relations( 'Message_Template' );
 		$new_mtg->save();
 		$success['GRP_ID'] = $new_mtg->ID();
 		$success['template_name'] = $template_name;

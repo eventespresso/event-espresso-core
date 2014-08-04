@@ -53,47 +53,47 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_page_routes = array(
 			'duplicate_event' => array(
 				'func' => '_duplicate_event',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id,
 				'noheader' => TRUE
 				),
 			'ticket_list_table' => array(
 				'func' => '_tickets_overview_list_table',
-				'capability' => 'read_default_tickets'
+				'capability' => 'ee_read_default_tickets'
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'delete_default_tickets',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'delete_default_tickets',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
-				'capability' => 'delete_default_tickets',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE
 				),
 			'import_page'=> array(
@@ -280,9 +280,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _set_list_table_views_default() {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
-		$this->_views['all']['bulk_action']['export_events'] = $export_label;
-		$this->_views['draft']['bulk_action']['export_events'] = $export_label;
-		$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
+			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
+				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+			}
+		}
 
 		$new_views = array(
 			'today' => array(
@@ -320,7 +325,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function extra_list_table_actions( $actionlinks, $event ) {
-		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registrations', 'espresso_registrations_reports', $event->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_reports', $event->ID() ) ) {
 			$reports_query_args = array(
 					'action' => 'reports',
 					'EVT_ID' => $event->ID()
@@ -334,7 +339,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function additional_legend_items($items) {
-		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registrations', 'espresso_registrations_reports' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_reports' ) ) {
 			$items['reports'] = array(
 					'class' => 'dashicons dashicons-chart-bar',
 					'desc' => __('Event Reports', 'event_espresso')

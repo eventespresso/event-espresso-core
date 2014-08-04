@@ -938,6 +938,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_tax_rows( $tktrow, $ticket ) {
 		$tax_rows = '';
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_tax_row.template.php';
+		$template_args = array();
 		$taxes = empty( $ticket ) ? EE_Taxes::get_taxes_for_admin() : $ticket->get_ticket_taxes_for_admin();
 		foreach ( $taxes as $tax ) {
 			$tax_added = $this->_get_tax_added( $tax, $ticket );
