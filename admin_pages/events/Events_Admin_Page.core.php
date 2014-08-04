@@ -914,6 +914,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
+			//load DTT helper
+			EE_Registry::instance()->load_helper('DTT_Helper');
+
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
