@@ -17,18 +17,18 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Txn_Page  extends EES_Shortcode {
-	
+
 	/**
 	 * The transaction specified by the reg_url_link passed from the Request, or from the Session
 	 * @var EE_Transaction $_current_txn
 	 */
 	protected $_current_txn = NULL;
-	
+
 	/**
 	 * The current payment method for the IPN
 	 * @var EE_Payment_Method $_current_pm
@@ -78,27 +78,25 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		$req = EE_Registry::instance()->REQ;
-		if ( $req->is_set('e_reg_url_link' )){
+		if ( EE_Registry::instance()->REQ->is_set('e_reg_url_link' )){
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-		}else{
+		} else {
 			$this->_current_txn = NULL;
 		}
-		if($req->is_set('ee_payment_method') ){			
-			$payment_method_slug = $req->get('ee_payment_method') ;
-		}else{
-			$payment_method_slug = NULL;
+		if ( $this->_current_txn instanceof EE_Transaction ) {
+			$this->_current_txn->finalize();
 		}
-		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$this->_current_txn,$payment_method_slug);
-		
+		$payment_method_slug = EE_Registry::instance()->REQ->get( 'ee_payment_method', NULL );
+		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn( $_REQUEST, $this->_current_txn, $payment_method_slug );
+
 	}
 
 
 
 
 	/**
-	 * 	process_shortcode - EES_Espresso_Txn_Page 
-	 * 
+	 * 	process_shortcode - EES_Espresso_Txn_Page
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void
