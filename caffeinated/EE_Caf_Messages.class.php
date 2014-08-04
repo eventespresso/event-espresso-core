@@ -385,6 +385,14 @@ class EE_Caf_Messages  {
 			'messengers_to_activate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'payment_declined', $setup_args );
+
+		//register payment declined message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Declined_Registration_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/' => array( 'class' ) ),
+			'messengers_to_activate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'declined_registration', $setup_args );
 	}
 
 

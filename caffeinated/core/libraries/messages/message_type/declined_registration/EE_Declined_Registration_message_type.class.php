@@ -102,7 +102,7 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/declined-registration-message-type-content.template.php', TRUE );
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/templates/declined-registration-message-type-content.template.php', TRUE );
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
