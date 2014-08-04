@@ -241,7 +241,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Venues_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'venues_overview_help_tab' => array(
 						'title' => __('Venues Overview', 'event_espresso'),
 						'filename' => 'venues_overview'
@@ -265,44 +265,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 5,
 					'persistent' => FALSE
 				),
-                'help_tabs' => array(
-					'venues_editor_help_tab' => array(
-						'title' => __('Venue Editor', 'event_espresso'),
-						'filename' => 'venues_editor'
-					),
-					'venues_editor_title_richtexteditor_help_tab' => array(
-						'title' => __('Venue Title & Rich Text Editor', 'event_espresso'),
-						'filename' => 'venues_editor_title_richtexteditor'
-					),
-					'venues_editor_tags_categories_help_tab' => array(
-						'title' => __('Venue Tags & Categories', 'event_espresso'),
-						'filename' => 'venues_editor_tags_categories'
-					),
-                'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
-						'title' => __('Venue Editor Physical Location & Google Map & Virtual Location', 'event_espresso'),
-						'filename' => 'venues_editor_physical_location_google_map_virtual_location'
-					),
-					'venues_editor_save_new_venue_help_tab' => array(
-						'title' => __('Save New Venue', 'event_espresso'),
-						'filename' => 'venues_editor_save_new_venue'
-					),
-					'venues_editor_other_help_tab' => array(
-						'title' => __('Venue Editor Other', 'event_espresso'),
-						'filename' => 'venues_editor_other'
-					)
-				),
-                'help_tour' => array( 'Venues_Add_Venue_Help_Tour' ),
-				'metaboxes' => array('_venue_editor_metaboxes'),
-				'require_nonce' => FALSE
-				),
-			'edit' => array(
-				'nav' => array(
-					'label' => __('Edit Venue', 'event_espresso'),
-					'order' => 5,
-					'persistent' => FALSE,
-					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
-				),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'venues_editor_help_tab' => array(
 						'title' => __('Venue Editor', 'event_espresso'),
 						'filename' => 'venues_editor'
@@ -328,7 +291,44 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-                'help_tour' => array( 'Venues_ee_edit_venue_Help_Tour' ),
+				'help_tour' => array( 'Venues_Add_Venue_Help_Tour' ),
+				'metaboxes' => array('_venue_editor_metaboxes'),
+				'require_nonce' => FALSE
+				),
+			'edit' => array(
+				'nav' => array(
+					'label' => __('Edit Venue', 'event_espresso'),
+					'order' => 5,
+					'persistent' => FALSE,
+					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+				),
+				'help_tabs' => array(
+					'venues_editor_help_tab' => array(
+						'title' => __('Venue Editor', 'event_espresso'),
+						'filename' => 'venues_editor'
+					),
+					'venues_editor_title_richtexteditor_help_tab' => array(
+						'title' => __('Venue Title & Rich Text Editor', 'event_espresso'),
+						'filename' => 'venues_editor_title_richtexteditor'
+					),
+					'venues_editor_tags_categories_help_tab' => array(
+						'title' => __('Venue Tags & Categories', 'event_espresso'),
+						'filename' => 'venues_editor_tags_categories'
+					),
+					'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
+						'title' => __('Venue Editor Physical Location & Google Map & Virtual Location', 'event_espresso'),
+						'filename' => 'venues_editor_physical_location_google_map_virtual_location'
+					),
+					'venues_editor_save_new_venue_help_tab' => array(
+						'title' => __('Save New Venue', 'event_espresso'),
+						'filename' => 'venues_editor_save_new_venue'
+					),
+					'venues_editor_other_help_tab' => array(
+						'title' => __('Venue Editor Other', 'event_espresso'),
+						'filename' => 'venues_editor_other'
+					)
+				),
+				'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
@@ -339,13 +339,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => false),
 				'metaboxes' => array('_publish_post_box'),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'venues_add_category_help_tab' => array(
 						'title' => __('Add New Venue Category', 'event_espresso'),
 						'filename' => 'venues_add_category'
 					)
 				),
-                'help_tour' => array( 'Venues_Add_Category_Help_Tour' ),
+				'help_tour' => array( 'Venues_Add_Category_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'edit_category' => array(
@@ -356,13 +356,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box'),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'venues_edit_category_help_tab' => array(
 						'title' => __('Edit Venue Category', 'event_espresso'),
 						'filename' => 'venues_edit_category'
 					)
 				),
-                'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),
+				'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'category_list' => array(
@@ -371,7 +371,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'Venue_Categories_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'venues_categories_help_tab' => array(
 						'title' => __('Venue Categories', 'event_espresso'),
 						'filename' => 'venues_categories'
@@ -389,7 +389,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_categories_other'
 					)
 				),
-                'help_tour' => array( 'Venues_Categories_Help_Tour' ),
+				'help_tour' => array( 'Venues_Categories_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
 				)
