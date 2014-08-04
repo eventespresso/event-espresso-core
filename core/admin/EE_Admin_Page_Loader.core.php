@@ -160,7 +160,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Main', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::NONE,
 				'menu_slug' => 'main',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 0,
 				'parent_slug' => 'espresso_events',
 				)),
@@ -168,7 +168,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Management', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'management',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 10,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -176,7 +176,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Settings', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'settings',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 30,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -184,7 +184,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Templates', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'templates',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 40,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -192,7 +192,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Extras', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 				'menu_slug' => 'extras',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 50,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -200,7 +200,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __("Tools", "event_espresso"),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'tools',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 60,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -208,7 +208,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Addons', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 				'menu_slug' => 'addons',
-				'capability' => 'read_ee',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 20,
 				'parent_slug' => 'espresso_events'
 				))

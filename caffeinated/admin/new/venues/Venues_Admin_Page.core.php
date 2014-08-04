@@ -130,80 +130,89 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_overview_list_table',
-				'capability' => 'read_venues'
+				'capability' => 'ee_read_venues'
+				),
+			'create_new' => array(
+				'func' => '_create_new_cpt_item',
+				'capability' => 'ee_edit_venues'
+				),
+			'edit' => array(
+				'func' => '_edit_cpt_item',
+				'capability' => 'ee_edit_venue',
+				'obj_id' => $vnu_id
 				),
 			'trash_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'trash' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			'trash_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'trash' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'restore_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'draft' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			'restore_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'draft' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'delete_venues' => array(
 				'func' => '_delete_venues',
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'delete_venue' => array(
 				'func' => '_delete_venue',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			//venue category tab related
 			'add_category' => array(
 				'func' => '_category_details',
 				'args' => array('add'),
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
 				'args' => array('edit'),
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue_category'
+				'capability' => 'ee_delete_venue_category'
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue_category'
+				'capability' => 'ee_delete_venue_category'
 				),
 
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
 				'noheader' => TRUE,
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
 				'noheader' => TRUE,
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'export_categories' => array(
 				'func' => '_categories_export',
@@ -216,7 +225,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'category_list' => array(
 				'func' => '_category_list_table',
-				'capability' => 'manage_venue_categories'
+				'capability' => 'ee_manage_venue_categories'
 				)
 		);
 	}
@@ -319,7 +328,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-                'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
+                'help_tour' => array( 'Venues_ee_edit_venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
@@ -944,11 +953,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//cap checks
-		if ( ! EE_Registry::instance()->current_user_can( 'edit_private_venues', 'get_venue' ) ) {
+		if ( ! EE_Registry::instance()->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
 			$where['status**'] = array( '!=' , 'private' );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venues', 'get_venues' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
 		}
 

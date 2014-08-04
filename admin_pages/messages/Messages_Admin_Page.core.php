@@ -197,11 +197,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'read_global_messages'
+					'capability' => 'ee_read_global_messages'
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
@@ -215,66 +215,66 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'preview_message' => array(
 					'func' => '_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id,
 					'noheader' => true,
 					'headers_sent_route' => 'display_preview_message'
 					),
 				'display_preview_message' => array(
 					'func' => '_display_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id
 					),
 				'insert_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_messages',
+					'capability' => 'ee_edit_messages',
 					'args' => array( 'new_template' => TRUE ),
 					'noheader' => TRUE
 					 ),
 				'update_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'new_template' => FALSE ),
 					'noheader' => TRUE
 					),
 				'trash_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'trash_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => FALSE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array('trash' => FALSE),
 					'noheader' => TRUE
 					),
 				'delete_message_template' => array(
 					'func' => '_delete_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
 				'reset_to_default' => array(
 					'func' => '_reset_to_default_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
@@ -284,7 +284,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'reports' => array(
 					'func' => '_messages_reports',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 		);
 	}
@@ -691,7 +691,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_messages', 'espresso_messages_trash_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'espresso_messages_trash_message_template' ) ) {
 			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),

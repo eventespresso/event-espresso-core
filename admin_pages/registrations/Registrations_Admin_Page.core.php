@@ -136,12 +136,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 				'default'	=> array(
 					'func' => '_registrations_overview_list_table',
-					'capability' => 'read_registrations'
+					'capability' => 'ee_read_registrations'
 					),
 
 				'view_registration'	=> array(
 					'func' => '_registration_details',
-					'capability' => 'read_registration',
+					'capability' => 'ee_read_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -149,7 +149,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'func' => '_registration_details',
 						'args' => array( 'edit' ),
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -157,51 +157,51 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_trash_or_restore_registrations',
 					'args' => array('trash' => TRUE),
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'restore_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
 					'args' => array( 'trash' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'delete_registrations' => array(
 					'func' => '_delete_registrations',
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'update_attendee_registration_form'	=> array(
 						'func' => '_update_attendee_registration_form',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
 				'new_registration' => array(
 					'func' => 'new_registration',
-					'capability' => 'edit_registrations'
+					'capability' => 'ee_edit_registrations'
 					),
 
 				'process_registration_step'	=> array(
 						'func' => '_process_registration_step',
 						'noheader' => TRUE,
-						'capability' => 'edit_registrations'
+						'capability' => 'ee_edit_registrations'
 					),
 
 				'change_reg_status' => array(
 					'func' => '_change_reg_status',
 					'noheader' => TRUE,
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'approve_registration'	=> array(
 						'func' => 'approve_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -209,14 +209,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'approve_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'decline_registration'	=> array(
 						'func' => 'decline_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -224,14 +224,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'decline_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'pending_registration'	=> array(
 						'func' => 'pending_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -239,14 +239,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'pending_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'no_approve_registration' => array(
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE,
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -254,14 +254,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'cancel_registration'	=> array(
 						'func' => 'cancel_registration',
 						'noheader' => TRUE,
-						'capability' => 'edit_registration',
+						'capability' => 'ee_edit_registration',
 						'obj_id' => $reg_id
 					),
 
@@ -269,13 +269,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => 'cancel_registration',
 					'noheader' => TRUE,
 					'args' => array(TRUE),
-					'capability' => 'edit_registration',
+					'capability' => 'ee_edit_registration',
 					'obj_id' => $reg_id
 					),
 
 				'contact_list'	=> array(
 					'func' => '_attendee_contact_list_table',
-					'capability' => 'read_contacts'
+					'capability' => 'ee_read_contacts'
 					),
 
 
@@ -283,20 +283,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_create_new_cpt_item',
 					'args' => array(
 						'new_attendee' => TRUE,
-					'capability' => 'edit_contacts'
+					'capability' => 'ee_edit_contacts'
 					)
 				),
 
 				'edit_attendee'	=> array(
 					'func' => '_edit_cpt_item',
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 				),
 
 				'duplicate_attendee' => array(
 					'func' => '_duplicate_attendee',
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 					),
 
@@ -306,7 +306,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'new_attendee' => TRUE
 					),
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts'
+					'capability' => 'ee_edit_contacts'
 				),
 
 				'update_attendee'	=> array(
@@ -315,7 +315,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'new_attendee' => FALSE
 					),
 					'noheader' => TRUE,
-					'capability' => 'edit_contacts',
+					'capability' => 'ee_edit_contacts',
 					'obj_id' => $att_id
 				),
 
@@ -325,7 +325,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'trash' => TRUE
 					),
 					'noheader' => TRUE,
-					'capability' => 'delete_contacts',
+					'capability' => 'ee_delete_contacts',
 					'obj_id' => $att_id
 				),
 
@@ -335,18 +335,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'trash' => FALSE
 					),
 					'noheader' => TRUE,
-					'capability' => 'delete_contacts',
+					'capability' => 'ee_delete_contacts',
 					'obj_id' => $att_id
 				),
 				'resend_registration' => array(
 					'func' => '_resend_registration',
 					'noheader' => TRUE,
-					'capability' => 'send_message'
+					'capability' => 'ee_send_message'
 					),
 				'registrations_report'=>array(
 					'func'=>'_registrations_report',
 					'noheader'=> TRUE,
-					'capability' => 'read_registrations'
+					'capability' => 'ee_read_registrations'
 				),
 				'contact_list_export'=>array(
 					'func'=>'_contact_list_export',
@@ -669,7 +669,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				)
 			);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'espresso_registrations_delete_registration' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_delete_registration' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -697,7 +697,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				)
 			);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => 'Trash',
@@ -771,7 +771,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registrations_overview_list_table() {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registrations', 'espresso_registrations_new_registration', $EVT_ID ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registrations', 'espresso_registrations_new_registration', $EVT_ID ) ) {
 				$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
 			}
 			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
@@ -938,7 +938,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can('read_others_registrations', 'get_registrations' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations' ) ) {
 			$_where['AND'] = array(
 				'Event.EVT_wp_user' => get_current_user_id()
 				);
@@ -1166,7 +1166,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//make sure we don't just get 0 updated
 			$success = $success === FALSE ? FALSE : TRUE;
 
-			if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_resend_registration' ) ) {
+			if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 				$this->_req_data['_REG_ID'] = $REG_ID;
 				$this->_process_resend_registration();
 			}
@@ -1198,7 +1198,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'] ) : array( 'action' => 'default' );
 
 		//was the send notification toggle checked?
-		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) && EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_resend_registration' ) ) {
+		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 			$this->_req_data['_REG_ID'] = $result['REG_ID'];
 			$this->_process_resend_registration();
 		}
@@ -1336,8 +1336,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['taxes'] = array();
 		}
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
-		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
+		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
+		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 

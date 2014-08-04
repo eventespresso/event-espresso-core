@@ -51,37 +51,37 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$new_page_routes = array(
 			'reports' => array(
 				'func' => '_registration_reports',
-				'capability' => 'read_registrations'
+				'capability' => 'ee_read_registrations'
 				),
 			'registration_checkins' => array(
 				'func' => '_registration_checkin_list_table',
-				'capability' => 'read_checkins'
+				'capability' => 'ee_read_checkins'
 				),
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
 				'noheader' => TRUE,
-				'capability' => 'send_message'
+				'capability' => 'ee_send_message'
 				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
 					'noheader' => TRUE,
-					'capability' => 'delete_checkins'
+					'capability' => 'ee_delete_checkins'
 				),
 			'delete_checkin_row' => array(
 					'func' => '_delete_checkin_row',
 					'noheader' => TRUE,
-					'capability' => 'delete_checkin',
+					'capability' => 'ee_delete_checkin',
 					'obj_id' => $reg_id
 				),
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
 					'noheader' => TRUE,
-					'capability' => 'edit_checkin',
+					'capability' => 'ee_edit_checkin',
 					'obj_id' => $reg_id
 				),
 			'event_registrations'=> array(
 				'func' => '_event_registrations_list_table',
-				'capability' => 'read_registrations',
+				'capability' => 'ee_read_registrations',
 				)
 			);
 
@@ -314,7 +314,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
 			return '';
 		}
 

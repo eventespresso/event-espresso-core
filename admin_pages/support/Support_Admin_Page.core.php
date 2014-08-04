@@ -62,13 +62,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_shortcodes',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			//'installation' => '_installation',
 			//'resources' => '_resources',
 			'contact_support' => array(
 				'func' => '_contact_support',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				)
 			);
 	}
