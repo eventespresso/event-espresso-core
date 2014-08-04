@@ -409,6 +409,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Message Preview', 'event_espresso'),
 					'order' => 5,
+					'url' => '',
 					'persistent' => FALSE
 					),
 				'help_tabs' => array(
