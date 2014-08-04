@@ -52,6 +52,7 @@ class EE_Html_messenger extends EE_messenger  {
 			'singular' => __('html', 'event_espresso'),
 			'plural' => __('html', 'event_espresso')
 			);
+		$this->activate_on_install = TRUE;
 
 		parent::__construct();
 	}
@@ -142,7 +143,7 @@ class EE_Html_messenger extends EE_messenger  {
 	public function add_html_css( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
 		//prevent recursion on this callback.
 		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10 );
-		$variation = $this->get_variation( $template_pack, $this->_incoming_message_type->name, $url, $type, $variation, TRUE  );
+		$variation = $this->get_variation( $template_pack, $message_type, $url, $type, $variation, TRUE  );
 		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 8 );
 		return $variation;
 	}

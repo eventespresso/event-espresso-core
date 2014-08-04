@@ -108,7 +108,7 @@ class EED_Events_Archive  extends EED_Module {
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EEH_Event_Query::filter_query_parts();
-		EEH_Event_Query::get_post_data();
+		EEH_Event_Query::set_query_params();
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
@@ -559,7 +559,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function get_post_data() {
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		EEH_Event_Query::get_post_data();
+		EEH_Event_Query::set_query_params();
 	}
 	/**
 	 * 	@deprecated

@@ -110,37 +110,37 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 				'default' => array(
 					'func' => '_transactions_overview_list_table',
-					'capability' => 'read_transactions'
+					'capability' => 'ee_read_transactions'
 					),
 
 				'view_transaction' => array(
 					'func' => '_transaction_details',
-					'capability' => 'read_transaction',
+					'capability' => 'ee_read_transaction',
 					'obj_id' => $txn_id
 					),
 
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
 					'noheader' => TRUE,
-					'capability' => 'send_message'
+					'capability' => 'ee_send_message'
 					),
 
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
 				 	'noheader' => TRUE,
-				 	'capability' => 'edit_payments'
+				 	'capability' => 'ee_edit_payments'
 				 	),
 
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
 					'noheader' => TRUE,
-					'capability' => 'edit_payments'
+					'capability' => 'ee_edit_payments'
 					),
 
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
 					'noheader' => TRUE,
-					'capability' => 'delete_payments'
+					'capability' => 'ee_delete_payments'
 					),
 
 		);
@@ -448,7 +448,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_transactions_send_payment_reminder' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
 		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __(' Send Payment Reminder'), 'button secondary-button right',  'dashicons dashicons-email-alt' ) : '';
 		}
 

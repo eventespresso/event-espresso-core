@@ -126,7 +126,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			case '[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]' :
 				if ( ! $primary_registration->primary_reg_obj instanceof EE_Registration )
 					return '';
-				return $primary_registration->edit_attendee_information_url();
+				return $primary_registration->primary_reg_obj->edit_attendee_information_url();
 				break;
 
 			default :

@@ -57,42 +57,42 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_tickets_overview_list_table',
-				'capability' => 'read_default_tickets'
+				'capability' => 'ee_read_default_tickets'
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE ),
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE ),
-				'capability' => 'delete_default_tickets'
+				'capability' => 'ee_delete_default_tickets'
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
-				'capability' => 'delete_default_tickets'
+				'capability' => 'ee_delete_default_tickets'
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
 				'noheader' => TRUE,
-				'capability' => 'delete_default_ticket',
+				'capability' => 'ee_delete_default_ticket',
 				'obj_id' => $tkt_id
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
 				'noheader' => TRUE,
-				'capability' => 'delete_default_tickets'
+				'capability' => 'ee_delete_default_tickets'
 				),
 			);
 	}
