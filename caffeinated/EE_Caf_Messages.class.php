@@ -369,6 +369,14 @@ class EE_Caf_Messages  {
 			'messengers_to_activate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'payment_refund', $setup_args );
+
+		//register payment reminder message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Reminder_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/' => array( 'class' ) ),
+			'messengers_to_activate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_reminder', $setup_args );
 	}
 
 

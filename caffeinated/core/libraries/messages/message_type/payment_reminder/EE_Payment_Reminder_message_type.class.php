@@ -93,11 +93,11 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 	}
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-reminder-message-type-content.template.php');
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/templates/payment-reminder-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-reminder-message-type-event-list.template.php');
+			$tcontent[$context]['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/templates/payment-reminder-message-type-event-list.template.php');
 			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
 		}
 

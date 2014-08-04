@@ -152,7 +152,10 @@ class EE_Messages_Init extends EE_Base {
 	public function payment_reminder( EE_Transaction $transaction ) {
 		$this->_load_controller();
 		$data = array( $transaction, null );
-		$this->_EEMSG->send_message( 'payment_reminder', $data );
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'payment_reminder', $active_mts ) ) {
+			$this->_EEMSG->send_message( 'payment_reminder', $data );
+		}
 	}
 
 
