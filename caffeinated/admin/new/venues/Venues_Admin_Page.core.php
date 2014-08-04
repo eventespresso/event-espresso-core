@@ -328,7 +328,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-				'help_tour' => array( 'Venues_ee_edit_venue_Help_Tour' ),
+				'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
