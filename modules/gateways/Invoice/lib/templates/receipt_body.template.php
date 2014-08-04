@@ -54,7 +54,7 @@ $tax_total_line_item;
 			?>
 				<li class="event-ticket">
 					<div class="ticket-details">
-						<table id="invoice-amount">
+						<table class="invoice-amount">
 							<thead>
 								<tr class="header_row">
 									<th class="name-column"><?php _e("Ticket", "event_espresso");?></th>
@@ -173,7 +173,7 @@ $tax_total_line_item;
 		<div class="taxes">
 			<?php if ($tax_total_line_item && $tax_total_line_item->children()){?>
 				<h3 class="section-title"><?php _e("Taxes",'event_espresso')?></h3>
-				<table id="invoice-amount">
+				<table class="invoice-amount">
 
 					<thead>
 						<tr class="header_row">
@@ -210,7 +210,7 @@ $tax_total_line_item;
 		<div class="payment-dv">
 			<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
 			<p>[instructions]</p>
-			<table id="invoice-amount">
+			<table class="invoice-amount">
 				<thead>
 					<tr class="header_row">
 						<th><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
@@ -277,14 +277,14 @@ $tax_total_line_item;
 							<?php } ?>
 						</tr>
 					<?php }?>
-				</tr>
+				</table>
 				<?php } ?>
-			</table>
 
-			<?php if($shameless_plug){?>
-			<div class='aln-cntr'><?php
-				printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
-			?></div>
-			<?php } ?>
+				<?php if($shameless_plug){?>
+				<div class='aln-cntr'><?php
+					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
+				?></div>
+				<?php } ?>
+			</div>
 		</div>
 	</div>
