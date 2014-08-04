@@ -59,8 +59,8 @@ class EE_Caf_Messages  {
 		 * @since 4.3.0
 		 */
 		//eat our own dogfood!
-		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_message_type' ) );
-		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_shortcodes' ) );
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_message_types' ) );
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_shortcodes' ) );
 		do_action('EE_Brewing_Regular___messages_caf');
 	}
 
@@ -345,14 +345,14 @@ class EE_Caf_Messages  {
 
 
 	/**
-	 * Takes care of registering the newsletter message type that is only available in caffeinated EE.
+	 * Takes care of registering the  message types that are only available in caffeinated EE.
 	 *
-	 * @since   4.3.0
+	 * @since   %VER%
 	 *
 	 * @return  void
 	 */
-	public function register_newsletter_message_type() {
-		//setup array for registering
+	public function register_caf_message_types() {
+		//register newsletter message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
@@ -361,19 +361,27 @@ class EE_Caf_Messages  {
 			'messengers_to_activate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
+
+		//register payment refund message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Refund_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/' => array( 'class' ) ),
+			'messengers_to_activate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_refund', $setup_args );
 	}
 
 
 
 
 	/**
-	 * Takes care of registering the newsletter shortcode library and set up related items.
+	 * Takes care of registering the  shortcode libraries implemented with caffeinated EE and set up related items.
 	 *
-	 * @since   4.3.0
+	 * @since   %VER%
 	 *
 	 * @return void
 	 */
-	public function register_newsletter_shortcodes() {
+	public function register_caf_shortcodes() {
 		$setup_args = array(
 			'autoloadpaths' => array(
 				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
