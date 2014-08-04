@@ -43,7 +43,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 		$new_page_routes = array(
 			'faq' => array(
 				'func' => '_faq',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				)
 			);
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );

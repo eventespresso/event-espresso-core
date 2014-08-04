@@ -922,7 +922,7 @@ class EEH_Activation {
 			}
 
 			//if default_mts is empty and this messenger has already been activated at some point, then we can just skip the rest
-			if ( empty( $default_mts ) && !empty( $has_activated[$messenger] ) ) {
+			if ( empty( $default_mts ) && isset( $has_activated[$messenger] ) ) {
 				continue;
 			}
 

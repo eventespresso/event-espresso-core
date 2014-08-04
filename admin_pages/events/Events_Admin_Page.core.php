@@ -113,63 +113,63 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_events_overview_list_table',
-				'capability' => 'read_events'
+				'capability' => 'ee_read_events'
 				),
 			'create_new' => array(
 				'func' => '_create_new_cpt_item',
-				'capability' => 'edit_events'
+				'capability' => 'ee_edit_events'
 				),
 			'edit' => array(
 				'func' => '_edit_cpt_item',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id
 				),
 			'copy_event' => array(
 				'func' => '_copy_events',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'trash'),
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'trash'),
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'draft'),
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'draft'),
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'delete_event' => array(
 				'func' => '_delete_event',
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'delete_events' => array(
 				'func' => '_delete_events',
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'view_report' => array(
 				'func' => '_view_report',
-				'capablity' => 'edit_events'
+				'capablity' => 'ee_edit_events'
 				),
 			'default_event_settings' => array(
 				'func' => '_default_event_settings',
@@ -183,42 +183,42 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//event category tab related
 			'add_category' => array(
 				'func' => '_category_details',
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('add'),
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('edit')
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
-				'capability' => 'delete_event_category',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
-				'capability' => 'delete_event_category',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 			'category_list' => array(
 				'func' => '_category_list_table',
-				'capability' => 'manage_event_categories'
+				'capability' => 'ee_manage_event_categories'
 				)
 		);
 	}
@@ -642,7 +642,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_events', 'espresso_events_trash_events' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -1490,11 +1490,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//possible conditions for capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_events', 'get_events') ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
 			$where['status**'] = array( '!=', 'private' );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_events', 'get_events' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
 		}
 

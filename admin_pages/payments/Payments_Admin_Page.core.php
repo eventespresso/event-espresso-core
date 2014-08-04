@@ -64,16 +64,16 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_gateway_settings',
-				'capability' => 'manage_gateways'
+				'capability' => 'ee_manage_gateways'
 				),
 			'payment_settings' => array(
 				'func' => '_payment_settings',
-				'capability' => 'manage_gateways'
+				'capability' => 'ee_manage_gateways'
 				),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
 				'noheader'=>TRUE,
-				'capability' => 'manage_gateways'
+				'capability' => 'ee_manage_gateways'
 				)
 			);
 	}
