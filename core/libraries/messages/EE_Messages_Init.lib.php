@@ -361,7 +361,10 @@ class EE_Messages_Init extends EE_Base {
 		$_POST['MTP_ID'] = (int) $mtp_id;
 
 		$this->_load_controller();
-		$this->_EEMSG->send_message('newsletter', $contacts);
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'newsletter', $active_mts ) ) {
+			$this->_EEMSG->send_message('newsletter', $contacts);
+		}
 	}
 
 

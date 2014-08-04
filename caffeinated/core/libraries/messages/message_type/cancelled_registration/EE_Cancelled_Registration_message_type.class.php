@@ -102,7 +102,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-content.template.php', TRUE );
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/templates/cancelled-registration-message-type-content.template.php', TRUE );
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;

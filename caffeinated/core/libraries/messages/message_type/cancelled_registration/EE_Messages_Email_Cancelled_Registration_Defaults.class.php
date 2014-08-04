@@ -40,9 +40,9 @@ class EE_Messages_Email_Cancelled_Registration_Defaults extends EE_Message_Templ
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
 		$this->_templates['attendee']['to'] = '[RECIPIENT_EMAIL]';
-		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/cancelled-registration-message-type-admin-main-content.template.php', TRUE );
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/templates/admin/cancelled-registration-message-type-admin-main-content.template.php', TRUE );
 		$this->_templates['admin']['content']['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not-approved-registration-message-type-admin-attendee-list.template.php', TRUE );
-		$this->_templates['attendee']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-event-list.template.php', TRUE );
+		$this->_templates['attendee']['content']['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/templates/cancelled-registration-message-type-event-list.template.php', TRUE );
 		$this->_templates['attendee']['content']['attendee_list'] = '';
 	}
 }
