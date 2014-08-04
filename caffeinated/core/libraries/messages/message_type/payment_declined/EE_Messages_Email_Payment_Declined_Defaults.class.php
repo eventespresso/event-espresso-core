@@ -40,7 +40,7 @@ class EE_Messages_Email_Payment_Declined_Defaults extends EE_Message_Template_De
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
 		$this->_templates['primary_attendee']['to'] = '[PRIMARY_REGISTRANT_EMAIL]';
-		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/payment-declined-message-type-admin-content.template.php', TRUE );
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/templates/admin/payment-declined-message-type-admin-content.template.php', TRUE );
 		$this->_templates['admin']['content']['event_list'] = '';
 		$this->_templates['admin']['content']['ticket_list'] = '';
 		$this->_templates['admin']['content']['attendee_list'] = '';
