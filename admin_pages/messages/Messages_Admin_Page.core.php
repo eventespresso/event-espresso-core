@@ -205,12 +205,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
-					 'capability' => 'edit_messages',
+					 'capability' => 'ee_edit_messages',
 					 'noheader' => TRUE
 					),
 				'edit_message_template' => array(
 					'func' => '_edit_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id
 					),
 				'preview_message' => array(
