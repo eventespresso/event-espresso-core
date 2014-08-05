@@ -1083,18 +1083,16 @@ class EEH_Activation {
 		$undeleted_options = array();
 		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
 
-			$option_name = $no_wildcard ? "= '$option_name'" : "LIKE '%$option_name%'";
-
-			if ( $option_id = $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
-				switch ( $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name $option_name" )) {
-					case FALSE :
-						$undeleted_options[] = $option_name;
-					break;
-					case 0 :
-	//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
-					break;
-					default:
-	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+			if( $no_wildcard ){
+				if( ! delete_option( $option_name ) ){
+					$undeleted_options[] = $option_name;
+				}
+			}else{
+				$option_names_to_delete_from_wildcard = $wpdb->get_col( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE '%$option_name%'" );
+				foreach($option_names_to_delete_from_wildcard as $option_name_from_wildcard ){
+					if( ! delete_option( $option_name_from_wildcard ) ){
+						$undeleted_options[] = $option_name_from_wildcard;
+					}
 				}
 			}
 		}
@@ -1127,7 +1125,7 @@ class EEH_Activation {
 
 		}
 		if ( $errors != '' ) {
-			echo $errors;
+			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 

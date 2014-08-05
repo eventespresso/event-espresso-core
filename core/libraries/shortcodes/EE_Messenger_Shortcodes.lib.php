@@ -24,13 +24,33 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  */
 class EE_Messenger_Shortcodes extends EE_Shortcodes {
 
+
+	/**
+	 * Hold array of active messengers indexed by messenger name.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_messenger[]
+	 */
+	protected $_active_messengers = array();
+
+
+
+
 	protected function _init_props() {
 		$this->label = __('Messenger Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes that are messenger specific.', 'event_espresso');
-		$this->_shortcodes = array(
-			'[DISPLAY_HTML_URL]' => __('This will return a link to view the template in a browser.', 'event_espresso'),
-			'[DISPLAY_PDF_URL]' => __('This will return a link to generate a pdf for the template.', 'event_espresso' )
-			);
+
+		//only show shortcodes when the messenger is active.
+		$this->_active_messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+
+		if ( isset( $this->_active_messengers['html'] ) ) {
+			$this->_shortcodes['[DISPLAY_HTML_URL]'] =__('This will return a link to view the template in a browser.', 'event_espresso');
+		}
+
+		if ( isset( $this->_active_messengers['pdf'] ) ) {
+			$this->_shortcodes['[DISPLAY_PDF_URL]'] = __('This will return a link to generate a pdf for the template.', 'event_espresso' );
+		}
 	}
 
 
@@ -66,6 +86,12 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	 * @return string The generated url for displaying the link.
 	 */
 	private function _get_url( EE_Messages_Addressee $recipient, $type ) {
+
+		//get out early if the given messenger is not active!
+		if ( ! isset( $this->_active_messengers[$type]) ) {
+			return '';
+		}
+
 		$reg = $recipient->reg_obj;
 		$reg = ! $reg instanceof EE_Registration ? $recipient->primary_reg_obj : $reg;
 
