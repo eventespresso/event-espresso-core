@@ -17,6 +17,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core
  */
 class EE_System_Test_With_Addons extends EE_UnitTestCase{
+
+	public function __construct($name = NULL, array $data = array(), $dataName = '') {
+		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';require_once $this->_main_file_path;
+		parent::__construct($name, $data, $dataName);
+	}
 	/**
 	 * The mock addon registered
 	 * @var EE_Addon
@@ -182,7 +187,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//just for assurance, make sure New Addon is the only existing addon
 		unset($current_db_state[ $this->_addon_name ]);
 		update_option( EE_Data_Migration_Manager::current_database_state,$current_db_state );
-		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"]) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0;
+		$times_reactivation_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__reactivation"]) ? $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] : 0;
 		//set the activator option
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
@@ -192,17 +197,17 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 //		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
 		EE_System::reset()->detect_activations_or_upgrades();
-		$this->assertEquals(EE_System::req_type_normal,$this->_addon->detect_req_type());
-		$this->assertEquals($times_its_new_install_hook_fired_before, isset( $wp_actions["AHEE__{$this->_addon_classname}__new_install"] ) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0);
-		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
+		$this->assertEquals(EE_System::req_type_activation_but_not_installed,$this->_addon->detect_req_type());
+		$this->assertEquals($times_reactivation_hook_fired_before, isset( $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] ) ? $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] : 0);
+		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name() );
 
 		//ok, now let's pretend the site was teaken out of MM
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 
 		//check for activations/upgrades again. This time activation should be detected
 		EE_System::reset()->detect_activations_or_upgrades();
-		$this->assertEquals(EE_System::req_type_new_activation,$this->_addon->detect_req_type());
-		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
+		$this->assertEquals(EE_System::req_type_reactivation,$this->_addon->detect_req_type());
+		$this->assertEquals($times_reactivation_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__reactivation"]);
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 
 		//now we also want to check that the addon will have created the necessary table
