@@ -113,31 +113,31 @@ final class EE_Capabilities extends EE_Base {
 	private function _set_meta_caps() {
 		$this->_meta_caps =  array (
 			//edits
-			new EE_Meta_Capability_Map_Edit( 'edit_event', array( EEM_Event::instance(), 'edit_published_events', 'edit_others_events', 'edit_private_events' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_venue', array( EEM_Venue::instance(), 'edit_published_venues', 'edit_others_venues', 'edit_private_venues' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_messages', 'edit_global_messages' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', '', 'edit_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_groups' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( EEM_Event::instance(), 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( EEM_Venue::instance(), 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_checkin', array( EEM_Registration::instance(), '', 'ee_edit_others_checkins', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_edit_message', array( EEM_Message_Template_Group::instance(), '', 'ee_edit_others_messages', 'ee_edit_global_messages' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_default_ticket', array( EEM_Ticket::instance(), '', 'ee_edit_others_default_tickets', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question', array( EEM_Question::instance(), '', '', 'ee_edit_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question_group', array( EEM_Question_Group::instance(), '', '', 'ee_edit_system_question_groups' ) ),
 			//reads
-			new EE_Meta_Capability_Map_Read( 'read_event', array( EEM_Event::instance(), '', 'read_others_events', 'read_private_events' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_venue', array( EEM_Venue::instance(), '', 'read_others_venues', 'read_private_venues' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registrations' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Registration::instance(), '', '', 'read_others_checkins' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'read_others_messages', 'read_global_messages' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'read_others_default_tickets' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( EEM_Event::instance(), '', 'ee_read_others_events', 'ee_read_private_events' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( EEM_Venue::instance(), '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( EEM_Registration::instance(), '', '', 'ee_edit_others_registrations' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( EEM_Registration::instance(), '', '', 'ee_read_others_checkins' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( EEM_Message_Template_Group::instance(), '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( EEM_Ticket::instance(), '', '', 'ee_read_others_default_tickets' ) ),
 
 			//deletes
-			new EE_Meta_Capability_Map_Delete( 'delete_event', array( EEM_Event::instance(), 'delete_published_events', 'delete_others_events', 'delete_private_events' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_venue', array( EEM_Venue::instance(), 'delete_published_venues', 'delete_others_venues', 'delete_private_venues' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'delete_others_messages', 'delete_global_messages' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'delete_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( EEM_Event::instance(), 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( EEM_Venue::instance(), 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( EEM_Registration::instance(), '', 'ee_delete_others_checkins', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( EEM_Message_Template_Group::instance(), '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( EEM_Ticket::instance(), '', 'ee_delete_others_default_tickets', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -157,135 +157,135 @@ final class EE_Capabilities extends EE_Base {
 		return array(
 			'administrator' => array(
 			//basic access
-				'read_ee',
+				'ee_read_ee',
 			//gateways
-				'manage_gateways',
+				'ee_manage_gateways',
 			//events
-				'publish_events',
-				'read_private_events',
-				'read_others_events',
-				'read_event',
-				'read_events',
-				'edit_event',
-				'edit_events',
-				'edit_published_events',
-				'edit_others_events',
-				'edit_private_events',
-				'delete_published_events',
-				'delete_private_events',
-				'delete_event',
-				'delete_events',
-				'delete_others_events',
+				'ee_publish_events',
+				'ee_read_private_events',
+				'ee_read_others_events',
+				'ee_read_event',
+				'ee_read_events',
+				'ee_edit_event',
+				'ee_edit_events',
+				'ee_edit_published_events',
+				'ee_edit_others_events',
+				'ee_edit_private_events',
+				'ee_delete_published_events',
+				'ee_delete_private_events',
+				'ee_delete_event',
+				'ee_delete_events',
+				'ee_delete_others_events',
 			//event categories
-				'manage_event_categories',
-				'edit_event_category',
-				'delete_event_category',
-				'assign_event_category',
+				'ee_manage_event_categories',
+				'ee_edit_event_category',
+				'ee_delete_event_category',
+				'ee_assign_event_category',
 			//venues
-				'publish_venues',
-				'read_venue',
-				'read_venues',
-				'read_others_venues',
-				'read_private_venues',
-				'edit_venue',
-				'edit_venues',
-				'edit_others_venues',
-				'edit_published_venues',
-				'edit_private_venues',
-				'delete_venue',
-				'delete_venues',
-				'delete_others_venues',
-				'delete_private_venues',
-				'delete_published_venues',
+				'ee_publish_venues',
+				'ee_read_venue',
+				'ee_read_venues',
+				'ee_read_others_venues',
+				'ee_read_private_venues',
+				'ee_edit_venue',
+				'ee_edit_venues',
+				'ee_edit_others_venues',
+				'ee_edit_published_venues',
+				'ee_edit_private_venues',
+				'ee_delete_venue',
+				'ee_delete_venues',
+				'ee_delete_others_venues',
+				'ee_delete_private_venues',
+				'ee_delete_published_venues',
 			//venue categories
-				'manage_venue_categories',
-				'edit_venue_category',
-				'delete_venue_category',
-				'assign_venue_category',
+				'ee_manage_venue_categories',
+				'ee_edit_venue_category',
+				'ee_delete_venue_category',
+				'ee_assign_venue_category',
 			//contacts
-				'read_contact',
-				'read_contacts',
-				'edit_contact',
-				'edit_contacts',
-				'delete_contact',
-				'delete_contacts',
+				'ee_read_contact',
+				'ee_read_contacts',
+				'ee_edit_contact',
+				'ee_edit_contacts',
+				'ee_delete_contact',
+				'ee_delete_contacts',
 			//registrations
-				'read_registration',
-				'read_registrations',
-				'read_others_registrations',
-				'edit_registration',
-				'edit_registrations',
-				'edit_others_registrations',
-				'delete_registration',
-				'delete_registrations',
+				'ee_read_registration',
+				'ee_read_registrations',
+				'ee_read_others_registrations',
+				'ee_edit_registration',
+				'ee_edit_registrations',
+				'ee_edit_others_registrations',
+				'ee_delete_registration',
+				'ee_delete_registrations',
 			//checkins
-				'read_checkin',
-				'read_others_checkins',
-				'read_checkins',
-				'edit_checkin',
-				'edit_checkins',
-				'edit_others_checkins',
-				'delete_checkin',
-				'delete_checkins',
-				'delete_others_checkins',
+				'ee_read_checkin',
+				'ee_read_others_checkins',
+				'ee_read_checkins',
+				'ee_edit_checkin',
+				'ee_edit_checkins',
+				'ee_edit_others_checkins',
+				'ee_delete_checkin',
+				'ee_delete_checkins',
+				'ee_delete_others_checkins',
 			//transactions && payments
-				'read_transaction',
-				'read_transactions',
-				'edit_payments',
-				'delete_payments',
+				'ee_read_transaction',
+				'ee_read_transactions',
+				'ee_edit_payments',
+				'ee_delete_payments',
 			//messages
-				'read_message',
-				'read_messages',
-				'read_others_messages',
-				'read_global_messages',
-				'edit_global_messages',
-				'edit_message',
-				'edit_messages',
-				'edit_others_messages',
-				'delete_message',
-				'delete_messages',
-				'delete_others_messages',
-				'delete_global_messages',
-				'send_message',
+				'ee_read_message',
+				'ee_read_messages',
+				'ee_read_others_messages',
+				'ee_read_global_messages',
+				'ee_edit_global_messages',
+				'ee_edit_message',
+				'ee_edit_messages',
+				'ee_edit_others_messages',
+				'ee_delete_message',
+				'ee_delete_messages',
+				'ee_delete_others_messages',
+				'ee_delete_global_messages',
+				'ee_send_message',
 			//tickets
-				'read_default_ticket',
-				'read_default_tickets',
-				'read_others_default_tickets',
-				'edit_default_ticket',
-				'edit_default_tickets',
-				'edit_others_default_tickets',
-				'delete_ticket',
-				'delete_tickets',
-				'delete_others_default_tickets',
+				'ee_read_default_ticket',
+				'ee_read_default_tickets',
+				'ee_read_others_default_tickets',
+				'ee_edit_default_ticket',
+				'ee_edit_default_tickets',
+				'ee_edit_others_default_tickets',
+				'ee_delete_default_ticket',
+				'ee_delete_default_tickets',
+				'ee_delete_others_default_tickets',
 			//prices
-				'edit_default_price',
-				'edit_default_prices',
-				'delete_default_price',
-				'delete_default_prices',
-				'edit_default_price_type',
-				'edit_default_price_types',
-				'delete_default_price_type',
-				'delete_default_price_types',
-				'read_default_prices',
-				'read_default_price_types',
+				'ee_edit_default_price',
+				'ee_edit_default_prices',
+				'ee_delete_default_price',
+				'ee_delete_default_prices',
+				'ee_edit_default_price_type',
+				'ee_edit_default_price_types',
+				'ee_delete_default_price_type',
+				'ee_delete_default_price_types',
+				'ee_read_default_prices',
+				'ee_read_default_price_types',
 			//registration form
-				'edit_question',
-				'edit_questions',
-				'edit_system_questions',
-				'read_questions',
-				'delete_question',
-				'delete_questions',
-				'edit_question_group',
-				'edit_question_groups',
-				'read_question_groups',
-				'edit_system_question_groups',
-				'delete_question_group',
-				'delete_question_groups',
+				'ee_edit_question',
+				'ee_edit_questions',
+				'ee_edit_system_questions',
+				'ee_read_questions',
+				'ee_delete_question',
+				'ee_delete_questions',
+				'ee_edit_question_group',
+				'ee_edit_question_groups',
+				'ee_read_question_groups',
+				'ee_edit_system_question_groups',
+				'ee_delete_question_group',
+				'ee_delete_question_groups',
 			//event_type taxonomy
-				'assign_event_type',
-				'manage_event_types',
-				'edit_event_type',
-				'delete_event_type',
+				'ee_assign_event_type',
+				'ee_manage_event_types',
+				'ee_edit_event_type',
+				'ee_delete_event_type',
 				)
 			);
 	}
@@ -513,7 +513,7 @@ abstract class EE_Meta_Capability_Map {
 
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -545,7 +545,7 @@ abstract class EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -625,7 +625,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -658,7 +658,7 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -733,7 +733,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -794,7 +794,7 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php

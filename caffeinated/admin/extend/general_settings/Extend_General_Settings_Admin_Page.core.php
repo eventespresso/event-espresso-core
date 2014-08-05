@@ -60,7 +60,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					'order' => 40
 					),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'general_settings_google_maps_help_tab' => array(
 						'title' => __('Google Maps', 'event_espresso'),
 						'filename' => 'general_settings_google_maps'
@@ -74,6 +74,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 		//filters and action hooks here
 		add_action('AHEE__admin_option_settings__template__before', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
+		add_action( 'AHEE__admin_option_settings__template__before', array( $this, 'debug_logging_options' ), 9 );
 	}
 
 
@@ -82,6 +83,15 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$_args['use_personnel_manager_select'] = EEH_Form_Fields::select_input('use_personnel_manager', $template_args['values'], $template_args['use_personnel_manager'] );
 		$template = GEN_SET_CAF_TEMPLATE_PATH . 'use_venue_and_staff_manager_settings.template.php';
 		EEH_Template::display_template( $template, $_args );
+	}
+
+
+	public function debug_logging_options( $template_args ) {
+		$template_args['use_full_logging'] = isset( EE_Registry::instance()->CFG->admin->use_full_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_full_logging ) : FALSE;
+		$template_args['use_remote_logging'] = isset( EE_Registry::instance()->CFG->admin->use_remote_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_remote_logging ) : FALSE;
+		$template_args['remote_logging_url'] = isset( EE_Registry::instance()->CFG->admin->remote_logging_url ) && ! empty( EE_Registry::instance()->CFG->admin->remote_logging_url ) ? stripslashes( EE_Registry::instance()->CFG->admin->remote_logging_url ) : '';
+		$template = GEN_SET_CAF_TEMPLATE_PATH . 'debug_log_settings.template.php';
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 

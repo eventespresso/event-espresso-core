@@ -50,10 +50,24 @@ class EEH_Event_Query {
 
 	/**
 	 *    whether to display expired events in the event list
-	 * @var    $_show_expired
+	 * @var    bool $_show_expired
 	 * @access    protected
 	 */
-	protected static $_event_query_show_expired = NULL;
+	protected static $_event_query_show_expired = FALSE;
+
+	/**
+	 *    list of params for controlling how the query results are ordered
+	 * @var    array $_event_query_orderby
+	 * @access    protected
+	 */
+	protected static $_event_query_orderby = array();
+
+	/**
+	 *    direction list is sorted
+	 * @var    string $_event_query_sort
+	 * @access    protected
+	 */
+	protected static $_event_query_sort = NULL;
 
 	/**
 	 *    list of params used to build the query's various clauses
@@ -72,6 +86,7 @@ class EEH_Event_Query {
 	 */
 	public static function filter_query_parts() {
 		// build event list query
+		add_filter( 'posts_fields', array( 'EEH_Event_Query', 'posts_fields' ), 10, 2 );
 		add_filter( 'posts_join', array( 'EEH_Event_Query', 'posts_join' ), 10, 2 );
 		add_filter( 'posts_where', array( 'EEH_Event_Query', 'posts_where' ), 10, 2 );
 		add_filter( 'posts_orderby', array( 'EEH_Event_Query', 'posts_orderby' ), 10, 2 );
@@ -80,25 +95,33 @@ class EEH_Event_Query {
 
 
 	/**
-	 *    get_post_data
+	 * set_query_params
 	 *
-	 * @access    public
+	 * @param string $month
+	 * @param string $category
+	 * @param bool   $show_expired
+	 * @param string $orderby
+	 * @param string $sort
 	 */
-	public static function get_post_data() {
-		EEH_Event_Query::$_event_query_month = EEH_Event_Query::_display_month();
-		EEH_Event_Query::$_event_query_category = EEH_Event_Query::_event_category_slug();
-		EEH_Event_Query::$_event_query_show_expired = EEH_Event_Query::_show_expired( TRUE );
+	public static function set_query_params( $month = '', $category = '', $show_expired = FALSE, $orderby = 'start_date', $sort = 'ASC' ) {
+		EEH_Event_Query::$_event_query_month = EEH_Event_Query::_display_month( $month );
+		EEH_Event_Query::$_event_query_category = EEH_Event_Query::_event_category_slug( $category );
+		EEH_Event_Query::$_event_query_show_expired = EEH_Event_Query::_show_expired( $show_expired );
+		EEH_Event_Query::$_event_query_orderby = EEH_Event_Query::_orderby( $orderby );
+		EEH_Event_Query::$_event_query_sort = EEH_Event_Query::_sort( $sort );
 	}
+
 
 
 	/**
 	 *    _display_month - what month should the event list display events for?
 	 *
 	 * @access    private
+	 * @param string $month
 	 * @return    string
 	 */
-	private static function _display_month() {
-		return EE_Registry::instance()->REQ->is_set( 'event_query_month' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_month' ) ) : '';
+	private static function _display_month( $month = '' ) {
+		return EE_Registry::instance()->REQ->is_set( 'event_query_month' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_month' ) ) : $month;
 	}
 
 
@@ -107,10 +130,11 @@ class EEH_Event_Query {
 	 *    _event_category_slug
 	 *
 	 * @access    private
+	 * @param string $category
 	 * @return    string
 	 */
-	private static function _event_category_slug() {
-		return EE_Registry::instance()->REQ->is_set( 'event_query_category' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_category' ) ) : '';
+	private static function _event_category_slug( $category = '' ) {
+		return EE_Registry::instance()->REQ->is_set( 'event_query_category' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_category' ) ) : $category;
 	}
 
 
@@ -119,12 +143,52 @@ class EEH_Event_Query {
 	 *    _show_expired
 	 *
 	 * @access    private
+	 * @param bool $show_expired
 	 * @return    boolean
 	 */
-	private static function _show_expired() {
+	private static function _show_expired( $show_expired = FALSE ) {
 		// override default expired option if set via filter
-		EEH_Event_Query::$_event_query_show_expired = EE_Registry::instance()->REQ->is_set( 'event_query_show_expired' ) ? absint( EE_Registry::instance()->REQ->get( 'event_query_show_expired' ) ) : FALSE;
-		return EEH_Event_Query::$_event_query_show_expired ? TRUE : FALSE;
+		EEH_Event_Query::$_event_query_show_expired =EE_Registry::instance()->REQ->is_set( 'event_query_show_expired' ) ? EE_Registry::instance()->REQ->get( 'event_query_show_expired' ) : $show_expired;
+		// ensure field is set correctly as boolean
+		switch( (string)EEH_Event_Query::$_event_query_show_expired  ) {
+			case 'TRUE' :
+			case 'true' :
+			case '1' :
+				EEH_Event_Query::$_event_query_show_expired = TRUE;
+				break;
+			default :
+				EEH_Event_Query::$_event_query_show_expired = FALSE;
+		}
+		return EEH_Event_Query::$_event_query_show_expired;
+	}
+
+
+
+	/**
+	 *    _orderby
+	 *
+	 * @access    private
+	 * @param    string $orderby
+	 * @return    array
+	 */
+	private static function _orderby( $orderby = 'start_date' ) {
+		$event_query_orderby = EE_Registry::instance()->REQ->is_set( 'event_query_orderby' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_orderby' ) ) : $orderby;
+		EEH_Event_Query::$_event_query_orderby = explode( ',', $event_query_orderby );
+		return array_map( 'trim', EEH_Event_Query::$_event_query_orderby );
+	}
+
+
+
+	/**
+	 *    _sort
+	 *
+	 * @access    private
+	 * @param string $sort
+	 * @return    array
+	 */
+	private static function _sort( $sort = 'ASC' ) {
+		$sort = EE_Registry::instance()->REQ->is_set( 'event_query_sort' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_sort' ) ) : $sort;
+		return in_array( $sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $sort ) : 'ASC';
 	}
 
 
@@ -140,7 +204,7 @@ class EEH_Event_Query {
 	public static function posts_fields( $SQL, WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
-			$SQL .= EEH_Event_Query::posts_fields_sql_for_orderby( array( 'start_date' ));
+			$SQL .= EEH_Event_Query::posts_fields_sql_for_orderby( EEH_Event_Query::$_event_query_orderby );
 		}
 		return $SQL;
 	}
@@ -180,8 +244,6 @@ class EEH_Event_Query {
 					$SQL .= ', ' . EEM_State::instance()->table() . '.STA_name' ;
 					break;
 
-					break;
-
 			}
 		}
 		return  $SQL;
@@ -200,7 +262,8 @@ class EEH_Event_Query {
 	public static function posts_join( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			// Category
-			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::_event_category_slug() );
+			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::$_event_query_category );
+			$SQL .= EEH_Event_Query::posts_join_for_orderby( EEH_Event_Query::$_event_query_orderby );
 		}
 		return $SQL;
 	}
@@ -275,11 +338,11 @@ class EEH_Event_Query {
 	public static function posts_where( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars[ 'post_type' ] ) && $wp_query->query_vars[ 'post_type' ] == 'espresso_events' ) {
 			// Show Expired ?
-			$SQL .= EEH_Event_Query::posts_where_sql_for_show_expired( EEH_Event_Query::_show_expired() );
+			$SQL .= EEH_Event_Query::posts_where_sql_for_show_expired( EEH_Event_Query::$_event_query_show_expired  );
 			// Category
-			$SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug( EEH_Event_Query::_event_category_slug() );
+			$SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug( EEH_Event_Query::$_event_query_category  );
 			// Start Date
-			$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( EEH_Event_Query::_display_month() );
+			$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( EEH_Event_Query::$_event_query_month );
 		}
 //		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
@@ -295,6 +358,7 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
+//		echo '<h5 style="color:#2EA2CC;">$show_expired : <span style="color:#E76700">' . $show_expired . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date( 'Y-m-d H:s:i' ) . '" ' : '';
 	}
 
@@ -345,7 +409,7 @@ class EEH_Event_Query {
 	 */
 	public static function posts_orderby( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
-			$SQL = EEH_Event_Query::posts_orderby_sql( array( 'start_date' ) );
+			$SQL = EEH_Event_Query::posts_orderby_sql( EEH_Event_Query::$_event_query_orderby, EEH_Event_Query::$_event_query_sort );
 		}
 //		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
@@ -382,7 +446,7 @@ class EEH_Event_Query {
 		$SQL = '';
 		$counter = 0;
 		//make sure 'orderby' is set in query params
-		if ( isset( self::$_query_params['orderby'] )) {
+		if ( ! isset( self::$_query_params['orderby'] )) {
 			self::$_query_params['orderby'] = array();
 		}
 		// loop thru $orderby_params (type cast as array)

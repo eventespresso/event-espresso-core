@@ -11,7 +11,7 @@ Created by Elliot Jay Stocks
 #invoice { font-family: "Book Antiqua", Palatino, "Palatino Linotype", Baskerville, BaskervilleBE, BaskervilleOldFace, Garamond, "Times New Roman", serif; color:#000; line-height:1.3 }
 #invoice h1 { margin:0; color:#000; text-transform:uppercase }
 #invoice h2, #invoice h3 {font-family: "Book Antiqua", Palatino, "Palatino Linotype", Baskerville, BaskervilleBE, BaskervilleOldFace, Garamond, "Times New Roman", serif; color:#777; line-height:1.2; margin-top:10px }
-#bill-to-ship-to, #company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th, #invoice-info { font-size:10pt }
+#bill-to-ship-to, #company-address, #client-details, #payment-details, #invoice-other, .invoice-amount td, th, #invoice-info { font-size:10pt }
  #comments { font-weight:bold; line-height:1.2; color:#fff }
 div#invoice #company-address div, div#invoice div#invoice-other div#comments { color:#fff }
 #invoice-header #company-address div.org { font-size:14pt; font-weight:bold }
@@ -35,13 +35,13 @@ div#company-address strong { color:#fff }
 
 #company-address { width:57.5%; margin:0;  padding:.75cm 1cm 1cm;  background-color:#000; }
 
-#bill-to-ship-to, #invoice-amount { margin:20px 0; }
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
 
 #invoice-info { padding:20px 0 20px; text-align:right; }
 #invoice-info th { text-align:right }
 #invoice-info h2 { text-transform:uppercase; font-size:14pt }
 #invoice-info h3 { }
-#invoice-amount { margin: 2em 0 2em 0; clear: both }
+.invoice-amount { margin: 2em 0 2em 0; clear: both }
 
 #payment-details { width:60%; }
 #invoice-other { }
