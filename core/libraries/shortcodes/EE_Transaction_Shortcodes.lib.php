@@ -235,7 +235,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$invoice_settings = ! empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 
 		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
-			$invoice_logo_url = $invoice_setttings['invoice_logo_url'];
+			$invoice_logo_url = $invoice_settings['invoice_logo_url'];
 		} else {
 			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
 		}
