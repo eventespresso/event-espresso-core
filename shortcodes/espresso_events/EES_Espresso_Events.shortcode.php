@@ -44,16 +44,17 @@ class EES_Espresso_Events  extends EES_Shortcode {
 
 
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
 		// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
-		EE_Registry::instance()->REQ->set( 'ee', 'event_list' );
+		add_action( 'pre_get_posts', array( EED_Events_Archive::instance(), 'run' ));
 	}
 
 
