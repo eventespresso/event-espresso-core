@@ -262,7 +262,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 					'http://eventespresso.com',
 					// plugin slug(s)
 					array(
-						'premium' => array( 'reg' => $settings['pue_options']['pue_plugin_slug'] ),
+						'premium' => array( 'p' => $settings['pue_options']['pue_plugin_slug'] ),
 						'prerelease' => array( 'beta' => $settings['pue_options']['pue_plugin_slug'] . '-pr' )
 					),
 					// options
