@@ -253,7 +253,7 @@ class EED_Messages  extends EED_Module {
 
 		//if no message type then it likely isn't active for this messenger.
 		if ( ! $message_type instanceof EE_message_type ) {
-			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso') ) );
+			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $generating_messenger ) );
 		}
 
 		//get data according to data handler requirements
