@@ -213,6 +213,13 @@ abstract class EE_Addon extends EE_Configurable {
 	 * from EE_Addon::initialize_db_if_no_migrations_required(), just after EE_Addon::initialize_db()
 	 */
 	public function initialize_default_data() {
+		/**
+		 * Called when an addon is ensuring its default data is set (possibly called
+		 * on a reactivation, so first check for the absense of other data before setting
+		 * default data)
+		 * @param EE_Addon $addon the addon that called this
+		 */
+		do_action( 'AHEE__EE_Addon__initialize_default_data__begin', $this );
 		//override to insert default data. It is safe to use the models here
 		//because the site should not be in maintenance mode
 	}
