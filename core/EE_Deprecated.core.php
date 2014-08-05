@@ -135,3 +135,77 @@ function ee_deprecated_get_inline_css_template_filters( $variation_path, $messen
 	return apply_filters( $filter_ref, $variation_path, $url, $type );
 }
 add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', 'ee_deprecated_get_inline_css_template_filters', 10, 8 );
+
+
+
+
+/**
+ * EE_Messages_Init
+ * This was the old controller for the Messages system which has now been moved into a proper EED Module
+ *
+ * @deprecated 4.5.0
+ * @deprecated Use the new EED_Messages module
+ *
+ */
+class EE_Messages_Init extends EE_Base {
+
+	public function __construct() {
+		self::doing_it_wrong_call( __METHOD__ );
+	}
+
+
+
+	public static function doing_it_wrong_call( $method_name ) {
+		EE_Error::doing_it_wrong( __CLASS__, sprintf( __('The %s in this class is deprecated as of EE4.5.0.  All functionality formerly in this class is now in the EED_Messages module.', 'event_espresso'), $method_name ), '4.5.0' );
+	}
+
+
+	public static function set_autoloaders() {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::set_autoloaders();
+	}
+
+
+	public function payment_reminder( $transaction ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::payment_reminder( $transaction );
+	}
+
+
+
+	public function payment( $transaction, $payment ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::payment( $transaction, $payment );
+	}
+
+
+	public function cancelled_registration( $transaction ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::cancelled_registration( $transaction );
+	}
+
+
+
+	public function maybe_registration( $transaction, $reg_msg, $from_admin ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::maybe_registration( $transaction, $reg_msg, $from_admin );
+	}
+
+
+	public function process_resend( $success, $req_data ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::process_resend( $success, $req_data );
+	}
+
+	public function process_admin_payment( $success, $payment ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::process_admin_payment( $success, $payment );
+	}
+
+
+	public function send_newsletter_message( $contacts, $grp_id ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::send_newsletter_message( $contacts, $grp_id );
+	}
+
+} //end deprecated EE_Messages_Init
