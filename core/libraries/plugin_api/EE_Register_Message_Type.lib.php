@@ -108,6 +108,10 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * This just ensures that when an addon registers a message type that on initial activation/reactivation the defaults the addon sets are taken care of.
      */
     public static function set_defaults() {
+    	//only set defaults if we're not in EE_Maintenance mode
+    	if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+    		return;
+    	}
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
     }
