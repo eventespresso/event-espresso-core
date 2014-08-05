@@ -94,6 +94,7 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
+		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 
 		//filters
 		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( 'EED_Messages', 'process_resend' ), 10, 2 );
@@ -357,6 +358,22 @@ class EED_Messages  extends EED_Module {
 
 
 		self::$_EEMSG->send_message( $message_type, $data);
+	}
+
+
+
+
+	public static function cancelled_registration( EE_Transaction $transaction ) {
+		self::_load_controller();
+
+		$data = array( $transaction, NULL );
+
+		$active_mts = self::$_EEMSG->get_active_message_types();
+
+		if ( in_array( 'cancelled_registration', $active_mts ) ) {
+			self::$_EEMSG->send_message( 'cancelled_registration', $data );
+		}
+		return;
 	}
 
 
