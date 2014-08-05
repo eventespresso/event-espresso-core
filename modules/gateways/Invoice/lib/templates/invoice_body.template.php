@@ -1,6 +1,6 @@
 
 	<div id="invoice">
-		
+
 		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
@@ -41,13 +41,13 @@
 							<div class="street-address"><?php echo $attendee_address; ?></div>
 							<div class="locality"><?php echo $attendee_city; ?> <?php echo $attendee_state; ?></div>
 							<div id="client-postcode"><?php echo $attendee_zip; ?></div>
-						</div> 
+						</div>
 					</div>
-					 <!--#client-details vcard--> 
-		
+					 <!--#client-details vcard-->
+
 		<h2><?php _e("Purchases",'event_espresso')?></h2>
-		<table id="invoice-amount">
-			
+		<table class="invoice-amount">
+
 			<thead>
 				<tr class="header_row">
 					<th class="left ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
@@ -58,7 +58,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php 
+				<?php
 				/**
 				 * Recursive function for traversing all the sub-items of each line item
 				 * and displaying them in the table
@@ -78,8 +78,8 @@
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
 							</tr>
 						<?php break;
-						
-						
+
+
 						case EEM_Line_Item::type_sub_total:
 							foreach($line_item->children() as $child_line_item){
 							//$odd = !$odd;
@@ -91,8 +91,8 @@
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
 							</tr>
 						<?php break;
-						
-						
+
+
 						case EEM_Line_Item::type_tax_sub_total:
 							foreach($line_item->children() as $child_line_item){
 								$odd = !$odd;
@@ -104,10 +104,10 @@
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
 							</tr>
 						<?php break;
-						
-						
+
+
 						case EEM_Line_Item::type_line_item:
-							$subitems = $line_item->children(); 
+							$subitems = $line_item->children();
 							$has_subitems  = count($subitems) > 1 ;
 							if($has_subitems){
 							?>
@@ -115,18 +115,18 @@
 								<td class="item_l"><?php echo $line_item->name() ?></td>
 								<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 								<td class="item_l"><?php echo $line_item->quantity();?></td>
-								
+
 								<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
-								
+
 								<td class="item_r"> <?php echo $line_item->total_no_code(); echo $line_item->is_taxable() ? '*' : ''?> </td>
 								<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
 							</tr>
-							<?php 
+							<?php
 								if( $has_subitems ){
 									foreach($line_item->children() as $child_line_item){
 										ee_invoice_display_line_item($child_line_item,$show_line_item_description, $odd);
 									}
-								} 
+								}
 							}else{//no subitems - just show this line item ?>
 								<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
 									<td class="item_l"><?php echo $line_item->name()?></td>
@@ -137,9 +137,9 @@
 									<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
 								</tr>
 							<?php }
-								
+
 						break;
-						case EEM_Line_Item::type_sub_line_item:							
+						case EEM_Line_Item::type_sub_line_item:
 							?>
 						<tr class="item subitem-row">
 							<td class="item_l subitem"><?php echo $line_item->name(); ?></td>
@@ -154,18 +154,18 @@
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
 						</tr>
 						<?php break;
-					case EEM_Line_Item::type_tax:							
+					case EEM_Line_Item::type_tax:
 							?>
 						<tr class="item sub-item tax-total">
 							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
-							
+
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
 						</tr><?php break;
 					}
 				}
-				$c=false; 
+				$c=false;
 				/* @var $transaction EE_Transaction */
 				$total_line_item = $transaction->total_line_item();
 				ee_invoice_display_line_item($total_line_item,$show_line_item_description);
@@ -181,11 +181,11 @@
 					</tr>
 				<?php } */ ?>
 			</tbody>
-			
+
 		</table>
 		<p><?php _e("* taxable items", "event_espresso");?></p>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
-		<table id="invoice-amount">
+		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
 					<th ><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
@@ -197,10 +197,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php 
+				<?php
 				$c = false;
 				if(!empty($payments)){
-					
+
 					foreach($payments as $payment){
 						/* @var $payment EE_Payment */?>
 					<tr class='item <?php echo (($c = !$c) ? ' odd' : '')?>'>
@@ -232,5 +232,5 @@
 				</tr>
 			</tfoot>
 		</table>
-		
+
 	</div>
