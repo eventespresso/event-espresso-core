@@ -60,7 +60,11 @@ Class  EE_New_Addon extends EE_Addon {
 					),
 				'capability_maps' => array(
 					new EE_Meta_Capability_Map_Edit( 'edit_addon', array( EEM_Event::instance(), '', 'edit_others_addon', 'edit_private_addon' ) )
-					)
+					),
+				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
+				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
+				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
+				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions'
 			)
 		);
 	}
