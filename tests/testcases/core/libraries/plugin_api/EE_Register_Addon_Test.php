@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/libraries/plugin_api
  * @group core
  * @group agg
+ * @group addons
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_mock_addon_path;

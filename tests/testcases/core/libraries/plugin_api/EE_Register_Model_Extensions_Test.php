@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * @group core/libraries/plugin_api
  * @group agg
+ * @group addons
  */
 class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	private $_reg_args;
@@ -121,10 +122,6 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 
 		EE_Register_Model_Extensions::register($this->_model_group, $this->_reg_args);
 		$att_model = EE_Registry::instance()->reset_model('Attendee');
-//		$att_model::reset();
-//		EEM_Attendee::reset();
-//
-//		var_dump( EE_Registry::instance() );
 		//verify they still haven't been extended
 		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
 		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
