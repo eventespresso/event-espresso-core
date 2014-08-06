@@ -512,8 +512,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$has_default = get_user_option('default'. $this->screen->id . 'columnshidden');
 		if ( empty( $has_default ) && !empty($this->_hidden_columns ) ) {
 			$user_id = get_current_user_id();
-			update_option($user_id, 'default'.$this->screen->id . 'columnshidden', TRUE);
-			update_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns );
+			update_user_option($user_id, 'default'.$this->screen->id . 'columnshidden', TRUE);
+			update_user_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns );
 		}
 		$saved_columns = (array) get_user_option( 'manage' . $this->screen->id . 'columnshidden' );
 		return $saved_columns;
