@@ -7,8 +7,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * EEME_Base
  * For magically adding fields, relations, and functions onto existing models.
- * example child class: adds a class called EEME_Sample_Attendee which adds a field named
- * 'ATT_foobar' on the Attendee model, which is actually a foreing key to transactions, and
+ * example child class: adds a class called EEME_Sample_Attendee which adds an extra table for
+ * meta info that we want to use for frequent querying (otherwise we could just use the extra meta features),
+ * and adds a field named 'ATT_foobar' on the Attendee model,
+ * which is actually a foreing key to transactions, and
  * a relation to transactions, and a function called new_func() onto EEM_Attendee which
  * gets all attendees which have a direct relation to the specified transaction.
  * For example,
@@ -16,7 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * class EEME_Sample_Attendee extends EEME_Base{
 	function __construct() {
 		$this->_model_name_extended = 'Attendee';
-		$this->_extra_fields = array('Attendee_Meta'=>array('ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', __("Foobar", 'event_espresso'), true,0,'Transaction')));
+		$this->_extra_tables = array(
+			'Mock_Attendee_Meta' => new EE_Secondary_Table('esp_mock_attendee_meta', 'MATTM_ID', 'ATT_ID' )
+		);
+		$this->_extra_fields = array('Mock_Attendee_Meta'=>array(
+			'MATTM_ID'=> new EE_DB_Only_Int_Field('MATTM_ID', __('Mock Attendee Meta Row ID','event_espresso'), false),
+			'MATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', __("Foreign Key to Attendee in Post Table", "event_espresso"), false),
+			'ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', __("Foobar", 'event_espresso'), true,0,'Transaction')));
 		$this->_extra_relations = array('Transaction'=>new EE_Belongs_To_Relation());
 		parent::__construct();
 	}
@@ -38,6 +46,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 abstract class EEME_Base {
 	const extending_method_prefix = 'ext_';
 	const dynamic_callback_method_prefix = 'dynamic_callback_method_';
+	protected $_extra_tables = array();
 	protected $_extra_fields = array();
 	protected $_extra_relations = array();
 	/**
@@ -58,17 +67,24 @@ abstract class EEME_Base {
 		if(did_action($construct_end_action)){
 			throw new EE_Error(sprintf(__("Hooked in model extension '%s' too late! The model %s has already been used! We know because the action %s has been fired", "event_espresso"),get_class($this),$this->_model_name_extended, $construct_end_action));
 		}
+		add_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__tables',array($this,'add_extra_tables_on_filter'));
 		add_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__fields',array($this,'add_extra_fields_on_filter'));
 		add_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__model_relations',array($this,'add_extra_relations_on_filter'));
 		$this->_register_extending_methods();
 	}
 
+	public function add_extra_tables_on_filter( $existing_tables ){
+		$tables = array_merge( $existing_tables, $this->_extra_tables );
+		return $tables;
+	}
 	public function add_extra_fields_on_filter($existing_fields){
 		if( $this->_extra_fields){
-			foreach($existing_fields as $table_alias => $fields){
-				if(isset($this->_extra_fields[$table_alias])){
-					$existing_fields[$table_alias] = array_merge($existing_fields[$table_alias],$this->_extra_fields[$table_alias]);
+			foreach($this->_extra_fields as $table_alias => $fields){
+				if( ! isset( $existing_fields[ $table_alias ] ) ){
+					$existing_fields[ $table_alias ] = array();
 				}
+				$existing_fields[$table_alias] = array_merge($existing_fields[$table_alias],$this->_extra_fields[$table_alias]);
+
 			}
 		}
 		return $existing_fields;
@@ -97,6 +113,7 @@ abstract class EEME_Base {
 	 * model extended. (Internally uses filters, and the __call magic method)
 	 */
 	public function deregister(){
+		remove_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__tables',array($this,'add_extra_tables_on_filter'));
 		remove_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__fields',array($this,'add_extra_fields_on_filter'));
 		remove_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__model_relations',array($this,'add_extra_relations_on_filter'));
 		$all_methods = get_class_methods(get_class($this));

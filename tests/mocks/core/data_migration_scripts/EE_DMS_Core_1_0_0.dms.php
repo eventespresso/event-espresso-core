@@ -34,7 +34,7 @@ class EE_DMS_Core_1_0_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	public function schema_changes_before_migration() {
-
+		
 	}
 }
 

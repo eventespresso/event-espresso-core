@@ -520,7 +520,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
 		if ( $has_custom ) {
-			return add_query_arg( array( 'receipt' => 'false' ), $this->invoice_url( 'launch' ) );
+			if ( $type == 'html' ) {
+				return $this->invoice_url( 'launch' );
+			}
+			$route = $type == 'download' || $type == 'pdf' ? 'download_invoice' : 'launch_invoice';
+
+			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
+			if ( $type == 'html' ) {
+				$query_args['html'] = TRUE;
+			}
+			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
 		}
 
 
