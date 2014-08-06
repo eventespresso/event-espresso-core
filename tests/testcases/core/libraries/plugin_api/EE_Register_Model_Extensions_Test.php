@@ -17,6 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group core/libraries/plugin_api
  * @group agg
  * @group addons
+ * @group problem
  */
 class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	private $_reg_args;
@@ -134,6 +135,7 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		EE_Register_Model_Extensions::deregister($this->_model_group);
 		$this->assertFalse( $this->_class_has_been_extended() );
 		$this->assertFalse( $this->_model_has_been_extended() );
+		EE_Registry::instance()->reset_model('Attendee');
 		//and EEM_Attendee still works right? both ways of instantiating it?
 		$a2 = EE_Attendee::new_instance();
 		EEM_Attendee::instance()->get_all();
@@ -143,7 +145,33 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		EE_Registry::instance()->load_helper('Activation');
-		EEH_Activation::add_column_if_it_doesnt_exist('esp_attendee_meta', 'ATT_foobar');
+		//whitelist the table we're about to add
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array($this, 'dont_short_circuit_mock_table' ), 25, 3 );
+		//add table from related DMS
+		EEH_Activation::create_table('esp_mock_attendee_meta', '
+			MATTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+			ATT_ID int(10) unsigned NOT NULL,
+			ATT_foobar int(10) unsigned NOT NULL,
+			PRIMARY KEY  (MATTM_ID)'
+				);
+		$this->assertTableExists( 'esp_mock_attendee_meta' );
+	}
+
+	/**
+	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
+	 * @global type $wpdb
+	 * @param array $whitelisted_tables
+	 * @return array
+	 */
+	public function dont_short_circuit_mock_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
+		if( $table_name == 'esp_mock_attendee_meta' && ! $this->_table_exists( $table_name) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok to allow this
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return $short_circuit;
+		}
 	}
 	public function tearDown(){
 		//ensure the models aren't stil registered. they should have either been

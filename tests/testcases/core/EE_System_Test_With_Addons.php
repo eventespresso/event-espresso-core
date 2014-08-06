@@ -255,9 +255,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * @return array
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( $table_name == 'esp_new_addon_thing' && ! $this->_table_exists( $table_name) ){
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! $this->_table_exists( $table_name) ){
 //			echo "\r\n\r\nDONT shortcircuit $sql";
-			//it's not altering. it's ok to allow this 
+			//it's not altering. it's ok to allow this
 			return FALSE;
 		}else{
 //			echo "3\r\n\r\nshort circuit:$sql";

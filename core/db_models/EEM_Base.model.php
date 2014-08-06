@@ -215,13 +215,23 @@ abstract class EEM_Base extends EE_Base{
 		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
 		}
-
+		/**
+		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
+		 * just use EE_Register_Model_Extension
+		 * @param EE_Table_Base[]
+		 */
+		$this->_tables = apply_filters( 'FHEE__'.get_class($this).'__construct__tables', $this->_tables );
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
 			if($table_obj instanceof EE_Secondary_Table){
 				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
 			}
 		}
+		/**
+		 * Filters the list of fields on a model. It is best to NOT use this directly and instead just use
+		 * EE_REigster_Model_Extension
+		 * @param EE_Model_Field_Base[]
+		 */
 		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
 		foreach($this->_fields as $table_alias => $fields_for_table){
 			if ( ! array_key_exists( $table_alias, $this->_tables )){
@@ -243,6 +253,11 @@ abstract class EEM_Base extends EE_Base{
 			//in the future we should automatically delete them
 			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
+		/**
+		 * Filters the list of relations on a model. It is best to NOT use this directly and instead just use
+		 * EE_REigster_Model_Extension
+		 * @param EE_Model_Relation_Base[]
+		 */
 		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
