@@ -148,18 +148,18 @@ class EEH_Event_Query {
 	 */
 	private static function _show_expired( $show_expired = FALSE ) {
 		// override default expired option if set via filter
-		EEH_Event_Query::$_event_query_show_expired =EE_Registry::instance()->REQ->is_set( 'event_query_show_expired' ) ? EE_Registry::instance()->REQ->get( 'event_query_show_expired' ) : $show_expired;
+		$_event_query_show_expired =EE_Registry::instance()->REQ->is_set( 'event_query_show_expired' ) ? EE_Registry::instance()->REQ->get( 'event_query_show_expired' ) : $show_expired;
 		// ensure field is set correctly as boolean
-		switch( (string)EEH_Event_Query::$_event_query_show_expired  ) {
+		switch( (string)$_event_query_show_expired  ) {
 			case 'TRUE' :
 			case 'true' :
 			case '1' :
-				EEH_Event_Query::$_event_query_show_expired = TRUE;
+				$_event_query_show_expired = TRUE;
 				break;
 			default :
-				EEH_Event_Query::$_event_query_show_expired = FALSE;
+				$_event_query_show_expired = FALSE;
 		}
-		return EEH_Event_Query::$_event_query_show_expired;
+		return $_event_query_show_expired;
 	}
 
 
@@ -173,8 +173,8 @@ class EEH_Event_Query {
 	 */
 	private static function _orderby( $orderby = 'start_date' ) {
 		$event_query_orderby = EE_Registry::instance()->REQ->is_set( 'event_query_orderby' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_orderby' ) ) : $orderby;
-		EEH_Event_Query::$_event_query_orderby = explode( ',', $event_query_orderby );
-		return array_map( 'trim', EEH_Event_Query::$_event_query_orderby );
+		$_event_query_orderby = explode( ',', $event_query_orderby );
+		return array_map( 'trim', $_event_query_orderby );
 	}
 
 
@@ -205,6 +205,7 @@ class EEH_Event_Query {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= EEH_Event_Query::posts_fields_sql_for_orderby( EEH_Event_Query::$_event_query_orderby );
+//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 		return $SQL;
 	}
@@ -264,6 +265,7 @@ class EEH_Event_Query {
 			// Category
 			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::$_event_query_category );
 			$SQL .= EEH_Event_Query::posts_join_for_orderby( EEH_Event_Query::$_event_query_orderby );
+//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 		return $SQL;
 	}
@@ -285,7 +287,6 @@ class EEH_Event_Query {
 			$SQL .= " LEFT JOIN $wpdb->term_taxonomy ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)";
 			$SQL .= " LEFT JOIN $wpdb->terms ON ($wpdb->terms.term_id = $wpdb->term_taxonomy.term_id) ";
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -321,7 +322,6 @@ class EEH_Event_Query {
 					break;
 			}
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -343,8 +343,8 @@ class EEH_Event_Query {
 			$SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug( EEH_Event_Query::$_event_query_category  );
 			// Start Date
 			$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( EEH_Event_Query::$_event_query_month );
+//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -358,7 +358,6 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
-//		echo '<h5 style="color:#2EA2CC;">$show_expired : <span style="color:#E76700">' . $show_expired . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date( 'Y-m-d H:s:i' ) . '" ' : '';
 	}
 
@@ -393,7 +392,6 @@ class EEH_Event_Query {
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
 			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date( 'Y-m-d 0:0:00', strtotime( $month ) ) . '" ';
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -410,8 +408,8 @@ class EEH_Event_Query {
 	public static function posts_orderby( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			$SQL = EEH_Event_Query::posts_orderby_sql( EEH_Event_Query::$_event_query_orderby, EEH_Event_Query::$_event_query_sort );
+//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
