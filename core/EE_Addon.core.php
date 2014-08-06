@@ -208,9 +208,14 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * If you want to setup default data for the addon, and only add it when NOT migrating
-	 * data from a previous version, override this method. This is normally called
+	 * If you want to setup default data for the addon, override this method, and call
+	 * parent::initialize_default_data() from within it. This is normally called
 	 * from EE_Addon::initialize_db_if_no_migrations_required(), just after EE_Addon::initialize_db()
+	 * and should verify default data is present (but this is also called
+	 * on reactivations and just after migrations, so please verify you actually want
+	 * to ADD default data, because it may already be present).
+	 * However, please call this parent (currently it just fires a hook which other
+	 * addons may be depending on)
 	 */
 	public function initialize_default_data() {
 		/**
