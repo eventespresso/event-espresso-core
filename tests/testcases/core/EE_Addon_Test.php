@@ -15,6 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group core
+ * @group addons
  */
 class EE_Addon_Test extends EE_UnitTestCase{
 	/**
