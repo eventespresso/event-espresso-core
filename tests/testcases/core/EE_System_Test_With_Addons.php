@@ -246,17 +246,23 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->_current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		delete_option(EE_Data_Migration_Manager::current_database_state);
 		update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version() ) );
-		add_filter( 'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array( $this, 'whitelist_new_addon_table' ) );
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 	/**
-	 * OK's the creation of the esp_new_addon table
+	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
 	 * @global type $wpdb
 	 * @param array $whitelisted_tables
 	 * @return array
 	 */
-	public function whitelist_new_addon_table( $whitelisted_tables ){
-		$whitelisted_tables[] = 'esp_new_addon_thing';
-		return $whitelisted_tables;
+	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
+		if( $table_name == 'esp_new_addon_thing' && ! $this->_table_exists( $table_name) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok to allow this 
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return $short_circuit;
+		}
 	}
 
 

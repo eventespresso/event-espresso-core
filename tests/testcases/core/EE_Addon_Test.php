@@ -42,18 +42,24 @@ class EE_Addon_Test extends EE_UnitTestCase{
 //		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 //		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 //		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
-		add_filter( 'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array( $this, 'whitelist_new_addon_table' ) );
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 
 	/**
-	 * OK's the creation of the esp_new_addon table
+	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
 	 * @global type $wpdb
 	 * @param array $whitelisted_tables
 	 * @return array
 	 */
-	public function whitelist_new_addon_table( $whitelisted_tables ){
-		$whitelisted_tables[] = 'esp_new_addon_thing';
-		return $whitelisted_tables;
+	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
+		if( $table_name == 'esp_new_addon_thing' && ! $this->_table_exists( $table_name) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok to allow this
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return $short_circuit;
+		}
 	}
 
 	public function test_update_list_of_installed_versions(){
