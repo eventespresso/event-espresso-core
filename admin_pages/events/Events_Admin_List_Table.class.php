@@ -70,6 +70,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
+			'author' => array( 'EVT_wp_user' => false ),
 			'venue' => array( 'Venue.VNU_name' => false ),
 			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
