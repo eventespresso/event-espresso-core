@@ -57,6 +57,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
+			'author' => __('Author', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('On Sale', 'event_espresso'),
@@ -74,8 +75,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			);
 
-		$this->_hidden_columns = array();
-		}
+		$this->_hidden_columns = array( 'author' );
+	}
 
 
 	protected function _get_table_filters() {
@@ -107,14 +108,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		//does event have any attached registrations?
 		$regs = $item->count_related('Registration');
-        return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
-            '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
-        );
-    }
+		return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
+			'<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
+		);
+	}
 
 
 
-	public function column_default($item) {
+	public function column_default($item, $column_name) {
 		return isset( $item->$column_name ) ? $item->$column_name : '';
 	}
 
@@ -205,6 +206,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					}
 		}
 
+
 		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
 		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
 		$content .= $this->row_actions($actions);
@@ -214,6 +216,19 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
+
+	public function column_author( EE_Event $item ) {
+		//user author info
+		$event_author = get_userdata( $item->wp_user() );
+		$gravatar = get_avatar( $item->wp_user(), '15' );
+		//filter link
+		$query_args = array(
+			'action' => 'default',
+			'EVT_wp_user' => $item->wp_user()
+			);
+		$filter_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, EVENTS_ADMIN_URL );
+		return $gravatar . '  <a href="' . $filter_url . '" title="' . __('Click to filter events by this author.', 'event_espresso') . '">' . $event_author->display_name . '</a>';
+	}
 
 
 
