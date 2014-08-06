@@ -28,10 +28,17 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
+	/**
+	 * Boolean indicating we've already noted an accidental txn commit and we don't need to
+	 * keep checking or warning the test runner about it
+	 * @var boolean
+	 */
+	static $accidental_txn_commit_noted = FALSE;
+
 	public function setUp() {
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
-		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb;
 		$this->wp_filters_saved = array(
 			'wp_filter'=>$wp_filter,
 			'wp_actions'=>$wp_actions,
@@ -40,15 +47,34 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		);
 		parent::setUp();
 		$auto_made_thing_seed = 1;
+		//reset wpdb's list of queries executed so it only stores those from the current test
+		$wpdb->queries = array();
+		//the accidental txn commit indicator option shouldnt' be set from the previous test
+		update_option( 'accidental_txn_commit_indicator', TRUE );
 
 //		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', '__return_true' );
+		add_filter( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true' );
+		add_filter( 'FHEE__EEH_Activation__drop_index__short_circuit', '__return_true' );
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
 
+	}
+
+	public function _short_circuit_db_implicit_commits( $short_circuit = FALSE, $table_name, $sql ){
+		$whitelisted_tables = apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array() );
+		if( in_array( $table_name, $whitelisted_tables ) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return TRUE;
+		}
 	}
 
 	public function tearDown(){
@@ -59,6 +85,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
 		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
 	}
+
+	protected function _detect_accidental_txn_commit(){
+		//for some reason WP waits until the start of the next test to do this. but
+		//we prefer to do it now so taht we can check for implicit commits
+		$this->clean_up_global_scope();
+		//now we can check if there was an accidental implicit commit
+		if( ! self::$accidental_txn_commit_noted && get_option( 'accidental_txn_commit_indicator', FALSE ) ){
+			global $wpdb;
+			self::$accidental_txn_commit_noted = TRUE;
+			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldnt properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s", 'event_espresso' ),print_r( $wpdb->queries, TRUE) ) );
+		}
+	}
+
 
 	/**
 	 *  Use this to clean up any global scope singletons etc that we may have being used by EE so
@@ -371,7 +410,22 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
-	function assertTableExists($table_name,$model_name = 'Unknown'){
+	function assertTableExists($table_name,$model_name = 'Unknown') {
+		if( ! $this->_table_exists( $table_name) ){
+			global $wpdb;
+			$this->fail( $wpdb->last_error);
+		}
+	}
+
+	/**
+	 * Returns whether or not hte table exists
+	 * @global WPDB $wpdb
+	 * @param string $table_name
+	 * @param type $model_name
+	 * @return boolean whether the table exists or not. If you want to get the error
+	 * regarding the table's existence, you can use $wpdb->last_error
+	 */
+	protected function _table_exists( $table_name ){
 		global $wpdb;
 		if(strpos($table_name, $wpdb->prefix) !== 0){
 			$table_name = $wpdb->prefix.$table_name;
@@ -381,8 +435,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$wpdb->show_errors( FALSE );
 		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
 		$wpdb->show_errors( $old_show_errors_value );
-		if( ! is_null( $wpdb->last_error) && $wpdb->last_error != '' ){
-			$this->fail( $wpdb->last_error);
+		if( empty( $wpdb->last_error ) ){
+			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 
@@ -394,16 +450,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
 	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
-		global $wpdb;
-		if(strpos($table_name, $wpdb->prefix) !== 0){
-			$table_name = $wpdb->prefix.$table_name;
-		}
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->last_error = NULL;
-		$wpdb->show_errors( FALSE );
-		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_errors( $old_show_errors_value );
-		if( is_null( $wpdb->last_error) || $wpdb->last_error == '' ){
+		if( $this->_table_exists( $table_name ) ){
 			$this->fail( sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
 	}

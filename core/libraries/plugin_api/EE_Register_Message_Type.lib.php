@@ -98,8 +98,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 	add_filter( 'FHEE__EE_messenger__get_valid_message_types__valid_types', array( 'EE_Register_Message_Type', 'register_messengers_to_validate_mt_with'), 10, 2 );
 
 	//actions
-	add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations', array( 'EE_Register_Message_Type', 'set_defaults' ) );
-
+	add_action( 'AHEE__EE_Addon__initialize_default_data__begin', array( 'EE_Register_Message_Type', 'set_defaults' ) );
     }
 
 
@@ -109,9 +108,6 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      */
     public static function set_defaults() {
     	//only set defaults if we're not in EE_Maintenance mode
-    	if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-    		return;
-    	}
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
     }

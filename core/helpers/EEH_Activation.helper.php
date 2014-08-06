@@ -335,6 +335,9 @@ class EEH_Activation {
 	 */
 	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
 //		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exstsi') . "<br>";//die;
+		if( apply_filters( 'FHEE__EEH_Activation__create_table__short_circuit', FALSE, $table_name, $sql ) ){
+			return;
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -368,6 +371,9 @@ class EEH_Activation {
 	 * 	@param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
 	 */
 	public static function add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
+		if( apply_filters( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', FALSE ) ){
+			return;
+		}
 		global $wpdb;
 		$full_table_name=$wpdb->prefix.$table_name;
 		$fields = self::get_fields_on_table($table_name);
@@ -431,6 +437,9 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function drop_index( $table_name, $index_name ) {
+		if( apply_filters( 'FHEE__EEH_Activation__drop_index__short_circuit', FALSE ) ){
+			return;
+		}
 		global $wpdb;
 		$table_name_with_prefix = $wpdb->prefix . $table_name ;
 		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
