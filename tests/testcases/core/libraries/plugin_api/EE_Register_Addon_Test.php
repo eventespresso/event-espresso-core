@@ -38,6 +38,20 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->_addon_name = 'New_Addon';
 		parent::__construct($name, $data, $dataName);
 	}
+	public function setUp(){
+		parent::setUp();
+		add_filter( 'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array( $this, 'whitelist_new_addon_table' ) );
+	}
+	/**
+	 * OK's the creation of the esp_new_addon table
+	 * @global type $wpdb
+	 * @param array $whitelisted_tables
+	 * @return array
+	 */
+	public function whitelist_new_addon_table( $whitelisted_tables ){
+		$whitelisted_tables[] = 'esp_new_addon_thing';
+		return $whitelisted_tables;
+	}
 	//test registering a bare minimum addon, and then deregistering it
 	function test_register_mock_addon_fail(){
 		//we're registering the addon WAAAY after EE_System has set thing up, so

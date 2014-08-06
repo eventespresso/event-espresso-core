@@ -23,3 +23,6 @@ require WP_TESTS_DIR . '/includes/bootstrap.php';
 
 //Load the EE_specific testing tools
 require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
+
+require_once EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';
+remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );

@@ -15,11 +15,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 /**
  * @group core
+ * @group addons
+ * @group monkey1
  */
 class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';require_once $this->_main_file_path;
+		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';
 		parent::__construct($name, $data, $dataName);
 	}
 	/**
@@ -222,7 +224,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 */
 	public function setUp(){
 		parent::setUp();
-
 		$this->_pretend_addon_hook_time();
 		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
 		EE_Register_Addon::register($this->_addon_name, array(
@@ -245,6 +246,17 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->_current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		delete_option(EE_Data_Migration_Manager::current_database_state);
 		update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version() ) );
+		add_filter( 'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array( $this, 'whitelist_new_addon_table' ) );
+	}
+	/**
+	 * OK's the creation of the esp_new_addon table
+	 * @global type $wpdb
+	 * @param array $whitelisted_tables
+	 * @return array
+	 */
+	public function whitelist_new_addon_table( $whitelisted_tables ){
+		$whitelisted_tables[] = 'esp_new_addon_thing';
+		return $whitelisted_tables;
 	}
 
 
