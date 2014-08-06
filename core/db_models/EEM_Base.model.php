@@ -238,7 +238,10 @@ abstract class EEM_Base extends EE_Base{
 
 		// everything is related to Extra_Meta
 		if( get_class($this) != 'EEM_Extra_Meta'){
-			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
+			//make extra metas related to everything, but don't block deleting things just
+			//because they have related extra meta info. For now just orphan those extra metas
+			//in the future we should automatically delete them
+			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
 		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
