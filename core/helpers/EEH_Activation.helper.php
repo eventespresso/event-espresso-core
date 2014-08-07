@@ -820,6 +820,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_upload_directories() {
+		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
 				EVENT_ESPRESSO_UPLOAD_DIR,
@@ -827,16 +828,14 @@ class EEH_Activation {
 				EVENT_ESPRESSO_GATEWAY_DIR,
 				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
 				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
 		);
-		foreach ($folders as $folder) {
-			wp_mkdir_p($folder);
-			@ chmod($folder, 0755);
+		foreach ( $folders as $folder ) {
+			EEH_File::ensure_folder_exists_and_is_writable( $folder );
+			@ chmod( $folder, 0755 );
 		}
-
 		//add .htaccess to logs
-		EE_Error::add_htaccess();
+		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . DS . 'logs' );
 	}
 
 
