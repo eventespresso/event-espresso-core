@@ -39,6 +39,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function verify_filepath_and_permissions( $full_file_path = '', $file_name = '', $file_ext = '', $type_of_file = '' ) {
+		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( ! is_readable( $full_file_path )) {
 			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
 			$file_name .= ! empty( $file_ext ) ? ' file' : ' folder';
@@ -106,6 +107,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function ensure_folder_exists_and_is_writable( $folder = '', $parent_folder = '', $msg = '' ){
+		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
 		$msg = ! empty( $msg ) ? $msg . ' the ' : 'The ';
 		if ( ! is_dir( $folder )) {
 			if ( ! is_writable( $parent_folder )) {
@@ -138,6 +140,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder', $msg = '' ){
+		$full_path = EEH_File::standardise_directory_separators( $full_path );
 		$msg = ! empty( $msg ) ? $msg : 'The ';
 		if ( ! is_writable( $full_path )) {
 			$msg .= sprintf( __( '"%s" %s is not writable.', 'event_espresso' ), $full_path, $file_or_folder );
@@ -157,6 +160,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function ensure_file_exists_and_is_writable( $full_file_path = '' ) {
+		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( ! file_exists( $full_file_path )) {
 			if ( ! touch( $full_file_path )) {
 				$msg = sprintf( __( 'The "%s" file could not be created.', 'event_espresso' ), $full_file_path );
@@ -181,6 +185,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function write_to_file( $full_file_path = '', $file_contents = '', $mode = 'w' ){
+		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( ! EEH_File::verify_is_writable( $full_file_path, 'file' )) {
 			$msg = sprintf( __( 'The Espresso Log file "%s" is not writable.', 'event_espresso' ), $full_file_path );
 			$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
@@ -201,6 +206,26 @@ class EEH_File extends EEH_Base {
 			return FALSE;
 		}
 		fclose( $handle );
+		return TRUE;
+	}
+
+
+
+	/**
+	 * add_htaccess_deny_from_all
+	 * @param string $folder
+	 * @return bool
+	 */
+	public static function add_htaccess_deny_from_all( $folder = '' ) {
+		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
+		if ( ! file_exists( $folder . '.htaccess' ) ) {
+			if ( ! file_put_contents( $folder . '.htaccess', 'deny from all' )) {
+				$msg = sprintf( __( 'Could not create .htaccess file to block direct access to the "%s" folder.', 'event_espresso' ), $folder );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $folder );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				return FALSE;
+			}
+		}
 		return TRUE;
 	}
 
