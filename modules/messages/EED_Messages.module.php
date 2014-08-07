@@ -118,14 +118,13 @@ class EED_Messages  extends EED_Module {
 
 
 
-
 	/**
 	 *  This runs when the msg_url_trigger route has initiated.
 	 *
-	 *  @since 4.5.0
-	 *  @throws EE_Error
-	 *
-	 *  @return 	void
+	 * @since 4.5.0
+	 * @param WP $WP
+	 * @throws EE_Error
+	 * @return    void
 	 */
 	public function run( $WP ) {
 		$sending_messenger = EE_Registry::instance()->REQ->is_set('snd_msgr') ? EE_Registry::instance()->REQ->get('snd_msgr') : '';
@@ -328,6 +327,9 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * @param EE_Transaction $transaction
+	 */
 	public static function payment_reminder( EE_Transaction $transaction ) {
 		self::_load_controller();
 		$data = array( $transaction, null );
@@ -362,7 +364,9 @@ class EED_Messages  extends EED_Module {
 
 
 
-
+	/**
+	 * @param EE_Transaction $transaction
+	 */
 	public static function cancelled_registration( EE_Transaction $transaction ) {
 		self::_load_controller();
 
@@ -378,11 +382,12 @@ class EED_Messages  extends EED_Module {
 
 
 
-
 	/**
 	 * Trigger for Registration messages
 	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
 	 * @param  EE_Transaction $transaction
+	 * @param  array $reg_msg
+	 * @param  bool $from_admin
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
@@ -402,7 +407,7 @@ class EED_Messages  extends EED_Module {
 
 		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
 		$registration = $transaction->get_first_related('Registration');
-		$reg_status = $registration->status_ID();
+		$reg_status = $registration instanceof EE_Registration ? $registration->status_ID() : '';
 
 		//send the message type matching the status if that message type is active.
 		//first an array to match for class name
@@ -419,19 +424,17 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Simply returns an array indexed by Registration Status ID and the related message_type name assoicated with that status id.
+	 * Simply returns an array indexed by Registration Status ID and the related message_type name associated with that status id.
 	 * @return array
 	 */
 	protected static function _get_reg_status_array() {
-
-		$status_match_array = array(
+		return array(
 			EEM_Registration::status_id_approved => 'registration',
 			EEM_Registration::status_id_pending_payment => 'pending_approval',
 			EEM_Registration::status_id_not_approved => 'not_approved_registration',
 			EEM_Registration::status_id_cancelled => 'cancelled_registration',
 			EEM_Registration::status_id_declined => 'declined_registration'
 			);
-		return $status_match_array;
 	}
 
 
@@ -445,8 +448,8 @@ class EED_Messages  extends EED_Module {
 	 * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
 	 * @return bool          success/fail
 	 */
-	public static function process_resend( $success, $req_data ) {
-		$success = TRUE;
+	public static function process_resend( $success = TRUE, $req_data ) {
+
 		//first let's make sure we have the reg id (needed for resending!);
 		if ( !isset( $req_data['_REG_ID'] ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -457,7 +460,7 @@ class EED_Messages  extends EED_Module {
 		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
 
 		//if no reg object then send error
-		if ( empty( $reg ) ) {
+		if ( ! $reg instanceof EE_Registration ) {
 			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
 			$success = FALSE;
 		}
@@ -499,8 +502,7 @@ class EED_Messages  extends EED_Module {
 	 * @param  EE_Payment $payment EE_payment object
 	 * @return bool              success/fail
 	 */
-	public static function process_admin_payment( $success, EE_Payment $payment ) {
-		$success = TRUE;
+	public static function process_admin_payment( $success = TRUE, EE_Payment $payment ) {
 
 		//we need to get the transaction object
 		$transaction = $payment->transaction();

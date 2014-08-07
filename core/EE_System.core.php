@@ -120,7 +120,13 @@ final class EE_System {
 		if ( ! $this->_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			exit();
+			return;
+		}
+		// check required PHP version
+		if ( ! $this->_minimum_php_version_required() ) {
+			unset( $_GET['activate'] );
+			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
+			return;
 		}
 		// check recommended WP version
 		if ( ! $this->_minimum_wp_version_recommended() ) {
@@ -210,6 +216,16 @@ final class EE_System {
 	}
 
 	/**
+	 * 	_minimum_php_version_required
+	 *
+	 * 	@access private
+	 * 	@return boolean
+	 */
+	private function _minimum_php_version_required() {
+		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
+	}
+
+	/**
 	 * 	_minimum_php_version_recommended
 	 *
 	 * 	@access private
@@ -238,6 +254,31 @@ final class EE_System {
 			$wp_version,
 			'<br/>',
 			'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
+		);
+		?>
+		</p>
+		</div>
+		<?php
+		deactivate_plugins( EE_PLUGIN_BASENAME );
+	}
+
+
+
+	/**
+	 * 	minimum_php_version_error
+	 *
+	 * 	@return void
+	 */
+	public function minimum_php_version_error() {
+		?>
+		<div class="error">
+		<p>
+		<?php
+		printf(
+			__( 'We\'re sorry, but Event Espresso requires PHP version %s or greater in order to operate. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+			EE_MIN_PHP_VER_REQUIRED,
+			PHP_VERSION,
+			'<br/>'
 		);
 		?>
 		</p>
@@ -280,10 +321,12 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.%sPlease note that Event Espresso will be dropping support for PHP 5.2 as of version 4.4.0%s', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
-				'<br/>'
+				'<br/>',
+				'<br/><span style="font-weight: bold;color: #d54e21;">',
+				'</span>'
 			)
 		);
 	}
