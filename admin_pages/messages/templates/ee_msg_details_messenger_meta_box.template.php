@@ -1,5 +1,5 @@
 <div class="<?php echo $messenger; ?>-content">
-	<?php if (  empty( $inactive_message_types ) && empty( $active_message_types )  ) : echo '<p>' . __('This messenger is not currentely used with any message types for templates but merely adds to the shortcodes available for templates on other messenger and message types.') . '</p>'; else : ?>
+	<?php if (  empty( $inactive_message_types ) && empty( $active_message_types )  ) : echo '<p>' . __('This messenger is not currently used with any message types for templates but merely adds to the shortcodes available for templates on other messenger and message types.') . '</p>'; else : ?>
 		<p class="inactive-on-message <?php echo $hide_on_message; ?>">
 			<?php _e('Below are message types that are currently inactive with this messenger.  Drag them over to the messenger box to activate them.', 'event_espresso'); ?>
 		<p>

@@ -71,7 +71,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => PRICING_PG_SLUG,
 			'menu_label' => PRICING_LABEL,
-			'capability' => 'read_default_prices',
+			'capability' => 'ee_read_default_prices',
 			'admin_init_page' => $this
 			));
 	}

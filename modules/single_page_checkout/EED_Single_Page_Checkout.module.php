@@ -185,6 +185,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
 			}
 		}
+		// reset redirect
+		$checkout->redirect = FALSE;
 		return $checkout;
 	}
 
@@ -800,7 +802,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			echo json_encode( $this->checkout->json_response );
 			die();
 		}
-
 		// store notices in a transient
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from

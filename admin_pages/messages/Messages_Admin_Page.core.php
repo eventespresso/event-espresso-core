@@ -30,6 +30,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected $_active_messengers = array();
 	protected $_active_message_types = array();
+	protected $_active_message_type_name = '';
 	protected $_active_messenger;
 	protected $_activate_state;
 	protected $_activate_meta_box_type;
@@ -196,84 +197,84 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'read_global_messages'
+					'capability' => 'ee_read_global_messages'
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
-					 'capability' => 'edit_messages',
+					 'capability' => 'ee_edit_messages',
 					 'noheader' => TRUE
 					),
 				'edit_message_template' => array(
 					'func' => '_edit_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id
 					),
 				'preview_message' => array(
 					'func' => '_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id,
 					'noheader' => true,
 					'headers_sent_route' => 'display_preview_message'
 					),
 				'display_preview_message' => array(
 					'func' => '_display_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id
 					),
 				'insert_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_messages',
+					'capability' => 'ee_edit_messages',
 					'args' => array( 'new_template' => TRUE ),
 					'noheader' => TRUE
 					 ),
 				'update_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'new_template' => FALSE ),
 					'noheader' => TRUE
 					),
 				'trash_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'trash_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => FALSE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array('trash' => FALSE),
 					'noheader' => TRUE
 					),
 				'delete_message_template' => array(
 					'func' => '_delete_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
 				'reset_to_default' => array(
 					'func' => '_reset_to_default_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
@@ -283,7 +284,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'reports' => array(
 					'func' => '_messages_reports',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 		);
 	}
@@ -408,6 +409,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Message Preview', 'event_espresso'),
 					'order' => 5,
+					'url' => '',
 					'persistent' => FALSE
 					),
 				'help_tabs' => array(
@@ -578,11 +580,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function wp_editor_css( $mce_css ) {
 		//if we're on the edit_message_template route
-		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
+		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_messenger  ) {
+			$message_type_name = $this->_active_message_type_name;
 
 			//we're going to REPLACE the existing mce css
 			//we need to get the css file location from the active messenger
-			$mce_css = $this->_active_messenger->get_variation($this->_template_pack, TRUE, 'wpeditor', $this->_variation );
+			$mce_css = $this->_active_messenger->get_variation($this->_template_pack, $message_type_name, TRUE, 'wpeditor', $this->_variation );
 		}
 
 		return $mce_css;
@@ -617,7 +620,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
 		}
 
-		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, TRUE, 'preview', $this->_variation ) );
+		$message_type_name = isset( $this->_req_data['message_type'] ) ? $this->_req_data['message_type'] : '';
+
+
+		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, $message_type_name, TRUE, 'preview', $this->_variation ) );
 	}
 
 
@@ -686,7 +692,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_messages', 'espresso_messages_trash_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'espresso_messages_trash_message_template' ) ) {
 			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),
@@ -912,6 +918,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//set active messenger for this view
 		$this->_active_messenger = $this->_active_messengers[$message_template_group->messenger()]['obj'];
+		$this->_active_message_type_name = $message_template_group->message_type();
 
 
 		//Do we have any validation errors?
@@ -1515,6 +1522,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
+		//if empty $tp_select_values then we make sure default is set because EVERY message type should be supported by the default template pack.  This still allows for the odd template pack to override.
+		if ( empty( $tp_select_values ) ) {
+			$tp_select_values[] = array(
+				'text' => __('Default', 'event_espresso'),
+				'id' => 'default'
+				);
+		}
+
 		//setup variation select values for the currently selected template.
 		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger(), $this->_message_template_group->message_type() );
 		$variations_select_values = array();
@@ -1563,6 +1578,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//test button
 		//first we need to see if there are any fields
 		$fields = $this->_message_template_group->messenger_obj()->get_test_settings_fields();
+
 		if ( !empty( $fields ) ) {
 			//yup there be fields
 			foreach ( $fields as $field => $config ) {
@@ -1593,13 +1609,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$test_settings_fields = !empty( $template_form_fields) ? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' ) : '';
 
+		$test_settings_html = '';
 		//print out $test_settings_fields
 		if ( !empty( $test_settings_fields ) ) {
 			echo $test_settings_fields;
+			$test_settings_html = '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" />';
 		}
 
 		//and button
-		echo '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
+		echo $test_settings_html . '<div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
 	}
 
 
@@ -2616,10 +2634,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_m_mt_settings();
 
 		if ( !$deactivate ) {
-			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers.
 
+
+			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers
 			$this->_active_messengers[$messenger]['settings'] = !isset($this->_active_messengers[$messenger]['settings']) ? array() : $this->_active_messengers[$messenger]['settings'];
 			$this->_active_messengers[$messenger]['obj'] = $this->_m_mt_settings['messenger_tabs'][$messenger]['obj'];
+
+			//get has_active so we can sure its kept up to date.
+			$has_activated = get_option( 'ee_has_activated_messages' );
+
+			if ( empty( $has_activated[$messenger] ) ) {
+				$has_activated[$messenger] = array();
+			}
 
 			//k we need to get what default message types are to be associated with the messenger that's been activated.
 			$default_types = $message_type ? (array) $message_type : $this->_active_messengers[$messenger]['obj']->get_default_message_types();
@@ -2637,6 +2663,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$settings = array();
 				}
 				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
+
+				if ( ! in_array( $type, $has_activated[$messenger] ) ) {
+					$has_activated[$messenger][] = $type;
+				}
 			}
 
 			//any default settings for the messenger?
@@ -2650,6 +2680,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//update settings in database
 			update_option( 'ee_active_messengers', $this->_active_messengers );
+			update_option( 'ee_has_activated_messages', $has_activated );
 
 
 			//generate new templates (if necessary)

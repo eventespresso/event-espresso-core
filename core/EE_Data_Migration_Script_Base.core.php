@@ -92,9 +92,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Sets the mapping from old table primary keys to new table primary keys.
 	 * This mapping is automatically persisted as a property on the migration
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @param int|string $new_pk eg posts.ID
 	 * @return void
 	 */
@@ -109,9 +109,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Gets the new primary key, if provided with the OLD table and the primary key
 	 * of an item in the old table, and the new table
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_new_pk($old_table,$old_pk,$new_table){
@@ -125,9 +125,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Gets the old primary key, if provided with the OLD table,
 	 * and the new table and the primary key of an item in the new table
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_old_pk($old_table,$new_table,$new_pk){

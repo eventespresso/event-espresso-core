@@ -300,7 +300,7 @@ abstract class EE_PMT_Base{
 				$transaction->update_based_on_payments();//also saves transaction
 				$transaction->finalize();
 			}else{
-				throw new EE_Error(sprintf(__("Gateway for payment method type '%s' is '%s', not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)", "event_espresso"),get_class($this),typeof($this->_gateway)));
+				throw new EE_Error(sprintf(__("Gateway for payment method type '%s' is '%s', not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)", "event_espresso"),get_class($this), gettype( $this->_gateway ) ) );
 			}
 		}else{//no gateway provided
 			//so create no payment. The payment processor will know how to handle this

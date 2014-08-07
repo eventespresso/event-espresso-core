@@ -19,12 +19,12 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$input = new EE_Select_Input( array( 'foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz' ) );
 		$output = $input->get_html_for_input();
 		$expected_output =
-"
-<select id='' name='' class='' style=''/>
-	<option value='foo' >Foo</option>
-	<option value='bar' >Bar</option>
-	<option value='baz' >Baz</option>
-</select>";
+'
+<select id="" name="" class="" style=""/>
+	<option value="foo">Foo</option>
+	<option value="bar">Bar</option>
+	<option value="baz">Baz</option>
+</select>';
 		$this->assertEquals( $expected_output, $output );
 
 
@@ -42,19 +42,19 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 					)));
 		$output = $input->get_html_for_input();
 		$expected_output =
-"
-<select id='' name='' class='' style=''/>
-	<optgroup label='code_var_names'>
-		<option value='foo' >Foo</option>
-		<option value='bar' >Bar</option>
-		<option value='baz' >Baz</option>
+'
+<select id="" name="" class="" style=""/>
+	<optgroup label="code_var_names">
+		<option value="foo">Foo</option>
+		<option value="bar">Bar</option>
+		<option value="baz">Baz</option>
 	</optgroup>
-	<optgroup label='monkey_types'>
-		<option value='chimp' >Chimp</option>
-		<option value='orang' >Orangutang</option>
-		<option value='baboob' >Baboon</option>
+	<optgroup label="monkey_types">
+		<option value="chimp">Chimp</option>
+		<option value="orang">Orangutang</option>
+		<option value="baboob">Baboon</option>
 	</optgroup>
-</select>";
+</select>';
 		$this->assertEquals( $expected_output, $output );
 
 

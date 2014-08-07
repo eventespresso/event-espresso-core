@@ -15,7 +15,7 @@
  *
  * EE_Gateway
  *
- * ABstract base class for all gateways
+ * Abstract base class for all gateways
  *
  * @package			Event Espresso
  * @subpackage		core/libraries/payment_methods
@@ -25,7 +25,7 @@
  */
 abstract class EE_Gateway{
 	/**
-	 * a constant used as a possibel value for $_currencies_supported to indicate
+	 * a constant used as a possible value for $_currencies_supported to indicate
 	 * that ALL currencies are supported by this gateway
 	 */
 	const all_currencies_supported = 'all_currencies_supported';
@@ -35,7 +35,7 @@ abstract class EE_Gateway{
 	 */
 	protected $_currencies_supported = array();
 	/**
-	 * WHether or not this gateway can support SENDING a refudn request (ie, initiated by
+	 * Whether or not this gateway can support SENDING a refund request (ie, initiated by
 	 * admin in EE's wp-admin page)
 	 * @var boolean
 	 */
@@ -78,12 +78,12 @@ abstract class EE_Gateway{
 	protected $_ID;
 
 	/**
-	 * @var $_debug_mode boolean whether to send reqeusts to teh sandbox site or not
+	 * @var $_debug_mode boolean whether to send requests to teh sandbox site or not
 	 */
 	protected $_debug_mode = NULL;
 	/**
 	 *
-	 * @var $_name name to show for this paymetn method
+	 * @var string $_name name to show for this payment method
 	 */
 	protected $_name = NULL;
 	/**
@@ -93,7 +93,7 @@ abstract class EE_Gateway{
 	protected $_admin_name = NULL;
 
 	/**
-	 * @param EEMI_Payment $model
+	 * @return EE_Gateway
 	 */
 	public function __construct(){
 	}
@@ -114,7 +114,7 @@ abstract class EE_Gateway{
 		return array_keys($properties);
 	}
 	/**
-	 * Returns whether or not this gateway shoudl support SENDING refunds
+	 * Returns whether or not this gateway should support SENDING refunds
 	 * see $_supports_sending_refunds
 	 * @return boolean
 	 */
@@ -122,7 +122,7 @@ abstract class EE_Gateway{
 		return $this->_supports_sending_refunds;
 	}
 	/**
-	 * Returns whether or not this gateway shoudl support RECEIVING refunds
+	 * Returns whether or not this gateway should support RECEIVING refunds
 	 * see $_supports_receiving_refunds
 	 * @return boolean
 	 */
@@ -143,7 +143,7 @@ abstract class EE_Gateway{
 		return NULL;
 	}
 	/**
-	 * Sets the paymetn method's settings so the gateway knows where to send the request
+	 * Sets the payment method's settings so the gateway knows where to send the request
 	 * etc
 	 * @param array $settings_array
 	 */
@@ -177,13 +177,19 @@ abstract class EE_Gateway{
 	}
 
 	/**
-	 * 
+	 *
 	 * @param EEHI_Line_Item $line_item_helper
 	 */
 	public function set_line_item_helper( $line_item_helper ){
 		$this->_line_item = $line_item_helper;
 	}
 
+
+
+	/**
+	 * @param $message
+	 * @param $payment
+	 */
 	public function log($message,$payment){
 		if($payment instanceof EEI_Payment){
 			$type='Payment';
@@ -205,7 +211,7 @@ abstract class EE_Gateway{
 
 	/**
 	 * Returns either an array of all the currency codes supported,
-	 * or a string indicating they're all supported (EE_gateway::all_currencies_suported)
+	 * or a string indicating they're all supported (EE_gateway::all_currencies_supported)
 	 * @return mixed array or string
 	 */
 	public function currencies_supported(){
@@ -213,11 +219,11 @@ abstract class EE_Gateway{
 	}
 
 	/**
-	 * Returns what a simpl summing of items and taxes for this transaction. This
+	 * Returns what a simple summing of items and taxes for this transaction. This
 	 * can be used to determine if some more complex line items, like promotions,
 	 * surcharges, or cancellations occurred (in which case we might want to forget
 	 * about creating an itemized list of purchases and instead only send the total due)
-	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Transaction  $transaction
 	 * @return float
 	 */
 	protected function _sum_items_and_taxes( EE_Transaction  $transaction){
@@ -242,4 +248,7 @@ abstract class EE_Gateway{
 		return  $this->_sum_items_and_taxes( $payment->transaction() ) == $payment->transaction()->total() &&
 					$payment->amount() == $payment->transaction()->total();
 	}
+
+
+
 }

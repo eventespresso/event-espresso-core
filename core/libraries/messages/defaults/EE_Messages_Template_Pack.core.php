@@ -404,10 +404,13 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return array
 	 */
 	public function get_variations( $messenger = '', $message_type = '' ) {
-		$variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : array();
+		$messenger_variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : array();
 
-		//message_type provided?
-		$variations = !empty( $messenger ) && !empty( $message_type ) && isset( $variations[$message_type] ) ? $variations[$message_type] : $variations;
+		//message_type provided? IF so, then we've requested a specific set of variations, so we need to make sure we set it as empty if that's not present.
+		$variations = !empty( $messenger ) && !empty( $message_type ) && isset( $messenger_variations[$message_type] ) ? $messenger_variations[$message_type] : array();
+
+		//now let's account for the possibility we just want all the variations for a messenger (which is indicated by providing the messenger but not the message type).
+		$variations = empty( $variations ) && !empty( $messenger ) && empty( $message_type ) ? $messenger_variations : $variations;
 
 		//filter per template pack and globally.
 		$variations = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variations', $variations, $messenger, $message_type );
@@ -425,11 +428,12 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * This is typically called by EE_messenger objects to get the specific css variation defined for the messenger and type (i.e. inline, wpeditor, preview etc.)
+	 * This is typically called by EE_messenger objects to get the specific css variation defined for the messenger, message_type and type (i.e. inline, wpeditor, preview etc.)
 	 *
 	 * @since 4.5.0
 	 *
 	 * @param string $messenger messenger slug
+	 * @param string $message_type message_type slug
 	 * @param string $type           variation type (i.e. inline, base, wpeditor, preview etc. //this varies per messenger).
 	 * @param string $variation    this should match one of the defined variations in the _variations property on this class.
 	 * @param string $file_extension  What type of file the variation file is (defaults to css)
@@ -438,29 +442,34 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @return string The variation path or url (typically css reference)
 	 */
-	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css', $skip_filters = FALSE ) {
+	public function get_variation( $messenger, $message_type, $type, $variation, $url = true, $file_extension = '.css', $skip_filters = FALSE ) {
 
 		$base = $url ? $this->_base_url : $this->_base_path;
 		$base_path = $this->_base_path;
 
 		if ( ! $skip_filters ) {
-			$base =  apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base, $messenger, $type, $variation, $url, $file_extension, $this );
-			$base_path = apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base_path, $messenger, $type, $variation, FALSE, $file_extension, $this );
+			$base =  apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variation__base_path_or_url', $base, $messenger, $message_type, $type, $variation, $url, $file_extension, $this );
+			$base_path = apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variation__base_path', $base_path, $messenger, $message_type, $type, $variation, FALSE, $file_extension, $this );
 		}
 
 		$default_pack = get_class( $this ) != 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
 
-		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
+		//possible variation paths considering whether message type is present or not in the file name.
+		$path_string = 'variations/' . $messenger . '_' . $message_type . '_'  . $type . '_' . $variation . $file_extension;
+		$default_path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
 
-		//first see if the file exists.
+		//first see if fully validated file exists.
 		if ( is_readable( $base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
+		//otherwise see if default exists.
+		} elseif ( is_readable( $base_path . $default_path_string ) ) {
+			$variation_path = $base . $default_path_string;
 		} else {
 			//prevent recursion.
 			if ( $skip_filters ) {
 				$variation_path = '';
 			} else {
-				$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
+				$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $message_type, $type, 'default', $url, $file_extension, TRUE ) : '';
 			}
 		}
 
@@ -469,8 +478,8 @@ abstract class  EE_Messages_Template_Pack {
 		}
 
 		//filter result
-		$variation_path = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variation', $variation_path, $messenger, $type, $variation, $file_extension, $url );
-		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variation', $variation_path, $messenger, $type, $variation, $file_extension, $url, $this );
+		$variation_path = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variation', $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url );
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variation', $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url, $this );
 	}
 
 

@@ -537,9 +537,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['use_dashboard_widget'] = isset( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) ? absint( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) : TRUE;
 		$this->_template_args['events_in_dashboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dashboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dashboard ) : 30;
 		$this->_template_args['use_event_timezones'] = isset( EE_Registry::instance()->CFG->admin->use_event_timezones ) ? absint( EE_Registry::instance()->CFG->admin->use_event_timezones ) : FALSE;
-		$this->_template_args['use_full_logging'] = isset( EE_Registry::instance()->CFG->admin->use_full_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_full_logging ) : FALSE;
-		$this->_template_args['use_remote_logging'] = isset( EE_Registry::instance()->CFG->admin->use_remote_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_remote_logging ) : FALSE;
-		$this->_template_args['remote_logging_url'] = isset( EE_Registry::instance()->CFG->admin->remote_logging_url ) && ! empty( EE_Registry::instance()->CFG->admin->remote_logging_url ) ? stripslashes( EE_Registry::instance()->CFG->admin->remote_logging_url ) : '';
 		$this->_template_args['show_reg_footer'] = isset( EE_Registry::instance()->CFG->admin->show_reg_footer ) ? absint( EE_Registry::instance()->CFG->admin->show_reg_footer ) : TRUE;
 		$this->_template_args['affiliate_id'] = isset( EE_Registry::instance()->CFG->admin->affiliate_id ) ? $this->_display_nice( EE_Registry::instance()->CFG->admin->affiliate_id ) : '';
 		$this->_template_args['help_tour_activation'] = isset( EE_Registry::instance()->CFG->admin->help_tour_activation ) ? absint( EE_Registry::instance()->CFG->admin->help_tour_activation ): 1;

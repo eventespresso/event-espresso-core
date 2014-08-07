@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EEH_Formatter {
 	/**
-	 * Used by EEH_Formatter::nl() and EEH_Formatter::increase_indent()
+	 * Used by EEH_Formatter::nl() and EEH_Formatter::indent()
 	 * @var int
 	 */
 	static $tab_level = 0;
@@ -144,11 +144,11 @@ class EEH_Formatter {
    /**
     * Changes the indents used in EEH_Formatter::nl. Often its convenient to change
     * the indentation level without actually creating a new line
-    * @param int $ident_change can be negative to decrease the identation level
+    * @param int $indent_change can be negative to decrease the indentation level
     * @return void
     */
-   public static function increase_indent( $ident_change ){
-	   self::$tab_level += $ident_change;
+   public static function indent( $indent_change ){
+	   self::$tab_level += $indent_change;
    }
 
 

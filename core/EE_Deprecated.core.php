@@ -43,7 +43,7 @@ function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_me
 	foreach ( $old_default_classnames as $classname ) {
 		$filter_ref = 'FHEE__' . $classname . '___create_new_templates___templates';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
 		}
 		$templates = apply_filters( $filter_ref, $templates, $old_class_instance );
 	}
@@ -83,7 +83,7 @@ function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_me
 	foreach ( $classnames_to_try as $classname => $obj ) {
 		$filter_ref = 'FHEE__' . $classname . '__get_default_field_content';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
 		}
 		$contents = apply_filters( $filter_ref, $contents, $obj );
 	}
@@ -109,6 +109,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
  *
  * @param string                    $variation_path The current css path.
  * @param string                    $messenger      EE_messenger slug.
+ * @param string                    $messenger      EE_message_type slug
  * @param string                    $type                The type of css file being returned (wpeditor, default etc.)
  * @param string                    $variation         Introduced by the new template pack system. The variation slug.
  * @param string                    $file_extension Defaults to css.  The file extension for the file being retrieved.
@@ -117,7 +118,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
  *
  * @return string                    The path to the file being used.
  */
-function ee_deprecated_get_inline_css_template_filters( $variation_path, $messenger, $type, $variation, $file_extension, $url,  EE_Messages_Template_Pack $template_pack ) {
+function ee_deprecated_get_inline_css_template_filters( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url,  EE_Messages_Template_Pack $template_pack ) {
 
 	if ( $messenger == 'email' ) {
 		$filter_ref = $url ? 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url' : 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path';
@@ -133,4 +134,94 @@ function ee_deprecated_get_inline_css_template_filters( $variation_path, $messen
 
 	return apply_filters( $filter_ref, $variation_path, $url, $type );
 }
-add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', 'ee_deprecated_get_inline_css_template_filters', 10, 7 );
+add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', 'ee_deprecated_get_inline_css_template_filters', 10, 8 );
+
+
+
+
+/**
+ * EE_Messages_Init
+ * This was the old controller for the Messages system which has now been moved into a proper EED Module
+ *
+ * @deprecated 4.5.0
+ * @deprecated Use the new EED_Messages module
+ *
+ */
+class EE_Messages_Init extends EE_Base {
+
+	public function __construct() {
+		self::doing_it_wrong_call( __METHOD__ );
+	}
+
+	/**
+	 * @param $method_name
+	 */
+	public static function doing_it_wrong_call( $method_name ) {
+		EE_Error::doing_it_wrong( __CLASS__, sprintf( __('The %s in this class is deprecated as of EE4.5.0.  All functionality formerly in this class is now in the EED_Messages module.', 'event_espresso'), $method_name ), '4.5.0' );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public static function set_autoloaders() {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::set_autoloaders();
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function payment_reminder( $transaction ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::payment_reminder( $transaction );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function payment( $transaction, $payment ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::payment( $transaction, $payment );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function cancelled_registration( $transaction ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::cancelled_registration( $transaction );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function maybe_registration( $transaction, $reg_msg, $from_admin ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::maybe_registration( $transaction, $reg_msg, $from_admin );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function process_resend( $success, $req_data ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::process_resend( $success, $req_data );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function process_admin_payment( $success, $payment ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::process_admin_payment( $success, $payment );
+	}
+
+	/**
+	 * @deprecated 4.5.0
+	 */
+	public function send_newsletter_message( $contacts, $grp_id ) {
+		self::doing_it_wrong_call( __METHOD__ );
+		EED_Messages::send_newsletter_message( $contacts, $grp_id );
+	}
+
+} //end deprecated EE_Messages_Init

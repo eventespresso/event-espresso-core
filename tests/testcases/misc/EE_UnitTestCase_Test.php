@@ -12,6 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage
  * @author				Mike Nelson
  *
+ * @group problem
  */
 class EE_UnitTestCase_Test extends EE_UnitTestCase{
 

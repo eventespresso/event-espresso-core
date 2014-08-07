@@ -121,8 +121,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		//empty messengers?
 		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
 		if ( empty( $active_messengers ) ) {
-			$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'activate', 'activate_view' => 'messengers'), EE_MSG_ADMIN_URL );
-			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+			$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'settings'), EE_MSG_ADMIN_URL );
+			$error_msg = sprintf( __('There are no active messengers. So no notifications will go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
 			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
 			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
@@ -176,7 +176,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 */
 	public function create_new_custom() {
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_messages', 'create_new_custom_ajax' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'create_new_custom_ajax' ) ) {
 			wp_die( __('You don\'t have privileges to do this action', 'event_espresso' ) );
 		}
 

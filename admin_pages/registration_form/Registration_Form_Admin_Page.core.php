@@ -101,25 +101,25 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_questions_overview_list_table',
-				'capability' => 'read_questions'
+				'capability' => 'ee_read_questions'
 				),
 
 			'edit_question' => array(
 				'func' => '_edit_question',
-				'capability' => 'edit_question',
+				'capability' => 'ee_edit_question',
 				'obj_id' => $qst_id,
 				'args' => array('edit')
 				),
 
 			'question_groups' => array(
 				'func' => '_questions_groups_preview',
-				'capability' => 'read_question_groups'
+				'capability' => 'ee_read_question_groups'
 				),
 
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
-				'capability' => 'edit_question',
+				'capability' => 'ee_edit_question',
 				'obj_id' => $qst_id,
 				'noheader' => TRUE,
 				),
@@ -278,7 +278,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_questions', 'espresso_registration_form_trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),

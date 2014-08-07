@@ -994,6 +994,7 @@ abstract class EE_Base_Class{
 						$pk_field_name =self::_get_primary_key_name( get_class($this));
 						$this->_fields[$pk_field_name] = $results;
 						$this->_clear_cached_property($pk_field_name);
+						$this->get_model()->add_to_entity_map( $this );
 						$this->_update_cached_related_model_objs_fks();
 					}
 				}

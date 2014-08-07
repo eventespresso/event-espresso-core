@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/libraries/plugin_api
  * @group core
  * @group agg
+ * @group addons
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_mock_addon_path;
@@ -36,6 +37,26 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		);
 		$this->_addon_name = 'New_Addon';
 		parent::__construct($name, $data, $dataName);
+	}
+	public function setUp(){
+		parent::setUp();
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
+	}
+	/**
+	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
+	 * @global type $wpdb
+	 * @param array $whitelisted_tables
+	 * @return array
+	 */
+	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! $this->_table_exists( $table_name) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok to allow this
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return $short_circuit;
+		}
 	}
 	//test registering a bare minimum addon, and then deregistering it
 	function test_register_mock_addon_fail(){
