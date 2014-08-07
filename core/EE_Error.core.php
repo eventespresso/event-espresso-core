@@ -1039,7 +1039,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs', EVENT_ESPRESSO_UPLOAD_DIR, 'Event Espresso Error Logging can not be set up because' )) {
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs', 'Event Espresso Error Logging can not be set up because' )) {
 			return;
 		}
 		if ( ! EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' )) {
