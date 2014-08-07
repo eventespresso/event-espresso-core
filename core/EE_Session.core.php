@@ -677,12 +677,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				 $IN[] = "'" . str_replace( '_transient_timeout_', '', $expired_session ) . "'";
 			 }
 			 $IN = implode( ', ', $IN );
-			 $SQL = "
-			 	DELETE FROM {$wpdb->options}
-			 	WHERE option_name
-			 	IN ( $IN );
-			 ";
-			 $wpdb->query( $SQL );
+			 if ( ! empty( $IN )) {
+				 $SQL = "
+					DELETE FROM {$wpdb->options}
+					WHERE option_name
+					IN ( $IN );
+				 ";
+				 $wpdb->query( $SQL );
+			 }
 		 }
 	 }
 
