@@ -1518,7 +1518,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					// no existing attendee exists so create a new one
 					$attendee = EE_Attendee::new_instance( array(
 						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
-						'ATT_fname' => $Qst_fname,
+						'ATT_fname' => $QST_fname,
 						'ATT_lname' => $QST_lname,
 						'ATT_email' => $QST_email,
 						'ATT_address' => $QST_address,
@@ -2414,7 +2414,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		if ( $success === FALSE )
-			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'));
+			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 
 	}
 
