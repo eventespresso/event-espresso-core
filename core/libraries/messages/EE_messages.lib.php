@@ -169,15 +169,15 @@ class EE_messages {
 	/**
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
-	 * @param  array  $vars    Data being sent for parsing in the message
+	 * @param  mixed  $vars    Data being sent for parsing in the message
 	 * @param  string $sending_messenger if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
 	 * @param string $generating_messenger if included then this messenger is used for generating the message templates (but not for sending).
 	 * @param string $context If included then only a message type for a specific context will be generated.
 	  * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
-	 * @return void
+	 * @return bool
 	 */
 	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $send = TRUE ) {
-		$success = FALSE;
+
 		$error = FALSE;
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
@@ -224,7 +224,7 @@ class EE_messages {
 		}
 		// add a success message
 		if ( ! $error ) {
-			EE_Error::add_success( sprintf( __( 'The %s message has been succesfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_success( sprintf( __( 'The %s message has been successfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
@@ -281,7 +281,7 @@ class EE_messages {
 	 *
 	 * @param EE_messenger $generating_messenger The messenger used for generating messages
 	 * @param EE_message_type $message_type         The message type used for generating messages
-	 * @param array  $data                 Data provided for parsing shortcodes in message templates.
+	 * @param mixed  $data                 Data provided for parsing shortcodes in message templates.
 	 * @param EE_messenger $sending_messenger    The messenger that will be used for SENDING the messages.
 	 * @param bool   $context              If provided, then a specific context for a given template will be sent.
 	 * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages std_Class objects which might be used by the trigger to setup a batch message (typically html messenger uses it).

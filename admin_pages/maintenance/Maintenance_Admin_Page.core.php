@@ -335,7 +335,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	protected function _reset_capabilities() {
 		EE_Registry::instance()->CAP->init_caps( true );
 		EE_Error::add_success( __('Default Event Espresso capabilities have been restored for all current roles.', 'event_espresso' ) );
-		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'tools' ), TRUE );
+		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'data_reset' ), TRUE );
 	}
 
 
@@ -461,11 +461,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		wp_enqueue_script('ee-text-links');
 	}
 
-
-	public function load_scripts_styles_tools() {
-		wp_register_style( 'ee_tools_page', EE_MAINTENANCE_ASSETS_URL . 'ee-tools.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style( 'ee_tools_page' );
-	}
 
 
 
