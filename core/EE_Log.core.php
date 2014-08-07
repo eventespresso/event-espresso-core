@@ -87,11 +87,10 @@ class EE_Log {
 		$this->_remote_logging_url = EE_Registry::instance()->CFG->admin->remote_logging_url;
 		$this->_remote_log = '';
 
-		$uploads = wp_upload_dir();
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR, $uploads['baseurl'], 'Event Espresso Error Logging can not be set up because' )) {
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR, '', 'Event Espresso Logging can not be set up because' )) {
 			return;
 		}
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder, EVENT_ESPRESSO_UPLOAD_DIR, 'Event Espresso Error Logging can not be set up because' )) {
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder, '', 'Event Espresso Logging can not be set up because' )) {
 			return;
 		}
 		if ( ! EEH_File::add_htaccess_deny_from_all( $this->_logs_folder )) {
@@ -128,7 +127,7 @@ class EE_Log {
 		$msg .= ! empty( $function ) ? $function . '()' : '';
 		$msg .= PHP_EOL;
 		$type = ! empty( $type ) ? $type : 'log message';
-		$msg .= ! empty( $message ) ? '[' . $type . '] ' . $message . PHP_EOL : '';
+		$msg .= ! empty( $message ) ? "\t" . '[' . $type . '] ' . $message . PHP_EOL : '';
 		return $msg;
 	}
 
@@ -193,17 +192,13 @@ class EE_Log {
 	 * debug
 	 */
 	public function write_debug() {
-		$message = '<?php' . PHP_EOL;
+		$this->_debug_log = '<?php' . PHP_EOL;
 		foreach ( $_GET as $key => $value ) {
-			$message .= '$my_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+			$this->_debug_log .= '$my_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
 		}
 		foreach ( $_POST as $key => $value ) {
-			$message .= '$my_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+			$this->_debug_log .= '$my_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
 		}
-		foreach ( $_REQUEST as $key => $value ) {
-			$message .= '$my_REQUEST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
-		}
-		$this->_debug_log = EE_Log::_format_message( '', '', $message );
 		EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'w' );
 	}
 
