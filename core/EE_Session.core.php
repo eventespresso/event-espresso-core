@@ -668,7 +668,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			 	WHERE option_name
 			 	LIKE '\_transient\_timeout\_ee\_ssn\_%'
 			 	AND option_value < {$expiration}
-			 	LIMIT 25;
+			 	LIMIT 50;
 			";
 			 $expired_sessions = $wpdb->get_col( $SQL );
 			 $IN = array();
