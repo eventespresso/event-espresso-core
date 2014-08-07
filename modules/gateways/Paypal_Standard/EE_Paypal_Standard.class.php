@@ -392,7 +392,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->addField('os0_'.$item_num,  $description);
 			$item_num++;
 		}
-		
+
 		if($paypal_settings['use_sandbox']){
 			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
 			$this->addField('amount_'.$item_num,0);
@@ -436,7 +436,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(!$this->validateIpn()){
 			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"));
+			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		//if the transaction's just an ID, swap it for a real EE_Transaction
