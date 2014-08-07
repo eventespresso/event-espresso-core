@@ -662,16 +662,30 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
 			 global $wpdb;
 			 $expiration = current_time( 'timestamp' );
-			$SQL = "
-				DELETE FROM t1, t2
-				USING {$wpdb->options} t1
-				JOIN {$wpdb->options} t2 ON t2.option_name = replace( t1.option_name, '_timeout', '' )
-				WHERE t1.option_name LIKE '\_transient\_timeout\_ee\_ssn\_%'
-				AND t1.option_value < $expiration;
+			 $SQL = "
+			 	SELECT option_name
+			 	FROM {$wpdb->options}
+			 	WHERE option_name
+			 	LIKE '\_transient\_timeout\_ee\_ssn\_%'
+			 	AND option_value < {$expiration}
+			 	LIMIT 25;
 			";
-			$wpdb->query( $SQL );
+			 $expired_sessions = $wpdb->get_col( $SQL );
+			 $IN = array();
+			 foreach( $expired_sessions as $expired_session ) {
+				 $IN[] = "'" . $expired_session . "'";
+				 $IN[] = "'" . str_replace( '_transient_timeout_', '', $expired_session ) . "'";
+			 }
+			 $IN = implode( ', ', $IN );
+			 $SQL = "
+			 	DELETE FROM {$wpdb->options}
+			 	WHERE option_name
+			 	IN ( $IN );
+			 ";
+			 $wpdb->query( $SQL );
 		 }
 	 }
+
 
 
 }
