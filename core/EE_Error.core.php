@@ -1038,37 +1038,18 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		$exception_log_file = str_replace( '\\', '/', EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' ) . self::$_exception_log_file;
-
-		if ( is_writable( EVENT_ESPRESSO_UPLOAD_DIR.'logs' ) && ! file_exists( $exception_log_file )) {
-			touch( $exception_log_file );
-			self::add_htaccess();
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs', EVENT_ESPRESSO_UPLOAD_DIR, 'Event Espresso Error Logging can not be set up because' )) {
+			return;
 		}
-
-		if ( is_writable( $exception_log_file )) {
-			$fh = fopen( $exception_log_file, 'a' ) or die( 'Cannot open ' . $exception_log_file . ' file!' );
-			fwrite( $fh, $exception_log );
-			fclose( $fh );
-		} else {
-			echo '<div class="error"><p>'. sprintf( __( 'Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso' ), $exception_log_file ) . '</p></div>';
+		if ( ! EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' )) {
+			return;
 		}
+		EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
+		// write (which clears file and starts from top) or append ?
+		$mode = $clear ? 'w' : 'a';
+		EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file, $exception_log, $mode );
 
-	}
-
-
-
-	/**
-	 * simply adds .htaccess file to log dir.
-	 */
-	public static function add_htaccess() {
-		if ( !file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess' ) ) {
-			if ( file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all') )
-				do_action('AHEE_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder');
-			else
-  				do_action('AHEE_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
-		} else {
-			do_action('AHEE_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
-		}
 	}
 
 
@@ -1085,7 +1066,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The verison of Event Espresso where the error was added
+	 * @param  string $version  The version of Event Espresso where the error was added
 	 * @return trigger_error()
 	 */
 	public static function doing_it_wrong( $function, $message, $version ) {
