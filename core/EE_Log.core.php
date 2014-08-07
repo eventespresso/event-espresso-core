@@ -87,10 +87,10 @@ class EE_Log {
 		$this->_remote_logging_url = EE_Registry::instance()->CFG->admin->remote_logging_url;
 		$this->_remote_log = '';
 
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR, '', 'Event Espresso Logging can not be set up because' )) {
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR, 'Event Espresso Logging can not be set up because' )) {
 			return;
 		}
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder, '', 'Event Espresso Logging can not be set up because' )) {
+		if ( ! EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder, 'Event Espresso Logging can not be set up because' )) {
 			return;
 		}
 		if ( ! EEH_File::add_htaccess_deny_from_all( $this->_logs_folder )) {
@@ -101,11 +101,11 @@ class EE_Log {
 
 		add_action( 'AHEE_log', array( $this, 'log' ), 10, 4 );
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
-			add_action( 'shutdown', array( $this, 'write_log' ));
-			add_action( 'shutdown', array( $this, 'write_debug' ));
+			add_action( 'shutdown', array( $this, 'write_log' ), 9999 );
+			add_action( 'shutdown', array( $this, 'write_debug' ), 9999 );
 		}
 		if ( EE_Registry::instance()->CFG->admin->use_remote_logging ) {
-			add_action( 'shutdown', array( $this, 'send_log' ));
+			add_action( 'shutdown', array( $this, 'send_log' ), 9999 );
 		}
 
 	}
