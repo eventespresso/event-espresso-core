@@ -115,7 +115,7 @@ class EEH_File extends EEH_Base {
 					return FALSE;
 				}
 			} else {
-				if ( ! mkdir( $folder )) {
+				if ( ! wp_mkdir_p( $folder )) {
 					$msg .= sprintf( __( '"%s" could not be created.', 'event_espresso' ), $folder );
 					$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $folder );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
