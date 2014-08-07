@@ -40,7 +40,7 @@ class EEH_Line_Item {
 			'LIN_unit_price' => $unit_price,
 			'LIN_quantity' => $quantity,
 			'LIN_is_taxable' => $taxable,
-			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal ) : 0,
+			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
 			'LIN_total' => floatval( $unit_price ) * intval( $quantity ),
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 		));
