@@ -79,6 +79,47 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf('EE_Attendee', $attendee_found);
 		$this->assertEquals($a->ID(),$attendee_found->ID());
 	}
+
+	public function test_delete(){
+		$e1 = EE_Event::new_instance();
+		$e1->save();
+		$e2 = EE_Event::new_instance();
+		$e2->save();
+		$e3 = EE_Event::new_instance();
+		$e3->save();
+		//now assert things are as they should be: the items are in teh Db and the entity map
+		$this->assertEquals( EEM_Event::instance()->get_one_by_ID( $e1->ID() ), $e1 );
+		$this->assertEquals( EEM_Event::instance()->get_one_by_ID( $e2->ID() ), $e2 );
+		$this->assertEquals( EEM_Event::instance()->get_one_by_ID( $e3->ID() ), $e3 );
+		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e1->ID() ), $e1 );
+		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e2->ID() ), $e2 );
+		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e3->ID() ), $e3 );
+
+		//now run a delete query that should have deleted $e1 and $e2
+		EEM_Event::instance()->delete_permanently( array( array( 'EVT_ID' => array( '<=', $e2->ID() ) ) ) );
+
+		//check $e1 and $e2 don't exist in the DB anymore
+		$this->assertEmpty( EEM_Event::instance()->get_one_by_ID( $e1->ID() ) );
+		$this->assertEmpty( EEM_Event::instance()->get_one_by_ID( $e2->ID() ) );
+		$this->assertEquals( EEM_Event::instance()->get_one_by_ID( $e3->ID() ), $e3 );
+		//and now chekc $e1 and $e2 don't exist in the entity map either
+		$this->assertEmpty( EEM_Event::instance()->get_from_entity_map( $e1->ID() ) );
+		$this->assertEmpty( EEM_Event::instance()->get_from_entity_map( $e2->ID() ) );
+		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e3->ID() ), $e3 );
+	}
+
+	/**
+	 *
+	 * @throws EE_Error
+	 */
+	public function test_distanced_HABTM_join(){
+		try{
+			EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>1,'TXN_ID'=>1)));
+			$this->assertTrue( TRUE );
+		}catch( EE_Error $e){
+			throw $e;
+		}
+	}
 }
 
 // End of file EEM_Base_Test.php

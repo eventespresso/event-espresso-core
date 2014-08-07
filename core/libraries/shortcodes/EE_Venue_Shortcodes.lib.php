@@ -54,6 +54,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 			'[VENUE_CITY]' => __('The city the venue is in', 'event_espresso'),
 			'[VENUE_STATE]' => __('The state the venue is located in', 'event_espresso'),
 			'[VENUE_COUNTRY]' => __('The country the venue is located in', 'event_espresso'),
+			'[VENUE_FORMATTED_ADDRESS]' => __('This just outputs the venue address in a semantic address format.', 'event_espresso'),
 			'[VENUE_ZIP]' => __('The zip code for the venue address', 'event_espresso'),
 			'[GOOGLE_MAP_LINK]' => __('Link to a google map for the venue', 'event_espresso'),
 			'[GOOGLE_MAP_IMAGE]' => __('Google map for venue wrapped in image tags', 'event_espresso')
@@ -109,6 +110,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				return $this->_venue('zip');
 				break;
 
+			case '[VENUE_FORMATTED_ADDRESS]' :
+				return $this->_venue('formatted_address');
+				break;
+
 			case '[GOOGLE_MAP_LINK]' :
 				return $this->_venue('gmap_link');
 				break;
@@ -139,6 +144,13 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
 
 			$this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : NULL;
+
+			//if still empty do we have a ticket data item?
+			$this->_event = empty( $this->_event ) && $this->_data instanceof EE_Ticket && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->tickets[$this->_data->ID()]['EE_Event'] : $this->_event;
+
+			//if STILL empty event, let's try to get the first event in the list of events via EE_Messages_Addressee and use that.
+			$event = $aee instanceof EE_Messages_Addressee ? reset( $aee->events ) : array();
+			$this->_event = empty( $this->_event ) && !empty( $events ) ? $event : $this->_event;
 		}
 
 
@@ -161,7 +173,8 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case 'url':
-				return $venue->get('VNU_url');
+				$url = $venue->get('VNU_url');
+				return empty( $url ) ? $venue->get_permalink() : $url;
 				break;
 
 			case 'image':
@@ -196,6 +209,11 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 			case 'zip':
 				return $venue->get('VNU_zip');
+				break;
+
+			case 'formatted_address' :
+				EE_Registry::instance()->load_helper( 'Formatter' );
+				return EEH_Address::format( $venue );
 				break;
 
 			case 'gmap_link':

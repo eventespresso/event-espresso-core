@@ -46,6 +46,9 @@ class EEH_Line_Item {
 		));
 		return self::add_item($total_line_item, $line_item );
 	}
+
+
+
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
@@ -114,7 +117,7 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
 	 */
-	public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item, $save = FALSE ){
+	public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item ){
 		// add item to cart
 		$ticket_items = self::get_items_subtotal( $total_line_item );
 		if($ticket_items){

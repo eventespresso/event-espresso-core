@@ -358,8 +358,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			$transaction = $total_line_item->transaction();
 		}
 		$primary_registrant = $transaction->primary_registration();
-		if( $total_to_pay === NULL && //they didn't specify an amount to charge
-			$total_to_pay != $transaction->total() && //and even if they did, it wasn't for the entire transaction
+		if( $this->_sum_items_and_taxes( $total_line_item ) == $transaction->total() &&//the itemized total matches the transaction total
+				$total_to_pay === NULL && //they didn't specify an amount to charge
 			! $transaction->paid()){//and there have been no payments on the transaction yet anyways
 			//so let's create a nice looking invoice including everything
 			foreach($total_line_item->get_items() as $line_item){
@@ -376,23 +376,17 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 				$item_num++;
 			}
 		}else{//we're only charging for part of the transaction's total
-			if( $total_to_pay){
-				//client code specified how much to charge
-				$description = sprintf(__("Partial payment of %s", "event_espresso"),$total_to_pay);
-			}elseif($transaction->paid()){
-				//they didn't specify how much, but there has already been a payment, so let's just charge on what's left
-				$total_to_pay = $transaction->remaining();
-				$description = sprintf(__("Total paid to date: %s, and this charge is for the balance.", "event_espresso"),$transaction->get_pretty('TXN_paid'));
-			}else{
-				throw new EE_Error(sprintf(__("Thats impossible!!", "event_espresso")));
-			}
+			if( ! $total_to_pay){//they didn't set the total to charge, so it must have a balance
+					$total_to_pay = $transaction->remaining();
+				}
+			$description = sprintf(__("Payment of %s for %s", "event_espresso"),$total_to_pay,$primary_registrant->reg_code());
 			$this->addField('item_name_'.$item_num,  sprintf(__("Amount owing for registration %s", 'event_espresso'),$primary_registrant->reg_code()));
 			$this->addField('amount_'.$item_num,$total_to_pay);
 			$this->addField('on0_'.$item_num,  __("Amount Owing:", 'event_espresso'));
 			$this->addField('os0_'.$item_num,  $description);
 			$item_num++;
 		}
-		
+
 		if($paypal_settings['use_sandbox']){
 			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
 			$this->addField('amount_'.$item_num,0);

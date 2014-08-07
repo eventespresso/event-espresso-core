@@ -27,6 +27,9 @@ class EE_Newsletter_message_type extends EE_message_type {
             'singular' => __('newsletter', 'event_espresso'),
             'plural' => __('newsletters', 'event_espresso')
             );
+        $this->_master_templates = array(
+            'email' => 'registration'
+            );
         parent::__construct();
     }
 
@@ -62,39 +65,6 @@ class EE_Newsletter_message_type extends EE_message_type {
 
 
 
-    protected function _set_default_field_content() {
-        $this->_default_field_content = array(
-            'subject' => $this->_default_template_field_subject(),
-            'content' => $this->_default_template_field_content()
-            );
-    }
-
-
-
-    protected function _default_template_field_subject() {
-        foreach ( $this->_contexts as $context => $details ) {
-            $content[$context] = sprintf( __('Message from %s', 'event_espresso'), EE_Registry::instance()->CFG->organization->name);
-        }
-        return $content;
-    }
-
-
-
-    protected function _default_template_field_content() {
-        $content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/newsletter/templates/newsletter-message-type-content.template.php', TRUE );
-        $news_content_field = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/newsletter/templates/newsletter-message-type-newsletter-content-field.template.php', TRUE );
-
-        foreach ( $this->_contexts as $context => $details ) {
-            $tcontent[$context]['main'] = $content;
-            $tcontent[$context]['newsletter_content'] = $news_content_field;
-        }
-
-
-        return $tcontent;
-    }
-
-
-
     protected function _set_contexts() {
         $this->_context_label = array(
             'label' => __('recipient', 'event_espresso'),
@@ -105,7 +75,7 @@ class EE_Newsletter_message_type extends EE_message_type {
         $this->_contexts = array(
             'attendee' => array(
                 'label' => __('Registrant', 'event_espresso'),
-                'description' => __('This template goes to selected registrants.')
+                'description' => __('This template goes to selected registrants.', 'event_espresso')
                 )
             );
     }

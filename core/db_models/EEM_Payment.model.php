@@ -130,15 +130,13 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	}
 
 	/**
-	 * Exactly like instance(), but always returns a new EEM_Payment
-	 * @param string $timezone
+	 * resets the model and returns it
 	 * @return EEM_Payment
 	 */
-	public static function reset( $timezone = NULL){
-		self::$_instance = new self( $timezone );
-		return self::$_instance;
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
-
 
 
 

@@ -75,7 +75,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map( $id );
 		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
-
+	
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
@@ -314,6 +314,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t,$t_removed);
 		$t_null = $r->get_one_from_cache('Transaction');
 		$this->assertNull($t_null);
+	}
+
+	function test_set_and_get_extra_meta(){
+		$e = EE_Event::new_instance();
+		$e->save();
+		$e->update_extra_meta('monkey', 'baboon');
+		$this->assertEquals('baboon', $e->get_extra_meta('monkey', TRUE)  );
+		$e->update_extra_meta('monkey', 'chimp');
+		$this->assertEquals('chimp', $e->get_extra_meta('monkey', TRUE)  );
 	}
 }
 

@@ -47,10 +47,13 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Attendee Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to attendee related data', 'event_espresso');
 		$this->_shortcodes = array(
-			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
-			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
+			'[FNAME]' => __('First Name of an attendee.', 'event_espresso'),
+			'[LNAME]' => __('Last Name of an attendee.', 'event_espresso'),
+			'[ATTENDEE_EMAIL]' => __('Email address for the attendee.', 'event_espresso'),
 			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
 			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso'),
+			'[REGISTRATION_STATUS_ID]' => __('Parses to the registration status for the attendee', 'event_espresso'),
+			'[REGISTRATION_STATUS_LABEL]' => __('Parses to the status label for the registrant', 'event_espresso'),
 			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso'),
 			'[PHONE_NUMBER]' => __('The Phone Number for the Registration.', 'event_espresso'),
 			'[ADDRESS]' => __('The Address for the Registration', 'event_espresso'),
@@ -131,6 +134,14 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			case '[COUNTRY]' :
 				$country_obj = $attendee->country_obj();
 				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
+				break;
+
+			case '[REGISTRATION_STATUS_ID]' :
+				return $registration->status_ID();
+				break;
+
+			case '[REGISTRATION_STATUS_LABEL]' :
+				return $registration->pretty_status();
 				break;
 
 		}

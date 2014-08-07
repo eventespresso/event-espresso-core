@@ -1076,7 +1076,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string template for add new cpt form
 	 */
 	protected function _create_new_cpt_item() {
-		global $post, $title;
+		global $post, $title, $is_IE;
 		$this->_template_args['post_type'] = $this->_cpt_routes[$this->_req_action];
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
 		$title = $this->_template_args['post_type_object']->labels->add_new_item;
@@ -1084,6 +1084,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		wp_enqueue_script( 'autosave' );
 		$this->_template_args['post'] = $post = get_default_post_to_edit( $this->_cpt_routes[$this->_req_action], TRUE );
 		$this->_template_args['post_ID'] = $this->_template_args['post']->ID;
+		$this->_template_args['is_IE'] = $is_IE;
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 
 		add_action( 'admin_print_styles', array( $this, 'add_new_admin_page_global' ) );
@@ -1119,7 +1120,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string   template for edit cpt form
 	 */
 	protected function _edit_cpt_item() {
-		global $post, $title;
+		global $post, $title, $is_IE;
 		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$post = !empty( $post_id ) ? get_post( $post_id, OBJECT, 'edit' ) : NULL;
 
@@ -1139,6 +1140,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_template_args['post'] = $post;
 		$this->_template_args['post_type'] = $this->_cpt_routes[$this->_req_action];
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
+		$this->_template_args['is_IE'] = $is_IE;
 		if ( $last = wp_check_post_lock( $post->ID ) ) {
 			add_action('admin_notices', '_admin_notice_post_locked' );
 		} else {

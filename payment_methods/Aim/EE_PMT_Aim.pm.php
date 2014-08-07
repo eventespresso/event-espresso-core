@@ -52,7 +52,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 			$form->get_input('credit_card')->set_default('4007000000027');
 			$form->get_input('exp_year')->set_default('2020');
 			$form->get_input('cvv')->set_default(('123'));
-			$form->add_subsections(array('fyi_about_autofill'=>new EE_Form_Section_HTML(sprintf(__("%sPayment fields have been autofilled because you are in debug mode%s", "event_espresso"),'<h3>','</h3>'))),'credit_card');
+			$form->add_subsections(array('fyi_about_autofill'=> $form->payment_fields_autofilled_notice_html() ),'credit_card');
 		}
 		return $form;
 	}

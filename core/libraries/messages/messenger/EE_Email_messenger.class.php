@@ -132,33 +132,6 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 
-	/**
-	 * see parent declaration for description
-	 *
-	 * @param bool $url return the url or path
-	 * @param mixed (string|bool) $type 'preview'|wpeditor|FALSE (default is the inline preview for email)
-	 * @return string path to inline css template file
-	 */
-	public function get_inline_css_template( $url = FALSE, $type = FALSE ) {
-		switch ( $type ) {
-
-			case 'preview' :
-				$base = 'messages/messenger/assets/email/email-messenger-inline-preview-css.template.css';
-				break;
-
-			case 'wpeditor' :
-				$base = 'messages/messenger/assets/email/email-messenger-inline-wpeditor-css.template.css';
-				break;
-
-			default :
-				$base = 'messages/messenger/assets/email/email-messenger-inline-css.template.css';
-				break;
-		}
-
-		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
-	}
-
-
 
 	/**
 	 * @see parent EE_messenger class for docs
@@ -167,15 +140,19 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
 		if ( $sending_messenger_name = 'html' ) {
-			add_filter( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', array( $this, 'add_email_css' ), 10, 3 );
+			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_email_css' ), 10, 7 );
 		}
 	}
 
 
 
 
-	public function add_email_css( $url, $path_or_url, $type ) {
-		return $this->get_inline_css_template( $path_or_url );
+	public function add_email_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+		//prevent recursion on this callback.
+		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_email_css' ), 10 );
+		$variation = $this->get_variation( $template_pack, $url, 'main', $variation, FALSE  );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_email_css' ), 10, 7 );
+		return $variation;
 	}
 
 
@@ -325,27 +302,7 @@ class EE_Email_messenger extends EE_messenger  {
 		);
 	}
 
-	/**
-	 * _set_default_field_content
-	 * set the _default_field_content property (what gets added in the default templates).
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_default_field_content() {
-		$this->_default_field_content = array(
-			'to' => '[RECIPIENT_EMAIL]',
-			'from' => '[CO_FORMATTED_EMAIL]',
-			'subject' => '',
-			'content' => array(
-				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
-				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
-				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
-				)
-			);
-	}
+
 
 
 
@@ -464,7 +421,7 @@ class EE_Email_messenger extends EE_messenger  {
 			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
 		} else if ( $preview && defined('DOING_AJAX' ) ) {
 			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-			$style = file_get_contents( $this->get_inline_css_template( FALSE, TRUE ) );
+			$style = file_get_contents( $this->get_variation( $this->_tmp_pack,  FALSE, 'main', $this->_variation ) );
 			$CSS = new CssToInlineStyles( utf8_decode($body), $style );
 			$body = ltrim( $CSS->convert(), ">\n" );
 

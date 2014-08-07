@@ -130,7 +130,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 #espresso-admin-page-overlay-dv {
 	position   : absolute; top : 0; left : 0;
-	background : rgba(0, 0, 0, 0.6) !important; z-index : 999;
+	background : rgba(0, 0, 0, 0.6) !important; z-index : 9999990;
 }
 
 .primary-attendee-star-img {
@@ -205,12 +205,12 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	/*content: "\f463";*/
 }
 .ee-spinner {
-	font           : 'dashicons';
-	display        : inline-block;
-	font-style     : normal;
-	font-weight    : normal;
-	line-height    : 1;
-	vertical-align : middle;
+	font-family: 'dashicons';
+	display: inline-block;
+    	font-style: normal;
+    	font-weight: normal;
+    	line-height: 1;
+	vertical-align: middle;
 }
 
 .ee-spin {
@@ -287,9 +287,9 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .float-left { float : left; }
 
 /* Nicolas Gallagher's micro clearfix */
-.clearfix:before, .clearfix:after { content : ""; display : table; }
-.clearfix:after { clear : both; }
-.clearfix { zoom : 1; }
+.clearfix:before, .clearfix:after { content:""; display:table; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
 
 #adminmenuwrap { z-index : 100; }
 
@@ -505,7 +505,7 @@ label.error { display : block; color : #FE2A00 !important; }
  * ee-dialog helper css
  */
 .ee-admin-dialog-container {
-	position   : absolute; top : 50px; left : 25%; width : 75%; height : auto; padding : 3em 4em 2em; z-index : 9999;
+	position   : absolute; top : 50px; left : 25%; width : 75%; height : auto; padding : 3em 4em 2em; z-index : 9999991;
 	background : #FFFFFF; border : 1px solid #DDDDDD; border-radius : 5px;
 }
 

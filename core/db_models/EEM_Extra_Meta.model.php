@@ -14,11 +14,11 @@
  * ------------------------------------------------------------------------
  *
  * Extra Meta Model
- * 
- * This is meta info which can be potentially attached to any model with a integer primary key. 
+ *
+ * This is meta info which can be potentially attached to any model with a integer primary key.
  * (If they have a string primary key, some further development will be needed in the code).
  * Querying on this meta data is cumbersome and difficult, but this can be used
- * to attach any arbitrary information onto any model desired. 
+ * to attach any arbitrary information onto any model desired.
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -38,15 +38,24 @@ class EEM_Extra_Meta extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Extra_Meta instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Extra_Meta
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 	protected function __construct(){
@@ -69,7 +78,7 @@ class EEM_Extra_Meta extends EEM_Base {
 		foreach($models_this_can_attach_to as $model){
 			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
-		
+
 		parent::__construct();
 	}
 

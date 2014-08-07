@@ -121,7 +121,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 * limits for the server.
 		 */
 		if ( ! empty( $data['input_count'] ) ) {
-			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check();
+			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check($data['input_count']);
 		}
 
 		return $response;
@@ -628,7 +628,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		//set is_creating_event property.
 		$evtID = $evtobj->ID();
-		$this->_is_creating_event = absint($evtID) != 0 ? TRUE : FALSE;
+		$this->_is_creating_event = absint($evtID) != 0 ? FALSE : TRUE;
 
 		//default main template args
 		$main_template_args = array(

@@ -277,11 +277,12 @@ final class EE_Request_Handler {
 	 *    getter
 	 *
 	 * @access    public
-	 * @param $key
+	 * @param      $key
+	 * @param null $default
 	 * @return    mixed
 	 */
-	public function get( $key ) {
-		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : NULL;
+	public function get( $key, $default = NULL ) {
+		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : $default;
 	}
 
 

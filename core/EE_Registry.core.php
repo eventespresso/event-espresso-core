@@ -518,7 +518,7 @@ final class EE_Registry {
 					sprintf(
 						__('The %s file %s does not appear to contain the %s Class.','event_espresso'),
 						$type,
-						$class_name,
+						$path,
 						$class_name
 					)
 				);
@@ -538,6 +538,7 @@ final class EE_Registry {
 			if ( $reflector->getConstructor() === NULL || $reflector->isAbstract() || $load_only ) {
 //				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
+				return TRUE;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 //				$instantiation_mode = 1;
 				$class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
@@ -689,6 +690,20 @@ final class EE_Registry {
 			$addons[ $addon->name() ] = $addon;
 		}
 		return $addons;
+	}
+
+	/**
+	 * Resets that specified model's instance AND makes sure EE_Registry doesn't keep
+	 * a stale copy of it around
+	 * @param string $model_name
+	 * @return EEM_Base
+	 */
+	public function reset_model( $model_name ){
+		$model = $this->load_model( $model_name );
+		$model_class_name = get_class( $model );
+		//get that model reset it and make sure we nuke the old reference to it
+		$this->LIB->$model_class_name = $model::reset();
+		return $this->LIB->$model_class_name;
 	}
 
 

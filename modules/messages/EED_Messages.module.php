@@ -38,12 +38,29 @@ class EED_Messages  extends EED_Module {
 	protected static $_MSG_PATHS;
 
 
+
+	/**
+	 * This will hold an array of messages template packs that are registered in the messages system.
+	 * Format is:
+	 * array(
+	 * 	'template_pack_dbref' => EE_Messages_Template_Pack (instance)
+	 * )
+	 *
+	 * @var EE_Messages_Template_Pack[]
+	 */
+	protected static $_TMP_PACKS = array();
+
+
+
+
+
 	/**
 	 * @return EED_Module
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
 	}
+
 
 
 
@@ -140,6 +157,70 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * This is used to retrieve the template pack for the given name.
+	 * Retrieved packs are cached on the static $_TMP_PACKS array.  If there is no class matching the given name then the default template pack is returned.
+	 *
+	 * @param string $template_pack_name This should correspond to the dbref of the template pack (which is also used in generating the Pack class name).
+	 *
+	 * @return EE_Messages_Template_Pack
+	 */
+	public static function get_template_pack( $template_pack_name ) {
+		if ( isset( self::$_TMP_PACKS[$template_pack_name] ) ) {
+			return self::$_TMP_PACKS[$template_pack_name];
+		}
+
+		//not set yet so let's attempt to get it.
+		$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template_pack_name ) ) );
+
+		if ( ! class_exists( $pack_class ) ) {
+			$pack_class = 'EE_Messages_Template_Pack_Default';
+			self::$_TMP_PACKS['default'] = empty( self::$_TMP_PACKS['default'] ) ? new $pack_class : self::$_TMP_PACKS['default'];
+			return self::$_TMP_PACKS['default'];
+		} else {
+			$pack = new $pack_class;
+			self::$_TMP_PACKS[$template_pack_name] = $pack;
+			return self::$_TMP_PACKS[$template_pack_name];
+		}
+	}
+
+
+
+
+	/**
+	 * Retrieves an array of all template packs.
+	 * Array is in the format array( 'dbref' => EE_Messages_Template_Pack )
+	 *
+	 * @return EE_Messages_Template_Pack[]
+	 */
+	public static function get_template_packs() {
+		//glob the defaults directory for messages
+		$templates = glob( EE_LIBRARIES . 'messages/defaults/*', GLOB_ONLYDIR );
+		$template_packs = array();
+		foreach( $templates as $template_path ) {
+			//grab folder name
+			$template = basename( $template_path );
+
+			//is this already set?
+			if ( isset( self::$_TMP_PACKS[$template] ) )
+				continue;
+
+			//setup classname.
+			$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template ) ) );
+
+			if ( ! class_exists( $pack_class ) )
+				continue;
+
+			$template_packs[$template] = new $pack_class;
+		}
+
+		$template_packs = apply_filters( 'FHEE__EED_Messages__get_template_packs__template_packs', $template_packs );
+		self::$_TMP_PACKS = array_merge( self::$_TMP_PACKS, $template_packs );
+		return self::$_TMP_PACKS;
+	}
+
+
+
 
 
 	/**
@@ -219,6 +300,7 @@ class EED_Messages  extends EED_Module {
 			'messages/data_class',
 			'messages/validators',
 			'messages/validators/email',
+			'messages/validators/html',
 			'shortcodes'
 			);
 		$paths = array();

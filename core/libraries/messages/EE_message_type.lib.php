@@ -205,6 +205,43 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * This allows each message type to set what alternate messenger&message type combination can be used for fallback default templates if there are no specific ones defined for this messenger and message type.  Should be in the format:
+	 *
+	 * array( 'messenger' => 'message_type', 'another_messenger' => another_message_type );
+	 *
+	 * This is set in the message type constructor.
+	 *
+	 * @var array
+	 */
+	protected $_master_templates = array();
+
+
+
+	/**
+	 * This holds whatever the set template pack is for a message template group when generating messages.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_template_pack;
+
+
+
+	/**
+	 * This holds whatever the set variation is for a message template group when generating messages.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
+
+
 	public function __construct() {
 		$this->_messages_item_type = 'message_type';
 		$this->_set_contexts();
@@ -379,28 +416,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
 		}
 
-		$base_url = get_site_url();
-
-		//add on common params
-		$query_args = array(
-			'ee' => 'msg_url_trigger',
-			'snd_msgr' => $sending_messenger,
-			'gen_msgr' => $this->_active_messenger->name,
-			'message_type' => $this->name,
-			'context' => $context,
-			'token' => $registration->reg_url_link(),
-			'GRP_ID' => $this->_GRP_ID,
-			'id' => $this->_get_id_for_msg_url( $context, $registration )
-			);
-
-		$url = add_query_arg( $query_args, $base_url );
-
-
-		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
-		$url = apply_filters( 'FHEE__EE_message_type__get_url_trigger__url', $url, $this );
-		$url = apply_filters( 'FHEE__' . get_class( $this ) . '__get_url_trigger__url', $url, $this );
-
-		return $url;
+		EE_Registry::instance()->load_helper('MSG_Template');
+		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $this->_active_messenger->name, $context, $this->name, $registration, $this->_GRP_ID, $this->_get_id_for_msg_url( $context, $registration ) );
 	}
 
 
@@ -524,6 +541,20 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * This just returns the (filtered) _master_templates property.
+	 * @see property definition for documentation.
+	 *
+	 * @return array
+	 */
+	public function get_master_templates() {
+		//first class specific filter then filter that by the global filter.
+		$master_templates = apply_filters( 'FHEE__' . get_class( $this ) . '__get_master_templates', $this->_master_templates );
+		return apply_filters( 'FHEE__EE_message_type__get_master_templates', $master_templates, $this );
+	}
+
+
+
 
 	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->_templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
@@ -575,6 +606,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _process_data() {
 		//at a minimum, we NEED EE_Attendee objects.
+
 		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 
@@ -599,12 +631,18 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	private function _set_default_addressee_data() {
 		$this->_default_addressee_data = array(
+			'billing' => $this->_data->billing,
+			'taxes' => $this->_data->taxes,
+			'tax_line_items' => $this->_data->tax_line_items,
+			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
+			'payments' => $this->_data->payments,
 			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
 			'reg_objs' => $this->_data->reg_objs,
 			'registrations' => $this->_data->registrations,
 			'datetimes' => $this->_data->datetimes,
 			'tickets' => $this->_data->tickets,
+			'line_items_with_children' => $this->_data->line_items_with_children,
 			'questions' => $this->_data->questions,
 			'answers' => $this->_data->answers,
 			'txn_status' => $this->_data->txn_status,
@@ -841,6 +879,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		$templates = $mtpg->context_templates();
 
+		//set the template pack and the variation for the given message template group.
+		$this->_template_pack = $mtpg->get_template_pack();
+		$this->_variation = $mtpg->get_template_pack_variation();
+
+
 
 		foreach ( $templates as $context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
@@ -862,8 +905,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 			foreach ( $addressees as $addressee ) {
 				$message = $this->_setup_message_object($context, $addressee);
 				//only assign message if everything went okay
-				if ( $message )
+				if ( $message ) {
+					$message->template_pack = $this->_template_pack;
+					$message->variation = $this->_variation;
 					$this->messages[] = $message;
+				}
 			}
 		}
 	}

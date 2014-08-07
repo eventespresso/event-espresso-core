@@ -47,28 +47,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$org_config = EE_Registry::instance()->CFG->organization;
-		$default_address = trim($org_config->address_1);
-		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->address_2);
-		$default_address .= '<br />' . trim($org_config->city);
-		$state_obj = EE_Registry::instance()->load_model('State')->get_one_by_ID($org_config->STA_ID);
-		if($state_obj){
-			$default_address .= ',' . $state_obj->name();
-		}
-		$country_obj = EE_Registry::instance()->load_model('Country')->get_one_by_ID($org_config->CNT_ISO);
-		if($country_obj){
-			$default_address .= '<br />' . $country_obj->name();
-		}
-
-		$default_address .= '<br />' . trim($org_config->zip);
 		$this->_payment_settings['active'] = '';
-		$this->_payment_settings['pdf_title'] = __('Invoice Payments', 'event_espresso');
-		$this->_payment_settings['pdf_instructions'] = __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.', 'event_espresso');
-		$this->_payment_settings['page_instructions'] = __('Please send Invoice to the address below. Payment must be received within 48 hours of event date.', 'event_espresso');
-		$this->_payment_settings['payable_to'] = trim($org_config->name);
-		$this->_payment_settings['payment_address'] = $default_address;
+		$this->_payment_settings['page_instructions'] = __('Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.', 'event_espresso');
+		$this->_payment_settings['payment_address'] = '';
 		$this->_payment_settings['invoice_logo_url'] = '';
 		$this->_payment_settings['show'] = true;
-		$this->_payment_settings['invoice_css'] = '';
 		$this->_payment_settings['type'] = 'off-line';
 		$this->_payment_settings['display_name'] = __('Invoice','event_espresso');
 		$this->_payment_settings['current_path'] = '';
@@ -76,14 +59,10 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	}
 
 	protected function _update_settings() {
-		$this->_payment_settings['pdf_title'] = trim(strip_tags($_POST['pdf_title']));
-		$this->_payment_settings['pdf_instructions'] = trim(strip_tags($_POST['pdf_instructions']));
 		$this->_payment_settings['page_instructions'] = trim(strip_tags($_POST['page_instructions']));
-		$this->_payment_settings['payable_to'] = trim(strip_tags($_POST['payable_to']));
 		$this->_payment_settings['payment_address'] = trim(strip_tags($_POST['payment_address']));
 		$this->_payment_settings['invoice_logo_url'] = trim(strip_tags($_POST['invoice_logo_url']));
 		$this->_payment_settings['show'] = $_POST['show'];
-		$this->_payment_settings['invoice_css'] = trim(strip_tags($_POST['invoice_css']));
 		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
@@ -91,47 +70,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		require_once('lib/invoice_functions.php');
 		$themes = espresso_invoice_template_files($this->_path);
 
-//		$this->_payment_settings['pdf_title'] = isset( $this->_payment_settings['pdf_title'] ) ? $this->_payment_settings['pdf_title'] : '';
-//		$this->_payment_settings['pdf_instructions'] = isset( $this->_payment_settings['pdf_instructions'] ) ? $this->_payment_settings['pdf_instructions'] : '';
-//		$this->_payment_settings['page_instructions'] = isset( $this->_payment_settings['page_instructions'] ) ? $this->_payment_settings['page_instructions'] : '';
-//		$this->_payment_settings['payable_to'] = isset( $this->_payment_settings['payable_to'] ) ? $this->_payment_settings['payable_to'] : '';
-//		$this->_payment_settings['payment_address'] = isset( $this->_payment_settings['payment_address'] ) ? $this->_payment_settings['payment_address'] : '';
-//		$this->_payment_settings['invoice_logo_url'] = isset( $this->_payment_settings['invoice_logo_url'] ) ? $this->_payment_settings['invoice_logo_url'] : '';
-//		$this->_payment_settings['show'] = isset( $this->_payment_settings['show'] ) ? $this->_payment_settings['show'] : '';
-//		$this->_payment_settings['invoice_css'] = isset( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : '';
-//		$this->_payment_settings['button_url'] = isset( $this->_payment_settings['button_url'] ) ? $this->_payment_settings['button_url'] : '';
-
 		?>
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Display Settings', 'event_espresso'); ?></h4></th>
 					<td>
-						<span class="description"><?php _e('The following settings affect the content and/or appearance of the downloadable PDF invoice.', 'event_espresso'); ?></span>
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<label for="base-invoice-select"><?php _e('Select Stylesheet', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<select id="base-invoice-select" name="invoice_css">
-						<?php
-						$this->_payment_settings['invoice_css'] = ! empty( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : 'simple.css';
-						foreach ($themes as $theme) {
-							$selected = ( $theme == $this->_payment_settings['invoice_css'] ) ? 'selected="selected"' : ''; ?>
-							<option value="<?php echo $theme ?>" <?php echo $selected; ?>><?php echo $theme; ?></option>
-						<?php } ?>
-						</select>
-						<span class="description"><?php _e('Load a custom/pre-made style sheet <br />to change the look of your invoices.', 'event_espresso'); ?></span>
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<label for="pdf_instructions"><?php _e('Instructions', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<textarea name="pdf_instructions" cols="50" rows="5"><?php echo stripslashes_deep($this->_payment_settings['pdf_instructions']); ?></textarea>
+						<span class="description"><?php _e('Invoice layout and style is controlled by the corresponding message type via the messages templates admin.  The settings here are shared among all Invoice and Receipt templates.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 
@@ -147,7 +90,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 								<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 							</span><br/>
 
-							<span class="description"><?php _e('(Logo for the top left of the invoice)', 'event_espresso'); ?></span>
+							<span class="description"><?php _e('(The [INVOICE_LOGO] and [INVOICE_LOGO_URL] message template shortcodes will parse to either the image uploaded here, or if blank, the organization logo set via the "Your Organization Settings" page.).', 'event_espresso'); ?></span>
 						</p>
 					</td>
 				</tr>
@@ -171,16 +114,8 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 				<tr>
 					<th>
-						<label for="pdf_title"><?php _e('Invoice Title', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<input class="regular-text" type="text" name="pdf_title" id="pdf_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['pdf_title']); ?>" />
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<label for="page_instructions"><?php _e('Invoice Instructions', 'event_espresso'); ?></label>
+						<label for="page_instructions"><?php _e('Confirmation Text:', 'event_espresso'); ?></label>
+						<p class="description"><?php _e('This text appears on the thank you page after a registration using Invoice as the payment method.', 'event_espresso'); ?></p>
 					</th>
 					<td>
 						<textarea name="page_instructions" cols="50" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['page_instructions'])); ?></textarea>
@@ -189,16 +124,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 				<tr>
 					<th>
-						<label for="payable_to"><?php _e('Payable To', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<input class="regular-text" type="text" name="payable_to" id="payable_to" size="30" value="<?php echo trim(stripslashes_deep($this->_payment_settings['payable_to'])); ?>" />
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<label for="payment_address"><?php _e('Address to Send Payment', 'event_espresso'); ?></label>
+						<label for="payment_address"><?php _e('Extra Info:', 'event_espresso'); ?></label>
 					</th>
 					<td>
 						<textarea name="payment_address" cols="50" rows="5"><?php echo trim($this->_payment_settings['payment_address']); ?></textarea>

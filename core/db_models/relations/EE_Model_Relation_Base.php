@@ -92,7 +92,7 @@ abstract class EE_Model_Relation_Base{
 	 * @return EEM_Base
 	 */
 	protected function _get_model($model_name){
-		$modelInstance=call_user_func("EEM_".$model_name."::instance");
+		$modelInstance = EE_Registry::instance()->load_model( $model_name );
 		$modelInstance->set_timezone( $this->_timezone );
 		return $modelInstance;
 	}

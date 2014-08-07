@@ -145,7 +145,8 @@ $has_answers = $question->has_answers();
 
 							<?php
 							$count=0;
-							if ( $question_options = $question->options() ) {
+							$question_options = $question->options();
+							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
 									$disabled =  $has_answers ? ' disabled="disabled"' : '';
 									$id = $has_answers ? '_disabled' : '';

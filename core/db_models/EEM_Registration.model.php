@@ -164,6 +164,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Registration
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 
 
