@@ -236,6 +236,9 @@ final class EE_System {
 		</p>
 		</div>
 		<?php
+		if ( ! function_exists( 'deactivate_plugins' )) {
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
 		deactivate_plugins( EE_PLUGIN_BASENAME );
 	}
 
@@ -774,6 +777,9 @@ final class EE_System {
 			foreach ( $active_plugins as $active_plugin ) {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
+						if ( ! function_exists( 'deactivate_plugins' )) {
+							require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+						}
 						deactivate_plugins( $active_plugin );
 						unset( $_GET['activate'] );
 					}
