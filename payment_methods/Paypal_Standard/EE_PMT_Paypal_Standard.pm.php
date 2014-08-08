@@ -1,13 +1,27 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+/**
+ *
+ * Class EE_PMT_Paypal_Standard
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
  */
 class EE_PMT_Paypal_Standard extends EE_PMT_Base{
+
 	const shipping_info_none = 1;
 	const shipping_info_optional = 0;
 	const shipping_info_required = 2;
+
+
+
+	/**
+	 * @param null $pm_instance
+	 * @return \EE_PMT_Paypal_Standard
+	 */
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
@@ -15,15 +29,29 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'paypal-logo.png';
 	}
+
+
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @return NULL
+	 */
 	public function generate_new_billing_form() {
 		return NULL;
 	}
+
+
+
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
 	public function generate_new_settings_form() {
 		$form =  new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'paypal_id'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), $this->get_help_tab_link()),
-					'html_help_text'=>  __("Typically payment@yourdomain.com", 'event_espresso'),
+					'html_help_text'=>  __("Typically payment@example-domain.com", 'event_espresso'),
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
 					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
@@ -35,7 +63,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 				)),
 				'paypal_shipping' => new EE_Yes_No_Input(array(
 					'html_label_text' => sprintf( __( 'Paypal Calculates Shipping %s', 'event_espresso' ), $this->get_help_tab_link() ),
-					'html_help_text' => __('Wether Paypal should add shipping surcharges', 'event_espresso'),
+					'html_help_text' => __('Whether Paypal should add shipping surcharges', 'event_espresso'),
 					'default' => FALSE
 				)),
 				'shipping_details'=>new EE_Select_Input(array(
@@ -51,6 +79,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		$form->get_input('shipping_details')->set_html_label_text(sprintf(__("Shipping Address Options %s", "event_espresso"),  $this->get_help_tab_link()));
 		return $form;
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
@@ -64,6 +95,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			)
 		);
 	}
+
+
+
 	/**
 	 * Logic to be accomplished when the payment attempt is complete.
 	 * Most payment methods don't need to do anything at this point; but some, like Mijireh, do.

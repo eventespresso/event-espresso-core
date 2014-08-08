@@ -62,7 +62,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
-
+		EE_Registry::reset();
 	}
 
 	public function _short_circuit_db_implicit_commits( $short_circuit = FALSE, $table_name, $sql ){
@@ -358,6 +358,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				if( ! isset( $args['CNT_ISO' ] )){
 					$args[ 'CNT_ISO' ] = 'US';
 				}
+			}
+			elseif( $related_model_name == 'Status' ){
+				$fk = $model->get_foreign_key_to($related_model_name);
+				$args[ $fk->get_name() ] = $fk->get_default_value();
 			}elseif($relation instanceof EE_Belongs_To_Relation) {
 				$obj = $this->new_model_obj_with_dependencies($related_model_name);
 				$fk = $model->get_foreign_key_to($related_model_name);

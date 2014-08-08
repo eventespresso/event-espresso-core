@@ -174,6 +174,14 @@ final class EE_Registry {
 		}
 		return self::$_instance;
 	}
+	/**
+	 * Resets the registry- for now that means just the LIB property
+	 * @return EE_Registry
+	 */
+	public static function reset(){
+		self::$_instance->LIB = new stdClass();
+		return self::instance();
+	}
 
 
 

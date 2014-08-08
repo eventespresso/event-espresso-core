@@ -20,6 +20,8 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
 	public function test_process_payment__onsite__success(){
+		//setup all the $_REQUEST globals etc because messages require them
+		$this->go_to('http://localhost/');
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
 		$billing_form = $pm->type_obj()->billing_form();

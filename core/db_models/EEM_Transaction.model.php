@@ -82,7 +82,7 @@ class EEM_Transaction extends EEM_Base {
 				'TXN_timestamp'=>new EE_Datetime_Field('TXN_timestamp', __('date when transaction was created','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
 				'TXN_paid'=>new EE_Money_Field('TXN_paid', __('Amount paid towards transaction to date','event_espresso'), false, 0),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Transaction::incomplete_status_code, 'Status'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Transaction::failed_status_code, 'Status'),
 				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized session data','event_espresso'), true, ''),
 				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, ''),
 				'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __("Last Used Payment Method", 'event_espresso'), true, NULL, 'Payment_Method'),
@@ -124,16 +124,16 @@ class EEM_Transaction extends EEM_Base {
 		return self::$_instance;
 	}
 
+
+
 	/**
 	 * resets the model and returns it
 	 * @return EEM_Transaction
 	 */
-	public static function reset(){
+	public static function reset( $timezone = NULL ){
 		self::$_instance = NULL;
-		return self::instance();
+		return self::instance( $timezone );
 	}
-
-
 
 
 

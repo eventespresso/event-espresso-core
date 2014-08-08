@@ -30,9 +30,9 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html .= 'id="' . $this->_input->html_id() . '" ';
 		$html .= 'name="' . $this->_input->html_name() . '"';
 		$class = $this->_input->required() ? 'ee-needs-value ' . $this->_input->html_class() : $this->_input->html_class();
-		$html .= 'class="' . $class . '" ';
+		$html .= ' class="' . $class . '" ';
 		$html .= 'style="' . $this->_input->html_style() . '"';
-		$html .= '/>"';
+		$html .= '/>';
 
 		EEH_Formatter::indent( 1 );
 		if ( EEH_Array::is_multi_dimensional_array( $this->_input->options() )) {

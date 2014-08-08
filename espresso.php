@@ -146,7 +146,7 @@ function espresso_duplicate_plugin_error() {
 	<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
 	</div>
 	<?php
-	deactivate_plugins( plugin_basename( __FILE__ ));
+	EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
 }
 
 
@@ -345,7 +345,16 @@ interface EEMI_Payment {
 }
 
 interface EEI_Base{
+	/**
+	 * gets the unique ID of the model object. If it hasn't been saved yet
+	 * to the database, this should be 0 or NULL
+	 */
 	function ID();
+	/**
+	 * Returns an array where keys are field names and values are their values
+	 * @return array
+	 */
+	function model_field_array();
 }
 interface EEI_Transaction extends EEI_Base{
 	/**
@@ -354,7 +363,7 @@ interface EEI_Transaction extends EEI_Base{
 	 */
 	function last_payment();
 	/**
-	 * Gets the toal that should eb paid for this transaction
+	 * Gets the total that should eb paid for this transaction
 	 * @return float
 	 */
 	function total();
@@ -416,6 +425,14 @@ interface EEI_Line_Item{
 	 * @return float
 	 */
 	function get_total_tax();
+
+	/**
+	 * Saves this line item to the DB, and recursively saves its descendants.
+	 * Also sets the transaction on this line item and all its descendants before saving
+	 * @param int $txn_id if none is provided, assumes $this->TXN_ID()
+	 * @return int count of items saved
+	 */
+	public function save_this_and_descendants_to_txn( $txn_id = NULL );
 }
 
 interface EEI_Registration{
@@ -437,6 +454,37 @@ interface EEMI_Payment_Log{
 	 * @return EEI_Log
 	 */
 	function gateway_log($message,$id,$model_name);
+}
+interface EEHI_Line_Item{
+	/**
+	 * Adds an item to the purchase in the right spot
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Line_Item $line_item
+	 */
+	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item );
+	/**
+	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
+	 * tax and updates the total line item accordingly
+	 * @param EE_Line_Item $total_line_item
+	 * @param float $amount
+	 * @param string $name
+	 * @param string $description
+	 * @return EE_Line_Item the new tax created
+	 */
+	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
+
+	/**
+	 * Adds a simple item ( unrelated to any other model object) to the total line item,
+	 * in the correct spot in the line item tree.
+	 * @param EE_Line_Item $total_line_item
+	 * @param string $name
+	 * @param float $unit_price
+	 * @param string $description
+	 * @param int $quantity
+	 * @param boolean $taxable
+	 * @return boolean success
+	 */
+	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE );
 }
 
 interface EEHI_Template{
