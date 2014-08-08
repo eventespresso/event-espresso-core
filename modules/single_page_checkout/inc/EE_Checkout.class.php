@@ -217,7 +217,14 @@ class EE_Checkout {
 	public function set_current_step( $current_step = 'attendee_information' ) {
 		// grab what step we're on
 		$this->current_step = isset( $this->reg_steps[ $current_step ] ) ? $this->reg_steps[ $current_step ] : reset( $this->reg_steps );
-		$this->current_step->set_is_current_step( TRUE );
+		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
+			$this->current_step->set_is_current_step( TRUE );
+		} else {
+			EE_Error::add_error(
+				__( 'The current step could not be set.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
 	}
 
 
