@@ -89,8 +89,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// set ajax hooks
 		add_action( 'wp_ajax_espresso_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_nopriv_espresso_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
-		add_action( 'wp_ajax_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
-		add_action( 'wp_ajax_nopriv_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
+//		add_action( 'wp_ajax_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
+//		add_action( 'wp_ajax_nopriv_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
 	}
 
 
@@ -184,7 +184,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	ajax_process_registration_steps
 	 */
 	public static function process_reg_step() {
+		EED_Single_Page_Checkout::load_request_handler();
+		EE_Registry::instance()->REQ->set( 'action', 'process_reg_step' );
 		EED_Single_Page_Checkout::instance()->_initialize();
+	}
+
+
+
+	/**
+	 *    load_request_handler
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public static function load_request_handler() {
+		// load core Request_Handler class
+		if ( ! isset( EE_Registry::instance()->REQ )) {
+			EE_Registry::instance()->load_core( 'Request_Handler' );
+		}
 	}
 
 
@@ -211,9 +228,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize() {
 		// load classes
-		if ( ! isset( EE_Registry::instance()->REQ )) {
-			EE_Registry::instance()->load_core( 'Request_Handler' );
-		}
+		EED_Single_Page_Checkout::load_request_handler();
 		// setup the EE_Checkout object
 		$this->checkout = $this->_initialize_checkout();
 		// filter continue_reg
@@ -260,6 +275,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$checkout = EE_Registry::instance()->SSN->get_session_data( 'checkout' );
 		// verify
 		if ( ! $checkout instanceof EE_Checkout ) {
+			echo '<h2 style="color:#E76700;"> ! $checkout instanceof EE_Checkout <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// instantiate EE_Checkout object for handling the properties of the current checkout process
 			$checkout = EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_Checkout', 'class', array(), FALSE  );
 			// verify again
@@ -312,6 +328,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
 		// finally re-sort based on the reg step class order properties
 		$this->checkout->sort_reg_steps();
+		// pass basic reg step data to JS
+		foreach ( $this->checkout->reg_steps as $reg_step ) {
+			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
+		}
 	}
 
 
@@ -630,16 +650,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function translate_js_strings() {
+		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required question.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['required_multi_field'] = __(' is a required question. Please enter a value for at least one of the options.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('Please answer all required questions before proceeding.', 'event_espresso');
-		EE_Registry::$i18n_js_strings['attendee_info_copied'] = __('The attendee information was successfully copied.<br/>Please ensure the rest of the registration form is completed before proceeding.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['attendee_info_copied'] = sprintf( __('The attendee information was successfully copied.%sPlease ensure the rest of the registration form is completed before proceeding.', 'event_espresso'), '<br/>' );
 		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['no_payment_method'] = __( 'Please select a method of payment in order to continue.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['process_registration'] = __( 'Please wait while we process your registration.<br />Do not refresh the page or navigate away while this is happening.<br/> Thank you for your patience.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
 	}
@@ -660,10 +681,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->translate_js_strings();
 		$this->checkout->current_step->translate_js_strings();
 		// load JS
-//		wp_enqueue_script( 'underscore' );
-//		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
-//		wp_enqueue_script( 'single_page_checkout' );
-//		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_enqueue_script( 'underscore' );
+		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script( 'single_page_checkout' );
+		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 		// add css and JS for current step
 		$this->checkout->current_step->enqueue_styles_and_scripts();
 	}
@@ -677,40 +698,43 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return 	string
 	 */
 	private function _display_spco_reg_form() {
-		// form details
-		$form_args = array(
-			'name' 	=> 'single-page-checkout',
-			'html_id' 	=> 'ee-single-page-checkout-dv',
-			//template files
-			'layout_strategy' => is_admin() ?
-				new EE_Div_Per_Section_Layout() :
-				new EE_Template_Layout( array(
-					'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
-					'begin_template_file' 			=> NULL,
-					'input_template_file' 				=> NULL,
-					'subsection_template_file' 	=> NULL,
-					'end_template_file' 				=> NULL,
-					'template_args' => array(
-							'empty_cart' 		=> count( $this->checkout->transaction->registrations() ) < 1 ? TRUE : FALSE,
-							'revisit' 				=> $this->checkout->revisit,
-							'reg_steps' 			=> $this->checkout->reg_steps,
-							'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
-							'empty_msg' 		=> apply_filters(
-								'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
-								sprintf(
-									__( 'You need to %sselect at least one event%s before you can proceed with the registration process.', 'event_espresso' ),
-									'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="' . __( 'Return to Events list', 'event_espresso' ) . '">',
-									'</a>'
+//		d( $this->checkout );
+		$this->checkout->registration_form = new EE_Form_Section_Proper(
+			array(
+				'name' 	=> 'single-page-checkout',
+				'html_id' 	=> 'ee-single-page-checkout-dv',
+				//template files
+				'layout_strategy' => is_admin() ?
+					new EE_Div_Per_Section_Layout() :
+					new EE_Template_Layout(
+						array(
+							'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
+							'begin_template_file' 			=> NULL,
+							'input_template_file' 				=> NULL,
+							'subsection_template_file' 	=> NULL,
+							'end_template_file' 				=> NULL,
+							'template_args' => array(
+								'empty_cart' 		=> count( $this->checkout->transaction->registrations() ) < 1 ? TRUE : FALSE,
+								'revisit' 				=> $this->checkout->revisit,
+								'reg_steps' 			=> $this->checkout->reg_steps,
+								'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
+								'empty_msg' 		=> apply_filters(
+									'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
+									sprintf(
+										__( 'You need to %sselect at least one event%s before you can proceed with the registration process.', 'event_espresso' ),
+										'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="' . __( 'Return to Events list', 'event_espresso' ) . '">',
+										'</a>'
+									)
 								)
 							)
 						)
-				)
+					)
 			)
 		);
-//		d( $this->checkout );
-		$this->checkout->registration_form = new EE_Form_Section_Proper( $form_args );
 		// load template and add to output sent that gets filtered into the_content()
 		EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
+		// store our progress so far
+		$this->checkout->stash_transaction_and_checkout();
 	}
 
 
