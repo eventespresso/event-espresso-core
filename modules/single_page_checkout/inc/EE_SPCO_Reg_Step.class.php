@@ -337,13 +337,14 @@ abstract class EE_SPCO_Reg_Step {
 	 */
 	public function reg_step_submit_button() {
 		$sbmt_btn = new EE_Submit_Input( array(
-			'layout_strategy' => new EE_Div_Per_Section_Layout(),
-			'html_name' 		=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-			'html_id' 				=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-			'html_class' 		=> 'spco-next-step-btn',
-			'default'				=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
+			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
+			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+			'html_id' 							=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+			'html_class' 					=> 'spco-next-step-btn',
+			'other_html_attributes' 	=> ' rel="' . $this->slug() . '"',
+			'default'							=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
 		));
-		$sbmt_btn->set_button_css_attributes( TRUE, 'large', 'rel="' . $this->slug() . '"' );
+		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
 		ob_start();
 		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
 		echo '<div id="spco-' . $this->slug() . '-whats-next-buttons-dv" class="spco-whats-next-buttons">';
