@@ -137,10 +137,7 @@ function espresso_duplicate_plugin_error() {
 	<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
 	</div>
 	<?php
-	if ( ! function_exists( 'deactivate_plugins' )) {
-		require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-	}
-	deactivate_plugins( plugin_basename( __FILE__ ));
+	EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
 }
 
 
