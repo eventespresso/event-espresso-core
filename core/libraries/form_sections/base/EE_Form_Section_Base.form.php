@@ -54,6 +54,12 @@ abstract class EE_Form_Section_Base {
 	protected $_html_style;
 
 	/**
+	 * $_other_html_attributes
+	 * @var string
+	 */
+	protected $_other_html_attributes;
+
+	/**
 	 * The form section of which this form section is a part
 	 * @var EE_Form_Section_Proper
 	 */
@@ -188,6 +194,24 @@ abstract class EE_Form_Section_Base {
 	 */
 	public function set_html_style( $html_style ) {
 		$this->_html_style = $html_style;
+	}
+
+
+
+	/**
+	 * @param string $other_html_attributes
+	 */
+	public function set_other_html_attributes( $other_html_attributes ) {
+		$this->_other_html_attributes = $other_html_attributes;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function other_html_attributes() {
+		return $this->_other_html_attributes;
 	}
 
 
