@@ -82,20 +82,21 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			// generate hidden inputs for managing the reg process
 			$subsections['hidden_inputs'] = $this->reg_step_hidden_inputs();
 		}
-		// build array of form options
-		$form_args = array(
-			'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-			'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-			'subsections' 			=> $subsections,
-			'layout_strategy'		=> is_admin() ?
+		$this->reg_form = new EE_Form_Section_Proper(
+			array(
+				'name' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
+				'html_id' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
+				'subsections' 			=> $subsections,
+				'layout_strategy'		=> is_admin() ?
 					new EE_Div_Per_Section_Layout() :
-					new EE_Template_Layout( array(
-							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
-							'template_args' 					=> $template_args
+					new EE_Template_Layout(
+						array(
+							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'template_args' 				=> $template_args
 						)
 					),
+			)
 		);
-		$this->reg_form = new EE_Form_Section_Proper( $form_args );
 
 	}
 
