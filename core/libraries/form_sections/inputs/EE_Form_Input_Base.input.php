@@ -163,7 +163,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
-		
+
 		$this->_display_strategy->_construct_finalize($this);
 
 		if ( $this->_validation_strategies ){
@@ -643,7 +643,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			default :
 				$button_css_attributes .= '';
 		}
-		$this->_button_css_attributes = $button_css_attributes . ' ' . $other_attributes;
+		$this->_button_css_attributes .= ! empty( $other_attributes ) ? $button_css_attributes . ' ' . $other_attributes : $button_css_attributes;
 	}
 
 
