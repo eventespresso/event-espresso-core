@@ -527,7 +527,7 @@ abstract class EE_Meta_Capability_Map {
 	 */
 	final public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		$this->_ensure_is_model();
-		$this->_map_meta_caps( $caps, $cap, $user_id, $args );
+		return $this->_map_meta_caps( $caps, $cap, $user_id, $args );
 	}
 
 
@@ -540,9 +540,12 @@ abstract class EE_Meta_Capability_Map {
 	 * @return void
 	 */
 	private function _ensure_is_model() {
-		//verify that $this->model is a string that corresponds with a EEM_Base_Class.
+		//is it already instantiated?
+		if ( $this->model instanceof EEM_Base ) {
+			return;
+		}
 		//ensure is string
-		$this->model = (string) $model;
+		$this->model = (string) $this->model;
 		$this->model = class_exists( $this->model ) ? call_user_func( array( $this->model, 'instance' ) ) : null;
 
 		if ( ! $this->model instanceof EEM_Base ) {
@@ -597,7 +600,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
@@ -677,8 +680,8 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
-		return parent::map_meta_caps( $caps, $cap, $user_id, $args );
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
+		return parent::_map_meta_caps( $caps, $cap, $user_id, $args );
 	}
 }
 
@@ -710,7 +713,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped cap;
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
@@ -785,7 +788,7 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
@@ -846,7 +849,7 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
