@@ -133,13 +133,18 @@ class EEH_MSG_Template {
 	/**
 	 * Updates all message template groups matching the incoming arguments to inactive status.
 	 *
-	 * @param string $messenger      The messenger slug.
+	 * @param string $messenger      The messenger slug. If empty then all templates matching the message type are marked inactive.  Otherwise only templates matching the messenger and message type.
 	 * @param string $message_type The message type slug.  If empty then all templates matching the messenger are marked inactive. Otherwise only templates matching the messenger and message type.
 	 *
 	 * @return int  count of updated records.
 	 */
-	public static function update_to_inactive( $messenger, $message_type = '' ) {
-		$query_args[0]['MTP_messenger'] = $messenger;
+	public static function update_to_inactive( $messenger = '', $message_type = '' ) {
+		if ( empty( $messenger ) && empty( $message_type ) )
+			return 0;
+		if ( ! empty( $messenger ) ) {
+			$query_args[0]['MTP_messenger'] = $messenger;
+		}
+
 		if ( ! empty( $message_type ) ) {
 			$query_args[0]['MTP_message_type'] = $message_type;
 		}
