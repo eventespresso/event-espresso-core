@@ -72,7 +72,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : NULL;
 
-
+		EE_Registry::instance()->load_lib( 'messages' );
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
