@@ -28,6 +28,8 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+
+
 	/**
 	 * The label for the menu item. (What shows up in the actual menu).
 	 *
@@ -223,6 +225,15 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 
 
 	/**
+	 * If included int incoming params, then this class will also register a Sub Menue Admin page with a different subtitle than the main menu item.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var string
+	 */
+	public $subtitle;
+
+	/**
 	 * The page to a icon used for this menu.
 	 *
 	 * @since  4.4.0
@@ -257,7 +268,11 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback ) : '';
+		$main =  $this->show_on_menu ? add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback ) : '';
+		if ( !empty( $this->subtitle ) && $this->show_on_menu ) {
+			add_submenu_page( $this->parent_slug, $this->subtitle, $this->subtitle, $this->capability, $this->menu_slug, $this->menu_callback );
+		}
+		return $main;
 	}
 } //end EE_Admin_Page_Main_Menu
 
