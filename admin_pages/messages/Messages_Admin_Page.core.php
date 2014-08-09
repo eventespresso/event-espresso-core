@@ -298,7 +298,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
                             'filename' => 'messages_templates'
                             ),
 						'message_template_shortcodes' => array(
-							'title' => __('Message Shortcodes', 'event_epresso'),
+							'title' => __('Message Shortcodes', 'event_espresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
                         'message_preview_help_tab' => array(
