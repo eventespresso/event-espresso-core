@@ -114,7 +114,7 @@ class EE_messages {
 			} else {
 				$this->_unset_active($active, $kind);
 				//set WP_Error
-				return EE_Error::add_error( sprintf( __("Missing messenger file set as inactive: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file, $msg_name), __FILE__, __FUNCTION__, __LINE__ );
+				return EE_Error::add_error( sprintf( __("Missing messages system file set as inactive: (%s) %s has been made inactive.", 'event_espresso'), $load_file, $msg_name), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
 		return $active_names;
