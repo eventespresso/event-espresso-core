@@ -545,14 +545,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
 				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
 			)
 		);
 	}
@@ -570,14 +562,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'in_use' => array(
 				'slug' => 'in_use',
 				'label' => __('In Use', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
@@ -654,10 +638,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			case 'in_use':
 				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global );
-				break;
-
-			case 'all':
-				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count );
 				break;
 
 			default:
