@@ -47,10 +47,11 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 		$this->_menu_map = new EE_Admin_Page_Main_Menu( array(
 			'menu_group' => 'main',
 			'menu_order' => 10,
+			'subtitle' => __('Events', 'event_espresso'),
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_events',
-			'menu_label' => EVENTS_LABEL,
+			'menu_label' => __('Event Espresso', 'events'),
 			'capability' => 'administrator',
 			'admin_init_page' => $this
 			));
