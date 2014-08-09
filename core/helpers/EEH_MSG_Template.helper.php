@@ -130,6 +130,24 @@ class EEH_MSG_Template {
 
 
 
+	/**
+	 * Updates all message template groups matching the incoming arguments to inactive status.
+	 *
+	 * @param string $messenger      The messenger slug.
+	 * @param string $message_type The message type slug.  If empty then all templates matching the messenger are marked inactive. Otherwise only templates matching the messenger and message type.
+	 *
+	 * @return int  count of updated records.
+	 */
+	public static function update_to_inactive( $messenger, $message_type = '' ) {
+		$query_args[0]['MTP_messenger'] = $messenger;
+		if ( ! empty( $message_type ) ) {
+			$query_args[0]['MTP_message_type'] = $message_type;
+		}
+		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => 0 ), $query_args );
+	}
+
+
+
 
 	/**
 	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
