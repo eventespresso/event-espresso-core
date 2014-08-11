@@ -674,7 +674,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			 $IN = array();
 			 foreach( $expired_sessions as $expired_session ) {
 				 $IN[] = "'" . $expired_session . "'";
-				 $IN[] = "'" . str_replace( '_transient_timeout_', '', $expired_session ) . "'";
+				 $IN[] = "'" . str_replace( 'timeout_', '', $expired_session ) . "'";
 			 }
 			 $IN = implode( ', ', $IN );
 			 if ( ! empty( $IN )) {
