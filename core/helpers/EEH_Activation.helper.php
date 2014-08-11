@@ -950,7 +950,7 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get active and installed  messengers/message types.
-		$active_messengers = get_option( 'ee_active_messengers' );
+		$active_messengers = get_option( 'ee_active_messengers', array() );
 		$installed = EEH_MSG_Template::get_installed_message_objects();
 		$ims = $installed['messengers'];
 		$imts = $installed['message_types'];
@@ -976,8 +976,8 @@ class EEH_Activation {
 
 			//messenger is active, so let's just make sure that any active message types not installed are deactivated.
 			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
-			foreach ( $mts as $mt ) {
-				if ( ! isset( $installed_mts[$mt] )  ) {
+			foreach ( $mts as $mt_name => $mt ) {
+				if ( ! isset( $installed_mts[$mt_name] )  ) {
 					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] );
 					EEH_MSG_Template::update_to_inactive( $messenger, $mt );
 				}
@@ -985,7 +985,7 @@ class EEH_Activation {
 		}
 
 		//all done! let's update the active_messengers.
-		update_option( 'ee_active_messengers', $active_messenger );
+		update_option( 'ee_active_messengers', $active_messengers );
 		return;
 	}
 
