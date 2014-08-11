@@ -29,12 +29,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2"><h4>
-				<?php _e('Category Description', 'event_espresso'); ?>
-			</h4></td>
-		</tr>
-		<tr>
 			<td colspan="2">
+				<h4 class="category_description_label">
+					<?php _e('Category Description', 'event_espresso'); ?>
+				</h4>
 				<?php echo $category_desc_editor; ?>
 				<table id="cat-descr-add-form" cellspacing="0">
 					<tbody>
