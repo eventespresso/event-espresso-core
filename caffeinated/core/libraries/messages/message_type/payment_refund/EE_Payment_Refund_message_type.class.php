@@ -17,27 +17,27 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Payment_Declined_message_type extends EE_message_type
+ * EE_Payment_Refund_message_type extends EE_message_type
  *
- * Handles frontend and backend payment notification messages for declined payments
+ * Handles frontend payment notification messages
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/message_type/EE_Payment_Declined_message_type.class.php
+ * @subpackage	includes/core/messages/message_type/EE_Payment_Refund_message_type.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Payment_Declined_message_type extends EE_message_type {
+class EE_Payment_Refund_message_type extends EE_message_type {
 
 	public function __construct() {
 
 		//setup type details for reference
-		$this->name = 'payment_declined';
-		$this->description = __('This message type is used for all declined payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso');
+		$this->name = 'payment_refund';
+		$this->description = __('This message type is used for all payment notification messages that go out for refunds.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('payment declined', 'event_espresso'),
-			'plural' => __('payments declined', 'event_espresso')
+			'singular' => __('refund issued', 'event_espresso'),
+			'plural' => __('refunds issued', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -80,7 +80,6 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->_default_field_content = apply_filters( 'FHEE_default_field_content_'.$this->name, $this->_default_field_content );
 	}
 
 
@@ -88,17 +87,17 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = __('Event Payment Details: Your payment was declined', 'event_espresso');
+			$content[$context] = 'Event Refund Details';
 		};
 		return $content;
 	}
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-declined-message-type-content.template.php');
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/templates/payment-refund-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-declined-message-type-event-list.template.php');
+			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
 			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
 		}
 
@@ -122,16 +121,13 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive when payment is declined', 'event_espresso')
+				'description' => __('This template is what event administrators will receive on a successful refund.', 'event_espresso')
 				),
 			'primary_attendee' => array(
 				'label' => __('Primary Registrant', 'event_espresso'),
-				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive when the payment is declined', 'event_espresso')
+				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful refund.', 'event_espresso')
 				)
 			);
 	}
 
-
 }
-
-// end of file:	includes/core/messages/types/EE_Onsite Payment_message.class.php

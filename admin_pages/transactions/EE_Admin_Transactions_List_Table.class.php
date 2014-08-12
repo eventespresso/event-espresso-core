@@ -117,9 +117,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 
-
-
-    function column_TXN_ID( $item ) {
+	/**
+	 * 		column_default
+	*/
+   function column_default($item, $column_name){
     	$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 				return '<a href="' . $view_lnk_url . '" title="Go to Transaction Details">' . $item->ID() . '</a>';
     }
@@ -293,13 +294,21 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
 
-	       $send_pay_lnk = '
-		<li>
-			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
-				<span class="ee-icon ee-icon-payment-reminder"></span>
-			</a>
-		</li>';
-		$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
+
+      		//only show payment reminder link if the message type is active.
+      		$EEMSG = EE_Registry::instance()->load_lib('messages');
+      		$active_mts = $EEMSG->get_active_message_types();
+      		if ( in_array( 'payment_reminder', $active_mts ) ) {
+			$send_pay_lnk = '
+			<li>
+				<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
+					<span class="ee-icon ee-icon-payment-reminder"></span>
+				</a>
+			</li>';
+			$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
+		} else {
+			$send_pay_lnk = '';
+		}
 
 	        $view_reg_lnk = '
 		<li>

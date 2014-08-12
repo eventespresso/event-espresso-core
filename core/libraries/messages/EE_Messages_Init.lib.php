@@ -152,7 +152,10 @@ class EE_Messages_Init extends EE_Base {
 	public function payment_reminder( EE_Transaction $transaction ) {
 		$this->_load_controller();
 		$data = array( $transaction, null );
-		$this->_EEMSG->send_message( 'payment_reminder', $data );
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'payment_reminder', $active_mts ) ) {
+			$this->_EEMSG->send_message( 'payment_reminder', $data );
+		}
 	}
 
 
@@ -170,15 +173,17 @@ class EE_Messages_Init extends EE_Base {
 		//let's set up the message type depending on the status
 		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
 
-		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
-
 		//verify this message type is present and active.  If it isn't then we use the default payment message type.
 		$active_mts = $this->_EEMSG->get_active_message_types();
 
+		$default_message_type = $payment->amount() < 0  ? 'payment_refund' : 'payment';
+
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
-
-		$this->_EEMSG->send_message( $message_type, $data);
+		//one final check
+		if ( in_array( $message_type, $active_mts ) ) {
+			$this->_EEMSG->send_message( $message_type, $data);
+		}
 	}
 
 
@@ -356,7 +361,10 @@ class EE_Messages_Init extends EE_Base {
 		$_POST['MTP_ID'] = (int) $mtp_id;
 
 		$this->_load_controller();
-		$this->_EEMSG->send_message('newsletter', $contacts);
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'newsletter', $active_mts ) ) {
+			$this->_EEMSG->send_message('newsletter', $contacts);
+		}
 	}
 
 

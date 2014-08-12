@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Email_Cancelled_Registration_Defaults class
+ * EE_Messages_Payment_Declined_Defaults class
  *
  * Handles all the defaults for Email messenger, Payment message type templates
  *
@@ -27,22 +27,22 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages_Email_Cancelled_Registration_Defaults extends EE_Message_Template_Defaults {
+class EE_Messages_Email_Payment_Declined_Defaults extends EE_Message_Template_Defaults {
 
 
 	protected function _set_props() {
 		$this->_m_name = 'email';
-		$this->_mt_name = 'cancelled_registration';
+		$this->_mt_name = 'payment_declined';
 	}
 
 
 	protected function _change_templates() {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
-		$this->_templates['attendee']['to'] = '[RECIPIENT_EMAIL]';
-		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/cancelled-registration-message-type-admin-main-content.template.php', TRUE );
-		$this->_templates['admin']['content']['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not-approved-registration-message-type-admin-attendee-list.template.php', TRUE );
-		$this->_templates['attendee']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-event-list.template.php', TRUE );
-		$this->_templates['attendee']['content']['attendee_list'] = '';
+		$this->_templates['primary_attendee']['to'] = '[PRIMARY_REGISTRANT_EMAIL]';
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/templates/admin/payment-declined-message-type-admin-content.template.php', TRUE );
+		$this->_templates['admin']['content']['event_list'] = '';
+		$this->_templates['admin']['content']['ticket_list'] = '';
+		$this->_templates['admin']['content']['attendee_list'] = '';
 	}
 }
