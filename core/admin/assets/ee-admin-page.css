@@ -565,6 +565,10 @@ label.error  { display: block; color: #FE2A00 !important; }
     padding-left: 15px;
 }
 
+.ee-decaf-img-review {
+	width: 100%;
+}
+
 .ee_dtt_timezone_string {
 	font-size: .8em;
 	display: block;
