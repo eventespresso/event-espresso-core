@@ -198,6 +198,7 @@ class EEH_Form_Fields {
 	 * 		['unique_id'] => 1 //defaults to empty string.  This is useful for when the fields generated are going to be used in a loop and you want to make sure that the field identifiers are unique from each other.
 	 * 		['dimensions'] => array(100,300), //defaults to empty array.  This is used by field types such as textarea to indicate cols/rows.
 	 * 		['tabindex'] => '' //this allows you to set the tabindex for the field.
+	 * 		['wpeditor_args'] => array() //if the type of field is wpeditor then this can optionally contain an array of arguments for the editor setup.
 	 *
 	 * @return array         an array of inputs for form indexed by field name, and in the following structure:
 	 *     [field_name] => array( 'label' => '{label_html}', 'field' => '{input_html}'
@@ -221,7 +222,8 @@ class EEH_Form_Fields {
 				'id' => $field_name,
 				'unique_id' => '',
 				'dimensions' => array('10', '5'),
-				'tabindex' => ''
+				'tabindex' => '',
+				'wpeditor_args' => array()
 				);
 			// merge defaults with passed arguments
 			$_fields = wp_parse_args( $field_atts, $defaults);
@@ -296,6 +298,7 @@ class EEH_Form_Fields {
 							'editor_class' => $class,
 							'tabindex' => $tabindex
 							);
+						$editor_settings = array_merge( $wpeditor_args, $editor_settings );
 						ob_start();
 						wp_editor( $value, $id, $editor_settings );
 						$editor = ob_get_contents();
