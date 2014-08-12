@@ -65,7 +65,64 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 				'help_tour' => array(),
 				'require_nonce' => FALSE
 				);
+
+		add_filter( 'FHEE_manage_event-espresso_page_espresso_messages_columns', array( $this, 'add_custom_mtps_columns' ), 10, 2 );
+		add_action( 'AHEE__EE_Admin_List_Table__column_actions__event-espresso_page_espresso_messages', array( $this, 'custom_mtp_create_button_column'), 10, 2 );
 	}
+
+
+
+	/**
+	 * This is the callback for the FHEE__manage_event-espresso_page_espresso_messages_columns to register the caffeinated columns for the global message templates list table.
+	 *
+	 * @since %VER%
+	 *
+	 * @param array  $columns   Original defined list of columns
+	 * @param string $screen_id The unique screen id for the page.
+	 */
+	public function add_custom_mtps_columns( $columns, $screen_id ) {
+		if ( $screen_id !== 'espresso_messages_default' ) {
+			return $columns;
+		}
+
+		$columns['actions'] = '';
+		return $columns;
+	}
+
+
+
+
+	/**
+	 * Callback for FHEE__EE_Admin_List_Table__column_actions__event-espresso_page_espresso_messages action that allows for adding the content for the registered "action" column.
+	 *
+	 * @since %VER%
+	 *
+	 * @param EE_Base_Class
+	 * @param string $screen_id Unique screen id for the page
+	 *
+	 * @return string html content for the page.
+	 */
+	public function custom_mtp_create_button_column( $item, $screen_id ) {
+		if ( $screen_id !== 'espresso_messages_default' ) {
+			return '';
+		}
+
+		//first we consider whether this template has override set.  If it does then that means no custom templates can be created from this template as a base.  So let's just skip the button creation.
+		if ( $item->get('MTP_is_override' ) )
+			return '';
+
+
+		$create_args = array(
+			'GRP_ID' => $item->ID(),
+			'messenger' => $item->messenger(),
+			'message_type' => $item->message_type(),
+			'action' => 'add_new_message_template'
+			);
+		$create_link = EE_Admin_Page::add_query_args_and_nonce( $create_args, EE_MSG_ADMIN_URL );
+		echo sprintf( '<a href="%s" class="button button-small">%s</a>', $create_link, __('Create Custom', 'event_espresso') );
+	}
+
+
 
 
 
