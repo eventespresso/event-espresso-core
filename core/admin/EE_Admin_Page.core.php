@@ -1069,7 +1069,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_help_tour = array();
 
 		//exit early if help tours are turned off globally
-		if ( ! EE_Registry::instance()->CFG->admin->help_tour_activation )
+		if ( ! EE_Registry::instance()->CFG->admin->help_tour_activation || ( defined( 'EE_DISABLE_HELP_TOURS' ) && EE_DISABLE_HELP_TOURS ) )
 			return;
 
 		//loop through _page_config to find any help_tour defined
