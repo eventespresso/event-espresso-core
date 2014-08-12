@@ -1306,12 +1306,6 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = FALSE;
 		$this->thank_you_page_url = FALSE;
 		$this->cancel_page_url = FALSE;
-
-		//ueip constant check
-		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
-			$this->ee_ueip_optin = FALSE;
-			$this->ee_ueip_has_notified = TRUE;
-		}
 	}
 
 
