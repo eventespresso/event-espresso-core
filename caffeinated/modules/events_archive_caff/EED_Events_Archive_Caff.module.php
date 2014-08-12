@@ -78,6 +78,11 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 	 *  @return 	void
 	 */
 	public static function template_settings_form() {
+		// grab general settings admin page and remove the existing hook callback
+		$gen_set_admin = EE_Registry::instance()->LIB->EE_Admin_Page_Loader->get_admin_page_object( 'general_settings' );
+		if ( $gen_set_admin instanceof General_Settings_Admin_Page ) {
+			remove_action( 'AHEE__template_settings__template__before_settings_form', array( $gen_set_admin, 'template_settings_caff_features' ), 100 );
+		}
 		$template_settings = EE_Registry::instance()->CFG->template_settings;
 		$template_settings->EED_Events_Archive = isset( $template_settings->EED_Events_Archive ) ? $template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
 		$template_settings->EED_Events_Archive = apply_filters( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', $template_settings->EED_Events_Archive );
