@@ -33,18 +33,18 @@ final class EE_System {
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
-	 * Also, if an addon is activated while the site is in maintenance mode, that is ALSO considered a
-	 * 'normal' request (because it shouldn't setup its default data because its tables might not exist).
-	 * Instead, the first request once EE is out of maintenance mode will be considered the addon's activation request
+	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
 	 */
 	const req_type_normal = 0;
 	/**
-	 * Indicates this is a brand new installation of EE, and we'll probably want to create db tables etc.
+	 * Indicates this is a brand new installation of EE so we should install
+	 * tables and default data etc
 	 */
 	const req_type_new_activation = 1;
 	/**
-	 * normal request except the activation hook was called... probably want to recheck database is ok
+	 * we've detected that EE has been reactivated (or EE was activated during maintenance mode,
+	 * and we just exited maintenance mode). We MUST check the database is setup properly
+	 * and that default data is setup too
 	 */
 	const req_type_reactivation = 2;
 	/**
@@ -56,6 +56,14 @@ final class EE_System {
 	 * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
+
+	/**
+	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * EE was in maintenance mode. So when we exit maintenance mode, we will
+	 * consider the next request to be a reactivation and will verify default data
+	 * is in place and tables are setup
+	 */
+	const req_type_activation_but_not_installed = 5;
 
 	/**
 	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
@@ -228,7 +236,7 @@ final class EE_System {
 		</p>
 		</div>
 		<?php
-		deactivate_plugins( EE_PLUGIN_BASENAME );
+		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
 	}
 
 
@@ -265,10 +273,12 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.%sPlease note that Event Espresso will be dropping support for PHP 5.2 as of version 4.4.0%s', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
-				'<br/>'
+				'<br/>',
+				'<br/><span style="font-weight: bold;color: #d54e21;">',
+				'</span>'
 			)
 		);
 	}
@@ -371,6 +381,11 @@ final class EE_System {
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
+				$this->update_list_of_installed_versions( $espresso_db_update );
+				break;
+			case EE_System::req_type_activation_but_not_installed:
+				//just record that it was activated, but don't install anything
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
@@ -536,8 +551,17 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			$req_type = EE_System::req_type_normal;
+			//ok check if this is a new install while in MM...
+			if( $activation_history_for_addon ){
+				$req_type = EE_System::req_type_normal;
+			}else{
+				//so this should have been a "new install" request, but we're in MM
+				//so set things up so that when we exit MM, we will consider it a delayed install
+				//for that, WE LEAVE THE activation indicator option in place
+				$req_type = EE_System::req_type_activation_but_not_installed;
+			}
 		}else{
 			if( $activation_history_for_addon ){
 				//it exists, so this isn't a completely new install
@@ -548,7 +572,7 @@ final class EE_System {
 					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
-					if( get_option( $activation_indicator_option_name, FALSE )){
+					if( get_option( $activation_indicator_option_name, FALSE ) ){
 						$req_type = EE_System::req_type_reactivation;
 						delete_option( $activation_indicator_option_name );
 					} else {
@@ -557,9 +581,10 @@ final class EE_System {
 					}
 				}
 			} else {
-				//it doesn't exist. It's a completely new install
+				//brand new install and we're not in MM
 				$req_type = EE_System::req_type_new_activation;
 				delete_option( $activation_indicator_option_name );
+
 			}
 		}
 //		echo "req type for ".$activation_indicator_option_name." was $req_type";
@@ -749,12 +774,29 @@ final class EE_System {
 			foreach ( $active_plugins as $active_plugin ) {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
-						deactivate_plugins( $active_plugin );
 						unset( $_GET['activate'] );
+						EE_System::deactivate_plugin( $active_plugin );
 					}
 				}
 			}
 		}
+	}
+
+
+
+	/**
+	 *    deactivate_plugin
+	 * usage:  EE_System::deactivate_plugin( plugin_basename( __FILE__ ));
+	 *
+	 * @access public
+	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+	 * @return    void
+	 */
+	public static function deactivate_plugin( $plugin_basename = '' ) {
+		if ( ! function_exists( 'deactivate_plugins' )) {
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
+		deactivate_plugins( $plugin_basename );
 	}
 
 

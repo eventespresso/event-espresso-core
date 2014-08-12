@@ -32,7 +32,7 @@
                 <input type="hidden" id="get_newsletter_form_content_nonce" name="get_newsletter_form_content_nonce" value="<?php echo $ajax_nonce; ?>">
                 <input type="hidden" name="batch_message[id_type]" value="<?php echo $id_type; ?>">
                 <input id="newsletter-batch-ids" type="hidden" name="batch_message[ids]" value="">
-                <h3 class="newsletter-send-form-title"><?php printf( __('Sending batch message to %s people...', 'event-espresso'), '[NUMPEOPLE]' ); ?></h3>
+                <h3 class="newsletter-send-form-title"><?php printf( __('Sending batch message to %s people...', 'event_espresso'), '[NUMPEOPLE]' ); ?></h3>
                 <label for="batch-message-template-selector"><?php _e('Select Template:', 'event_espresso'); ?></label>
                 <?php echo $template_selector; ?>
                 <div class="batch-message-edit-fields" style="display:none;">

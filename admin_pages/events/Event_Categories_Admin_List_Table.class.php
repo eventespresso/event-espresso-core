@@ -103,15 +103,6 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_default($item) {
-		return '';
-	}
-
-
-
-
-
-
 	public function column_id($item) {
 		return $item->get('term_id');
 	}

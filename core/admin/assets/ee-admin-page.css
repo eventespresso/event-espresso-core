@@ -561,6 +561,10 @@ label.error  { display: block; color: #FE2A00 !important; }
     padding: 10px 15px 0;
 }
 
+.ee-admin-caf-preview-img, .ee-admin-caf-preview-img img {
+	width: 100%;
+}
+
 .ee_dtt_timezone_string {
 	font-size: .8em;
 	display: block;

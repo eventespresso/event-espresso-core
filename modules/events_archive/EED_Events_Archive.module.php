@@ -955,7 +955,7 @@ class EE_Event_List_Query extends WP_Query {
 //	private $_list_type ='text';
 
 	function __construct( $args = array() ) {
-//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
@@ -966,6 +966,16 @@ class EE_Event_List_Query extends WP_Query {
 				// then remove it from the array of args that will later be passed to WP_Query()
 				unset( $args[ $key ] );
 			}
+		}
+		// Show Expired ?
+		switch ( (string)$this->_show_expired ) {
+			case 'TRUE' :
+			case 'true' :
+			case '1' :
+				$this->_show_expired = TRUE;
+				break;
+			default :
+				$this->_show_expired = FALSE;
 		}
 		// parse orderby attribute
 		if ( $this->_order_by !== NULL ) {
@@ -1052,8 +1062,6 @@ class EE_Event_List_Query extends WP_Query {
 	public function posts_where( $SQL ) {
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'posts_where', array( $this, 'posts_where' ));
-		// Show Expired ?
-		$this->_show_expired = $this->_show_expired ? TRUE : FALSE;
 		$SQL .= EED_Events_Archive::posts_where_sql_for_show_expired( $this->_show_expired );
 		// Category
 		$SQL .=  EED_Events_Archive::posts_where_sql_for_event_category_slug( $this->_category_slug );
