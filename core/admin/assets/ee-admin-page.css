@@ -547,22 +547,18 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .ee-caf-preview-text {
    float: left;
-   width: 90%;
+	padding: 0 10px;
 }
 
 .ee-caf-preview-action-box {
-    float: left;
-    /*border: 2px solid #b2b2b2;*/
+    float: right;
     padding: 10px;
-    /*background-color: #f8f8f8;*/
 }
 
 #ee-admin-caf-preview-container .button-large {
     height: 50px;
-    width: 100px;
     font-size: 1.5em;
-    padding-top: 10px;
-    padding-left: 15px;
+    padding: 10px 15px 0;
 }
 
 .ee_dtt_timezone_string {
