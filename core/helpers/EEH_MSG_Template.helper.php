@@ -148,7 +148,7 @@ class EEH_MSG_Template {
 		if ( ! empty( $message_type ) ) {
 			$query_args[0]['MTP_message_type'] = $message_type;
 		}
-		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => 0 ), $query_args );
+		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => FALSE ), $query_args );
 	}
 
 
