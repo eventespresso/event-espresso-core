@@ -363,11 +363,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				: TRUE;
 
 		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
+		add_action( 'AHEE__template_settings__template__before_settings_form', array( $this, 'template_settings_caff_features' ), 100 );
 
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+
+	public function template_settings_caff_features() {
+		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
+		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.png" alt="Template Settings Preview screenshot" />';
+		$this->_template_args['preview_text'] = __( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appear options for both your Event Detail and Event List pages.', 'event_espresso' );
+		echo $this->display_admin_caf_preview_page( 'template_settings_tab', TRUE );
 	}
 
 
