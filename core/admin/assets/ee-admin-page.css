@@ -565,7 +565,7 @@ label.error  { display: block; color: #FE2A00 !important; }
     padding-left: 15px;
 }
 
-.ee-decaf-img-review {
+.ee-admin-caf-preview-img, .ee-admin-caf-preview-img img {
 	width: 100%;
 }
 
