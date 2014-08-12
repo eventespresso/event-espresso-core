@@ -154,6 +154,48 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	}
 
 	/**
+	 * uses the connection settings on EE_New_Addon::register() instead
+	 * of our copy of them
+	 */
+//	function test_register_mock_addon_success_using_its_callback(){
+//		//ensure model and class extensions weren't setup beforehand
+//		$this->assertFalse( $this->_class_has_been_extended() );
+//		$this->assertFalse( $this->_model_has_been_extended() );
+//
+//		$this->_pretend_addon_hook_time();
+//		if( did_action( 'activate_plugin' ) ){
+//			$this->assertTrue( FALSE );
+//		}
+//		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+//
+//
+//		//use the function in mocks/addons/new_addon/espresso-new-addon.php
+//		load_espresso_new_addon();
+//
+//		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+//		//check DMSs were setup properly too
+//		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
+//		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+//
+//		//and check the deactivation hook was setup properly
+//		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
+//
+//		//check that the model was registered properly
+//		EE_System::instance()->load_core_configuration();
+//		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
+//		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
+//
+//		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
+//		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+//		$dms->schema_changes_before_migration();
+//		$dms->schema_changes_after_migration();
+//		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
+//		//check that the model extension was registerd properly
+//		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
+//		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
+//	}
+
+	/**
 	 * check that when we register an addon and then another after the 'activate_plugin'
 	 * action fired, that there are no errors and the 2nd addon's activation indicator
 	 * was set properly
@@ -243,7 +285,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 	protected function _pretend_addon_hook_time() {
 		global $wp_actions;
-		unset( $wp_actions['AHEE__EEM_Attendee__construct__end'] );
+		unset( $wp_actions[ 'AHEE__EEM_Attendee__construct__end' ] );
+		unset( $wp_actions[ 'AHEE__EE_System__load_core_configuration__begin' ] );
+		unset( $wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
+		unset( $wp_actions[ 'AHEE__EE_System__core_loaded_and_ready' ] );
 		parent::_pretend_addon_hook_time();
 	}
 	/**
