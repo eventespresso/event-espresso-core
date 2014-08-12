@@ -32,7 +32,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$class = $this->_input->required() ? 'ee-needs-value ' . $this->_input->html_class() : $this->_input->html_class();
 		$html .= ' class="' . $class . '" ';
 		$html .= 'style="' . $this->_input->html_style() . '"';
-		$html .= '/>';
+		$html .= '>';
 
 		EEH_Formatter::indent( 1 );
 		if ( EEH_Array::is_multi_dimensional_array( $this->_input->options() )) {
@@ -61,8 +61,8 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 
 		$html = '';
 		foreach( $options as $value => $display_text ){
-			$selected_attr = $this->_check_if_option_selected($value) ? ' selected="selected"' : '';
 			$value_in_form = esc_attr( $this->_input->get_normalization_strategy()->unnormalize( $value ));
+			$selected_attr = $this->_input->normalized_value() == $value ? ' selected="selected"' : '';
 			$html.= EEH_Formatter::nl() . '<option value="' . $value_in_form . '"' . $selected_attr . '>' . $display_text . '</option>';
 		}
 		return $html;
@@ -75,9 +75,8 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @param string|int $value
 	 * @return boolean
 	 */
-	protected function _check_if_option_selected($value){
-		$equality = ($this->_input->normalized_value() == $value);
-		return $equality;
+	protected function _check_if_option_selected( $value ){
+		return $this->_input->normalized_value() == $value ? TRUE : FALSE;
 	}
 
 
