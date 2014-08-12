@@ -185,11 +185,11 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// colspan
 		$colspan = $options['show_desc'] ? ' colspan="2"' : '';
 		// start of row
-		$html = EEH_HTML::tr( '', 'total_tr odd' );
+		$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 		// empty td
 		$html .= EEH_HTML::td( EEH_HTML::nbsp(), '',  '',  '',  $colspan );
 		// total td
-		$html .= EEH_HTML::td( $text, 'total_currency',  'total',  '',  $colspan );
+		$html .= EEH_HTML::td( $text, '',  'total_currency total',  '',  $colspan );
 		// total td
 		$html .= EEH_HTML::td( $line_item->total_no_code(), '',  'total' );
 		// end of row
