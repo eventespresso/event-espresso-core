@@ -47,6 +47,9 @@ class EE_messages {
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
 		$this->_set_installed_message_types();
+
+		//load helper
+		EE_Registry::instance()->load_helper('MSG_Template');
 	}
 
 	/**
@@ -54,7 +57,7 @@ class EE_messages {
 	 */
 	private function _set_active_messengers_and_message_types() {
 		// todo: right now this just gets active global messengers: at some point we'll have to get what the active messengers are for the event.
-		$_actives = get_option('ee_active_messengers');
+		$_actives = EEH_MSG_Template::get_active_messengers_in_db();
 		$actives = is_array($_actives) ? array_keys($_actives) : $_actives;
 		$active_names = $this->_load_files('messenger', $actives);
 
@@ -133,7 +136,7 @@ class EE_messages {
 	 */
 	private function _unset_active( $active_name, $kind ) {
 		//pluralize
-		$active_messengers = get_option( 'ee_active_messengers' );
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		if ( $kind == 'messenger' ) {
 			unset( $active_messengers[$active_name] );
@@ -153,7 +156,7 @@ class EE_messages {
 			}
 		}
 
-		update_option( 'ee_active_messengers', $active_messengers );
+		EEH_MSG_Template::update_active_messengers_in_db($active_messengers);
 	}
 
 

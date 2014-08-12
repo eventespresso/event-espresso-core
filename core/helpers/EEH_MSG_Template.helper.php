@@ -371,4 +371,35 @@ class EEH_MSG_Template {
 		return in_array( $messenger, $active_messengers );
 	}
 
+
+
+
+	/**
+	 * Used to return active messengers array stored in the wp options table.
+	 * If no value is present in the option then an empty array is returned.
+	 *
+	 * @since %VER%
+	 *
+	 * @return array
+	 */
+	public static function get_active_messengers_in_db() {
+		return apply_filters( 'FHEE__EEH_MSG_Template__get_active_messengers_in_db', get_option( 'ee_active_messengers', array() ) );
+	}
+
+
+
+
+	/**
+	 * Used to update the active messengers array stored in the wp options table.
+	 *
+	 * @since %VER%
+	 *
+	 * @param array $data_to_save Incoming data to save.
+	 *
+	 * @return bool FALSE if not updated, TRUE if updated.
+	 */
+	public static function update_active_messengers_in_db( $data_to_save ) {
+		return update_option( 'ee_active_messengers', $data_to_save );
+	}
+
 }

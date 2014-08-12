@@ -854,11 +854,14 @@ class EEH_Activation {
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
 
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		//let's first setup an array of what we consider to be the default messengers.
 		$default_messengers = array( 'email' );
 
 		//let's determine if we've already got an active messengers option
-		$active_messengers = get_option('ee_active_messengers');
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 
 		//do an initial loop to determine if we need to continue
 		$def_ms = array();
@@ -869,9 +872,6 @@ class EEH_Activation {
 
 		//continue?
 		if ( empty( $def_ms ) ) return false;
-
-		//include our helper
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
@@ -921,7 +921,7 @@ class EEH_Activation {
 			}
 
 			//now let's save the settings for this messenger!
-			update_option( 'ee_active_messengers', $active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 
 			//let's generate all the templates
@@ -950,7 +950,7 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get active and installed  messengers/message types.
-		$active_messengers = get_option( 'ee_active_messengers', array() );
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$installed = EEH_MSG_Template::get_installed_message_objects();
 		$ims = $installed['messengers'];
 		$imts = $installed['message_types'];
@@ -985,7 +985,7 @@ class EEH_Activation {
 		}
 
 		//all done! let's update the active_messengers.
-		update_option( 'ee_active_messengers', $active_messengers );
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 		return;
 	}
 
