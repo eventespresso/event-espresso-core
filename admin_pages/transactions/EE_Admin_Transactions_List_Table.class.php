@@ -120,7 +120,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_default
 	*/
-   function solumn_TXN_ID($item, $column_name){
+   function column_TXN_ID($item, $column_name){
     	$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 				return '<a href="' . $view_lnk_url . '" title="Go to Transaction Details">' . $item->ID() . '</a>';
     }
