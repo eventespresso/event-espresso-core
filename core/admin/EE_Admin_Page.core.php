@@ -2261,8 +2261,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-	public function display_admin_caf_preview_page( $utm_campaign_source = '', $return_string = FALSE ) {
+	/**
+	 * This is used to display caf preview pages.
+	 *
+	 * @since %VER%
+	 *
+	 * @param string $utm_campaign_source what is the key used for google analytics link
+	 * @param bool   $return_string       whether to return the content.  FALSE just echoes, TRUE returns.
+	 * @param bool   $sidebar           whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
+	 *
+	 * @return [type] [description]
+	 */
+	public function display_admin_caf_preview_page( $utm_campaign_source = '', $return_string = FALSE, $sidebar = FALSE ) {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Upgrade Now', 'event_espresso');
 		$buy_now_url = add_query_arg(
@@ -2280,8 +2290,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $return_string ) {
 			return EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		} else {
-			$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-			$this->admin_page_wrapper();
+			$this->_template_args['post_body_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+			$this->_display_admin_page($sidebar);
 		}
 	}
 
