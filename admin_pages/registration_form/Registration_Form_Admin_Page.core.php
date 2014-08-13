@@ -155,7 +155,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-                'help_tabs' => array(
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
