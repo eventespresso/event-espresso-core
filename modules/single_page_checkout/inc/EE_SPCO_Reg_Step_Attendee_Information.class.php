@@ -70,7 +70,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
 					$subsections[ $registration->reg_url_link() ] = $this->registrations_reg_form( $registration, count( $registrations ));
-					if ( ! is_admin() ) {
+					if ( ! $this->checkout->admin_request ) {
 						$template_args['registrations'][ $registration->reg_url_link() ] = $registration;
 						$template_args['ticket_count'][ $registration->ticket()->ID() ] = isset( $template_args['ticket_count'][ $registration->ticket()->ID() ] ) ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1 : 1;
 					}
@@ -78,7 +78,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		// if not performing registrations via the admin
-		if ( ! is_admin() ) {
+		if ( ! $this->checkout->admin_request ) {
 			// generate hidden inputs for managing the reg process
 			$subsections['hidden_inputs'] = $this->reg_step_hidden_inputs();
 		}
@@ -87,7 +87,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				'name' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
 				'html_id' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
 				'subsections' 			=> $subsections,
-				'layout_strategy'		=> is_admin() ?
+				'layout_strategy'		=> $this->checkout->admin_request ?
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout(
 						array(
@@ -154,7 +154,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		if ( $registration->is_primary_registrant() ) {
-			if ( ! is_admin() && $total_registrations > 1 ) {
+			if ( ! $this->checkout->admin_request && $total_registrations > 1 ) {
 				// TODO: add admin option for toggling copy attendee info, then use that value here
 				$print_copy_info = TRUE;
 				// generate hidden input
@@ -206,14 +206,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			),
 			'layout_strategy' 	=> new EE_Div_Per_Section_Layout()
 		);
-
 		$questions = $question_group->get_many_related(
 			'Question',
 			array(
 				array(
 					// where params
 					'QST_deleted' => 0,
-					'QST_admin_only' => is_admin() ? 1 :0
+					'QST_admin_only' => $this->checkout->admin_request ? 1 : 0
 				),
 				'order_by'=>array(
 					'Question_Group_Question.QGQ_order' =>'ASC'
@@ -363,7 +362,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return 	EE_Form_Input_Base
 	 */
 	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
-
 		// if this question was for an attendee detail, then check for that answer
 		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
 		$answer = $registration->reg_url_link() || ! $answer_value ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
@@ -470,6 +468,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	}
 
 
+/********************  PROCESS REG STEP  ********************/
+
 
 	/**
 	 * @return boolean
@@ -483,12 +483,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
 		//d( $valid_data );
+		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		//	 printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( ! $this->checkout->transaction instanceof EE_Transaction || ! $this->checkout->continue_reg ) {
 			EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -496,6 +496,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		// get cached registrations
 		$registrations = $this->checkout->transaction->registrations( array(), TRUE );
+		// verify we got the goods
 		if ( empty( $registrations )) {
 			EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -504,7 +505,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		if ( ! $this->_process_registrations( $registrations, $valid_data )) {
 			return FALSE;
 		}
-		$this->_set_success_message( __('Attendee information has TOTALLY been submitted successfully.', 'event_espresso' ));
+		// printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$this->_set_success_message( __('Attendee information has been successfully submitted.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
@@ -529,6 +531,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$primary_registrant = array(
 			'line_item_id' =>NULL
 		);
+		$copy_primary = FALSE;
 		// reg form sections that do not contain inputs
 		$non_input_form_sections = array(
 			'primary_registrant',
@@ -560,6 +563,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$this->_attendee_data[ $reg_url_link ] = array();
 					// unset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] );
 					if ( isset( $valid_data[ $reg_url_link ] )) {
+						//printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						// do we need to copy basic info from primary attendee ?
 						$copy_primary = isset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
 						// filter form input data for this registration
