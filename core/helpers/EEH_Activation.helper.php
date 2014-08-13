@@ -978,8 +978,8 @@ class EEH_Activation {
 			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
 			foreach ( $mts as $mt_name => $mt ) {
 				if ( ! isset( $installed_mts[$mt_name] )  ) {
-					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] );
-					EEH_MSG_Template::update_to_inactive( $messenger, $mt );
+					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+					EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
 				}
 			}
 		}
