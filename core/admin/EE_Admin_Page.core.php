@@ -2290,7 +2290,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $return_string ) {
 			return EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		} else {
-			$this->_template_args['post_body_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+			$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 			$this->_display_admin_page($sidebar);
 		}
 	}
