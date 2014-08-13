@@ -376,8 +376,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function template_settings_caff_features() {
 		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.png" alt="Template Settings Preview screenshot" />';
-		$this->_template_args['preview_text'] = __( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appear options for both your Event Detail and Event List pages.', 'event_espresso' );
+		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="Template Settings Preview screenshot" />';
+		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appear options for both your Event Detail and Event List pages.', 'event_espresso' ).'<strong>';
 		echo $this->display_admin_caf_preview_page( 'template_settings_tab', TRUE );
 	}
 
