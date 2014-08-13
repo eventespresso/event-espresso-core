@@ -70,11 +70,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
 
-		$billing_form = new EE_Billing_Info_Form($this->_pm_instance,$form_args);
+		$billing_form = new EE_Billing_Info_Form( $this->_pm_instance, $form_args );
 		if($this->_pm_instance->debug_mode()){
 			$billing_form->get_input('credit_card')->set_default('5424180818927383');
 //			$form_args['subsections']['credit_card']->set_html_help_text(__("Payment fields have been autofilled because you are in debug mode.", 'event_espresso'));
-			$billing_form->add_subsections(array('fyi_about_autofill'=>$billing_form->payment_fields_autofilled_notice_html() ),'credit_card');
+			$billing_form->add_subsections(
+				array(
+					'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html()
+				),
+				'credit_card'
+			);
 			$billing_form->get_input('credit_card_type')->set_default('MasterCard');
 			$billing_form->get_input('exp_year')->set_default('2020');
 			$billing_form->get_input('cvv')->set_default('115');
