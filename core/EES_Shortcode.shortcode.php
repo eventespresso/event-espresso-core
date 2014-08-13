@@ -108,6 +108,8 @@ abstract class EES_Shortcode extends EE_Base {
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
 		// assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
 		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
+		// make sure system knows this is an EE page
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 	}
 
 
