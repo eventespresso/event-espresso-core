@@ -479,6 +479,30 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$offset *= 3600; // convert hour offset to seconds
 		//make sure $offset is int (cause if incoming was int then converted to float);
 		$offset = (int) $offset;
+
+		//account for WP offsets that aren't valid UTC
+		switch ( $offset ) {
+			case -1800 :
+				$offset = -3600;
+				break;
+
+			case 1800 :
+				$offset = 3600;
+				break;
+
+			case -23400 :
+				$offset = -21600;
+				break;
+
+			case -27000 :
+				$offset = -25200;
+				break;
+
+			default :
+				$offset = $offset;
+				break;
+		}
+
 		$abbrarray = timezone_abbreviations_list();
 		foreach ($abbrarray as $abbr)
 		{
@@ -490,8 +514,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				}/**/
 			}
 		}
+		exit;
 
-        return FALSE;
+        		return FALSE;
 	}
 
 
