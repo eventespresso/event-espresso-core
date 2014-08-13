@@ -2267,12 +2267,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @since %VER%
 	 *
 	 * @param string $utm_campaign_source what is the key used for google analytics link
-	 * @param bool   $return_string       whether to return the content.  FALSE just echoes, TRUE returns.
-	 * @param bool   $sidebar           whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
-	 *
-	 * @return [type] [description]
+	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
+	 * @return void
 	 */
-	public function display_admin_caf_preview_page( $utm_campaign_source = '', $return_string = FALSE, $sidebar = FALSE ) {
+	public function display_admin_caf_preview_page( $utm_campaign_source = '', $display_sidebar = TRUE ) {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Upgrade Now', 'event_espresso');
 		$buy_now_url = add_query_arg(
@@ -2287,12 +2285,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		);
 		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
-		if ( $return_string ) {
-			return EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-		} else {
-			$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-			$this->_display_admin_page($sidebar);
-		}
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		$this->_display_admin_page( $display_sidebar );
 	}
 
 
