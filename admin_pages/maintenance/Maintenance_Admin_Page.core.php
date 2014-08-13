@@ -194,6 +194,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
 			$this->_template_args[ 'support_url' ] = 'http://eventespresso.com/support/forums/';
+			$this->_template_args[ 'next_url' ] = EEH_URL::add_query_args_and_nonce(array( 'action' => 'confirm_migration_crash_report_sent', 'success' => '0' ), EE_MAINTENANCE_ADMIN_URL );
 		}elseif($addons_should_be_upgraded_first){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{

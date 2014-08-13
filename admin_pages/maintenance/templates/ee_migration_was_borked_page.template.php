@@ -22,3 +22,4 @@
 <br>
 <p><?php printf(__('...or copy-and-paste the below information to %1$s %2$s %3$s', "event_espresso"),'<a href="mailto:'.EE_SUPPORT_EMAIL.'">',EE_SUPPORT_EMAIL,"</a>");?></p>
 <textarea class="system_status_info"><?php print_r( EEM_System_Status::instance()->get_system_stati())?></textarea>
+<p><?php printf( __( '...or %1$sDON\'T send migration crash report%2$s.', 'event_espresso' ), "<a href='$next_url'>","</a>");?></p>
