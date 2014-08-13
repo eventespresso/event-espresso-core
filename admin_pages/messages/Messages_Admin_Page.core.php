@@ -547,7 +547,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = __('Custom Message Templates (Preview)', 'event_espresso');
 		$this->_template_args['preview_img'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="Preview Custom Message Templates screenshot" />';
 		$this->_template_args['preview_text'] = '<strong>'.__('Custom Message Templates is a feature that is only available in the caffeinated version of Event Espresso.  With the Custom Message Templates feature, you are able to create custom templates and set them per event.', 'event_espresso').'</strong>';
-		$this->display_admin_caf_preview_page();
+		$this->display_admin_caf_preview_page( 'custom_message_types', FALSE );
 	}
 
 
