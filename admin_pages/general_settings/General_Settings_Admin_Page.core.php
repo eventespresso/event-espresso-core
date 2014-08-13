@@ -88,11 +88,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 			'template_settings' => '_template_settings',
 
-			'update_template_settings' => array(
-				'func' => '_update_template_settings',
-				'noheader' => TRUE,
-				),
-
 			'copy_templates' => array(
 				'func' => '_copy_templates',
 				'noheader' => TRUE,
@@ -162,17 +157,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Templates'),
 					'order' => 30
-					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                			'help_tabs' => array(
+				),
+				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+                'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'
-						)
-					),
+					)
+				),
 				'help_tour' => array( 'Templates_Help_Tour' ),
 				'require_nonce' => FALSE
-				),
+			),
 			'default' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
@@ -355,48 +350,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _template_settings() {
-		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$this->_template_args['display_address_in_regform'] =
-				isset( EE_Registry::instance()->CFG->template_settings->display_address_in_regform )
-				? EE_Registry::instance()->CFG->template_settings->display_address_in_regform
-				: TRUE;
-
-		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
-		add_action( 'AHEE__template_settings__template__before_settings_form', array( $this, 'template_settings_caff_features' ), 100 );
-
-		$this->_set_add_edit_form_tags( 'update_template_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();
-	}
-
-
-
-
-	public function template_settings_caff_features() {
 		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
 		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="Template Settings Preview screenshot" />';
 		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
-		echo $this->display_admin_caf_preview_page( 'template_settings_tab', TRUE );
-	}
-
-
-
-
-	protected function _update_template_settings() {
-
-		EE_Registry::instance()->CFG->template_settings->display_address_in_regform =
-				 isset( $this->_req_data['display_address_in_regform'] )
-				? absint( $this->_req_data['display_address_in_regform'] )
-				: EE_Registry::instance()->CFG->template_settings->display_address_in_regform;
-
-		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
-
-		$what = 'Template Settings';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
-
+		$this->display_admin_caf_preview_page( 'template_settings_tab' );
 	}
 
 
