@@ -89,6 +89,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// set ajax hooks
 		add_action( 'wp_ajax_espresso_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_nopriv_espresso_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
+		add_action( 'wp_ajax_espresso_display_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
+		add_action( 'wp_ajax_nopriv_espresso_display_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
 //		add_action( 'wp_ajax_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
 //		add_action( 'wp_ajax_nopriv_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
 	}
@@ -181,7 +183,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	ajax_process_registration_steps
+	 * 	ajax display registration step
+	 */
+	public static function display_reg_step() {
+//		EED_Single_Page_Checkout::load_request_handler();
+//		$action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
+//		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_form' );
+		EED_Single_Page_Checkout::instance()->_initialize();
+	}
+
+
+
+
+	/**
+	 * 	ajax process registration step
 	 */
 	public static function process_reg_step() {
 		EED_Single_Page_Checkout::load_request_handler();
@@ -241,6 +256,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->set_next_step();
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
+//		$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, '$this->checkout->action: ' . $this->checkout->action );
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// was there already a valid transaction in the checkout from the session ?
@@ -275,7 +291,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$checkout = EE_Registry::instance()->SSN->get_session_data( 'checkout' );
 		// verify
 		if ( ! $checkout instanceof EE_Checkout ) {
-			echo '<h2 style="color:#E76700;"> ! $checkout instanceof EE_Checkout <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// instantiate EE_Checkout object for handling the properties of the current checkout process
 			$checkout = EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_Checkout', 'class', array(), FALSE  );
 			// verify again
@@ -285,6 +300,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// reset redirect
 		$checkout->redirect = FALSE;
+		$checkout->json_response = array();
 		return $checkout;
 	}
 
@@ -366,17 +382,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// capture form data
 				$this->checkout->current_step->reg_form->receive_form_submission();
 				// validate form data
-				if ( $this->checkout->current_step->reg_form->is_valid() && $this->checkout->continue_reg ) {
-					if ( $this->checkout->current_step->success_message() != '' ) {
-						// good registrant, you get to proceed
-						EE_Error::add_success( $this->checkout->current_step->success_message() );
-					}
-				} else {
+				if ( ! $this->checkout->current_step->reg_form->is_valid() || ! $this->checkout->continue_reg ) {
+					$this->checkout->continue_reg = FALSE;
 					if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
 						// bad, bad, bad registrant
 						EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+					}
+					if ( ! EE_Registry::instance()->REQ->front_ajax ) {
 						$this->checkout->action = 'display_spco_reg_form';
 					}
+//					$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, '$this->checkout->action: ' . $this->checkout->action );
+					$this->go_to_next_step();
 				}
 			}
 		} catch( EE_Error $e ) {
@@ -395,23 +411,38 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _process_form_action() {
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
-			// initial form view before anything has happened
+			// AJAX next step reg form
+			case 'espresso_display_reg_step' :
+				if ( EE_Registry::instance()->REQ->ajax ) {
+					$this->checkout->json_response['registration_form'] = $this->checkout->current_step->display_reg_form();
+					// advance to the next step! If you pass GO, collect $200
+					$this->go_to_next_step();
+				} else {
+					$this->_display_spco_reg_form();
+				}
+				break;
+
 			case 'display_spco_reg_form' :
+//				$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, 'display_spco_reg_form' );
 				$this->_display_spco_reg_form();
 				break;
 
 			default :
+//				$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, $this->checkout->current_step . ' ' . $this->checkout->action );
 				// meh... do one of those other steps first
 				if ( ! empty( $this->checkout->action ) && method_exists( $this->checkout->current_step, $this->checkout->action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
 					// call action on current step
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
+						// good registrant, you get to proceed
+						if ( $this->checkout->current_step->success_message() != '' ) {
+							EE_Error::add_success( $this->checkout->current_step->success_message() );
+						}
 						// store our progress so far
 						$this->checkout->stash_transaction_and_checkout();
 						// advance to the next step! If you pass GO, collect $200
 						$this->go_to_next_step();
 					} else {
-//						d( EE_Error::get_notices( FALSE ));
 						$this->checkout->action = 'display_spco_reg_form';
 						$this->_display_spco_reg_form();
 					}
@@ -806,7 +837,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 		$errors = FALSE;
-		$this->checkout->json_response = array();
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
 		// check for recursion
