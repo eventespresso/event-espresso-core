@@ -80,28 +80,28 @@ class EE_Log {
 		EE_Registry::instance()->load_helper( 'File' );
 
 		$this->_logs_folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS;
-		$this->_log_file = 'espresso_log.txt';
+		$this->_log_file = EE_Registry::instance()->CFG->admin->log_file_name();
 		$this->_log = '';
-		$this->_debug_file = 'espresso_debug.txt';
+		$this->_debug_file = EE_Registry::instance()->CFG->admin->debug_file_name();
 		$this->_debug_log = '';
 		$this->_remote_logging_url = EE_Registry::instance()->CFG->admin->remote_logging_url;
 		$this->_remote_log = '';
 
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR, 'Event Espresso Logging can not be set up because' )) {
+		try {
+			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR );
+			EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder );
+			EEH_File::add_htaccess_deny_from_all( $this->_logs_folder );
+			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
+			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
 			return;
 		}
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder, 'Event Espresso Logging can not be set up because' )) {
-			return;
-		}
-		if ( ! EEH_File::add_htaccess_deny_from_all( $this->_logs_folder )) {
-			return;
-		}
-		EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
-		EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
 
 		add_action( 'AHEE_log', array( $this, 'log' ), 10, 4 );
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			add_action( 'shutdown', array( $this, 'write_log' ), 9999 );
+			// if WP_DEBUG
 			add_action( 'shutdown', array( $this, 'write_debug' ), 9999 );
 		}
 		if ( EE_Registry::instance()->CFG->admin->use_remote_logging ) {
@@ -149,7 +149,7 @@ class EE_Log {
 	 * write_log
 	 */
 	public function write_log() {
-		EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'a' );
+		EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'a', 'Event Espresso Log' );
 	}
 
 
@@ -192,14 +192,16 @@ class EE_Log {
 	 * debug
 	 */
 	public function write_debug() {
-		$this->_debug_log = '<?php' . PHP_EOL;
-		foreach ( $_GET as $key => $value ) {
-			$this->_debug_log .= '$my_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$this->_debug_log = '<?php' . PHP_EOL;
+			foreach ( $_GET as $key => $value ) {
+				$this->_debug_log .= '$my_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+			}
+			foreach ( $_POST as $key => $value ) {
+				$this->_debug_log .= '$my_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+			}
+			EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'w', 'Event Espresso Debug Log' );
 		}
-		foreach ( $_POST as $key => $value ) {
-			$this->_debug_log .= '$my_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
-		}
-		EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'w' );
 	}
 
 
@@ -208,7 +210,7 @@ class EE_Log {
 	 * __clone
 	 */
 	public function __clone() {
-		trigger_error( 'Clone is not allowed.', E_USER_ERROR );
+		trigger_error( __( 'Clone is not allowed.', 'event_espresso' ), E_USER_ERROR );
 	}
 
 
