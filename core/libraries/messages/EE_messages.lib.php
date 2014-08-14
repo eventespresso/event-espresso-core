@@ -104,7 +104,7 @@ class EE_messages {
 		if ( empty($actives) ) return false;
 
 		//make sure autoloaders are set (failsafe)
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 
 		//make sure $actives is an array
 		$actives = (array) $actives;

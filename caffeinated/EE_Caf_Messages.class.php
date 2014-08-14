@@ -66,12 +66,12 @@ class EE_Caf_Messages  {
 
 
 	/**
-	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
+	 * This just allows us to add additional paths to the autoloader (EED_Messages::autoload_messages()) for the messages system.
 	 * @param  array  $dir_ref original array of paths
 	 * @return array           appended paths
 	 */
 	public function messages_autoload_paths( $dir_ref ) {
-		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
+		$dir_ref[] = EE_CAF_LIBRARIES . 'shortcodes/';
 		return $dir_ref;
 	}
 
@@ -391,49 +391,55 @@ class EE_Caf_Messages  {
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
 				),
-			'messengers_to_activate_with' => array( 'email' )
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
 
 		//register payment refund message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Payment_Refund_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/'),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'payment_refund', $setup_args );
 
 		//register payment reminder message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Payment_Reminder_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'payment_reminder', $setup_args );
 
 		//register payment declined message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Payment_Declined_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_declined/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'payment_declined', $setup_args );
 
 		//register registration declined message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Declined_Registration_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'declined_registration', $setup_args );
 
 		//register registration cancelled message type
 		$setup_args = array(
 			'mtfilename' => 'EE_Cancelled_Registration_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/cancelled_registration/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'cancelled_registration', $setup_args );
 	}
@@ -451,7 +457,7 @@ class EE_Caf_Messages  {
 	public function register_caf_shortcodes() {
 		$setup_args = array(
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
+				EE_CAF_LIBRARIES . 'shortcodes/'
 				),
 			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
