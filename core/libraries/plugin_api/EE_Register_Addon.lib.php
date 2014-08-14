@@ -59,12 +59,26 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * 			      	an array indexed by role name (i.e. administrator,author ) and the values are an array of caps to add to the role.
 	 * 			      	'administrator' => array('read_addon', 'edit_addon' etc.).
 	 * 	         		}
-	 * 	           		 @type  EE_Meta_Capability_Map[] $capability_maps an array of EE_Meta_Capability_Map object for any addons that need to register any special meta mapped capabilities
+	 * 	        @type  EE_Meta_Capability_Map[] $capability_maps an array of EE_Meta_Capability_Map object for any addons that need to register any special meta mapped capabilities
 	 *			@type array $model_paths array of folders containing DB models @see EE_Register_Model
 	 *			@type array $class_paths array of folders containign DB classes @see EE_Register_Model
 	 *			@type array $model_extension_paths array of folders containing DB model extensions @see EE_Register_Model_Extension
 	 *			@type array $class_extension_paths arrya of folders containing DB class extensions @see EE_Register_Model_Extension
-	 * 	         }
+	 * 			@type array message_types {
+	 *       		 An array of message types with the key as the message type name and the values as below:
+	 *        		@type string $mtfilename             The filename of the message type being
+	 *                                                                          registered.  This will be the main
+	 *                                                                          EE_{Messagetype_Name}_message_type class. (
+	 *                                                                          eg. EE_Declined_Registration_message_type.
+	 *                                                                          class.php). Required.
+	 *                     @type array $autoloadpaths          An array of paths to add to the messages
+	 *                                                                          autoloader for the new message type. Required.
+	 *                     @type array $messengers_to_activate_with An array of messengers that this message
+	 *                                                                          type should activate with. Each value in the
+	 *                                                                          array should match the name property of a
+	 *                                                                          EE_messenger. Optional.
+	 *       	}
+	 * 	}
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
@@ -124,6 +138,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 			// array of PUE options used by the addon
 			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
+			'message_type' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array(),
 			'capabilities' => isset( $setup_args['capabilities'] ) ? (array) $setup_args['capabilities'] : array(),
 			'capability_maps' => isset( $setup_args['capability_maps'] ) ? (array) $setup_args['capability_maps'] : array(),
 			'model_paths' => isset( $setup_args['model_paths'] ) ? (array) $setup_args['model_paths'] : array(),
@@ -199,6 +214,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( ! empty( self::$_settings[ $addon_name ]['capabilities'] ) ) {
 			EE_Register_Capabilities::register( $addon_name . '_caps', array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
 		}
+		//any message type to register?
+		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
+			foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
+				EE_Register_Message_Type::register( $message_type, $message_type_settings );
+			}
+		}
+
 
 		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
 		if ( ! empty( $setup_args['pue_options'] )) {
@@ -328,6 +350,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 					! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
 				// add to list of shortcodes to be registered
 				EE_Register_Model_Extensions::deregister( $addon_name );
+				}
+			if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
+				foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
+					EE_Register_Message_Type::deregister( $message_type );
+				}
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);

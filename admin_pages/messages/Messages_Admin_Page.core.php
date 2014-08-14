@@ -74,6 +74,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function __construct( $routing = TRUE ) {
+		//make sure MSG Template helper is loaded.
+		EE_Registry::instance()->load_helper('MSG_Template');
 		//make sure messages autoloader is running
 		EED_Messages::set_autoloaders();
 		parent::__construct($routing);
@@ -94,9 +96,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : NULL;
 
-
+		EE_Registry::instance()->load_lib( 'messages' );
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = get_option('ee_active_messengers');
+		$this->_active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) && ! empty(  $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] ) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
 
@@ -652,14 +654,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
 				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
 			)
 		);
 	}
@@ -677,14 +671,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'in_use' => array(
 				'slug' => 'in_use',
 				'label' => __('In Use', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
@@ -764,10 +750,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			case 'in_use':
 				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global, TRUE );
-				break;
-
-			case 'all':
-				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count, TRUE );
 				break;
 
 			default:
@@ -2679,7 +2661,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			//update settings in database
-			update_option( 'ee_active_messengers', $this->_active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 			update_option( 'ee_has_activated_messages', $has_activated );
 
 
@@ -2691,7 +2673,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//if generation failed then we need to remove the active messenger.
 			if ( !$templates ) {
 				unset($this->_active_messengers[$messenger]);
-				update_option('ee_active_messengers', $this->_active_messengers);
+				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 			} else {
 				//all is good let's do a success message
 				$success_msg = $message_type ? sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) :sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
@@ -2724,7 +2706,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				unset( $this->_active_messengers[$messenger] );
 			}
 
-			update_option('ee_active_messengers', $this->_active_messengers);
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 
 			$success_msg = $message_type ? sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']), __('Message Type', 'event_espresso') ) : sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messenger', 'event_espresso') );
 
@@ -2829,7 +2811,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//okay we should have the data all setup.  Now we just update!
-		$success = update_option( 'ee_active_messengers', $this->_active_messengers );
+		$success = EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 
 		if ( $success ) {
 			EE_Error::add_success( __('Settings updated', 'event_espresso') );
