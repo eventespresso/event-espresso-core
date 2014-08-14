@@ -198,14 +198,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	/**
-	 * 		column_default
-	*/
-   	function column_default( $item, $column_name ){
-		return isset( $item->$column_name ) ? $item->$column_name : '';
-    }
-
-
 
     function column__Reg_Status( EE_Registration $item ) {
     	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
