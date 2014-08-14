@@ -122,16 +122,10 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 	protected function _template_settings() {
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['display_address_in_regform'] =
-			isset( EE_Registry::instance()->CFG->template_settings->display_address_in_regform )
-				? EE_Registry::instance()->CFG->template_settings->display_address_in_regform
-				: TRUE;
-
 		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
-
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_CAF_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -139,11 +133,6 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 
 	protected function _update_template_settings() {
-
-		EE_Registry::instance()->CFG->template_settings->display_address_in_regform =
-			isset( $this->_req_data['display_address_in_regform'] )
-				? absint( $this->_req_data['display_address_in_regform'] )
-				: EE_Registry::instance()->CFG->template_settings->display_address_in_regform;
 
 		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 
