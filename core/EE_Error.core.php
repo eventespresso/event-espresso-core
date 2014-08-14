@@ -670,11 +670,11 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	_reset_notices
+	*	reset_notices
 	*	@access private
 	*	@return void
 	*/
-    private static function _reset_notices(){
+	public static function reset_notices(){
     	self::$_espresso_notices['success'] = FALSE;
     	self::$_espresso_notices['attention'] = FALSE;
     	self::$_espresso_notices['errors'] = FALSE;
@@ -776,7 +776,7 @@ class EE_Error extends Exception {
 
 			if ($attention_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-				$css_class = is_admin() ? 'updated' : 'attention fade-away';
+				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
