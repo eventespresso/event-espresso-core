@@ -161,11 +161,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_default( $item, $column_name ) {
-		return isset( $item->$column_name ) ? $item->$column_name : '';
-	}
-
-
 
 
 	function column__Reg_Status( EE_Registration $item ) {
