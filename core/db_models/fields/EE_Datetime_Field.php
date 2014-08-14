@@ -498,6 +498,14 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				$offset = -25200;
 				break;
 
+			case -30600 :
+				$offset = -28800;
+				break;
+
+			case 49500 :
+				$offset = 50400;
+				break;
+
 			default :
 				$offset = $offset;
 				break;
@@ -514,8 +522,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				}/**/
 			}
 		}
-		exit;
-
         		return FALSE;
 	}
 
