@@ -336,7 +336,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden = $this->get_hidden_columns();
 		$_sortable = $this->get_sortable_columns();
-		$_sortable = apply_filters( "FHEE_manage_{$this->screen->id}_sortable_columns", $_sortable );
+		$_sortable = apply_filters( "FHEE_manage_{$this->screen->id}_sortable_columns", $_sortable, $this->_screen );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
@@ -397,7 +397,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	private function _filters() {
 		$classname = get_class($this);
-		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this );
+		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this, $this->_screen );
 
 		if ( empty($filters) )
 			return;
@@ -436,11 +436,25 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 
+	/**
+	 * This column is the default for when there is no defined column method for a registered column.
+	 *
+	 * This can be overridden by child classes, but allows for hooking in for custom columns.
+	 *
+	 * @param EE_Base_Class
+	 * @param string $column_name The column being called.
+	 *
+	 * @return string html content for the column
+	 */
+	public function column_default( $item, $column_name ) {
+		do_action( 'AHEE__EE_Admin_List_Table__column_' . $column_name . '__' . $this->screen->id, $item, $this->_screen );
+	}
+
+
 
 	public function get_columns() {
-		//var_dump($this->screen);
-		$columns = apply_filters( 'FHEE_manage_'.$this->screen->id.'_columns', $this->_columns );
-		return $this->_columns;
+		$columns = apply_filters( 'FHEE_manage_'.$this->screen->id.'_columns', $this->_columns, $this->_screen );
+		return $columns;
 	}
 
 	public function get_views() {
@@ -531,7 +545,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 				$extra_request = isset( $action['extra_request'] ) ? $action['extra_request'] : '';
 				echo $this->_admin_page->get_action_link_or_button($route, $type, $extra_request);
 			}
-			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this );
+			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen );
 			echo '</div>';
 		}
 		//echo $this->_entries_per_page_dropdown;

@@ -294,7 +294,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * Example: if we wanted to set this up for Messages hooking into Events then we would do:  events_Messages_Hooks.class.php
 	 *
 	 * @param bool $extend This indicates whether we're checking the extend directory for any register_hooks files/classes
-	 * @return void
+	 * @return array
 	 */
 	public function register_hooks( $extend = FALSE ) {
 
@@ -390,6 +390,15 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	public function get_admin_page_name() {
 		return $this->_file_name . '_Admin_Page';
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function loaded_page_object() {
+		return $this->_loaded_page_object;
 	}
 
 
