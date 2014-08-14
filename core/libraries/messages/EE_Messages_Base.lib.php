@@ -116,6 +116,8 @@ abstract class EE_Messages_Base extends EE_Base {
 		$this->_set_existing_admin_settings();
 		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
+		//load helper
+		EE_Registry::instance()->load_helper('MSG_Template');
 	}
 
 
@@ -184,7 +186,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @return void
 	 */
 	protected function _set_existing_admin_settings( $messenger = NULL ) {
-		$active_messengers = get_option('ee_active_messengers', true);
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
 
 

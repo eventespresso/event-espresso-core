@@ -129,6 +129,29 @@ class EEH_MSG_Template {
 
 
 
+	/**
+	 * Updates all message template groups matching the incoming arguments to inactive status.
+	 *
+	 * @param string $messenger      The messenger slug. If empty then all templates matching the message type are marked inactive.  Otherwise only templates matching the messenger and message type.
+	 * @param string $message_type The message type slug.  If empty then all templates matching the messenger are marked inactive. Otherwise only templates matching the messenger and message type.
+	 *
+	 * @return int  count of updated records.
+	 */
+	public static function update_to_inactive( $messenger = '', $message_type = '' ) {
+		if ( empty( $messenger ) && empty( $message_type ) )
+			return 0;
+		if ( ! empty( $messenger ) ) {
+			$query_args[0]['MTP_messenger'] = $messenger;
+		}
+
+		if ( ! empty( $message_type ) ) {
+			$query_args[0]['MTP_message_type'] = $message_type;
+		}
+		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => FALSE ), $query_args );
+	}
+
+
+
 
 	/**
 	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
@@ -345,6 +368,36 @@ class EEH_MSG_Template {
 		$active_messengers = $MSG->get_active_messengers();
 		$active_messengers = array_keys( $active_messengers );
 		return in_array( $messenger, $active_messengers );
+	}
+
+
+
+	/**
+	 * Used to return active messengers array stored in the wp options table.
+	 * If no value is present in the option then an empty array is returned.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return array
+	 */
+	public static function get_active_messengers_in_db() {
+		return apply_filters( 'FHEE__EEH_MSG_Template__get_active_messengers_in_db', get_option( 'ee_active_messengers', array() ) );
+	}
+
+
+
+
+	/**
+	 * Used to update the active messengers array stored in the wp options table.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param array $data_to_save Incoming data to save.
+	 *
+	 * @return bool FALSE if not updated, TRUE if updated.
+	 */
+	public static function update_active_messengers_in_db( $data_to_save ) {
+		return update_option( 'ee_active_messengers', $data_to_save );
 	}
 
 

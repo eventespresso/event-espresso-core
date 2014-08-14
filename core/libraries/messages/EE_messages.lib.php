@@ -42,6 +42,8 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
+		//load helper
+		EE_Registry::instance()->load_helper('MSG_Template');
 
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
@@ -54,7 +56,7 @@ class EE_messages {
 	 */
 	private function _set_active_messengers_and_message_types() {
 		// todo: right now this just gets active global messengers: at some point we'll have to get what the active messengers are for the event.
-		$_actives = get_option('ee_active_messengers');
+		$_actives = EEH_MSG_Template::get_active_messengers_in_db();
 		$actives = is_array($_actives) ? array_keys($_actives) : $_actives;
 		$active_names = $this->_load_files('messenger', $actives);
 
@@ -114,7 +116,7 @@ class EE_messages {
 			} else {
 				$this->_unset_active($active, $kind);
 				//set WP_Error
-				return EE_Error::add_error( sprintf( __("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file), __FILE__, __FUNCTION__, __LINE__ );
+				return EE_Error::add_error( sprintf( __("Missing messages system file set as inactive: (%s) %s has been made inactive.", 'event_espresso'), $load_file, $msg_name), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
 		return $active_names;
@@ -132,11 +134,28 @@ class EE_messages {
 	 * @return void
 	 */
 	private function _unset_active( $active_name, $kind ) {
-		global $espresso_wp_user;
 		//pluralize
-		$kind = $kind . 's';
-		unset($this->_active_{$kind}[$active_name]);
-		update_option($espresso_wp_user, 'ee_active_'.$kind, $this->_active{$kind});
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		if ( $kind == 'messenger' ) {
+			unset( $active_messengers[$active_name] );
+			EEH_MSG_Template::update_to_inactive( $active_name );
+			if ( isset( $this->_active_messengers[$active_name] ) ) {
+				unset( $this->_active_messengers[$active_name] );
+			}
+		} else {
+			foreach( $active_messengers as $messenger => $settings ) {
+				if ( ! empty( $settings['settings'][$messenger . '-message_types'][$active_name] ) ) {
+					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$active_name] );
+				}
+			}
+			EEH_MSG_Template::update_to_inactive( '', $active_name );
+			if ( isset( $this->_active_message_types[$active_name] ) ) {
+				unset( $this->_active_message_types[$active_name] );
+			}
+		}
+
+		EEH_MSG_Template::update_active_messengers_in_db($active_messengers);
 	}
 
 
