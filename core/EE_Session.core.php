@@ -659,31 +659,45 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @since 4.3.0
 	  */
 	 public function garbage_collection() {
+		 // only perform during regular requests
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
 			 global $wpdb;
+			 // since transient expiration timestamps are set in the future, we can compare against NOW
 			 $expiration = current_time( 'timestamp' );
-			 $SQL = "
-			 	SELECT option_name
-			 	FROM {$wpdb->options}
-			 	WHERE option_name
-			 	LIKE '\_transient\_timeout\_ee\_ssn\_%'
-			 	AND option_value < {$expiration}
-			 	LIMIT 50;
-			";
-			 $expired_sessions = $wpdb->get_col( $SQL );
-			 $IN = array();
-			 foreach( $expired_sessions as $expired_session ) {
-				 $IN[] = "'" . $expired_session . "'";
-				 $IN[] = "'" . str_replace( 'timeout_', '', $expired_session ) . "'";
-			 }
-			 $IN = implode( ', ', $IN );
-			 if ( ! empty( $IN )) {
+			 // filter the query limit. Set to 0 to turn off garbage collection
+			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
+			 // non-zero LIMIT means take out the trash
+			 if ( $expired_session_transient_delete_query_limit ) {
 				 $SQL = "
-					DELETE FROM {$wpdb->options}
+					SELECT option_name
+					FROM {$wpdb->options}
 					WHERE option_name
-					IN ( $IN );
-				 ";
-				 $wpdb->query( $SQL );
+					LIKE '\_transient\_timeout\_ee\_ssn\_%'
+					AND option_value < {$expiration}
+					LIMIT {$expired_session_transient_delete_query_limit}
+				";
+				 $expired_sessions = $wpdb->get_col( $SQL );
+				 // valid results?
+				 if ( ! $expired_sessions instanceof WP_Error && ! empty( $expired_sessions )) {
+					 // format array of results into something usable within the actual DELETE query's IN clause
+					 $expired = array();
+					 foreach( $expired_sessions as $expired_session ) {
+						 $expired[] = "'" . $expired_session . "'";
+						 $expired[] = "'" . str_replace( 'timeout_', '', $expired_session ) . "'";
+					 }
+					 $expired = implode( ', ', $expired );
+					 $SQL = "
+						DELETE FROM {$wpdb->options}
+						WHERE option_name
+						IN ( $expired );
+					 ";
+					 $results = $wpdb->query( $SQL );
+					 // if something went wrong, then notify the admin
+					 if ( $results instanceof WP_Error && is_admin() ) {
+						 EE_Error::add_error( $results->get_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+					 }
+				 }
+				 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 			 }
 		 }
 	 }

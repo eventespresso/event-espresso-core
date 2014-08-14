@@ -210,11 +210,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 														$new_sub_total = $running_total * ( $price_mod->amount() / 100 );
 														$new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
 													?>
-													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
-													<?php $running_total += $new_sub_total; ?>
 												<?php } else { ?>
+													<?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
 													<td class="small-text"><?php echo $price_mod->desc(); ?></td>
 												<?php } ?>
+													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
+													<?php $running_total += $new_sub_total; ?>
 												</tr>
 											<?php } ?>
 											<?php
