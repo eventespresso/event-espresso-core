@@ -28,13 +28,16 @@ require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_File extends EEH_Base {
 
 	/**
-	 * @return WP_Filesystem_Direct
+	 * @throws EE_Error
+	 * @return WP_Filesystem_Base
 	 */
 	private static function _get_wp_filesystem() {
 		global $wp_filesystem;
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			WP_Filesystem();
+			if ( ! WP_Filesystem() ) {
+				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+			}
 		}
 		return $wp_filesystem;
 	}
@@ -54,8 +57,10 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function verify_filepath_and_permissions( $full_file_path = '', $file_name = '', $file_ext = '', $type_of_file = '' ) {
+		// load WP_Filesystem and set file permissions
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
-		if ( ! is_readable( $full_file_path )) {
+		if ( ! $wp_filesystem->is_readable( $full_file_path )) {
 			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
 			$file_name .= ! empty( $file_ext ) ? ' file' : ' folder';
 			$msg = sprintf(
@@ -91,8 +96,11 @@ class EEH_File extends EEH_Base {
 	 * @return string
 	 */
 	private static function _permissions_error_for_unreadable_filepath( $full_file_path = '', $type_of_file = '' ){
+		// load WP_Filesystem and set file permissions
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		// check file permissions
-		$perms = substr( fileperms( $full_file_path ), 2 );
+//		$perms = substr( fileperms( $full_file_path ), 2 );
+		$perms = $wp_filesystem->getchmod( $full_file_path );
 		if ( $perms ) {
 			// file permissions exist, but way be set incorrectly
 			$type_of_file = ! empty( $type_of_file ) ? $type_of_file . ' ' : '';
@@ -140,6 +148,7 @@ class EEH_File extends EEH_Base {
 			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder', $msg )) {
 				return FALSE;
 			} else {
+				// load WP_Filesystem and set file permissions
 				$wp_filesystem = EEH_File::_get_wp_filesystem();
 				if ( ! $wp_filesystem->mkdir( $folder )) {
 					if ( is_admin() ) {
@@ -167,9 +176,11 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder', $msg = '' ){
+		// load WP_Filesystem and set file permissions
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$full_path = EEH_File::standardise_directory_separators( $full_path );
 		$msg = ! empty( $msg ) ? $msg : 'The ';
-		if ( ! is_writable( $full_path )) {
+		if ( ! $wp_filesystem->is_writable( $full_path )) {
 			if ( is_admin() ) {
 				$msg .= sprintf( __( '"%s" %s is not writable.', 'event_espresso' ), $full_path, $file_or_folder );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_path );
@@ -190,9 +201,11 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function ensure_file_exists_and_is_writable( $full_file_path = '' ) {
+		// load WP_Filesystem and set file permissions
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
-		if ( ! file_exists( $full_file_path )) {
-			if ( ! touch( $full_file_path )) {
+		if ( ! $wp_filesystem->exists( $full_file_path )) {
+			if ( ! $wp_filesystem->touch( $full_file_path )) {
 				if ( is_admin() ) {
 					$msg = sprintf( __( 'The "%s" file could not be created.', 'event_espresso' ), $full_file_path );
 					$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
@@ -210,15 +223,31 @@ class EEH_File extends EEH_Base {
 
 
 	/**
+	 * get_file_contents
+	 * @param string $full_file_path
+	 * @return string
+	 */
+	public static function get_file_contents( $full_file_path = '' ){
+		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
+		if ( EEH_File::verify_filepath_and_permissions( $full_file_path, EEH_File::get_filename_from_filepath( $full_file_path ) , EEH_File::get_file_extension( $full_file_path ))) {
+			// load WP_Filesystem and set file permissions
+			$wp_filesystem = EEH_File::_get_wp_filesystem();
+			return $wp_filesystem->get_contents( $full_file_path );
+		}
+		return '';
+	}
+
+
+
+	/**
 	 * write_file
 	 * @param string $full_file_path
 	 * @param string $file_contents - the content to be written to the file
-	 * @param string $mode          - the type of access required to the stream
 	 * @param string $file_type
 	 * @throws EE_Error
 	 * @return bool
 	 */
-	public static function write_to_file( $full_file_path = '', $file_contents = '', $mode = 'w', $file_type = '' ){
+	public static function write_to_file( $full_file_path = '', $file_contents = '', $file_type = '' ){
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		$file_type = ! empty( $file_type ) ? rtrim( $file_type, ' ' ) . ' ' : '';
 		$folder = EEH_File::remove_filename_from_filepath( $full_file_path );
@@ -230,35 +259,12 @@ class EEH_File extends EEH_Base {
 			}
 			return FALSE;
 		}
-		$handle = fopen( $full_file_path, $mode );
-		if ( ! $handle ) {
-			if ( is_admin() ) {
-				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be opened for writing.', 'event_espresso' ), $file_type, $full_file_path );
-				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
-				throw new EE_Error( $msg );
-			}
-			return FALSE;
-		}
-		// set binary safe encoding
-		mbstring_binary_safe_encoding();
-		// write the file
-		if ( ! fwrite( $handle, $file_contents )) {
-			if ( is_admin() ) {
-				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be written to.', 'event_espresso' ), $file_type, $full_file_path );
-				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
-				throw new EE_Error( $msg );
-			}
-			return FALSE;
-		}
-		// reset encoding
-		reset_mbstring_encoding();
-		//close file handle
-		fclose( $handle );
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem();
-		if ( ! $wp_filesystem->chmod( $full_file_path )) {
+		// write the file
+		if ( ! $wp_filesystem->put_contents( $full_file_path, $file_contents )) {
 			if ( is_admin() ) {
-				$msg = sprintf( __( 'Permissions for the %1$sfile located at "%2$s" could not be set.', 'event_espresso' ), $file_type, $full_file_path );
+				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be written to.', 'event_espresso' ), $file_type, $full_file_path );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
 				throw new EE_Error( $msg );
 			}
@@ -270,13 +276,36 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * add_htaccess_deny_from_all
+	 * remove_filename_from_filepath
+	 * given a full path to a file including the filename itself, this removes  the filename and returns the path, up to, but NOT including the filename
+	 *
 	 * @param string $full_file_path
-	 * @return bool
+	 * @return string
 	 */
 	public static function remove_filename_from_filepath( $full_file_path = '' ) {
-		$path_info = pathinfo( $full_file_path );
-		return isset( $path_info['dirname'] ) ? $path_info['dirname'] : '';
+		return pathinfo( $full_file_path, PATHINFO_DIRNAME );
+	}
+
+
+	/**
+	 * get_filename_from_filepath
+	 *
+	 * @param string $full_file_path
+	 * @return string
+	 */
+	public static function get_filename_from_filepath( $full_file_path = '' ) {
+		return pathinfo( $full_file_path, PATHINFO_BASENAME );
+	}
+
+
+	/**
+	 * get_file_extension
+	 *
+	 * @param string $full_file_path
+	 * @return string
+	 */
+	public static function get_file_extension( $full_file_path = '' ) {
+		return pathinfo( $full_file_path, PATHINFO_EXTENSION );
 	}
 
 
