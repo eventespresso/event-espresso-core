@@ -1,7 +1,6 @@
 <div class="changelog">
-	<h2 class="about-headline-callout"><?php _e('Welcome to the Decaf (free) Version of Event Espresso 4!', 'event_espresso'); ?></h2>
-	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!</p>
-	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
+	<h2 class="about-headline-callout"><?php _e('Event Espresso, the most advanced event management system!', 'event_espresso'); ?></h2>
+	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=WordPress+event+manager" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
 			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/publish_meta_box.jpg">
