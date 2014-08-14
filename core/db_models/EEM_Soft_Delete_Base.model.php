@@ -27,6 +27,9 @@ require_once( EE_MODELS . 'EEM_Base.model.php');
  */
 abstract class EEM_Soft_Delete_Base extends EEM_Base{
 
+	/**
+	 * @param null $timezone
+	 */
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
 		if( ! $this->_default_where_conditions_strategy){
