@@ -914,28 +914,23 @@ abstract class EE_Base_Class{
 
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
-	 * @return boolean success
+	 * @return boolean | int
 	 */
 	public function delete(){
-		$model=$this->get_model();
 		/**
 		 * Called just before deleting a model object
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
-		$result = $model->delete_by_ID( $this->ID() );
+		$result = $this->get_model()->delete_by_ID( $this->ID() );
 		/**
 		 * Called just after deleting a model object
 		 * @param EE_Base_Class $model_object that was just 'deleted'
-		 * @param boolean success
+		 * @param boolean $result
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__end', $this, $result );
-		if($result){
-			return true;
-		}else{
-			return false;
-		}
+		return $result;
 	}
 
 
@@ -1076,7 +1071,7 @@ abstract class EE_Base_Class{
 
 	/**
 	 * for getting a model while instantiated.
-	 * @return mixed EEM_Base|EEM_CPT_Base
+	 * @return \EEM_Base | \EEM_CPT_Base
 	 */
 	public function get_model() {
 		$modelName = self::_get_model_classname( get_class($this) );
