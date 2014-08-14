@@ -1768,6 +1768,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1815,6 +1825,38 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->affiliate_id = NULL;
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 
