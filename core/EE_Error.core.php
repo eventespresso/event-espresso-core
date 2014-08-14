@@ -1039,16 +1039,19 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( ! EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs', 'Event Espresso Error Logging can not be set up because' )) {
+		try {
+			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
+			if ( ! $clear ) {
+				//get existing log file and append new log info
+				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;
+			}
+			EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file, $exception_log );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Event Espresso error logging could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
 			return;
 		}
-		if ( ! EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' )) {
-			return;
-		}
-		EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
-		// write (which clears file and starts from top) or append ?
-		$mode = $clear ? 'w' : 'a';
-		EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file, $exception_log, $mode );
 
 	}
 
