@@ -498,8 +498,41 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string         timezone_string (valid for DateTimeZone)
 	 */
 	public static function timezone_convert_to_string_from_offset( $offset ) {
-		// convert hour offset to seconds
-		$offset *= 3600;
+		$offset *= 3600; // convert hour offset to seconds
+		//make sure $offset is int (cause if incoming was int then converted to float);
+		$offset = (int) $offset;
+
+		//account for WP offsets that aren't valid UTC
+		switch ( $offset ) {
+			case -1800 :
+				$offset = -3600;
+				break;
+
+			case 1800 :
+				$offset = 3600;
+				break;
+
+			case -23400 :
+				$offset = -21600;
+				break;
+
+			case -27000 :
+				$offset = -25200;
+				break;
+
+			case -30600 :
+				$offset = -28800;
+				break;
+
+			case 49500 :
+				$offset = 50400;
+				break;
+
+			default :
+				$offset = $offset;
+				break;
+		}
+
 		$abbreviations = timezone_abbreviations_list();
 		foreach ( $abbreviations as $abbreviation ) {
 			foreach ( $abbreviation as $city ) {
@@ -508,7 +541,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				}
 			}
 		}
-        return FALSE;
+        		return FALSE;
 	}
 
 
