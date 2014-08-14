@@ -42,14 +42,13 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
+		//load helper
+		EE_Registry::instance()->load_helper('MSG_Template');
 
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
 		$this->_set_installed_message_types();
-
-		//load helper
-		EE_Registry::instance()->load_helper('MSG_Template');
 	}
 
 	/**
