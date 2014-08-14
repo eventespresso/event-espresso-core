@@ -27,21 +27,6 @@ require_once( EE_MODELS . 'EEM_Base.model.php');
  */
 abstract class EEM_Soft_Delete_Base extends EEM_Base{
 
-	/**
-	 * About all child constructors:
-	 * they should define the _tables, _fields and _model_relations arrays.
-	 * Should ALWAYS be called after child constructor.
-	 * In order to make the child constructors to be as simple as possible, this parent constructor
-	 * finalizes constructing all the object's attributes.
-	 * Generally, rather than requiring a child to code
-	 * $this->_tables = array(
-	 *		'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
-	 *		...);
-	 *  (thus repeating itself in the array key and in the constructor of the new EE_Table,)
-	 * each EE_Table has a function to set the table's alias after the constructor, using
-	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
-	 * do something similar.
-	 */
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
 		if( ! $this->_default_where_conditions_strategy){
@@ -355,18 +340,20 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		}
 	}
 
-
-
 	/**
 	 * Updates all the items of this model which match the $query params, regardless of whether
 	 * they've been soft-deleted or not
-	 * @param array $fields_n_values like EEM_Base::update $fields_n_value
-	 * @param array $query_params like EEM_base::get_all $query_params
+	 * @param array $field_n_values like EEM_Base::update's $fields_n_value
+	 * @param array $query_params like EEM_base::get_all's $query_params
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int number of items updated
 	 */
-	public function update_deleted_and_undeleted($fields_n_values, $query_params){
+	public function update_deleted_and_undeleted($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE ){
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-		return $this->update($fields_n_values, $query_params);
+		return $this->update($fields_n_values, $query_params, $keep_model_objs_in_sync );
 	}
 
 	/**
@@ -375,10 +362,14 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * If you want to update soft-deleted items also, use update_deleted_and_undeleted instead.
 	 * @param array $fields_n_values like EEM_base::update's $fields_n_values
 	 * @param array $query_params like EEM_base::get_all's $query_params
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int how many items were updated
 	 */
-	public function update($fields_n_values, $query_params){
-		return parent::update($fields_n_values,$query_params);
+	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE ){
+		return parent::update($fields_n_values,$query_params, $keep_model_objs_in_sync );
 	}
 
 

@@ -570,7 +570,8 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_tables;
 	}
 	/**
-	 * Updates all the entries (in each table for this model) according to $fields_n_values, where the criteria expressed in $query_params are met..
+	 * Updates all the database entries (in each table for this model) according to $fields_n_values and optionally
+	 * also updates all the model objects, where the criteria expressed in $query_params are met..
 	 * Also note: if this model has multiple tables, this update verifies all the secondary tables have an entry for each row (in the primary table) we're trying to update; if not,
 	 * it inserts an entry in the secondary table.
 	 * Eg: if our model has 2 tables: wp_posts (primary), and wp_esp_event (seconary). Let's say we are trying to update a model object with EVT_ID = 1
@@ -590,9 +591,21 @@ abstract class EEM_Base extends EE_Base{
 	 * is left as FALSE, then EE_Simple_HTML_Field->preapre_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because
 	 * model objects perform their prepare_for_set function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we
 	 * escape HTML characters in the prepare_for_set method...)
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
-	function update($fields_n_values, $query_params){
+	function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE){
+		/**
+		 * Action called befpre a model update call has been made.
+		 *
+		 * @param EEM_Base $model
+		 * @param array $fields_n_values the updated fields and their new values
+		 * @param array $query_params @see EEM_Base::get_all()
+		 */
+		do_action( 'AHEE__EEM_Base__update__begin',$this, $fields_n_values, $query_params );
 		/**
 		 * Filters the fields about to be updated given the query parameters. You can provide the
 		 * $query_params to $this->get_all() to find exactly which records will be updated
@@ -607,6 +620,9 @@ abstract class EEM_Base extends EE_Base{
 		$tables= $this->get_tables();
 		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
 		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
+		//NOTE: we should make this code more efficient by NOT querying twice
+		//before the real update, but that needs to first go through ALPHA testing
+		//as it's dangerous. says Mike August 8 2014
 		if(count($tables) > 1){
 			//we want to make sure the default_where strategy is ignored
 			$this->_ignore_where_strategy = TRUE;
@@ -629,13 +645,72 @@ abstract class EEM_Base extends EE_Base{
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
+		//if we want to keep model objects in sync, AND
+		//if this wasn't called from a model object (to update itself)
+		//then we want to make sure we keep all the existing
+		//model objects in sync with the db
+		if( $keep_model_objs_in_sync && ! $this->_values_already_prepared_by_model_object ){
+			$model_objs_affected_ids = $this->get_col( $query_params );
+			if( ! $model_objs_affected_ids ){
+				//wait wait wait- if nothing was affected let's stop here
+				return 0;
+			}
+			foreach( $model_objs_affected_ids as $id ){
+				$model_obj_in_entity_map = $this->get_from_entity_map( $id );
+				if( $model_obj_in_entity_map ){
+					foreach( $fields_n_values as $field => $new_value ){
+						$model_obj_in_entity_map->set( $field, $new_value );
+					}
+				}
+			}
+			//we already know what we want to update. So let's make the query simpler so it's a little more efficient
+			$query_params = array(
+				array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
+				'limit' => count( $model_objs_affected_ids ) );
+		}
 
-
-		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
 		$this->show_db_query_if_previously_requested($SQL);
+		/**
+		 * Action called after a model update call has been made.
+		 *
+		 * @param EEM_Base $model
+		 * @param array $fields_n_values the updated fields and their new values
+		 * @param array $query_params @see EEM_Base::get_all()
+		 * @param int $rows_affected
+		 */
+		do_action( 'AHEE__EEM_Base__update__end',$this, $fields_n_values, $query_params, $rows_affected );
 		return $rows_affected;//how many supposedly got updated
+	}
+
+	/**
+	 * Analogous to $wpdb->get_col, returns a 1-dimensional array where teh values
+	 * are teh values of the field specified (or by default the primary key field)
+	 * that matched the query params. Note that you should pass the name of the
+	 * model FIELD, not the database table's column name.
+	 * @param array $query_params @see EEM_Base::get_all()
+	 * @param string $field_to_select
+	 * @return array just like $wpdb->get_col()
+	 */
+	public function get_col( $query_params  = array(), $field_to_select = NULL ){
+		global $wpdb;
+
+		if( $field_to_select ){
+			$field = $this->field_settings_for( $field_to_select );
+		}else{
+			$field = $this->get_primary_key_field();
+		}
+
+
+		$model_query_info = $this->_create_model_query_info_carrier($query_params);
+		$select_expressions = $field->get_qualified_column();
+		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
+//		echo "sql:$SQL";
+		$results =  $wpdb->get_col( $SQL );
+		$this->show_db_query_if_previously_requested($SQL);
+		return $results;
 	}
 
 

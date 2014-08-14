@@ -107,9 +107,8 @@ Fully customize WordPress edit screens with powerful custom fields.</p>
 <p><strong>Payment Gateway Fixes</strong></p>
 <ul>
 <li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
-<li>Restored the download invoice link in the payment overview page</li>
 <li>Show failed payments in payment response</li>
-<li>Added support for partial payments in Single Page Checkout</li>
+<li>Fix for Single Page Checkout so it displays the correct amount owed based on when a payment has already been entered into the system</li>
 <li>Send address fields to Mijireh</li>
 </ul>
 

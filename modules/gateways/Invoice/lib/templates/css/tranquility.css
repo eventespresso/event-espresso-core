@@ -11,7 +11,7 @@ Created by Roan Lavery
 #invoice h1 {margin: 0;color: #000;text-transform: uppercase;}
 #invoice h2, #Main #invoice h3 {font-family: Georgia, "Times New Roman", Times, serif; color:#000; text-transform: none; line-height:1.2;margin-top:9px}
 #invoice h2 {font-size:11pt}
-#company-address, #client-details, #payment-details, #invoice-other, #invoice-amount td, th,  #invoice-info {font-size:10pt}
+#company-address, #client-details, #payment-details, #invoice-other, .invoice-amount td, th,  #invoice-info {font-size:10pt}
 .org, .fn, #bank_name{text-transform:capitalize;font-variant: small-caps; font-weight:bold; letter-spacing:0.07em; color:#5F7C91}
 #payment-details strong, #invoice-other strong{font-weight:normal; color:#666}
 #payment-details h2, #invoice-other h2{font-variant: small-caps;letter-spacing:0.07em; color:#6C8597 }
@@ -32,9 +32,9 @@ Created by Roan Lavery
 #invoice-info th{text-align:right}
 #company-address { width:300px; text-align:right; margin-top:10px }
 
-#bill-to-ship-to, #invoice-amount { margin:20px 0; }
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
 
-#invoice-amount {margin: 1em 0; clear: both; }
+.invoice-amount {margin: 1em 0; clear: both; }
 
 #payment-details{width:250px; float:left;  }
 #invoice-other{width:350px;clear:both; float:right; text-align:right;  }
