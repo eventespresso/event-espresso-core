@@ -530,7 +530,7 @@ final class EE_System {
 	/**
 	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
 	 *
-	 * @since  %VER%
+	 * @since  4.3.1
 	 *
 	 * @param int $request_type What request type this is.  The paramater is included so that any future validations added to here can be restricted to only certain request types.
 	 *

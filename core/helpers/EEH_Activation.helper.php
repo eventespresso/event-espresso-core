@@ -941,7 +941,7 @@ class EEH_Activation {
 	/**
 	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
 	 *
-	 * @since %VER%
+	 * @since 4.3.1
 	 *
 	 * @return void
 	 */

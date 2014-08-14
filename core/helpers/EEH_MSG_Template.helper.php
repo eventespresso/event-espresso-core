@@ -378,7 +378,7 @@ class EEH_MSG_Template {
 	 * Used to return active messengers array stored in the wp options table.
 	 * If no value is present in the option then an empty array is returned.
 	 *
-	 * @since %VER%
+	 * @since 4.3.1
 	 *
 	 * @return array
 	 */
@@ -392,7 +392,7 @@ class EEH_MSG_Template {
 	/**
 	 * Used to update the active messengers array stored in the wp options table.
 	 *
-	 * @since %VER%
+	 * @since 4.3.1
 	 *
 	 * @param array $data_to_save Incoming data to save.
 	 *
