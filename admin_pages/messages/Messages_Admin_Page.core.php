@@ -53,6 +53,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function __construct( $routing = TRUE ) {
 		//make sure messages autoloader is running
 		EE_Registry::instance()->load_lib( 'Messages_Init' );
+		EE_Registry::instance()->load_helper('MSG_Template');
 		EE_Messages_Init::set_autoloaders();
 		parent::__construct($routing);
 	}
@@ -72,9 +73,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : NULL;
 
-
+		EE_Registry::instance()->load_lib( 'messages' );
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = get_option('ee_active_messengers');
+		$this->_active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
 		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
 
@@ -172,7 +173,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_page_routes = array(
 				'default'=> '_ee_default_messages_overview_list_table',
-				'custom_mtps' => '_ee_custom_messages_overview_list_table',
+				'custom_mtps' => '_custom_mtps_preview',
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
 					 'noheader' => TRUE
@@ -246,21 +247,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Custom Message Templates', 'event_espresso'),
 					'order' => 15
 					),
-				'list_table' => 'Custom_Messages_Template_List_Table',
-				'help_tabs' => array(
-					'message_overview_message_types_help_tab' => array(
-						'title' => __('Message Types', 'event_espresso'),
-						'filename' => 'messages_overview_types'
-					),
-					'messages_overview_messengers_help_tab' => array(
-						'title' => __('Messengers', 'event_espresso'),
-						'filename' => 'messages_overview_messengers',
-					),
-					'messages_overview_other_help_tab' => array(
-						'title' => __('Messages Other', 'event_espresso'),
-						'filename' => 'messages_overview_other',
-					),
-				),
+				'help_tabs' => array(),
 				'help_tour' => array(),
 				'require_nonce' => FALSE
 			),
@@ -298,7 +285,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
                             'filename' => 'messages_templates'
                             ),
 						'message_template_shortcodes' => array(
-							'title' => __('Message Shortcodes', 'event_epresso'),
+							'title' => __('Message Shortcodes', 'event_espresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
                         'message_preview_help_tab' => array(
@@ -370,15 +357,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options_default() {
 		$page_title = $this->_admin_page_title;
 		$this->_admin_page_title = __('Global Message Templates', 'event_espresso');
-		$this->_per_page_screen_option();
-		$this->_admin_page_title = $page_title;
-	}
-
-
-
-	protected function _add_screen_options_custom_mtps() {
-		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -545,57 +523,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
 				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
 			)
 		);
 	}
-
-
-
-	/**
-	 * set views array for Custom Templates list table
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function _set_list_table_views_custom_mtps() {
-		$this->_views = array(
-			'in_use' => array(
-				'slug' => 'in_use',
-				'label' => __('In Use', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Message Templates', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'trashed' => array(
-				'slug' => 'trashed',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
-					'delete_message_template' => __('Delete Permanently', 'event_espresso')
-				)
-			)
-		);
-	}
-
-
 
 
 
@@ -606,9 +536,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _ee_custom_messages_overview_list_table() {
-		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
-		$this->display_admin_list_table_page_with_no_sidebar();
+	protected function _custom_mtps_preview() {
+		$this->_admin_page_title = __('Custom Message Templates (Preview)', 'event_espresso');
+		$this->_template_args['preview_img'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="Preview Custom Message Templates screenshot" />';
+		$this->_template_args['preview_text'] = '<strong>'.__('Custom Message Templates is a feature that is only available in the caffeinated version of Event Espresso.  With the Custom Message Templates feature, you are able to create custom templates and set them per event.', 'event_espresso').'</strong>';
+		$this->display_admin_caf_preview_page( 'custom_message_types', FALSE );
 	}
 
 
@@ -654,10 +586,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			case 'in_use':
 				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global );
-				break;
-
-			case 'all':
-				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count );
 				break;
 
 			default:
@@ -2387,7 +2315,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			//update settings in database
-			update_option( 'ee_active_messengers', $this->_active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 
 
 			//generate new templates (if necessary)
@@ -2398,7 +2326,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//if generation failed then we need to remove the active messenger.
 			if ( !$templates ) {
 				unset($this->_active_messengers[$messenger]);
-				update_option('ee_active_messengers', $this->_active_messengers);
+				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 			} else {
 				//all is good let's do a success message
 				$success_msg = $message_type ? sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) :sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
@@ -2431,7 +2359,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				unset( $this->_active_messengers[$messenger] );
 			}
 
-			update_option('ee_active_messengers', $this->_active_messengers);
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 
 			$success_msg = $message_type ? sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']), __('Message Type', 'event_espresso') ) : sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messenger', 'event_espresso') );
 
@@ -2536,7 +2464,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//okay we should have the data all setup.  Now we just update!
-		$success = update_option( 'ee_active_messengers', $this->_active_messengers );
+		$success = EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 
 		if ( $success ) {
 			EE_Error::add_success( __('Settings updated', 'event_espresso') );

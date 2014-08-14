@@ -97,10 +97,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Events_Archive', 'filter_config' ), 10 );
-		add_action( 'AHEE__template_settings__template__before_settings_form', array( 'EED_Events_Archive', 'template_settings_form' ), 10 );
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
-		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Events_Archive', 'update_template_settings' ), 10, 2 );
 	}
 
 
@@ -792,59 +789,6 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
-	/**
-	 * 	template_settings_form
-	 *
-	 *  @access 	public
-	 *  @static
-	 *  @return 	void
-	 */
-	public static function template_settings_form() {
-		$template_settings = EE_Registry::instance()->CFG->template_settings;
-		$template_settings->EED_Events_Archive = isset( $template_settings->EED_Events_Archive ) ? $template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
-		$template_settings->EED_Events_Archive = apply_filters( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', $template_settings->EED_Events_Archive );
-		$events_archive_settings = array(
-			'display_status_banner' => 0,
-			'display_description' => 1,
-			'display_ticket_selector' => 0,
-			'display_datetimes' => 1,
-			'display_venue' => 0,
-			'display_expired_events' => 0
-		);
-		$events_archive_settings = array_merge( $events_archive_settings, (array)$template_settings->EED_Events_Archive );
-		EEH_Template::display_template( EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $events_archive_settings );
-	}
-
-
-
-
-
-
-	/**
-	 * 	update_template_settings
-	 *
-	 *  @access 	public
-	 *  @param 	EE_Events_Archive_Config $CFG
-	 *  @param 	EE_Request_Handler $REQ
-	 *  @return 	void
-	 */
-	public static function update_template_settings( $CFG, $REQ ) {
-		$CFG->EED_Events_Archive = new EE_Events_Archive_Config();
-		// unless we are resetting the config...
-		if ( ! isset( $REQ['EED_Events_Archive_reset_event_list_settings'] ) || absint( $REQ['EED_Events_Archive_reset_event_list_settings'] ) !== 1 ) {
-			$CFG->EED_Events_Archive->display_status_banner = isset( $REQ['EED_Events_Archive_display_status_banner'] ) ? absint( $REQ['EED_Events_Archive_display_status_banner'] ) : 0;
-			$CFG->EED_Events_Archive->display_description = isset( $REQ['EED_Events_Archive_display_description'] ) ? absint( $REQ['EED_Events_Archive_display_description'] ) : 1;
-			$CFG->EED_Events_Archive->display_ticket_selector = isset( $REQ['EED_Events_Archive_display_ticket_selector'] ) ? absint( $REQ['EED_Events_Archive_display_ticket_selector'] ) : 0;
-			$CFG->EED_Events_Archive->display_datetimes = isset( $REQ['EED_Events_Archive_display_datetimes'] ) ? absint( $REQ['EED_Events_Archive_display_datetimes'] ) : 1;
-			$CFG->EED_Events_Archive->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
-			$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;			}
-		return $CFG;
-	}
-
-
-
-
-
 
 	/**
 	 * 	event_list_css
@@ -1011,7 +955,7 @@ class EE_Event_List_Query extends WP_Query {
 //	private $_list_type ='text';
 
 	function __construct( $args = array() ) {
-//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
@@ -1022,6 +966,16 @@ class EE_Event_List_Query extends WP_Query {
 				// then remove it from the array of args that will later be passed to WP_Query()
 				unset( $args[ $key ] );
 			}
+		}
+		// Show Expired ?
+		switch ( (string)$this->_show_expired ) {
+			case 'TRUE' :
+			case 'true' :
+			case '1' :
+				$this->_show_expired = TRUE;
+				break;
+			default :
+				$this->_show_expired = FALSE;
 		}
 		// parse orderby attribute
 		if ( $this->_order_by !== NULL ) {
@@ -1108,8 +1062,6 @@ class EE_Event_List_Query extends WP_Query {
 	public function posts_where( $SQL ) {
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'posts_where', array( $this, 'posts_where' ));
-		// Show Expired ?
-		$this->_show_expired = $this->_show_expired ? TRUE : FALSE;
 		$SQL .= EED_Events_Archive::posts_where_sql_for_show_expired( $this->_show_expired );
 		// Category
 		$SQL .=  EED_Events_Archive::posts_where_sql_for_event_category_slug( $this->_category_slug );

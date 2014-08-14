@@ -318,6 +318,10 @@ abstract class EE_Addon extends EE_Configurable {
 				$this->new_install();
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
+			case EE_System::req_type_activation_but_not_installed:
+				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation_but_not_installed" );
+				$this->update_list_of_installed_versions( $activation_history_for_addon );
+				break;
 			case EE_System::req_type_reactivation:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__reactivation" );
 				$this->reactivation();

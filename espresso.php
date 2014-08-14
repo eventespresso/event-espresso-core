@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.3.0.p
+  Version: 			4.3.2.rc.000
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.3.0.p';
+		return '4.3.2.rc.000';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -53,7 +53,8 @@ if ( ! function_exists( 'espresso_version' )) {
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
 define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
 define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
-define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3.28' );
+define( 'EE_MIN_PHP_VER_REQUIRED', '5.0.0' );
+define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3.2' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 
@@ -136,7 +137,7 @@ function espresso_duplicate_plugin_error() {
 	<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
 	</div>
 	<?php
-	deactivate_plugins( plugin_basename( __FILE__ ));
+	EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
 }
 
 

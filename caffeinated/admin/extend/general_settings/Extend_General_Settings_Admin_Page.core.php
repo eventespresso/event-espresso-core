@@ -40,10 +40,14 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 
 	protected function _extend_page_config() {
+
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'general_settings';
 
 		$new_page_routes = array(
-//			'request_filesystem_credentials' => '_request_filesystem_credentials',
+			'update_template_settings' => array(
+				'func' => '_update_template_settings',
+				'noheader' => TRUE,
+			),
 			'google_map_settings' => '_google_map_settings',
 			'update_google_map_settings' => array(
 				'func' => '_update_google_map_settings',
@@ -54,6 +58,22 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
 
 		$new_page_config = array(
+			//template settings
+			'template_settings' => array(
+				'nav' => array(
+					'label' => __('Templates'),
+					'order' => 30
+				),
+				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'general_settings_templates_help_tab' => array(
+						'title' => __('Templates', 'event_espresso'),
+						'filename' => 'general_settings_templates'
+					)
+				),
+				'help_tour' => array( 'Templates_Help_Tour' ),
+				'require_nonce' => FALSE
+			),
 			'google_map_settings' => array(
 				'nav' => array(
 					'label' => __('Google Maps'),
@@ -68,7 +88,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					),
 				'help_tour' => array( 'Google_Maps_Help_Tour' ),
 				'require_nonce' => FALSE
-				)
+			)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
@@ -86,6 +106,10 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$template = GEN_SET_CAF_TEMPLATE_PATH . 'use_venue_and_staff_manager_settings.template.php';
 		EEH_Template::display_template( $template, $_args );
 	}
+
+
+
+		/*************		Logging Settings 		*************/
 
 
 
@@ -180,6 +204,32 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$admin_options->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : $admin_options->use_remote_logging;
 		$admin_options->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : $admin_options->remote_logging_url;
 		return $admin_options;
+
+
+		
+	/*************		Template Settings 		*************/
+
+
+
+	protected function _template_settings() {
+		$this->_template_args['values'] = $this->_yes_no_values;
+		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
+		$this->_set_add_edit_form_tags( 'update_template_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_CAF_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+	protected function _update_template_settings() {
+
+		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
+
+		$what = 'Template Settings';
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
+
 	}
 
 
