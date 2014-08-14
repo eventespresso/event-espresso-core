@@ -423,18 +423,21 @@ final class EE_System {
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
-				$this->check_ee3addons();
+                $this->check_ee3addons();
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
 				//just record that it was activated, but don't install anything
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
@@ -446,11 +449,13 @@ final class EE_System {
 					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
 				}
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -578,6 +583,26 @@ final class EE_System {
 		// re-save
 		return update_option( 'espresso_db_update', $version_history );
 	}
+
+
+
+
+	/**
+	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
+	 *
+	 * @since  4.3.1
+	 *
+	 * @param int $request_type What request type this is.  The paramater is included so that any future validations added to here can be restricted to only certain request types.
+	 *
+	 * @return void
+	 */
+	private function _do_setup_validations( $request_type ) {
+		EEH_Activation::validate_messages_system();
+		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
+	}
+
+
+
 
 
 	/**
