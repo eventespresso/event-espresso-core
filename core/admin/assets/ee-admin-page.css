@@ -735,7 +735,9 @@ label.error  { display: block; color: #FE2A00 !important; }
     vertical-align: middle;
 }
 
-
+div.updated.ee-notices-attention {
+	border-left: 4px solid #E6DB55;
+}
 .espresso-notices.ee-nag-notice {
 	border-left: 4px solid #E76700;
 }
