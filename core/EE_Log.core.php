@@ -149,7 +149,9 @@ class EE_Log {
 	 * write_log
 	 */
 	public function write_log() {
-		EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'a', 'Event Espresso Log' );
+		//get existing log file and append new log info
+		$this->_log = EEH_File::get_file_contents( $this->_logs_folder . $this->_log_file ) . $this->_log;
+		EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log' );
 	}
 
 
@@ -193,14 +195,14 @@ class EE_Log {
 	 */
 	public function write_debug() {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			$this->_debug_log = '<?php' . PHP_EOL;
+			$this->_debug_log = '';
 			foreach ( $_GET as $key => $value ) {
-				$this->_debug_log .= '$my_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+				$this->_debug_log .= '$_GET["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
 			}
 			foreach ( $_POST as $key => $value ) {
-				$this->_debug_log .= '$my_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
+				$this->_debug_log .= '$_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
 			}
-			EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'w', 'Event Espresso Debug Log' );
+			EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'Event Espresso Debug Log' );
 		}
 	}
 
