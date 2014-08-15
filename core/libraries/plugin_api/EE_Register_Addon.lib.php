@@ -230,7 +230,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				'checkPeriod' 			=> isset( $setup_args['pue_options']['checkPeriod'] ) ? (string)$setup_args['pue_options']['checkPeriod'] : '24',
 				'use_wp_update'		=> isset( $setup_args['pue_options']['use_wp_update'] ) ? (string)$setup_args['pue_options']['use_wp_update'] : FALSE
 			);
-			add_action( 'action_hook_espresso_new_addon_update_api', array( 'EE_Register_Addon', 'load_pue_update' ));
+			add_action( 'AHEE__EE_System__brew_espresso__after_pue_init', array( 'EE_Register_Addon', 'load_pue_update' ));
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
 			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
@@ -274,7 +274,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function load_pue_update() {
 		// load PUE client
-		EE_Registry::instance()->load_file( EE_THIRD_PARTY . 'pue' . DS, 'pue-client.php' );
+		require_once  EE_THIRD_PARTY . 'pue' . DS . 'pue-client.php';
 		// cycle thru settings
 		foreach ( self::$_settings as $settings ) {
 			if ( isset( $settings['pue_options'] )) {
