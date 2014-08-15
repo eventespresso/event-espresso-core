@@ -55,7 +55,6 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
-//		echo"init reg content";
 		EEH_Activation::initialize_system_questions();
 //		EEH_Activation::insert_default_prices();
 //		EEH_Activation::insert_defaulinsert_default_pricest_price_types();
@@ -766,9 +765,8 @@ class EEH_Activation {
 	public static function insert_default_status_codes() {
 
 		global $wpdb;
-		$table = $wpdb->get_var("SHOW TABLES LIKE '" . EEM_Status::instance()->table() . "'");
 
-		if ( $table == EEM_Status::instance()->table()) {
+		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
 			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
@@ -1257,6 +1255,31 @@ class EEH_Activation {
 
 		if ( !empty($msg) )
 			EE_Error::add_persistent_admin_notice( 'ee3plugins_disabled', $msg, true );
+	}
+
+	/**
+	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+	 * @global type $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @return boolean
+	 */
+	public static function table_exists( $table_name ){
+		global $wpdb;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->last_error = NULL;
+		$wpdb->show_errors( FALSE );
+		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		if( ! is_null( $wpdb->last_error) && $wpdb->last_error != '' ){
+			//no errors. Table exists
+			return FALSE;
+		}else{
+			//errors. Table doesn't exist
+			return TRUE;
+		}
 	}
 
 }

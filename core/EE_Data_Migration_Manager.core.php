@@ -445,8 +445,17 @@ class EE_Data_Migration_Manager{
 	 * data migration scripts' migration_step() functions).
 	 * @return array, where the first item is one EE_Data_Migration_Script_Base's stati, and the second
 	 * item is a string describing what was done
+	 * @param int $step_size
+	 * @return array {
+	 *	@type int $records_to_migrate from the current migration script
+	 *	@type int $records_migrated
+	 *	@type string $status one of EE_Data_Migration_Manager::status_*
+	 *	@type string $script verbose name of the current DMS
+	 *	@type string $message string describing what was done during this step
+	 * }
 	 */
-	public function migration_step(){
+	public function migration_step( $step_size = NULL ){
+
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
 			if( ! $currently_executing_script){
@@ -497,7 +506,9 @@ class EE_Data_Migration_Manager{
 		//ok so we definitely have a data migration script
 		try{
 			//how big of a bite do we want to take? Allow users to easily override via their wp-config
-			$step_size = defined('EE_MIGRATION_STEP_SIZE') ? EE_MIGRATION_STEP_SIZE : EE_Data_Migration_Manager::step_size;
+			if( is_null( $step_size ) ){
+				$step_size = defined('EE_MIGRATION_STEP_SIZE') ? EE_MIGRATION_STEP_SIZE : EE_Data_Migration_Manager::step_size;
+			}
 			//do what we came to do!
 			$currently_executing_script->migration_step($step_size);
 			switch($currently_executing_script->get_status()){

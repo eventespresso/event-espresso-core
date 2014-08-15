@@ -399,50 +399,22 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	/**
+	 * asserts that a table (even temporary one) exists
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
-	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
-	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
-	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
-	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
-	function assertTableExists($table_name,$model_name = 'Unknown') {
-		if( ! $this->_table_exists( $table_name) ){
+	function assertTableExists($table_name,$model_name = 'Unknown'){
+		if( ! EEH_Activation::table_exists( $table_name ) ){
 			global $wpdb;
 			$this->fail( $wpdb->last_error);
 		}
 	}
 
 	/**
-	 * Returns whether or not hte table exists
-	 * @global WPDB $wpdb
-	 * @param string $table_name
-	 * @param type $model_name
-	 * @return boolean whether the table exists or not. If you want to get the error
-	 * regarding the table's existence, you can use $wpdb->last_error
-	 */
-	protected function _table_exists( $table_name ){
-		global $wpdb;
-		if(strpos($table_name, $wpdb->prefix) !== 0){
-			$table_name = $wpdb->prefix.$table_name;
-		}
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->last_error = NULL;
-		$wpdb->show_errors( FALSE );
-		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_errors( $old_show_errors_value );
-		if( empty( $wpdb->last_error ) ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	}
-
-	/**
+	 * Asserts the table (even temporary one) does not exist
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
 	 * @global WPDB $wpdb
@@ -450,7 +422,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
 	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
-		if( $this->_table_exists( $table_name ) ){
+		if( EEH_Activation::table_exists( $table_name ) ){
+			global $wpdb;
 			$this->fail( sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
 	}
