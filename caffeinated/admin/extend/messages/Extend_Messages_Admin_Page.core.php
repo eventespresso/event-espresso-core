@@ -77,7 +77,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	/**
 	 * This is the callback for the FHEE__manage_event-espresso_page_espresso_messages_columns to register the caffeinated columns for the global message templates list table.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param array  $columns   Original defined list of columns
 	 * @param string $screen_id The unique screen id for the page.
@@ -97,7 +97,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	/**
 	 * Callback for FHEE__EE_Admin_List_Table__column_actions__event-espresso_page_espresso_messages action that allows for adding the content for the registered "action" column.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param EE_Base_Class
 	 * @param string $screen_id Unique screen id for the page
