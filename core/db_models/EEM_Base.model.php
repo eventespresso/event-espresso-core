@@ -785,6 +785,14 @@ abstract class EEM_Base extends EE_Base{
 			$rows_deleted = 0;
 		}
 
+		/**
+		 * Action called just after performing a real deletion query. Although at this point the
+		 * items should have been deleted
+		 * @param EEM_Base $model
+		 * @param array $query_params @see EEM_Base::get_all()
+		 * @param int $rows_deleted
+		 */
+		do_action( 'AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted );
 		return $rows_deleted;//how many supposedly got updated
 	}
 
@@ -1492,7 +1500,7 @@ abstract class EEM_Base extends EE_Base{
 		if(array_key_exists('group_by', $query_params)){
 			if(is_array($query_params['group_by'])){
 				$this->_extract_related_models_from_sub_params_array_values($query_params['group_by'],$query_info_carrier,'group_by');
-			}elseif($this->_isnt_empty ('group_by', $query_params['group_by'])){
+			}elseif( ! empty( $query_params['group_by'])){
 				$this->_extract_related_model_info_from_query_param( $query_params['group_by'],$query_info_carrier,'group_by');
 			}
 		}
@@ -1502,7 +1510,7 @@ abstract class EEM_Base extends EE_Base{
 		if(array_key_exists('order_by', $query_params)){
 			if ( is_array( $query_params['order_by'] ) )
 				$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier,'order_by');
-			elseif($this->_isnt_empty('order_by', $query_params['order_by']))
+			elseif( ! empty( $query_params['order_by']))
 				$this->_extract_related_model_info_from_query_param( $query_params['order_by'], $query_info_carrier,'order_by');
 		}
 		if(array_key_exists('force_join', $query_params)){
@@ -1604,7 +1612,7 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, $value,get_class($this)));
 			}
 		}
-		if(array_key_exists('default_where_conditions',$query_params) && $this->_isnt_empty('default_where_conditions', $query_params['default_where_conditions'])){
+		if(array_key_exists('default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'])){
 			$use_default_where_conditions = $query_params['default_where_conditions'];
 		}else{
 			$use_default_where_conditions = 'all';
@@ -1615,7 +1623,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.  So we need to setup a subquery and use that for the main join.  Note for now this only works on the primary table for the model.  So for instance, you could set the limit array like this:
 		//array( 'on_join_limit' => array('Primary_Table_Alias', array(1,10) ) )
-		if ( array_key_exists('on_join_limit', $query_params ) && $this->_isnt_empty('on_join_limit', $query_params['on_join_limit'])) {
+		if ( array_key_exists('on_join_limit', $query_params ) && ! empty( $query_params['on_join_limit'])) {
 			$query_object->set_main_model_join_sql( $this->_construct_limit_join_select( $query_params['on_join_limit'][0], $query_params['on_join_limit'][1] ) );
 		}
 
@@ -1629,7 +1637,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
-			}elseif($this->_isnt_empty ('limit', $query_params['limit'])){
+			}elseif( ! empty( $query_params['limit'])){
 				$query_object->set_limit_sql((" LIMIT ".$query_params['limit']));
 			}
 		}
@@ -1651,7 +1659,7 @@ abstract class EEM_Base extends EE_Base{
 					$order_array[] = $this->_deduce_column_name_from_query_param($field_name_to_order_by).SP.$order;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
-			}elseif($this->_isnt_empty ('order_by', $query_params['order_by'])){
+			}elseif( ! empty( $query_params['order_by'])){
 				$this->_extract_related_model_info_from_query_param($query_params['order_by'],$query_object,'order',$query_params['order_by']);
 				if(isset($query_params['order'])){
 					$order = $this->_extract_order($query_params['order']);
@@ -1663,7 +1671,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		//if 'order_by' wasn't set, maybe they are just using 'order' on its own?
-		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params) && $this->_isnt_empty('order', $query_params['order'])){
+		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params) && ! empty( $query_params['order'])){
 			$pk_field = $this->get_primary_key_field();
 			$order = $this->_extract_order($query_params['order']);
 			$query_object->set_order_by_sql(" ORDER BY ".$pk_field->get_qualified_column().SP.$order);
@@ -1678,7 +1686,7 @@ abstract class EEM_Base extends EE_Base{
 					$group_by_array[] = $this->_deduce_column_name_from_query_param($field_name_to_group_by);
 				}
 				$query_object->set_group_by_sql(" GROUP BY ".implode(", ",$group_by_array));
-			}elseif($this->_isnt_empty ('group_by', $query_params['group_by'])){
+			}elseif( ! empty( $query_params['group_by'])){
 				$query_object->set_group_by_sql(" GROUP BY ".$this->_deduce_column_name_from_query_param($query_params['group_by']));
 			}
 		}
@@ -1705,26 +1713,6 @@ abstract class EEM_Base extends EE_Base{
 		if ( empty( $main_model_join_sql ) )
 			$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
-	}
-
-	/**
-	 * Checks if $value isn't empty. If it IS empty (ie, its '', NULL, 0, etc) returns FALSE; otherwise TRUE. Also adds doing_it_wrong messages if WP_DEBUG is on.
-	 * @param string $name query parameter name
-	 * @param mixed $value
-	 * @return boolean. True if value is fine (non-empty), false if it's NOT ok (NULL, '', or 0, etc
-	 */
-	private function _isnt_empty($name,$value){
-		if(empty($value)){
-			//only show warning for empty string.
-//			if($value === ''){
-//				$value = is_array($value) ? json_encode($value): $value;
-//				EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf(__("Your query has an empty query parameter. Parameter '%s' should not have an empty value (you provided '%s')", 'event_espresso'),$name,$value), '4.2');
-//			}
-
-			return false;
-		}else{
-			return true;
-		}
 	}
 
 	/**
@@ -2598,7 +2586,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_foreign_key_to($model_name){
 		foreach($this->field_settings() as $field){
-//			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
 			if( $field instanceof EE_Foreign_Key_Field_Base ){
 				if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
 					return $field;
