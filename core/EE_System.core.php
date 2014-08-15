@@ -537,7 +537,9 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _do_setup_validations( $request_type ) {
-		EEH_Activation::validate_messages_system();
+		if ( $request_type !== EE_System::req_type_new_activation ) {
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
+		}
 		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
 	}
 
