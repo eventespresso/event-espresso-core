@@ -189,6 +189,10 @@
 	outline: none !important;
 }
 
+#wp-admin-bar-espresso-toolbar .ee-icon-size-20:before {
+	margin-right: 0.25em;
+}
+
 /******************* UPCOMING EVENTS WIDGET ****************** */
 
 
