@@ -2266,7 +2266,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * This is used to display caf preview pages.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param string $utm_campaign_source what is the key used for google analytics link
 	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
