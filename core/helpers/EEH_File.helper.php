@@ -140,7 +140,7 @@ class EEH_File extends EEH_Base {
 		// determine parent folder
 		$folder_segments = explode( DS, $folder );
 		array_pop( $folder_segments );
-		$parent_folder = implode( DS, $folder ) . DS;
+		$parent_folder = implode( DS, $folder_segments ) . DS;
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
 		$msg = ! empty( $msg ) ? $msg . ' the ' : 'The ';

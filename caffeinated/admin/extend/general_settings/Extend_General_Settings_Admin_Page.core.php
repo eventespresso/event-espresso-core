@@ -204,9 +204,9 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$admin_options->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : $admin_options->use_remote_logging;
 		$admin_options->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : $admin_options->remote_logging_url;
 		return $admin_options;
+	}
 
 
-		
 	/*************		Template Settings 		*************/
 
 
