@@ -840,6 +840,7 @@ final class EE_System {
 			EE_Registry::instance()->load_core( 'PUE' );
 			//check ee3addons status
 			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
+			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
