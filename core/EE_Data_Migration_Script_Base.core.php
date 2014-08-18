@@ -231,7 +231,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		foreach($this->stages() as $stage){
 			if( $stage->get_status() == EE_Data_Migration_Manager::status_continue){
 				try{
-					$records_migrated_during_stage = $stage->migration_step($num_records_to_migrate_limit);
+					$records_migrated_during_stage = $stage->migration_step($num_records_to_migrate_limit - $num_records_actually_migrated);
 					$num_records_actually_migrated += $records_migrated_during_stage;
 					$records_migrated_per_stage[$stage->pretty_name()] = $records_migrated_during_stage;
 				}catch(Exception $e){
