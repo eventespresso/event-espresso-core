@@ -41,12 +41,15 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	public static function set_hooks_admin() {
 	}
 
+
+
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
 		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
@@ -55,7 +58,15 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
 			// now check for this shortcode
 			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
-				EE_Registry::instance()->REQ->set( 'ee', '_register' );
+				if ( ! did_action( 'pre_get_posts' )) {
+					// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
+					// this allows us to initialize things, enqueue assets, etc,
+					// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
+					add_action( 'pre_get_posts', array( EED_Single_Page_Checkout::instance(), 'run' ));
+				} else {
+					global $wp;
+					EED_Single_Page_Checkout::instance()->run( $wp );
+				}
 			}
 		}
 	}
@@ -65,7 +76,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		return EE_Registry::instance()->REQ->get_output();
