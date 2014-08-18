@@ -90,6 +90,8 @@ abstract class EES_Shortcode extends EE_Base {
 		$shortcode_obj = self::instance( $shortcode_class );
 		// verify class
 		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			global $wp;
+			$shortcode_obj->run( $wp );
 			// set attributes and run the shortcode
 			$shortcode_obj->_attributes = (array)$attributes;
 			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
