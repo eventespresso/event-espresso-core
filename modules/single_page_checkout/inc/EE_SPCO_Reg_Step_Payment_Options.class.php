@@ -235,10 +235,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 				=> 'ee-' . $this->slug() . '-hidden-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
-					'selected_method_of_payment' => new EE_Hidden_Input(
+					'selected_method_of_payment_input' => new EE_Hidden_Input(
 						array(
 							'normalization_strategy' 	=> NULL,
-							'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
 							'html_name' 						=> 'selected_method_of_payment',
 							'html_id' 								=> 'reg-page-selected-method-of-payment',
 							'default'								=> $this->checkout->selected_method_of_payment
@@ -247,7 +246,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					'spco_no_payment_required' => new EE_Hidden_Input(
 						array(
 							'normalization_strategy' 	=> new EE_Boolean_Normalization(),
-							'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
 							'html_name' 						=> 'spco_no_payment_required',
 							'html_id' 								=> 'spco-no-payment-required-payment_options',
 							'default'								=> $no_payment_required
@@ -284,17 +282,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					'hidden_inputs' 		=> $this->_default_hidden_inputs( FALSE )
 				),
 				'layout_strategy'		=> new EE_Template_Layout( array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
-							'template_args'  				=> apply_filters(
-								'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_options__template_args',
-								array(
-									'reg_count' 					=> $reg_count,
-									'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
-									'available_payment_methods' => array()
-								)
-							),
-						)
-					),
+						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
+						'template_args'  				=> apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_options__template_args',
+							array(
+								'reg_count' 					=> $reg_count,
+								'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
+								'available_payment_methods' => array()
+							)
+						),
+					)
+				),
 			)
 		);
 	}
@@ -336,6 +334,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	public function _setup_payment_options() {
+
 		// get all active payment methods
 		$payment_methods = EE_Registry::instance()->load_model( 'Payment_Method' )->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
 		// switch up header depending on number of available payment methods
@@ -403,13 +402,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 				=> 'ee-available-payment-method-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
-					'' => new EE_Radio_Button_Input(
+					'method_of_payment_inputs' => new EE_Radio_Button_Input(
 						$available_payment_method_options,
 						array(
-							'layout_strategy' => new EE_Div_Per_Section_Layout(),
 							'html_name' 		=> 'selected_method_of_payment',
 							'html_class' 		=> 'spco-payment-method',
-							'default'				=> array( $this->checkout->selected_method_of_payment )
+							'default'				=> $this->checkout->selected_method_of_payment
 						)
 					)
 				)
@@ -562,7 +560,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			default:
-//				return $this->_process_payment();
 				$result = $this->_process_payment();
 //				d( $result );
 //				die();
@@ -612,7 +609,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 //		EE_Error::overwrite_errors();
 		// ya gotta make a choice man
 		if ( empty( $this->checkout->selected_method_of_payment )) {
-			$this->checkout->json_response['return_data'] = array( 'plz-select-method-of-payment' => FALSE );
+			$this->checkout->json_response->set_plz_select_method_of_payment( FALSE );
 			return FALSE;
 		}
 		// get EE_Payment_Method object
@@ -637,9 +634,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
-				$this->checkout->redirect_url = add_query_arg(  array( /*'ee' => '_register', */'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
-				// setup URL for redirect
-				$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $this->checkout->redirect_form );
+				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
+				// set JSON response
+				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
 //				d( $payment );
 //				d( $this->checkout );
 //				die();
