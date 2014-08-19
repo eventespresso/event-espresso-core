@@ -557,7 +557,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	function set_default($value){
 		$this->_normalized_value = $value;
-		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );;
+		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );
 	}
 
 	/**
@@ -661,24 +661,33 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * find_form_data_for_this_section
+	 *
 	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
 	 * For example, if this form section's HTML name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
 	 * at $_REQUEST['my_form']['subform']['form_input_1']. (If that doesn't exist, we also check for this subsection's name
 	 * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
 	 * This function finds its value in the form.
+	 *
+	 * @param array $req_data
 	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
-	public function find_form_data_for_this_section($req_data){
-		//break up the html name by "[]"
-		$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
-		$success = preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
-
+	public function find_form_data_for_this_section( $req_data ){
+		// break up the html name by "[]"
+		if ( strpos( $this->html_name(), '[' ) !== FALSE ) {
+			$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
+		} else {
+			$before_any_brackets = $this->html_name();
+		}
+		// grab all of the segments
+		preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
 		if( isset( $matches[ 1 ] ) && is_array( $matches[ 1 ] ) ){
 			$name_parts = $matches[ 1 ];
 			array_unshift($name_parts, $before_any_brackets);
 		}else{
 			$name_parts = array( $before_any_brackets );
 		}
+		// now get the value for the input
 		$value = $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
 		if( $value === NULL ){
 			//check if this thing's name is at the TOP level of the request data
@@ -689,11 +698,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		return $value;
 	}
 
+
+
 	/**
 	 *
-	 * @param type $html_name_parts
-	 * @param type $req_data
-	 * @return boolean
+	 * @param array $html_name_parts
+	 * @param array $req_data
+	 * @return array | NULL
 	 */
 	public function _find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data){
 		$first_part_to_consider = array_shift( $html_name_parts );
@@ -707,6 +718,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return NULL;
 		}
 	}
+
+
+
 	/**
 	 * Checks if this form input's data is in the request data
 	 * @param array $req_data like $_POST
