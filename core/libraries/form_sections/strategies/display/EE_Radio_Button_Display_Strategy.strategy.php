@@ -13,19 +13,14 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
 			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
-		//d( $this->_input );
 		$html = '';
 		foreach( $this->_input->options() as $value => $display_text ){
-			if ( $this->_input->raw_value() && in_array( $value, $this->_input->raw_value() )){
-				$selected_attr = ' checked="checked"';
-			} else {
-				$selected_attr = '';
-			}
+			$selected_attr = $this->_input->raw_value() === $value ? ' checked="checked"' : '';
 			$value_slug = sanitize_key( $value );
 			$html .= '<label for="' . $this->_input->html_id() . '-' . $value_slug . '"';
 			$html .= 'class="ee-radio-label-after">';
 			$html .= '<input id="' . $this->_input->html_id() . '-' . $value_slug . '"';
-			$html .= 'name="' . $this->_input->html_name() . '[]"';
+			$html .= 'name="' . $this->_input->html_name() . '"';
 			$html .= 'class="' . $this->_input->html_class() . '"';
 			$html .= 'style="' . $this->_input->html_style() . '"';
 			$html .= 'type="radio"';
