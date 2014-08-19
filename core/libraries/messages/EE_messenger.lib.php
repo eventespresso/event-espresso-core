@@ -681,7 +681,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_existing_test_settings() {
-		$settings = get_option('ee_active_messengers', true);
+		$settings = EEH_MSG_Template::get_active_messengers_in_db();
 		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
 	}
 
@@ -694,9 +694,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return bool 	success/fail
 	 */
 	public function set_existing_test_settings( $settings ) {
-		$existing = get_option('ee_active_messengers', true);
+		$existing = EEH_MSG_Template::get_active_messengers_in_db();
 		$existing[$this->name]['test_settings'] = $settings;
-		return update_option('ee_active_messengers', $existing);
+		return EEH_MSG_Template::update_active_messengers_in_db( $existing );
 	}
 
 
