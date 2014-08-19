@@ -457,6 +457,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * Sanitizes all the data and sets the sanitized value of each field
 	 * @param array $req_data like $_POST
+	 * @return void
 	 */
 	protected function _normalize($req_data) {
 		$this->_received_submission = TRUE;
