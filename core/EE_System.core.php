@@ -768,6 +768,7 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
+			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
