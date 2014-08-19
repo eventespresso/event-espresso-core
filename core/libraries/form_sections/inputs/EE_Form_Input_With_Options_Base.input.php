@@ -29,7 +29,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	protected $_options = array();
 	/**
-	 * whether ot allow multiple selections (ie, the value of this input should be an array)
+	 * whether to allow multiple selections (ie, the value of this input should be an array)
 	 * or not (ie, the value should be a simple int, string, etc)
 	 * @var boolean
 	 */
@@ -53,7 +53,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	public function set_select_options($select_options){
 		$this->_options = $select_options;
-		//get teh first item in teh select options. Depending on what it is, use a different normalization strategy
+		//get the first item in the select options. Depending on what it is, use a different normalization strategy
 		if($select_options){
 			$flat_select_options = $this->_flatten_select_options($select_options);
 			$select_option_keys = array_keys($flat_select_options);
