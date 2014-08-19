@@ -123,8 +123,19 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @return void
      */
     public static function deregister( $mt_name = NULL ) {
-    	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) )
+    	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) ) {
+                        //let's make sure that we remove any place this message type was made active
+                        EE_Registry::instance()->load_helper( 'MSG_Template' );
+                        $active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+                        foreach( $active_messengers as $messenger => $settings ) {
+                            if ( !empty( $settings['settings'][$messenger . '-message_types'][$mt_name] ) ) {
+                                unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+                            }
+                        }
+                        EEH_MSG_Template::update_to_inactive( '', $mt_name );
+                        EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
     		unset( self::$_ee_message_type_registry[$mt_name] );
+        }
     }
 
 

@@ -363,7 +363,14 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			! $transaction->paid()){//and there have been no payments on the transaction yet anyways
 			//so let's create a nice looking invoice including everything
 			foreach($total_line_item->get_items() as $line_item){
-				$this->addField('item_name_' . $item_num, substr($line_item->name(),0,127));
+				$this->addField('item_name_' . $item_num,
+						substr(
+								sprintf(
+										__( '%s for %s', 'event_espresso' ),
+										$line_item->name() ,
+										$line_item->ticket_event_name() ),
+								0,
+								127 ) );
 				$this->addField('amount_' . $item_num, $line_item->unit_price());
 				$this->addField('quantity_' . $item_num, $line_item->quantity());
 				$item_num++;

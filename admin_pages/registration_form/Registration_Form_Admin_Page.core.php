@@ -165,7 +165,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-                'help_tabs' => array(
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
@@ -296,9 +297,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _questions_groups_preview() {
 		$this->_admin_page_title = __('Question Groups (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.png" alt="Preview Question Groups Overview List Table screenshot" />';
-		$this->_template_args['preview_text'] = __( 'Question Groups is a feature that is only available in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups.', 'event_espresso' );
-		$this->display_admin_caf_preview_page();
+		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="Preview Question Groups Overview List Table screenshot" />';
+		$this->_template_args['preview_text'] = '<strong>'.__( 'Question Groups is a feature that is only available in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups.', 'event_espresso' ).'</strong>';
+		$this->display_admin_caf_preview_page( 'question_groups_tab' );
 	}
 
 

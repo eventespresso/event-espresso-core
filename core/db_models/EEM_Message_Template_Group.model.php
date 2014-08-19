@@ -176,39 +176,6 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * get_all_global_message_template groups
-	 * @access public
-	 * @return EE_Message_Template_Group[] all message template groups that are global (i.e. non-event)
-	 */
-	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		$_where = $this->_maybe_mtp_filters( array('MTP_is_global' => TRUE ) );
-
-		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
-		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
-	}
-
-
-
-
-	/**
-	 * get_all_custom_message_templates
-	 * @access public
-	 * @return EE_Message_Template_Group[] all message template groups that are non-global and are event specific
-	 */
-	public function get_all_custom_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $user_check = FALSE ) {
-		$_where = $this->_maybe_mtp_filters( array( 'MTP_is_global' => FALSE  ) );
-
-		if  ( $user_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_others_messages', 'get_all_custom_message_templates' )  ) {
-			$_where['MTP_user_id'] = get_current_user_id();
-		}
-
-		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
-		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
-	}
-
-
-
-	/**
 	 * This gets all the custom templates attached to a specific event
 	 * @param  int      $EVT_ID       	event id
 	 * @param  array  $query_params same as EEM_Base::get_all()

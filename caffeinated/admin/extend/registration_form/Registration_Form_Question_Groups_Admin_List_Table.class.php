@@ -114,16 +114,6 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 
-	public function column_default(EE_Question_Group $item) {
-		/*switch($column_name) {
-            case 'question_group_id':
-				return $item[$column_name];
-             default:
-				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }*/
-	}
-
-
 
 	public function column_id(EE_Question_Group $item) {
 		return $item->ID();
