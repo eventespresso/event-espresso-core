@@ -82,7 +82,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
 				$this->checkout->thank_you_page_url
 			);
-			$this->checkout->json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->checkout->thank_you_page_url );
+			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 
 //			echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 //			d( $this->checkout );
