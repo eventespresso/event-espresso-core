@@ -17,25 +17,25 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Cancelled_Registration_message_type
+ * EE_Declined_Registration_message_type
  *
  * Handles frontend registration message types.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/message_type/EE_Cancelled_Registration_message_type.class.php
+ * @subpackage	includes/core/messages/message_type/EE_Declined_Registration_message_type.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Cancelled_Registration_message_type extends EE_message_type {
+class EE_Declined_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
-		$this->name = 'cancelled_registration';
-		$this->description = __('This message type is for messages sent to registrants when their registration is cancelled.', 'event_espresso');
+		$this->name = 'declined_registration';
+		$this->description = __('This message type is for messages sent to registrants when their registration is declined.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('registration cancelled', 'event_espresso'),
-			'plural' => __('registrations cancelled', 'event_espresso')
+			'singular' => __('registration declined', 'event_espresso'),
+			'plural' => __('registrations declined', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -91,7 +91,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Cancelled Registration Details';
+			$content[$context] = 'Declined Registration Details';
 		};
 		return $content;
 	}
@@ -102,7 +102,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-content.template.php', TRUE );
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/declined_registration/templates/declined-registration-message-type-content.template.php', TRUE );
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
@@ -138,15 +138,14 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive with an cancelled registration', 'event_espresso')
+				'description' => __('This template is what event administrators will receive with an declined registration', 'event_espresso')
 				),
 			'attendee' => array(
 				'label' => __('Registrant', 'event_espresso'),
-				'description' => __('This template is what each registrant for the event will receive when their registration is cancelled.', 'event_espresso')
+				'description' => __('This template is what each registrant for the event will receive when their registration is declined.', 'event_espresso')
 				)
 			);
 	}
-
 
 
 	protected function _set_valid_shortcodes() {
@@ -161,7 +160,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	}
 
 
-
 	/**
 	 * returns an array of addressee objects for event_admins
 	 *
@@ -174,5 +172,4 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		return parent::_admin_addressees();
 	}
 
-
-} //end EE_Cancelled_Registration_message_type class
+} //end EE_Declined_Registration_message_type class

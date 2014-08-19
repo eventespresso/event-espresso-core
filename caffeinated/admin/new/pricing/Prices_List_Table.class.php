@@ -22,14 +22,14 @@
  *
  * @package			Event_Categories_Admin_List_Table
  * @subpackage		includes/core/admin/pricing_manager/Prices_List_Table.core.php
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class Prices_List_Table extends EE_Admin_List_Table {
 
 	private $_PRT;
-	
+
 	/**
 	 * Array of price types.
 	 * @var EE_Price_Type[]
@@ -47,11 +47,11 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;		
+		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;
 		$this->_data = $this->_admin_page->get_prices_overview_data( $this->_per_page, FALSE, $trashed );
 		$this->_all_data_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, FALSE );
 		$this->_trashed_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, TRUE );
-	}	
+	}
 
 
 
@@ -74,7 +74,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
         $this->_sortable_columns = array(
 				// TRUE means its already sorted
-				'name' => array( 'name' => FALSE ), 
+				'name' => array( 'name' => FALSE ),
 				'type' => array( 'type' => FALSE ),
 				'amount' => array( 'amount' => FALSE )
 	        	);
@@ -83,7 +83,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 			);
 
         $this->_ajax_sorting_callback = 'update_prices_order';
-			
+
 	}
 
 
@@ -97,8 +97,8 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_all_data_count;		
-		$this->_views['trashed']['count'] = $this->_trashed_count;		
+		$this->_views['all']['count'] = $this->_all_data_count;
+		$this->_views['trashed']['count'] = $this->_trashed_count;
 	}
 
 
@@ -127,13 +127,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_default($item) {
-		return isset( $item->$column_name ) ? $item->$column_name : '';
-	}
-
-
-
-
 
 	function column_cb($item) {
 		if ( $item->type_obj()->base_type() !== 1 )
@@ -146,13 +139,13 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	function column_name($item) {
-		
+
 		//Build row actions
 		$actions = array();
 		// edit price link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_price', 'id'=>$item->ID() ), PRICING_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
-		
+
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price', 'event_espresso' ) . '">' . stripslashes( $item->name() ) . '</a>';
 
 		if ( $item->type_obj()->base_type() !== 1 ) {

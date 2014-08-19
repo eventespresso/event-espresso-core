@@ -159,7 +159,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
