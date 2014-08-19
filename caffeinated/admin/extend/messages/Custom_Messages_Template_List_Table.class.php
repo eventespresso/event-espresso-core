@@ -173,16 +173,6 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
-	/**
-	 * column_default
-	 * @param  object $item        item for row
-	 * @param  string $column_name name of column
-	 * @return string              column_name for default column
-	 */
-	function column_default($item, $column_name) {
-		return ( isset( $item->$column_name ) ) ? $item->column_name : '';
-	}
-
 
 
 

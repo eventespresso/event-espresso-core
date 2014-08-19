@@ -13,31 +13,31 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	4.0
+ * @ version		 	3.2
  *
  * ------------------------------------------------------------------------
  *
- * EE_Payment_Refund_message_type extends EE_message_type
+ * EE_Payment_Reminder_message_type extends EE_message_type
  *
- * Handles frontend payment notification messages
+ * Handles triggered payment reminder notification messages.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/message_type/EE_Payment_Refund_message_type.class.php
+ * @subpackage	includes/core/messages/message_type/EE_Payment_Reminder_message_type.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Payment_Refund_message_type extends EE_message_type {
+class EE_Payment_Reminder_message_type extends EE_message_type {
 
 	public function __construct() {
 
 		//setup type details for reference
-		$this->name = 'payment_refund';
-		$this->description = __('This message type is used for all payment notification messages that go out for refunds.', 'event_espresso');
+		$this->name = 'payment_reminder';
+		$this->description = __('This message type is used for all payment reminder messages.  These are triggered when an offline gateway registration is completed or when manually triggered via event administrators via the transaction admin page(s).', 'event_espresso');
 		$this->label = array(
-			'singular' => __('refund issued', 'event_espresso'),
-			'plural' => __('refunds issued', 'event_espresso')
+			'singular' => __('payment reminder', 'event_espresso'),
+			'plural' => __('payment reminders', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -87,17 +87,17 @@ class EE_Payment_Refund_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Refund Details';
+			$content[$context] = 'Event Payment Reminder';
 		};
 		return $content;
 	}
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-refund-message-type-content.template.php');
+		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/templates/payment-reminder-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
+			$tcontent[$context]['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_reminder/templates/payment-reminder-message-type-event-list.template.php');
 			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
 		}
 
@@ -121,13 +121,15 @@ class EE_Payment_Refund_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive on a successful refund.', 'event_espresso')
+				'description' => __('This template is what event administrators will receive on a successful payment', 'event_espresso')
 				),
 			'primary_attendee' => array(
 				'label' => __('Primary Registrant', 'event_espresso'),
-				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful refund.', 'event_espresso')
+				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful payment', 'event_espresso')
 				)
 			);
 	}
 
 }
+
+// end of file:	includes/core/messages/types/EE_Onsite Payment_message.class.php

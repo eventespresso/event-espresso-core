@@ -78,7 +78,12 @@ abstract class EES_Shortcode extends EE_Base {
 	final public static function fallback_shortcode_processor( $attributes ) {
 		$shortcode_class = get_called_class();
 		$shortcode_obj = self::instance( $shortcode_class );
-		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
+		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			global $wp;
+			$shortcode_obj->run( $wp );
+			return $shortcode_obj->process_shortcode( $attributes );
+		}
+		return NULL;
 	}
 
 
