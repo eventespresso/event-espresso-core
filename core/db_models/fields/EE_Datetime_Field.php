@@ -477,20 +477,52 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	public static function timezone_convert_to_string_from_offset( $offset ) {
 		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
 		$offset *= 3600; // convert hour offset to seconds
-        $abbrarray = timezone_abbreviations_list();
-        foreach ($abbrarray as $abbr)
-        {
-                foreach ($abbr as $city)
-                {
-                        if ($city['offset'] === $offset && $city['dst'] === FALSE )
-                        {
+		//make sure $offset is int (cause if incoming was int then converted to float);
+		$offset = (int) $offset;
 
-                               return $city['timezone_id'];
-                        }/**/
-                }
-        }
+		//account for WP offsets that aren't valid UTC
+		switch ( $offset ) {
+			case -1800 :
+				$offset = -3600;
+				break;
 
-        return FALSE;
+			case 1800 :
+				$offset = 3600;
+				break;
+
+			case -23400 :
+				$offset = -21600;
+				break;
+
+			case -27000 :
+				$offset = -25200;
+				break;
+
+			case -30600 :
+				$offset = -28800;
+				break;
+
+			case 49500 :
+				$offset = 50400;
+				break;
+
+			default :
+				$offset = $offset;
+				break;
+		}
+
+		$abbrarray = timezone_abbreviations_list();
+		foreach ($abbrarray as $abbr)
+		{
+			foreach ($abbr as $city)
+			{
+				if ($city['offset'] === $offset && $city['dst'] === FALSE )
+				{
+					 return $city['timezone_id'];
+				}/**/
+			}
+		}
+        		return FALSE;
 	}
 
 
