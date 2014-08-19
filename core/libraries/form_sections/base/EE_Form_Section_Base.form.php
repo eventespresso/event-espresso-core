@@ -86,7 +86,7 @@ abstract class EE_Form_Section_Base {
 	function __construct( $options_array = array() ) {
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;
-			if ( property_exists( $this, $key )) {
+			if ( property_exists( $this, $key ) && empty( $this->$key )) {
 				$this->$key = $value;
 			}
 		}
