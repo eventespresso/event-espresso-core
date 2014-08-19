@@ -67,10 +67,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
 		//if they've included subsections in the constructor, add them now
-		if(isset($options_array['subsections'])){
-			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
-		}
-
 		if( isset( $options_array['include'] )){
 			//we are going to make sure we ONLY have those subsections to include
 			//AND we are going to make sure they're in that specified order
