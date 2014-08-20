@@ -512,7 +512,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @param array $query_params
 	 * @return EE_Line_Item[]
 	 */
-	public function line_items( $query_params ) {
+	public function line_items( $query_params = array() ) {
 		return $this->get_many_related( 'Line_Item', $query_params );
 	}
 
