@@ -4,7 +4,7 @@
  *
  * @package				Event Espresso
  * @subpackage		includes/functions
- * @author					Brent Christensen 
+ * @author					Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -12,8 +12,8 @@
 
   // instance of the EE_CSV object
 	private static $_instance = NULL;
- 
-	
+
+
 	// multidimensional array to store update & error messages
 //	var $_notices = array( 'updates' => array(), 'errors' => array() );
 
@@ -34,10 +34,10 @@
 	 *		@Constructor
 	 *		@access private
 	 *		@return void
-	 */	
+	 */
  	private function __construct() {
-		
-		
+
+
 		global $wpdb;
 
 		$this->_primary_keys = array(
@@ -76,7 +76,7 @@
 	 *		@ singleton method used to instantiate class object
 	 *		@ access public
 	 *		@ return class instance
-	 */	
+	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_CSV )) {
@@ -85,9 +85,9 @@
 		return self::$_instance;
 	}
 
-	
+
 	/**
-	 * Generic CSV-functionality to turn an entire CSV file into a single array that's 
+	 * Generic CSV-functionality to turn an entire CSV file into a single array that's
 	 * NOT in a specific format to EE. It's just a 2-level array, with top-level arrays
 	 * representing each row in the CSV file, and the second-level arrays being each column in that row
 	 * @param string $path_to_file
@@ -104,12 +104,12 @@
 		$file_contents = str_replace ( '\\"', '"""', $file_contents );
 		// HEY YOU! PUT THAT FILE BACK!!!
 		file_put_contents($path_to_file, $file_contents);
-		
+
 		if (($file_handle = fopen($path_to_file, "r")) !== FALSE) {
 			# Set the parent multidimensional array key to 0.
 			$nn = 0;
 			$csvarray = array();
-			
+
 			// in PHP 5.3 fgetcsv accepts a 5th parameter, but the pre 5.3 versions of fgetcsv choke if passed more than 4 - is that crazy or what?
 			if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
 
@@ -129,12 +129,12 @@
 			fclose($file_handle);
 			return $csvarray;
 		}else{
-			EE_Error::add_error( sprintf(__("An error occurred - the file: %s could not opened.", "event_espresso"),$path_to_file));
+			EE_Error::add_error( sprintf(__("An error occurred - the file: %s could not opened.", "event_espresso"),$path_to_file), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 	}
 
-	
+
 	/**
 	 *			@Import contents of csv file and store values in an array to be manipulated by other functions
 	 *		  @access public
@@ -158,7 +158,7 @@
 	 *							)
 	 *						...
 	 *						)
-	 */	
+	 */
 	public function import_csv_to_model_data_array( $path_to_file, $model_name = FALSE, $first_row_is_headers = TRUE ) {
 		$multi_dimensional_array = $this->import_csv_to_multi_dimensional_array($path_to_file);
 		if( ! $multi_dimensional_array ){
@@ -188,7 +188,7 @@
 				$row = 1;
 				continue;
 			}
-			
+
 
 			// how many columns are there?
 			$columns = count($data);
@@ -196,12 +196,12 @@
 			$model_entry = array();
 			// loop through each column
 			for ( $i=0; $i < $columns; $i++ ) {
-				
-				//replace csv_enclosures with backslashed quotes 
+
+				//replace csv_enclosures with backslashed quotes
 				$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
 				// do we need to grab the column names?
 				if ( $row === 1){
-					if( $first_row_is_headers ) {						
+					if( $first_row_is_headers ) {
 						// store the column names to use for keys
 						$column_name = $data[$i];
 						//check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
@@ -213,12 +213,12 @@
 							//now get the db table name from it (the part between square brackets)
 							$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
 							if (!$success){
-								EE_Error::add_error( sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data)));
+								EE_Error::add_error( sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data)), __FILE__, __FUNCTION__, __LINE__ );
 								return false;
 							}
 							$headers[$i] = $matches[2];
 						}
-						
+
 					}else{
 						// no column names means our final array will just use counters for keys
 						$model_entry[$headers[$i]] = $data[$i];
@@ -231,7 +231,7 @@
 						$model_entry[$headers[$i]] = $data[$i];
 					}
 				}
-				
+
 			}
 			//save the row's data IF it's a non-header-row
 			if( ! $first_row_is_headers || ($first_row_is_headers && $row > 1)){
@@ -249,10 +249,10 @@
 
 		// it's good to give back
 		return $ee_formatted_data;
-		
+
 	}
-	
-	
+
+
 	/**
 	 *	Given an array of data (usually from a CSV import) attempts to save that data to the db.
 	 *	If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
@@ -264,19 +264,19 @@
 	 *	IDs DON'T exist in the database, they're treated as temporary IDs,
 	 *	which can used elsewhere to refer to the same object. Once an item
 	 *	with a temporary ID gets inserted, we record its mapping from temporary
-	 *	ID to real ID, and use the real ID in place of the temporary ID 
+	 *	ID to real ID, and use the real ID in place of the temporary ID
 	 *	when that temporary ID was used as a foreign key.
 	 *	If the CSV data says (in the metadata again) that it's from a DIFFERENT database,
 	 *	we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
 	 *	ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
 	 *	and insert a new event, and map it's temporary ID of 1 over to its new real ID.
-	 *	An important exception are non-auto-increment primary keys. If one entry in the 
+	 *	An important exception are non-auto-increment primary keys. If one entry in the
 	 *	CSV file has the same ID as one in the DB, we assume they are meant to be
 	 *	the same item, and instead update the item in the DB with that same ID.
 	 *	Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
-	 *	time you import a CSV from a different site, we remember their mappings, and 
+	 *	time you import a CSV from a different site, we remember their mappings, and
 	 * will try to update the item in the DB instead of inserting another item (eg
-	 * if we previously imported an event with temporary ID 1, and then it got a 
+	 * if we previously imported an event with temporary ID 1, and then it got a
 	 * real ID of 123, we remember that. So the next time we import an event with
 	 * temporary ID, from the same site, we know that it's real ID is 123, and will
 	 * update that event, instead of adding a new event).
@@ -284,7 +284,7 @@
 	 *			@param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
 	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
 	 *			@return TRUE on success, FALSE on fail
-	 */	
+	 */
 	public function save_csv_to_db( $csv_data_array, $model_name = FALSE ) {
 		$total_inserts = 0;
 		$total_updates = 0;
@@ -303,7 +303,7 @@
 		}
 		// begin looking through the $csv_data_array, expecting the toplevel key to be the model's name...
 		$old_site_url = 'none-specified';
-	
+
 		//hanlde metadata
 		if(isset($csv_data_array[EE_CSV::metadata_header]) ){
 			$csv_metadata = array_shift($csv_data_array[EE_CSV::metadata_header]);
@@ -318,7 +318,7 @@
 			unset($csv_data_array[EE_CSV::metadata_header]);
 		}
 		/**
-		* @var $old_db_to_new_db_mapping 2d array: toplevel keys being model names, bottom-level keys being the original key, and 
+		* @var $old_db_to_new_db_mapping 2d array: toplevel keys being model names, bottom-level keys being the original key, and
 		* the value will be the newly-inserted ID.
 		* If we have already imported data from the same website via CSV, it shoudl be kept in this wp option
 		*/
@@ -326,20 +326,20 @@
 	   if( $old_db_to_new_db_mapping){
 		   EE_Error::add_attention(sprintf(__("We noticed you have imported data via CSV from %s before. Because of this, IDs in your CSV have been mapped to their new IDs in %s", "event_espresso"),$old_site_url,site_url()));
 	   }
-		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {	
+		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {
 			//now check that assumption was correct. If
 			if ( EE_Registry::instance()->is_model_name($model_name_in_csv_data)) {
 				$model_name = $model_name_in_csv_data;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
-				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
+				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 			/* @var $model EEM_Base */
 			$model = EE_Registry::instance()->load_model($model_name);
-			
+
 			//so without further ado, scanning all the data provided for primary keys and their inital values
-			foreach ( $model_data_from_import as $model_object_data ) {		
+			foreach ( $model_data_from_import as $model_object_data ) {
 				//before we do ANYTHING, make sure the csv row wasn't just completely blank
 				$row_is_completely_empty = true;
 				foreach($model_object_data as $field){
@@ -350,14 +350,14 @@
 				if($row_is_completely_empty){
 					continue;
 				}
-				//find the PK in the row of data (or a combined key if 
+				//find the PK in the row of data (or a combined key if
 				//there is no primary key)
 				if($model->has_primary_key_field()){
 					$id_in_csv =  $model_object_data[$model->primary_key_name()];
 				}else{
 					$id_in_csv = $model->get_index_primary_key_string($model_object_data);
 				}
-				
+
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
 				if($export_from_site_a_to_b){
@@ -376,7 +376,7 @@
 							//so basically this already exists in the DB...
 							//remember the mapping
 							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $copy_in_db->ID();
-							//and don't bother trying to update or insert, beceause 
+							//and don't bother trying to update or insert, beceause
 							//we JUST asserted that it's the exact same as what's in the DB
 							continue;
 						}else{
@@ -385,7 +385,7 @@
 					}
 					//loop through all its related models, and see if we can swap their OLD foreign keys
 					//(ie, idsin the OLD db) for  new foreign key (ie ids in the NEW db)
-					
+
 					foreach($model->field_settings() as $field_name => $fk_field){
 						if($fk_field instanceof EE_Foreign_Key_Field_Base){
 							$fk_value = $model_object_data[$fk_field->get_name()];
@@ -409,13 +409,13 @@
 								}
 							}
 							if( ! $found_new_id ){
-								EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model_name,http_build_query($model_object_data)));
+								EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model_name,http_build_query($model_object_data)), __FILE__, __FUNCTION__, __LINE__ );
 							}
 						}
 					}
 				}else{//this is just a re-import
 					//in this case, check if this thing ACTUALLY exists in the database
-					if(($model->has_primary_key_field() && $model->get_one_by_ID($id_in_csv)) || 
+					if(($model->has_primary_key_field() && $model->get_one_by_ID($id_in_csv)) ||
 						( ! $model->has_primary_key_field() && $model->get_one(array($model_object_data)))){
 						$do_insert = false;
 					}else{
@@ -449,8 +449,8 @@
 					//remove the primary key, if there is one (we don't want it for inserts OR updates)
 					//we'll put it back in if we need it
 					if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
-						$effective_id =$model_object_data[$model->primary_key_name()];	
-						unset($model_object_data[$model->primary_key_name()]);	
+						$effective_id =$model_object_data[$model->primary_key_name()];
+						unset($model_object_data[$model->primary_key_name()]);
 					}
 					//the model takes care of validating the CSV's input
 					try{
@@ -462,14 +462,14 @@
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $effective_id;
-							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)));
+							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
 						if($model->has_primary_key_field()){
 							$model_object_data[$model->primary_key_name()] = $effective_id;
 						}
-						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
+						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}else{//UPDATING
 					try{
@@ -484,7 +484,7 @@
 						}else{
 							$model->primary_key_name();//this shoudl just throw an exception, explaining that we dont have a primary key (or a combine dkey)
 						}
-	
+
 						$success = $model->update($model_object_data,array($conditions));
 						if($success){
 							$total_updates++;
@@ -494,7 +494,7 @@
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
-								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model_name,http_build_query($model_object_data),http_build_query($conditions)));
+								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model_name,http_build_query($model_object_data),http_build_query($conditions)), __FILE__, __FUNCTION__, __LINE__ );
 							}else{
 								$total_updates++;
 								EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data)));
@@ -502,7 +502,7 @@
 						}
 					}catch(EE_Error $e){
 						$total_update_errors++;
-						EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
+						EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}
 			}
@@ -520,14 +520,14 @@
 		}
 
 		if ( $total_update_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors));
+			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
 		if ( $total_insert_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
+			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
-		
+
 		//lastly, we need to update the datetime and ticket sold amounts
 		//as those may ahve been affected by this
 		EEM_Datetime::instance()->update_sold( EEM_Datetime::instance()->get_all() );
@@ -536,15 +536,15 @@
 		// if there was at least one success and absolutely no errors
 		if ( $success && ! $error ) {
 			return TRUE;
-		} else {	
+		} else {
 			return FALSE;
 		}
-			
+
 	}
-	
+
 	/**
 	 * Sends HTTP headers to indicate that the browser should download a file,
-	 * and starts writing the file to PHP's output. Returns the file handle so other functions can 
+	 * and starts writing the file to PHP's output. Returns the file handle so other functions can
 	 * also write to it
 	 * @param string $new_filename the name of the file that the user will download
 	 * @return resource, like the results of fopen(), which can be used for fwrite, fputcsv2, etc.
@@ -556,7 +556,7 @@
 			str_replace( $ext, '', $filename );
 		}
 		$filename .= '.csv';
-		
+
 		//if somebody's been naughty and already started outputting stuff, trash it
 		//and start writing our stuff.
 		if (ob_get_length()) {
@@ -575,10 +575,10 @@
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/html; charset=utf-8");
 		echo "\xEF\xBB\xBF"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
-		$fh = fopen('php://output', 'w');		
+		$fh = fopen('php://output', 'w');
 		return $fh;
 	}
-	
+
 	/**
 	 * Writes some meta data to the CSV as a bunch of columns. Initially we're only
 	 * mentioning the version and timezone
@@ -596,25 +596,25 @@
 			'site_url'=>site_url()));
 		$this->write_data_array_to_csv($filehandle, $meta_data);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
-	 * @param array $data 2D array, first numerically-indexed, and next-level-down preferably indexed by string 
+	 * @param array $data 2D array, first numerically-indexed, and next-level-down preferably indexed by string
 	 * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for headers in the CSV.
-	 * Eg, if $data looked like array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...)) 
+	 * Eg, if $data looked like array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...))
 	 * then the first row we'd write to the CSV would be "EVT_ID,EVT_name,..."
 	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
 	 */
 	public function write_data_array_to_csv($filehandle, $data){
 		EE_Registry::instance()->load_helper('Array');
 
-		
+
 		//determine if $data is actually a 2d array
 		if ( $data && is_array($data) && is_array(EEH_Array::get_one_item_from_array($data))){
 			//make sure top level is numerically indexed,
-			
+
 			if( EEH_Array::is_associative_array($data)){
 				throw new EE_Error(sprintf(__("top-level array must be numerically indexed. Does these look like numbers to you? %s","event_espresso"),implode(",",array_keys($data))));
 			}
@@ -635,45 +635,45 @@
 			return true;
 		}
 //		//if 2nd level is indexed by strings, use those as csv column headers (ie, the first row)
-//		
-//		
+//
+//
 //		$no_table = TRUE;
-//	
+//
 //		// loop through data and add each row to the file/stream as csv
 //		foreach ( $data as $model_name => $model_data ) {
 //			// test first row to see if it is data or a model name
 //			$model = 	EE_Registry::instance();->load_model($model_name);
-//			//if the model really exists, 
+//			//if the model really exists,
 //			if ( $model ) {
-//			
+//
 //				// we have a table name
 //				$no_table = FALSE;
-//	
+//
 //				// put the tablename into an array cuz that's how fputcsv rolls
 //				$model_name_row = array( 'MODEL', $model_name );
 //
 //				// add table name to csv output
 //				echo self::fputcsv2($filehandle, $model_name_row);
-//	
+//
 //				// now get the rest of the data
 //				foreach ( $model_data as $row ) {
 //					// output the row
 //					echo self::fputcsv2($filehandle, $row);
 //				}
-//				
+//
 //			}
-//				
+//
 //			if ( $no_table ) {
 //				// no table so just put the data
 //				echo self::fputcsv2($filehandle, $model_data);
 //			}
-		
+
 //		} 		//		END OF foreach ( $data )
 	}
 	/**
 	 * Should be called after begin_sending_csv(), and one or more write_data_array_to_csv()s.
 	 * Calls exit to prevent polluting the CSV file with other junk
-	 * @param resource $fh filehandle where we're writing the CSV to 
+	 * @param resource $fh filehandle where we're writing the CSV to
 	 */
 	public function end_sending_csv($fh){
 		fclose($fh);
@@ -694,7 +694,7 @@
 			//first: output a special row stating the model
 			echo $this->fputcsv2($filehandle,array('MODEL',$model_name));
 			//if we have items to put in the CSV, do it normally
-			
+
 			if( ! empty($model_instance_arrays) ){
 				$this->write_data_array_to_csv($filehandle, $model_instance_arrays);
 			}else{
@@ -710,7 +710,7 @@
 			}
 		}
 	}
-	
+
 	/**
 	 * Writes the CSV file to the output buffer, with rows corresponding to $model_data_array,
 	 * and dies (in order to avoid other plugins from messing up the csv output)
@@ -726,56 +726,56 @@
 	/**
 	 *			@Export contents of an array to csv file
 	 *		  @access public
-	 *			@param array $data - the array of data to be converted to csv and exported 
+	 *			@param array $data - the array of data to be converted to csv and exported
 	 *			@param string $filename - name for newly created csv file
 	 *			@return TRUE on success, FALSE on fail
-	 */	
+	 */
 	public function export_array_to_csv( $data = FALSE, $filename = FALSE  ) {
-	
+
 		// no data file?? get outta here
 		if ( ! $data or ! is_array( $data ) or empty( $data ) ) {
 			return FALSE;
 		}
-		
+
 		// no filename?? get outta here
 		if ( ! $filename ) {
 			return FALSE;
 		}
-		
-		
-		
+
+
+
 		// somebody told me i might need this ???
 		global $wpdb;
 		$prefix = $wpdb->prefix;
-			
-	
+
+
 		$fh = $this->begin_sending_csv($filename);
-		
-		
+
+
 		$this->end_sending_csv($fh);
-		
-	
+
+
 	}
-	
-	
+
+
 	/**
 	 *			@Determine the maximum upload file size based on php.ini settings
 	 *		  @access public
 	 *			@param int $percent_of_max - desired percentage of the max upload_mb
 	 *			@return int KB
-	 */	
+	 */
 	public function get_max_upload_size ( $percent_of_max = FALSE ) {
-	
+
 		$max_upload = (int)(ini_get('upload_max_filesize'));
 		$max_post = (int)(ini_get('post_max_size'));
 		$memory_limit = (int)(ini_get('memory_limit'));
-		
+
 		// determine the smallest of the three values from above
 		$upload_mb = min($max_upload, $max_post, $memory_limit);
-		
+
 		//convert MB to KB
 		$upload_mb = $upload_mb * 1024;
-		
+
 		// don't want the full monty? then reduce the max uplaod size
 		if ( $percent_of_max ) {
 			// is percent_of_max like this -> 50 or like this -> 0.50 ?
@@ -786,7 +786,7 @@
 			// make upload_mb a percentage of the max upload_mb
 			$upload_mb = $upload_mb * $percent_of_max;
 		}
-		
+
 		return $upload_mb;
 	}
 
@@ -800,12 +800,12 @@
 	 *			@param string $enclosure - csv enclosure
 	 *			@param string $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
 	 *			@return void
-	 */	
+	 */
 	private function fputcsv2 ($fh, array $row, $delimiter = ',', $enclosure = '"', $mysql_null = FALSE) {
-	
+
 		$delimiter_esc = preg_quote($delimiter, '/');
 		$enclosure_esc = preg_quote($enclosure, '/');
-		
+
 		$output = array();
 		foreach ($row as $field_value) {
 			if(is_object($field_value) || is_array($field_value)){
@@ -815,31 +815,31 @@
 				$output[] = 'NULL';
 				continue;
 			}
-			
+
 			$output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value) ?
 				( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure ) : $field_value;
 		}
-		
+
 		fwrite($fh, join($delimiter, $output) . PHP_EOL);
-	} 
-	
+	}
+
 
 
 
 
 //	/**
-//	 *			@CSV Import / Export messages 
+//	 *			@CSV Import / Export messages
 //	 *		  @access public
 //	 *			@return void
-//	 */	
+//	 */
 //	public function csv_admin_notices () {
-//			
+//
 //		// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
 //		foreach( array('updates', 'errors') as $type ) {
-//		
+//
 //			// if particular notice type is not empty, then "You've got Mail"
 //			if( ! empty( $this->_notices[$type] )) {
-//			
+//
 //				// is it an update or an error ?
 //				$msg_class = $type == 'updates' ? 'updated' : 'error';
 //				echo '<div id="message" class="'. $msg_class .'">';
@@ -852,8 +852,8 @@
 //			}
 //		}
 //	}
-	
-	
+
+
 
 }
 /* End of file EE_CSV.class.php */
