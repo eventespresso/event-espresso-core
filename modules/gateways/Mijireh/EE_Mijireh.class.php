@@ -230,7 +230,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			$payment->save($properties);
 		}else{
 			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
-			EE_Error::add_error($error_message);
+			EE_Error::add_error($error_message, __FILE__, __FUNCTION__, __LINE__ );
 			throw new EE_Error($error_message);
 
 		}

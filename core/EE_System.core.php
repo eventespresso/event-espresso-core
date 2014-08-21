@@ -710,7 +710,7 @@ final class EE_System {
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
-			EE_Error::add_error( $activation_errors );
+			EE_Error::add_error( $activation_errors, __FILE__, __FUNCTION__, __LINE__ );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names

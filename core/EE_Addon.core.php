@@ -197,7 +197,7 @@ abstract class EE_Addon extends EE_Configurable {
 			$current_data_migration_script->schema_changes_after_migration();
 			if ( $current_data_migration_script->get_errors() ) {
 				foreach( $current_data_migration_script->get_errors() as $error ) {
-					EE_Error::add_error( $error );
+					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 		}
