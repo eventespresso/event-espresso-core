@@ -631,7 +631,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//if auto-draft then throw an error
 		if ( $this->_cpt_model_obj->get('status') == 'auto-draft' ) {
 			EE_Error::overwrite_errors();
-			EE_Error::add_error( sprintf( __('This %1$s was saved without a title, description, or excerpt which means that none of the extra details you added were saved properly.  All autodrafts will show up in the "draft" view of your event list table.  You can delete them from there. Please click the "Add %1$s" button to refresh and restart.'), $label ) );
+			EE_Error::add_error( sprintf( __('This %1$s was saved without a title, description, or excerpt which means that none of the extra details you added were saved properly.  All autodrafts will show up in the "draft" view of your event list table.  You can delete them from there. Please click the "Add %1$s" button to refresh and restart.'), $label ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
