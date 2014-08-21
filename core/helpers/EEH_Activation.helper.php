@@ -1182,7 +1182,7 @@ class EEH_Activation {
 			'espresso-frontend-event-manager-pr',
 			'espresso-volume-discounts-pr',
 			'espresso-json-api',
-			'grid-template',
+			'espresso-template-grid',
 			'espresso-calendar',
 			'espresso-price-modifier-pr',
 			'custom-templates',
