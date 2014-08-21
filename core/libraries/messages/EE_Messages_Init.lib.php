@@ -284,7 +284,7 @@ class EE_Messages_Init extends EE_Base {
 
 		//if no reg object then send error
 		if ( empty( $reg ) ) {
-			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 
@@ -298,7 +298,7 @@ class EE_Messages_Init extends EE_Base {
 
 			if ( ! in_array( $status_match_array[$reg->status_ID()], $active_mts ) ) {
 				$success = FALSE;
-				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ) );
+				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ), __FILE__, __FUNCTION__, __LINE__ );
 				return $success;
 			}
 
