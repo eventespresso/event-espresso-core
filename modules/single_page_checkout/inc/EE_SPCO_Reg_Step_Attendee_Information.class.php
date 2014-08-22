@@ -80,7 +80,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// if not performing registrations via the admin
 		if ( ! $this->checkout->admin_request ) {
 			// generate hidden inputs for managing the reg process
-			$subsections['hidden_inputs'] = $this->reg_step_hidden_inputs();
+			$subsections['default_hidden_inputs'] = $this->reg_step_hidden_inputs();
 		}
 		$this->reg_form = new EE_Form_Section_Proper(
 			array(
