@@ -261,8 +261,8 @@ abstract class EE_SPCO_Reg_Step {
 		$input_details = array(
 			array(
 				'id' => 'spco-' . $this->slug() . '-action',
-				'html_name' => 'ajax_action',
-				'value' => 'espresso_process_reg_step'
+				'html_name' => 'action',
+				'value' => empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
 			),
 			array(
 				'id' => 'spco-' . $this->slug() . '-noheader',
@@ -294,7 +294,6 @@ abstract class EE_SPCO_Reg_Step {
 			// set array of args
 			$input_constructor_args = array(
 				'normalization_strategy' 	=> isset( $input['normalization_strategy'] ) ? $input['normalization_strategy'] : NULL,
-				'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
 				'html_name' 						=> $input['html_name'],
 				'html_id' 								=> $input['id'],
 				'default'								=> $input['value']
@@ -302,14 +301,14 @@ abstract class EE_SPCO_Reg_Step {
 			// generate input
 			$inputs[ $input['html_name'] ] = new EE_Hidden_Input( $input_constructor_args );
 		}
-		// now set arguments for the entire hidden inputs section
-		$form_args = array(
-			'html_id' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
-			'subsections' 	=> $inputs,
-			'exclude' 	=> array(),
-			'layout_strategy'	=> new EE_Div_Per_Section_Layout()
+		// now create the entire hidden inputs section
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
+				'subsections' 			=> $inputs,
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout()
+			)
 		);
-		return new EE_Form_Section_Proper( $form_args );
 	}
 
 
@@ -320,8 +319,7 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$action = empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step';
-			$html .= $this->reg_form->form_open( $this->reg_step_url( $action ));
+			$html .= $this->reg_form->form_open( $this->reg_step_url() );
 			$html .= $this->reg_form->get_html_and_js();
 			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
