@@ -398,25 +398,26 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * Picks out the form value that relates to this form input,
 	 * and stores it as the sanitized value on the form input, and sets the normalized value.
 	 * Returns whether or not any validation errors occurred
+	 *
 	 * @param array $req_data like $_POST
 	 * @return boolean whether or not there was an error
 	 */
-	protected function _normalize($req_data) {
-		try{
-			$raw_input = $this->find_form_data_for_this_section($req_data);
+	protected function _normalize( $req_data ) {
+		try {
+			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
-			if(is_array($raw_input)){
+			if ( is_array( $raw_input )) {
 				$this->_raw_value = array();
-				foreach($raw_input as $key => $value){
-					$this->_raw_value[$key] = $this->_sanitize($value);
+				foreach( $raw_input as $key => $value ) {
+					$this->_raw_value[ $key ] = $this->_sanitize( $value );
 				}
-			}else{
-				$this->_raw_value = $this->_sanitize($raw_input);
+			} else {
+				$this->_raw_value = $this->_sanitize( $raw_input );
 			}
 			//we want ot mostly leave the input alone in case we need to re-display it to the user
-			$this->_normalized_value = $this->_normalization_strategy->normalize($this->raw_value());
-		}catch(EE_Validation_Error $e){
-			$this->add_validation_error($e);
+			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
+		} catch ( EE_Validation_Error $e ) {
+			$this->add_validation_error( $e );
 		}
 	}
 
