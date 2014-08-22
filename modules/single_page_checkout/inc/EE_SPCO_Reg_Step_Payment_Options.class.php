@@ -86,18 +86,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
-			$this->reg_form = $this->_sold_out_events( $sold_out_events );
+			return $this->_sold_out_events( $sold_out_events );
 		} else if ( ! empty( $events_requiring_pre_approval )) {
-			$this->reg_form = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
+			return $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		} else if ( $payment_required ) {
-			$this->reg_form = $this->_display_payment_options( $reg_count );
+			return $this->_display_payment_options( $reg_count );
 		} else {
-			$this->reg_form = $this->_no_payment_required();
-		}
-		// if not performing registrations via the admin
-		if ( ! $this->checkout->admin_request ) {
-			// generate hidden inputs for managing the reg process
-			$this->reg_form->add_subsections( array( 'default_hidden_inputs' => $this->reg_step_hidden_inputs() ));
+			return $this->_no_payment_required();
 		}
 
 	}
@@ -121,10 +116,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-				'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+				'name' 					=> $this->reg_form_name(),
+				'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
-					'hidden_inputs' 	=> $this->_default_hidden_inputs()
+					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
 				),
 				'layout_strategy'		=> new EE_Template_Layout(
 					array(
@@ -162,10 +158,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-				'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+				'name' 					=> $this->reg_form_name(),
+				'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
-					'hidden_inputs' 	=> $this->_default_hidden_inputs()
+					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
 				),
 				'layout_strategy'		=> new EE_Template_Layout(
 					array(
@@ -200,10 +197,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-				'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+				'name' 					=> $this->reg_form_name(),
+				'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
-					'hidden_inputs' 	=> $this->_default_hidden_inputs()
+					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
 				),
 				'layout_strategy' 	=> new EE_Template_Layout(
 					array(
@@ -226,45 +224,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * _default_hidden_inputs
-	 * @param bool $no_payment_required
-	 * @return \EE_Form_Section_Proper
-	 */
-	private function _default_hidden_inputs( $no_payment_required = TRUE ) {
-
-		//	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
-		//	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
-
-		return new EE_Form_Section_Proper(
-			array(
-				'html_id' 				=> 'ee-' . $this->slug() . '-hidden-inputs',
-				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
-				'subsections' 		=> array(
-					'selected_method_of_payment_input' => new EE_Hidden_Input(
-						array(
-							'normalization_strategy' 	=> NULL,
-							'html_name' 						=> 'selected_method_of_payment',
-							'html_id' 								=> 'reg-page-selected-method-of-payment',
-							'default'								=> $this->checkout->selected_method_of_payment
-						)
-					),
-					'spco_no_payment_required' => new EE_Hidden_Input(
-						array(
-							'normalization_strategy' 	=> new EE_Boolean_Normalization(),
-							'html_name' 						=> 'spco_no_payment_required',
-							'html_id' 								=> 'spco-no-payment-required-payment_options',
-							'default'								=> $no_payment_required
-						)
-					)
-				)
-			)
-		);
-
-	}
-
-
-
-	/**
 	 * _display_payment_options
 	 * @param int $reg_count
 	 * @return \EE_Form_Section_Proper
@@ -280,11 +239,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// build payment options form
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 			=> 'ee-' . $this->slug() . '-reg-step-form',
-				'html_id' 			=> 'ee-' . $this->slug() . '-reg-step-form',
+				'name' 			=> $this->reg_form_name(),
+				'html_id' 			=> $this->reg_form_name(),
 				'subsections' 	=> array(
 					'payment_options' => $this->_setup_payment_options(),
-					'extra_hidden_inputs' 		=> $this->_default_hidden_inputs( FALSE )
+					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+					'extra_hidden_inputs' 		=> $this->_extra_hidden_inputs( FALSE )
 				),
 				'layout_strategy'		=> new EE_Template_Layout( array(
 						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
@@ -300,6 +260,45 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				),
 			)
 		);
+	}
+
+
+
+	/**
+	 * _extra_hidden_inputs
+	 * @param bool $no_payment_required
+	 * @return \EE_Form_Section_Proper
+	 */
+	private function _extra_hidden_inputs( $no_payment_required = TRUE ) {
+
+		//	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
+		//	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
+
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 				=> 'ee-' . $this->slug() . '-hidden-inputs',
+				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
+				'subsections' 		=> array(
+					'selected_method_of_payment_input' => new EE_Hidden_Input(
+							array(
+								'normalization_strategy' 	=> NULL,
+								'html_name' 						=> 'selected_method_of_payment',
+								'html_id' 								=> 'reg-page-selected-method-of-payment',
+								'default'								=> $this->checkout->selected_method_of_payment
+							)
+						),
+					'spco_no_payment_required' => new EE_Hidden_Input(
+							array(
+								'normalization_strategy' 	=> new EE_Boolean_Normalization(),
+								'html_name' 						=> 'spco_no_payment_required',
+								'html_id' 								=> 'spco-no-payment-required-payment_options',
+								'default'								=> $no_payment_required
+							)
+						)
+				)
+			)
+		);
+
 	}
 
 
@@ -642,11 +641,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
 				// set JSON response
-				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+				$this->checkout->json_response->set_redirect_url( $payment->redirect_url() );
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
-//				d( $payment );
-//				d( $this->checkout );
-//				die();
 			}
 
 		}
@@ -819,7 +815,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * 	@access 	private
 	 * 	@type 	EE_Payment_Method $payment_method
-	 * 	@return 	mixed	object | boolean
+	 * 	@return 	mixed	EE_Payment | boolean
 	 */
 	private function _attempt_payment( EE_Payment_Method $payment_method ) {
 		$this->checkout->transaction->save();
