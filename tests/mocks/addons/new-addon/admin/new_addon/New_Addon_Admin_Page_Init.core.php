@@ -39,9 +39,9 @@ class New_Addon_Admin_Page_Init extends EE_Admin_Page_Init  {
 		define( 'NEW_ADDON_LABEL', __( 'New_Addon', 'event_espresso' ));
 		define( 'EE_NEW_ADDON_ADMIN_URL', admin_url( 'admin.php?page=' . NEW_ADDON_PG_SLUG ));
 		define( 'EE_NEW_ADDON_ADMIN_ASSETS_PATH', EE_NEW_ADDON_ADMIN . 'assets' . DS );
-		define( 'EE_NEW_ADDON_ADMIN_ASSETS_URL', EE_NEW_ADDON_URL . 'assets' . DS );
+		define( 'EE_NEW_ADDON_ADMIN_ASSETS_URL', EE_NEW_ADDON_URL . 'admin' . DS . 'new_addon' . DS . 'assets' . DS );
 		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_PATH', EE_NEW_ADDON_ADMIN . 'templates' . DS );
-		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_URL', EE_NEW_ADDON_URL . 'templates' . DS );
+		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_URL', EE_NEW_ADDON_URL . 'admin' . DS . 'new_addon' . DS . 'templates' . DS );
 
 		parent::__construct();
 		$this->_folder_path = EE_NEW_ADDON_ADMIN;
