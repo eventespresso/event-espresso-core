@@ -525,24 +525,24 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * the default inner content (or possibly generate this all yourself using
 	 * redirect_url() and redirect_args() or redirect_args_as_inputs()).
 	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead.
-	 * @param string $inside_form_hmtl
+	 * @param string $inside_form_html
 	 * @return string html
 	 */
-	function redirect_form( $inside_form_hmtl = NULL ) {
+	function redirect_form( $inside_form_html = NULL ) {
 		$redirect_url = $this->redirect_url();
 		if ( ! empty( $redirect_url )) {
 			EE_Registry::instance()->load_helper('Formatter');
 			$method = $this->redirect_args() ? 'POST' : 'GET';
-			if( $inside_form_hmtl === NULL ) {
-				$inside_form_hmtl = EEH_Formatter::nl(0) . '<p style="text-align:center;"><br/>';
-				$inside_form_hmtl .= EEH_Formatter::nl(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
-				$inside_form_hmtl .= EEH_Formatter::nl(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
-				$inside_form_hmtl .= EEH_Formatter::nl(-1) . '</p>';
+			if( $inside_form_html === NULL ) {
+				$inside_form_html = EEH_Formatter::nl(0) . '<p style="text-align:center;"><br/>';
+				$inside_form_html .= EEH_Formatter::nl(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
+				$inside_form_html .= EEH_Formatter::nl(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
+				$inside_form_html .= EEH_Formatter::nl(-1) . '</p>';
 			}
 
 			$form = EEH_Formatter::nl(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
 			$form .= EEH_Formatter::nl(1) . $this->redirect_args_as_inputs();
-			$form .= $inside_form_hmtl;
+			$form .= $inside_form_html;
 			$form .= EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl(-1);
 			return $form;
 		} else {
