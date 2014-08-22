@@ -27,7 +27,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
 		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
-		$this->_reg_form_name = 'EE_Attendee_Information_Reg_Form';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 	}
@@ -58,7 +57,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return EE_Form_Section_Proper
 	 */
 	public function generate_reg_form() {
-		$subsections = array();
+		$subsections = array(
+			'default_hidden_inputs' => $this->reg_step_hidden_inputs()
+		);
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
 			'registrations' =>array(),
@@ -78,14 +79,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		// if not performing registrations via the admin
-		if ( ! $this->checkout->admin_request ) {
-			// generate hidden inputs for managing the reg process
-			$subsections['default_hidden_inputs'] = $this->reg_step_hidden_inputs();
-		}
-		$this->reg_form = new EE_Form_Section_Proper(
+//		if ( ! $this->checkout->admin_request ) {
+//			// generate hidden inputs for managing the reg process
+//			$subsections['default_hidden_inputs'] = $this->reg_step_hidden_inputs();
+//		}
+		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
-				'html_id' 					=> 'ee-spco-' . $this->slug() . '-reg-step-form',
+				'name' 					=> $this->reg_form_name(),
+				'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> $subsections,
 				'layout_strategy'		=> $this->checkout->admin_request ?
 					new EE_Div_Per_Section_Layout() :
