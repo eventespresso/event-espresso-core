@@ -56,7 +56,7 @@ abstract class EE_SPCO_Reg_Step {
 	protected $_template = NULL;
 
 	/**
-	 * 	$_reg_form_name - class name for this step's reg form
+	 * 	$_reg_form_name - the form input name and id attribute
 	 * 	@access protected
 	 *	@var string $_reg_form_name
 	 */
@@ -233,7 +233,19 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_form_name() {
+		if ( empty( $this->_reg_form_name )) {
+			$this->set_reg_form_name( 'ee-spco-' . $this->slug() . '-reg-step-form' );
+		}
 		return $this->_reg_form_name;
+	}
+
+
+
+	/**
+	 * @param string $reg_form_name
+	 */
+	protected function set_reg_form_name( $reg_form_name ) {
+		$this->_reg_form_name = $reg_form_name;
 	}
 
 
@@ -254,59 +266,52 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * creates the default hidden inputs section
 	 * @return EE_Form_Input_Base[]
 	 */
 	public function reg_step_hidden_inputs() {
-		// multidimensional array containing the following input details: id, name, value
-		$input_details = array(
-			array(
-				'id' => 'spco-' . $this->slug() . '-action',
-				'html_name' => 'action',
-				'value' => empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
-			),
-			array(
-				'id' => 'spco-' . $this->slug() . '-noheader',
-				'html_name' => 'noheader',
-				'value' => '',
-				'normalization_strategy' => new EE_Boolean_Normalization()
-			),
-			array(
-				'id' => 'spco-' . $this->slug() . '-next-step',
-				'html_name' => 'next_step',
-				'value' => $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
-			),
-			array(
-				'id' => 'spco-reg_url_link',
-				'html_name' => 'e_reg_url_link',
-				'value' => $this->checkout->reg_url_link
-			),
-			array(
-				'id' => 'spco-revisit',
-				'html_name' => 'revisit',
-				'value' => $this->checkout->revisit,
-				'normalization_strategy' => new EE_Boolean_Normalization()
-			)
-		);
-		// array to hold generated inputs
-		$inputs = array();
-		// loop thru input details
-		foreach ( $input_details as $input ) {
-			// set array of args
-			$input_constructor_args = array(
-				'normalization_strategy' 	=> isset( $input['normalization_strategy'] ) ? $input['normalization_strategy'] : NULL,
-				'html_name' 						=> $input['html_name'],
-				'html_id' 								=> $input['id'],
-				'default'								=> $input['value']
-			);
-			// generate input
-			$inputs[ $input['html_name'] ] = new EE_Hidden_Input( $input_constructor_args );
-		}
-		// now create the entire hidden inputs section
 		return new EE_Form_Section_Proper(
 			array(
+				'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
 				'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
-				'subsections' 			=> $inputs,
-				'layout_strategy'		=> new EE_Div_Per_Section_Layout()
+				'subsections' 			=> array(
+					'action' 				=> new EE_Fixed_Hidden_Input(
+						array(
+							'html_name' 	=> 'action',
+							'html_id' 			=> 'spco-' . $this->slug() . '-action',
+							'default' 			=> empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
+						)
+					),
+					'next_step' 			=> new EE_Fixed_Hidden_Input(
+						array(
+							'html_name' 	=> 'next_step',
+							'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
+							'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
+						)
+					),
+					'e_reg_url_link' 	=> new EE_Fixed_Hidden_Input(
+						array(
+							'html_name' 	=> 'e_reg_url_link',
+							'html_id' 			=> 'spco-reg_url_link',
+							'default' 			=> $this->checkout->reg_url_link
+						)
+					),
+					'revisit' 				=> new EE_Fixed_Hidden_Input(
+						array(
+							'html_name' 	=> 'revisit',
+							'html_id' 			=> 'spco-revisit',
+							'default' 			=> $this->checkout->revisit
+						)
+					),
+					'noheader' 			=> new EE_Hidden_Input(
+						array(
+							'html_name' 	=> 'noheader',
+							'html_id' 			=> 'spco-' . $this->slug() . '-noheader',
+							'default' 			=> '',
+							'normalization_strategy' => new EE_Boolean_Normalization()
+						)
+					)
+				)
 			)
 		);
 	}
