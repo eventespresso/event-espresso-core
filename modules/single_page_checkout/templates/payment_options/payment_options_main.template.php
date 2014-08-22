@@ -50,7 +50,7 @@
 		</table>
 	</div>
 
-	<?php  echo $hidden_inputs;  ?>
+	<?php  echo $default_hidden_inputs;  ?>
 
 	<div id="methods-of-payment">
 		<?php echo $payment_options; ?>
