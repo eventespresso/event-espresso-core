@@ -376,7 +376,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _check_form_submission() {
 		// ever heard that song by Blue Rodeo ?
 		try {
-			$this->checkout->current_step->generate_reg_form();
+			$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 			// check for form submission
 			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
 				// capture form data
