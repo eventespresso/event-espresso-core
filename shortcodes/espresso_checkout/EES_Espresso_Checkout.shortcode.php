@@ -58,8 +58,14 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
 			// now check for this shortcode
 			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
-				if ( ! EE_Registry::instance()->REQ->get( 'step' )) {
-					EE_Registry::instance()->REQ->set( 'step', '1' );
+				if ( ! did_action( 'pre_get_posts' )) {
+					// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
+					// this allows us to initialize things, enqueue assets, etc,
+					// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
+					add_action( 'pre_get_posts', array( EED_Single_Page_Checkout::instance(), 'run' ));
+				} else {
+					global $wp;
+					EED_Single_Page_Checkout::instance()->run( $wp );
 				}
 			}
 		}
@@ -72,7 +78,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		return EE_Registry::instance()->REQ->get_output();

@@ -13,6 +13,19 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  */
 class EE_DMS_New_Addon_0_0_2 extends EE_Data_Migration_Script_Base{
+
+	public function __construct() {
+		$this->_pretty_name = __("Data Migration to New Addon 0.0.2", "event_espresso");
+		$this->_migration_stages = array(
+			/*
+			 * add children of EE_Data_Migration_Script_Stage or EE_Data_Migration_Script_Stage_Table
+			 * it's easiest to add these classes onto this same file, or use EEH_Autoloader to autoload them
+			 * BEFORE declaring this class' name (because on some requests only THIS file is auto-loaded
+			 * and the class is unserialized from the DB- ie used but NOT constructed)
+			 */
+		);
+		parent::__construct();
+	}
 	/**
 	 * only run when New Addon is at exactly version 0.0.1
 	 * @param type $version_string

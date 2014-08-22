@@ -111,14 +111,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$regs = $item->count_related('Registration');
 		return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
 			'<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
-		);
-	}
-
-
-
-	public function column_default($item, $column_name) {
-		return isset( $item->$column_name ) ? $item->$column_name : '';
-	}
+        );
+    }
 
 
 

@@ -113,31 +113,31 @@ final class EE_Capabilities extends EE_Base {
 	private function _set_meta_caps() {
 		$this->_meta_caps =  array (
 			//edits
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( EEM_Event::instance(), 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( EEM_Venue::instance(), 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_checkin', array( EEM_Registration::instance(), '', 'ee_edit_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_edit_message', array( EEM_Message_Template_Group::instance(), '', 'ee_edit_others_messages', 'ee_edit_global_messages' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_default_ticket', array( EEM_Ticket::instance(), '', 'ee_edit_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question', array( EEM_Question::instance(), '', '', 'ee_edit_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question_group', array( EEM_Question_Group::instance(), '', '', 'ee_edit_system_question_groups' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( 'Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( 'Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_registration', array( 'Registration', '', 'ee_edit_others_registrations', '' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_checkin', array( 'Registration', '', 'ee_edit_others_checkins', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_edit_message', array( 'Message_Template_Group', '', 'ee_edit_others_messages', 'ee_edit_global_messages' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_default_ticket', array( 'Ticket', '', 'ee_edit_others_default_tickets', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question', array( 'Question', '', '', 'ee_edit_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question_group', array( 'Question_Group', '', '', 'ee_edit_system_question_groups' ) ),
 			//reads
-			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( EEM_Event::instance(), '', 'ee_read_others_events', 'ee_read_private_events' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( EEM_Venue::instance(), '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( EEM_Registration::instance(), '', '', 'ee_edit_others_registrations' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( EEM_Registration::instance(), '', '', 'ee_read_others_checkins' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( EEM_Message_Template_Group::instance(), '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( EEM_Ticket::instance(), '', '', 'ee_read_others_default_tickets' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( 'Event', '', 'ee_read_others_events', 'ee_read_private_events' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( 'Venue', '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( 'Registration', '', '', 'ee_edit_others_registrations' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( 'Registration', '', '', 'ee_read_others_checkins' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( 'Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( 'Ticket', '', '', 'ee_read_others_default_tickets' ) ),
 
 			//deletes
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( EEM_Event::instance(), 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( EEM_Venue::instance(), 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( EEM_Registration::instance(), '', 'ee_delete_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( EEM_Message_Template_Group::instance(), '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( EEM_Ticket::instance(), '', 'ee_delete_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( 'Event', 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( 'Venue', 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( 'Registration', '', 'ee_edit_others_registrations', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( 'Registration', '', 'ee_delete_others_checkins', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( 'Message_Template_Group', '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( 'Ticket', '', 'ee_delete_others_default_tickets', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( 'Question', '', '', 'delete_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( 'Question_Group', '', '', 'delete_system_question_groups' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -465,7 +465,8 @@ final class EE_Capabilities extends EE_Base {
  */
 abstract class EE_Meta_Capability_Map {
 	public $meta_cap;
-	public $model;
+	protected $_model;
+	protected $_model_name;
 	public $published_cap = '';
 	public $others_cap = '';
 	public $private_cap = '';
@@ -481,7 +482,10 @@ abstract class EE_Meta_Capability_Map {
 	 * @param string $meta_cap     What meta capability is this mapping.
 	 * @param array  $map_values   array {
 	 * 		//array of values that MUST match a count of 4.  It's okay to send an empty string for capabilities that don't get mapped to.
-	 * 		@type param \EEM_Base model used for grabbing any context object. Required.
+	 * 		@type param string A string representing the model name. Required.  String's
+	 * 		      	    	       should always be used when Menu Maps are registered via the
+	 * 		      	    	       plugin API as models are not allowed to be instantiated when
+	 * 		      	    	       in maintenance mode 2 (migrations).
 	 * 		@type param string represents the capability used for published. Optional.
 	 * 		@type param string represents the capability used for "others". Optional.
 	 * 		@type param string represents the capability used for private. Optional.
@@ -495,19 +499,66 @@ abstract class EE_Meta_Capability_Map {
 			throw new EE_Error( sprintf( __('Incoming $map_values array should have a count of four values in it.  This is what was given: %s', 'event_espresso'), '<br>' . print_r( $map_values, TRUE ) ) );
 		}
 
-		//the first value should be an instance of EEM_Base
-		if ( ! $map_values[0] instanceof EEM_Base ) {
-			throw new EE_Error( sprintf( __('The first value in the $map_values array should be an instance of EEM_Base.  It is not, instead this was given: %s', 'event_espresso'), '<br>' . print_r( $map_values[0], true ) ) );
-		}
-
 		//set properties
-		$this->model = $map_values[0];
+		$this->_model = null;
+		$this->_model_name = $map_values[0];
 		$this->published_cap = (string) $map_values[1];
 		$this->others_cap = (string) $map_values[2];
 		$this->private_cap = (string) $map_values[3];
 
-		//add filter for map_meta_caps
-		add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
+		//add filter for map_meta_caps but only if models can query.
+		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
+			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
+		}
+	}
+
+
+
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
+	 *
+	 * The actual logic is carried out by implemntor classes in their definition of _map_meta_caps.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
+	final public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		$this->_ensure_is_model();
+		return $this->_map_meta_caps( $caps, $cap, $user_id, $args );
+	}
+
+
+	/**
+	 * This method ensures that the $model property is converted from the model name string to a proper EEM_Base class
+	 *
+	 * @since 4.5.0
+	 * @throws EE_Error
+	 *
+	 * @return void
+	 */
+	private function _ensure_is_model() {
+		//is it already instantiated?
+		if ( $this->_model instanceof EEM_Base ) {
+			return;
+		}
+
+		//ensure model name is string
+		$this->_model_name = (string) $this->_model_name;
+		//error proof if the name has EEM in it
+		$this->_model_name = str_replace( 'EEM', '', $this->_model_name );
+
+		$this->_model = EE_Registry::instance()->load_model( $this->_model_name );
+
+		if ( ! $this->_model instanceof EEM_Base ) {
+			throw new EE_Error( sprintf( __('This string passed in to %s to represent a EEM_Base model class was not able to be used to instantiate the class.   Please ensure that the string is a match for the EEM_Base model name (not including the EEM_ part). This was given: %s', 'event_espresso'), get_class($this), $this->_model ) );
+		}
 	}
 
 
@@ -525,7 +576,7 @@ abstract class EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	abstract public function map_meta_caps( $caps, $cap, $user_id, $args );
+	abstract protected function _map_meta_caps( $caps, $cap, $user_id, $args );
 }
 
 
@@ -557,13 +608,13 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
 		}
 
-		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->_model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Base_Class ) {
@@ -637,8 +688,8 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
-		return parent::map_meta_caps( $caps, $cap, $user_id, $args );
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
+		return parent::_map_meta_caps( $caps, $cap, $user_id, $args );
 	}
 }
 
@@ -670,13 +721,13 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped cap;
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
 		}
 
-		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->_model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Base_Class ) {
@@ -745,13 +796,13 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
 		}
 
-		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->_model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Message_Template_Group ) {
@@ -806,13 +857,13 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
 	 *
 	 * @return array   actual users capabilities
 	 */
-	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+	protected function _map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
 			return $caps;
 		}
 
-		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->_model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Base_Class ) {

@@ -2282,14 +2282,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-	public function display_admin_caf_preview_page() {
+	/**
+	 * This is used to display caf preview pages.
+	 *
+	 * @since 4.3.2
+	 *
+	 * @param string $utm_campaign_source what is the key used for google analytics link
+	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
+	 * @return void
+	 */
+	public function display_admin_caf_preview_page( $utm_campaign_source = '', $display_sidebar = TRUE ) {
 		//let's generate a default preview action button if there isn't one already present.
-		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
-		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=question_groups_tab&utm_content=buy_now_button' ) : $this->_template_args['preview_action_button'];
+		$this->_labels['buttons']['buy_now'] = __('Upgrade Now', 'event_espresso');
+		$buy_now_url = add_query_arg(
+			array(
+				'ee_ver' => 'ee4',
+				'utm_source' => 'ee4_plugin_admin',
+				'utm_medium' => 'link',
+				'utm_campaign' => $utm_campaign_source,
+				'utm_content' => 'buy_now_button'
+			),
+		'http://eventespresso.com/pricing/'
+		);
+		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-		$this->admin_page_wrapper();
+		$this->_display_admin_page( $display_sidebar );
 	}
 
 

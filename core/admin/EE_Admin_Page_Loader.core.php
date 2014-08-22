@@ -32,7 +32,7 @@ class EE_Admin_Page_Loader {
 	 * _installed_pages
 	 * objects for page_init objects detected and loaded
 	 * @access private
-	 * @var array
+	 * @var \EE_Admin_Page_Init[]
 	 */
 	private $_installed_pages = array();
 
@@ -330,6 +330,21 @@ class EE_Admin_Page_Loader {
 				$this->_installed_pages[$page]->do_initial_loads();
 			}
 		}
+	}
+
+
+
+	/**
+	 * get_admin_page_object
+	 *
+	 * @param string $page_slug
+	 * @return EE_Admin_Page
+	 */
+	public function get_admin_page_object( $page_slug = '' ) {
+		if ( isset( $this->_installed_pages[ $page_slug ] )) {
+			return $this->_installed_pages[ $page_slug ]->loaded_page_object();
+		}
+		return NULL;
 	}
 
 
