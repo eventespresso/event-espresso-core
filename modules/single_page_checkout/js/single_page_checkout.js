@@ -49,6 +49,7 @@ jQuery(document).ready(function($) {
 
 	var SPCO = {
 
+		main_container : $('#ee-single-page-checkout-dv'),
 		// array of input fields that require values
 		require_values : [],
 		// array of multi-value inputs (checkboxes and radio buttons) that do NOT require values
@@ -59,6 +60,8 @@ jQuery(document).ready(function($) {
 		error_msgs : [],
 		// pixel position from top of form to scroll to after errors
 		offset_from_top : 0,
+		// modifier for offset_from_top
+		offset_from_top_modifier : -50,
 		// display debugging info in console?
 		display_debug : 1,
 
@@ -81,12 +84,11 @@ jQuery(document).ready(function($) {
 		 *	set_offset_from_top
 		 */
 		set_offset_from_top : function( item, extra ) {
-			if ( SPCO.offset_from_top === 0 ) {
-				extra = typeof extra !== 'undefined' && extra !== '' ? extra : 50;
-				var top_of_form = $( item ).offset();
-				SPCO.offset_from_top = top_of_form.top + extra;
+//			if ( SPCO.offset_from_top === 0 ) {
+				extra = typeof extra !== 'undefined' && extra !== '' ? extra : SPCO.offset_from_top_modifier;
+				SPCO.offset_from_top = $( item ).offset().top + extra;
 				SPCO.offset_from_top = Math.max( 0, SPCO.offset_from_top );
-			}
+//			}
 		},
 
 
@@ -133,11 +135,13 @@ jQuery(document).ready(function($) {
 		/**
 		 *	scroll_to_top_and_display_messages
 		 */
-		scroll_to_top_and_display_messages : function( msg ) {
-			SPCO.set_offset_from_top( $('#ee-single-page-checkout-dv') );
-			$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
-				SPCO.display_messages( msg );
-			});
+		scroll_to_top_and_display_messages : function( item, msg ) {
+			if ( $( item ).offset().top + SPCO.offset_from_top_modifier !== SPCO.offset_from_top ) {
+				SPCO.set_offset_from_top( item );
+				$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
+					SPCO.display_messages( msg );
+				});
+			}
 		},
 
 
@@ -170,7 +174,7 @@ jQuery(document).ready(function($) {
 //					form_to_check = SPCO.process_selected_gateway();
 //					if ( form_to_check === false ) {
 //						msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'process_next_step > ' + next_step, eei18n.no_payment_method ));
-//						SPCO.scroll_to_top_and_display_messages( msg );
+//						SPCO.scroll_to_top_and_display_messages( $('#ee-single-page-checkout-dv'), msg );
 //						return false;
 //					}
 //				}
@@ -199,7 +203,7 @@ jQuery(document).ready(function($) {
 				} else {
 					// validation errors
 					$( form_to_check ).slideDown();
-//					SPCO.scroll_to_top_and_display_messages();
+//					SPCO.scroll_to_top_and_display_messages( $('#ee-single-page-checkout-dv') );
 					return false;
 				}
 			}
@@ -225,13 +229,15 @@ jQuery(document).ready(function($) {
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
 			$('#spco-'+step+'-noheader').val('true');
-			$('#spco-'+step+'-action').attr( 'name', 'action' );
+//			$('#spco-'+step+'-action').attr( 'name', 'action' );
+			alert( '#spco-'+step+'-action = ' + $('#spco-'+step+'-action').val() );
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&ee_front_ajax=1';
+			form_data += '&noheader=true';
 			form_data += '&step=' + step;
 			form_data += '&EESID=' + eei18n.EESID;
 //			SPCO.console_log( 'submit_reg_form > form_data', form_data, true );
-			//alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
+//			alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
 
@@ -253,7 +259,7 @@ jQuery(document).ready(function($) {
 
 					SPCO.console_log( 'submit_reg_form > step', step );
 					SPCO.console_log( 'submit_reg_form > next_step', next_step );
-					SPCO.console_log_obj( 'submit_reg_form > response', response );
+//					SPCO.console_log_obj( 'submit_reg_form > response', response );
 
 					if ( typeof response !== 'undefined' ) {
 //
@@ -264,42 +270,40 @@ jQuery(document).ready(function($) {
 //						SPCO.console_log_obj( 'submit_reg_form > response.return_data', response.return_data );
 //
 ////						SPCO.enable_submit_buttons();
-//						// hide recaptcha?
-//						if ( typeof response.recaptcha_passed !== 'undefined' ) {
-//							if ( response.recaptcha_passed ) {
-//								$( '#spco-captcha span' ).html('');
-//							}
-//						}
-//						// or reload recaptcha ?
-//						if ( typeof response.recaptcha_reload !== 'undefined' ) {
-//							$('#recaptcha_reload').trigger('click');
-//							SPCO.scroll_to_top_and_display_messages( response );
-//						// process valid response data
-//						} else if ( typeof response.return_data !== 'undefined' ) {
-//							SPCO.process_return_data( next_step, response );
-//						} else {
+						// hide recaptcha?
+						if ( typeof response.recaptcha_passed !== 'undefined' ) {
+							if ( response.recaptcha_passed ) {
+								$( '#spco-captcha' ).children( 'span' ).html('');
+							}
+						// or reload recaptcha ?
+						} else if ( typeof response.recaptcha_reload !== 'undefined' ) {
+							$('#recaptcha_reload').trigger('click');
+							SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
+						// process valid response data
+						} else if ( typeof response.return_data !== 'undefined' ) {
+							SPCO.process_return_data( next_step, response );
+						} else {
 //							// uh-oh spaghettios!
 							if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
-								SPCO.scroll_to_top_and_display_messages( response );
-							} else {
+								SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
+							} else if ( typeof response.success !== 'undefined' && response.success !== '' ) {
 								SPCO.get_next_reg_step( next_step, response );
-//								go_to[ next_step ]( response );
-//
+							} else {
+								SPCO.submit_reg_form_server_error( response );
 							}
-//						}
+
+						}
 					} else {
-						return SPCO.submit_reg_form_server_error( response );
+						SPCO.submit_reg_form_server_error( response );
 					}
 
 				},
 
 				error: function( response ) {
-					return SPCO.submit_reg_form_server_error( response );
+					SPCO.submit_reg_form_server_error( response );
 				}
 
 			});
-
-			return false;
 
 		},
 
@@ -323,8 +327,8 @@ jQuery(document).ready(function($) {
 		submit_reg_form_server_error : function( response ) {
 			SPCO.console_log( 'submit_reg_form_server_error > ajax error response', dump( response ));
 	//			SPCO.enable_submit_buttons();
-	//			msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ));
-	//			SPCO.scroll_to_top_and_display_messages( msg );
+				msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ));
+				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			return false;
 		},
 
@@ -333,22 +337,28 @@ jQuery(document).ready(function($) {
 		/**
 		 * opens the the SPCO step specified by step_to_show
 		 * shows msg as a notification
-		 * @param string step_to_show either step 1, 2, or 3
-		 * @param string msg message to show
+		 * @param step_to_show  (string) either step 1, 2, or 3
+		 * @param msg  (string) message to show
 		 * @return void
 		 **/
-		display_step : function( step_to_show, msg ){
+		display_step : function( step_to_show, response ){
 			SPCO.hide_steps();
+			var step_to_show_div = $('#spco-' + step_to_show + '-dv' );
+			SPCO.console_log_obj( 'display_step -> response', response );
+			$( step_to_show_div ).html( response.reg_step_html );
 			$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');
 			$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
-			$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');
+			var step_to_show_link = $('#spco-edit-'+step_to_show+'-lnk');
+			$( step_to_show_link ).addClass('hidden');
 			SPCO.console_log( 'display_step -> step_to_show', step_to_show );
-			SPCO.console_log( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $('#spco-edit-'+step_to_show+'-lnk').attr('class') );
+			SPCO.console_log( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $( step_to_show_link ).attr('class') );
 			$('#espresso-ajax-loading').fadeOut('fast');
-			$('#spco-'+step_to_show+'-dv').css({ 'display' : 'none' }).removeClass('hidden').slideDown( function() {
-				SPCO.scroll_to_top_and_display_messages( msg );
+			$( step_to_show_div ).css({ 'display' : 'none' }).removeClass('hidden').slideDown( function() {
+				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 			});
 		},
+
+
 
 		/**
 		 * Hides the step specified by step_to_hide
@@ -364,16 +374,50 @@ jQuery(document).ready(function($) {
 			});
 		},
 
+
+
+		/**
+		 *	process_return_data
+		 */
+		process_return_data : function( next_step, response ) {
+			if ( typeof response !== 'undefined' && response.hasOwnProperty( 'return_data' )) {
+				for ( var key in response.return_data ) {
+					if ( typeof key !== 'undefined' && response.hasOwnProperty( key )) {
+						SPCO.console_log_obj( 'process_return_data > ' + key, response.return_data[key] );
+						if ( key === 'reg_step_html' ) {
+							SPCO.get_next_reg_step( next_step, response );
+						} else if ( key === 'redirect_url' ) {
+							window.location.replace( response.return_data[key] );
+							return;
+						} else if ( key === 'redirect_form' ) {
+							$( '#espresso-ajax-notices-attention' ).append( response.return_data[key] );
+							document.forms.gateway_form.submit();
+						} else if ( key === 'plz_select_method_of_payment' ) {
+							var methods_of_payment = $( '#methods-of-payment' );
+							$( methods_of_payment ).addClass( 'plz-select-method-of-payment' );
+							SPCO.scroll_to_top_and_display_messages( $( methods_of_payment ), response );
+							return;
+						}
+					}
+				}
+			}
+			go_to[ next_step ]( response );
+		},
+
+
+
 		/**
 		* get_next_reg_step
 		*/
 		get_next_reg_step : function( next_step, prev_response ){
 
-			var form_data = 'action=espresso_display_reg_step';
+			var form_data = 'action=display_spco_reg_step';
 			form_data += '&step=' + next_step;
 			form_data += '&noheader=1';
 			form_data += '&ee_front_ajax=1';
 			form_data += '&EESID=' + eei18n.EESID;
+
+			alert( 'form_data = ' + form_data );
 
 			$.ajax({
 
@@ -388,20 +432,14 @@ jQuery(document).ready(function($) {
 
 				success: function( response ){
 
-					SPCO.console_log_obj( 'get_next_reg_step > response', response );
+//					SPCO.console_log_obj( 'get_next_reg_step > response', response );
 
 					if ( typeof response !== 'undefined' ) {
 						// uh-oh spaghettios!
 						if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
-							SPCO.scroll_to_top_and_display_messages( response );
-						} else if ( typeof response.registration_form !== 'undefined' && response.registration_form !== '' ) {
-							$('#spco-' + next_step + '-dv' ).html( response.registration_form );
-							if ( typeof prev_response.success !== 'undefined' && prev_response.success !== '' ) {
-								msg = prev_response.success;
-							} else {
-								msg = '';
-							}
-							SPCO.display_step( next_step, msg );
+							SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
+						} else if ( typeof response.reg_step_html !== 'undefined' && response.reg_step_html !== '' ) {
+							SPCO.display_step( next_step, response );
 						}
 					} else {
 						return SPCO.submit_reg_form_server_error( response );
@@ -423,7 +461,21 @@ jQuery(document).ready(function($) {
 		display_payment_method: function ( item ) {
 			var payment_method = $(item).val();
 			$('.spco-payment-method-info-dv' ).hide();
-			$( '#spco-payment-method-info-' + payment_method  ).slideDown();
+			$( '#spco-payment-method-info-' + payment_method ).slideDown( function() {
+				SPCO.scroll_to_top_and_display_messages( $('#methods-of-payment'), '' );
+			});
+		},
+
+
+
+		/**
+		 *	generate_message_object
+		 */
+		generate_message_object : function( success_msg, error_msg ) {
+			msg = {};
+			msg.success = typeof success_msg !== 'undefined' && success_msg !== '' ? success_msg : false;
+			msg.errors = typeof error_msg !== 'undefined' && error_msg !== '' ? error_msg : false;
+			return msg;
 		},
 
 
@@ -502,7 +554,7 @@ jQuery(document).ready(function($) {
 
 		// finalize_registration
 		finalize_registration : function ( response ) {
-			SPCO.scroll_to_top_and_display_messages( response );
+			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 		}
 
 	};
@@ -513,10 +565,10 @@ jQuery(document).ready(function($) {
 	/**
 	 *	submit registration form
 	 */
-	$('#ee-single-page-checkout-dv').on( 'click', '.spco-next-step-btn', function(e) {
+	SPCO.main_container.on( 'click', '.spco-next-step-btn', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		SPCO.process_next_step( $(this) );
+		SPCO.process_next_step( this );
 	});
 
 
@@ -526,8 +578,8 @@ jQuery(document).ready(function($) {
 	/**
 	 *	payment method button
 	 */
-	$('#ee-single-page-checkout-dv').on( 'click', '.spco-payment-method', function(e) {
-		SPCO.display_payment_method( $(this ) );
+	SPCO.main_container.on( 'click', '.spco-payment-method', function(e) {
+		SPCO.display_payment_method( this );
 	});
 
 
