@@ -72,17 +72,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// add event to list of events that are sold out
 				$sold_out_events[] = $registration->event();
 			}
+			// event requires admin approval
+			if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
+				// add event to list of events with pre-approval reg status
+				$events_requiring_pre_approval[] = $registration->event();
+			}
 			// these reg statuses require payment (if event is not free)
 			$requires_payment = array(
 				EEM_Registration::status_id_pending_payment,
 				EEM_Registration::status_id_approved
 			);
 			$payment_required = in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ? TRUE : $payment_required;
-			// event requires admin approval
-			if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
-				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[] = $registration->event();
-			}
 		}
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
@@ -93,6 +93,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->reg_form = $this->_display_payment_options( $reg_count );
 		} else {
 			$this->reg_form = $this->_no_payment_required();
+		}
+		// if not performing registrations via the admin
+		if ( ! $this->checkout->admin_request ) {
+			// generate hidden inputs for managing the reg process
+			$this->reg_form->add_subsections( array( 'default_hidden_inputs' => $this->reg_step_hidden_inputs() ));
 		}
 
 	}
@@ -279,7 +284,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 			=> 'ee-' . $this->slug() . '-reg-step-form',
 				'subsections' 	=> array(
 					'payment_options' => $this->_setup_payment_options(),
-					'hidden_inputs' 		=> $this->_default_hidden_inputs( FALSE )
+					'extra_hidden_inputs' 		=> $this->_default_hidden_inputs( FALSE )
 				),
 				'layout_strategy'		=> new EE_Template_Layout( array(
 						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
@@ -561,6 +566,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 			default:
 				$result = $this->_process_payment();
+//				d( $this->checkout );
 //				d( $result );
 //				die();
 				return $result;
