@@ -69,13 +69,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func'=>'_payment_methods_list',
-				'capability' => 'manage_gateways'
+//				'capability' => 'manage_gateways'
 			),
 			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
 				'noheader'=>TRUE,
-				'capability' => 'manage_gateways'
+//				'cap ability' => 'manage_gateways'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
@@ -390,6 +390,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						));
 					}
 					$payment_method->set_active();
+					$payment_method->set_description( $pm_type_obj->default_description() );
 					//handles the goofy case where someone activates the invoice gateway which is also
 					$payment_method->set_type($pm_type_obj->system_name());
 					$payment_method->save();

@@ -28,6 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_PMT_Invoice extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Invoice", 'event_espresso');
+		$this->_default_description = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
 	}

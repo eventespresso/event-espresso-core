@@ -28,6 +28,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		$this->_pretty_name = __("Paypal Standard", 'event_espresso');
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'paypal-logo.png';
+		$this->_default_description = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration', 'event_espresso' );
 	}
 
 

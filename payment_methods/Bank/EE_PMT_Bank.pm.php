@@ -30,6 +30,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 		$this->_pretty_name = __("Bank", 'event_espresso');
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'bank-logo.png';
+		$this->_default_description = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
 	}
 	public function generate_new_billing_form() {
 		return NULL;

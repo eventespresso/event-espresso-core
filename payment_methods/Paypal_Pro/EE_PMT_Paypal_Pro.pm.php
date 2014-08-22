@@ -30,6 +30,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
 		$this->_gateway = new EEG_Paypal_Pro();
 		$this->_pretty_name = __("Paypal Pro", 'event_espresso');
+		$this->_default_description = __( 'Please provide the following billing information', 'event_espresso' );
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_settings_form() {

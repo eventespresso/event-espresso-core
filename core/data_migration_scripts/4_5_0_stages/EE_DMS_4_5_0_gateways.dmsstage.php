@@ -95,6 +95,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 					'transaction_key'=>$old_gateway_settings['authnet_aim_transaction_key'],
 					'test_transactions'=>$old_gateway_settings['test_transactions']
 				);
+				$desc = __( 'Please provide the following billing information', 'event_espresso' );
 				break;
 			case 'Bank':
 				$extra_meta_key_values = array(
@@ -105,6 +106,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 				'bank_name'=>$old_gateway_settings['bank_name'],
 				'bank_address'=>$old_gateway_settings['bank_address']
 				);
+				$desc = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
 				break;
 			case 'Check':
 				$extra_meta_key_values = array(
@@ -113,6 +115,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 					'payable_to'=>$old_gateway_settings['payable_to'],
 					'address_to_send_payment'=>$old_gateway_settings['payment_address']
 				);
+				$desc = __( 'On the next page you will be given instructions on how to make a payment by check', 'event_espresso' );
 				break;
 			case 'Invoice':
 				$extra_meta_key_values = array(
@@ -125,11 +128,13 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 					'page_payable_to' => isset( $old_gateway_settings[ 'payable_to' ] ) ? $old_gateway_settings[ 'payable_to' ] : '',
 					'page_address_payable' => isset( $old_gateway_settings[ 'address_payable' ] ) ? $old_gateway_settings[ 'address_payable' ] : '',
 				);
+				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );
 				break;
 			case 'Mijireh':
 				$extra_meta_key_values = array(
 					'access_key' => $old_gateway_settings[ 'access_key' ]
 				);
+				$desc =  __( 'On the next page you will be able to enter your billing information to make the payment', 'event_espresso' );
 				break;
 			case 'Paypal_Pro':
 				$extra_meta_key_values = array(
@@ -138,6 +143,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 					'signature'=>$old_gateway_settings['signature'],
 					'credit_card_types'=>$old_gateway_settings['credit_cards'],
 				);
+				$desc = __( 'Please provide the following billing information', 'event_espresso' );
 				break;
 			case 'Paypal_Standard':
 				$extra_meta_key_values = array(
@@ -146,11 +152,13 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 					'shipping_details' => isset( $old_gateway_settings[ 'no_shippping' ] ) ? $old_gateway_settings[ 'no_shippping' ] : false,
 
 				);
+				$desc = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration', 'event_espresso' );
 				break;
 			default:
 				//if we don't recognize the payment method, just put everything in it into
 				//extra metas. At least this way its preserved somewhere
 				$extra_meta_key_values = $old_gateway_settings;
+				$desc = '';
 		}
 		$pretty_name = isset( $old_gateway_settings[ 'display_settings' ] ) ? $old_gateway_settings[ 'display_settings' ] : $old_gateway_slug;
 		$offline_gateways = array( 'Bank', 'Check', 'Invoice' );
@@ -166,6 +174,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		$payment_method_col_values = array(
 			'PMD_type' => $old_gateway_slug,
 			'PMD_name' => $pretty_name,
+			'PMD_desc' => $desc,
 			'PMD_admin_name' => $pretty_name,
 			'PMD_slug' => sanitize_key( $old_gateway_slug ),
 			'PMD_debug_mode' => isset( $old_gateway_settings[ 'use_sandbox' ] ) ? $old_gateway_settings['use_sandbox'] : FALSE,
