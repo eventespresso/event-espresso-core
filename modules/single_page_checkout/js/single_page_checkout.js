@@ -230,7 +230,7 @@ jQuery(document).ready(function($) {
 
 			$('#spco-'+step+'-noheader').val('true');
 //			$('#spco-'+step+'-action').attr( 'name', 'action' );
-			alert( '#spco-'+step+'-action = ' + $('#spco-'+step+'-action').val() );
+//			alert( '#spco-'+step+'-action = ' + $('#spco-'+step+'-action').val() );
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&ee_front_ajax=1';
 			form_data += '&noheader=true';
@@ -380,18 +380,18 @@ jQuery(document).ready(function($) {
 		 *	process_return_data
 		 */
 		process_return_data : function( next_step, response ) {
-			if ( typeof response !== 'undefined' && response.hasOwnProperty( 'return_data' )) {
+			if ( typeof response !== 'undefined' && typeof response.return_data !== 'undefined') {
 				for ( var key in response.return_data ) {
-					if ( typeof key !== 'undefined' && response.hasOwnProperty( key )) {
-						SPCO.console_log_obj( 'process_return_data > ' + key, response.return_data[key] );
+					if ( typeof key !== 'undefined' && typeof response.return_data[key] !== 'undefined' ) {
+						SPCO.console_log_obj( 'process_return_data > ' + key + ' = ', response.return_data[key] );
 						if ( key === 'reg_step_html' ) {
 							SPCO.get_next_reg_step( next_step, response );
-						} else if ( key === 'redirect_url' ) {
-							window.location.replace( response.return_data[key] );
-							return;
 						} else if ( key === 'redirect_form' ) {
 							$( '#espresso-ajax-notices-attention' ).append( response.return_data[key] );
 							document.forms.gateway_form.submit();
+						} else if ( key === 'redirect_url' ) {
+							window.location.replace( response.return_data[key] );
+							return;
 						} else if ( key === 'plz_select_method_of_payment' ) {
 							var methods_of_payment = $( '#methods-of-payment' );
 							$( methods_of_payment ).addClass( 'plz-select-method-of-payment' );
@@ -417,7 +417,7 @@ jQuery(document).ready(function($) {
 			form_data += '&ee_front_ajax=1';
 			form_data += '&EESID=' + eei18n.EESID;
 
-			alert( 'form_data = ' + form_data );
+//			alert( 'form_data = ' + form_data );
 
 			$.ajax({
 
