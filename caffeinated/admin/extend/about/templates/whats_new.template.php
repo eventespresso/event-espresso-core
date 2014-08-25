@@ -1,15 +1,15 @@
 <div class="changelog point-releases">
-	<!-- <h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>-->
-	<h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>
-	<?php //$type = 'minor'; ?>
-	<?php $type = 'major'; ?>
+<h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>
+		<!-- <h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>-->
+	<?php $type = 'minor'; ?>
+	<?php //$type = 'major'; ?>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
 		<?php
 			$ver = explode( '.', EVENT_ESPRESSO_VERSION );
 			array_pop( $ver );
 			$ver = implode( '.', $ver );
 		?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/#' . $ver ); ?>
+		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/' . $ver ); ?>
  	</p>
 </div>
 
@@ -57,27 +57,63 @@
 	<hr>
 	*/
 	?>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3.2</h2>
+	<p>This release brings a few minor improvements to existing core features.</p>
+	<p><strong>Fixes</strong></p>
+		<ul>
+			<li>Fixed the month property in the EED_Events_Archive method</li> 
+			<li>Fixed LearnDash EE_Error exception</li>
+			<li>Fixed PayPal Standard not sending event name in shopping cart</li> 
+			<li>Fixed H3 tags that were outside of DIV tags</li>
+			<li>Fixed some doing_it_wrong() messages</li>
+			<li>Fixed spacing around the Event Espresso icon</li>
+		</ul>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3.1</h2>
+	<p>This release brings many minor improvements to existing core features.</p>
+	<p><strong>Fixes</strong></p>
+		<ul style="margin-bottom: 12px;">
+			<li>Fix event datetime comparison to now for upcoming events widget</li>
+			<li>Add limit to session transient delete query</li>
+			<li>Fix flat fee discount/surcharge not showing in the price breakdown</li>
+			<li>Fix undefined function deactivate_plugins()</li>
+			<li>Fix [ESPRESSO_EVENTS] show_expired=false parameter</li>
+			<li>Fix calendar shortcode parsing on page with [ESPRESSO_EVENTS] shortcode on it</li>
+			<li>Fix 1 click updates not working for addons</li>
+			<li>Fix error when changing timezone to half hour increments</li>
+			<li>Fix event_espresso text domain typos</li>
+			<li>Fix [EVENT_AUTHOR_FORMATTED_EMAIL] shortcode</li>
+			<li>Incorrect array configuration for Plugin Update Engine in EE_Register_Addon</li>
+			<li>Fix receipt HTML issues</li>
+			<li>Fix issue where EE_DMS_New_Addon_0_0_2.dms.php does not have constructor</li>
+			<li>Fix issue where core misinforms addons when it’s a new install</li>
+		</ul>
+	<p><strong>Enhancements:</strong></p>
+		<ul>
+			<li>Change minimum PHP version notification to say next major version will drop support for PHP 5.2</li>
+			<li>Add in validation of active messengers and message types</li>
+			<li>Update Category help tour</li>
+		</ul>
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
 	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
-<p><strong>New Features</strong></p>
-<ul>
-	<li>Duplicate Event</li>
-	<li>Ticket Required Option</li>
-	<li>Added iCal Integration</li>
-	<li>Drag-n-drop Answer Values</li>
-	<li>Order Questions by Question Group</li>
-	<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
-	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
-	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
-	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
-</ul>
-<strong>Fixes</strong>
-<ul>
-	<li>Gateways</li>
-	<li>Messages System</li>
-	<li>Migration Issues</li>
-	<li>Miscellaneous Spelling Errors</li>
-</ul>
+	<p><strong>New Features</strong></p>
+		<ul>
+			<li>Duplicate Event</li>
+			<li>Ticket Required Option</li>
+			<li>Added iCal Integration</li>
+			<li>Drag-n-drop Answer Values</li>
+			<li>Order Questions by Question Group</li>
+			<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
+			<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+			<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+			<li>New Hooks and Filters for Developers Added to the Registration Process</li>
+		</ul>
+	<p><strong>Fixes</strong></p>
+		<ul>
+			<li>Gateways</li>
+			<li>Messages System</li>
+			<li>Migration Issues</li>
+			<li>Miscellaneous Spelling Errors</li>
+		</ul>
 
 <p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
 Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
