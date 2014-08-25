@@ -93,7 +93,7 @@ class EE_Payment_Refund_message_type extends EE_message_type {
 	}
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/templates/payment-refund-message-type-content.template.php');
+		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-refund-message-type-content.template.php');
 
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
