@@ -303,6 +303,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_message_types() {
 		$this->_default_message_types = array(
 			'payment',
+			'payment_refund',
 			'registration',
 			'not_approved_registration',
 			'pending_approval'
