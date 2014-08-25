@@ -1,13 +1,13 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
-  Plugin Name: 	Event Espresso
-  Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
+  Plugin Name: 		Event Espresso
+  Plugin URI: 		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.3.1.p
+  Version: 			4.3.2.rc.001
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
-  TextDomain: 	event_espresso
+  TextDomain: 		event_espresso
 
   Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.3.1.p';
+		return '4.3.2.rc.001';
 	}
 } else {
 	unset( $_GET['activate'] );

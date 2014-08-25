@@ -173,7 +173,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_page_routes = array(
 				'default'=> '_ee_default_messages_overview_list_table',
-				'custom_mtps' => '_ee_custom_messages_overview_list_table',
+				'custom_mtps' => '_custom_mtps_preview',
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
 					 'noheader' => TRUE
@@ -247,21 +247,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Custom Message Templates', 'event_espresso'),
 					'order' => 15
 					),
-				'list_table' => 'Custom_Messages_Template_List_Table',
-				'help_tabs' => array(
-					'message_overview_message_types_help_tab' => array(
-						'title' => __('Message Types', 'event_espresso'),
-						'filename' => 'messages_overview_types'
-					),
-					'messages_overview_messengers_help_tab' => array(
-						'title' => __('Messengers', 'event_espresso'),
-						'filename' => 'messages_overview_messengers',
-					),
-					'messages_overview_other_help_tab' => array(
-						'title' => __('Messages Other', 'event_espresso'),
-						'filename' => 'messages_overview_other',
-					),
-				),
+				'help_tabs' => array(),
 				'help_tour' => array(),
 				'require_nonce' => FALSE
 			),
@@ -371,15 +357,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options_default() {
 		$page_title = $this->_admin_page_title;
 		$this->_admin_page_title = __('Global Message Templates', 'event_espresso');
-		$this->_per_page_screen_option();
-		$this->_admin_page_title = $page_title;
-	}
-
-
-
-	protected function _add_screen_options_custom_mtps() {
-		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -552,38 +529,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	/**
-	 * set views array for Custom Templates list table
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function _set_list_table_views_custom_mtps() {
-		$this->_views = array(
-			'in_use' => array(
-				'slug' => 'in_use',
-				'label' => __('In Use', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'trash_message_template' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'trashed' => array(
-				'slug' => 'trashed',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
-					'delete_message_template' => __('Delete Permanently', 'event_espresso')
-				)
-			)
-		);
-	}
-
-
-
-
-
 	protected function _ee_default_messages_overview_list_table() {
 		$this->_admin_page_title = __('Default Message Templates', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -591,9 +536,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _ee_custom_messages_overview_list_table() {
-		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
-		$this->display_admin_list_table_page_with_no_sidebar();
+	protected function _custom_mtps_preview() {
+		$this->_admin_page_title = __('Custom Message Templates (Preview)', 'event_espresso');
+		$this->_template_args['preview_img'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="Preview Custom Message Templates screenshot" />';
+		$this->_template_args['preview_text'] = '<strong>'.__('Custom Message Templates is a feature that is only available in the caffeinated version of Event Espresso.  With the Custom Message Templates feature, you are able to create custom templates and set them per event.', 'event_espresso').'</strong>';
+		$this->display_admin_caf_preview_page( 'custom_message_types', FALSE );
 	}
 
 
@@ -1725,7 +1672,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( $success ) {
 			EE_Error::add_success( __('Test message sent', 'event_espresso') );
 		} else {
-			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ) );
+			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -2431,7 +2378,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function update_mt_form() {
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
-			EE_Error::add_error( __('Require message type or messenger to send an updated form'));
+			EE_Error::add_error( __('Require message type or messenger to send an updated form'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_return_json();
 		}
 

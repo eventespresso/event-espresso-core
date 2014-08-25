@@ -1144,7 +1144,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->unique_indexes() as $index_name => $index){
 			$uniqueness_where_params = array_intersect_key($field_n_values, $index->fields());
 			if($this->exists(array($uniqueness_where_params))){
-				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)));
+				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
 		}

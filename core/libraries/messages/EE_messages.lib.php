@@ -103,6 +103,9 @@ class EE_messages {
 		$base_path = EE_LIBRARIES . 'messages' . DS . $kind . DS;
 		if ( empty($actives) ) return false;
 
+		//make sure autoloaders are set (failsafe)
+		EE_Messages_Init::set_autoloaders();
+
 		//make sure $actives is an array
 		$actives = (array) $actives;
 
