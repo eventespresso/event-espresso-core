@@ -7,7 +7,7 @@
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
-  TextDomain: 	event_espresso
+  TextDomain: 		event_espresso
 
   Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
