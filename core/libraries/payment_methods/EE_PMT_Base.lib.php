@@ -63,6 +63,11 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_default_button_url = NULL;
 
+	/**
+	 *
+	 * @var string
+	 */
+	protected $_default_description = NULL;
 
 
 	/**
@@ -115,6 +120,14 @@ abstract class EE_PMT_Base{
 		$file_folder_fixed = str_replace('\\',DS,$this->file_folder());
 		$file_path = str_replace($plugins_dir_fixed,WP_PLUGIN_URL,$file_folder_fixed);
 		$this->_file_url = $file_path;
+	}
+
+	/**
+	 * Gets the default description on all payment methods of this type
+	 * @return string
+	 */
+	public function default_description(){
+		return $this->_default_description;
 	}
 
 

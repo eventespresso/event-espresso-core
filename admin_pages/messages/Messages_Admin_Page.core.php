@@ -1937,7 +1937,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( $success ) {
 			EE_Error::add_success( __('Test message sent', 'event_espresso') );
 		} else {
-			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ) );
+			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -2669,7 +2669,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function update_mt_form() {
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
-			EE_Error::add_error( __('Require message type or messenger to send an updated form'));
+			EE_Error::add_error( __('Require message type or messenger to send an updated form'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_return_json();
 		}
 
