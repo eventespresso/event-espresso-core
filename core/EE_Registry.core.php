@@ -696,6 +696,18 @@ final class EE_Registry {
 		return $this->LIB->$model_class_name;
 	}
 
+	/**
+	 * Resets the registry and everything in it (eventually, getting it to properly
+	 * reset absolutely everything will probably be tricky)
+	 * @return EE_Registry
+	 */
+	public static function reset(){
+		$instance = self::instance();
+		$instance->CFG = EE_Config::reset();
+		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
+		return $instance;
+	}
+
 
 }
 // End of file EE_Registry.core.php
