@@ -23,6 +23,8 @@
  */
 class EED_Single_Page_Checkout  extends EED_Module {
 
+	// ensures that SPCO only runs once
+	private static $_run = FALSE;
 	// base url for the site's registration checkout page - additional url params will be added to this
 	private $_reg_page_base_url = '';
 	// thank you page URL
@@ -478,17 +480,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		$this->init();
-		if ( $this->_transaction instanceof EE_Transaction ) {
-			// convert AJAX requests if JS is disabled
-			if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
-				$process_method = '_' . $this->_current_step;
-				call_user_func( array( $this, $process_method ));
-			} else if ( $this->_current_step == 'finalize_registration' ) {
-				$this->_process_finalize_registration();
-			} else {
-				$this->registration_checkout();
+		if ( ! EED_Single_Page_Checkout::$_run ) {
+			$this->init();
+			if ( $this->_transaction instanceof EE_Transaction ) {
+				// convert AJAX requests if JS is disabled
+				if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
+					$process_method = '_' . $this->_current_step;
+					call_user_func( array( $this, $process_method ));
+				} else if ( $this->_current_step == 'finalize_registration' ) {
+					$this->_process_finalize_registration();
+				} else {
+					$this->registration_checkout();
+				}
 			}
+			EED_Single_Page_Checkout::$_run = TRUE;
 		}
 	}
 
