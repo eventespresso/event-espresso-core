@@ -75,7 +75,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
 				'noheader'=>TRUE,
-				'cap ability' => 'manage_gateways'
+				'capability' => 'manage_gateways'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
