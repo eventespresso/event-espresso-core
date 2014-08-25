@@ -69,13 +69,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func'=>'_payment_methods_list',
-//				'capability' => 'manage_gateways'
+				'capability' => 'manage_gateways'
 			),
 			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
 				'noheader'=>TRUE,
-//				'cap ability' => 'manage_gateways'
+				'cap ability' => 'manage_gateways'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
