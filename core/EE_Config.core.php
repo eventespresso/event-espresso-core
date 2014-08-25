@@ -130,6 +130,22 @@ final class EE_Config {
 	}
 
 
+		/**
+	 * Resets the config
+	 * @return EE_Config
+	 */
+	public static function reset(){
+		if( self::$_instance instanceof EE_Config ){
+			self::$_instance->shutdown();
+		}
+		self::$_instance = NULL;
+		//we don't need to reset the static properties imo because those should
+		//only change when a module is added or removed. Currently we don't
+		//support removing a module during a request when it previously existed
+		return self::instance();
+	}
+
+
 
 	/**
 	 *    class constructor
