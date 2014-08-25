@@ -197,6 +197,14 @@ abstract class EE_PMT_Base{
 
 
 	/**
+	 * Gets a list of instructions and/or information regarding how the payment is to be completed
+	 * @return string
+	 */
+	abstract function payment_information();
+
+
+
+	/**
 	 * Sets the form for settings. This may be useful if we have already received
 	 * a form submission and have form data it in, and want to use it anytime we're showing
 	 * this payment method type's settings form later in the request

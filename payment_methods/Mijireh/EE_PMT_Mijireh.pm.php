@@ -62,16 +62,32 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	public function generate_new_billing_form() {
 		return NULL;
 	}
+
+
+
 	/**
 	 *
 	 * mijireh doesn't send an IPN in the usual sense
 	 * they just send the user back to our thank you page
 	 * and then we need to directly query them for the payment's status
 	 * @param EE_Transaction $transaction
+	 * @return \EE_Payment
 	 */
 	public function finalize_payment_for($transaction) {
 		return $this->handle_ipn($_REQUEST, $transaction);
 	}
-}
 
+
+
+	/**
+	 * Gets a list of instructions and/or information regarding how the payment is to be completed
+	 * @return string
+	 */
+	public function payment_information() {
+		// TODO: Implement payment_information() method.
+	}
+
+
+
+}
 // End of file EE_PMT_Mijireh.pm.php

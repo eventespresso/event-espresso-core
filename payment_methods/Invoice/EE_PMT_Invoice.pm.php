@@ -99,6 +99,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$show_on_page_name);
 		return $form;
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
@@ -112,6 +115,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						),
 		);
 	}
+
+
+
  /**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -137,6 +143,18 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				$template_vars,
 				true);
 	}
-}
 
+
+
+	/**
+	 * Gets a list of instructions and/or information regarding how the payment is to be completed
+	 * @return string
+	 */
+	public function payment_information() {
+		// TODO: Implement payment_information() method.
+	}
+
+
+
+}
 // End of file EE_PMT_Invoice.pm.php
