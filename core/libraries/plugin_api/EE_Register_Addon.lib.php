@@ -111,10 +111,19 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 		);
+		//check whether this addon version is compatible with EE core
 		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
-			EE_Error::add_error( sprintf( __( 'The addon \'%s\' requires EE Core version %s or higher to run. EE Core is currently at %s', 'event_espresso' ),$addon_name, $setup_args[ 'min_core_version' ], espresso_version() ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf(
+					__( 'The "%s" addon requires Event Espresso Core version %s or higher in order to run. Your version of Event Espresso Core is currently at %s', 'event_espresso' ),
+					$addon_name,
+					$setup_args[ 'min_core_version' ],
+					espresso_version()
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			if ( current_user_can( 'activate_plugins' )) {
-				require_once(ABSPATH.'wp-admin/includes/plugin.php');
+				require_once( ABSPATH.'wp-admin/includes/plugin.php' );
 				deactivate_plugins( plugin_basename( $addon_settings[ 'main_file_path' ] ), TRUE );
 			}
 			return;
