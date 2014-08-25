@@ -179,8 +179,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 			// redirecting to another site for registration ??
 			$external_url = self::$_event->external_url() !== NULL || self::$_event->external_url() !== '' ? self::$_event->external_url() : FALSE;
-			// set up the form
-			$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url );
+			// set up the form (but not for the admin)
+			$ticket_selector = ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url ) : '';
 			// if not redirecting to another site for registration
 			if ( ! $external_url ) {
 				// then display the ticket selector
@@ -188,9 +188,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			} else {
 				// if not we still need to trigger the display of the submit button
 				add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
+				//display notice to admin that registration is external
+				$ticket_selector .= ! is_admin() ? '' : __( 'Registration is at an external URL for this event.', 'event_espresso' );
 			}
-			$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
-			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
+			$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() ) : '';
+			$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_close() : '';
 
 			return $ticket_selector;
 		} else {
@@ -302,7 +304,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	public function process_ticket_selections() {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
-		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
+		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
 			$error_msg = sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -314,7 +316,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		);
 
 
-		$return = FALSE;
 		//we should really only have 1 registration in the works now (ie, no MER) so clear any previous items in the cart.
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
@@ -332,7 +333,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$valid = self::_validate_post_data('add_event_to_cart');
 			// d( $valid );
 
-			//check total tickets oredered vs max number of attendees that can register
+			//check total tickets ordered vs max number of attendees that can register
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 
 				// ordering too many tickets !!!
@@ -376,14 +377,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
-						if ( $return ) {
+						EE_Registry::instance()->CART->save_cart();
+						EE_Registry::instance()->SSN->update();
+						// just return TRUE for registrations being made from admin
+						if ( is_admin() ) {
 							return TRUE;
-						} else {
-							EE_Registry::instance()->CART->save_cart();
-							EE_Registry::instance()->SSN->update();
-							wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
-							exit();
 						}
+						wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+						exit();
 					} else {
 						// nothing added to cart
 						$error_msg = __( 'No tickets were added for the event.', 'event_espresso' );
@@ -396,7 +397,10 @@ class EED_Ticket_Selector extends  EED_Module {
 					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
-//die();
+			// at this point, just return if registration is being made from admin
+			if ( is_admin() ) {
+				return FALSE;
+			}
 			if ( $valid['return_url'] ) {
 				EE_Error::get_notices( FALSE, TRUE );
 				wp_safe_redirect( $valid['return_url'] );
@@ -409,108 +413,13 @@ class EED_Ticket_Selector extends  EED_Module {
 				echo EE_Error::get_notices();
 			}
 
-
 		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
 			$error_msg = sprintf( __( 'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-//		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-//			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
-//			wp_safe_redirect( $return_url );
-//			exit();
-//		}
 		return FALSE;
-
-	}
-
-
-	/**
-	 * basically does the same as process_tickets_selections() method except this will process tickets from the manual registration via the admin.
-	 *
-	 * @access public
-	 * @static
-	 * @return bool
-	 */
-	public static function process_tickets_selection_from_admin() {
-		//nonce has already been verified in the admin
-		//only one registration is in process and session has already been cleared in the admin
-		EE_Registry::instance()->load_core('Session');
-		EE_Registry::instance()->load_core( 'Cart' );
-
-		if ( empty( EE_Registry::instance()->REQ ) ) {
-			EE_Registry::instance()->load_core( 'Request_Handler' );
-		}
-
-		// do we have an event id?
-		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
-
-			// validate/sanitize data
-			$valid = self::_validate_post_data('add_event_to_cart');
-			// d( $valid );
-
-			//check total tickets ordered vs max number of attendees that can register
-			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
-
-				// ordering too many tickets !!!
-				$singular = 'You have attempted to select %s ticket.';
-				$plural = 'You have attempted to select %s tickets.';
-				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
-
-				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may select at a time can not exceed %s.';
-				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may select at a time can not exceed %s.';
-				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
-				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			} else {
-
-				$tckts_slctd = FALSE;
-				$success = FALSE;
-
-				//load cart
-				EE_Registry::instance()->load_core( 'Cart' );
-				// all data appears to be valid
-				// cycle thru the number of data rows sent from the event listing
-				for ( $x = 0; $x < $valid['rows']; $x++ ) {
-					// does this row actually contain a ticket quantity?
-					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
-						// YES we have a ticket quantity
-						$tckts_slctd = TRUE;
-//						d( $valid['ticket_obj'][$x] );
-						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
-							// then add ticket to cart
-							$success = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
-						} else {
-							// nothing added to cart
-							$error_msg = sprintf( __( 'A valid ticket could not be retrieved for this event.%sPlease refresh this page and try again.', 'event_espresso' ), '<br/>' );
-							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-						}
-					}
-				}
-
-				if ( $tckts_slctd ) {
-					if ( $success ) {
-						EE_Registry::instance()->CART->save_cart();
-						EE_Registry::instance()->SSN->update();
-						return true;
-					} else {
-						// nothing added to cart
-						$error_msg = sprintf( __( 'No tickets were added for the event.%sPlease try refreshing the page and try beginning the process again.', 'event_espresso' ), '<br/>' );
-						EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-					}
-
-				} else {
-					// no ticket quantities were selected
-					$error_msg = __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' );
-					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-				}
-			}
-
-		}
-
-		//if we made it here something went wrong so let's just return false
-		return false;
 
 	}
 
