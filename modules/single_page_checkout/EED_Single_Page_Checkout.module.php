@@ -25,6 +25,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 	$_initialized - has the SPCO controller already been initialized ?
+	 * 	@access private
+	 *	@var bool $_initialized
+	 */
+	private static $_initialized = FALSE;
+
+	/**
 	 * 	$_reg_steps_array - holds initial array of reg steps
 	 * 	@access private
 	 *	@var array $_reg_steps_array
@@ -61,7 +68,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function set_hooks() {
 		EED_Single_Page_Checkout::set_definitions();
 		// set routing
-		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
+//		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
 		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
@@ -81,7 +88,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
 		// set routing
-		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
+//		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
 		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
@@ -242,6 +249,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	private function _initialize() {
+		// dejavu ?
+		if ( EED_Single_Page_Checkout::$_initialized ) {
+			return;
+		}
+		EED_Single_Page_Checkout::$_initialized = TRUE;
 		// load classes
 		EED_Single_Page_Checkout::load_request_handler();
 		// setup the EE_Checkout object
@@ -255,7 +267,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and the next step
 		$this->checkout->set_next_step();
 		// and what we're doing on the current step
-		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
+		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
 //		$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, '$this->checkout->action: ' . $this->checkout->action );
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
@@ -377,8 +389,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// ever heard that song by Blue Rodeo ?
 		try {
 			$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
-			// check for form submission
-			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
+			// if not displaying a form, then check for form submission
+			if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
 				// capture form data
 				$this->checkout->current_step->reg_form->receive_form_submission();
 				// validate form data
@@ -410,18 +422,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		switch( $this->checkout->action ) {
 			// AJAX next step reg form
 			case 'display_spco_reg_step' :
+				$this->checkout->redirect = FALSE;
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
-				} else {
-					$this->_display_spco_reg_form();
 				}
-				break;
-
-			case 'display_spco_reg_form' :
-//				$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, 'display_spco_reg_form' );
-				$this->_display_spco_reg_form();
+				// advance to the next step! If you pass GO, collect $200
+				$this->go_to_next_step();
 				break;
 
 			default :
@@ -431,7 +437,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
 					// call action on current step
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
-//						echo '<h2 style="color:#E76700;">' . $this->checkout->action . '<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 						// good registrant, you get to proceed
 						if ( $this->checkout->current_step->success_message() != '' ) {
 							EE_Error::add_success( $this->checkout->current_step->success_message() );
@@ -829,8 +834,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _setup_redirect() {
 		if ( $this->checkout->continue_reg && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
-			$this->checkout->redirect_url = empty( $this->checkout->redirect_url ) ? $this->checkout->next_step->reg_step_url() : $this->checkout->redirect_url;
 			$this->checkout->redirect = TRUE;
+			$this->checkout->redirect_url = empty( $this->checkout->redirect_url ) ? $this->checkout->next_step->reg_step_url() : $this->checkout->redirect_url;
+			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 		}
 	}
 
@@ -899,7 +905,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step( $callback = FALSE, $callback_param = FALSE ) {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 		if ( $this->checkout->action == 'redirect_form' ) {
 			return;
