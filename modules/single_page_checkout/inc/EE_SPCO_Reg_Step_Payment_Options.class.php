@@ -421,7 +421,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 
-
 	/**
 	 *    _payment_method_billing_info
 	 *
@@ -431,32 +430,29 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _payment_method_billing_info( EE_Payment_Method $payment_method ) {
 		// setup billing form
-		if ( $this->checkout->selected_method_of_payment == $payment_method->slug() ) {
-			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $payment_method );
-			$billing_form = $this->checkout->billing_form;
-			$pm_style = '';
-		} else {
-			$billing_form = new EE_Form_Section_HTML();
-			$pm_style = 'display:none;';
-		}
-		$info_html = '';
-		$info_html .= EEH_HTML::h3 ( 'Important information regarding your payment', '', 'spco-payment-method-hdr' );
-//		$info_html .= EEH_HTML::div ( ' ', '', '', 'clear:both;' );
-		$info_html .= $payment_method->description() ? EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' ) : '';
-
-		//d( $payment_method );
-		return new EE_Form_Section_Proper(
-			array(
-				'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
-				'html_class' 			=> 'spco-payment-method-info-dv',
-				'html_style' 			=> $pm_style,
-				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
-				'subsections' 			=> array(
-					'info' 					=> new EE_Form_Section_HTML( $info_html ),
-					'billing_form' 		=> $billing_form,
+		$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $payment_method );
+		// only display the selected or default PM
+		$pm_style = $this->checkout->selected_method_of_payment == $payment_method->slug() ? '' : 'display:none;';
+		// it's all in the details
+		if ( $payment_method->description() ) {
+			$info_html = EEH_HTML::h3 ( 'Important information regarding your payment', '', 'spco-payment-method-hdr' );
+			$info_html .= EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' );
+			return new EE_Form_Section_Proper(
+				array(
+					'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
+					'html_class' 			=> 'spco-payment-method-info-dv',
+					'html_style' 			=> $pm_style,
+					'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
+					'subsections' 			=> array(
+						'info' 					=> new EE_Form_Section_HTML( $info_html ),
+						'billing_form' 		=> $this->checkout->billing_form,
+					)
 				)
-			)
-		);
+			);
+		} else {
+			return new EE_Form_Section_HTML();
+		}
+
 	}
 
 
@@ -565,8 +561,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 			default:
 				$result = $this->_process_payment();
-//				d( $this->checkout );
+//				printr( $result, '$result  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				printr( $this->checkout, '$this->checkout  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				d( $result );
+//				d( $this->checkout );
 //				die();
 				return $result;
 
@@ -614,16 +612,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 //		EE_Error::overwrite_errors();
 		// ya gotta make a choice man
 		if ( empty( $this->checkout->selected_method_of_payment )) {
-			$this->checkout->json_response->set_plz_select_method_of_payment( FALSE );
+			$this->checkout->json_response->set_plz_select_method_of_payment( __( 'Please select a method of payment before proceeding.', 'event_espresso' ));
 			return FALSE;
 		}
 		// get EE_Payment_Method object
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
 			return FALSE;
 		}
-		// bad billing form ?
-		if ( ! $this->_billing_form_is_valid() && $this->checkout->payment_method->is_on_site() ) {
-			return FALSE;
+		// setup billing form
+		if ($this->checkout->payment_method->is_on_site() ) {
+			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
+			// bad billing form ?
+			if ( ! $this->_billing_form_is_valid() ) {
+				return FALSE;
+			}
 		}
 		// ensure primary registrant has been fully processed
 		if ( ! $this->_finalize_primary_registrant_prior_to_payment() ) {
