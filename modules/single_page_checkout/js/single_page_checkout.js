@@ -93,43 +93,6 @@ jQuery(document).ready(function($) {
 
 
 
-		/**
-		 *	show event queue ajax success msg
-		 */
-		show_event_queue_ajax_success_msg : function( success_msg, fadeOut ) {
-			// make sure fade out time is not too short
-			fadeOut = typeof fadeOut === 'undefined' || fadeOut < 4000 ? 4000 : fadeOut;
-			// does an actual message exist ?
-			if ( typeof success_msg !== 'undefined' && success_msg !== '' )  {
-				$('#espresso-ajax-notices').eeCenter();
-				var espresso_ajax_success = $('#espresso-ajax-notices-success');
-				espresso_ajax_success.children('.espresso-notices-msg').html( success_msg );
-				$('#espresso-ajax-loading').fadeOut('fast');
-				espresso_ajax_success.removeClass('hidden').show().delay(fadeOut).fadeOut();
-			} else {
-				$('#espresso-ajax-loading').fadeOut('fast');
-			}
-		},
-
-
-
-		/**
-		 *	show event queue ajax error msg
-		 */
-		show_event_queue_ajax_error_msg : function( error_msg ) {
-			$('#espresso-ajax-notices-attention').fadeOut('fast');
-			// does an actual message exist ?
-			if ( typeof error_msg !== 'undefined' && error_msg !== '' ) {
-				$('#espresso-ajax-notices').eeCenter();
-				var espresso_ajax_error = $('#espresso-ajax-notices-error');
-				espresso_ajax_error.children('.espresso-notices-msg').html( error_msg );
-				$('#espresso-ajax-loading').fadeOut('fast');
-				espresso_ajax_error.removeClass('hidden').show().delay(10000).fadeOut();
-			} else {
-				$('#espresso-ajax-loading').fadeOut('fast');
-			}
-		},
-
 
 
 		/**
@@ -150,10 +113,40 @@ jQuery(document).ready(function($) {
 		 * display messages
 		 */
 		display_messages : function( msg ){
-			if ( msg.success ) {
-				SPCO.show_event_queue_ajax_success_msg( msg.success );
-			} else if ( msg.errors ) {
-				SPCO.show_event_queue_ajax_error_msg( msg.errors );
+			if ( typeof msg.success !== 'undefined' ) {
+				SPCO.show_event_queue_ajax_msg( 'success', msg.success, 4000 );
+			} else if ( typeof msg.attention !== 'undefined' ) {
+				SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, 10000 );
+			} else if ( typeof msg.errors !== 'undefined' ) {
+				SPCO.show_event_queue_ajax_msg( 'error', msg.errors, 10000 );
+			}
+		},
+
+
+
+		/**
+		 *	show event queue ajax msg
+		 */
+		show_event_queue_ajax_msg : function( type, msg, fadeOut ) {
+			// does an actual message exist ?
+			if ( typeof msg !== 'undefined' && msg !== '' ) {
+				// ensure message type is set
+				var msg_type = typeof type !== 'undefined' && type !== '' ? type : 'error';
+				// make sure fade out time is not too short
+				fadeOut = typeof fadeOut === 'undefined' || fadeOut < 4000 ? 4000 : fadeOut;
+				// center notices on screen
+				$('#espresso-ajax-notices').eeCenter();
+				// target parent container
+				var espresso_ajax_msg = $('#espresso-ajax-notices-' + msg_type);
+				//  actual message container
+				espresso_ajax_msg.children('.espresso-notices-msg').html( msg );
+				// bye bye spinner
+				$('#espresso-ajax-loading').fadeOut('fast');
+				// display message
+				espresso_ajax_msg.removeClass('hidden').show().delay( fadeOut ).fadeOut();
+			} else {
+				// bye bye spinner
+				$('#espresso-ajax-loading').fadeOut('fast');
 			}
 		},
 
@@ -263,7 +256,7 @@ jQuery(document).ready(function($) {
 
 					if ( typeof response !== 'undefined' ) {
 //
-//						SPCO.console_log_obj( 'submit_reg_form > response', response );
+						SPCO.console_log_obj( 'submit_reg_form > response', response );
 //
 //						SPCO.console_log( 'submit_reg_form > response.success', response.success );
 //						SPCO.console_log( 'submit_reg_form > response.errors', response.errors );
@@ -285,6 +278,8 @@ jQuery(document).ready(function($) {
 						} else {
 //							// uh-oh spaghettios!
 							if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
+								SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
+							} else if ( typeof response.attention !== 'undefined' && response.attention !== '' ) {
 								SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 							} else if ( typeof response.success !== 'undefined' && response.success !== '' ) {
 								SPCO.get_next_reg_step( next_step, response );
@@ -338,7 +333,7 @@ jQuery(document).ready(function($) {
 		 * opens the the SPCO step specified by step_to_show
 		 * shows msg as a notification
 		 * @param step_to_show  (string) either step 1, 2, or 3
-		 * @param msg  (string) message to show
+		 * @param response  (object)
 		 * @return void
 		 **/
 		display_step : function( step_to_show, response ){
