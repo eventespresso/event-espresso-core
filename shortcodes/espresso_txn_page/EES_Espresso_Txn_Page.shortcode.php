@@ -17,12 +17,12 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Txn_Page  extends EES_Shortcode {
-	
+
 	/**
 	 * The transaction specified by the reg_url_link passed from the Request, or from the Session
 	 * @var EE_Transaction $_current_txn
@@ -72,11 +72,10 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		$req = EE_Registry::instance()->REQ;
-		if ( $req->is_set('e_reg_url_link' ) && $req->is_set('ee_gateway') ){			
+		if ( EE_Registry::instance()->REQ->is_set('e_reg_url_link' ) && EE_Registry::instance()->REQ->is_set('ee_gateway') ){
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			EEM_Gateways::instance()->set_selected_gateway($req->get('ee_gateway') );
-			EEM_Gateways::instance()->handle_ipn_for_transaction($this->_current_txn);
+			EEM_Gateways::instance()->set_selected_gateway( EE_Registry::instance()->REQ->get('ee_gateway') );
+			EEM_Gateways::instance()->handle_ipn_for_transaction( $this->_current_txn );
 		}
 	}
 
@@ -84,8 +83,8 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 
 
 	/**
-	 * 	process_shortcode - EES_Espresso_Txn_Page 
-	 * 
+	 * 	process_shortcode - EES_Espresso_Txn_Page
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void

@@ -247,6 +247,10 @@
 	outline: none !important;
 }
 
+#wp-admin-bar-espresso-toolbar .ee-icon-size-20:before {
+	margin-right: 0.25em;
+}
+
 /******************* UPCOMING EVENTS WIDGET ****************** */
 
 
@@ -766,7 +770,7 @@ input.ee-register-button {
 	text-align: center;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box; 	
+	box-sizing: border-box;
 }
 .highlight-bg {
 	padding:1em 1.5em;
@@ -946,7 +950,7 @@ article .espresso_venues {
 	text-transform: none !important;
 	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;	
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /*******************************************************/
