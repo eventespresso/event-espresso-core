@@ -256,7 +256,7 @@ class PluginUpdateEngineChecker {
 			$slug = $this->slug;
 
 			if ( empty( $this->slug ) ) {
-				$msg .= sprintf( 'Automatic updates cannot be setup for an EE addon because of an error in the file.  Please contact support, and include a list of EE addons recently installed/updated.', $this->lang_domain );
+				$msg .= sprintf( 'Automatic updates cannot be setup for an EE addon because of an error in the file.  Please contact support, and include a list of EE addons recently installed/updated.', $this->lang_domain ) . '</p><p>';
 			} else {
 				$msg .= sprintf( __('Unable to setup automatic updates for the plugin with the slug "%s" because of an error with the code. Please contact EE support and give them this error message.', $this->lang_domain), $slug ) . '</p><p>';
 			}
