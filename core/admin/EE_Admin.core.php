@@ -171,11 +171,8 @@ final class EE_Admin {
 	*/
 	public function init() {
 
-		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
-		//however, we want to make use of the admin infrastructure still
-		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100 );
-		} else {
+		//only enable most of the EE_Admin IF we're not in full maintenance mode
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );

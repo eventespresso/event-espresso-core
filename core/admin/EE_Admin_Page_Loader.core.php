@@ -290,6 +290,13 @@ class EE_Admin_Page_Loader {
 				if ( ! $this->_installed_pages[$page]->get_menu_map() instanceof EE_Admin_Page_Menu_Map ) {
 					continue;
 				}
+
+				//skip if in full maintenance mode and maintenance_mode_parent is set
+				$maintenance_mode_parent = $this->_installed_pages[$page]->get_menu_map()->maintenance_mode_parent;
+				if ( empty( $maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+					continue;
+				}
+
 				$this->_menu_slugs[$this->_installed_pages[$page]->get_menu_map()->menu_slug] = $page;
 				//flag for register hooks on extended pages b/c extended pages use the default INIT.
 				$extend = FALSE;
@@ -442,6 +449,11 @@ class EE_Admin_Page_Loader {
 				//if page map is NOT a EE_Admin_Page_Menu_Map object then throw error.
 				if ( ! $page_map instanceof EE_Admin_Page_Menu_Map ) {
 					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please doublecheck that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
+				}
+
+				//use the maintenance_mode_parent property and maintenance mode status to determine if this page even gets added to array.
+				if ( empty( $page_map->maintenance_mode_parent ) &&  EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+					continue;
 				}
 
 				//assign to group (remember $page_map has the admin page stored in it).
