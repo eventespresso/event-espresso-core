@@ -338,7 +338,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	 */
 	public function state_name(){
 		if( $this->state_obj() ){
-			return $this->_state_obj()->name();
+			return $this->state_obj()->name();
 		}else{
 			return __( 'Unknown', 'event_espresso' );
 		}
