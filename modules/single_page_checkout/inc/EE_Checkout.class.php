@@ -44,6 +44,12 @@ class EE_Checkout {
 	public $redirect = FALSE;
 
 	/**
+	 * generate the reg form or not ?
+	 * @type bool
+	 */
+	public $generate_reg_form = TRUE;
+
+	/**
 	 * the action being performed on the current step
 	 * @type string
 	 */
