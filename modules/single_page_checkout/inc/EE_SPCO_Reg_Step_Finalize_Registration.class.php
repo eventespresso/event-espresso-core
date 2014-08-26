@@ -49,6 +49,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// there's actually no reg form to process if this is the final step
 		if ( $this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
 			$this->checkout->action = 'process_reg_step';
+			$this->checkout->generate_reg_form = FALSE;
 		}
 	}
 
