@@ -194,7 +194,8 @@ class EE_Admin_Page_Loader {
 				'menu_slug' => 'extras',
 				'capability' => 'administrator',
 				'menu_order' => 50,
-				'parent_slug' => 'espresso_events'
+				'parent_slug' => 'espresso_events',
+				'maintenance_mode_parent' => 'espresso_maintenance_settings'
 				)),
 			'tools' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __("Tools", "event_espresso"),
