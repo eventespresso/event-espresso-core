@@ -64,11 +64,13 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 			'menu_slug' => EE_MAINTENANCE_PG_SLUG,
 			'menu_label' => EE_MAINTENANCE_LABEL,
 			'capability' => 'administrator',
+			'maintenance_mode_parent' => EE_MAINTENANCE_PG_SLUG,
 			'admin_init_page' => $this
 		);
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
 			$map['menu_group']='main';
-			$map['parent_slug'] = EE_MAINTENANCE_PG_SLUG;
+			$map['subtitle'] = EE_MAINTENANCE_LABEL;
+			$map['menu_label'] = __( 'Event Espresso', 'event_espresso' );
 		}
 		return $map;
 	}
