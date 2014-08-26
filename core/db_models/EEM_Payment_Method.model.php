@@ -210,7 +210,7 @@ class EEM_Payment_Method extends EEM_Base {
 
 	/**
 	 * Gets the ID of this object, or if its a string finds the object's id
-	 * assocaited with that slug
+	 * associated with that slug
 	 * @param type $base_obj_or_id_or_slug
 	 * @return int
 	 */
@@ -232,7 +232,7 @@ class EEM_Payment_Method extends EEM_Base {
 		/* @var $payment_method EE_Payment_Method[] */
 		foreach($payment_methods as $payment_method){
 			try{
-				//send an HTTP HEAD request to quickkly verify the file exists
+				//send an HTTP HEAD request to quickly verify the file exists
 
 				if( ! EEH_URL::remote_file_exists($payment_method->button_url())){
 					EE_Error::add_attention(sprintf(__("Payment Method '%s' had a broken button url, so it was reset", "event_espresso"),$payment_method->name()));
@@ -272,12 +272,12 @@ class EEM_Payment_Method extends EEM_Base {
 		return $usable_payment_methods;
 	}
 	/**
-	 * Gets all the paymetn methods which can be used for transaction
-	 * (according to the relations between paymetn methods and events, and
+	 * Gets all the payment methods which can be used for transaction
+	 * (according to the relations between payment methods and events, and
 	 * the currencies used for the transaction and their relation to payment methods)
 	 * @param EE_Transaction $transaction
 	 * @param string $scope @see EEM_Payment_Method::get_all_for_events
-	 * @return EE_Payment_Method
+	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_for_transaction($transaction,$scope){
 		//@todo take relations between events and payment methods into account, once
