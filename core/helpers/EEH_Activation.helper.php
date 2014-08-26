@@ -1185,33 +1185,11 @@ class EEH_Activation {
 	public static function screen_for_ee3_addons( $plugin = '' ) {
 		$addons_to_disable = array();
 		$ee3addons = array(
-			'espresso-infusionsoft',
-			'espresso-permissions-pro',
-			'espresso-frontend-event-manager-pr',
-			'espresso-volume-discounts-pr',
-			'espresso-json-api',
-			'espresso-template-grid',
-			'espresso-calendar',
-			'espresso-price-modifier-pr',
-			'custom-templates',
-			'recurring-events-drop-down',
-			'espresso-social',
-			'espresso-seating',
-			'espresso-template-calendar-table',
-			'espresso-s2member-pr',
-			'espresso-template-category-accordian',
-			'espresso-groupon',
-			'espresso-attendee-mover-pr',
-			'espresso-custom-files',
-			'espresso-services',
 			'espresso-mailchimp',
 			'espresso-multiple',
 			'espresso-recurring',
 			'espresso-ticketing',
-			'espresso-members',
-			'espresso-permissions-basic',
-			'vector-maps',
-			'date-range'
+			'espresso-members'
 			);
 
 		//make sure needed functions are available.
