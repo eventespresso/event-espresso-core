@@ -206,8 +206,8 @@ class EE_Admin_Page_Loader {
 				'parent_slug' => 'espresso_events'
 				)),
 			'addons' => new EE_Admin_Page_Menu_Group( array(
-				'menu_label' => __('Addons', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
+				'menu_label' => __('Add-ons', 'event_espresso'),
 				'menu_slug' => 'addons',
 				'capability' => 'ee_read_ee',
 				'menu_order' => 20,
@@ -294,6 +294,7 @@ class EE_Admin_Page_Loader {
 				//skip if in full maintenance mode and maintenance_mode_parent is set
 				$maintenance_mode_parent = $this->_installed_pages[$page]->get_menu_map()->maintenance_mode_parent;
 				if ( empty( $maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+					unset( $installed_refs[$page] );
 					continue;
 				}
 
@@ -461,7 +462,7 @@ class EE_Admin_Page_Loader {
 				$page_map = $page->get_menu_map();
 				//if we've got an array then the menu map is in the old format so let's throw a persistent notice that the admin system isn't setup correctly for this item.
 				if ( is_array( $page_map ) || empty( $page_map ) ) {
-					EE_Error::add_persistent_admin_notice( 'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION, sprintf( __('The admin page for %s was not correctly setup because it is using an older method for integrating with Event Espresso Core.  This means that full functionality for this component is not available.  This error message usually appears with an Addon that is out of date.  Make sure you update all your Event Espresso 4 addons to the latest version to ensure they have necessary compatibility updates in place.', 'event_espresso' ), $page->label ) );
+					EE_Error::add_persistent_admin_notice( 'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION, sprintf( __('The admin page for %s was not correctly setup because it is using an older method for integrating with Event Espresso Core.  This means that full functionality for this component is not available.  This error message usually appears with an Add-on that is out of date.  Make sure you update all your Event Espresso 4 add-ons to the latest version to ensure they have necessary compatibility updates in place.', 'event_espresso' ), $page->label ) );
 					continue;
 				}
 
