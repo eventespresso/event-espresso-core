@@ -128,6 +128,16 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+	/**
+	 * Menu maps can define a parent slug that gets used instead of the main parent slug for the menu when EE_Maintenance_Mode::level_2_complete_maintenance is active.
+	 *
+	 * @var bool
+	 */
+	public $maintenance_mode_parent = '';
+
+
+
+
 
 
 	/**
@@ -164,6 +174,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 					break;
 				case 'menu_callback' :
 					break;
+
 				default :
 					$value = (string) $value;
 					break;
@@ -173,6 +184,11 @@ abstract class EE_Admin_Page_Menu_Map  {
 				throw new EE_Error( sprintf( __('The $menu_args coming into %s has a index key (%s) representing a property that is not defined by the class.  Perhaps there is a typo?', 'event_espresso'), get_class( $this ), $prop ) );
 			$this->{$prop} = $value;
 
+		}
+
+		//Might need to change parent slug depending on maintenance mode.
+		if ( ! empty( $this->maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance )  {
+			$this->parent_slug = $this->maintenance_mode_parent;
 		}
 
 		//if empty menu_callback let's set default (but only if we have admin page init object)
