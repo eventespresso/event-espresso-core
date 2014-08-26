@@ -426,16 +426,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * regarding the table's existence, you can use $wpdb->last_error
 	 */
 	protected function _table_exists( $table_name ){
-		global $wpdb;
+		global $wpdb, $EZSQL_ERROR;
 		if(strpos($table_name, $wpdb->prefix) !== 0){
 			$table_name = $wpdb->prefix.$table_name;
 		}
 		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->last_error = NULL;
+		$old_error = $wpdb->last_error;
 		$wpdb->show_errors( FALSE );
+		$ezsql_error_cache = $EZSQL_ERROR;
 		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
 		$wpdb->show_errors( $old_show_errors_value );
-		if( empty( $wpdb->last_error ) ){
+		$new_error = $wpdb->last_error;
+		$wpdb->last_error = $old_error;
+		$EZSQL_ERROR = $ezsql_error_cache;
+		if( empty( $new_error ) ){
 			return TRUE;
 		}else{
 			return FALSE;
