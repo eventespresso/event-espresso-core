@@ -311,6 +311,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			add_meta_box( 'submitdiv', $box_label, 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		}
 
+		//let's add page_templates metabox if this cpt added support for it.
+		if ( $this->_supports_page_templates($this->_cpt_object->name) ) {
+			add_meta_box( 'page_templates', __('Page Template', 'event_espresso' ), array( $this, 'page_template_meta_box' ), $this->_cpt_routes[$this->_req_action], 'side', 'default' );
+		}
+
+
 		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
@@ -340,6 +346,47 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+	}
+
+
+
+	/**
+	 * Determine whether the current cpt supports page templates or not.
+	 *
+	 * @since %VER%
+	 *
+	 * @param string $cpt_name The cpt slug we're checking on.
+	 *
+	 * @return bool True supported, false not.
+	 */
+	private function _supports_page_templates( $cpt_name ) {
+		$cpt_args = EE_Register_CPTs::get_CPTs();
+		$cpt_args = isset( $cpt_args[$cpt_name] ) ? $cpt_args[$cpt_name]['args'] : array();
+		return ! empty( $cpt_args['page_templates'] ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * Callback for the page_templates metabox selector.
+	 *
+	 * @since %VER%
+	 *
+	 * @return string html
+	 */
+	public function page_template_meta_box() {
+		global $post;
+		if ( 0 != count( get_page_templates( $post ) ) ) {
+			$page_template = get_post_meta( $post->ID, '_wp_page_template', TRUE );
+			$template = !empty( $page_template ) ? $page_template : false;
+		}
+		?>
+		<p><strong><?php _e('Template') ?></strong></p>
+		<label class="screen-reader-text" for="page_template"><?php _e('Page Template') ?></label><select name="page_template" id="page_template">
+		<option value='default'><?php _e('Default Template'); ?></option>
+		<?php page_template_dropdown($template); ?>
+		</select>
+		<?php
 	}
 
 
@@ -705,6 +752,17 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			}
 
 		}/**/ //TODO reactivate after autosave is implemented in 4.2
+
+		//take care of updating any selected page_template IF this cpt supports it.
+		if ( $this->_supports_page_templates($post->post_type ) && !empty( $this->_req_data['page_template'] ) ) {
+			$post->page_template = $this->_req_data['page_template'];
+			$page_templates = wp_get_theme()->get_page_templates( $post );
+			if ( 'default' != $this->_req_data['page_template']  && ! isset( $page_templates[ $this->_req_data['page_template'] ] ) ) {
+				EE_Error::add_error( __('Invalid Page Template.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				update_post_meta( $post_id, '_wp_page_template', $this->_req_data['page_template'] );
+			}
+		}
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return; //TODO we'll remove this after reimplementing autosave in 4.2
