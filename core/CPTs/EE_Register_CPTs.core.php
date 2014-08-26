@@ -147,6 +147,7 @@ class EE_Register_CPTs {
 	 */
 	public static function get_CPTs(){
 		// define CPTs
+		// NOTE the ['args']['page_tempaltes'] array index is something specific to our CPTs and not part of the WP custom post type api.
 		return array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
@@ -177,7 +178,8 @@ class EE_Register_CPTs {
 						'espresso_event_categories',
 						'espresso_event_type',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
@@ -207,7 +209,8 @@ class EE_Register_CPTs {
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			/*'espresso_persons' => array(
 				'singular_name' => __("Person", "event_espresso"),
@@ -335,6 +338,8 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+
+	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesnt' actually have that in their register_post_type api.
 	  $args = array(
 		'labels' => $labels,
 		'public' => true,
@@ -454,10 +459,6 @@ class EE_Register_CPTs {
 			}
 		}
 	}
-
-
-
-
 
 }
 
