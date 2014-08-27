@@ -62,6 +62,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected $_required;
 
 	/**
+	 * css class added to required inputs
+	 * @var string
+	 */
+	protected $_required_css_class = 'ee-required';
+
+	/**
 	 * css styles applied to button type inputs
 	 * @var string
 	 */
@@ -589,6 +595,27 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function required(){
 		return $this->_required;
 	}
+
+
+
+	/**
+	 * @param string $required_css_class
+	 */
+	public function set_required_css_class( $required_css_class ) {
+		$this->_required_css_class = $required_css_class;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function required_css_class() {
+		return $this->_required_css_class;
+	}
+
+
+
 	/**
 	 * Sets the help text, in case
 	 * @param string $text
