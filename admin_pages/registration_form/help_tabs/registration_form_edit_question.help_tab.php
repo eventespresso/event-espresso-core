@@ -30,15 +30,15 @@
 <?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Answer Options (for applicable question types)</strong>', 'event_espresso');?>
-<strong><?php _e('Values do not allow any HTML, however, descriptions do allow HTML.', 'event_espresso');?>
+<strong><?php _e('Answer Options (for applicable question types)</strong>', 'event_espresso');?></strong>
+<strong><?php _e('Values do not allow any HTML, however, descriptions do allow HTML.', 'event_espresso');?></strong>
 </li>
 <li>
 <strong><?php _e('Required Question', 'event_espresso'); ?></strong><br />
 <?php _e('Whether registrants are required to answer this question.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Required Tex</strong>t', 'event_espresso'); ?><br />
+<strong><?php _e('Required Text', 'event_espresso'); ?></strong><br />
 <?php _e('This text is displayed when a registrant does not answer a question but is required to do so. The default message will show "this field is required."', 'event_espresso'); ?>
 </li>
 </ul>
