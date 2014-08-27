@@ -215,7 +215,7 @@ final class EE_Registry {
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
+		self::$i18n_js_strings['wp_debug'] = defined( 'WP_DEBUG' ) ? WP_DEBUG : FALSE;
 	}
 
 
