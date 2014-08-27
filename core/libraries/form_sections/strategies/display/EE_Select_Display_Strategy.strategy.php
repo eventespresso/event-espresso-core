@@ -26,12 +26,14 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		EE_Registry::instance()->load_helper('Array');
 
 		$html = EEH_Formatter::nl();
-		$html .= '<select ';
-		$html .= 'id="' . $this->_input->html_id() . '" ';
-		$html .= 'name="' . $this->_input->html_name() . '"';
-		$class = $this->_input->required() ? 'ee-needs-value ' . $this->_input->html_class() : $this->_input->html_class();
-		$html .= ' class="' . $class . '" ';
-		$html .= 'style="' . $this->_input->html_style() . '"';
+		$html .= '<select';
+		$html .= ' id="' . $this->_input->html_id() . '"';
+		$html .= ' name="' . $this->_input->html_name() . '"';
+		$class = $this->_input->required() ? $this->_input->required_css_class() . ' ' . $this->_input->html_class() : $this->_input->html_class();
+		$html .= ' class="' . $class . '"';
+		// add html5 required
+		$html .= $this->_input->required() ? ' required' : '';
+		$html .= ' style="' . $this->_input->html_style() . '"';
 		$html .= '>';
 
 		EEH_Formatter::indent( 1 );
