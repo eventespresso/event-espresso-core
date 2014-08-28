@@ -854,11 +854,14 @@ class EEH_Activation {
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
 
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		//let's first setup an array of what we consider to be the default messengers.
 		$default_messengers = array( 'email' );
 
 		//let's determine if we've already got an active messengers option
-		$active_messengers = get_option('ee_active_messengers');
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 
 		//do an initial loop to determine if we need to continue
 		$def_ms = array();
@@ -869,9 +872,6 @@ class EEH_Activation {
 
 		//continue?
 		if ( empty( $def_ms ) ) return false;
-
-		//include our helper
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
@@ -921,7 +921,7 @@ class EEH_Activation {
 			}
 
 			//now let's save the settings for this messenger!
-			update_option( 'ee_active_messengers', $active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 
 			//let's generate all the templates
@@ -931,6 +931,62 @@ class EEH_Activation {
 
 		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
 		return $templates;
+	}
+
+
+
+
+
+
+	/**
+	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return void
+	 */
+	public static function validate_messages_system() {
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
+		//get active and installed  messengers/message types.
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$installed = EEH_MSG_Template::get_installed_message_objects();
+		$ims = $installed['messengers'];
+		$imts = $installed['message_types'];
+
+		$installed_messengers = $installed_mts = array();
+		//set up the arrays so they can be handelled easier.
+		foreach( $ims as $im ) {
+			$installed_messengers[$im->name] = $im;
+		}
+		foreach( $imts as $imt ) {
+			$installed_mts[$imt->name] = $imt;
+		}
+
+		//now let's loop through the active array and validate
+		foreach( $active_messengers as $messenger => $active_details ) {
+			//first let's see if this messenger is installed.
+			if ( ! isset( $installed_messengers[$messenger] ) ) {
+				//not set so let's just remove from actives and make sure templates are inactive.
+				unset( $active_messengers[$messenger] );
+				EEH_MSG_Template::update_to_inactive( $messenger );
+				continue;
+			}
+
+			//messenger is active, so let's just make sure that any active message types not installed are deactivated.
+			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
+			foreach ( $mts as $mt_name => $mt ) {
+				if ( ! isset( $installed_mts[$mt_name] )  ) {
+					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+					EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
+				}
+			}
+		}
+
+		//all done! let's update the active_messengers.
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		return;
 	}
 
 
@@ -1108,6 +1164,70 @@ class EEH_Activation {
 
 
 
+
+	/**
+	 * Check to see if any ee3addons matching the given slug are present and if so , deactivate with
+	 * persistent notice.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string $plugin plugin path to plugin being activated.
+	 * @return void
+	 */
+	public static function screen_for_ee3_addons( $plugin = '' ) {
+		$addons_to_disable = array();
+		$ee3addons = array(
+			'espresso-mailchimp',
+			'espresso-multiple',
+			'espresso-recurring',
+			'espresso-ticketing',
+			'espresso-members'
+			);
+
+		//make sure needed functions are available.
+		if ( ! function_exists('get_plugins')) {
+			//require file if needed.
+			require_once ABSPATH.'wp-admin/includes/plugin.php';
+		}
+		// if plugin is empty then get list of all plugins in the WP plugin directory else we just use incoming plugin.
+		if ( empty( $plugin ) ) {
+			$all_plugins = get_plugins();
+		} else {
+			$all_plugins[$plugin] = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin, false, false );
+		}
+
+		//loop through the plugins and check if they are active.
+		foreach ( $all_plugins as $path => $plugin_details ) {
+			$plugin_basename = plugin_basename( trim( $path ) );
+
+			//first check if plugin is active.  If it isn't then it doesn't matter.
+			if ( is_plugin_inactive( $plugin_basename ) )
+				continue;
+
+			//now check if any of the values in the ee3addons array is found in the plugin_basename.
+			foreach( $ee3addons as $addon ) {
+				if ( strpos( $plugin_basename, $addon ) !== FALSE  ) {
+					$addons_to_disable[$plugin_basename] = $plugin_details['Name'];
+					break;
+				}
+			}
+		}
+
+		//if there are addons_to_disable, let's disable them and setup our persistent message
+		$msg = '';
+		if ( !empty( $addons_to_disable ) ) {
+			$msg = _n('The following Event Espresso addon has been disabled because it is not compatible with Event Espresso 4+:', 'The following Event Espresso addons have been disabled because they are not compatible with Event Espresso 4+:', count( $addons_to_disable ), 'event_espresso');
+			$msg .= '<ul>';
+			foreach ( $addons_to_disable as $basename => $name ) {
+				deactivate_plugins( $basename );
+				$msg .= '<li>' . $name . '</li>';
+			}
+			$msg .= '</ul>';
+		}
+
+		if ( !empty($msg) )
+			EE_Error::add_persistent_admin_notice( 'ee3plugins_disabled', $msg, true );
+	}
 
 }
 // End of file EEH_Activation.helper.php

@@ -152,7 +152,10 @@ class EE_Messages_Init extends EE_Base {
 	public function payment_reminder( EE_Transaction $transaction ) {
 		$this->_load_controller();
 		$data = array( $transaction, null );
-		$this->_EEMSG->send_message( 'payment_reminder', $data );
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'payment_reminder', $active_mts ) ) {
+			$this->_EEMSG->send_message( 'payment_reminder', $data );
+		}
 	}
 
 
@@ -170,15 +173,17 @@ class EE_Messages_Init extends EE_Base {
 		//let's set up the message type depending on the status
 		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
 
-		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
-
 		//verify this message type is present and active.  If it isn't then we use the default payment message type.
 		$active_mts = $this->_EEMSG->get_active_message_types();
 
+		$default_message_type = $payment->amount() < 0  ? 'payment_refund' : 'payment';
+
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
-
-		$this->_EEMSG->send_message( $message_type, $data);
+		//one final check
+		if ( in_array( $message_type, $active_mts ) ) {
+			$this->_EEMSG->send_message( $message_type, $data);
+		}
 	}
 
 
@@ -263,7 +268,7 @@ class EE_Messages_Init extends EE_Base {
 	 *
 	 * @access public
 	 * @param  bool $success incoming success value (we return true or false on success/fail)
-	 * @param arrray $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
+	 * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
 	 * @return bool          success/fail
 	 */
 	public function process_resend( $success, $req_data ) {
@@ -279,7 +284,7 @@ class EE_Messages_Init extends EE_Base {
 
 		//if no reg object then send error
 		if ( empty( $reg ) ) {
-			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 
@@ -293,7 +298,7 @@ class EE_Messages_Init extends EE_Base {
 
 			if ( ! in_array( $status_match_array[$reg->status_ID()], $active_mts ) ) {
 				$success = FALSE;
-				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ) );
+				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ), __FILE__, __FUNCTION__, __LINE__ );
 				return $success;
 			}
 
@@ -356,7 +361,10 @@ class EE_Messages_Init extends EE_Base {
 		$_POST['MTP_ID'] = (int) $mtp_id;
 
 		$this->_load_controller();
-		$this->_EEMSG->send_message('newsletter', $contacts);
+		$active_mts = $this->_EEMSG->get_active_message_types();
+		if ( in_array( 'newsletter', $active_mts ) ) {
+			$this->_EEMSG->send_message('newsletter', $contacts);
+		}
 	}
 
 

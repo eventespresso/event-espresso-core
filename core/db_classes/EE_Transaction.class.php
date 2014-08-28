@@ -435,6 +435,7 @@ class EE_Transaction extends EE_Base_Class {
 		} else {
 			return NULL;
 		}
+		return NULL;
 	}
 
 

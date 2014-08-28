@@ -53,7 +53,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t->get_pretty('TXN_total'),'$0.00 <span class="currency-code">(USD)</span>');
 		$this->assertEquals($t->get('TXN_total'),0);
 	}
-	function test_saving(){
+	function test_save_string_pk(){
+		//test saving something with an auto-increment PK
+		$c = EE_Country::new_instance(array('CNT_ISO'=>'12'));
+		$results = $c->save();
+		$this->assertEquals($results,$c->ID());
+		$c->set('CNT_cur_code','FOO');
+		$results2 = $c->save();
+		$this->assertEquals(true,$results2);
+	}
+	function test_save_autoincrement_pk(){
+		//test saving something with an auto-increment PK
 		$t = EE_Transaction::new_instance();
 		$id = $t->save();
 		$this->assertNotNull($id);
@@ -61,6 +71,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t2 = EEM_Transaction::instance()->get_one_by_ID($id);
 		$this->assertEquals($id,$t2->ID());
 	}
+
+//	function test_save_no_pk(){
+		//@todo: make this test work
+		//the following is known to not work for the time-being (the models
+		//system should be improved to allow this, when we get time)
+//		$term_taxonomy = $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
+//		$e = $this->new_model_obj_with_dependencies('Event');
+//		$tr = EE_Term_Relationship::new_instance(array('object_id'=>$e->ID()));
+//		$results = $tr->save();
+//		$this->assertNotNull($results);
+//	}
 	function test_add_relation_to(){
 		$t = EE_Transaction::new_instance();
 		$t->save();

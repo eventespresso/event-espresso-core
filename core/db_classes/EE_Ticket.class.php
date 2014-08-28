@@ -298,7 +298,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 					return $total;
 				}
 				if ( ! empty( $dtt_id ) && ! isset( $tickets_sold[ 'datetime' ][ $dtt_id ] ) ) {
-					EE_Error::add_error( __( "You've requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?", "event_espresso" ) );
+					EE_Error::add_error( __( "You've requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?", "event_espresso" ), __FILE__, __FUNCTION__, __LINE__ );
 					return $total;
 				}
 				return empty( $dtt_id ) ? $tickets_sold[ 'datetime' ] : $tickets_sold[ 'datetime' ][ $dtt_id ];

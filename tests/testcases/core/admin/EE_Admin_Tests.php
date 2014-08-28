@@ -133,7 +133,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		//test when maintainence mode is set at level 2
 		$this->setMaintenanceMode(2);
 		$admin->init();
-		$this->assertEquals( has_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $admin, 'hide_admin_pages_except_maintenance_mode' ) ), 100 );
 		$this->assertFalse( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ) );
 		$this->assertFalse( has_action('save_post', array( 'EE_Admin', 'parse_post_content_on_save' ) ) );
 		$this->assertFalse( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ) );

@@ -226,7 +226,7 @@ class PluginUpdateEngineChecker {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			switch ( $type ) {
 				case 'options' :
-					$msg .= sprintf( __('Plugin Update Engine is unable to setup correctly for the plugin with the slug "%s" because there are the following keys missing from the options array sent to the PluginUpdateEngineChecker class when it is instantiated:', $this->lang_domain), $this->_incoming_slug ) . '</p><p>';
+					$msg .= sprintf( __('Plugin Update Engine is unable to setup correctly for the plugin with the slug "%s" because there are the following keys missing from the options array sent to the PluginUpdateEngineChecker class when it is instantiated:', $this->lang_domain), print_r( $this->_incoming_slug, true) ) . '</p><p>';
 					$msg .= '<ul>';
 					foreach ( $this->_pue_errors as $error ) {
 						$msg .= '<li>' . $error . '</li>';
@@ -249,11 +249,17 @@ class PluginUpdateEngineChecker {
 				case 'slug_not_array' :
 					//Old method for plugin name is just to use the slug and manipulate
 					$pluginname = ucwords(str_replace('-', ' ', $this->_incoming_slug) );
-					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong></p><p>You will have to update this manually.  Contact support for further intstructions', $this->lang_domain), $pluginname);
+					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong></p><p>You will have to update this manually.  Contact support for further instructions', $this->lang_domain), $pluginname);
 					break;
 			}
 		} else {
-			$msg .= sprintf( __('Unable to setup automatic updates for the plugin with the slug "%s" because it\'s running an old version of the code used for updates.  To get the new code please update this plugin manually.', $this->lang_domain), $this->_incoming_slug ) . '</p><p>';
+			$slug = $this->slug;
+
+			if ( empty( $this->slug ) ) {
+				$msg .= sprintf( 'Automatic updates cannot be setup for an EE addon because of an error in the file.  Please contact support, and include a list of EE addons recently installed/updated.', $this->lang_domain ) . '</p><p>';
+			} else {
+				$msg .= sprintf( __('Unable to setup automatic updates for the plugin with the slug "%s" because of an error with the code. Please contact EE support and give them this error message.', $this->lang_domain), $slug ) . '</p><p>';
+			}
 		}
 
 		$this->_error_msg = apply_filters('PUE__display_errors', '<p>' . $msg . '</p>', $type, $this->_pue_errors, $this->_incoming_slug);

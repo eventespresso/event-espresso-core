@@ -99,12 +99,12 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 *        set deleted
-	 *
-	 * @access        public
-	 * @param        bool
-	 */
-	public function set_deleted( $PRC_deleted = FALSE ) {
+	*		set deleted
+	*
+	* 		@access		public
+	*		@param		bool		$PRC_deleted
+	*/
+	public function set_deleted( $PRC_deleted = NULL ) {
 		$this->set( 'PRC_deleted', $PRC_deleted );
 	}
 
@@ -195,6 +195,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	}
 
 
+	//some helper methods for getting info on the price_type for this price
 
 	/**
 	 * return whether the price is a base price or not
@@ -206,7 +207,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	}
 
 
-	//some helper methods for getting info on the price_type for this price
+	
 	/**
 	 *
 	 * @return EE_Price_Type
@@ -238,12 +239,15 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	}
 
 
-
 	/**
-	 * @return mixed
+	 * return pretty price dependant on whether its a dollar or percent.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return string
 	 */
 	public function pretty_price() {
-		return $this->get_pretty( 'PRC_amount' );
+		return ! $this->is_percent() ? $this->get_pretty('PRC_amount') : $this->get('PRC_amount') . '%';
 	}
 
 

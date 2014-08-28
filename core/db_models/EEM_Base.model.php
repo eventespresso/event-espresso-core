@@ -391,7 +391,6 @@ abstract class EEM_Base extends EE_Base{
 	 *		SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
-	 *	}
 	 *	@param mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
 	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 *
@@ -1213,7 +1212,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		if( !isset($field_with_model_name) || !$field_with_model_name ){
-			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"), $this->get_this_model_name() ));
+			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %s", "event_espresso"), $this->get_this_model_name() ));
 		}
 		return $field_with_model_name;
 	}
@@ -1267,7 +1266,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->unique_indexes() as $index_name => $index){
 			$uniqueness_where_params = array_intersect_key($field_n_values, $index->fields());
 			if($this->exists(array($uniqueness_where_params))){
-				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)));
+				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
 		}
@@ -2348,6 +2347,7 @@ abstract class EEM_Base extends EE_Base{
 		$SQL .= $this->_construct_internal_join_to_table_with_alias($this->_get_main_table()->get_table_alias());
 		return $SQL;
 	}
+
 
 
 	/**
