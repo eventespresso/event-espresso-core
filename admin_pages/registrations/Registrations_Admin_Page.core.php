@@ -2386,7 +2386,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		if ( $success === FALSE )
-			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'));
+			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 
 	}
 
