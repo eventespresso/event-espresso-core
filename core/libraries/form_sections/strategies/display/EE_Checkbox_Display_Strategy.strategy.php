@@ -1,5 +1,5 @@
 <?php
-class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
+class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 
 	/**
 	 *
@@ -20,7 +20,10 @@ class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
 			}
 			$value_slug = sanitize_key( $value );
 			$value_inside_attribute = esc_attr( $value );
-			$html .= '<label for="' . $this->_input->html_id() . '-' . $value_slug . '" class="ee-checkbox-label-after"><input id="' . $this->_input->html_id() . '-' . $value_slug . '" name="' . $this->_input->html_name() . '[]" class="' . $this->_input->html_class() . '" style="' . $this->_input->html_style() . '" type="checkbox" value="' . $value_inside_attribute . '"' . $selected_attr . '>&nbsp;' . $display_text . '</label>';
+			$html .= '<label for="' . $this->_input->html_id() . '-' . $value_slug . '" class="ee-checkbox-label-after">';
+			$html .= EEH_Formatter::nl(1) . '<input id="' . $this->_input->html_id() . '-' . $value_slug . '" name="' . $this->_input->html_name() . '[]" class="' . $this->_input->html_class() . '" style="' . $this->_input->html_style() . '" type="checkbox" value="' . $value_inside_attribute . '"' . $selected_attr . '>';
+			$html .= '&nbsp;' . $display_text;
+			$html .= EEH_Formatter::nl(-1) . '</label>';
 		}
 		return $html;
 	}
