@@ -80,8 +80,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function initialize_reg_step() {
 		// don't need payment options for a completed or overpaid transaction
 		// TODO: if /when we implement donations, then this will need overriding
-		if ( $this->checkout->transaction->is_completed() || $this->checkout->transaction->is_overpaid() ) {
-			unset( $this->checkout->reg_steps['payment_options'] );
+		if ( $this->checkout->transaction->is_completed() || $this->checkout->transaction->is_overpaid() || $this->checkout->transaction->is_free() ) {
+			$this->checkout->remove_reg_step( $this->_slug );
+			$this->checkout->reset_reg_steps();
 		}
 	}
 
@@ -659,11 +660,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		$this->checkout->transaction->save();
 		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
-		do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->checkout->transaction );
 		// set return URL
 		$this->checkout->redirect_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
 		// if payment required
 		if ( $this->checkout->transaction->total() > 0 ) {
+			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->checkout->transaction );
 			// attempt payment via payment method
 			return $this->_process_payment();
 		}
@@ -717,7 +718,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
 				// set JSON response
-//				$this->checkout->json_response->set_redirect_url( $payment->redirect_url() );
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
 			}
 
