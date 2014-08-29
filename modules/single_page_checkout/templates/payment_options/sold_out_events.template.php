@@ -5,3 +5,6 @@
 	<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
 		<?php echo $sold_out_events_msg; ?>
 	</p>
+
+	<?php echo $default_hidden_inputs;  ?>
+	<?php echo $extra_hidden_inputs;  ?>
