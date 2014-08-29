@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * They should just be used admin-side for recording payments like Cash, Check, etc.
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -38,5 +38,18 @@ class EE_PMT_Admin_Only extends EE_PMT_Base{
 	public function generate_new_settings_form() {
 		return new EE_Payment_Method_Form();
 	}
+
+
+
+	/**
+	 * Gets a list of instructions and/or information regarding how the payment is to be completed
+	 * @return string
+	 */
+	public function payment_information() {
+		// TODO: Implement payment_information() method.
+	}
+
+
+
 }
 // End of file EE_PMT_Admin_Only.pm.php

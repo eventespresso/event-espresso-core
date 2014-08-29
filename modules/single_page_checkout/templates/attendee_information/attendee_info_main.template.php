@@ -61,7 +61,7 @@ if ( count( $registrations ) > 0 ) {
 		} // if ( $registration instanceof EE_Registration )
 	 } // end foreach ( $registrations as $registration )
 
-	echo $hidden_inputs;
+	echo $default_hidden_inputs;
 
 } // end if ( count( $registrations ) > 0 )
 

@@ -7,15 +7,15 @@
 
 		/**
 		*	center elements on screen
-		 * @param string  position : relative, absolute or fixed (default)
+		 * @param {string}  position : relative, absolute or fixed (default)
 		*/
 		eeCenter : function( position ) {
 			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
-			element_top = position == 'fixed' ? element_top + $( window ).height() / 8 : element_top + $( window ).scrollTop();
+			element_top = position === 'fixed' ? element_top + $( window ).height() / 8 : element_top + $( window ).scrollTop;
 			element_top = Math.max( 0, element_top );
 			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
-			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
+			element_left = position === 'fixed' ? element_left : element_left + $( window ).scrollLeft;
 			element_left = Math.max( 0, element_left );
 			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' , 'margin' : 0 });
 			return this;
@@ -25,11 +25,11 @@
 		/**
 		 * Shortcut for adding a window overlay quickly if none exists in the dom
 		 *
-		 * @param {array} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
+		 * @param {int} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
 		 * @return {jQuery}
 		 */
 		eeAddOverlay : function( opacity ) {
-			opacity = typeof(opacity) === 'undefined' ? [0.5, 50] : opacity;
+			opacity = typeof opacity === 'undefined' || opacity > 1 ? 0.5 : opacity;
 			var overlay = '<div id="ee-overlay"></div>';
 			$(overlay).appendTo('body').css({
 				'position' : 'fixed',
@@ -38,8 +38,8 @@
 				'width' : '100%',
 				'height' : '100%',
 				'background' : '#000',
-				'opacity' : opacity[0],
-				'filter' : 'alpha(opacity=' + opacity[1] + ')',
+				'opacity' : opacity,
+				'filter' : 'alpha(opacity=' + ( opacity * 100 ) + ')',
 				'z-index' : 10000
 			});
 			return this;
@@ -77,7 +77,7 @@
 		*/
 		eeInputValue : function () {
 			var inputType = this.prop('type');
-			if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			if ( inputType ===  'checkbox' || inputType === 'radio' ) {
 				return this.prop('checked');
 			} else {
 				return this.val();
@@ -93,7 +93,7 @@
 			var url = this.attr('href');
 			url = typeof url !== 'undefined' && url !== '' ? url : location.href;
 			url = url.substring( url.indexOf( '?' ) + 1 ).split( '#' );
-			urlParams['hash'] = typeof url[1] !== 'undefined' && url[1] !== '' ? url[1] : '';
+			urlParams.hash = typeof url[1] !== 'undefined' && url[1] !== '' ? url[1] : '';
 			var qs = url[0].split( '&' );
 			for( var i = 0; i < qs.length; i++ ) {
 				qs[ i ] = qs[ i ].split( '=' );
@@ -134,9 +134,9 @@
 		 */
 		removeFromArray: function( arr, ind ) {
 			return arr.filter( function(i) {
-				return i != ind;
+				return i !== ind;
 			});
-		},
+		}
 
 
 	});
@@ -146,13 +146,14 @@
 
 jQuery(document).ready(function($) {
 
+	var existing_message = $('#message');
 	$('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
 
 
 	window.do_before_admin_page_ajax = function do_before_admin_page_ajax() {
 		// stop any message alerts that are in progress
-		$('#message').stop().hide();
+		$(existing_message).stop().hide();
 		// spinny things pacify the masses
 		$('#espresso-ajax-loading').eeCenter().show();
 	};
@@ -163,16 +164,16 @@ jQuery(document).ready(function($) {
 		console.log( response );
 		$('#espresso-ajax-loading').fadeOut('fast');
 		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
-			if ( closeModal === undefined ) {
-				closeModal = false;
-			}
+//			if ( closeModal === undefined ) {
+//				closeModal = false;
+//			}
+			var fadeaway = true;
+			var msg = '';
 			// if there is no existing message...
-			if ( $('#message').length === 0 ) {
+			if ( $(existing_message).length === 0 ) {
 				//create one and add it to the DOM
 				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
 			}
-			var existing_message = $('#message');
-			var fadeaway = true;
 			// success ?
 			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
 				msg = '<p>' + response.success + '</p>';
@@ -193,9 +194,9 @@ jQuery(document).ready(function($) {
 			}
 			// and display it
 			if ( fadeaway === true ) {
-				$('#message').removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
+				$(existing_message).removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
 			} else {
-				$('#message').removeAttr('style').removeClass('hidden').show();
+				$(existing_message).removeAttr('style').removeClass('hidden').show();
 			}
 		}
 	};
@@ -314,21 +315,27 @@ jQuery(document).ready(function($) {
  */
 function dump(arr,level) {
 	var dumped_text = "";
-	if(!level) level = 0;
+	if ( ! level ) {
+		level = 0;
+	}
 
 	//The padding given at the beginning of the line.
 	var level_padding = "";
-	for(var j=0;j<level+1;j++) level_padding += "    ";
-
-	if(typeof(arr) == 'object') { //Array/Hashes/Objects
+	for(var j=0;j<level+1;j++) {
+		level_padding += "    ";
+	}
+	//Array/Hashes/Objects
+	if( typeof(arr) === 'object' ) {
 		for(var item in arr) {
-			var value = arr[item];
-
-			if(typeof(value) == 'object') { //If it is an array,
-				dumped_text += level_padding + "'" + item + "' ...\n";
-				dumped_text += dump(value,level+1);
-			} else {
-				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+			if ( typeof item !== 'undefined' && arr.hasOwnProperty( item ) ) {
+				var value = arr[item];
+				//If it is an array
+				if( typeof(value) === 'object' ) {
+					dumped_text += level_padding + "'" + item + "' ...\n";
+					dumped_text += dump(value,level+1);
+				} else {
+					dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+				}
 			}
 		}
 	} else { //Stings/Chars/Numbers etc.
@@ -338,9 +345,9 @@ function dump(arr,level) {
 }
 
 
-function getFunctionName() {
-	var myName = arguments.callee.toString();
-	myName = myName.substr('function '.length);
-	myName = myName.substr(0, myName.indexOf('('));
-	return myName;
-}
+//function getFunctionName() {
+//	var myName = arguments.callee.toString();
+//	myName = myName.substr('function '.length);
+//	myName = myName.substr(0, myName.indexOf('('));
+//	return myName;
+//}

@@ -117,4 +117,17 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
 		}
 	}
+
+
+
+	/**
+	 * Gets a list of instructions and/or information regarding how the payment is to be completed
+	 * @return string
+	 */
+	public function payment_information() {
+		// TODO: Implement payment_information() method.
+	}
+
+
+
 }//NOTIFY URL: http://eventespresso.com/sandbox/dev1/transactions/?e_reg_url_link=1-07eae3d1b8e76de4b3bd9181a69408b5&ee_payment_method=paypal_standard

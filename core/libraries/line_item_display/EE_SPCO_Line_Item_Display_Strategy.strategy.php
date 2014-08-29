@@ -206,11 +206,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = '';
 		if ( $line_item->total() ) {
 			// start of row
-			$html = EEH_HTML::tr( '', 'total_tr odd' );
+			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 			// empty td
 			$html .= EEH_HTML::td( EEH_HTML::nbsp(), '',  '',  '',  ' colspan="2"' );
 			// total td
-			$html .= EEH_HTML::td( $text, 'total_currency',  'total jst-rght' );
+			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght' );
 			// total td
 			$html .= EEH_HTML::td( $line_item->total_no_code(), '',  'total jst-rght' );
 			// end of row
