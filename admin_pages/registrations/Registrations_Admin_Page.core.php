@@ -101,7 +101,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'add-registrant' => __('Add New Registration', 'event_espresso'),
 					'add-attendee' => __('Add Contact', 'event_espresso'),
 					'edit' => __('Edit Contact', 'event_espresso'),
-					'report'=>  __("Registrations CSV Report", "event_espresso"),
+					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
+					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
 					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
 				),
 			'publishbox' => array(
@@ -2364,7 +2365,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'registrations_report_for_event',
-			'EVT_ID' => $this->_req_data['EVT_ID'],
+			'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 

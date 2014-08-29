@@ -99,7 +99,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					break;
 
 					case 'registrations_report_for_event':
-						$this->report_registrations_for_event();
+						$this->report_registrations_for_event( $this->_req_data['EVT_ID'] );
 					break;
 
 					case 'attendees':
@@ -309,8 +309,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 * and the questions associated with the registrations
 	 * @param type $event_id
 	 */
-	function report_registrations_for_event(){
-		$event_id = $this->_req_data['EVT_ID'];
+	function report_registrations_for_event( $event_id = NULL ){
 		$reg_fields_to_include = array(
 				'REG_ID',
 				'REG_date',
@@ -334,7 +333,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$registrations_csv_ready_array = array();
 		$reg_model = EE_Registry::instance()->load_model('Registration');
-		$registrations = $reg_model->get_all(array(array('EVT_ID'=>$event_id),'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc')));
+		$query_params = array(
+			'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
+			'force_join' => array( 'Transaction', 'Ticket' ) );
+		if( $event_id ){
+			$query_params[0] = array( 'EVT_ID' => $event_id );
+		}else{
+			$query_params[ 'force_join' ][] = 'Event';
+		}
+		$registrations = $reg_model->get_all();
 
 		//get all questions which relate to someone in this group
 		$registration_ids = array_keys($registrations);
@@ -342,6 +349,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$questions_for_these_registrations = EEM_Question::instance()->get_all(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
 		foreach($registrations as $registration){
 			$reg_csv_array = array();
+			if( ! $event_id ){
+				//get the event's name and Id
+				$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '[' . $registration->event_ID() . ']';
+			}
 			/*@var $registration EE_Registration */
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
@@ -426,8 +437,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			}
 			$registrations_csv_ready_array [] = $reg_csv_array;
 		}
-		$event = EEM_Event::instance()->get_one_by_ID($event_id);
-		$filename = sprintf("registrations-for-%s",$event->slug());
+		if( $event_id ){
+			$event = EEM_Event::instance()->get_one_by_ID($event_id);
+			$event_slug = $event->slug();
+		}else{
+			$event_slug = __( 'all', 'event_espresso' );
+		}
+		$filename = sprintf( "registrations-for-%s", $event_slug );
 
 		$handle = $this->EE_CSV->begin_sending_csv( $filename);
 		$this->EE_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
