@@ -105,12 +105,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			/** @var $registration EE_Registration */
 			if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
 				// add event to list of events that are sold out
-				$sold_out_events[] = $registration->event();
+				$sold_out_events[ $registration->event()->ID() ] = $registration->event();
 			}
 			// event requires admin approval
 			if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
 				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[] = $registration->event();
+				$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
 			}
 			// these reg statuses require payment (if event is not free)
 			$requires_payment = array(
@@ -140,8 +140,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _sold_out_events( $sold_out_events_array = array() ) {
-
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'events_sold_out';
 
@@ -184,8 +182,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _events_requiring_pre_approval( $events_requiring_pre_approval_array = array()) {
-
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 		$events_requiring_pre_approval = '';
 		foreach ( $events_requiring_pre_approval_array as $event_requiring_pre_approval ) {
@@ -307,9 +303,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _extra_hidden_inputs( $no_payment_required = TRUE ) {
-
-		//	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
-		//	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
 		return new EE_Form_Section_Proper(
 			array(
@@ -620,7 +613,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		switch(  $this->checkout->selected_method_of_payment ) {
 
 			case 'events_sold_out' :
-				EE_Error::add_attention( __( 'can not register for sold out events.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				$this->checkout->redirect = TRUE;
+				$this->checkout->redirect_url = $this->checkout->cancel_page_url;
+				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 				return FALSE;
 				break;
 
