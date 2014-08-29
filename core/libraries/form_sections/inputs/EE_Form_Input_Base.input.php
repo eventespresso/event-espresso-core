@@ -442,7 +442,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	function html_label_id(){
-		return $this->_html_label_id;
+		return ! empty( $this->_html_label_id ) ? $this->_html_label_id : $this->_html_id . '-lbl';
 	}
 
 
