@@ -980,6 +980,18 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
+//		EEM_Registration::instance();
+//		EEH_Debug_Tools::instance()->start_timer('model query 1');
+//		EEM_Registration::instance()->get_all( array(array('REG_ID'=>1), 'force_join' => array( 'Ticket','Transaction')));
+//		EEH_Debug_Tools::instance()->stop_timer('model query 1');
+//		EEH_Debug_Tools::instance()->start_timer('model query 2');
+//		EEM_Registration::instance()->get_all( array(array('REG_ID'=>2), 'force_join' => array( 'Ticket','Transaction')));
+//		EEH_Debug_Tools::instance()->stop_timer('model query 2');
+//		EEH_Debug_Tools::instance()->start_timer('option');
+//		get_option('moderation_keys');
+//		EEH_Debug_Tools::instance()->stop_timer('option');
+//		EEH_Debug_Tools::instance()->show_times();
+
 	}
 
 
