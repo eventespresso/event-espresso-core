@@ -67,12 +67,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EED_Single_Page_Checkout::set_definitions();
-		// set routing
-//		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
 		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
-//		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
-//		EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 		// add powered by EE msg
 		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
@@ -99,8 +95,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_ajax_nopriv_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_display_spco_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
 		add_action( 'wp_ajax_nopriv_display_spco_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
-//		add_action( 'wp_ajax_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
-//		add_action( 'wp_ajax_nopriv_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
 	}
 
 
@@ -383,10 +377,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
 		// finally re-sort based on the reg step class order properties
 		$this->checkout->sort_reg_steps();
-		// pass basic reg step data to JS
-		foreach ( $this->checkout->reg_steps as $reg_step ) {
-			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
-		}
+		// make reg step details available to JS
+		$this->checkout->set_reg_step_JSON_info();
 	}
 
 
@@ -448,7 +440,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _process_form_action() {
-//		echo '<h5 style="color:#2EA2CC;">$this->checkout->action : <span style="color:#E76700">' . $this->checkout->action . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
 			// AJAX next step reg form
@@ -465,7 +456,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //				$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, $this->checkout->current_step . ' ' . $this->checkout->action );
 				// meh... do one of those other steps first
 				if ( ! empty( $this->checkout->action ) && is_callable( array( $this->checkout->current_step, $this->checkout->action ))) {
-					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
+					// dynamically creates hook point like: AHEE__Single_Page_Checkout__before_attendee_information__display_spco_reg_step
+					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
 					// call action on current step
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// good registrant, you get to proceed
@@ -474,12 +466,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// store our progress so far
 						$this->checkout->stash_transaction_and_checkout();
+						// pack it up, pack it in...
 						$this->_setup_redirect();
-						// advance to the next step! If you pass GO, collect $200
-						$this->go_to_next_step();
-					} else {
 					}
+					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
+					// advance to the next step! If you pass GO, collect $200
+					$this->go_to_next_step();
+
 				} else {
 					EE_Error::add_error(
 						sprintf(
@@ -841,24 +835,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 *        _process_return_to_reg_step_query_args
-	 *
-	 * @access 	private
-	 * @param 	$args
-	 * @return 	array
-	 */
-//	private function _process_return_to_reg_step_query_args( $args ) {
-//		$ignore = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn', 'step', 'next_step' );
-//		foreach ( $_POST as $key => $value ) {
-//			if ( ! in_array( $key, $ignore )) {
-//				$args[ $key ] = isset( $value ) ? $value : '';
-//			}
-//		}
-//		return $args;
-//	}
-
-
 
 	/**
 	 *        _setup_redirect
@@ -869,64 +845,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _setup_redirect() {
 		if ( $this->checkout->continue_reg && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			$this->checkout->redirect = TRUE;
-			$this->checkout->redirect_url = empty( $this->checkout->redirect_url ) ? $this->checkout->next_step->reg_step_url() : $this->checkout->redirect_url;
-//			if ( $this->checkout->json_response->redirect_url() == '' && $this->checkout->json_response->redirect_form() == '' && $this->checkout->redirect_url !== $this->checkout->current_step->reg_step_url() ) {
-			//				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-			//			}
-		}
-	}
-
-
-	/**
-	 *        _process_callback
-	 *
-	 * @access 	private
-	 * @param 	$callback
-	 * @param 	$callback_param
-	 * @return 	bool
-	 */
-	private function _process_callback( $callback, $callback_param ) {
-		// if no callback is specified, then just return TRUE
-		if ( empty( $callback )) {
-			return TRUE;
-		}
-		// is callback a string denoting a static method ?
-		if ( strpos( $callback, '::' ) !== FALSE ) {
-			$callback = explode( '::', $callback );
-		}
-		// check for valid callback function
-		if ( is_array( $callback ) && isset( $callback[0] ) && isset( $callback[1] )) {
-			// check for recursion
-			if ( $this->checkout->action == $callback ) {
-				EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-				return FALSE;
+			if ( empty( $this->checkout->redirect_url )) {
+				$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 			}
-			$valid_callback = is_callable( $callback ) ? TRUE : FALSE;
-		} else {
-			EE_Error::add_error(
-				sprintf(
-					__('The callback "%1$s" was found to be invalid when attempting to process the %2$s reg step.', 'event_espresso'),
-					$callback,
-					$this->checkout->current_step->name()
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
 		}
-		if ( ! $valid_callback ) {
-			EE_Error::add_error(
-				sprintf(
-					__('The callback "%1$s::%2$s()" was found to be invalid when attempting to process the %3$s reg step.', 'event_espresso'),
-					$callback[0],
-					$callback[1],
-					$this->checkout->current_step->name()
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		// send data through to the callback function
-		return call_user_func_array( $callback, $callback_param );
 	}
 
 
@@ -935,16 +857,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *   handle ajax message responses and redirects
 	 *
 	 * @access public
-	 * @param bool   $callback
-	 * @param bool   $callback_param
 	 * @return void
 	 */
-	public function go_to_next_step( $callback = FALSE, $callback_param = FALSE ) {
+	public function go_to_next_step() {
 
 		if ( $this->checkout->action == 'redirect_form' ) {
-			return;
-		}
-		if ( ! $this->_process_callback( $callback, $callback_param )) {
 			return;
 		}
 		// if this is an ajax request AND a callback function exists
