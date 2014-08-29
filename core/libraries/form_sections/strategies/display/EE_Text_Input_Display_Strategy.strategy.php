@@ -11,6 +11,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 		$input .= ' name="' . $this->_input->html_name() . '"';
 		$input .= ' id="' . $this->_input->html_id() . '"';
 		$class = $this->_input->required() ? $this->_input->required_css_class() . ' ' . $this->_input->html_class() : $this->_input->html_class();
+		$class .= $type == 'email' ? ' email' : '';
 		$input .= ' class="' . $class . '"';
 		// add html5 required
 		$input .= $this->_input->required() ? ' required' : '';
