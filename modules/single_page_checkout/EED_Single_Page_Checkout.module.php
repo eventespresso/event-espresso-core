@@ -721,6 +721,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('Please answer all required questions correctly before proceeding.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['attendee_info_copied'] = sprintf( __('The attendee information was successfully copied.%sPlease ensure the rest of the registration form is completed before proceeding.', 'event_espresso'), '<br/>' );
+		EE_Registry::$i18n_js_strings['attendee_info_copy_error'] = __('An unknown error occurred on the server while attempting to copy the attendee information. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['no_payment_method'] = __( 'Please select a method of payment in order to continue.', 'event_espresso' );
