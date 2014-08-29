@@ -351,7 +351,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$reg_csv_array = array();
 			if( ! $event_id ){
 				//get the event's name and Id
-				$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '[' . $registration->event_ID() . ']';
+				$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '(' . $registration->event_ID() . ')';
 			}
 			/*@var $registration EE_Registration */
 			foreach($reg_fields_to_include as $field_name){
