@@ -230,7 +230,6 @@ class EE_Checkout {
 		$this->current_step = isset( $this->reg_steps[ $current_step ] ) ? $this->reg_steps[ $current_step ] : reset( $this->reg_steps );
 		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
 			$this->current_step->set_is_current_step( TRUE );
-			$this->redirect_url = $this->current_step->reg_step_url();
 		} else {
 			EE_Error::add_error(
 				__( 'The current step could not be set.', 'event_espresso' ),
@@ -261,7 +260,7 @@ class EE_Checkout {
 		// advance one more spot ( if it exists )
 		$this->next_step = next( $this->reg_steps );
 		// verify instance
-		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step && $this->current_step->slug() != 'finalize_registration' ? $this->next_step  : NULL;
+		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step /*&& $this->current_step->slug() != 'finalize_registration' */? $this->next_step  : NULL;
 		// then back to current step to reset
 		prev( $this->reg_steps );
 	}
@@ -316,6 +315,37 @@ class EE_Checkout {
 			return 0;
 		}
 		return ( $reg_step_A->order() > $reg_step_B->order() ) ? 1 : -1;
+	}
+
+
+
+	/**
+	 * 	set_reg_step_JSON_info
+	 *
+	 * 	@access public
+	 * 	@return 	void
+	 */
+	public function set_reg_step_JSON_info() {
+		EE_Registry::$i18n_js_strings[ 'reg_steps' ] = array();
+		// pass basic reg step data to JS
+		foreach ( $this->reg_steps as $reg_step ) {
+			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
+		}
+	}
+
+
+
+	/**
+	 * 	reset_reg_steps
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function reset_reg_steps() {
+		$this->sort_reg_steps();
+		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
+		$this->set_next_step();
+		$this->set_reg_step_JSON_info();
 	}
 
 
