@@ -22,6 +22,8 @@ jQuery(document).ready( function($) {
 		offset_from_top : 0,
 		// modifier for offset_from_top
 		offset_from_top_modifier : -50,
+		// the first invalid input in a form
+		invalid_input_to_scroll_to : null,
 		// display debugging info in console?
 		display_debug : eei18n.wp_debug,
 
@@ -40,7 +42,10 @@ jQuery(document).ready( function($) {
 				SPCO.disable_caching();
 				SPCO.set_validation_defaults();
 				SPCO.uncheck_copy_option_inputs();
-				SPCO.set_listener_for_process_next_step();
+				SPCO.set_listener_for_advanced_copy_options_checkbox();
+				SPCO.set_listener_for_copy_all_attendee_info_checkbox();
+				SPCO.set_listener_for_individual_copy_attendee_checkboxes();
+				SPCO.set_listener_for_process_next_reg_step_button();
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
 				SPCO.initialize_datepicker_inputs();
@@ -65,21 +70,92 @@ jQuery(document).ready( function($) {
 		 *	set_validation_defaults
 		 */
 		set_validation_defaults : function() {
+			// jQuery validation object
 			$.validator.setDefaults({
+
 				debug: false,
+				ignore: '.ee-do-not-validate',
 				validClass: '',
 				errorClass: 'ee-required-text',
+
 				errorPlacement: function( error, element ) {
 					$(element).before( error );
 				},
-				highlight: function( element ) {
-					$(element).addClass('ee-needs-value').removeClass('ee-has-value');
+
+				highlight: function( element, error ) {
+						$(element).addClass('ee-needs-value').removeClass('ee-has-value');
 				},
-				unhighlight: function(element ) {
-					$(element).removeClass('ee-needs-value').addClass('ee-has-value');
+				unhighlight: function( element, error ) {
+						$(element).removeClass('ee-needs-value').addClass('ee-has-value');
+				},
+
+				invalidHandler: function( event, validator ) {
+					SPCO.reset_validation_vars();
+					// validator.errorList contains an array of objects, where each object has properties "element" and "message".  element is the actual HTML Input.
+					for ( var i=0; i<validator.errorList.length; i++ ){
+						// input object
+						var invalid_input = $( validator.errorList[i].element.id );
+						SPCO.track_validation_error( $( invalid_input ).selector );
+					}
+					SPCO.display_validation_errors();
 				}
+
 			});
 
+		},
+
+
+
+		/**
+		 *	track_validation_error
+		 */
+		track_validation_error : function( invalid_input_id ) {
+			SPCO.console_log( 'track_validation_error > invalid_input_id', invalid_input_id, true );
+			// convert to jQuery object
+			var invalid_input = $( '#' + invalid_input_id );
+			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null ? $( '#' + invalid_input_id + '-lbl' ) : SPCO.invalid_input_to_scroll_to;
+			// grab input label
+			var input_label = $( '#' + invalid_input_id + '-lbl' ).text();
+			// remove "required" asterisk
+			input_label = input_label.replace( '*', '' );
+			SPCO.console_log( 'track_validation_error > input_label: ', input_label );
+			SPCO.console_log_obj( 'track_validation_error > SPCO.invalid_input_to_scroll_to: ', SPCO.invalid_input_to_scroll_to );
+			// add to invalid input array
+			SPCO.require_values.push( input_label );
+			// add to list of validation errors
+			if ( $(invalid_input).hasClass('email') ) {
+				SPCO.error_msgs.push( eei18n.enter_valid_email );
+			} else if ( $(invalid_input).is(':radio') || $(invalid_input).is(':checkbox') ) {
+				SPCO.error_msgs.push( input_label + eei18n.required_multi_field );
+			} else {
+				SPCO.error_msgs.push( input_label + eei18n.required_field );
+			}
+		},
+
+
+
+		/**
+		 *	display_validation_errors
+		 */
+		display_validation_errors : function() {
+			//remove duplicates
+			SPCO.require_values = _.unique( SPCO.require_values );
+			// no empty or invalid fields that need values ?
+			if ( SPCO.require_values.length > 0 ) {
+				SPCO.console_log( 'display_validation_errors > require_values', SPCO.require_values.join() );
+//				SPCO.console_log( 'validation_errors > multi_inputs_that_do_not_require_values', SPCO.multi_inputs_that_do_not_require_values.join() );
+				// add required questions call to action
+				SPCO.error_msgs.push( eei18n.answer_required_questions );
+				//remove duplicates
+				SPCO.error_msgs = _.unique( SPCO.error_msgs );
+				// concatenate and tag error messages
+				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', SPCO.error_msgs.join( '<br/>' ));
+				// scroll to top of form or to the first invalid input?
+				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null ? SPCO.main_container : SPCO.invalid_input_to_scroll_to;
+				SPCO.console_log_obj( 'display_validation_errors > SPCO.invalid_input_to_scroll_to: ', SPCO.invalid_input_to_scroll_to );
+				// display error_msg
+				SPCO.scroll_to_top_and_display_messages( SPCO.invalid_input_to_scroll_to, SPCO.generate_message_object( '', error_msg ));
+			}
 		},
 
 
@@ -98,18 +174,83 @@ jQuery(document).ready( function($) {
 
 
 		/**
+		* set_listener_for_advanced_copy_options_checkbox
+		* This is the "advanced copy options" link in Step 1 for the "Use Attendee #1's information for ALL attendees" box
+		*/
+		set_listener_for_advanced_copy_options_checkbox : function() {
+			$('#display-more-attendee-copy-options').on( 'click', function() {
+				$('#spco-copy-all-attendee-chk').prop('checked', false);
+			});
+		},
+
+
+
+		/**
+		* set_listener_for_copy_all_attendee_info_checkbox
+		*	if the Copy All option is checked off, trigger click event on all checkboxes
+		*/
+		set_listener_for_copy_all_attendee_info_checkbox : function() {
+			$('#spco-copy-all-attendee-chk').on( 'click', function() {
+				if ( $(this).prop('checked')) {
+					SPCO.reset_validation_vars();
+					SPCO.do_before_sending_ajax();
+					var primary_reg_questions = SPCO.validate_primary_registrant_questions();
+					if ( SPCO.require_values.length > 0 ) {
+						// uncheck the checkbox that was clicked
+						$(this).prop('checked', false);
+						SPCO.display_validation_errors();
+					} else {
+						$('.spco-copy-attendee-chk').each( function(index) {
+							if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') !== $('#spco-copy-all-attendee-chk').prop('checked') ) {
+								$(this ).trigger('click');
+							}
+						});
+						SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));
+					}
+				}
+			});
+		},
+
+
+
+		/**
+		 *	validate_primary_registrant_questions
+		 */
+		validate_primary_registrant_questions : function() {
+			// get all form inputs for the primary attendee
+			var primary_reg_questions = SPCO.get_primary_reg_questions();
+			$( primary_reg_questions ).each( function() {
+				if( ! $(this).valid() ) {
+					SPCO.track_validation_error( $(this ).attr('id') );
+				}
+			});
+			return primary_reg_questions;
+		},
+
+
+
+		/**
+		 *	copy primary attendee details to this attendee
+		 */
+		set_listener_for_individual_copy_attendee_checkboxes : function() {
+			$('#spco-copy-attendee-dv').on( 'click', '.spco-copy-attendee-chk', function() {
+				var primary_reg_questions = SPCO.validate_primary_registrant_questions();
+				SPCO.copy_primary_registrant_information( $(this), primary_reg_questions );
+			});
+		},
+
+
+
+		/**
 		 *	submit registration form - submit form and proceed to next step
 		 */
-		set_listener_for_process_next_step : function() {
+		set_listener_for_process_next_reg_step_button : function() {
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function(e) {
 				e.preventDefault();
 				e.stopPropagation();
-				var current_form = $(this).parents('form:first');
-				if ( current_form.valid() ){
+//				var current_form = ;
+				if ( $(this).parents('form:first').valid() ){
 					SPCO.process_next_step( this );
-				} else {
-					var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'set_listener_for_process_next_step', eei18n.answer_required_questions ));
-					SPCO.scroll_to_top_and_display_messages( current_form, msg );
 				}
 			});
 		},
@@ -132,10 +273,11 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-				$(this ).valid();
+//				if ( ! $(this ).hasClass('.spco-copy-attendee-chk') ) {
+					$(this ).valid();
+//				}
 			});
 		},
-
 
 
 		/**
@@ -148,6 +290,7 @@ jQuery(document).ready( function($) {
 			SPCO.success_msgs = [];
 			SPCO.error_msgs = [];
 			SPCO.offset_from_top = 0;
+			SPCO.invalid_input_to_scroll_to = null;
 		},
 
 
@@ -194,6 +337,104 @@ jQuery(document).ready( function($) {
 			*/
 		},
 
+
+
+		/**
+		 *	copy_primary_registrant_information
+		 *	capture values from the primary attendee's form inputs and copy them to the corresponding form inputs of the selected attendee
+		 */
+		copy_primary_registrant_information : function( clicked_checkbox, primary_reg_questions ) {
+			// is the checkbox that was clicked actually "checked"
+			if ( clicked_checkbox.prop('checked')) {
+				// the targeted attendee question group
+				var targeted_attendee = clicked_checkbox.val();
+				SPCO.console_log( 'copy_primary_registrant_information > targeted_attendee', targeted_attendee );
+				// for each question in the targeted attendee question group
+				$( primary_reg_questions ).each( function() {
+					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
+					if ( $(new_input_id).length > 0 ){
+						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
+						$(new_input_id).trigger('change');
+					} else {
+						return false;
+					}
+				});
+			}
+			return true;
+		},
+		// end copy_primary_registrant_information()
+
+
+
+		/**
+		 *	get_primary_reg_questions
+		 *	returns a jQuery object consisting of all of the form inputs assigned to the primary attendee
+		 */
+		get_primary_reg_questions : function () {
+			// the primary attendee question group
+			var primary_reg_qstn_grp = $('#primary_registrant').val();
+//			SPCO.console_log( 'get_primary_reg_questions > primary_reg_qstn_grp = ', primary_reg_qstn_grp );
+			// find all of the primary attendee's questions for this event
+			return $( '#ee-registration-' + primary_reg_qstn_grp ).children( '.ee-reg-form-qstn-grp-dv' ).find(':input');
+		},
+
+
+
+		/**
+		 *	calculate_target_attendee_input_id
+		 */
+		calculate_target_attendee_input_id : function ( primary_reg_input, targeted_attendee) {
+			// here we go again...
+			var input_id = $(primary_reg_input).attr('id');
+			SPCO.console_log( 'calculate_target_attendee_input_id > input_id', input_id, true );
+
+			if ( typeof input_id !== 'undefined' ) {
+				// split the above var
+				var input_id_array =  input_id.split('-');
+				SPCO.console_log( 'calculate_target_attendee_input_id > input_id_array', input_id_array );
+				// grab the current input's details
+				// var att_nmbr = input_id_array[1];
+				// var line_item_id = input_id_array[2];
+				var input_name = input_id_array[3];
+				var answer_id = input_id_array[4];
+				// var input_value = $(this).eeInputValue();
+				SPCO.console_log( 'calculate_target_attendee_input_id > input_name', input_name );
+
+				var new_input_id = '#ee_reg_qstn-' + targeted_attendee + '-' +  input_name;
+				if ( typeof answer_id !== 'undefined' ) {
+					new_input_id = new_input_id + '-' + answer_id;
+				}
+				SPCO.console_log( 'calculate_target_attendee_input_id > new_input_id', new_input_id );
+				return new_input_id;
+			}
+		},
+
+
+
+		/**
+		 *	copy_form_input_value_from_this
+		 */
+		copy_form_input_value_from_this : function( target_input, copy_from ) {
+			if ( $(target_input).is(':radio') || $(target_input).is(':checkbox') ) {
+				$(target_input).prop('checked', $(copy_from).prop('checked'));
+				SPCO.console_log( 'copy_form_input_value_from_this > input value copied', $(copy_from).prop('checked') );
+			} else {
+				$(target_input).val( $(copy_from).val() );
+				SPCO.console_log( 'copy_form_input_value_from_this > input value copied', $(copy_from).val() );
+			}
+		},
+
+
+
+		/**
+		 *	collapse_question_groups
+		 */
+		collapse_question_groups : function() {
+			$('.ee-reg-form-qstn-grp-dv').slideUp();
+			$('#spco-copy-attendee-dv').slideUp();
+			$('#spco-auto-copy-attendee-pg').slideUp();
+//			$('#spco-display-event-questions-lnk').removeClass('hidden');
+		},
 
 
 		/********** REG STEP NAVIGATION **********/
@@ -297,7 +538,7 @@ jQuery(document).ready( function($) {
 					$(next_step_btn).addClass( 'disabled' );
 					// copy billing info?
 //					if ( step === 'attendee_information' ) {
-//						SPCO.copy_primary_attendee_info_to_billing_info();
+//						SPCO.copy_primary_registrant_info_to_billing_info();
 //					}
 //					if ( next_step === 'finalize_registration' && _.indexOf( eei18n.reg_steps, 'payment_options' ) !== -1 ) {
 //						if ( $('#reg-page-off-site-gateway').val() === 1 ) {
