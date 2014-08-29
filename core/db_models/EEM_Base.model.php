@@ -2652,7 +2652,6 @@ abstract class EEM_Base extends EE_Base{
 		}
 		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
-			EEH_Debug_Tools::instance()->start_timer( 'build one' );
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
 			}
@@ -2661,7 +2660,6 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
-			EEH_Debug_Tools::instance()->stop_timer( 'build one' );
 			EEH_Debug_Tools::instance()->start_timer( 'build related' );
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
@@ -2669,7 +2667,7 @@ abstract class EEM_Base extends EE_Base{
 			//that filtered out some fo the results, then we'd be caching an incomplete set
 			//so it requires a little more thought than just caching them immediately...)
 			foreach($this->_model_relations as $modelName => $relation_obj){
-				EEH_Debug_Tools::instance()->start_timer( 'build a related' );
+				EEH_Debug_Tools::instance()->start_timer( 'build a related ' . $modelName );
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
@@ -2683,7 +2681,7 @@ abstract class EEM_Base extends EE_Base{
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
-				EEH_Debug_Tools::instance()->stop_timer( 'build a related' );
+				EEH_Debug_Tools::instance()->stop_timer( 'build a related ' . $modelName );
 			}
 			EEH_Debug_Tools::instance()->stop_timer( 'build related' );
 		}
@@ -2747,7 +2745,6 @@ abstract class EEM_Base extends EE_Base{
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		EEH_Debug_Tools::instance()->start_timer( 'filter-out-non-model-columns' );
 		foreach( $this->field_settings() as $field_name => $field_obj ){
 			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
 				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
@@ -2758,7 +2755,6 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
 			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
 		}
-		EEH_Debug_Tools::instance()->stop_timer( 'filter-out-non-model-columns' );
 		$className=$this->_get_class_name();
 
 		//check we actually foudn results that we can use to build our model object
@@ -2769,9 +2765,7 @@ abstract class EEM_Base extends EE_Base{
 
 		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
 		if ( $primary_key){
-			EEH_Debug_Tools::instance()->start_timer( 'check-if-in-entity-map' );
 			$classInstance = $this->get_from_entity_map( $primary_key );
-			EEH_Debug_Tools::instance()->stop_timer( 'check-if-in-entity-map' );
 			if( ! $classInstance) {
 				EEH_Debug_Tools::instance()->start_timer( 'load_class' );
 				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
