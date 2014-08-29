@@ -145,6 +145,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_paths' => isset( $setup_args['class_paths'] ) ? (array) $setup_args['class_paths'] : array(),
 			'model_extension_paths' => isset( $setup_args['model_extension_paths'] ) ? (array) $setup_args['model_extension_paths'] : array(),
 			'class_extension_paths' => isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
+			'payment_method_paths' => isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
 		);
 
 		//this is an activation request
@@ -237,6 +238,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
 			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
+		}
+		if( ! empty( self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) ){
+			EE_Register_Payment_Method::register($addon_name, array( 'payment_method_paths' => self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) );
 		}
 		// load and instantiate main addon class
 		$addon = self::_load_and_init_addon_class($addon_name);
