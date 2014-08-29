@@ -86,6 +86,38 @@ abstract class EEM_Base extends EE_Base{
 	protected $_timezone;
 
 	/**
+	 * A copy of _fields, except the array keys are the model names pointed to by
+	 * the field
+	 * @var EE_Model_Field[]
+	 */
+	private $_cache_foreign_key_to_fields = array();
+
+	/**
+	 * Cached list of all the fields on the model, indexed by their name
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_cached_fields = NULL;
+
+	/**
+	 * Cached list of all the fields on the model, except those that are
+	 * marked as only pertinent to the database
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_cached_fields_non_db_only = NULL;
+
+	/**
+	 * A cached reference to the primary key for quick lookup
+	 * @var EE_Model_Field_Base
+	 */
+	private $_primary_key_field = NULL;
+
+	/**
+	 * Flag indicating whether this model has a primary key or not
+	 * @var boolean
+	 */
+	protected $_has_primary_key_field=null;
+
+	/**
 	 *	List of valid operators that can be used for querying.
 	 * The keys are all operators we'll accept, the values are the real SQL
 	 * operators used
@@ -477,7 +509,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		global $wpdb;
+		EE_Registry::instance()->load_helper('Debug_Tools' );
+		EEH_Debug_Tools::instance()->start_timer( 'build query' );
+
 
 		//remember the custom selections, if any
 		if(is_array($columns_to_select)){
@@ -492,8 +526,10 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-
+		EEH_Debug_Tools::instance()->stop_timer( 'build query');
+		EEH_Debug_Tools::instance()->start_timer( 'run query');
 		$results =  $this->_do_wpdb_query( 'get_results', array($SQL, $output ) );// $wpdb->get_results($SQL, $output);
+		EEH_Debug_Tools::instance()->stop_timer('run query');
 		return $results;
 	}
 
@@ -2478,30 +2514,27 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-	/**
-	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
-	 * Eg, on EE_Answer that would be ANS_ID field object
-	 * @return EE_Model_Field_Base
-	 * @throws EE_Error
-	 */
+//	/**
+//	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
+//	 * Eg, on EE_Answer that would be ANS_ID field object
+//	 * @return EE_Model_Field_Base
+//	 * @throws EE_Error
+//	 */
 	public function get_primary_key_field(){
-		foreach( $this->field_settings( TRUE ) as $field_obj ){
-			if( $this->is_primary_key_field( $field_obj )){
-				return $field_obj;
+		if( $this->_primary_key_field === NULL ){
+			foreach( $this->field_settings( TRUE ) as $field_obj ){
+				if( $this->is_primary_key_field( $field_obj )){
+					$this->_primary_key_field = $field_obj;
+					break;
+				}
+			}
+			if( ! $this->_primary_key_field ){
+				throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 			}
 		}
-		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		return $this->_primary_key_field;
+
 	}
-
-
-
-	/**
-	 * Flag indicating whether this model has a primary key or not
-	 * @var boolean
-	 */
-	protected $_has_primary_key_field=null;
-
-
 
 	/**
 	 * Returns whether or not not there is a primary key on this model.
@@ -2535,6 +2568,8 @@ abstract class EEM_Base extends EE_Base{
 		return null;
 
 	}
+
+
 	/**
 	 * Gets a foreign key field pointing to model.
 	 * @param string $model_name eg Event, Registration, not EEM_Event
@@ -2542,16 +2577,21 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){
-		foreach($this->field_settings() as $field){
-			if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
-				if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
-					return $field;
-				}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
-					return $field;
+		if( ! isset( $this->_cache_foreign_key_to_fields[ $model_name ] ) ){
+			foreach($this->field_settings() as $field){
+				if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
+					if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
+						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
+					}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
+					}
 				}
 			}
+			if( ! isset( $this->_cache_foreign_key_to_fields[ $model_name ] ) ){
+				throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
+			}
 		}
-		throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
+		return $this->_cache_foreign_key_to_fields[ $model_name ];
 	}
 
 
@@ -2565,8 +2605,6 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_tables[$table_alias]->get_table_name();
 	}
 
-
-
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them
 	 * by table_alias as they are in the constructor.
@@ -2574,15 +2612,29 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Field_Base[] where the keys are the field's name
 	 */
 	public function field_settings($include_db_only_fields = false){
-		$all_fields = array();
-		foreach($this->_fields as $fields_corresponding_to_table){
-			foreach($fields_corresponding_to_table as $field_name => $field_obj){
-				if( !$field_obj->is_db_only_field() || ($include_db_only_fields && $field_obj->is_db_only_field())){
-					$all_fields[$field_name]=$field_obj;
+		if( $include_db_only_fields ){
+			if( $this->_cached_fields === NULL ){
+				$this->_cached_fields = array();
+				foreach($this->_fields as $fields_corresponding_to_table){
+					foreach($fields_corresponding_to_table as $field_name => $field_obj){
+						$this->_cached_fields[$field_name]=$field_obj;
+					}
 				}
 			}
+			return $this->_cached_fields;
+		}else{
+			if( $this->_cached_fields_non_db_only === NULL ){
+				$this->_cached_fields_non_db_only = array();
+				foreach($this->_fields as $fields_corresponding_to_table){
+					foreach($fields_corresponding_to_table as $field_name => $field_obj){
+						if( ! $field_obj->is_db_only_field() ){
+							$this->_cached_fields_non_db_only[$field_name]=$field_obj;
+						}
+					}
+				}
+			}
+			return $this->_cached_fields_non_db_only;
 		}
-		return $all_fields;
 	}
 
 	/**
@@ -2593,14 +2645,14 @@ abstract class EEM_Base extends EE_Base{
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/
 	protected function _create_objects( $rows = array() ) {
-
+		EEH_Debug_Tools::instance()->start_timer( 'built objects' );
 		$array_of_objects=array();
 		if(empty($rows)){
 			return array();
 		}
 		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
-
+			EEH_Debug_Tools::instance()->start_timer( 'build one' );
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
 			}
@@ -2609,12 +2661,15 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
+			EEH_Debug_Tools::instance()->stop_timer( 'build one' );
+			EEH_Debug_Tools::instance()->start_timer( 'build related' );
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
 			//that filtered out some fo the results, then we'd be caching an incomplete set
 			//so it requires a little more thought than just caching them immediately...)
 			foreach($this->_model_relations as $modelName => $relation_obj){
+				EEH_Debug_Tools::instance()->start_timer( 'build a related' );
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
@@ -2628,8 +2683,11 @@ abstract class EEM_Base extends EE_Base{
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
+				EEH_Debug_Tools::instance()->stop_timer( 'build a related' );
 			}
+			EEH_Debug_Tools::instance()->stop_timer( 'build related' );
 		}
+		EEH_Debug_Tools::instance()->stop_timer('built objects');
 		return $array_of_objects;
 	}
 
@@ -2655,7 +2713,25 @@ abstract class EEM_Base extends EE_Base{
 		return $classInstance;
 	}
 
+	/**
+	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
+	 * table column, and one for just the table column). This is primarily only used to speed up querying
+	 *
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_model_fields_sorted_by_db_col = NULL;
+	private function _get_cached_acceptable_table_columns(){
+		if( $this->_model_fields_sorted_by_db_col === NULL ){
+			foreach( $this->field_settings() as $field_name => $field_obj ){
+				if( ! $field_obj->is_db_only_field() ){
+					$this->_model_fields_sorted_by_db_col[ $field_obj->get_qualified_column() ] = $field_obj;
+					$this->_model_fields_sorted_by_db_col[ $field->get_table_column() ] = $field_obj;
+				}
 
+			}
+		}
+		return $this->_model_fields_sorted_by_db_col;
+	}
 
 	/**
 	 *
@@ -2664,26 +2740,25 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
+		EEH_Debug_Tools::instance()->start_timer( 'instantiate_class_from_array_or_object' );
 		if( ! is_array( $cols_n_values ) && is_object( $cols_n_values )) {
 			$cols_n_values = get_object_vars( $cols_n_values );
 		}
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		foreach( $cols_n_values as $col => $val ) {
-			foreach( $this->field_settings() as $field_name => $field_obj ){
-				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-				//does the field on the model relate to this column retrieved from the db?
-				//or is it a db-only field? (not relating to the model)
-				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
-					//OK, this field apparently relates to this model.
-					//now we can add it to the array
-					$this_model_fields_n_values[$field_name] = $val;
-					// grab the primary key
-					$primary_key = $this->has_primary_key_field() && $this->is_primary_key_field( $field_obj ) ? $val : $primary_key;
-				}
+		EEH_Debug_Tools::instance()->start_timer( 'filter-out-non-model-columns' );
+		foreach( $this->field_settings() as $field_name => $field_obj ){
+			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
+				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
+			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
+				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
 			}
 		}
+		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
+			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
+		}
+		EEH_Debug_Tools::instance()->stop_timer( 'filter-out-non-model-columns' );
 		$className=$this->_get_class_name();
 
 		//check we actually foudn results that we can use to build our model object
@@ -2694,9 +2769,13 @@ abstract class EEM_Base extends EE_Base{
 
 		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
 		if ( $primary_key){
+			EEH_Debug_Tools::instance()->start_timer( 'check-if-in-entity-map' );
 			$classInstance = $this->get_from_entity_map( $primary_key );
+			EEH_Debug_Tools::instance()->stop_timer( 'check-if-in-entity-map' );
 			if( ! $classInstance) {
+				EEH_Debug_Tools::instance()->start_timer( 'load_class' );
 				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
+				EEH_Debug_Tools::instance()->stop_timer( 'load_class' );
 				// add this new object to the entity map
 				$classInstance = $this->add_to_entity_map( $classInstance );
 			}
@@ -2706,7 +2785,7 @@ abstract class EEM_Base extends EE_Base{
 
 			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentionally override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );
-
+		EEH_Debug_Tools::instance()->stop_timer( 'instantiate_class_from_array_or_object' );
 		return $classInstance;
 	}
 	/**
