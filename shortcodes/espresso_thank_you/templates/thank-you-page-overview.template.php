@@ -1,7 +1,8 @@
-<?php  do_action( 'AHEE__thank_you_page_overview_template__top' ); ?>
+<?php  do_action( 'AHEE__thank_you_page_overview_template__top', $transaction ); ?>
 
 <div id="espresso-thank-you-page-overview-dv" class="width-100" >
 
+	<?php if ( ! $revisit ) : ?>
 	<div class="ee-attention">
 		<div class="extra-padding-sides jst-left">
 			<p class="bigger-text">
@@ -22,6 +23,7 @@
 		</div>
 	</div>
 	<br/>
+	<?php endif; ?>
 	<br/>
 
 	<?php  do_action( 'AHEE__thank_you_page_overview_template__content', $transaction ); ?>
