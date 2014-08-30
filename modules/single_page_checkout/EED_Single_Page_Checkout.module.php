@@ -95,6 +95,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_ajax_nopriv_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_display_spco_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
 		add_action( 'wp_ajax_nopriv_display_spco_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
+		add_action( 'wp_ajax_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
+		add_action( 'wp_ajax_nopriv_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 	}
 
 
@@ -123,6 +125,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function process_reg_step() {
 		EED_Single_Page_Checkout::process_ajax_request( 'process_reg_step' );
+	}
+
+
+
+	/**
+	 * 	ajax process registration step
+	 */
+	public static function update_reg_step() {
+		EED_Single_Page_Checkout::process_ajax_request( 'update_reg_step' );
 	}
 
 
@@ -275,21 +286,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_request_handler();
 		// setup the EE_Checkout object
 		$this->checkout = $this->_initialize_checkout();
+		// get the $_GET
+		$this->_get_request_vars();
 		// filter continue_reg
-		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
+		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
 		$this->_instantiate_reg_steps();
 		// set the current step
-		$this->checkout->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
+		$this->checkout->set_current_step( $this->checkout->step );
 		// and the next step
 		$this->checkout->set_next_step();
-		// and what we're doing on the current step
-		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
 		// and whether or not to generate a reg form for this request
 		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
 //		$this->checkout->mark_twain( __CLASS__, __FUNCTION__, __FILE__, __LINE__, '$this->checkout->action: ' . $this->checkout->action );
-		// returning from the thank you page ?
-		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// was there already a valid transaction in the checkout from the session ?
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
@@ -307,6 +316,27 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
+	}
+
+
+
+	/**
+	 *    _get_request_vars
+	 *
+	 * @access 	private
+	 * @return 	void
+	 */
+	private function _get_request_vars() {
+		// load classes
+		EED_Single_Page_Checkout::load_request_handler();
+		// which step is being requested ?
+		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
+		// and what we're doing on the current step
+		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
+		// returning to edit ?
+		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
+		// or some other kind of revisit ?
+		$this->checkout->revisit = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 	}
 
 
@@ -352,6 +382,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
 			// we need a
 			if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
+				// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
+				if ( $this->checkout->reg_url_link && $this->checkout->step !== $reg_step['slug'] && $reg_step['slug'] !== 'finalize_registration' ) {
+					continue;
+				}
 				// instantiate step class using file path and class name
 				$reg_step_obj = EE_Registry::instance()->load_file( $reg_step['file_path'], $reg_step['class_name'], 'class', $this->checkout, FALSE  );
 				// did we gets the goods ?
@@ -411,7 +445,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			try {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
-				if ( $this->checkout->action == 'process_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
+				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
 					// capture form data
 					$this->checkout->current_step->reg_form->receive_form_submission();
 					// validate form data
