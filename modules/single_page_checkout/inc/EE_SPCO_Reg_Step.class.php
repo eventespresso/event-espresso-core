@@ -302,14 +302,6 @@ abstract class EE_SPCO_Reg_Step {
 							'html_id' 			=> 'spco-revisit',
 							'default' 			=> $this->checkout->revisit
 						)
-					),
-					'noheader' 			=> new EE_Hidden_Input(
-						array(
-							'html_name' 	=> 'noheader',
-							'html_id' 			=> 'spco-' . $this->slug() . '-noheader',
-							'default' 			=> '',
-							'normalization_strategy' => new EE_Boolean_Normalization()
-						)
 					)
 				)
 			)
