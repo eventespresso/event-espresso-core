@@ -547,7 +547,6 @@ jQuery(document).ready( function($) {
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
-			$('#spco-'+step+'-noheader').val('true');
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&ee_front_ajax=1';
 			form_data += '&noheader=true';
