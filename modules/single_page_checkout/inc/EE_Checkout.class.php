@@ -50,6 +50,12 @@ class EE_Checkout {
 	public $generate_reg_form = TRUE;
 
 	/**
+	 * the reg step slug from the incoming request
+	 * @type string
+	 */
+	public $step = '';
+
+	/**
 	 * the action being performed on the current step
 	 * @type string
 	 */
@@ -420,34 +426,27 @@ class EE_Checkout {
 							$registration->set_transaction_id( $this->transaction->ID() );
 						}
 						// verify and save the attendee
-						$attendee = $registration->attendee();
-						if ( $attendee ) {
-							if ( $attendee instanceof EE_Attendee ) {
-//								d( $attendee );
-//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-								$attendee->save();
-								$registration->set_attendee_id( $attendee->ID() );
-								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
-									EE_Error::add_error(
-										__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
-										__FILE__, __FUNCTION__, __LINE__
-									);
-									return FALSE;
-								}
-							} else {
+					$attendee = $registration->attendee();
+						if ( $attendee instanceof EE_Attendee ) {
+//							d( $attendee );
+//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							$attendee->save();
+							$registration->set_attendee_id( $attendee->ID() );
+							if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
 								EE_Error::add_error(
-									__( 'An invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
+									__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
 									__FILE__, __FUNCTION__, __LINE__
 								);
 								return FALSE;
 							}
 						} else {
 							EE_Error::add_error(
-								__( 'No Attendee object was found when attempting to save your registration information.', 'event_espresso' ),
+								__( 'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
 								__FILE__, __FUNCTION__, __LINE__
 							);
 							return FALSE;
 						}
+
 						// save so that REG has ID
 						$registration->save();
 						// now save the answers
