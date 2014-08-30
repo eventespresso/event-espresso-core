@@ -81,25 +81,27 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		if ( $registrations ) {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
-					$subsections[ $registration->reg_url_link() ] = $this->registrations_reg_form( $registration );
-					if ( ! $this->checkout->admin_request ) {
-						$template_args['registrations'][ $registration->reg_url_link() ] = $registration;
-						$template_args['ticket_count'][ $registration->ticket()->ID() ] = isset( $template_args['ticket_count'][ $registration->ticket()->ID() ] ) ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1 : 1;
+					if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $registration->reg_url_link() )) {
+						$subsections[ $registration->reg_url_link() ] = $this->registrations_reg_form( $registration );
+						if ( ! $this->checkout->admin_request ) {
+							$template_args['registrations'][ $registration->reg_url_link() ] = $registration;
+							$template_args['ticket_count'][ $registration->ticket()->ID() ] = isset( $template_args['ticket_count'][ $registration->ticket()->ID() ] ) ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1 : 1;
+						}
+						if ( $registration->is_primary_registrant() ) {
+							$primary_registrant = $registration->reg_url_link();
+						}
 					}
-					if ( $registration->is_primary_registrant() ) {
-						$primary_registrant = $registration->reg_url_link();
-					}
+				}
 			}
-		}
-		// print_copy_info ?
-		if ( $primary_registrant && count( $registrations ) > 1 && ! $this->checkout->admin_request ) {
-			// TODO: add admin option for toggling copy attendee info, then use that value to change $this->_print_copy_info
-			$copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
-			// generate hidden input
-			if ( $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper ) {
-				$subsections[ $primary_registrant ]->add_subsections( $copy_options );
+			// print_copy_info ?
+			if ( $primary_registrant && count( $registrations ) > 1 && ! $this->checkout->admin_request ) {
+				// TODO: add admin option for toggling copy attendee info, then use that value to change $this->_print_copy_info
+				$copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
+				// generate hidden input
+				if ( isset( $subsections[ $primary_registrant ] ) && $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper ) {
+					$subsections[ $primary_registrant ]->add_subsections( $copy_options );
+				}
 			}
-		}
 
 		}
 
@@ -506,7 +508,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
 		//d( $valid_data );
-		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -643,14 +645,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					// add relation to registration, set attendee ID, and cache attendee
 					$this->_associate_attendee_with_registration( $registration, $attendee );
 
-				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
+					//				d( $attendee );
+					if ( ! $registration->attendee() instanceof EE_Attendee ) {
+						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
+						return FALSE;
+					}
+					//	 printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-//				d( $attendee );
-				if ( ! $registration->attendee() instanceof EE_Attendee ) {
-					EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
-					return FALSE;
-				}
-				//	 printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 
 			}  else {
 				EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -896,14 +898,20 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function update_reg_step() {
-		if ( $this->checkout->transaction instanceof EE_Transaction && $this->checkout->continue_reg ) {
-			// save everything
-			if ( $this->_save_all_registration_information() ) {
-				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->_thank_you_page_url );
-				$this->_redirect_to_thank_you_page = TRUE;
-			}
+		// save everything
+		if ( $this->process_reg_step() ) {
+			$this->checkout->redirect = TRUE;
+			$this->checkout->redirect_url = add_query_arg(
+				array(
+					'e_reg_url_link' => $this->checkout->reg_url_link,
+					'revisit' => TRUE
+				),
+				$this->checkout->thank_you_page_url
+			);
+			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+			return TRUE;
 		}
-		$this->go_to_next_step( __FUNCTION__ );
+		return FALSE;
 	}
 
 
