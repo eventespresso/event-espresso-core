@@ -197,7 +197,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
-			add_action( 'EE_Brewing_Regular__messages_caf', array( EE_Register_Addon, 'register_message_types' ) );
+			add_action( 'EE_Brewing_Regular__messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
 
