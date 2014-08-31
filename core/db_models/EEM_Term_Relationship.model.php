@@ -117,10 +117,14 @@ from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_opera
 	 * all ok
 	 * @param array $fields_n_values see EEM_Base::update
 	 * @param array $query_params @see EEM_Base::get_all
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int
 	 */
-	public function update($fields_n_values, $query_params) {
-		$count = parent::update($fields_n_values, $query_params);
+	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE) {
+		$count = parent::update($fields_n_values, $query_params, $keep_model_objs_in_sync );
 		if( $count ){
 			$this->update_term_taxonomy_counts();
 		}
