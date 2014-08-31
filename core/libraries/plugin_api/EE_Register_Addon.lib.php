@@ -77,6 +77,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *                                                                          type should activate with. Each value in the
 	 *                                                                          array should match the name property of a
 	 *                                                                          EE_messenger. Optional.
+	 *                     @type array $messengers_to_validate_with An array of messengers that this message
+	 *                           				      type should validate with. Each value in the array
+	 *                           				      should match the name property of an EE_messenger.
+	 *                           				      Optional.
 	 *       	}
 	 * 	}
 	 * @return void
