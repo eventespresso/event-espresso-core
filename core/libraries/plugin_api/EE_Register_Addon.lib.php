@@ -130,7 +130,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 			// array of PUE options used by the addon
 			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
-			'message_type' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array()
+			'message_types' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array(),
 		);
 
 		//this is an activation request
