@@ -393,7 +393,7 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the reciept
+	 * Gets the URL for viewing the receipt
 	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
