@@ -7,7 +7,7 @@
 
 		/**
 		*	center elements on screen
-		 * @param {string}  position : relative, absolute or fixed (default)
+		 * @param {string}  position // relative, absolute or fixed (default)
 		*/
 		eeCenter : function( position ) {
 			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
