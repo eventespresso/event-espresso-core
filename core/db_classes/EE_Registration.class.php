@@ -2,22 +2,6 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
-
-/**
  * EE_Registration class
  *
  * @package 			Event Espresso
@@ -462,43 +446,33 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/receipt_body.template.php';
-		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
-
-		if ( $has_custom ) {
+		EE_Registry::instance()->load_helper( 'Template' );
+		// check if custom template exists
+		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/receipt_body.template.php' , array(), FALSE, FALSE, TRUE )) {
 			return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( 'launch' ) );
 		}
-
-
 		EE_Registry::instance()->load_helper('MSG_Template');
-
 		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?)
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
 			'MTP_message_type' => 'receipt',
-			);
-
-		//get global template first as the fallback
-		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-		//get evt_id from this registration obj
-		$template_qa['Event.EVT_ID'] = $this->event_ID();
-
+			'Event.EVT_ID' => $this->event_ID()
+		);
 		//get the message template group.
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
-
-		//if we don't have a $mtpg then return
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		// check instanceof
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+			// get global template as the fallback
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+		}
+		// if we STILL don't have an EE_Message_Template_Group, then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 			return '';
 		}
-
 		//validate $type
 		$type = $type == 'pdf' ? $type : 'html';
-
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $mtpg->ID(), $this->transaction_ID() );
+		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $msg_template_group->ID(), $this->transaction_ID() );
 	}
 
 
@@ -516,51 +490,40 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/invoice_body.template.php';
-		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
-
-		if ( $has_custom ) {
+		// check for custom template
+		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/invoice_body.template.php' , array(), FALSE, FALSE, TRUE ) ) {
 			if ( $type == 'html' ) {
 				return $this->invoice_url( 'launch' );
 			}
 			$route = $type == 'download' || $type == 'pdf' ? 'download_invoice' : 'launch_invoice';
-
 			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
 			if ( $type == 'html' ) {
 				$query_args['html'] = TRUE;
 			}
 			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
 		}
-
-
 		EE_Registry::instance()->load_helper('MSG_Template');
-
 		//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
 			'MTP_message_type' => 'invoice',
-			);
-
-		//get global template first as the fallback
-		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-		//get evt_id from this registration obj
-		$template_qa['Event.EVT_ID'] = $this->event_ID();
-
+			'Event.EVT_ID' => $this->event_ID()
+		);
 		//get the message template group.
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
-
-		//if we don't have a $mtpg then return
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		//if we don't have an EE_Message_Template_Group then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+			//get global template as the fallback
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		}
+		//if we don't have an EE_Message_Template_Group then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 			return '';
 		}
-
 		//validate $type
 		$type = $type == 'pdf' ? $type : 'html';
-
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'invoice', $this, $mtpg->ID(), $this->transaction_ID() );
+		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'invoice', $this, $msg_template_group->ID(), $this->transaction_ID() );
 	}
 
 
