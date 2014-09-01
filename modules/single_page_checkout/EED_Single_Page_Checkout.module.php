@@ -1,25 +1,11 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * Single Page Checkout (SPCO)
  *
  * @package			Event Espresso
- * @subpackage	/modules/single_page_checkout/
+ * @subpackage		/modules/single_page_checkout/
  * @author				Brent Christensen
  *
- * ------------------------------------------------------------------------
  */
 class EED_Single_Page_Checkout  extends EED_Module {
 
@@ -531,8 +517,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return mixed EE_Transaction|NULL
 	 */
 	private function _get_transaction_and_cart_for_previous_visit() {
+		/** @var $TXN_model EEM_Transaction */
+		$TXN_model = EE_Registry::instance()->load_model( 'Transaction' );
 		// because the reg_url_link is present in the request, this is a return visit to SPCO, so we'll get the transaction data from the db
-		$transaction = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->checkout->reg_url_link );
+		$transaction = $TXN_model->get_transaction_from_reg_url_link( $this->checkout->reg_url_link );
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
 			// and get the cart that was used for that transaction
@@ -817,8 +805,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								'empty_msg' 		=> apply_filters(
 									'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 									sprintf(
-										__( 'You need to %sselect at least one event%s before you can proceed with the registration process.', 'event_espresso' ),
-										'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="' . __( 'Return to Events list', 'event_espresso' ) . '">',
+										__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
+										'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="',
+										'">',
 										'</a>'
 									)
 								)
@@ -862,7 +851,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( ! empty( EE_Registry::instance()->CFG->admin->affiliate_id )) {
 				$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
 				$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
-				echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></div>' );
+				echo apply_filters(
+					'FHEE__EE_Front_Controller__display_registration_footer',
+					sprintf(
+						__( '%1$sEvent Registration Powered by Event Espresso%2$sEvent Registration and Ticketing%3$s Powered by %4$sEvent Espresso - Event Registration and Management System for WordPress%5$sEvent Espresso%6$s', 'event_espresso' ),
+						'<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="',
+						'" target="_blank">',
+						'</a>',
+						'<a href="' . $url . '" title="',
+						'" target="_blank">',
+						'</a></div>'
+					)
+				);
 			}
 		}
 	}
