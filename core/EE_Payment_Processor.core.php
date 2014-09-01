@@ -229,7 +229,7 @@ class EE_Payment_Processor{
 	 * logic to perform here. For example, if process_payment() happens on a special request
 	 * and then the user is redirected to a page that displays the payment's status, this
 	 * should be called while loading the page that displays the payment's status. If the user is
-	 * sent to an offsite paymetn provider, this should be called upon returning from that offsite payment
+	 * sent to an offsite payment provider, this should be called upon returning from that offsite payment
 	 * provider.
 	 * @param EE_Transaction $transaction
 	 * @return EE_Payment
