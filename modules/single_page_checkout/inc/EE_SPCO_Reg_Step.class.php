@@ -331,6 +331,9 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_step_submit_button() {
+		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			return '';
+		}
 		$sbmt_btn = new EE_Submit_Input( array(
 			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
 			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
