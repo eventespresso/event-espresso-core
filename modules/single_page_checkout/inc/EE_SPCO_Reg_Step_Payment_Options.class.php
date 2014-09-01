@@ -14,7 +14,7 @@
 class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
-	 * @type \EEM_Payment_Method
+	 * @type EEM_Payment_Method
 	 */
 	private $_Payment_Method_Model = NULL;
 
@@ -898,6 +898,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	@return 	mixed	EE_Payment | boolean
 	 */
 	private function _attempt_payment( EE_Payment_Method $payment_method ) {
+		$payment =NULL;
 		$this->checkout->transaction->save();
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		if ( ! $payment_processor instanceof EE_Payment_Processor ) {
