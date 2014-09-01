@@ -68,6 +68,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function generate_reg_form() {
 		$this->_print_copy_info = FALSE;
 		$primary_registrant = NULL;
+		/** @var $subsections EE_Form_Section_Proper[] */
 		$subsections = array(
 			'default_hidden_inputs' => $this->reg_step_hidden_inputs()
 		);
@@ -127,10 +128,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 	/**
 	 * @param EE_Registration $registration
-	 * @param int             $total_registrations
 	 * @return EE_Form_Section_Proper
 	 */
-	public function registrations_reg_form( EE_Registration $registration, $total_registrations = 1 ) {
+	public function registrations_reg_form( EE_Registration $registration ) {
 		EE_Registry::instance()->load_helper( 'Template' );
 		static $attendee_nmbr = 1;
 		// array of params to pass to parent constructor
@@ -509,7 +509,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$valid_data = $this->checkout->current_step->valid_data();
 		//d( $valid_data );
 //		printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
+		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -672,9 +672,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 *    _save_registration_form_input
 	 *
 	 * @param EE_Registration $registration
-	 * @param array           $answers
-	 * @param string          $form_input
-	 * @param string          $input_value
+	 * @param EE_Answer[] 	$answers
+	 * @param string          		$form_input
+	 * @param string           	$input_value
 	 * @return boolean
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $answers = array(), $form_input = '', $input_value = '' ) {
