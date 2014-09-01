@@ -469,7 +469,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * Gets the postmeta key that holds this attendee's billing info for the
-	 * specified paymetn method
+	 * specified payment method
 	 * @param EE_Payment_Method $payment_method
 	 * @return string
 	 */
