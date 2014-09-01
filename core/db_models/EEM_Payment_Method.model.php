@@ -211,7 +211,7 @@ class EEM_Payment_Method extends EEM_Base {
 	/**
 	 * Gets the ID of this object, or if its a string finds the object's id
 	 * associated with that slug
-	 * @param type $base_obj_or_id_or_slug
+	 * @param mixed $base_obj_or_id_or_slug
 	 * @return int
 	 */
 	function ensure_is_ID($base_obj_or_id_or_slug){
@@ -279,10 +279,11 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @param string $scope @see EEM_Payment_Method::get_all_for_events
 	 * @return EE_Payment_Method[]
 	 */
-	public function get_all_for_transaction($transaction,$scope){
-		//@todo take relations between events and payment methods into account, once
-		//that relation exists
-		//@todo take the relation between transaction and currencies into account
+	public function get_all_for_transaction( $transaction, $scope ){
+		//@todo take relations between events and payment methods into account, once that relation exists
+		if ( $transaction instanceof EE_Transaction ) {
+			//@todo take the relation between transaction and currencies into account
+		}
 		$currencies_for_events = array(EE_Config::instance()->currency->code);
 		return $this->get_all_active($scope, array(array('Currency.CUR_code'=>array('IN',$currencies_for_events))));
 	}
