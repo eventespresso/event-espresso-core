@@ -340,7 +340,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param type $engine_string
 	 */
 	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=MyISAM '){
-		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
+		$currently_migrating = $this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() );
+		if( $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation  || $currently_migrating ){
 			$drop_pre_existing_tables = true;
 		}else{
 			$drop_pre_existing_tables = false;
