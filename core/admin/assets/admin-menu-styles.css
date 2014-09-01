@@ -248,6 +248,21 @@ div.TB-ee-frame a {
 .drk-grey-icon:before, .drk-grey { color: #59595B; }
 .black-icon:before, .black { color: #2F3334; }
 
+/** corresponding background colors **/
+.pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: #E44064; }
+.green-bg, .reg-status-bg-RAP, .txn-status-bg-TCM, .pymt-status-bg-PAP { background-color: #70CC50; }
+.drk-green-bg { background-color: #009900; }
+.red-bg { background-color: #B4113F; }
+.orange-bg, .reg-status-bg-RNA, .txn-status-bg-TOP, .pymt-status-bg-PFL { background-color: #E76700; }
+.lt-blue-bg, .reg-status-bg-RPP, .txn-status-bg-TIN, .pymt-status-bg-PPN { background-color: #00B1CA; }
+.blue-bg { background-color: #005B9E; }
+.yellow-bg { background-color: #F8D755; }
+.lt-grey-bg, .reg-status-bg-RCN, .pymt-status-bg-PCN { background-color: #AC9D9C; }
+.grey-bg { background-color: #888; }
+.drk-grey-bg { background-color: #59595B; }
+.black-bg { background-color: #2F3334; }
+
+
 
 .tags-links a {
 	white-space: nowrap;
