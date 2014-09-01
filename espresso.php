@@ -261,7 +261,7 @@ interface EEI_Payment extends EEI_Base{
 
 	/**
 	 * Sets the response details, usually the entire contents of an IPN request,
-	 * or data about the direct paymetn data sent
+	 * or data about the direct payment data sent
 	 * @param array $response_details
 	 */
 	function set_details($response_details);
