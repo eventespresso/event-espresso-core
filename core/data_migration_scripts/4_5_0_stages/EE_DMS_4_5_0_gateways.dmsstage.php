@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
@@ -16,10 +15,12 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * to 4.5-style payment methods (which have their database table)
  */
 class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
+
 	protected $_new_table_name;
 	protected $_extra_meta_table_name;
 	protected $_currency_table_name;
 	protected $_currency_payment_method_table_name;
+
 	/**
 	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.5
 	 * @var array
@@ -34,6 +35,11 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		'Paypal_Standard',
 	);
 
+
+
+	/**
+	 * Just initializes the status of the migration
+	 */
 	public function __construct() {
 		global $wpdb;
 		$this->_new_table_name = $wpdb->prefix."esp_payment_method";
@@ -44,11 +50,27 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		parent::__construct();
 	}
 
+
+
+	/**
+	 * Counts the records to migrate; the public version may cache it
+	 * @return int
+	 */
 	protected function _count_records_to_migrate() {
 		return count(EE_Config::instance()->gateway->payment_settings);
 	}
 
 
+
+	/**
+	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
+	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
+	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
+	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
+	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
+	 * @param int $num_items_to_migrate
+	 * @return int number of items ACTUALLY migrated
+	 */
 	protected function _migration_step($num_items_to_migrate = 50) {
 		$items_actually_migrated = 0;
 		$gateways_to_deal_with = array_slice(EE_Config::instance()->gateway->payment_settings,$this->count_records_migrated(),$num_items_to_migrate);
@@ -80,14 +102,13 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 	}
 
 	/**
-	 * Converts the 4.1-style gateway to a 4.5-style paymetn method and saves it to the DB
+	 * Converts the 4.1-style gateway to a 4.5-style payment method and saves it to the DB
 	 * @param string $old_gateway_slug
 	 * @param array $old_gateway_settings
-	 * @param boolean $active indicates the gatewya is currently active
+	 * @param boolean $active indicates the gateway is currently active
 	 * @return boolean success
 	 */
 	protected function _convert_gateway_settings($old_gateway_slug,$old_gateway_settings,$active){
-		$extra_meta_key_values = array();
 		switch($old_gateway_slug){
 			case 'Aim':
 				$extra_meta_key_values = array(
@@ -149,14 +170,13 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 				$extra_meta_key_values = array(
 					'paypal_id' => $old_gateway_settings[ 'paypal_id' ],
 					'image_url' => $old_gateway_settings[ 'image_url' ],
-					'shipping_details' => isset( $old_gateway_settings[ 'no_shippping' ] ) ? $old_gateway_settings[ 'no_shippping' ] : false,
+					'shipping_details' => isset( $old_gateway_settings[ 'no_shipping' ] ) ? $old_gateway_settings[ 'no_shipping' ] : false,
 
 				);
 				$desc = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration', 'event_espresso' );
 				break;
 			default:
-				//if we don't recognize the payment method, just put everything in it into
-				//extra metas. At least this way its preserved somewhere
+				//if we don't recognize the payment method, just put everything in it into extra meta. At least this way its preserved somewhere
 				$extra_meta_key_values = $old_gateway_settings;
 				$desc = '';
 		}
@@ -168,7 +188,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 			$scope = array( 'CART' );
 		}elseif( ! $active && in_array($old_gateway_slug,$offline_gateways ) ) {
 			$scope = array( 'ADMIN' );
-		}else{// ! active && ! in_array($old_gateway_slug, $offline_gateways) )
+		}else{
 			$scope = array();
 		}
 		$payment_method_col_values = array(
@@ -194,7 +214,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		//first: check if it already exists
 		$id = $wpdb->get_var( $wpdb->prepare( "SELECT PMD_ID FROM {$this->_new_table_name} WHERE PMD_slug=%s", $payment_method_col_values[ 'PMD_slug' ] ) );
 		if( $id ){
-			//just update that payment method instead of creatin ga new one
+			//just update that payment method instead of creating a new one
 			$success = $wpdb->update(
 					$this->_new_table_name,
 					$payment_method_col_values,
@@ -226,9 +246,13 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 			$this->get_migration_script()->set_mapping( 'EE_Gateway_Config', $old_gateway_slug, $this->_new_table_name, $id );
 			return true;
 		}
+		return false;
 	}
+
+
+
 	/**
-	 * Converts old gateway settings whicih don't map onto the Payment_Method model
+	 * Converts old gateway settings which don't map onto the Payment_Method model
 	 * to extra meta fields
 	 * @param int $id
 	 * @param array $extra_meta_key_values
