@@ -43,7 +43,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 
 	public function translate_js_strings() {
-
+		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required question.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['required_multi_field'] = __(' is a required question. Please enter a value for at least one of the options.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('Please answer all required questions correctly before proceeding.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['attendee_info_copied'] = sprintf( __('The attendee information was successfully copied.%sPlease ensure the rest of the registration form is completed before proceeding.', 'event_espresso'), '<br/>' );
+		EE_Registry::$i18n_js_strings['attendee_info_copy_error'] = __('An unknown error occurred on the server while attempting to copy the attendee information. Please refresh the page and try again.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
 	}
 
 
@@ -137,6 +143,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$form_args = array(
 			'html_id' 				=> 'ee-registration-' . $registration->reg_url_link(),
 			'html_class' 		=> 'ee-reg-form-attendee-dv',
+			'html_style' 		=> $this->checkout->admin_request ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;' : '',
 			'subsections' 		=> array(),
 			'layout_strategy' => new EE_Fieldset_Section_Layout(
 				array(
@@ -218,21 +225,25 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// array of params to pass to parent constructor
 		$form_args = array(
 			'html_id' 					=> 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
-			'html_class' 			=> 'ee-reg-form-qstn-grp-dv',
+			'html_class' 			=> $this->checkout->admin_request ? 'form-table ee-reg-form-qstn-grp-dv' : 'ee-reg-form-qstn-grp-dv',
 			'html_label_id' 		=> 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
 			'subsections' 			=> array(
 				'reg_form_qstn_grp_hdr' => $this->question_group_header( $question_group )
 			),
-			'layout_strategy' 	=> new EE_Div_Per_Section_Layout()
+			'layout_strategy' 	=> $this->checkout->admin_request
+					? new EE_Two_Column_Layout()
+					: new EE_Div_Per_Section_Layout()
 		);
+		// where params
+		$query_params = array( 'QST_deleted' => 0 );
+		// don't load admin only questions on the frontend
+		if ( ! $this->checkout->admin_request ) {
+			$query_params['QST_admin_only'] = array( '!=' => TRUE );
+		}
 		$questions = $question_group->get_many_related(
 			'Question',
 			array(
-				array(
-					// where params
-					'QST_deleted' => 0,
-					'QST_admin_only' => $this->checkout->admin_request ? 1 : 0
-				),
+				$query_params,
 				'order_by'=>array(
 					'Question_Group_Question.QGQ_order' =>'ASC'
 				)
@@ -264,11 +275,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$html = '';
 		// group_name
 		if ( $question_group->show_group_name() && $question_group->name() != '' ) {
-			$html .=  "\n\t\t" . '<h4 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name() . '</h4>';
+			$html .= EEH_Formatter::nl(1);
+			$html .= $this->checkout->admin_request ? '<br /><h3 style="font-size: 1.3em; padding-left:0;"' : '<h4';
+			$html .= ' class="' . ( $this->checkout->admin_request ? 'ee-reg-form-qstn-grp-title title' : 'ee-reg-form-qstn-grp-title section-title' ) . '">';
+			$html .=  $question_group->name() . '</h4>';
+			$html .=  $this->checkout->admin_request ? '</h3>' : '</h4>';
 		}
 		// group_desc
 		if ( $question_group->show_group_desc() && $question_group->desc() != '' ) {
-			$html .=  '<p class="ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text">' . $question_group->desc() . '</p>';
+			$html .=  '<p class="';
+			$html .=  $this->checkout->admin_request ? 'ee-reg-form-qstn-grp-desc-pg' : 'ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text';
+			$html .=  '>' . $question_group->desc() . '</p>';
 		}
 		return new EE_Form_Section_HTML( $html );
 	}
@@ -439,7 +456,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$input_constructor_args = array(
 			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
-			'html_class' 			=> 'ee-reg-qstn',
+			'html_class' 			=> $this->checkout->admin_request ? 'ee-reg-qstn regular-text' : 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
