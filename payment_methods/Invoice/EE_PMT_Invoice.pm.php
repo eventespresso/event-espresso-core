@@ -146,15 +146,5 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 
 
 
-	/**
-	 * Gets a list of instructions and/or information regarding how the payment is to be completed
-	 * @return string
-	 */
-	public function payment_information() {
-		// TODO: Implement payment_information() method.
-	}
-
-
-
 }
 // End of file EE_PMT_Invoice.pm.php

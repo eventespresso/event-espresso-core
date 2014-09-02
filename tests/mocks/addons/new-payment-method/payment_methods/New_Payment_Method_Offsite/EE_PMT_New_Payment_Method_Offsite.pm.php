@@ -36,11 +36,6 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 		return $form;
 	}
 
-
-
-	public function payment_information() {
-
-	}
 }
 
 // End of file EE_PMT_Onsite.php

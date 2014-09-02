@@ -206,11 +206,6 @@ abstract class EE_PMT_Base{
 
 
 
-	/**
-	 * Gets a list of instructions and/or information regarding how the payment is to be completed
-	 * @return string
-	 */
-	abstract function payment_information();
 
 
 
