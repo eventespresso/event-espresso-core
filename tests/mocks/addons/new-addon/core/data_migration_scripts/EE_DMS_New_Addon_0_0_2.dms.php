@@ -27,7 +27,9 @@ class EE_DMS_New_Addon_0_0_2 extends EE_Data_Migration_Script_Base{
 		parent::__construct();
 	}
 	/**
-	 * only run when New Addon is at exactly version 0.0.1
+	 * only run when New Addon is at exactly version 0.0.1.
+	 * NOTE: if at this first your addon will NOT be migrating data from pre-event-espresso-4, then
+	 * this hsoudl just return FALSE
 	 * @param type $version_string
 	 * @return boolean
 	 */
