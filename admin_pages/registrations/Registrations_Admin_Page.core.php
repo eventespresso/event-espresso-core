@@ -591,7 +591,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_script('ee-spco-for-admin');
 		add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		EED_Ticket_Selector::load_tckt_slctr_assets();
-		EED_Single_Page_Checkout::load_css();
 	}
 
 
@@ -1525,13 +1524,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
 	/**
-	 * 		_save_attendee_registration_form
-	*		@access private
-	*		@return void
-	*/
+	 *        _save_attendee_registration_form
+	 * @access private
+	 * @param bool $REG_ID
+	 * @param bool $qstns
+	 * @return bool
+	 */
 	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
 
 		if ( ! $REG_ID || ! $qstns ) {
@@ -1540,11 +1539,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 
 		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $registration, $qstns );
+		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $REG_ID, $qstns );
 		// loop thru questions... FINALLY!!!
 
 		foreach ( $qstns as $QST_ID => $qstn ) {
-			//if $qstn isn't an array then it doesnt' already have an answer, so let's create the answer
+			//if $qstn isn't an array then it doesn't already have an answer, so let's create the answer
 			if ( !is_array($qstn) ) {
 				$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
 				continue;
@@ -1986,7 +1985,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				break;
 			case 'questions' :
 				$template_args['title'] = __('Step Two: Add Registrant Details for this Registration', 'event_espresso');
-				$template_args['content'] = $this->_get_new_registration_questions();
+				//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first _process_registration_step run.
+				$template_args['content'] = EED_Single_Page_Checkout::registration_checkout_for_admin();
 				$template_args['step_button_text'] = __('Save Registration and Continue to Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = TRUE;
 				break;
@@ -1997,19 +1997,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		return EEH_Template::display_template( $template_path, $template_args, TRUE );
 	}
 
-
-
-
-	/**
-	 * This returns the questions form for a new registration
-	 *
-	 * @access protected
-	 * @return string html
-	 */
-	protected function _get_new_registration_questions() {
-		//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first _process_registration_step run.
-		return EED_Single_Page_Checkout::instance()->registration_checkout_for_admin();
-	}
 
 
 
@@ -2031,62 +2018,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_reg_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
 		return TRUE;
-	}
-
-
-
-
-
-
-	/**
-	 * The purpose of this method is to simply setup the SPCO instance on page load for registering a new attendee via the admin.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _setup_SPCO_for_admin() {
-		$SPCO = EED_Single_Page_Checkout::instance();
-		$SPCO->set_definitions();
-
-		//filter in our own array
-
-	}
-
-
-
-
-	/**
-	 * 		form_after_question_group
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
-	 */
-	public function form_after_question_group_new_reg( $output ) {
-		return  '
-		</tbody>
-	</table>
-';
-	}
-
-
-
-
-
-
-	/**
-	 * 		form_form_field_input__wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function form_form_field_input_wrap_new_reg( $input ) {
-		return '
-				<td class="reg-admin-new-attendee-input-td">
-					' . $input . '
-				</td>
-			</tr>';
 	}
 
 
