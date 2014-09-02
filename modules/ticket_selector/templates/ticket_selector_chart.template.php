@@ -219,7 +219,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												</tr>
 											<?php } ?>
 											<?php
-											foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
+											if ( $ticket->taxable() ) {
+												foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
 												<tr>
 													<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
 													<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
@@ -227,6 +228,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
 													<?php $running_total += $tax_amount; ?>
 												</tr>
+												<?php } ?>
 											<?php } ?>
 												<tr>
 													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'Total Ticket Price', 'event_espresso' ); ?></b></td>
