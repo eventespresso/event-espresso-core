@@ -497,7 +497,7 @@ final class EE_Registry {
 					sprintf(
 						__('The %s file %s does not appear to contain the %s Class.','event_espresso'),
 						$type,
-						$class_name,
+						$path,
 						$class_name
 					)
 				);

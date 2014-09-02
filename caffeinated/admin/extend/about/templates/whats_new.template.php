@@ -85,7 +85,7 @@
 			<li>Incorrect array configuration for Plugin Update Engine in EE_Register_Addon</li>
 			<li>Fix receipt HTML issues</li>
 			<li>Fix issue where EE_DMS_New_Addon_0_0_2.dms.php does not have constructor</li>
-			<li>Fix issue where core misinforms addons when it’s a new install</li>
+			<li>Fix issue where core misinforms add-ons when it’s a new install</li>
 		</ul>
 	<p><strong>Enhancements:</strong></p>
 		<ul>
