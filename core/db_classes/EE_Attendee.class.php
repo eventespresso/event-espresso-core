@@ -332,6 +332,18 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		return $this->get_first_related( 'State' );
 	}
 
+	/**
+	 * Returns the state's name, otherwise 'Unknown'
+	 * @return string
+	 */
+	public function state_name(){
+		if( $this->state_obj() ){
+			return $this->state_obj()->name();
+		}else{
+			return __( 'Unknown', 'event_espresso' );
+		}
+	}
+
 
 
 	/**
@@ -350,6 +362,18 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	 */
 	public function country_obj() {
 		return $this->get_first_related( 'Country' );
+	}
+
+	/**
+	 * REturns the country's name if known, otherwise 'Unknown'
+	 * @return string
+	 */
+	public function country_name(){
+		if( $this->country_obj() ){
+			return $this->country_obj()->name();
+		}else{
+			return __( 'Unknown', 'event_espresso' );
+		}
 	}
 
 

@@ -46,6 +46,7 @@
 			do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made', $transaction );
 
 		} else {
+
 			echo apply_filters(
 				'FHEE__payment_overview_template__no_payment_required',
 				sprintf (
@@ -69,4 +70,3 @@
 	<br/>
 	<?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_payment_details' ); ?>
 
-</div>

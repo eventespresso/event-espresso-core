@@ -164,6 +164,19 @@ abstract class EE_Base_Class{
 		}
 	}
 
+	/**
+	 * Gets the field's original value when this object was constructed during this request.
+	 * This can be helpful when determining if a model object has changed or not
+	 * @param string $field_name
+	 */
+	public function get_original( $field_name ){
+		if( isset( $this->_props_n_values_provided_in_constructor[ $field_name ] ) &&
+				$field_settings = $this->get_Model()->field_settings_for( $field_name )){
+			return $field_settings->prepare_for_get( $this->_props_n_values_provided_in_constructor[ $field_name ] );
+		}else{
+			return NULL;
+		}
+	}
 
 
 	/**
@@ -914,16 +927,23 @@ abstract class EE_Base_Class{
 
 	/**
 	 * Deletes this model object. That may mean just 'soft deleting' it though.
-	 * @return boolean success
+	 * @return boolean | int
 	 */
 	public function delete(){
-		$model=$this->get_model();
-		$result=$model->delete_by_ID($this->ID());
-		if($result){
-			return true;
-		}else{
-			return false;
-		}
+		/**
+		 * Called just before deleting a model object
+		 *
+		 * @param EE_Base_Class $model_object about to be 'deleted'
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
+		$result = $this->get_model()->delete_by_ID( $this->ID() );
+		/**
+		 * Called just after deleting a model object
+		 * @param EE_Base_Class $model_object that was just 'deleted'
+		 * @param boolean $result
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete__end', $this, $result );
+		return $result;
 	}
 
 
@@ -954,38 +974,88 @@ abstract class EE_Base_Class{
 	*					the new entry on insert; 0 on failure
 	*/
 	public function save($set_cols_n_values=array()) {
+		/**
+		 * Filters the fields we're about to save on the model object
+		 *
+		 * @param array $set_cols_n_values keys are field names values are their new values, if
+		 * provided during the save() method (often client code will change the fields'
+		 * values before calling save)
+		 * @param EE_Base_Class $model_object
+		 */
+		$set_cols_n_values = apply_filters( 'FHEE__EE_Base_Class__save__set_cols_n_values', $set_cols_n_values, $this  );
 		//set attributes as provided in $set_cols_n_values
 		foreach($set_cols_n_values as $column=>$value){
 			$this->set($column,$value);
 		}
+		/**
+		 * Saving a model object.
+		 *
+		 * Before we perform a save, this action is fired.
+		 * @param EE_Base_Class $model_object the model object about to be saved.
+		 */
+		do_action( 'AHEE__EE_Base_Class__save__begin', $this );
 		//now get current attribute values
 		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it
 		//also: change the assumption about values passed to the model NOT being prepare dby the model object. They have been
 		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->get_model()->assume_values_already_prepared_by_model_object(true);
-
-		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID()),'default_where_conditions'=>'other_models_only') );
-		} else {
-			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
-			$results = $this->get_model()->insert( $save_cols_n_values, true);
-			if($results){
-				//if successful, set the primary key
-				//but don't use the normal SET method, because it will check if
-				//an item with the same ID exists in the mapper & db, then
-				//will find it in the db (because we just added it) and THAT object
-				//will get added to the mapper before we can add this one!
-				//but if we just avoid using the SET method, all that headache can be avoided
-				$pk_field_name =self::_get_primary_key_name( get_class($this));
-				$this->_fields[$pk_field_name] = $results;
-				$this->_clear_cached_property($pk_field_name);
+		//does this model have an autoincrement PK?
+		if($this->get_model()->has_primary_key_field()){
+			if($this->get_model()->get_primary_key_field()->is_auto_increment()){
+				//ok check if it's set, if so: update; if not, insert
+				if ( ! empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
+					$results = $this->get_model()->update_by_ID ( $save_cols_n_values, $this->ID() );
+				} else {
+					unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
+					$results = $this->get_model()->insert( $save_cols_n_values, true);
+					if($results){
+						//if successful, set the primary key
+						//but don't use the normal SET method, because it will check if
+						//an item with the same ID exists in the mapper & db, then
+						//will find it in the db (because we just added it) and THAT object
+						//will get added to the mapper before we can add this one!
+						//but if we just avoid using the SET method, all that headache can be avoided
+						$pk_field_name =self::_get_primary_key_name( get_class($this));
+						$this->_fields[$pk_field_name] = $results;
+						$this->_clear_cached_property($pk_field_name);
+					}
+					$this->get_model()->add_to_entity_map($this);
+				}
+			}else{//PK is NOT auto-increment
+				//so check if one like it already exists in the db
+				if( $this->get_model()->exists_by_ID( $this->ID() ) ){
+					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
+				}else{
+					$results = $this->get_model()->insert($save_cols_n_values);
+				}
 			}
-			$this->get_model()->add_to_entity_map($this);
+		}else{//there is NO primary key
+			$already_in_db = false;
+			foreach($this->get_model()->unique_indexes() as $index_name => $index){
+				$uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
+				if($this->get_model()->exists(array($uniqueness_where_params))){
+					$already_in_db = true;
+				}
+			}
+			if( $already_in_db ){
+				$combined_pk_fields_n_values = array_intersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
+				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
+			}else{
+				$results = $this->get_model()->insert($save_cols_n_values);
+			}
 		}
 		//restore the old assumption about values being prepared by the model object
 		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
 
+		/**
+		 * After saving the model object this action is called
+		 *
+		 * @param EE_Base_Class $model_object which was just saved
+		 * @param boolean|int $results if it were updated, TRUE or FALSE; if it were newly inserted
+		 * the new ID (or 0 if an error occurred and it wasn't updated)
+		 */
+		do_action( 'AHEE__EE_Base_Class__save__end', $this, $results );
 		return $results;
 	}
 
@@ -1040,7 +1110,7 @@ abstract class EE_Base_Class{
 
 	/**
 	 * for getting a model while instantiated.
-	 * @return mixed EEM_Base|EEM_CPT_Base
+	 * @return \EEM_Base | \EEM_CPT_Base
 	 */
 	public function get_model() {
 		$modelName = self::_get_model_classname( get_class($this) );
@@ -1510,7 +1580,10 @@ abstract class EE_Base_Class{
 		if( ! $existing_rows_like_that){
 			return $this->add_extra_meta($meta_key, $meta_value);
 		}else{
-			return EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
+			foreach( $existing_rows_like_that as $existing_row){
+				$existing_row->save( array( 'EXM_value' => $meta_value ) );
+			}
+			return count( $existing_rows_like_that );
 		}
 	}
 
