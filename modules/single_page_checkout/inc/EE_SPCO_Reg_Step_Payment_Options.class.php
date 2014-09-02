@@ -65,7 +65,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	public function translate_js_strings() {
-
+		EE_Registry::$i18n_js_strings['no_payment_method'] = __( 'Please select a method of payment in order to continue.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['invalid_payment_method'] = __( 'A valid method of payment could not be determined. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['forwarding_to_offsite'] = __( 'Forwarding to Secure Payment Provider.', 'event_espresso' );
 	}
 
 	public function enqueue_styles_and_scripts() {
@@ -78,9 +80,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
-		// don't need payment options for a completed or overpaid transaction
+		// don't need payment options for:
+		// 	registrations made via the admin
+		// 	completed transactions
+		// 	overpaid transactions
+		// 	$ 0.00 transactions (no payment required)
 		// TODO: if /when we implement donations, then this will need overriding
-		if ( $this->checkout->transaction->is_completed() || $this->checkout->transaction->is_overpaid() || $this->checkout->transaction->is_free() ) {
+		if ( $this->checkout->admin_request || $this->checkout->transaction->is_completed() || $this->checkout->transaction->is_overpaid() || $this->checkout->transaction->is_free() ) {
 			$this->checkout->remove_reg_step( $this->_slug );
 			$this->checkout->reset_reg_steps();
 		}
