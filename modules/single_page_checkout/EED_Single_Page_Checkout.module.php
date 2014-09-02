@@ -694,12 +694,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			foreach ( $registrations as $registration ) {
 
-				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+				if (( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
 				}
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				if ( ! $payment_required ) {
+				if ( ! $payment_required && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
 				}
