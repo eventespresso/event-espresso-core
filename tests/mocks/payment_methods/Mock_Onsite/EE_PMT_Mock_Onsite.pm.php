@@ -49,6 +49,12 @@ class EE_PMT_Mock_Onsite extends EE_PMT_Base{
 				)))));
 		return $form;
 	}
+
+
+
+	public function payment_information() {
+
+	}
 }
 
 // End of file EE_PMT_Onsite.php

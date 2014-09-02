@@ -81,7 +81,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'report'=> array(
 					'route' => 'registrations_report',
 					'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
-					)
+					),
 			);
 		} else {
 			$this->_columns = array(
@@ -98,6 +98,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	  			'_REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
 	        );
+			$this->_bottom_buttons = array(
+				'report_all'=> array(
+					'route' => 'registrations_report'
+					),
+			);
 		}
 
 

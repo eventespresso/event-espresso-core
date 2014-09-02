@@ -36,7 +36,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 	 */
 	public static function register( $model_id = NULL, $config = array() ) {
 		//required fields MUST be present, so let's make sure they are.
-		if ( empty( $model_id ) || ! is_array( $config ) || empty( $config['model_extension_paths'] ) || empty( $config['class_extension_paths'] ) ) {
+		if ( empty( $model_id ) || ! is_array( $config ) || ( empty( $config['model_extension_paths'] ) && empty( $config['class_extension_paths'] ) ) ) {
 			throw new EE_Error( __( 'In order to register Model extensions with EE_Register_Model_Extensions::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_extension_paths" (an array of full server paths to folders that contain model extensions), and "class_extension_paths" (an array of full server paths to folders that contain class extensions)', 'event_espresso' ));
 		}
 
