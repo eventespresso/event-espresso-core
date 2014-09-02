@@ -270,42 +270,62 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return EE_Form_Input_Base[]
 	 */
 	public function reg_step_hidden_inputs() {
-		return new EE_Form_Section_Proper(
-			array(
-				'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
-				'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
-				'subsections' 			=> array(
-					'action' 				=> new EE_Fixed_Hidden_Input(
-						array(
-							'html_name' 	=> 'action',
-							'html_id' 			=> 'spco-' . $this->slug() . '-action',
-							'default' 			=> empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
-						)
-					),
-					'next_step' 			=> new EE_Fixed_Hidden_Input(
-						array(
-							'html_name' 	=> 'next_step',
-							'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
-							'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
-						)
-					),
-					'e_reg_url_link' 	=> new EE_Fixed_Hidden_Input(
-						array(
-							'html_name' 	=> 'e_reg_url_link',
-							'html_id' 			=> 'spco-reg_url_link',
-							'default' 			=> $this->checkout->reg_url_link
-						)
-					),
-					'revisit' 				=> new EE_Fixed_Hidden_Input(
-						array(
-							'html_name' 	=> 'revisit',
-							'html_id' 			=> 'spco-revisit',
-							'default' 			=> $this->checkout->revisit
+		// hidden inputs for admin registrations
+		if ( $this->checkout->admin_request ) {
+			return new EE_Form_Section_Proper(
+				array(
+					'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+					'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
+					'subsections' 			=> array(
+						'next_step' 			=> new EE_Fixed_Hidden_Input(
+							array(
+								'html_name' 	=> 'next_step',
+								'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
+								'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
+							)
 						)
 					)
 				)
-			)
-		);
+			);
+		} else {
+			// hidden inputs for frontend registrations
+			return new EE_Form_Section_Proper(
+				array(
+					'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+					'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
+					'subsections' 			=> array(
+						'action' 				=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'action',
+									'html_id' 			=> 'spco-' . $this->slug() . '-action',
+									'default' 			=> empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
+								)
+							),
+						'next_step' 			=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'next_step',
+									'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
+									'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
+								)
+							),
+						'e_reg_url_link' 	=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'e_reg_url_link',
+									'html_id' 			=> 'spco-reg_url_link',
+									'default' 			=> $this->checkout->reg_url_link
+								)
+							),
+						'revisit' 				=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'revisit',
+									'html_id' 			=> 'spco-revisit',
+									'default' 			=> $this->checkout->revisit
+								)
+							)
+					)
+				)
+			);
+		}
 	}
 
 
@@ -344,11 +364,24 @@ abstract class EE_SPCO_Reg_Step {
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
 		ob_start();
+		if ( $this->checkout->admin_request ) {
+			echo EEH_Formatter::nl(1) . '<table class="form-table" style="margin-left:2em;">';
+			echo EEH_Formatter::nl(1) . '<tr>';
+			echo EEH_Formatter::nl(1) . '<th>';
+			echo EEH_Formatter::nl(-1) . '</th>';
+			echo EEH_Formatter::nl() . '<td style="padding-left:10px;">';
+		}
 		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
 		echo '<div id="spco-' . $this->slug() . '-whats-next-buttons-dv" class="spco-whats-next-buttons">';
 		echo $sbmt_btn->get_html_for_input();
 		echo '</div>';
 		echo '<!--end spco-whats-next-buttons-->';
+		if ( $this->checkout->admin_request ) {
+			echo EEH_Formatter::nl(-1) . '</td>';
+			echo EEH_Formatter::nl(-1) . '</tr>';
+			echo EEH_Formatter::nl(-1) . '</table>';
+			echo '<br />';
+		}
 		return ob_get_clean();
 	}
 
