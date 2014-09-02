@@ -810,6 +810,16 @@ abstract class EEM_Base extends EE_Base{
 			$rows_deleted = 0;
 		}
 
+		//and lastly make sure those items are removed from the entity map; if they could be put into it at all
+		if( $this->has_primary_key_field() ){
+			foreach($items_for_deletion as $item_for_deletion_row ){
+				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
+				if( isset( $this->_entity_map[ $pk_value ] ) ){
+					unset( $this->_entity_map[ $pk_value ] );
+				}
+			}
+		}
+
 		/**
 		 * Action called just after performing a real deletion query. Although at this point the
 		 * items should have been deleted
