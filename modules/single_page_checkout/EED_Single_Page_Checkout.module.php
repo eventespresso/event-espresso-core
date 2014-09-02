@@ -1796,13 +1796,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			break;
 		}
 
-		if ( $prev_step == $callback ) {
-			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
 		$notices = EE_Error::get_notices(FALSE);
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
+
+		if ( $prev_step == $callback && ! $error_msg ) {
+			$error_msg = __('A recursive loop was detected and the registration process was halted.', 'event_espresso');
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
