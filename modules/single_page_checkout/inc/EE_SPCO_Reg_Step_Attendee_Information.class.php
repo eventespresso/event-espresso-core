@@ -238,7 +238,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$query_params = array( 'QST_deleted' => 0 );
 		// don't load admin only questions on the frontend
 		if ( ! $this->checkout->admin_request ) {
-			$query_params['QST_admin_only'] = array( '!=' => TRUE );
+			$query_params['QST_admin_only'] = array( '!=', TRUE );
 		}
 		$questions = $question_group->get_many_related(
 			'Question',
