@@ -57,6 +57,39 @@
 	<hr>
 	*/
 	?>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3.2</h2>
+	<p>This release brings a few minor improvements to existing core features.</p>
+	<p><strong>Fixes</strong></p>
+		<ul>
+			<li>Fixed SPCO return to pay in cases where the event is sold out / reached maximum capacity of approved registrations</li> 
+			<li>Fixed updates to core wiped out tables added by add-ons</li>
+			<li>Fixed the mysterious Sales Tax display in the Ticket Price breakdown</li> 
+		</ul>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3.1</h2>
+	<p>This release brings many minor improvements to existing core features.</p>
+	<p><strong>Fixes</strong></p>
+		<ul style="margin-bottom: 12px;">
+			<li>Fix event datetime comparison to now for upcoming events widget</li>
+			<li>Add limit to session transient delete query</li>
+			<li>Fix flat fee discount/surcharge not showing in the price breakdown</li>
+			<li>Fix undefined function deactivate_plugins()</li>
+			<li>Fix [ESPRESSO_EVENTS] show_expired=false parameter</li>
+			<li>Fix calendar shortcode parsing on page with [ESPRESSO_EVENTS] shortcode on it</li>
+			<li>Fix 1 click updates not working for addons</li>
+			<li>Fix error when changing timezone to half hour increments</li>
+			<li>Fix event_espresso text domain typos</li>
+			<li>Fix [EVENT_AUTHOR_FORMATTED_EMAIL] shortcode</li>
+			<li>Incorrect array configuration for Plugin Update Engine in EE_Register_Addon</li>
+			<li>Fix receipt HTML issues</li>
+			<li>Fix issue where EE_DMS_New_Addon_0_0_2.dms.php does not have constructor</li>
+			<li>Fix issue where core misinforms add-ons when it’s a new install</li>
+		</ul>
+	<p><strong>Enhancements:</strong></p>
+		<ul>
+			<li>Change minimum PHP version notification to say next major version will drop support for PHP 5.2</li>
+			<li>Add in validation of active messengers and message types</li>
+			<li>Update Category help tour</li>
+		</ul>
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
 	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
 <p><strong>New Features</strong></p>
