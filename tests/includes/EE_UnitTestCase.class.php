@@ -361,7 +361,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}
 			elseif( $related_model_name == 'Status' ){
 				$fk = $model->get_foreign_key_to($related_model_name);
-				$args[ $fk->get_name() ] = $fk->get_default_value();
+				if( ! isset( $args[ $fk->get_name() ] ) ){
+					//only set the default if they haven't specified anything
+					$args[ $fk->get_name() ] = $fk->get_default_value();
+				}
 			}elseif($relation instanceof EE_Belongs_To_Relation) {
 				$obj = $this->new_model_obj_with_dependencies($related_model_name);
 				$fk = $model->get_foreign_key_to($related_model_name);

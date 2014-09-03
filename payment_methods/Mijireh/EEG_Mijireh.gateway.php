@@ -131,14 +131,12 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
  * instead they just redirect the user back to our website and then we need to query them
  * for the payment's status). Also note that the $update_info should be an array with the key
  * 'payment' containing the EEI_Payment to update
- * @param array $update_info{
- *	@type $payment EEI_Payment
- * }
- * @param type $transaction
+ * @param array $update_info unused. We just use the $transaction
+ * @param EEI_Transaction $transaction
  * @throws EE_Error
  */
 	public function handle_payment_update($update_info, $transaction) {
-		$payment = isset($update_info['payment']) ? $update_info['payment'] : NULL;
+		$payment = $transaction->last_payment();
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
 			$response = wp_remote_get($url,

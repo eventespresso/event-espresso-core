@@ -95,12 +95,6 @@ class EE_Payment_Processor{
 		if( $payment_method->type_obj() instanceof EE_PMT_Base){
 			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
 			//offline gateways DON'T return a payment object, so check it
-			if( $payment instanceof EE_Payment) {
-				//we need to save this payment in order for transaction to be updated correctly
-			//(because it queries teh DB to find the total amount paid, and saving puts
-			//the payment into the DB)
-				$payment->save();
-			}
 			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 			return $payment;
 		} else {
@@ -199,7 +193,6 @@ class EE_Payment_Processor{
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
-				$payment->save();
 				$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
@@ -304,6 +297,12 @@ class EE_Payment_Processor{
 				//we should have already done that action
 			}
 		}else{
+			if( $payment instanceof EE_Payment) {
+				//we need to save this payment in order for transaction to be updated correctly
+				//(because it queries teh DB to find the total amount paid, and saving puts
+				//the payment into the DB)
+				$payment->save();
+			}
 //			$payment = EEM_Payment::instance()->ensure_is_obj( $payment );
 			//ok, now process the transaction according to the payment
 			$txn->update_based_on_payments($save_txn);//also saves transaction

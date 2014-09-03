@@ -41,6 +41,26 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' ] );
 	}
 
+	public function test_update_txn_based_on_payment(){
+		//create a txn, and an UNSAVED payment. then call this.
+		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
+		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_approved, 'PAY_amount' => 10,  ), FALSE );
+		$this->assertEquals( 0, $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+
+		EE_Payment_Processor::instance()->update_txn_based_on_payment($txn, $payment);
+
+		//the payment should have been saved, and the txn appropriately updated
+		$this->assertNotEquals( 0,  $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( $payment, $txn->last_payment() );
+		$this->assertEquals( 10, $payment->amount() );
+		$this->assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
+		$this->assertEquals( 10, EEM_Payment::instance()->recalculate_total_payments_for_transaction( $txn->ID(), EEM_Payment::status_id_approved ) );
+		$this->assertEquals( 10, $txn->paid() );
+		$this->assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
+	}
+
 	public function test_process_payment__onsite__declined(){
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
