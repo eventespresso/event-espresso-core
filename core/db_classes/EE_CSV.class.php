@@ -182,7 +182,7 @@
 				$headers = array();
 				continue;
 			}
-			if($data[0] == EE_CSV::metadata_header){
+			if( strpos( $data[0], EE_CSV::metadata_header ) !==FALSE ){
 				$model_name = EE_CSV::metadata_header;
 				//store like model data, we just won't try importing it etc.
 				$row = 1;
