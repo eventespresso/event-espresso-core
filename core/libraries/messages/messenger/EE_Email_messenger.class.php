@@ -325,14 +325,10 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_message_types() {
 		$this->_default_message_types = array(
 			'payment',
+			'payment_refund',
 			'registration',
 			'not_approved_registration',
-			//'declined_registration',
-			//'cancelled_registration',
-			'pending_approval',
-			'payment_reminder',
-			'payment_declined',
-			'payment_refund'
+			'pending_approval'
 			);
 	}
 
