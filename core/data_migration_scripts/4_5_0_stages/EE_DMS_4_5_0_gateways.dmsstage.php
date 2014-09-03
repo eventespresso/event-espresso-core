@@ -204,6 +204,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		$db_types = array(
 			'%s',//PMD_type
 			'%s',//PMD_name
+			'%s',//PMD_desc
 			'%s',//PMD_admin_name
 			'%s',//PMD_slug
 			'%d',//PMD_debug_mode
