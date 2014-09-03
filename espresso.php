@@ -1,13 +1,13 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
-  Plugin Name: 	Event Espresso
-  Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
-  Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.3.1.p
+  Plugin Name:		Event Espresso
+  Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
+  Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
+  Version: 			4.4.1.rc.000
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
-  TextDomain: 	event_espresso
+  TextDomain: 		event_espresso
 
   Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
@@ -25,7 +25,6 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
 /**
  * Event Espresso
  *
@@ -33,7 +32,7 @@
  *
  * @package 		Event Espresso
  * @author 			Seth Shoultes
- * @copyright	 	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
  * @license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @link 				{@link http://www.eventespresso.com}
  * @since 			4.0
@@ -42,8 +41,12 @@
 
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
+	/**
+	 * espresso_version
+	 * @return string
+	 */
 	function espresso_version() {
-		return '4.3.1.p';
+		return '4.4.1.rc.000';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -53,7 +56,7 @@ if ( ! function_exists( 'espresso_version' )) {
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
 define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
 define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
-define( 'EE_MIN_PHP_VER_REQUIRED', '5.0.0' );
+define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
 define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3.2' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
@@ -79,8 +82,8 @@ define( 'EE_PLUGIN_DIR_URL', plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
 define( 'EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages' . DS );
 define( 'EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS );
 define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
+define( 'EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
-define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
 define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
 define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
@@ -90,13 +93,14 @@ define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
+define( 'EE_TEMPLATES', EE_CORE . 'templates' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
 define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
 // gateways
 define( 'EE_GATEWAYS', EE_MODULES . 'gateways' . DS );
 define( 'EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules' . DS . 'gateways' . DS );
 // asset URL paths
-define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
+define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'templates' . DS );
 define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
 define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
 define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS );
@@ -118,8 +122,8 @@ define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 
 define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 
 //ajax constants
-define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
-define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
+define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? TRUE : FALSE );
+define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) || isset( $_REQUEST['data']['ee_admin_ajax'] ) ? TRUE : FALSE );
 //just a handy constant occasionally needed for finding values representing infinity in the DB
 //you're better to use this than its straight value (currently -1) in case you ever
 //want to change its default value! or find when -1 means infinity

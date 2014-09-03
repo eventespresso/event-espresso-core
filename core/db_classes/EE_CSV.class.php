@@ -129,7 +129,7 @@
 			fclose($file_handle);
 			return $csvarray;
 		}else{
-			EE_Error::add_error( sprintf(__("An error occurred - the file: %s could not opened.", "event_espresso"),$path_to_file));
+			EE_Error::add_error( sprintf(__("An error occurred - the file: %s could not opened.", "event_espresso"),$path_to_file), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 	}
@@ -213,7 +213,7 @@
 							//now get the db table name from it (the part between square brackets)
 							$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
 							if (!$success){
-								EE_Error::add_error( sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data)));
+								EE_Error::add_error( sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data)), __FILE__, __FUNCTION__, __LINE__ );
 								return false;
 							}
 							$headers[$i] = $matches[2];
@@ -332,7 +332,7 @@
 				$model_name = $model_name_in_csv_data;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
-				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
+				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			}
 			/* @var $model EEM_Base */
@@ -409,7 +409,7 @@
 								}
 							}
 							if( ! $found_new_id ){
-								EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model_name,http_build_query($model_object_data)));
+								EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model_name,http_build_query($model_object_data)), __FILE__, __FUNCTION__, __LINE__ );
 							}
 						}
 					}
@@ -462,14 +462,14 @@
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $effective_id;
-							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)));
+							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
 						if($model->has_primary_key_field()){
 							$model_object_data[$model->primary_key_name()] = $effective_id;
 						}
-						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
+						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}else{//UPDATING
 					try{
@@ -494,7 +494,7 @@
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
-								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model_name,http_build_query($model_object_data),http_build_query($conditions)));
+								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model_name,http_build_query($model_object_data),http_build_query($conditions)), __FILE__, __FUNCTION__, __LINE__ );
 							}else{
 								$total_updates++;
 								EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data)));
@@ -502,7 +502,7 @@
 						}
 					}catch(EE_Error $e){
 						$total_update_errors++;
-						EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
+						EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}
 			}
@@ -520,11 +520,11 @@
 		}
 
 		if ( $total_update_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors));
+			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
 		if ( $total_insert_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
+			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors), __FILE__, __FUNCTION__, __LINE__ );
 			$error = true;
 		}
 

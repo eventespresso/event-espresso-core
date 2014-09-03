@@ -1,8 +1,8 @@
 <div class="changelog point-releases">
-	<!-- <h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>-->
-	<h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>
-	<?php //$type = 'minor'; ?>
-	<?php $type = 'major'; ?>
+	<h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>
+	<!-- <h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>-->
+	<?php $type = 'minor'; ?>
+	<?php //$type = 'major'; ?>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
 		<?php
 			$ver = explode( '.', EVENT_ESPRESSO_VERSION );
@@ -33,41 +33,25 @@
 		<?php
 	}
 	?>
-	<?php 
-	/*
-	<h2 class="about-headline-callout">New Add-on Available</h2>
-	<h3>Mailchimp Add-on Released</h3>
-	<img class="alignright " alt="mijireh-checkout-large" src="http://ee-screenshots.s3.amazonaws.com/ee4/mijireh-checkout-large.png" width="131" height="147" /><p>Announcing the ability to integrate Event Espresso with <strong>over 90 different gateways and payment providers</strong>, using the Mijireh Checkout system! <a href="http://www.mijireh.com/" target="_blank">Mijireh Checkout</a> is a PCI compliant checkout page that looks exactly like your site, with support for over 90 gateways and payment providers to use on Mijireh's <a href="http://www.mijireh.com/docs/payment-gateways/" target="_blank">secure PCI compliant servers</a>.</p>
-	<p>Mijireh Checkout helps increase your conversion rates by using your existing website design. Your checkout process remains seamless to your customers while Mijireh Checkout securely handles collecting and transmitting of the credit card data for you.</p>
-	<h3>Support for the Calendar Add-on in EE 4.2+</h3>
-	<a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg"><img class="alignright size-medium wp-image-132" alt="ee4-calendar-3-0-01" src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg" width="265" height="300" /></a>
-	<p>The calendar add-on for EE 4.2 is now available for purchase on the <a target="_blank" href="http://eventespresso.com/product/ee4-events-calendar/">Event Espresso</a> website. The events calendar allows you to display your events in a way that your attendees/registrants are familiar with. It is another way for customers to find your events and even allows you to invite your attendees/registrants to add the events to their own calendars.</p>
-	<p>The EE4 Calendar add-on includes:</p>
-	<ul>
-		<li>Inline calendar images</li>
-		<li>Category filtering</li>
-		<li>Venue filtering</li>
-		<li>Featured images</li>
-		<li>Datetime and format settings</li>
-		<li>Tooltips</li>
-		<li>Color coded categories</li>
-		<li>Better compatibility with themes</li>
-		<li>and much more</li>
-	</ul>
+	
+	
+	<h2 class="about-headline-callout">Initial EE4 Decaf (free) Release</h2>
+	<p>This is the inital release of EE4 Decaf. This is the free version of our very powerful event registration and management plugin for WordPress.</p>
+	
 	<hr>
-	*/
-	?>
+	
+	
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
 	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
 <p><strong>New Features</strong></p>
 <ul>
-	<li>Duplicate Event</li>
-	<li>Ticket Required Option</li>
+	<li>Duplicate Event (Caffeinated Only)</li>
+	<li>Ticket Required Option (Caffeinated Only)</li>
 	<li>Added iCal Integration</li>
-	<li>Drag-n-drop Answer Values</li>
-	<li>Order Questions by Question Group</li>
-	<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
-	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+	<li>Drag-n-drop Answer Values (Caffeinated Only)</li>
+	<li>Order Questions by Question Group (Caffeinated Only)</li>
+	<li>Question Editor Style Changes (Caffeinated Only)</li>
+	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout (Caffeinated Only)</li>
 	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
 	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
 </ul>

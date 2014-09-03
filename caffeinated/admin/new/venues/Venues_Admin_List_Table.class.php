@@ -52,7 +52,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('Event Venue', 'event_espresso' ),
 			'plural' => __('Event Venues', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -104,10 +104,6 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-	public function column_default($item) {
-		return isset( $item->column_name ) ? $item->column_name : '';
-	}
 
 
 	public function column_id($item) {

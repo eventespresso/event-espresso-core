@@ -52,7 +52,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 			'singular' => __('question group', 'event_espresso' ),
 			'plural' => __('question groups', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -112,18 +112,8 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 
-	public function column_default(EE_Question_Group $item) {
-		/*switch($column_name) {
-            case 'question_group_id':
-				return $item[$column_name];
-             default:
-				return ( isset( $item->$column_name )) ? $item->$column_name : '';
-        }*/
-	}
 
-
-
-	public function column_id(EE_Question_Group $item) {	
+	public function column_id(EE_Question_Group $item) {
 		return $item->ID();
 	}
 
@@ -160,7 +150,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 		$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
 		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
-		
+
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question Group', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
@@ -191,19 +181,19 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 	public function column_description(EE_Question_Group $item) {
 		return $item->desc();
 	}
-	
+
 
 
 	public function column_show_group_name(EE_Question_Group $item) {
 		return $this->_yes_no[ $item->show_group_name() ];
 	}
-	
-	
+
+
 
 	public function column_show_group_desc(EE_Question_Group $item) {
 		return $this->_yes_no[ $item->show_group_desc() ];
 	}
-	
-	
+
+
 
 } //end class Registration_Form_Questions_Admin_List_Table
