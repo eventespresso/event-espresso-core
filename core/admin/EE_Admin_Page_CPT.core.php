@@ -362,10 +362,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function page_template_meta_box() {
 		global $post;
-		$template = FALSE;
+		$template = '';
 		if ( count( get_page_templates( $post ) ) != 0 ) {
 			$page_template = get_post_meta( $post->ID, '_wp_page_template', TRUE );
-			$template = !empty( $page_template ) ? $page_template : FALSE;
+			$template = !empty( $page_template ) ? $page_template : '';
 		}
 		?>
 		<p><strong><?php _e('Template') ?></strong></p>
