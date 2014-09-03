@@ -39,7 +39,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$ticket_price = $ticket_price * $ticket->min();
 			$ticket_bundle = TRUE;
 		}
-		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price );
+		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
 
 		$tkt_status = $ticket->ticket_status();
 		// check ticket status
