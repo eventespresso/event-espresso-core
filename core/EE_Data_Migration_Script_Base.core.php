@@ -30,15 +30,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	protected $_feedback_message;
 	/**
-	 * Indicaates the script's priority. Like wp's add_action and add_filter, lower numbers
-	 * correspond to earlier exeecution
+	 * Indicates the script's priority. Like wp's add_action and add_filter, lower numbers
+	 * correspond to earlier execution
 	 * @var int
 	 */
 	protected $_priority = 5;
+
+
+
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
 	 * it's passed a string like '3.1.38B', it should return true
+	 * @param string $version_string
 	 * @return boolean
 	 */
 	abstract public function  can_migrate_from_version($version_string);
@@ -71,7 +75,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Multi-dimensional array that defines the mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.
 	 * Top-level array keys are OLD table names (minus the "wp_" part),
-	 * 2nd-level array skeys are NEW table names (again, minus the "wp_" part),
+	 * 2nd-level array keys are NEW table names (again, minus the "wp_" part),
 	 * 3rd-level array keys are the OLD table primary keys
 	 * and 3rd-level array values are the NEW table primary keys
 	 * @var array
@@ -79,12 +83,14 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	protected $_mappings = array();
 
 	/**
-	 * All chidlren of this must call parent::__construct() at the end of their constructor or suffer the consequences!
+	 * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
 	 */
 	public function __construct() {
 		$this->_migration_stages = apply_filters('FHEE__'.get_class($this).'__construct__migration_stages',$this->_migration_stages);
 		foreach($this->_migration_stages as $migration_stage){
-			$migration_stage->_construct_finalize($this);
+			if ( $migration_stage instanceof EE_Data_Migration_Script_Stage ) {
+				$migration_stage->_construct_finalize($this);
+			}
 		}
 		parent::__construct();
 	}
@@ -126,9 +132,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Gets the old primary key, if provided with the OLD table,
 	 * and the new table and the primary key of an item in the new table
 	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
-	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
 	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
-	 * @return mixed the primary key on the new table
+	 * @param mixed $new_pk
+	 * @return mixed
 	 */
 	public function get_mapping_old_pk($old_table,$new_table,$new_pk){
 		if( ! isset($this->_mappings[$old_table]) ||
@@ -147,8 +153,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 	/**
 	 * Gets the mapping array option specified by the table names
-	 * @param type $old_table_name
-	 * @param type $new_table_name
+	 * @param string $old_table_name
+	 * @param string $new_table_name
 	 * @return array
 	 */
 	protected function _get_mapping_option($old_table_name,$new_table_name){
@@ -170,9 +176,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 	/**
-	 * Gest the option name for this script to map from $old_table_name to $new_table_name
-	 * @param type $old_table_name
-	 * @param type $new_table_name
+	 * Gets the option name for this script to map from $old_table_name to $new_table_name
+	 * @param string $old_table_name
+	 * @param string $new_table_name
 	 * @return string
 	 */
 	protected function _get_mapping_option_name($old_table_name,$new_table_name){
@@ -218,9 +224,17 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return $count;
 	}
 
+
+
+	/**
+	 * @param int $num_records_to_migrate_limit
+	 * @return int
+	 * @throws EE_Error
+	 * @throws Exception
+	 */
 	public function migration_step($num_records_to_migrate_limit){
 
-		//if wehaven't yet done the 1st schema changes, do them now. buffer any output
+		//if we haven't yet done the 1st schema changes, do them now. buffer any output
 		$this->_maybe_do_schema_changes(true);
 
 		$num_records_actually_migrated =0;
@@ -249,7 +263,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 			//once we've migrated all the number we intended to (possibly from different stages), stop migrating
 			//or if we had a fatal error
-			//or if the current script stopped early- its not done, butit's done all it thinks we shoudl do on this step
+			//or if the current script stopped early- its not done, but it's done all it thinks we should do on this step
 			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_borked() || $stage->has_more_to_do()){
 				break;
 			}
@@ -286,17 +300,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		$this->_feedback_message = implode("<br>",$feedback_message_array);
 	}
+
+
+
 	/**
 	 * Calls either schema_changes_before_migration() (if $before==true) or schema_changes_after_migration
 	 * (if $before==false). Buffers their outputs and stores them on the class.
 	 * @param boolean $before
+	 * @throws Exception
 	 * @return void
 	 */
 	private function _maybe_do_schema_changes($before = true){
-		//so this property will be ither _schema_changes_after_migration_ran or _schema_changes_before_migration_ran
+		//so this property will be either _schema_changes_after_migration_ran or _schema_changes_before_migration_ran
 		$property_name = '_schema_changes_'. ($before ? 'before' : 'after').'_migration_ran';
-		$fatal_error_occurred = false;
-		$output = '';
 		if ( ! $this->$property_name ){
 			try{
 				ob_start();
@@ -308,9 +324,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 				$output = ob_get_contents();
 				ob_end_clean();
 			}catch(Exception $e){
-				$output = print_r($e,true);
 				$this->set_status(EE_Data_Migration_Manager::status_fatal_error);
-				$fatal_error_occurred = true;
 				throw $e;
 			}
 			//record that we've done these schema changes
@@ -335,9 +349,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * all the brand new tables), upon reactivation of EE4 (it was deactivated and then reactivated, in which case we want to just verify the DB structure is ok)
 	 * that table should be dropped), and during a migration when we're moving the
 	 * DB to the state of the migration script
-	 * @param type $table_name
-	 * @param type $table_definition_sql
-	 * @param type $engine_string
+	 *
+	 * @param string $table_name
+	 * @param string $table_definition_sql
+	 * @param string $engine_string
 	 */
 	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=InnoDB'){
 		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
@@ -373,7 +388,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 	/**
 	 * Gets the request type for the plugin (core or addon) that corresponds to this DMS
-	 * @return int one of EE_System::_req_type_* consts
+	 * @return int one of EE_System::_req_type_* constants
 	 * @throws EE_Error
 	 */
 	private function _get_req_type_for_plugin_corresponding_to_this_dms(){
@@ -390,7 +405,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 	/**
-	 * returns an arrya of strings describing errors by all the script's stages
+	 * returns an array of strings describing errors by all the script's stages
 	 * @return array
 	 */
 	public function get_errors(){
@@ -404,7 +419,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return $all_errors;
 	}
 	/**
-	 * Indicates whether or not this migration script shoudl continue
+	 * Indicates whether or not this migration script should continue
 	 * @return boolean
 	 */
 	public function can_continue(){
@@ -449,15 +464,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 		foreach($this->_mappings as $old_table_name => $mapping_to_new_table){
 			foreach($mapping_to_new_table as $new_table_name => $mapping){
-				$success = $this->_set_mapping_option($old_table_name, $new_table_name, $mapping);
+				$this->_set_mapping_option($old_table_name, $new_table_name, $mapping);
 			}
 		}
 		return $properties;
 	}
 
 	/**
-	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
-	 * to ahve been made from the properties_as_array() function.
+	 * Sets all of the properties of this script stage to match what's in the array, which is assumed
+	 * to have been made from the properties_as_array() function.
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 * @return void
 	 */
@@ -469,7 +484,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			$this->$property_name = $property_value;
 		}
 		//_migration_stages are already instantiated, but have only default data
-		foreach($this->_migration_stages as $priority => $stage){
+		foreach($this->_migration_stages as $stage){
 			$stage_data = $this->_find_migration_stage_data_with_classname(get_class($stage),$stages_properties_arrays);
 			//SO, if we found the stage data that was saved, use it. Otherwise, I guess the stage is new? (maybe added by
 			//an addon? Unlikely... not sure why it wouldn't exist, but if it doesn't just treat it like it was never started yet)
@@ -482,20 +497,20 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Gets the migration data from the array $migration_stage_data_arrays (which is an array of arrays, each of which
 	 * is pretty well identical to EE_Data_Migration_Stage objects except all their properties are array indexes)
 	 * for the given classname
-	 * @param type $classname
-	 * @param type $migration_stage_data_arrays
+	 * @param string $classname
+	 * @param array $migration_stage_data_arrays
 	 * @return null
 	 */
 	private function _find_migration_stage_data_with_classname($classname,$migration_stage_data_arrays){
-		foreach($migration_stage_data_arrays as $priority => $migration_dstage_data_array){
-			if(isset($migration_dstage_data_array['class']) && $migration_dstage_data_array['class'] == $classname){
-				return $migration_dstage_data_array;
+		foreach($migration_stage_data_arrays as $migration_stage_data_array){
+			if(isset($migration_stage_data_array['class']) && $migration_stage_data_array['class'] == $classname){
+				return $migration_stage_data_array;
 			}
 		}
 		return null;
 	}
 	/**
-	 * Returns the vresion that this script migrates to, based on the script's name.
+	 * Returns the version that this script migrates to, based on the script's name.
 	 * Cannot be overwritten because lots of code needs to know which version a script
 	 * migrates to knowing only its name.
 	 * @return array where the first key is the plugin's slug, the 2nd is the version of that plugin
@@ -554,7 +569,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 
 	/**
 	 * This should eb called to essentially 'finalize' construction of the stage.
-	 * This isnt done on the main constructor in order to avoid repetitive code. Instead, this is
+	 * This isn't done on the main constructor in order to avoid repetitive code. Instead, this is
 	 * called by EE_Data_Migration_Script_Base's __construct() method so children don't have to
 	 * @param EE_Data_Migration_Script_Base $migration_script
 	 */
@@ -581,12 +596,16 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 		$this->_records_migrated += $items_migrated;
 		return $items_migrated;
 	}
+
+
+
 	/**
 	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
 	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
 	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
 	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
 	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
+	 * @param int $num_items_to_migrate
 	 * @return int number of items ACTUALLY migrated
 	 */
 	abstract protected function _migration_step($num_items_to_migrate=50);
@@ -600,7 +619,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	}
 
 	/**
-	 * returns an arrya of strings describing errors
+	 * returns an array of strings describing errors
 	 * @return array
 	 */
 	public function get_errors(){
@@ -609,8 +628,8 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 
 
 	/**
-	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
-	 * to ahve been made from the properties_as_array() function.
+	 * Sets all of the properties of this script stage to match what's in the array, which is assumed
+	 * to have been made from the properties_as_array() function.
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
 	public function instantiate_from_array_of_properties($array_of_properties){
@@ -645,13 +664,13 @@ abstract class EE_Data_Migration_Class_Base{
 
 
 	/**
-	 * Whether this mgiration script is done or not. This COULD be deduced by
+	 * Whether this migration script is done or not. This COULD be deduced by
 	 * _records_to_migrate and _records_migrated, but that might nto be accurate
 	 * @var string one of EE_Data_migration_Manager::status_* constants
 	 */
 	protected $_status = null;
 	/**
-	 *interntaniotalized name fo this class. Convention is to NOT restate that
+	 *internationalized name of this class. Convention is to NOT restate that
 	 * this class if a migration script or a migration script stage
 	 * @var string (i18ned)
 	 */
@@ -668,8 +687,12 @@ abstract class EE_Data_Migration_Class_Base{
 	public function __construct(){
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
 	}
+
+
+
 	/**
 	 * Just gets the pretty name for this migration script or stage
+	 * @throws EE_Error
 	 * @return string
 	 */
 	public function pretty_name(){
@@ -699,8 +722,8 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	abstract protected function _count_records_to_migrate();
 	/**
-	 * Returns a string indicating the migraiton script's status.
-	 * @return string one of EE_Data_Migration_Manager::statu_* constants
+	 * Returns a string indicating the migration script's status.
+	 * @return string one of EE_Data_Migration_Manager::status_* constants
 	 * @throws EE_Error
 	 */
 	public function get_status(){
@@ -723,7 +746,7 @@ abstract class EE_Data_Migration_Class_Base{
 	abstract public function get_errors();
 
 	/**
-	 * Return sthe last error that occurred. If none occurred, returns null
+	 * Returns the last error that occurred. If none occurred, returns null
 	 * @return string
 	 */
 	public function get_last_error(){
@@ -793,8 +816,8 @@ abstract class EE_Data_Migration_Class_Base{
 		return $properties;
 	}
 	/**
-	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
-	 * to ahve been made from the properties_as_array() function.
+	 * Sets all of the properties of this script stage to match what's in the array, which is assumed
+	 * to have been made from the properties_as_array() function.
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
 	abstract public function instantiate_from_array_of_properties($array_of_properties);
@@ -804,11 +827,11 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param string $old_table
 	 * @param array $old_row_as_array
 	 * @param string $new_table
-	 * @param array $new_row_as_array columsn=>values like used in wpdb->insert
-	 * @param array $datatypes numerically indexed
+	 * @param array $new_row_as_array columns=>values like used in wpdb->insert
+	 * @param array $data_types numerically indexed
 	 * @return string
 	 */
-	protected function _create_error_message_for_db_insertion($old_table, $old_row_as_array, $new_table, $new_row_as_array, $datatypes){
+	protected function _create_error_message_for_db_insertion($old_table, $old_row_as_array, $new_table, $new_row_as_array, $data_types){
 		global $wpdb;
 		$old_columns_and_values_for_string = array();
 		foreach($old_row_as_array as $column => $value){
@@ -817,20 +840,25 @@ abstract class EE_Data_Migration_Class_Base{
 		$new_columns_and_values_for_string = array();
 		$count = 0;
 		foreach($new_row_as_array as $column => $value){
-			$new_columns_and_values_for_string[] = " $column => $value (".$datatypes[$count++].")";
+			$new_columns_and_values_for_string[] = " $column => $value (".$data_types[$count++].")";
 		}
-		return sprintf(__('Received error "%6$s" inserting row %5$s %1$s %5$s into table %2$s.%5$s Data used was %5$s %3$s %5$s from table %4%s.', "event_espresso"),
-				implode(", ",$new_columns_and_values_for_string),
-				$new_table,
-				implode(", ",$old_columns_and_values_for_string),
-				$old_table,
-				'<br/>',
-				$wpdb->last_error);
+		return sprintf(
+			__('Received error "%6$s" inserting row %5$s %1$s %5$s into table %2$s.%5$s Data used was %5$s %3$s %5$s from table %4%s.', "event_espresso"),
+			implode(", ",$new_columns_and_values_for_string),
+			$new_table,
+			implode(", ",$old_columns_and_values_for_string),
+			$old_table,
+			'<br/>',
+			$wpdb->last_error
+		);
 	}
 
-	/* Same as json_encode, just avoids putting
+
+
+	/**
+	 * Same as json_encode, just avoids putting
 	 * serialized arrays into the http build query, as that would
-	* @param type $array_of_data
+	* @param array $array_of_data
 	* @return string
 	*/
 	protected function _json_encode($array_of_data){
@@ -853,6 +881,19 @@ abstract class EE_Data_Migration_Class_Base{
  */
 abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage{
 	protected $_old_table;
+
+
+
+	/**
+	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
+	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
+	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
+	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
+	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
+	 *
+	 * @param int $num_items
+	 * @return int number of items ACTUALLY migrated
+	 */
 	function _migration_step($num_items=50){
 		global $wpdb;
 		$start_at_record = $this->count_records_migrated();
@@ -867,6 +908,13 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 		}
 		return $items_actually_migrated;
 	}
+
+
+
+	/**
+	 * Counts the records to migrate; the public version may cache it
+	 * @return int
+	 */
 	function _count_records_to_migrate() {
 		global $wpdb;
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
@@ -877,16 +925,24 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	 * takes care of migrating this particular row from the OLD table to whatever its
 	 * representation is in the new database. If there are errors, use $this->add_error to log them. If there is a fatal error
 	 * which prevents all future migrations, throw an exception describing it
-	 * @param $old_row an associative array where keys are column names and values are their values.
+	 * @param array $old_row an associative array where keys are column names and values are their values.
 	 * @return null
 	 */
 	abstract protected function _migrate_old_row($old_row);
 }
 /**
- * This is a stub data migraiton that we can put in the array of data migrations when we have an aerror
+ * This is a stub data migration that we can put in the array of data migrations when we have an error
  * finding the next data migration script.
  */
 class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
+
+	/**
+	 * Returns whether or not this data migration script can operate on the given version of the database.
+	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
+	 * it's passed a string like '3.1.38B', it should return true
+	 * @param string $version_string
+	 * @return boolean
+	 */
 	public function can_migrate_from_version($version_string) {
 		return false;
 	}
@@ -896,6 +952,12 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 	public function schema_changes_before_migration() {
 		return;
 	}
+
+
+
+	/**
+	 * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
+	 */
 	public function __construct() {
 
 		$this->_migration_stages = array();
