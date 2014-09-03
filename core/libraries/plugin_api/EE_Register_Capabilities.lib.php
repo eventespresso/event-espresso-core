@@ -35,7 +35,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * @param array  $setup_args    {
 	 *                              An array of items related to registering capabilities.
 	 *                              @type array $capabilities 	An array mapping capability strings to core WP Role.  Something like array( 'administrator' => array( 'read_cap', 'edit_cap', 'delete_cap'), 'author' => array( 'read_cap' ) ).
-	 *                              @type array $capability_maps EE_Meta_Capability_Map[]   @see EE_Capabilities.php for php docs on these objects.
+	 *                              @type array $capability_maps EE_Meta_Capability_Map[]   @see EE_Capabilities.php for php docs on these objects.  Should be indexed by the classname for the capability map and values representing the arguments for the map.
 	 * }
 	 *
 	 * @return void
@@ -57,7 +57,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 
 		self::$_registry[$cap_reference] = array(
 			'caps' => isset( $setup_args['capabilities'] ) && is_array( $setup_args['capabilities'] ) ? $setup_args['capabilities'] : array(),
-			'cap_maps' => isset( $setup_args['capability_maps'] ) && reset( $setup_args['capability_maps'] ) instanceof EE_Meta_Capability_Map ? $setup_args['capability_maps'] : array()
+			'cap_maps' => isset( $setup_args['capability_maps'] ) ? $setup_args['capability_maps'] : array()
 			);
 
 
@@ -84,7 +84,24 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * @return EE_Meta_Capability_Map[]
 	 */
 	public static function register_cap_maps( $cap_maps ) {
-		return array_merge( $cap_maps, self::$_registry['cap_maps'] );
+		//loop through and instantiate cap maps.
+		foreach ( self::$_registry as $cap_reference => $setup ) {
+			if ( ! isset( $setup['cap_maps'] ) ) {
+				continue;
+			}
+			foreach ( $setup['cap_maps'] as $cap_class => $args ) {
+				if ( ! class_exists( $cap_class ) ) {
+					throw new EE_Error( sprintf( __( 'An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments', 'event_espresso' ), $cap_reference ) );
+				}
+
+				if ( count( $args ) !== 2 ) {
+					throw new EE_Error( sprintf( __('An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments.  The array should have two values the first being a string and the second an array.', 'event_espresso' ), $cap_reference ) );
+				}
+
+				$cap_maps[] = new $cap_class( $args[0], $args[1] );
+			}
+		}
+		return $cap_maps;
 	}
 
 
