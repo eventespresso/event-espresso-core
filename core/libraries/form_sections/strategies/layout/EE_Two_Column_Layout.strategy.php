@@ -32,7 +32,6 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	public function layout_input( $input ) {
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input ) {
-			$html .= 'EE_Hidden_Input';
 			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
 		} else {
 			$html .= EEH_Formatter::nl(1) . '<tr>';
