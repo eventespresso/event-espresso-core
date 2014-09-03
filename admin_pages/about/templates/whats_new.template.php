@@ -63,7 +63,8 @@
 		<ul>
 			<li>Fixed SPCO return to pay in cases where the event is sold out / reached maximum capacity of approved registrations</li> 
 			<li>Fixed updates to core wiped out tables added by add-ons</li>
-			<li>Fixed the mysterious Sales Tax display in the Ticket Price breakdown</li> 
+			<li>Fixed the mysterious Sales Tax display in the Ticket Price breakdown</li>
+			<li>Fixed migration error when migrating from EE3</li>
 		</ul>
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3.1</h2>
 	<p>This release brings many minor improvements to existing core features.</p>
