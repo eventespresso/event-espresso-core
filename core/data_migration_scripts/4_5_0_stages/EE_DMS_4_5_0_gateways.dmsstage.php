@@ -180,7 +180,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 				$extra_meta_key_values = $old_gateway_settings;
 				$desc = '';
 		}
-		$pretty_name = isset( $old_gateway_settings[ 'display_settings' ] ) ? $old_gateway_settings[ 'display_settings' ] : $old_gateway_slug;
+		$pretty_name = isset( $old_gateway_settings[ 'display_name' ] ) ? $old_gateway_settings[ 'display_name' ] : $old_gateway_slug;
 		$offline_gateways = array( 'Bank', 'Check', 'Invoice' );
 		if( $active && in_array( $old_gateway_slug, $offline_gateways ) ) {
 			$scope = array( 'CART', 'ADMIN');
