@@ -127,7 +127,7 @@ abstract class EE_Base_Class{
 		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
-			if( ! array_key_exists($field_name,$model_fields)){
+			if( ! isset( $model_fields[ $field_name] ) ){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
