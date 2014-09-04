@@ -70,7 +70,19 @@ class EEM_Payment_Method extends EEM_Base {
 		$this->singlular_item = __( 'Payment Method', 'event_espresso' );
 		$this->plural_item = __( 'Payment Methods', 'event_espresso' );
 		$this->_tables = array( 'Payment_Method' => new EE_Primary_Table( 'esp_payment_method', 'PMD_ID' ) );
-		$this->_fields = array( 'Payment_Method' => array( 'PMD_ID' => new EE_Primary_Key_Int_Field( 'PMD_ID', __( "ID", 'event_espresso' ) ), 'PMD_type' => new EE_Plain_Text_Field( 'PMD_type', __( "Payment Method Type", 'event_espresso' ), FALSE, 'Admin_Only' ), 'PMD_name' => new EE_Plain_Text_Field( 'PMD_name', __( "Name", 'event_espresso' ), FALSE ), 'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ), 'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ), 'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ), 'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ), 'PRC_ID' => new EE_Foreign_Key_Int_Field( 'PRC_ID', __( "Surcharge Price", 'event_espresso' ), TRUE, NULL, 'Price' ), 'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ), 'PMD_wp_user_id' => new EE_Integer_Field( 'PMD_wp_user_Id', __( "User ID", 'event_espresso' ), FALSE, 1 ), 'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ), 'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
+		$this->_fields = array(
+			'Payment_Method' => array(
+				'PMD_ID' => new EE_Primary_Key_Int_Field( 'PMD_ID', __( "ID", 'event_espresso' ) ),
+				'PMD_type' => new EE_Plain_Text_Field( 'PMD_type', __( "Payment Method Type", 'event_espresso' ), FALSE, 'Admin_Only' ),
+				'PMD_name' => new EE_Plain_Text_Field( 'PMD_name', __( "Name", 'event_espresso' ), FALSE ),
+				'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
+				'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ),
+				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
+				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ), 
+				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
+				'PMD_wp_user_id' => new EE_Integer_Field( 'PMD_wp_user_Id', __( "User ID", 'event_espresso' ), FALSE, 1 ),
+				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
+				'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
 		) );
 		$this->_model_relations = array( 'Price'   => new EE_Belongs_To_Relation(), //			'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
 										 'Payment' => new EE_Has_Many_Relation(), 'Currency' => new EE_HABTM_Relation( 'Currency_Payment_Method' ), );

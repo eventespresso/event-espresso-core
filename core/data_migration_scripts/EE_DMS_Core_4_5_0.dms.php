@@ -289,7 +289,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PMD_admin_desc text,
 				PMD_slug varchar(124) DEFAULT NULL,
 				PMD_order int(11) DEFAULT NULL,
-				PRC_ID int(11) DEFAULT NULL,
 				PMD_debug_mode tinyint(1) NOT NULL DEFAULT '0',
 				PMD_wp_user_id int(11) NOT NULL DEFAULT '0',
 				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
