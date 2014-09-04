@@ -187,6 +187,8 @@ abstract class EE_PMT_Base{
 	function settings_form(){
 		if( ! $this->_settings_form){
 			$this->_settings_form = $this->generate_new_settings_form();
+			$this->_settings_form->set_payment_method_type( $this );
+			$this->_settings_form->_construct_finalize(NULL, NULL );
 			//if we have already assigned a model object to this pmt, make
 			//sure its reflected in teh form we just generated
 			if($this->_pm_instance){

@@ -55,6 +55,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$pdf_stylesheet_input_name = 'pdf_stylesheet';
 		$show_on_page_name = 'show_on_page';
 		$form =  new EE_Payment_Method_Form(array(
+//				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
 					$pdf_stylesheet_input_name=>new EE_Select_Input(array('simple.css'), array(
 						'html_label_text'=>  sprintf(__("PDF Stylesheet %s", "event_espresso"),  $this->get_help_tab_link()),

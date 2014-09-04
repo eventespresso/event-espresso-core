@@ -34,16 +34,8 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	public function __construct($options_array = array()){
 		$this->_model = EEM_Payment_Method::instance();
 		$this->_options_array = $options_array;
-		//determine the payment method type corresponding to this payment method form
-		$caller = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT,2);
-		if( ! isset($options_array['payment_method_type'])){
-			$caller_we_hope_is_pm = $caller[1]['object'];
-			$this->_payment_method_type = $caller_we_hope_is_pm;
-		}elseif(isset($options_array['payment_method_type'])){
+		if(isset($options_array['payment_method_type'])){
 			$this->_payment_method_type = $options_array['payment_method_type'];
-		}
-		if( ! $this->_payment_method_type instanceof EE_PMT_Base){
-			throw new EE_Error(sprintf(__("Payment Method forms MUST include option 'payment_method_type' or be called from a payment method type! It was called from %s", "event_espresso"),$caller[1]['class']));
 		}
 		$options_array = $this->_options_array;
 		if(isset($options_array['extra_meta_inputs'])){
@@ -67,10 +59,24 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			)
 		);
 		parent::__construct($options_array);
-		//set the name of this form based on the payment method type
-		if( ! $this->_name){
-			$this->_name = str_replace(" ","_",ucwords(str_replace("_"," ",($this->_payment_method_type->system_name()))))."_Settings_Form";
+	}
+	public function set_payment_method_type( $payment_method_type ){
+		if( ! $payment_method_type instanceof EE_PMT_Base){
+			throw new EE_Error(sprintf(__("Payment Method forms MUST set a payment method type by using _set_payment_method_type", "event_espresso")));
 		}
+		$this->_payment_method_type = $payment_method_type;
+	}
+
+	public function _construct_finalize( $parent_form_section, $name ) {
+		if( ! $this->_payment_method_type instanceof EE_PMT_Base ){
+			throw new EE_Error( sprintf( __( 'Payment Method forms must have set their payment method type BEFORE calling _construct_finalize', 'event_espresso' )));
+		}
+		//set the name of this form based on the payment method type
+		if( ! $this->_name && ! $name ){
+			$name = str_replace(" ","_",ucwords(str_replace("_"," ",($this->_payment_method_type->system_name()))))."_Settings_Form";
+		}
+		parent::_construct_finalize( $parent_form_section, $name );
+
 	}
 	/**
 	 * extends the model form section's save method to also save the extra meta field values
