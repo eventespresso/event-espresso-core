@@ -323,7 +323,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			foreach( $expected_object->model_field_array() as $field_name => $expected_value ){
 				$actual_value = $actual_object->get( $field_name );
 				if( $expected_value != $actual_value ){
-					$this->fail( sprintf( __( 'EE objects of class "%s" did not match. They were: \r\n%s and \r\n%s', 'event_espresso' ), json_encode( $expected_object->model_field_array() ), json_encode( $actual_object->model_field_array() ) ) );
+					$this->fail( sprintf( __( 'EE objects of class "%s" did not match. They were: \r\n%s and \r\n%s', 'event_espresso' ), get_class( $expected_object ), json_encode( $expected_object->model_field_array() ), json_encode( $actual_object->model_field_array() ) ) );
 				}
 			}
 		}
