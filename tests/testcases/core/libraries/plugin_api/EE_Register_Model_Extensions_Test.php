@@ -164,7 +164,7 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	 * @return array
 	 */
 	public function dont_short_circuit_mock_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( $table_name == 'esp_mock_attendee_meta' && ! $this->_table_exists( $table_name) ){
+		if( $table_name == 'esp_mock_attendee_meta' && ! EEH_Activation::table_exists( $table_name) ){
 //			echo "\r\n\r\nDONT shortcircuit $sql";
 			//it's not altering. it's ok to allow this
 			return FALSE;

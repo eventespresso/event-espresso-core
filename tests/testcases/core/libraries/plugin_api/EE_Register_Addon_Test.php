@@ -49,7 +49,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	 * @return array
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! $this->_table_exists( $table_name) ){
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! EEH_Activation::table_exists( $table_name) ){
 //			echo "\r\n\r\nDONT shortcircuit $sql";
 			//it's not altering. it's ok to allow this
 			return FALSE;
