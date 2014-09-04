@@ -130,6 +130,22 @@ final class EE_Config {
 	}
 
 
+		/**
+	 * Resets the config
+	 * @return EE_Config
+	 */
+	public static function reset(){
+		if( self::$_instance instanceof EE_Config ){
+			self::$_instance->shutdown();
+		}
+		self::$_instance = NULL;
+		//we don't need to reset the static properties imo because those should
+		//only change when a module is added or removed. Currently we don't
+		//support removing a module during a request when it previously existed
+		return self::instance();
+	}
+
+
 
 	/**
 	 *    class constructor
@@ -1252,7 +1268,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
@@ -1484,7 +1500,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * twitter (twitter.com/twitterhandle)
+	 * twitter (twitter.com/twitter_handle)
 	 * @var string
 	 */
 	public $twitter;
@@ -1492,7 +1508,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * linkedin (linkedin.com/in/profilename)
+	 * linkedin (linkedin.com/in/profile_name)
 	 * @var string
 	 */
 	public $linkedin;
@@ -1500,7 +1516,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * pinterest (www.pinterest.com/profilename)
+	 * pinterest (www.pinterest.com/profile_name)
 	 * @var string
 	 */
 	public $pinterest;
@@ -1516,7 +1532,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * instragram (instagram.com/handle)
+	 * instagram (instagram.com/handle)
 	 * @var string
 	 */
 	public $instagram;
@@ -1587,7 +1603,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $sign;
 
 	/**
-	* Whether the currency sign shoudl come before the number or not
+	* Whether the currency sign should come before the number or not
 	* @var boolean $sign_b4
 	*/
 	public $sign_b4;
