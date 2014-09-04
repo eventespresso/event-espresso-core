@@ -116,10 +116,7 @@ class EEH_Debug_Tools{
 	 * @param null $timer_name
 	 */
 	public function start_timer( $timer_name = NULL ){
-		$microtime = microtime();
-		$microtime = explode(" ",$microtime);
-		$microtime = $microtime[1] + $microtime[0];
-		$this->_start_times[$timer_name] = $microtime;
+		$this->_start_times[$timer_name] = microtime( TRUE );
 	}
 
 
@@ -128,18 +125,40 @@ class EEH_Debug_Tools{
 	 * @param string $timer_name
 	 */
 	public function stop_timer($timer_name = 'default'){
-		$microtime = microtime();
-		$microtime = explode(" ",$microtime);
-		$microtime = $microtime[1] + $microtime[0];
-		$end_time = $microtime;
 		if( isset( $this->_start_times[ $timer_name ] ) ){
 			$start_time = $this->_start_times[ $timer_name ];
 			unset( $this->_start_times[ $timer_name ] );
 		}else{
 			$start_time = array_pop( $this->_start_times );
 		}
-		$total_time = ( $end_time - $start_time );
-		$this->_times[] = $timer_name.": $total_time<br>";
+		$total_time = microtime( TRUE ) - $start_time;
+		switch ( $total_time ) {
+			case $total_time < 0.00001 :
+				$color = '#8A549A';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.0001 :
+				$color = '#00B1CA';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.001 :
+				$color = '#70CC50';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.01 :
+				$color = '#FCC600';
+				$bold = 'bold';
+				break;
+			case $total_time < 0.1 :
+				$color = '#E76700';
+				$bold = 'bold';
+				break;
+			default :
+				$color = '#E44064';
+				$bold = 'bold';
+				break;
+		}
+		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name . PHP_EOL;
 	 }
 
 
