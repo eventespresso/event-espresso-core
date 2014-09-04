@@ -89,6 +89,38 @@ abstract class EEM_Base extends EE_Base{
 	protected $_timezone;
 
 	/**
+	 * A copy of _fields, except the array keys are the model names pointed to by
+	 * the field
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_cache_foreign_key_to_fields = array();
+
+	/**
+	 * Cached list of all the fields on the model, indexed by their name
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_cached_fields = NULL;
+
+	/**
+	 * Cached list of all the fields on the model, except those that are
+	 * marked as only pertinent to the database
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_cached_fields_non_db_only = NULL;
+
+	/**
+	 * A cached reference to the primary key for quick lookup
+	 * @var EE_Model_Field_Base
+	 */
+	private $_primary_key_field = NULL;
+
+	/**
+	 * Flag indicating whether this model has a primary key or not
+	 * @var boolean
+	 */
+	protected $_has_primary_key_field=null;
+
+	/**
 	 *	List of valid operators that can be used for querying.
 	 * The keys are all operators we'll accept, the values are the real SQL
 	 * operators used
@@ -197,6 +229,22 @@ abstract class EEM_Base extends EE_Base{
 	protected $_entity_map;
 
 	/**
+	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
+	 * table column, and one for just the table column). This is primarily only used to speed up querying
+	 *
+	 * @var EE_Model_Field_Base[]
+	 */
+	private $_model_fields_sorted_by_db_col = NULL;
+
+
+
+	private $_class = '';
+
+
+
+
+
+	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays.
 	 * Should ALWAYS be called after child constructor.
@@ -212,6 +260,7 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
+		$this->_class = get_class($this);
 		//if we're in maintenance mode level 2, DON'T run any queries
 		//because level 2 indicates the database needs updating and
 		//is probably out of sync with the code
@@ -221,7 +270,7 @@ abstract class EEM_Base extends EE_Base{
 		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
-		 * @param EE_Table_Base[]
+		 * @var EE_Table_Base[] $_tables
 		 */
 		$this->_tables = apply_filters( 'FHEE__'.get_class($this).'__construct__tables', $this->_tables );
 		foreach($this->_tables as $table_alias => $table_obj){
@@ -234,8 +283,8 @@ abstract class EEM_Base extends EE_Base{
 		}
 		/**
 		 * Filters the list of fields on a model. It is best to NOT use this directly and instead just use
-		 * EE_REigster_Model_Extension
-		 * @param EE_Model_Field_Base[]
+		 * EE_Register_Model_Extension
+		 * @param EE_Model_Field_Base[] $_fields
 		 */
 		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
 		foreach($this->_fields as $table_alias => $fields_for_table){
@@ -243,6 +292,7 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
 			}
 			foreach($fields_for_table as $field_name => $field_obj){
+				/** @var $field_obj EE_Model_Field_Base | EE_Primary_Key_Field_Base */
 				//primary key field base has a slightly different _construct_finalize
 				/** @var $field_obj EE_Model_Field_Base */
 				$field_obj->_construct_finalize( $table_alias, $field_name );
@@ -255,15 +305,15 @@ abstract class EEM_Base extends EE_Base{
 
 		// everything is related to Extra_Meta
 		if( get_class($this) != 'EEM_Extra_Meta'){
-			//make extra metas related to everything, but don't block deleting things just
-			//because they have related extra meta info. For now just orphan those extra metas
+			//make extra meta related to everything, but don't block deleting things just
+			//because they have related extra meta info. For now just orphan those extra meta
 			//in the future we should automatically delete them
 			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
 		/**
 		 * Filters the list of relations on a model. It is best to NOT use this directly and instead just use
-		 * EE_REigster_Model_Extension
-		 * @param EE_Model_Relation_Base[]
+		 * EE_Register_Model_Extension
+		 * @param EE_Model_Relation_Base[] $_model_relations
 		 */
 		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
@@ -294,6 +344,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
+		EEH_Debug_Tools::instance()->start_timer( 'set_timezone: ' . $this->_class );
 		if($timezone !== NULL){
 			$this->_timezone = $timezone;
 		}
@@ -309,6 +360,7 @@ abstract class EEM_Base extends EE_Base{
 				$field->set_timezone( $timezone );
 			}
 		}
+		EEH_Debug_Tools::instance()->stop_timer( 'set_timezone: ' . $this->_class );
 	}
 
 
@@ -338,7 +390,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
 	 * @param array $query_params {
 	 *
-	 *	@param array $0 (where) array {
+	 *	@var array $0 (where) array {
 	 *		eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
 			becomes
 	 *		SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
@@ -409,37 +461,37 @@ abstract class EEM_Base extends EE_Base{
 	 *		SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
-	 *	@param mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
+	 *	@var mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
 	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 *
-	 *	@param array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
+	 *	@var array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
 	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).
-	 *	@param mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
+	 *	@var mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *		which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *		Like the 'where' conditions, these fields can be on related models.
 	 *		Eg 'order_by'=>array('Registration.Transaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
-	 *	@param string $order	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
+	 *	@var string $order	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
 	 *		descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
 	 *		Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
 	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 *
-	 *	@param mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+	 *	@var mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
 	 *
-	 *	@param array having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
+	 *	@var array $having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *
-	 *	@param array force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
+	 *	@var array $force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
 	 *		array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
 	 *		You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model
 	 *		(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *		to avoid future queries
 	 *
-	 *	@param string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *	@var string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
 	 * }
 	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
-	 * @example   Some full examples:
+	 * Some full examples:
 	 *
 	 * 		get 10 transactions which have Scottish attendees:
 	 *
@@ -484,7 +536,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		global $wpdb;
+		EE_Registry::instance()->load_helper('Debug_Tools' );
+		EEH_Debug_Tools::instance()->start_timer( 'build query' );
+
 
 		//remember the custom selections, if any
 		if(is_array($columns_to_select)){
@@ -499,8 +553,10 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-
+		EEH_Debug_Tools::instance()->stop_timer( 'build query');
+		EEH_Debug_Tools::instance()->start_timer( 'run query');
 		$results =  $this->_do_wpdb_query( 'get_results', array($SQL, $output ) );// $wpdb->get_results($SQL, $output);
+		EEH_Debug_Tools::instance()->stop_timer('run query');
 		return $results;
 	}
 
@@ -534,6 +590,8 @@ abstract class EEM_Base extends EE_Base{
 
 	}
 
+
+
 	/**
 	 * Convenient wrapper for getting the primary key field's name. Eg, on Registration, this would be 'REG_ID'
 	 * @return string
@@ -541,6 +599,8 @@ abstract class EEM_Base extends EE_Base{
 	function primary_key_name(){
 		return $this->get_primary_key_field()->get_name();
 	}
+
+
 
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
@@ -555,11 +615,14 @@ abstract class EEM_Base extends EE_Base{
 			return $this->get_one(array(array($primary_key_name => $id)));
 		}
 	}
+
+
+
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
 	 * null is returned.
 	 * @param array $query_params like EEM_Base's $query_params variable.
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class | NULL
 	 */
 	function get_one($query_params = array()){
 		$query_params['limit'] = 1;
@@ -573,20 +636,15 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-
-
 	/**
 	 * This just returns whatever is set for the current timezone.
 	 *
 	 * @access public
-	 * @return string timezone string
+	 * @return string
 	 */
 	public function get_timezone() {
 		return $this->_timezone;
 	}
-
-
-
 
 
 
@@ -597,6 +655,9 @@ abstract class EEM_Base extends EE_Base{
 	function get_tables(){
 		return $this->_tables;
 	}
+
+
+
 	/**
 	 * Updates all the database entries (in each table for this model) according to $fields_n_values and optionally
 	 * also updates all the model objects, where the criteria expressed in $query_params are met..
@@ -606,7 +667,7 @@ abstract class EEM_Base extends EE_Base{
 	 * (which means where wp_posts has ID = 1, because wp_posts.ID is the primary key's column), which exists, but there is no entry in wp_esp_event for this entry in wp_posts.
 	 * So, this update script will insert a row into wp_esp_event, using any available parameters from $fields_n_values (eg, if "EVT_limit" => 40 is in $fields_n_values,
 	 * the new entry in wp_esp_event will set EVT_limit = 40, and use default for other columns which are not specified)
-	 * @param array $fields_n_values keys are model fields (exactly like keys in EEM_CPT_Base::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
+	 * @param array $fields_n_values keys are model fields (exactly like keys in EEM_Base::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
 	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in the DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
 	 * we'd use this method as follows:
 	 * EEM_Transaction::instance()->update(
@@ -642,7 +703,6 @@ abstract class EEM_Base extends EE_Base{
 		 * @param array $query_params see EEM_Base::get_all()
 		 */
 		$fields_n_values = apply_filters( 'FHEE__EEM_Base__update__fields_n_values', $fields_n_values, $this, $query_params );
-		global $wpdb;
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
@@ -670,12 +730,18 @@ abstract class EEM_Base extends EE_Base{
 						$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
 						//if there is no private key for this table on the results, it means there's no entry
 						//in this table, right? so insert a row in the current table, using any fields available
-						if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
+						if( ! ( array_key_exists( $this_table_pk_column, $wpdb_result) && $wpdb_result[ $this_table_pk_column ] )){
 							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
 						}
 					}
 				}
 
+//				//and now check that if we have cached any models by that ID on the model, that
+//				//they also get updated properly
+//				$model_object = $this->get_from_entity_map( $main_table_pk_value );
+//				if( $model_object ){
+//					foreach( $fields_n_values as $field => $value ){
+//						$model_object->set($field, $value);
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
@@ -705,7 +771,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-		$rows_affected = $wpdb->query($SQL);
+		$rows_affected = $this->_do_wpdb_query( 'query', array( $SQL ) );
 		$this->show_db_query_if_previously_requested($SQL);
 		/**
 		 * Action called after a model update call has been made.
@@ -729,7 +795,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array just like $wpdb->get_col()
 	 */
 	public function get_col( $query_params  = array(), $field_to_select = NULL ){
-		global $wpdb;
 
 		if( $field_to_select ){
 			$field = $this->field_settings_for( $field_to_select );
@@ -741,16 +806,14 @@ abstract class EEM_Base extends EE_Base{
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$select_expressions = $field->get_qualified_column();
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
-//		echo "sql:$SQL";
-		$results =  $wpdb->get_col( $SQL );
-		$this->show_db_query_if_previously_requested($SQL);
+		$results =  $this->_do_wpdb_query('get_col', array( $SQL ) );
 		return $results;
 	}
 
 
 
 	/**
-	 * Makes the SQL for after "UPDATE table-x inner join table-y..." and before "...WHERE". Eg "Question.name='party time?', Question.desc='what do you think?',..."
+	 * Makes the SQL for after "UPDATE table_X inner join table_Y..." and before "...WHERE". Eg "Question.name='party time?', Question.desc='what do you think?',..."
 	 * Values are filtered through wpdb->prepare to avoid against SQL injection, but currently no further filtering is done
 	 * @global $wpdb
 	 * @param array $fields_n_values array keys are field names on this model, and values are what those fields should be updated to in the DB
@@ -890,32 +953,32 @@ abstract class EEM_Base extends EE_Base{
 			$primary_table = $this->_get_main_table();
 			$other_tables = $this->_get_other_tables();
 			$deletes = $query = array();
-			foreach ( $objects_for_deletion as $deobj ) {
+			foreach ( $objects_for_deletion as $delete_object ) {
 				//before we mark this object for deletion,
 				//make sure there's no related objects blocking its deletion (if we're checking)
-				if( $allow_blocking && $this->delete_is_blocked_by_related_models($deobj[$primary_table->get_fully_qualified_pk_column()]) ){
+				if( $allow_blocking && $this->delete_is_blocked_by_related_models($delete_object[$primary_table->get_fully_qualified_pk_column()]) ){
 					continue;
 				}
 
 				//primary table deletes
-				if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
-					$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];
+				if ( isset( $delete_object[$primary_table->get_fully_qualified_pk_column()] ) )
+					$deletes[$primary_table->get_fully_qualified_pk_column()][] = $delete_object[$primary_table->get_fully_qualified_pk_column()];
 
 				//other tables
 				if ( !empty( $other_tables ) ) {
 					foreach ( $other_tables as $ot ) {
 
 						//first check if we've got the foreign key column here.
-						if ( isset( $deobj[$ot->get_fully_qualified_fk_column()] ) )
-							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_fk_column()];
+						if ( isset( $delete_object[$ot->get_fully_qualified_fk_column()] ) )
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_fk_column()];
 
 						//wait! it's entirely possible that we'll have a the primary key for this table in here if it's a foreign key for one of the other secondary tables
-						if ( isset( $deobj[$ot->get_fully_qualified_pk_column()] ) )
-							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+						if ( isset( $delete_object[$ot->get_fully_qualified_pk_column()] ) )
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
 
 						//finally, it is possible that the fk for this table is found in the fully qualified pk column for the fk table, so let's see if that's there!
-						if ( isset( $deobj[$ot->get_fully_qualified_pk_on_fk_table()]) )
-							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+						if ( isset( $delete_object[$ot->get_fully_qualified_pk_on_fk_table()]) )
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $delete_object[$ot->get_fully_qualified_pk_column()];
 					}
 				}
 			}
@@ -932,10 +995,10 @@ abstract class EEM_Base extends EE_Base{
 			$ways_to_identify_a_row = array();
 			$fields = $this->get_combined_primary_key_fields();
 			//note: because there' sno primary key, that means nothing else  can be pointing to this model, right?
-			foreach($objects_for_deletion as  $deobj){
+			foreach($objects_for_deletion as  $delete_object){
 				$values_for_each_cpk_for_a_row = array();
 				foreach($fields as $cpk_field){
-					$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()."=".$deobj[$cpk_field->get_qualified_column()];
+					$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()."=".$delete_object[$cpk_field->get_qualified_column()];
 				}
 				$ways_to_identify_a_row[] = "(".implode(" AND ",$values_for_each_cpk_for_a_row).")";
 			}
@@ -968,7 +1031,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
@@ -993,7 +1055,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function sum($query_params, $field_to_sum = NULL){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 
 		if($field_to_sum){
@@ -1013,12 +1074,15 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+
+
 	/**
 	 * Just calls the specified method on $wpdb with the given arguments
 	 * Consolidates a little extra error handling code
-	 * @global $wpdb $wpdb
 	 * @param string $wpdb_method
-	 * @param array $arguments_to_provide
+	 * @param array  $arguments_to_provide
+	 * @throws EE_Error
+	 * @global wpdb $wpdb
 	 * @return mixed
 	 */
 	private function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
@@ -1078,9 +1142,9 @@ abstract class EEM_Base extends EE_Base{
 	 * Adds a relationship of the correct type between $modelObject and $otherModelObject.
 	 * There are the 3 cases:
 	 *
-	 * 'belongsTo' relationship: sets $modelObject's foreign_key to be $otherModelObject's primary_key. If $otherModelObject has no ID, it is first saved.
+	 * 'belongsTo' relationship: sets $id_or_obj's foreign_key to be $other_model_id_or_obj's primary_key. If $otherModelObject has no ID, it is first saved.
 	 *
-	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key. If $modelObject has no ID, it is first saved.
+	 * 'hasMany' relationship: sets $other_model_id_or_obj's foreign_key to be $id_or_obj's primary_key. If $id_or_obj has no ID, it is first saved.
 	 *
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
 	 * If one of the model Objects has not yet been saved to the database, it is saved before adding the entry in the join table
@@ -1398,7 +1462,7 @@ abstract class EEM_Base extends EE_Base{
 	 * This is protected rather than private because private is not accessible to any child methods and there MAY be cases where we want to call it directly rather than via insert().
 	 * @access   protected
 	 * @param EE_Table_Base $table
-	 * @param array         $fields_n_values each key should be in _field's keys, and value should be an int, string or float
+	 * @param array         $fields_n_values each key should be in field's keys, and value should be an int, string or float
 	 * @param bool|int     $new_id
 	 * @throws EE_Error
 	 * @internal param int $new_id for now we assume only int keys
@@ -1415,7 +1479,7 @@ abstract class EEM_Base extends EE_Base{
 				continue;
 			}
 			if( ! isset( $fields_n_values[$field_name]) ||  $fields_n_values[$field_name] === null){
-				//they didnt include this field. so just use default
+				//they didn't include this field. so just use default
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
 			}else{
 				//they have specified the value for this field, so use it values_already_prepared_by_model_object
@@ -1432,7 +1496,7 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		$this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){
@@ -1514,7 +1578,7 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Gets all the tables of type EE_Other_Table from EE_CPT_Model::_tables
+	 * Gets all the tables of type EE_Other_Table from EEM_CPT_Basel_Model::_tables
 	 * @return EE_Secondary_Table[]
 	 */
 	protected function _get_other_tables(){
@@ -1552,7 +1616,7 @@ abstract class EEM_Base extends EE_Base{
 		if(array_key_exists('group_by', $query_params)){
 			if(is_array($query_params['group_by'])){
 				$this->_extract_related_models_from_sub_params_array_values($query_params['group_by'],$query_info_carrier,'group_by');
-			}elseif( ! empty( $query_params['group_by'])){
+			}elseif( ! empty ( $query_params['group_by'] )){
 				$this->_extract_related_model_info_from_query_param( $query_params['group_by'],$query_info_carrier,'group_by');
 			}
 		}
@@ -1562,7 +1626,7 @@ abstract class EEM_Base extends EE_Base{
 		if(array_key_exists('order_by', $query_params)){
 			if ( is_array( $query_params['order_by'] ) )
 				$this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_info_carrier,'order_by');
-			elseif( ! empty( $query_params['order_by']))
+			elseif( ! empty( $query_params['order_by'] ))
 				$this->_extract_related_model_info_from_query_param( $query_params['order_by'], $query_info_carrier,'order_by');
 		}
 		if(array_key_exists('force_join', $query_params)){
@@ -1593,7 +1657,7 @@ abstract class EEM_Base extends EE_Base{
 				$query_param_sans_stars = $this->_remove_stars_and_anything_after_from_condition_query_param_key($param);
 				if(in_array($query_param_sans_stars, $this->_logic_query_param_keys,true)){
 					if (! is_array($possibly_array_of_params)){
-						throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isn't an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkeyland'))", "event_espresso"),
+						throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isn't an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkey_land'))", "event_espresso"),
 							$param,$possibly_array_of_params));
 					}else{
 						$this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params, $model_query_info_carrier,$query_param_type);
@@ -1664,7 +1728,7 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, $value,get_class($this)));
 			}
 		}
-		if(array_key_exists('default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'])){
+		if( array_key_exists( 'default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'] )){
 			$use_default_where_conditions = $query_params['default_where_conditions'];
 		}else{
 			$use_default_where_conditions = 'all';
@@ -1675,7 +1739,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.  So we need to setup a subquery and use that for the main join.  Note for now this only works on the primary table for the model.  So for instance, you could set the limit array like this:
 		//array( 'on_join_limit' => array('Primary_Table_Alias', array(1,10) ) )
-		if ( array_key_exists('on_join_limit', $query_params ) && ! empty( $query_params['on_join_limit'])) {
+		if ( array_key_exists('on_join_limit', $query_params ) && ! empty( $query_params['on_join_limit'] )) {
 			$query_object->set_main_model_join_sql( $this->_construct_limit_join_select( $query_params['on_join_limit'][0], $query_params['on_join_limit'][1] ) );
 		}
 
@@ -1689,7 +1753,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
-			}elseif( ! empty( $query_params['limit'])){
+			}elseif( ! empty ( $query_params['limit'] )){
 				$query_object->set_limit_sql((" LIMIT ".$query_params['limit']));
 			}
 		}
@@ -1711,7 +1775,7 @@ abstract class EEM_Base extends EE_Base{
 					$order_array[] = $this->_deduce_column_name_from_query_param($field_name_to_order_by).SP.$order;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
-			}elseif( ! empty( $query_params['order_by'])){
+			}elseif( ! empty ( $query_params['order_by'] )){
 				$this->_extract_related_model_info_from_query_param($query_params['order_by'],$query_object,'order',$query_params['order_by']);
 				if(isset($query_params['order'])){
 					$order = $this->_extract_order($query_params['order']);
@@ -1723,7 +1787,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		//if 'order_by' wasn't set, maybe they are just using 'order' on its own?
-		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params) && ! empty( $query_params['order'])){
+		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params) && ! empty( $query_params['order'] )){
 			$pk_field = $this->get_primary_key_field();
 			$order = $this->_extract_order($query_params['order']);
 			$query_object->set_order_by_sql(" ORDER BY ".$pk_field->get_qualified_column().SP.$order);
@@ -1738,7 +1802,7 @@ abstract class EEM_Base extends EE_Base{
 					$group_by_array[] = $this->_deduce_column_name_from_query_param($field_name_to_group_by);
 				}
 				$query_object->set_group_by_sql(" GROUP BY ".implode(", ",$group_by_array));
-			}elseif( ! empty( $query_params['group_by'])){
+			}elseif( ! empty ( $query_params['group_by'] )){
 				$query_object->set_group_by_sql(" GROUP BY ".$this->_deduce_column_name_from_query_param($query_params['group_by']));
 			}
 		}
@@ -1766,6 +1830,8 @@ abstract class EEM_Base extends EE_Base{
 			$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
 	}
+
+
 
 	/**
 	 * Verifies that $should_be_order_string is in $this->_allowed_order_values,
@@ -1917,20 +1983,21 @@ abstract class EEM_Base extends EE_Base{
 	 * gets the join statement for it; gets the data types for it; and passes the remaining 'Transaction.TXN_ID'
 	 * onto its related Transaction object to do the same. Returns an EE_Join_And_Data_Types object which contains the SQL
 	 * for joining, and the data types
-	 * @param string 	$query_param
+	 * @param null|string 	$original_query_param
+	 * @param string $query_param like Registration.Transaction.TXN_ID
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
-	 * @param string $query_param_type like Registration.Transaction.TXN_ID
-	 * @param null|string 	$original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
-	 * @throws EE_Error
-	 * @internal param bool $allow_logic_query_params whether or not to allow logic_query_params like 'NOT','OR', or 'AND'
+	 * @param 	string $query_param_type like Registration.Transaction.TXN_ID
 	 * or 'PAY_ID'. Otherwise, we don't expect there to be a column name. We only want model names, eg 'Event.Venue' or 'Registration's
+	 * @param string $original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
+	 * @throws EE_Error
 	 * @return void only modifies the EEM_Related_Model_Info_Carrier passed into it
 	 */
 	private function _extract_related_model_info_from_query_param( $query_param, EE_Model_Query_Info_Carrier $passed_in_query_info, $query_param_type, $original_query_param = NULL ){
 		if($original_query_param == NULL){
 			$original_query_param = $query_param;
 		}
-		$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);//str_replace("*", "", $query_param);
+		$query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);
+		/** @var $allow_logic_query_params bool whether or not to allow logic_query_params like 'NOT','OR', or 'AND' */
 		$allow_logic_query_params = in_array($query_param_type,array('where','having'));
 		$allow_fields = in_array($query_param_type,array('where','having','order_by','group_by','order'));
 		//check to see if we have a field on this model
@@ -1948,7 +2015,7 @@ abstract class EEM_Base extends EE_Base{
 			if($allow_logic_query_params){
 				return;
 			}else{
-				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong quer params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
+				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong query params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
 			}
 		}
 		//check if it's a custom selection
@@ -2223,7 +2290,7 @@ abstract class EEM_Base extends EE_Base{
 			return $operator.SP.$cleaned_value;
 		} elseif( in_array( $operator, $this->_null_style_operators ) ) {
 			if($value != NULL){
-				throw new EE_Error(sprintf(__("You attempted to give a value  (%s) while using a NULL-style operator (%s). That isnt valid", "event_espresso"),$value,$operator));
+				throw new EE_Error(sprintf(__("You attempted to give a value  (%s) while using a NULL-style operator (%s). That isn't valid", "event_espresso"),$value,$operator));
 			}
 			return $operator;
 		}elseif( $operator == 'LIKE' && ! is_array($value)){
@@ -2237,7 +2304,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif( ! in_array($operator, $this->_in_style_operators) && is_array($value)){
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with a single value, not an array. Eg 'Registration.REG_ID => array('%s',23))",'event_espresso'),$operator,$operator));
 		}else{
-			throw new EE_Error(sprintf(__("It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isnt right at all", "event_espresso"),  http_build_query($op_and_value)));
+			throw new EE_Error(sprintf(__("It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all", "event_espresso"),  http_build_query($op_and_value)));
 		}
 	}
 
@@ -2572,8 +2639,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-
-
 	/**
 	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Answer that would be ANS_ID field object
@@ -2581,21 +2646,19 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_primary_key_field(){
-		foreach( $this->field_settings( TRUE ) as $field_obj ){
-			if( $this->is_primary_key_field( $field_obj )){
-				return $field_obj;
+		if( $this->_primary_key_field === NULL ){
+			foreach( $this->field_settings( TRUE ) as $field_obj ){
+				if( $this->is_primary_key_field( $field_obj )){
+					$this->_primary_key_field = $field_obj;
+					break;
+				}
+			}
+			if( ! $this->_primary_key_field instanceof EE_Primary_Key_Field_Base ){
+				throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
 			}
 		}
-		throw new EE_Error(sprintf(__("There is no Primary Key defined on model %s",'event_espresso'),get_class($this)));
+		return $this->_primary_key_field;
 	}
-
-
-
-	/**
-	 * Flag indicating whether this model has a primary key or not
-	 * @var boolean
-	 */
-	protected $_has_primary_key_field=null;
 
 
 
@@ -2614,8 +2677,9 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		return $this->_has_primary_key_field;
-
 	}
+
+
 
 	/**
 	 * Finds the first field of type $field_class_name.
@@ -2629,8 +2693,9 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		return null;
-
 	}
+
+
 	/**
 	 * Gets a foreign key field pointing to model.
 	 * @param string $model_name eg Event, Registration, not EEM_Event
@@ -2638,16 +2703,22 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function get_foreign_key_to($model_name){
-		foreach($this->field_settings() as $field){
-			if( $field instanceof EE_Foreign_Key_Field_Base ){
-				if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
-					return $field;
-				}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
-					return $field;
+		if( ! isset( $this->_cache_foreign_key_to_fields[ $model_name ] ) ){
+			foreach($this->field_settings() as $field){
+//				if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
+				if( $field instanceof EE_Foreign_Key_Field_Base ){
+					if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
+						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
+					}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
+					}
 				}
 			}
+			if( ! isset( $this->_cache_foreign_key_to_fields[ $model_name ] ) ){
+				throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
+			}
 		}
-		throw new EE_Error(sprintf(__("There is no foreign key field pointing to model %s on model %s",'event_espresso'),$model_name,get_class($this)));
+		return $this->_cache_foreign_key_to_fields[ $model_name ];
 	}
 
 
@@ -2670,17 +2741,33 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Field_Base[] where the keys are the field's name
 	 */
 	public function field_settings($include_db_only_fields = false){
-		$all_fields = array();
-		foreach($this->_fields as $fields_corresponding_to_table){
-			foreach($fields_corresponding_to_table as $field_name => $field_obj){
-				/** @var $field_obj EE_Model_Field_Base */
-				if( !$field_obj->is_db_only_field() || ($include_db_only_fields && $field_obj->is_db_only_field())){
-					$all_fields[$field_name]=$field_obj;
+		if( $include_db_only_fields ){
+			if( $this->_cached_fields === NULL ){
+				$this->_cached_fields = array();
+				foreach($this->_fields as $fields_corresponding_to_table){
+					foreach($fields_corresponding_to_table as $field_name => $field_obj){
+						$this->_cached_fields[$field_name]=$field_obj;
+					}
 				}
 			}
+			return $this->_cached_fields;
+		}else{
+			if( $this->_cached_fields_non_db_only === NULL ){
+				$this->_cached_fields_non_db_only = array();
+				foreach($this->_fields as $fields_corresponding_to_table){
+					foreach($fields_corresponding_to_table as $field_name => $field_obj){
+						/** @var $field_obj EE_Model_Field_Base */
+						if( ! $field_obj->is_db_only_field() ){
+							$this->_cached_fields_non_db_only[$field_name]=$field_obj;
+						}
+					}
+				}
+			}
+			return $this->_cached_fields_non_db_only;
 		}
-		return $all_fields;
 	}
+
+
 
 	/**
 	*		cycle though array of attendees and create objects out of each item
@@ -2690,14 +2777,13 @@ abstract class EEM_Base extends EE_Base{
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/
 	protected function _create_objects( $rows = array() ) {
-
+		EEH_Debug_Tools::instance()->start_timer( 'built objects' );
 		$array_of_objects=array();
 		if(empty($rows)){
 			return array();
 		}
 		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
-
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
 			}
@@ -2706,12 +2792,14 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
+			EEH_Debug_Tools::instance()->start_timer( 'build related: ' . $this->_class );
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
 			//that filtered out some fo the results, then we'd be caching an incomplete set
 			//so it requires a little more thought than just caching them immediately...)
 			foreach($this->_model_relations as $modelName => $relation_obj){
+				EEH_Debug_Tools::instance()->start_timer( 'build related object: ' . $modelName );
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
@@ -2725,8 +2813,11 @@ abstract class EEM_Base extends EE_Base{
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
+				EEH_Debug_Tools::instance()->stop_timer( 'build related object: ' . $modelName );
 			}
+			EEH_Debug_Tools::instance()->stop_timer( 'build related: ' . $this->_class );
 		}
+		EEH_Debug_Tools::instance()->stop_timer('built objects');
 		return $array_of_objects;
 	}
 
@@ -2755,31 +2846,45 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * _get_cached_acceptable_table_columns
+	 * @return EE_Model_Field_Base[]|null
+	 */
+	private function _get_cached_acceptable_table_columns(){
+		if( $this->_model_fields_sorted_by_db_col === NULL ){
+			foreach( $this->field_settings() as $field_obj ){
+				if( ! $field_obj->is_db_only_field() ){
+					$this->_model_fields_sorted_by_db_col[ $field_obj->get_qualified_column() ] = $field_obj;
+//					$this->_model_fields_sorted_by_db_col[ $field->get_table_column() ] = $field_obj;
+					$this->_model_fields_sorted_by_db_col[ $field_obj->get_table_column() ] = $field_obj;
+				}
+			}
+		}
+		return $this->_model_fields_sorted_by_db_col;
+	}
+
+	/**
 	 *
 	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
 	 * or an stdClass where each property is the name of a column,
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
+		EEH_Debug_Tools::instance()->start_timer( 'instantiate_class_from_array_or_object' );
 		if( ! is_array( $cols_n_values ) && is_object( $cols_n_values )) {
 			$cols_n_values = get_object_vars( $cols_n_values );
 		}
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		foreach( $cols_n_values as $col => $val ) {
-			foreach( $this->field_settings() as $field_name => $field_obj ){
-				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-				//does the field on the model relate to this column retrieved from the db?
-				//or is it a db-only field? (not relating to the model)
-				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
-					//OK, this field apparently relates to this model.
-					//now we can add it to the array
-					$this_model_fields_n_values[$field_name] = $val;
-					// grab the primary key
-					$primary_key = $this->has_primary_key_field() && $this->is_primary_key_field( $field_obj ) ? $val : $primary_key;
-				}
+		foreach( $this->field_settings() as $field_name => $field_obj ){
+			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
+				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
+			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
+				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
 			}
+		}
+		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
+			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
 		}
 		$className=$this->_get_class_name();
 
@@ -2793,7 +2898,9 @@ abstract class EEM_Base extends EE_Base{
 		if ( $primary_key){
 			$classInstance = $this->get_from_entity_map( $primary_key );
 			if( ! $classInstance) {
+				EEH_Debug_Tools::instance()->start_timer( 'load_class: ' . $className );
 				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
+				EEH_Debug_Tools::instance()->stop_timer( 'load_class: ' . $className );
 				// add this new object to the entity map
 				$classInstance = $this->add_to_entity_map( $classInstance );
 			}
@@ -2803,7 +2910,7 @@ abstract class EEM_Base extends EE_Base{
 
 			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentionally override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );
-
+		EEH_Debug_Tools::instance()->stop_timer( 'instantiate_class_from_array_or_object' );
 		return $classInstance;
 	}
 	/**
@@ -2819,14 +2926,12 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Adds the object to the model's mappings
-	 * @param 	\EE_Base_Class $object
+	 * @param 	EE_Base_Class $object
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	public function add_to_entity_map( $object ) {
-
+	public function add_to_entity_map( EE_Base_Class $object ) {
 		$className = $this->_get_class_name();
-
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
 		}

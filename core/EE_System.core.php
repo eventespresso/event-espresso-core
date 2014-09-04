@@ -980,6 +980,7 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
+
 	}
 
 
