@@ -158,7 +158,7 @@ class EEH_Debug_Tools{
 				$bold = 'bold';
 				break;
 		}
-		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name . PHP_EOL;
+		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
 	 }
 
 
