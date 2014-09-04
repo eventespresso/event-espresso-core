@@ -1,7 +1,14 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-
-
-
+/**
+ *
+ * Class EEH_Debug_Tools
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Brent Christensen, Michael Nelson
+ * @since 				4.0
+ *
+ */
 class EEH_Debug_Tools{
 	/**
 	 * 	instance of the EEH_Autoloader object
@@ -13,7 +20,7 @@ class EEH_Debug_Tools{
 	/**
 	 * array containing the start time for the timers
 	 */
-	private $_starttimes;
+	private $_start_times;
 	/**
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
@@ -30,11 +37,14 @@ class EEH_Debug_Tools{
 		}
 		return self::$_instance;
 	}
+
+
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  	@access 	private
-	 *  	@return 	void
+	 * @access    private
+	 * @return \EEH_Debug_Tools
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
@@ -67,11 +77,12 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 	List All Hooked Functions
-	 * 	to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
-	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
+	 *    List All Hooked Functions
+	 *    to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+	 *    http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
 	 *
-	 * 	@return void
+	 * @param bool $tag
+	 * @return void
 	 */
 	public function espresso_list_hooked_functions( $tag=FALSE ){
 		global $wp_filter;
@@ -88,10 +99,10 @@ class EEH_Debug_Tools{
 			$hook=$wp_filter;
 			ksort( $hook );
 		}
-		foreach( $hook as $tag => $priority ) {
+		foreach( $hook as $tag => $priorities ) {
 			echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
-			ksort( $priority );
-			foreach( $priority as $priority => $function ){
+			ksort( $priorities );
+			foreach( $priorities as $priority => $function ){
 				echo $priority;
 				foreach( $function as $name => $properties ) echo "\t$name<br />";
 			}
@@ -100,36 +111,49 @@ class EEH_Debug_Tools{
 	}
 
 
+
 	/**
-	 *
+	 * @param null $timer_name
 	 */
 	public function start_timer( $timer_name = NULL ){
-		$mtime = microtime();
-		$mtime = explode(" ",$mtime);
-		$mtime = $mtime[1] + $mtime[0];
-		$this->_starttimes[$timer_name] = $mtime;
+		$microtime = microtime();
+		$microtime = explode(" ",$microtime);
+		$microtime = $microtime[1] + $microtime[0];
+		$this->_start_times[$timer_name] = $microtime;
 	}
 
+
+
+	/**
+	 * @param string $timer_name
+	 */
 	public function stop_timer($timer_name = 'default'){
-		$mtime = microtime();
-		$mtime = explode(" ",$mtime);
-		$mtime = $mtime[1] + $mtime[0];
-		$endtime = $mtime;
-		if( isset( $this->_starttimes[ $timer_name ] ) ){
-			$start_time = $this->_starttimes[ $timer_name ];
-			unset( $this->_starttimes[ $timer_name ] );
+		$microtime = microtime();
+		$microtime = explode(" ",$microtime);
+		$microtime = $microtime[1] + $microtime[0];
+		$end_time = $microtime;
+		if( isset( $this->_start_times[ $timer_name ] ) ){
+			$start_time = $this->_start_times[ $timer_name ];
+			unset( $this->_start_times[ $timer_name ] );
 		}else{
-			$start_time = array_pop( $this->_starttimes );
+			$start_time = array_pop( $this->_start_times );
 		}
-		$totaltime = ( $endtime - $start_time );
-		$this->_times[] = $timer_name.": $totaltime<br>";
+		$total_time = ( $end_time - $start_time );
+		$this->_times[] = $timer_name.": $total_time<br>";
 	 }
-	 public function show_times($output_now=true){
+
+
+
+	/**
+	 * @param bool $output_now
+	 * @return string
+	 */
+	public function show_times($output_now=true){
 		 if($output_now){
 			 echo implode("<br>",$this->_times);
-		 }else{
-			 return implode("<br>",$this->_times);
+			 return '';
 		 }
+		return implode("<br>",$this->_times);
 	 }
 
 
@@ -156,7 +180,7 @@ class EEH_Debug_Tools{
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
 	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @return trigger_error()
+	 * @uses trigger_error()
 	 */
 	public function doing_it_wrong( $function, $message, $version ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
