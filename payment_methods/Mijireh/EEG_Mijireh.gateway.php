@@ -116,13 +116,29 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
-		if(! empty($response['body'])){
+		if( ! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
+			if($response_body == NULL || ! isset($response_body->checkout_url)){
+				if( is_array( $response_body ) || is_object( $response_body)){
+					$response_body_as_array = (array)$response_body;
+					$problems_string = '';
+					foreach($response_body_as_array as $problem_parameter => $problems){
+						$problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));
+					}
+				}else{
+					$problems_string = $response['body'];
+				}
+
+				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
+			}
 			$payment->set_redirect_url($response_body->checkout_url);
 			$payment->set_txn_id_chq_nmbr($response_body->order_number);
 			$payment->set_details($response['body']);
 		}else{
-			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
+			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
+			EE_Error::add_error($error_message, __FILE__, __FUNCTION__, __LINE__ );
+			throw new EE_Error($error_message);
+
 		}
 		return $payment;
 	}
