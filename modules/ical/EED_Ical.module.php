@@ -151,7 +151,7 @@ class EED_Ical  extends EED_Module {
 				$org_email = EED_Ical::_escape_ICal_data( $datetime->ID() );
 				$timestamp = date( EED_Ical::iCal_datetime_format );
 				$location = EED_Ical::_escape_ICal_data( $location );
-				$summary = EED_Ical::_escape_ICal_data( wp_trim_words( $event->description() ));
+				$summary = EED_Ical::_escape_ICal_data( $event->name() );
 				$description = EED_Ical::_escape_ICal_data( wp_strip_all_tags( $event->description() ));
 				$status = $datetime->get_active_status();
 				$status = $status == EE_Datetime::cancelled ? 'Cancelled' : 'Confirmed';
