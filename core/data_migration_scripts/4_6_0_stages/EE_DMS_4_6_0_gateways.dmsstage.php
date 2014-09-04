@@ -5,16 +5,16 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  *
- * EE_DMS_4_5_0_gateways
+ * EE_DMS_4_6_0_gateways
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  *
- * Migrates 4.1-4.3-style gateway settings (which were stores in EE_Config)
- * to 4.5-style payment methods (which have their database table)
+ * Migrates 4.1-4.5-style gateway settings (which were stores in EE_Config)
+ * to 4.6-style payment methods (which have their database table)
  */
-class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 
 	protected $_new_table_name;
 	protected $_extra_meta_table_name;
@@ -22,7 +22,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 	protected $_currency_payment_method_table_name;
 
 	/**
-	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.5
+	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.6
 	 * @var array
 	 */
 	protected $_gateway_we_know_to_migrate = array(
@@ -102,7 +102,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 	}
 
 	/**
-	 * Converts the 4.1-style gateway to a 4.5-style payment method and saves it to the DB
+	 * Converts the 4.1-style gateway to a 4.6-style payment method and saves it to the DB
 	 * @param string $old_gateway_slug
 	 * @param array $old_gateway_settings
 	 * @param boolean $active indicates the gateway is currently active
@@ -285,4 +285,4 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 
 }
 
-// End of file EE_DMS_4_5_0_gateways.dmsstage.php
+// End of file EE_DMS_4_6_0_gateways.dmsstage.php

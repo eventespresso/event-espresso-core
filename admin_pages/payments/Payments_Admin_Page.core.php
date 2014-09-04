@@ -372,7 +372,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'PMD_type',//dont want them changing the type
 			'PMD_order',//or the order, for now
 			'PMD_slug',//or the slug (probably never)
-			'PRC_ID',//or the price surcharge (will probably change soon)
 			'PMD_wp_user_id',//or the user's ID
 			'Currency'//or the currency, until the rest of EE supports simultaneous currencies
 		));

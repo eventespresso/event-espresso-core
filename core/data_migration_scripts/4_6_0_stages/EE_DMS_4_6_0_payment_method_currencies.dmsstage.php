@@ -6,19 +6,19 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  *
- * EE_DMS_4_5_0_payment_method_currencies
+ * EE_DMS_4_6_0_payment_method_currencies
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  *
  */
-class EE_DMS_4_5_0_payment_method_currencies extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_Stage{
 	protected $_currency_table_name;
 	protected $_currency_payment_method_table_name;
 	protected $_payment_method_table_name;
 	/**
-	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.5
+	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.6
 	 * @var array
 	 */
 	protected $_gateway_currencies = array(
@@ -179,4 +179,4 @@ class EE_DMS_4_5_0_payment_method_currencies extends EE_Data_Migration_Script_St
 	}
 }
 
-// End of file EE_DMS_4_5_0_payment_method_currencies.dmsstage.php
+// End of file EE_DMS_4_6_0_payment_method_currencies.dmsstage.php
