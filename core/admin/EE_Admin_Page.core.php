@@ -2947,7 +2947,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$data = get_transient( $transient );
 		//delete transient after retrieval (just in case it hasn't expired);
 		delete_transient( $transient );
-		return $notices ? $data['notices'] : $data;
+		return $notices && isset( $data['notices'] ) ? $data['notices'] : $data;
 	}
 
 
