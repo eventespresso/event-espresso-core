@@ -174,14 +174,6 @@ final class EE_Registry {
 		}
 		return self::$_instance;
 	}
-	/**
-	 * Resets the registry- for now that means just the LIB property
-	 * @return EE_Registry
-	 */
-	public static function reset(){
-		self::$_instance->LIB = new stdClass();
-		return self::instance();
-	}
 
 
 
@@ -717,6 +709,7 @@ final class EE_Registry {
 		$instance = self::instance();
 		$instance->CFG = EE_Config::reset();
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
+		$instance->LIB = new stdClass();
 		return $instance;
 	}
 
