@@ -49,6 +49,7 @@ Class  EE_New_Addon extends EE_Addon {
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
 					'pue_plugin_slug' => 'espresso_new_addon',
+					'plugin_basename' => EE_NEW_ADDON_BASENAME,
 					'checkPeriod' => '24',
 					'use_wp_update' => FALSE,
 					),
