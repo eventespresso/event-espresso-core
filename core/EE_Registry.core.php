@@ -680,9 +680,9 @@ final class EE_Registry {
 		return NULL;
 	}
 	/**
-	 * Gets an array of all the reigstered addons, where the keys are their names. (ie, what each returns for their name() function) They're already available on EE_Config::instance()->addons as properties, where each property's name is the addon's classname. So if you just want to get the addon by classname, use EE_Config::instance()->addons->{classname}
+	 * Gets an array of all the registered addons, where the keys are their names. (ie, what each returns for their name() function) They're already available on EE_Config::instance()->addons as properties, where each property's name is the addon's classname. So if you just want to get the addon by classname, use EE_Config::instance()->addons->{classname}
 	 *
-	 * @return EE_Addon[] where the KEYS are the addons's name()
+	 * @return EE_Addon[] where the KEYS are the addon's name()
 	 */
 	public function get_addons_by_name(){
 		$addons = array();
@@ -702,8 +702,22 @@ final class EE_Registry {
 		$model = $this->load_model( $model_name );
 		$model_class_name = get_class( $model );
 		//get that model reset it and make sure we nuke the old reference to it
-		$this->LIB->$model_class_name = $model::reset();
+		if ( is_callable( array( $model_class_name, 'reset' ))) {
+			$this->LIB->$model_class_name = $model::reset();
+		}
 		return $this->LIB->$model_class_name;
+	}
+
+	/**
+	 * Resets the registry and everything in it (eventually, getting it to properly
+	 * reset absolutely everything will probably be tricky)
+	 * @return EE_Registry
+	 */
+	public static function reset(){
+		$instance = self::instance();
+		$instance->CFG = EE_Config::reset();
+		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
+		return $instance;
 	}
 
 
