@@ -1215,10 +1215,7 @@ class EEH_Activation {
 			'espresso-multiple',
 			'espresso-recurring',
 			'espresso-ticketing',
-			'espresso-members',
-			'espresso-permissions-basic',
-			'vector-maps',
-			'date-range'
+			'espresso-members'
 			);
 
 		//make sure needed functions are available.
@@ -1273,21 +1270,25 @@ class EEH_Activation {
 	 * @return boolean
 	 */
 	public static function table_exists( $table_name ){
-		global $wpdb;
+		global $wpdb, $EZSQL_ERROR;
 		if(strpos($table_name, $wpdb->prefix) !== 0){
 			$table_name = $wpdb->prefix.$table_name;
 		}
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->last_error = NULL;
-		$wpdb->show_errors( FALSE );
-		$wpdb->get_col( "SELECT * from $table_name LIMIT 1" );
+		//ignore if this causes an sql error
+		$old_error = $wpdb->last_error;
+		$old_suppress_errors = $wpdb->suppress_errors();
+		$old_show_errors_value = $wpdb->show_errors( FALSE );
+		$ezsql_error_cache = $EZSQL_ERROR;
+		$wpdb->get_results( "SELECT * from $table_name LIMIT 1");
 		$wpdb->show_errors( $old_show_errors_value );
-		if( ! is_null( $wpdb->last_error) && $wpdb->last_error != '' ){
-			//no errors. Table exists
-			return FALSE;
-		}else{
-			//errors. Table doesn't exist
+		$wpdb->suppress_errors( $old_suppress_errors );
+		$new_error = $wpdb->last_error;
+		$wpdb->last_error = $old_error;
+		$EZSQL_ERROR = $ezsql_error_cache;
+		if( empty( $new_error ) ){
 			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 

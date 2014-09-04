@@ -694,12 +694,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			foreach ( $registrations as $registration ) {
 
-				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+				if (( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
 				}
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				if ( ! $payment_required ) {
+				if ( ! $payment_required && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
 				}
@@ -1775,13 +1775,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			break;
 		}
 
-		if ( $prev_step == $callback ) {
-			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
 		$notices = EE_Error::get_notices(FALSE);
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
+
+		if ( $prev_step == $callback && ! $error_msg ) {
+			$error_msg = __('A recursive loop was detected and the registration process was halted.', 'event_espresso');
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
