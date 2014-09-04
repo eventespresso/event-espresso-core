@@ -17,7 +17,7 @@
 <ul>
 	<li>replace: REQUIRED string, the new name of the addon, or the string to be replaced</li>
 	<li>search: OPTIONAL string, default is "New_Addon"</li>
-	<li>rename_parent_directory: OPTIONAL int, 1 (default) or 0. Whether to rename the parent directory (the directory that contains this script) in the normal ee4-addon-fashion.</li>
+	<li>rename_parent_directory: OPTIONAL int, 1 (default) or 0. Whether to rename the parent directory (the directory that contains this script) in the normal eea-addon-fashion.</li>
 	<li>folder_path: OPTIONAL string, by default uses the current folder, but if you want you can provide the FULL path to a specific folder you want to rename. Do not provide a trailing slash.</li>
 	<li>delete_script_when_finished: OPTIONAL int, 1 (default) or 0. Whether or not to delete this script when finished renaming
 </ul>
@@ -41,7 +41,7 @@ if( $delete_script_when_finished ){
 	unlink( __FILE__ );
 }
 if( $rename_parent_directory ){
-	replace_in_path( 'New_Addon', 'ee4-'.$_GET[ 'replace' ], $folder_path );
+	replace_in_path( 'New_Addon', 'eea-'.$_GET[ 'replace' ], $folder_path );
 }
 echo "<br><hr>ok folders renamed!";
 if( $delete_script_when_finished ){
