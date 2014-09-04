@@ -235,6 +235,10 @@ abstract class EEM_Base extends EE_Base{
 
 
 
+	private $_class = '';
+
+
+
 
 
 	/**
@@ -253,6 +257,7 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
+		$this->_class = get_class($this);
 		//if we're in maintenance mode level 2, DON'T run any queries
 		//because level 2 indicates the database needs updating and
 		//is probably out of sync with the code
@@ -333,6 +338,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
+		EEH_Debug_Tools::instance()->start_timer( 'set_timezone: ' . $this->_class );
 		if($timezone !== NULL){
 			$this->_timezone = $timezone;
 		}
@@ -348,6 +354,7 @@ abstract class EEM_Base extends EE_Base{
 				$field->set_timezone( $timezone );
 			}
 		}
+		EEH_Debug_Tools::instance()->stop_timer( 'set_timezone: ' . $this->_class );
 	}
 
 
@@ -2668,14 +2675,14 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
-			EEH_Debug_Tools::instance()->start_timer( 'build related' );
+			EEH_Debug_Tools::instance()->start_timer( 'build related: ' . $this->_class );
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
 			//that filtered out some fo the results, then we'd be caching an incomplete set
 			//so it requires a little more thought than just caching them immediately...)
 			foreach($this->_model_relations as $modelName => $relation_obj){
-				EEH_Debug_Tools::instance()->start_timer( 'build a related ' . $modelName );
+				EEH_Debug_Tools::instance()->start_timer( 'build related object: ' . $modelName );
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
@@ -2689,9 +2696,9 @@ abstract class EEM_Base extends EE_Base{
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
-				EEH_Debug_Tools::instance()->stop_timer( 'build a related ' . $modelName );
+				EEH_Debug_Tools::instance()->stop_timer( 'build related object: ' . $modelName );
 			}
-			EEH_Debug_Tools::instance()->stop_timer( 'build related' );
+			EEH_Debug_Tools::instance()->stop_timer( 'build related: ' . $this->_class );
 		}
 		EEH_Debug_Tools::instance()->stop_timer('built objects');
 		return $array_of_objects;
@@ -2774,9 +2781,9 @@ abstract class EEM_Base extends EE_Base{
 		if ( $primary_key){
 			$classInstance = $this->get_from_entity_map( $primary_key );
 			if( ! $classInstance) {
-				EEH_Debug_Tools::instance()->start_timer( 'load_class' );
+				EEH_Debug_Tools::instance()->start_timer( 'load_class: ' . $className );
 				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
-				EEH_Debug_Tools::instance()->stop_timer( 'load_class' );
+				EEH_Debug_Tools::instance()->stop_timer( 'load_class: ' . $className );
 				// add this new object to the entity map
 				$classInstance = $this->add_to_entity_map( $classInstance );
 			}
