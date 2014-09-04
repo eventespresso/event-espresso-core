@@ -77,6 +77,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *                                                                          type should activate with. Each value in the
 	 *                                                                          array should match the name property of a
 	 *                                                                          EE_messenger. Optional.
+	 *                     @type array $messengers_to_validate_with An array of messengers that this message
+	 *                           				      type should validate with. Each value in the array
+	 *                           				      should match the name property of an EE_messenger.
+	 *                           				      Optional.
 	 *       	}
 	 * 	}
 	 * @return void
@@ -138,7 +142,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 			// array of PUE options used by the addon
 			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
-			'message_type' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array(),
+			'message_types' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array(),
 			'capabilities' => isset( $setup_args['capabilities'] ) ? (array) $setup_args['capabilities'] : array(),
 			'capability_maps' => isset( $setup_args['capability_maps'] ) ? (array) $setup_args['capability_maps'] : array(),
 			'model_paths' => isset( $setup_args['model_paths'] ) ? (array) $setup_args['model_paths'] : array(),
@@ -216,9 +220,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
-			foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
-				EE_Register_Message_Type::register( $message_type, $message_type_settings );
-			}
+				add_action( 'EE_Brewing_Regular___messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
 
@@ -299,6 +301,23 @@ class EE_Register_Addon implements EEI_Plugin_API {
 						'use_wp_update' => $settings['pue_options']['use_wp_update'],
 					)
 				);
+			}
+		}
+	}
+
+
+
+	/**
+	 * Callback for EE_Brewing_Regular__messages_caf hook used to register message types.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return void
+	 */
+	public static function register_message_types() {
+		foreach ( self::$_settings as $addon_name => $settings ) {
+			foreach( $settings['message_types'] as $message_type => $message_type_settings ) {
+				EE_Register_Message_Type::register( $message_type, $message_type_settings );
 			}
 		}
 	}

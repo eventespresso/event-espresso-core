@@ -1068,6 +1068,30 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function set_reg_code( $REG_code = '' ) {
 		$this->set( 'REG_code', $REG_code );
 	}
+
+
+
+
+	/**
+	 * Returns all other registrations in the same group as this registrant.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_Registration[]  or empty array if this isn't a group registration.
+	 */
+	public function get_all_other_registrations_in_group() {
+		if ( $this->group_size() < 2 ) {
+			return array();
+		}
+
+		$query[0] = array(
+			'TXN_ID' => $this->transaction_ID(),
+			'REG_ID' => array( '!=', $this->ID() )
+			);
+
+		$registrations = $this->get_model()->get_all( $query );
+		return $registrations;
+	}
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */
