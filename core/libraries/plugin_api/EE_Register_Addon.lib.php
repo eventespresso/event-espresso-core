@@ -113,9 +113,18 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		);
 		//check whether this addon version is compatible with EE core
 		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
+			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
+			//plugin activated fine when it didn't
+			if( isset( $_GET[ 'activate' ]) ) {
+				unset( $_GET[ 'activate' ] );
+			}
+			if( isset( $_REQUEST[ 'activate' ] ) ){
+				unset( $_REQUEST[ 'activate' ] );
+			}
+			//and show an error message indicating the plugin didn't activate properly
 			EE_Error::add_error(
 				sprintf(
-					__( 'The "%s" addon requires Event Espresso Core version %s or higher in order to run. Your version of Event Espresso Core is currently at %s', 'event_espresso' ),
+					__( 'The Event Espresso addon "%1$s" could not be activated because it requires Event Espresso Core version %2$s or higher in order to run. Your version of Event Espresso Core is currently at %3$s. Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
 					$addon_name,
 					$setup_args[ 'min_core_version' ],
 					espresso_version()
