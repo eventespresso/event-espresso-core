@@ -64,16 +64,16 @@ class EEH_File extends EEH_Base {
 			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
 			$file_name .= ! empty( $file_ext ) ? ' file' : ' folder';
 			$msg = sprintf(
-				__( 'The requested %s could not be found or is not readable, possibly due to an incorrect filepath, or incorrect file permissions.', 'event_espresso' ),
-				$file_name
+				__( 'The requested %1$s could not be found or is not readable, possibly due to an incorrect filepath, or incorrect file permissions.%2$s', 'event_espresso' ),
+				$file_name,
+				'<br />'
 			);
 			if ( file_exists( $full_file_path )) {
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path, $type_of_file );
 			} else {
 				// no file permissions means the file was not found
 				$msg .= sprintf(
-					__( '%sPlease ensure the following path is correct: "%s".', 'event_espresso' ),
-					'<br />',
+					__( 'Please ensure the following path is correct: "%s".', 'event_espresso' ),
 					$full_file_path
 				);
 			}
@@ -106,16 +106,14 @@ class EEH_File extends EEH_Base {
 			$type_of_file = ! empty( $type_of_file ) ? $type_of_file . ' ' : '';
 			$type_of_file .= ! empty( $type_of_file ) ? 'file' : 'folder';
 			return sprintf(
-				__( '%sFile permissions for the requested %s are currently set at "%s". The recommended permissions are 644 for files and 755 for folders.', 'event_espresso' ),
-				'<br />',
+				__( 'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.', 'event_espresso' ),
 				$type_of_file,
 				$perms
 			);
 		} else {
 			// file exists but file permissions could not be read ?!?!
 			return sprintf(
-				__( '%sPlease ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".', 'event_espresso' ),
-				'<br />',
+				__( 'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".', 'event_espresso' ),
 				$full_file_path
 			);
 		}
@@ -127,11 +125,10 @@ class EEH_File extends EEH_Base {
 	 * ensure_folder_exists_and_is_writable
 	 * ensures that a folder exists and is writable, will attempt to create folder if it does not exist
 	 * @param string $folder
-	 * @param string $msg - Prepended to any error message produced ie : "Something something could not be setup because" + error message
 	 * @throws EE_Error
 	 * @return bool
 	 */
-	public static function ensure_folder_exists_and_is_writable( $folder = '', $msg = '' ){
+	public static function ensure_folder_exists_and_is_writable( $folder = '' ){
 		if ( empty( $folder )) {
 			return FALSE;
 		}
@@ -143,23 +140,22 @@ class EEH_File extends EEH_Base {
 		$parent_folder = implode( DS, $folder_segments ) . DS;
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
-		$msg = ! empty( $msg ) ? $msg . ' the ' : 'The ';
 		if ( ! is_dir( $folder )) {
-			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder', $msg )) {
+			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder' )) {
 				return FALSE;
 			} else {
 				// load WP_Filesystem and set file permissions
 				$wp_filesystem = EEH_File::_get_wp_filesystem();
 				if ( ! $wp_filesystem->mkdir( $folder )) {
 					if ( is_admin() ) {
-						$msg .= sprintf( __( '"%s" could not be created.', 'event_espresso' ), $folder );
+						$msg = sprintf( __( '"%s" could not be created.', 'event_espresso' ), $folder );
 						$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $folder );
 						throw new EE_Error( $msg );
 					}
 					return FALSE;
 				}
 			}
-		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder', $msg )) {
+		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
 			return FALSE;
 		}
 		return TRUE;
@@ -171,18 +167,16 @@ class EEH_File extends EEH_Base {
 	 * verify_is_writable - checks if a file or folder is writable
 	 * @param string $full_path      - full server path to file or folder
 	 * @param string $file_or_folder - whether checking a file or folder
-	 * @param string $msg            - prepended to any error message produced ie : "Something something could not be setup because" + error message
 	 * @throws EE_Error
 	 * @return bool
 	 */
-	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder', $msg = '' ){
+	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder' ){
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$full_path = EEH_File::standardise_directory_separators( $full_path );
-		$msg = ! empty( $msg ) ? $msg : 'The ';
 		if ( ! $wp_filesystem->is_writable( $full_path )) {
 			if ( is_admin() ) {
-				$msg .= sprintf( __( '"%s" %s is not writable.', 'event_espresso' ), $full_path, $file_or_folder );
+				$msg = sprintf( __( 'The "%1$s" %2$s is not writable.', 'event_espresso' ), $full_path, $file_or_folder );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_path );
 				throw new EE_Error( $msg );
 			}
