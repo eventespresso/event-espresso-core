@@ -28,14 +28,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Select_Multiple_Input extends EE_Form_Input_With_Options_Base{
 
 	/**
-	 * @param array $input_settings
 	 * @param array | EE_Question_Option[] $answer_options
+	 * @param array $input_settings
 	 */
-	public function __construct( $input_settings, $answer_options = array() ) {
+	public function __construct( $answer_options = array(), $input_settings ) {
 		$this->_set_display_strategy( new EE_Select_Multiple_Display_Strategy() );
 		$this->_add_validation_strategy( new EE_Many_Valued_Validation_Strategy( array( new EE_Enum_Validation_Strategy() )));
 		$this->_multiple_selections = TRUE;
-		parent::__construct( $input_settings, $answer_options );
+		parent::__construct( $answer_options, $input_settings );
 	}
 
 }
