@@ -786,6 +786,7 @@ jQuery(document).ready( function($) {
 				} else {
 					// uh-oh spaghettios!
 					if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
+						SPCO.hide_notices();
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 					// Achtung Baby!!!
 					} else if ( typeof response.attention !== 'undefined' && response.attention !== '' ) {
@@ -961,6 +962,7 @@ jQuery(document).ready( function($) {
 				// bye bye spinner
 				SPCO.end_ajax();
 			}
+			SPCO.enable_submit_buttons();
 		},
 
 
@@ -977,11 +979,20 @@ jQuery(document).ready( function($) {
 
 
 		/**
+		 * @function
+		 * stop any message alerts that are in progress
+		 */
+		hide_notices : function() {
+			$('.espresso-ajax-notices').stop().fadeOut(50);
+		},
+
+
+
+		/**
 		 * @function do_before_sending_ajax
 		 */
 		do_before_sending_ajax : function() {
-			// stop any message alerts that are in progress
-			$('.espresso-ajax-notices').stop();
+			SPCO.hide_notices();
 			$('#espresso-ajax-long-loading').remove();
 			$('#espresso-ajax-loading').show();
 		},
@@ -993,8 +1004,8 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		submit_reg_form_server_error : function( response ) {
+			SPCO.hide_notices();
 			SPCO.console_log( 'submit_reg_form_server_error > ajax error response', dump( response ), false );
-			SPCO.enable_submit_buttons();
 			var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ));
 			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			return false;
