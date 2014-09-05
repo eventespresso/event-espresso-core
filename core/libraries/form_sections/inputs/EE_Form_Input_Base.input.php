@@ -1,8 +1,16 @@
-<?php
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
+ *
+ * Class EE_Form_Input_Base
+ *
  * For representing a single form input. Extends EE_Form_Section_Base because
  * it is a part of a form and shares a surprisingly large amount of functionality
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -116,14 +124,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * @param array $options_array {
+	 * @param array $input_args {
 	 *		@type string $html_name the html name for the input
 	 *		@type string $html_label_id the id attribute to give to the html label tag
-	 *		@type string $html_label_class the class attribut eto give to the html label tag
+	 *		@type string $html_label_class the class attribute to give to the html label tag
 	 *		@type string $html_label_style the style attribute to give ot teh label tag
 	 *		@type string $html_label_text the text to put in the label tag
 	 *		@type string $html_label the full html label. If used, all other html_label_* args are invalid
-	 *		@type string @html_help_text text to put in help element
+	 *		@type string $html_help_text text to put in help element
 	 *		@type string $html_help_style style attribute to give to teh help element
 	 *		@type string $html_help_class class attribute to give to the help element
 	 *		@type string $default default value NORMALIZED (eg, if providing the default for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
@@ -204,7 +212,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
 				$this->_html_name = $this->_parent_section->html_name_prefix() . "[{$this->name()}]";
 			}else{
-				$this->_html_name = $this->name;
+				$this->_html_name = $this->name();
 			}
 		}
 	}
@@ -319,8 +327,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @param EE_Validation_Strategy_Base $validation_strategy
 	 * @return void
 	 */
-	protected function _add_validation_strategy(EE_Validation_Strategy_Base $validation_strategy){
-		$this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
+	protected function _add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ){
+		$this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
