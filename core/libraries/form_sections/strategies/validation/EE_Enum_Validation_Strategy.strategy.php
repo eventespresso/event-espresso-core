@@ -1,6 +1,15 @@
 <?php
-
-class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base{
+/**
+ *
+ * Class EE_Enum_Validation_Strategy
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
+ */
+class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base {
 
 	/**
 	 * Check that the value is in the allowed list
