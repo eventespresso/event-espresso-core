@@ -1,4 +1,16 @@
 <?php
+/**
+ *
+ * Class EE_Checkbox_Display_Strategy
+ *
+ * displays a set of checkbox inputs
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
+ */
 class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 
 	/**
@@ -11,11 +23,12 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			throw new EE_Error(sprintf(__("Cannot use Checkbox Display Strategy with an input that doesn't have options", "event_espresso")));
 		}
 		//d( $this->_input );
-		$html = '';
+		$html = $this->display_label();
 		$multi = count( $this->_input->options() ) > 1 ? TRUE : FALSE;
+		$label_size_class = $this->_input->get_label_size_class();
 		foreach( $this->_input->options() as $value => $display_text ){
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $value ) : $this->_input->html_id();
-			$html .= '<label for="' . $html_id . '" class="ee-checkbox-label-after">';
+			$html .= '<label for="' . $html_id . '" class="ee-checkbox-label-after' . $label_size_class . '">';
 			$html .= EEH_Formatter::nl(1);
 			$html .= '<input type="checkbox"';
 			$html .= ' name="' . $this->_input->html_name() . '[]"';
@@ -39,7 +52,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	public function display_label(){
-		return '<span id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . '" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</span>';
+		return '<div id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . '" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</div>';
 	}
 
 }
