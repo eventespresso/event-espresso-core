@@ -260,6 +260,12 @@ abstract class EE_SPCO_Reg_Step {
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
 		}
+		if( $this->checkout->revisit ) {
+			$query_args['revisit'] = TRUE;
+		}
+		if( $this->checkout->reg_url_link ) {
+			$query_args['e_reg_url_link'] = $this->checkout->reg_url_link;
+		}
 		return add_query_arg( $query_args, $this->checkout->reg_page_base_url );
 	}
 
