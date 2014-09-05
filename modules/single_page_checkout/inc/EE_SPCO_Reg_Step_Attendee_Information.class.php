@@ -474,7 +474,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
 
-
+		$has_options = FALSE;
 
 		switch ( $question->type() ) {
 			// Text
@@ -487,15 +487,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// Single
 			case EEM_Question::QST_type_single :
-				$input_class = 'EE_Checkbox_Multi_Input';
+				$input_class = 'EE_Radio_Button_Input';
+				$has_options = TRUE;
 				break;
 			// Dropdown
 			case EEM_Question::QST_type_dropdown :
 				$input_class = 'EE_Select_Input';
+				$has_options = TRUE;
 				break;
 			// Multiple
 			case EEM_Question::QST_type_multiple :
 				$input_class = 'EE_Checkbox_Multi_Input';
+				$has_options = TRUE;
 				break;
 			// Date
 			case EEM_Question::QST_type_date :
@@ -505,7 +508,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			default :
 				$input_class = 'EE_Text_Input';
 		}
-		return new $input_class( $input_constructor_args );
+
+		return $has_options ? new $input_class( $question->options(), $input_constructor_args ) : new $input_class( $input_constructor_args );
 
 	}
 
