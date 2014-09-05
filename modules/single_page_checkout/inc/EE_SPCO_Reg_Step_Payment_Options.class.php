@@ -658,20 +658,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function update_reg_step() {
-		if ( ! $this->_billing_form_is_valid() ) {
-			return FALSE;
-		}
-		$this->checkout->transaction->save();
-		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
-		// set return URL
-		$this->checkout->redirect_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
+		$success = TRUE;
 		// if payment required
 		if ( $this->checkout->transaction->total() > 0 ) {
 			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->checkout->transaction );
 			// attempt payment via payment method
-			return $this->_process_payment();
+			$success = $this->process_reg_step();
 		}
-		return TRUE;
+		if ( $success ) {
+//			$this->checkout->transaction->save();
+			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+			 // set return URL
+			$this->checkout->redirect_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
+		}
+		return $success;
 	}
 
 
@@ -771,7 +771,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					return TRUE;
 				}
 				EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				EE_Error::add_error( __( 'The billing form was not submitted or something prevented it\'s submission.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
+		} else {
+			EE_Error::add_error( __( 'The submitted billing form is invalid possibly due to a technical reason.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return FALSE;
 	}
