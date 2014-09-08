@@ -6,8 +6,8 @@
 }
 
 .form-table { width:100%;}
-.general-settings-country-input-td input,
-.general-settings-country-state-input-td input { font-size: 14px !important; line-height: 1.3 !important; padding: 3px 5px !important; }/**/
+.general-settings-country-input-td input[type="text"],
+.general-settings-country-state-input-td input[type="text"] { font-size: 14px !important; line-height: 1.3 !important; padding: 3px 5px !important; }
 
 #general-setting-country-states-tbl td text { padding: 0; margin: 0; width: 100%; }/**/
 #general-setting-country-states-tbl td ul { width: 100% }
