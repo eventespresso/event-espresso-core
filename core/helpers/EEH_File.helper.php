@@ -68,7 +68,7 @@ class EEH_File extends EEH_Base {
 				$file_name,
 				'<br />'
 			);
-			if ( $wp_filesystem->exists( $full_file_path )) {
+			if ( EEH_File::exists( $full_file_path )) {
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path, $type_of_file );
 			} else {
 				// no file permissions means the file was not found
@@ -99,7 +99,6 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		// check file permissions
-//		$perms = substr( fileperms( $full_file_path ), 2 );
 		$perms = $wp_filesystem->getchmod( $full_file_path );
 		if ( $perms ) {
 			// file permissions exist, but way be set incorrectly
@@ -198,7 +197,7 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
-		if ( ! $wp_filesystem->exists( $full_file_path )) {
+		if ( ! EEH_File::exists( $full_file_path )) {
 			if ( ! $wp_filesystem->touch( $full_file_path )) {
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					$msg = sprintf( __( 'The "%s" file could not be created.', 'event_espresso' ), $full_file_path );
@@ -270,6 +269,34 @@ class EEH_File extends EEH_Base {
 
 
 	/**
+	 * exists
+	 * checks if a file exists using the WP filesystem
+	 *
+	 * @param string $full_file_path
+	 * @return bool
+	 */
+	public static function exists( $full_file_path = '' ) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		return $wp_filesystem->exists( $full_file_path ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * is_readable
+	 * checks if a file is_readable using the WP filesystem
+	 *
+	 * @param string $full_file_path
+	 * @return bool
+	 */
+	public static function is_readable( $full_file_path = '' ) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		return $wp_filesystem->is_readable( $full_file_path ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * remove_filename_from_filepath
 	 * given a full path to a file including the filename itself, this removes  the filename and returns the path, up to, but NOT including the filename
 	 *
@@ -310,9 +337,8 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function add_htaccess_deny_from_all( $folder = '' ) {
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
 		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
-		if ( ! $wp_filesystem->exists( $folder . '.htaccess' ) ) {
+		if ( ! EEH_File::exists( $folder . '.htaccess' ) ) {
 			if ( ! EEH_File::write_to_file( $folder . '.htaccess', 'deny from all', '.htaccess' )) {
 				return FALSE;
 			}
