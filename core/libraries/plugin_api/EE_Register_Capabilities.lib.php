@@ -62,14 +62,39 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 
 
 		//set initial caps (note that EE_Capabilities takes care of making sure that the caps get added donly once)
-		if ( ! empty( self::$_registry['caps'] ) ) {
-			EE_Registry::instance()->CAP->init_role_caps( FALSE, self::$_registry['caps'] );
-		}
+		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( 'EE_Register_Capabilities', 'register_capabilities' ), 10 );
 
-		//set maps if present
-		if ( ! empty( self::$_registry['cap_maps'] ) ) {
-			add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( 'EE_Register_Capabilities', 'register_cap_maps' ), 10 );
+		//add filter for cap maps
+		add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( 'EE_Register_Capabilities', 'register_cap_maps' ), 10 );
+	}
+
+
+
+	/**
+	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter.
+	 * Takes care of registering additional capabilities to the caps map.   Note, that this also on the initial registration ensures that new capabilities are added to existing roles.
+	 *
+	 * @param array $caps The original caps map.
+	 *
+	 * @return array merged in new caps.
+	 */
+	public static function register_capabilities( $caps ) {
+		foreach ( self::$_registry as $ref => $caps ) {
+			$caps = array_merge( $caps, $caps['caps'] );
+			//have caps been initialized yet?
+			$caps_init = get_option( 'ee_caps_init', array() );
+			if ( ! isset( $caps_init[$ref] ) ) {
+				foreach( $caps['caps'] as $role => $caps_to_add ) {
+					foreach ( $caps_to_add as $cap ) {
+						EE_Capabilities::instance()->add_cap_to_role( $role, $cap );
+					}
+				}
+				//record initialized
+				$caps_init[$ref] = 1;
+				update_option( 'ee_caps_init', $caps_init );
+			}
 		}
+		return $caps;
 	}
 
 
