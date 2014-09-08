@@ -72,12 +72,12 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 
-		// to remove Cancelled events from the frontend, use the following filter
+		// to remove Cancelled events from the frontend, copy the following filter to your functions.php file
 		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__cancelled__Public', '__return_false' );
-		// to remove Postponed events from the frontend, use the following filter
+		// to remove Postponed events from the frontend, copy the following filter to your functions.php file
 		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', '__return_false' );
-		// to remove Sold Out events from the frontend, use the following filter
-//		 add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
+		// to remove Sold Out events from the frontend, copy the following filter to your functions.php file
+		//	add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
 
 		$this->_custom_stati = apply_filters(
 			'AFEE__EEM_Event__construct___custom_stati',
