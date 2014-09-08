@@ -26,9 +26,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
 		$this->_pretty_name = __("Paypal Standard", 'event_espresso');
-		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'paypal-logo.png';
 		$this->_default_description = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration', 'event_espresso' );
+		parent::__construct($pm_instance);
 	}
 
 
@@ -49,6 +49,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	 */
 	public function generate_new_settings_form() {
 		$form =  new EE_Payment_Method_Form(array(
+			'payment_method_type' => $this,
 			'extra_meta_inputs'=>array(
 				'paypal_id'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), $this->get_help_tab_link()),
