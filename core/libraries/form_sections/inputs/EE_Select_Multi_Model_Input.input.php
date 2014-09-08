@@ -60,7 +60,7 @@ class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 	 * @param EE_Base_Class[] $answer_options
 	 * @return null|void
 	 */
-	public function set_select_options( $answer_options ) {
+	public function set_select_options( $answer_options = array() ) {
 		//convert the model objects to select from into normal select options
 		$select_options = array();
 		foreach( $answer_options as $model_obj){
