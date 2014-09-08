@@ -1,26 +1,95 @@
 <?php
-
-/*
+define('EE_Event_Category_Taxonomy','espresso_event_category');
+/**
+ *
+ * EEM_CPT_Base
+ *
  * For shared functionality between models internally implemented
- * as Custom Post Types. Subclass of EEM_Soft_Delete_Base, meaning that when you 'delete' one of these model obejcts
- * we actuallyd efault ot just trashing it. (It works differently than EEM_Soft_Delete under the hood,because there's a post status field
- * insetad of a soft-delete flag, but the functionality is the same)
+ * as Custom Post Types. Subclass of EEM_Soft_Delete_Base, meaning that when you 'delete' one of these model objects
+ * we actually default ot just trashing it. (It works differently than EEM_Soft_Delete under the hood,because there's a post status field
+ * instead of a soft-delete flag, but the functionality is the same)
  * Note: if you add a new subclass of EEM_CPT_Base, you should add it as a relation
  * on EEM_Term_Taxonomy and EEM_Term_Relationship
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ *
  */
-define('EE_Event_Category_Taxonomy','espresso_event_category');
-//require_once( EE_MODELS . 'EEM_Base.model.php');
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
-	
+
+	/**
+	 * @var string post_status_trashed - the wp post status for trashed cpts
+	 */
+	const post_status_trashed = 'trash';
+
+	/**
+	 * This is an array of custom statuses for the given CPT model (modified by children)
+	 * format:
+	 * array(
+	 * 		'status_name' => array(
+	 * 			'label' => __('Status Name', 'event_espresso'),
+	 * 			'public' => TRUE //whether a public status or not.
+	 * 		)
+	 * )
+	 * @var array
+	 */
+	protected $_custom_stati = array();
+
+
+
+
+
+	/**
+	 * Adds a relationship to Term_Taxonomy for each CPT_Base
+	 * @param string $timezone
+	 */
+	protected function __construct($timezone = null){
+		//adds a relationship to Term_Taxonomy for all these models. For this to work
+		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
+		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
+		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
+		//must also be new EE_HABTM_Relation('Term_Relationship');
+		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
+		$primary_table_name = NULL;
+		//add  the common _status field to all CPT primary tables.
+		foreach ( $this->_tables as $alias => $table_obj ) {
+			if ( $table_obj instanceof EE_Primary_Table ) {
+				$primary_table_name = $alias;
+			}
+		}
+		//set default wp post statuses if child has not already set.
+		if ( ! isset( $this->_fields[$primary_table_name]['status'] )) {
+			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
+		}
+		parent::__construct($timezone);
+
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function public_event_stati() {
+		// @see wp-includes/post.php
+		return get_post_stati( array( 'public' => TRUE ));
+	}
+
+
+
 	/**
 	 * Searches for field on this model of type 'deleted_flag'. if it is found,
-	 * returns it's name. BUT That doesn't apply to CPTs. We should istnead usepost_status_field_name
+	 * returns it's name. BUT That doesn't apply to CPTs. We should instead use post_status_field_name
 	 * @return string
 	 * @throws EE_Error
 	 */
 	public function deleted_field_name(){
-		throw new EE_Error(sprintf(__("EEM_CPT_Base should nto call deleted_field_name! It shoul dinstead use post_status_field_name", "event_espresso")));
+		throw new EE_Error(sprintf(__("EEM_CPT_Base should nto call deleted_field_name! It should instead use post_status_field_name", "event_espresso")));
 	}
+
+
+
 	/**
 	 * Gets the field's name that sets the post status
 	 * @return string
@@ -34,7 +103,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			throw new EE_Error(sprintf(__('We are trying to find the post status flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?','event_espresso'),get_class($this),get_class($this)));
 		}
 	}
-	
+
+
+
 	/**
 	 * Alters the query params so that only trashed/soft-deleted items are considered
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -45,7 +116,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		$query_params[0][$post_status_field_name]=self::post_status_trashed;
 		return $query_params;
 	}
-	
+
+
+
 	/**
 	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
@@ -56,6 +129,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
 		return $query_params;
 	}
+
+
+
 	/**
 	 * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
 	 * @param boolean $delete true to indicate deletion, false to indicate restoration
@@ -74,55 +150,6 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		} else {
 			return FALSE;
 		}
-	}
-	
-	
-	/**
-	 * @var post_status_trashed the wp post status for trashed cpts
-	 */
-	const post_status_trashed = 'trash';
-
-
-
-
-
-
-	/**
-	 * This is an array of custom statuses for the given CPT model (modified by children)
-	 * format:
-	 * array(
-	 * 		'status_name' => array(
-	 * 			'label' => __('Status Name', 'event_espresso'),
-	 * 			'public' => TRUE //whether a public status or not.
-	 * 		)
-	 * )
-	 * @var array
-	 */
-	protected $_custom_stati = array();
-
-
-	/**
-	 * Adds a relationship to Term_Taxonomy for each CPT_Base
-	 * @param type $timezone
-	 */
-	protected function __construct($timezone = null){
-		//adds a relationship to Term_Taxonomy for all these models. For this to work
-		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
-		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
-		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
-		//must also be new EE_HABTM_Relation('Term_Relationship');
-		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
-
-		//add  the common _status field to all CPT primary tables.
-		foreach ( $this->_tables as $alias => $table_obj ) {
-			if ( $table_obj instanceof EE_Primary_Table )
-				$primary_table_name = $alias;
-		}
-
-		//set default wp post statuses if child has not already set.
-		if ( !isset( $this->_fields[$primary_table_name]['status'] ) )
-			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
-		parent::__construct($timezone);
 	}
 
 
@@ -144,7 +171,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 	/**
 	 * This simply returns an array of the meta table fields (useful for when we just need to update those fields)
-	 * @param  bool $all triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no dbonly fields)
+	 * @param  bool $all triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no db only fields)
 	 * @return array
 	 */
 	public function get_meta_table_fields( $all = FALSE ) {
@@ -156,7 +183,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 		if ( !$all ) {
 			foreach ( $all_fields as $name => $obj ) {
-				if ( $obj instanceof EE_DB_Only_Field_Base ) 
+				if ( $obj instanceof EE_DB_Only_Field_Base )
 					continue;
 				$fields_to_return[] = $name;
 			}
@@ -167,7 +194,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		return $fields_to_return;
 	}
 
-	
+
+
 	/**
 	 * Adds an event category with the specified name and description to the specified
 	 * $cpt_model_object. Intelligently adds a term if necessary, and adds a term_taxonomy if necessary,
@@ -194,6 +222,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		//make sure there's a term-taxonomy entry too
 		require_once( EE_MODELS . 'EEM_Term_Taxonomy.model.php');
 		$term_taxonomy = EEM_Term_Taxonomy::instance()->get_one(array(array('term_id'=>$term->ID(),'taxonomy'=>EE_Event_Category_Taxonomy)));
+		/** @var $term_taxonomy EE_Term_Taxonomy */
 		if( ! $term_taxonomy ){
 			$term_taxonomy = EE_Term_Taxonomy::new_instance(array(
 				'term_id'=>$term->ID(),
@@ -209,23 +238,24 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		return $this->add_relationship_to($cpt_model_object, $term_taxonomy, 'Term_Taxonomy');
 	}
-	
-	
+
+
 	/**
 	 * Removed the category specified by name as having a relation to this event.
 	 * Does not remove the term or term_taxonomy.
-	 * @param EE_CPT_Base $cpt_model_object
+	 * @param EE_CPT_Base $cpt_model_object_event
 	 * @param string $category_name name of the event category (term)
-	 * @return void
+	 * @return bool
 	 */
-	function remove_event_category(EE_CPT_Base $cpt_model_objectevent, $category_name){
+	function remove_event_category(EE_CPT_Base $cpt_model_object_event, $category_name){
 		//find the term_taxonomy by that name
-		$term_taxonomy = $this->get_first_related($cpt_model_objectevent, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
-		if($term_taxonomy){
+		$term_taxonomy = $this->get_first_related($cpt_model_object_event, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
+		/** @var $term_taxonomy EE_Term_Taxonomy */
+		if( $term_taxonomy ){
 			$term_taxonomy->set_count($term_taxonomy->count() - 1);
 			$term_taxonomy->save();
 		}
-		return $this->remove_relationship_to($cpt_model_objectevent, $term_taxonomy, 'Term_Taxonomy');
+		return $this->remove_relationship_to($cpt_model_object_event, $term_taxonomy, 'Term_Taxonomy');
 	}
 
 
@@ -265,6 +295,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	}
 
 
+
 	/**
 	 * public method that can be used to retrieve the protected status array on the instantiated cpt model
 	 * @return array array of statuses.
@@ -279,6 +310,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	}
 
 
+
 	/**
 	 * this returns the post statuses that are NOT the default wordpress status
 	 * @return array
@@ -291,8 +323,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		return $new_stati;
 	}
 
+
+
 	/**
-	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which 
+	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which
 	 * are a row from the posts table. If we're missing any fields required for the model,
 	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
 	 * make sure you are attaching all the model's fields onto the post)
@@ -302,11 +336,11 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	public function instantiate_class_from_post_object_orig($post){
 		$post = (array)$post;
 		$has_all_necessary_fields_for_table = true;
-		//check if the post has fields on the meta table already 
+		//check if the post has fields on the meta table already
 		foreach($this->_get_other_tables() as $table_obj){
 			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
-			foreach($fields_for_that_table as $field_name => $field_obj){
-				if( ! isset($post[$field_obj->get_table_column()]) 
+			foreach($fields_for_that_table as $field_obj){
+				if( ! isset($post[$field_obj->get_table_column()])
 					&& ! isset($post[$field_obj->get_qualified_column()])){
 					$has_all_necessary_fields_for_table = false;
 				}
@@ -314,23 +348,30 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		//if we don't have all the fields we need, then just fetch the proper model from the DB
 		if( ! $has_all_necessary_fields_for_table){
-			
+
 			return $this->get_one_by_ID($post['ID']);
 		}else{
 			return $this->instantiate_class_from_array_or_object($post);
 		}
 	}
+
+
+
+	/**
+	 * @param null $post
+	 * @return EE_Base_Class|EE_Soft_Delete_Base_Class
+	 */
 	public function instantiate_class_from_post_object( $post = NULL ){
 		if ( empty( $post )) {
 			global $post;
 		}
 		$post = (array)$post;
 		$tables_needing_to_be_queried = array();
-		//check if the post has fields on the meta table already 
+		//check if the post has fields on the meta table already
 		foreach($this->get_tables() as $table_obj){
 			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
-			foreach($fields_for_that_table as $field_name => $field_obj){
-				if( ! isset($post[$field_obj->get_table_column()]) 
+			foreach($fields_for_that_table as $field_obj){
+				if( ! isset($post[$field_obj->get_table_column()])
 					&& ! isset($post[$field_obj->get_qualified_column()])){
 					$tables_needing_to_be_queried[$table_obj->get_table_alias()] = $table_obj;
 				}
@@ -339,27 +380,31 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		//if we don't have all the fields we need, then just fetch the proper model from the DB
 		if( $tables_needing_to_be_queried){
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
-				//so we're only missing data from a secondary table. Well thats not too hard to query for
-				global $wpdb; 
+				//so we're only missing data from a secondary table. Well that's not too hard to query for
+				global $wpdb;
 				$table_to_query = reset($tables_needing_to_be_queried);
-				if ( $missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A )) {
-					$post = array_merge($post,$missing_data);
-				}				
+				$missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'], ARRAY_A );
+				if ( ! empty( $missing_data )) {
+					$post = array_merge( $post, $missing_data );
+				}
 			} else {
 				return $this->get_one_by_ID($post['ID']);
 			}
 		}
 		return $this->instantiate_class_from_array_or_object($post);
-		
+
 	}
-	
+
+
+
 	/**
-	 * Gets the post type associated with this 
+	 * Gets the post type associated with this
+	 * @throws EE_Error
 	 * @return string
 	 */
 	public function post_type(){
 		$post_type_field = NULL;
-		foreach($this->field_settings(true) as $name=>$field_obj){
+		foreach($this->field_settings(true) as $field_obj){
 			if($field_obj instanceof EE_WP_Post_Type_Field){
 				$post_type_field = $field_obj;break;
 			}
@@ -369,5 +414,5 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		return $post_type_field->get_default_value();
 	}
-	
+
 }
