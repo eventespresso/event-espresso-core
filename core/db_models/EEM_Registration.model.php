@@ -31,9 +31,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	private static $_instance = NULL;
 
 	/**
-	 * Keys are the status IDs for registrations (eg, RAP, RCN, etc), and the values 
+	 * Keys are the status IDs for registrations (eg, RAP, RCN, etc), and the values
 	 * are status codes (eg, approved, cancelled, etc)
-	 * @var array 
+	 * @var array
 	 */
 	private static $_reg_status;
 
@@ -44,7 +44,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
-	 * Payments are NOT allowed. 
+	 * Payments are NOT allowed.
 	 * Event Admin must manually toggle STS_ID for it to change
 	 * No space reserved.
 	 * Registration is active
@@ -53,7 +53,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
-	 * Payments are allowed. 
+	 * Payments are allowed.
 	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
 	 * No space reserved.
 	 * Registration is active
@@ -63,15 +63,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
 	 * the TXN may or may not be completed ( paid in full )
-	 * Payments are allowed. 
-	 * A space IS reserved. 
+	 * Payments are allowed.
+	 * A space IS reserved.
 	 * Registration is active
 	 */
 	const status_id_approved = 'RAP';
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate a registration was CANCELLED by the attendee.
-	 * Payments are NOT allowed. 
+	 * Payments are NOT allowed.
 	 * NO space reserved.
 	 * Registration is NOT active
 	 */
@@ -79,7 +79,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
-	 * Payments are NOT allowed. 
+	 * Payments are NOT allowed.
 	 * No space reserved.
 	 * Registration is NOT active
 	 */
@@ -93,7 +93,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *	private constructor to prevent direct creation
 	 *	@Constructor
 	 *	@access protected
-	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  
+	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
 	* 	Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *	@return void
 	 */
@@ -135,7 +135,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Answer'=>new EE_Has_Many_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation()
 		);
-		
+
 		parent::__construct( $timezone );
 	}
 
@@ -159,7 +159,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 		//we might have a timezone set, let set_timezone decide what to do with it
 		self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
 	}
@@ -174,11 +174,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	 * 		get list of registration statuses
 	 *
-	 * 
+	 *
 	 *		@access private
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
-	 *		@return void
+	 *		@return array
 	 */
 	public static function reg_status_array( $exclude = array(), $translated = FALSE ) {
 		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
@@ -187,16 +187,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 
-
-
-
-
-
 	/**
-	 * 		get list of registration statuses
-	*		@access private
-	*		@return void
-	*/
+	 * 	get list of registration statuses
+	 * @access private
+	 * @param array $exclude
+	 * @return array
+	 */
 	private function _get_registration_status_array( $exclude = array() ) {
 
 		global $wpdb;
@@ -249,9 +245,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			return FALSE;
 		}
 	}
-	
+
 	/**
-	 * Gets a registration given their REG_url_link. Yes, this should usually 
+	 * Gets a registration given their REG_url_link. Yes, this should usually
 	 * be passed via a GET parameter.
 	 * @param string $REG_url_link
 	 * @return EE_Registration
@@ -268,7 +264,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	*		retrieve registration for a specific transaction attendee from db
-	* 
+	*
 	* 		@access		public
 	* 		@param		$TXN_ID
 	* 		@param		$ATT_ID
@@ -299,8 +295,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 					array('REG_date'=>array('>=',$sql_date)),
 					'group_by'=>'regDate',
 					'order_by'=>array('REG_date'=>'DESC')
-				), 
-				OBJECT, 
+				),
+				OBJECT,
 				array(
 					'regDate'=>array('DATE(Registration.REG_date)','%s'),
 					'total'=>array('count(REG_ID)','%d')
@@ -317,7 +313,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	* 		@access		public
 	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
-	public function get_registrations_per_event_report( $period = '-1 month' ) {		
+	public function get_registrations_per_event_report( $period = '-1 month' ) {
 		$date_sql = date("Y-m-d H:i:s", strtotime($period));
 		$results = $this->_get_all_wpdb_results(array(
 			array(
@@ -326,13 +322,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'group_by'=>'Event.EVT_name',
 			'order_by'=>'Event.EVT_name',
 			'limit'=>array(0,24)),
-			OBJECT, 
+			OBJECT,
 			array(
 				'event_name'=>array('Event_CPT.post_title','%s'),
 				'total'=>array('COUNT(REG_ID)','%s')
 			)
 		);
-		
+
 		return $results;
 
 	}
@@ -355,18 +351,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		get_event_registration_count
 	 *
 	 *		@access public
-	 *		@param int $EVT_ID 
+	 *		@param int $EVT_ID
 	 *		@param boolean $for_incomplete_payments
 	 *		@return int
 	 */
-	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
+	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {
 		// we only count approved registrations towards registration limits
 		$query_params = array( array( 'EVT_ID' => $EVT_ID, 'STS_ID' => self::status_id_approved ) );
 		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
 
-		return $this->count($query_params);	
+		return $this->count($query_params);
 	}
 
 
