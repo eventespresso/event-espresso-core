@@ -33,10 +33,12 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
-		define( 'EE_MSG_CAF_ASSETS_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/assets/' );
-		define( 'EE_MSG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
-		define( 'EE_MSG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/' );
-		define( 'EE_MSG_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/templates/' );
+		if ( !defined( 'EE_MSG_CAF_ASSETS_PATH' ) ) {
+			define( 'EE_MSG_CAF_ASSETS_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/assets/' );
+			define( 'EE_MSG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
+			define( 'EE_MSG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/' );
+			define( 'EE_MSG_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/templates/' );
+		}
 	}
 
 	protected function _extend_page_config() {
