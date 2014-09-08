@@ -193,9 +193,10 @@ class EE_Maintenance_Mode {
 	 *  @return 	string
 	 */
 	public static function template_include() {
-		if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php' )) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( EEH_File::exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php' )) {
 			return EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php';
-		} else if ( file_exists( EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php' )) {
+		} else if ( EEH_File::exists( EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php' )) {
 			return EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php';
 		}
 	}
