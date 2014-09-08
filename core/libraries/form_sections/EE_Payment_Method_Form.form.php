@@ -5,23 +5,31 @@
  * Uses EEM_Payment_Method as the model
  */
 class EE_Payment_Method_Form extends EE_Model_Form_Section{
+
 	/**
 	 * All the subsection inputs that correspond ot extra meta rows
 	 * for this payment method
-	 * @var EE_Form_Input_Base
+	 * @var EE_Form_Input_Base[]
 	 */
 	protected $_extra_meta_inputs = array();
+
 	/**
 	 * Because payment method form might DELAY part of construction, we want to remember
 	 * what options were passed in
 	 * @var array
 	 */
 	protected $_options_array = array();
+
 	/**
 	 * The payment method type for this form
 	 * @var EE_PMT_Base
 	 */
 	protected $_payment_method_type;
+
+
+
+
+
 	/**
 	 *
 	 * @param array $options_array {
@@ -60,13 +68,15 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		);
 		parent::__construct($options_array);
 	}
-	public function set_payment_method_type( $payment_method_type ){
-		if( ! $payment_method_type instanceof EE_PMT_Base){
-			throw new EE_Error(sprintf(__("Payment Method forms MUST set a payment method type by using _set_payment_method_type", "event_espresso")));
-		}
-		$this->_payment_method_type = $payment_method_type;
-	}
 
+
+
+	/**
+	 * Finishes construction given the parent form section and this form section's name
+	 * @param EE_Form_Section_Proper $parent_form_section
+	 * @param string 	$name
+	 * @throws EE_Error
+	 */
 	public function _construct_finalize( $parent_form_section, $name ) {
 		if( ! $this->_payment_method_type instanceof EE_PMT_Base ){
 			throw new EE_Error( sprintf( __( 'Payment Method forms must have set their payment method type BEFORE calling _construct_finalize', 'event_espresso' )));
@@ -76,8 +86,23 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			$name = str_replace(" ","_",ucwords(str_replace("_"," ",($this->_payment_method_type->system_name()))))."_Settings_Form";
 		}
 		parent::_construct_finalize( $parent_form_section, $name );
-
 	}
+
+
+
+	/**
+	 * @param $payment_method_type
+	 * @throws EE_Error
+	 */
+	public function set_payment_method_type( $payment_method_type ){
+		if( ! $payment_method_type instanceof EE_PMT_Base){
+			throw new EE_Error(sprintf(__("Payment Method forms MUST set a payment method type by using _set_payment_method_type", "event_espresso")));
+		}
+		$this->_payment_method_type = $payment_method_type;
+	}
+
+
+
 	/**
 	 * extends the model form section's save method to also save the extra meta field values
 	 * @return int ID of the payment method inserted, or true on update
@@ -91,17 +116,20 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		}
 		return $parent_save_val;
 	}
+
+
+
 	/**
-	 * Overrides parentt's populate_model_obj to also populate the extra meta fields
+	 * Overrides parent's populate_model_obj to also populate the extra meta fields
 	 * @param EE_Base_Class $model_obj
 	 */
 	public function populate_model_obj($model_obj) {
 		$model_obj = $this->_model->ensure_is_obj($model_obj);
 		parent::populate_model_obj($model_obj);
-		$extra_metas = $model_obj->all_extra_meta_array();
+		$extra_meta = $model_obj->all_extra_meta_array();
 		foreach($this->_extra_meta_inputs as $input_name => $extra_meta_input){
-			if(isset($extra_metas[$input_name])){
-				$extra_meta_input->set_default($extra_metas[$input_name]);
+			if(isset($extra_meta[$input_name])){
+				$extra_meta_input->set_default($extra_meta[$input_name]);
 			}
 		}
 		$currency_input = $this->get_input('Currency');
@@ -109,8 +137,11 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			$currency_input->set_payment_method($model_obj);
 		}
 	}
+
+
+
 	/**
-	 * gets teh default name of this form section if none is specified
+	 * gets the default name of this form section if none is specified
 	 * @return string
 	 */
 	protected function _set_default_name_if_empty(){
@@ -119,6 +150,9 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			$this->_name =  $default_name;
 		}
 	}
+
+
+
 	/**
 	 * Gets all the extra meta inputs in this form
 	 * @return EE_Form_Input_Base[]
