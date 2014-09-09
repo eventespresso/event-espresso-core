@@ -868,7 +868,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
 			if ( !empty( $error_msg ) && call_user_func_array( $func, $args ) === FALSE ) {
 				$error_msg = __('An error occurred. The requested page route could not be found', 'event_espresso' );
-				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $fund );
+				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $func );
 			}
 
 
