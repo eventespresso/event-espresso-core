@@ -541,7 +541,7 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_date_range( $date_format = 'M jS', $time_format = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
+	function espresso_event_date_range( $date_format = 'M jS', $time_format = ' ', $single_dt_frmt = 'D M jS ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
