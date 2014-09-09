@@ -538,13 +538,12 @@ class EEH_Form_Fields {
 	/**
 	 * generate_form_input
  	 *
-	 * @param object $QST EE_Question_Form_Input
-	 * to see exactly what keys are expected
+	 * @param EE_Question_Form_Input $QFI
 	 * @return string HTML
 	 */
 	static function generate_form_input( EE_Question_Form_Input $QFI ) {
 		if ( isset( $QFI->QST_admin_only) && $QFI->QST_admin_only && ! is_admin() ) {
-			return;
+			return '';
 		}
 
 		$QFI = self::_load_system_dropdowns( $QFI );
@@ -566,6 +565,9 @@ class EEH_Form_Fields {
 		$QST_options = $QFI->options(true,$answer);
 		$options = is_array( $QST_options ) ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
+		$label_b4 = $QFI->get_meta( 'label_b4' );
+		$use_desc_4_label = $QFI->get_meta( 'use_desc_4_label' );
+
 		switch ( $QFI->get('QST_type') ){
 
 			case 'TEXTAREA' :
@@ -577,7 +579,7 @@ class EEH_Form_Fields {
 				break;
 
 			case 'SINGLE' :
-					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, $label_b4, $use_desc_4_label );
 				break;
 
 			case 'MULTIPLE' :
@@ -799,23 +801,26 @@ class EEH_Form_Fields {
 
 
 
-
-
 	/**
 	 * generates HTML for form radio button inputs
- 	 *
-	 * @param string $question 	label content
-	 * @param string $answer 		form input value attribute
-	 * @param array $options 		array of answer options where array key = option value and array value = option display text
-	 * @param string $name 			form input name attribute
-	 * @param string $id 				form input css id attribute
-	 * @param string $class 			form input css class attribute
-	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
-	 * @param string $label_class 	css class attribute for the label
-	 * @param string $disabled 		disabled="disabled" or null
+	 *
+	 * @param bool|string $question    label content
+	 * @param string      $answer      form input value attribute
+	 * @param array|bool  $options     array of answer options where array key = option value and array value = option display text
+	 * @param bool|string $name        form input name attribute
+	 * @param string      $id          form input css id attribute
+	 * @param string      $class       form input css class attribute
+	 * @param array|bool  $required    'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
+	 * @param string      $required_text
+	 * @param string      $label_class css class attribute for the label
+	 * @param bool|string $disabled    disabled="disabled" or null
+	 * @param bool        $system_ID
+	 * @param bool        $use_html_entities
+	 * @param bool        $label_b4
+	 * @param bool        $use_desc_4_label
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE, $use_desc_4_label = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -827,7 +832,7 @@ class EEH_Form_Fields {
 		// set disabled tag
 		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
-		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
+		$radio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
 		$extra = apply_filters( 'FHEE__EEH_Form_Fields__additional_form_field_attributes', '' );
 
@@ -841,24 +846,24 @@ class EEH_Form_Fields {
 		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
 
 		foreach ( $options as $OPT ) {
-			$key = self::prep_option_value( $OPT->value() );
-			$size = self::get_label_size_class( $OPT->value() );
+			if ( $OPT instanceof EE_Question_Option ) {
+				$value = self::prep_option_value( $OPT->value() );
+				$label = $use_desc_4_label ? $OPT->desc() : $OPT->value();
+				$size = $use_desc_4_label ? self::get_label_size_class( $OPT->value() . ' ' . $OPT->desc() ) : self::get_label_size_class( $OPT->value() );
+				$desc = $OPT->desc();//no self::prep_answer
+				$answer = is_numeric( $value ) && empty( $answer ) ? 0 : $answer;
+				$checked = (string)$value == (string)$answer ? ' checked="checked"' : '';
+				$opt = '-' . sanitize_key( $value );
 
-			$value = $OPT->value();// self::prep_answer( $OPT->value() );
-			$desc = $OPT->desc();//no self::prep_answer
-			$answer = is_numeric( $key ) && empty( $answer ) ? 0 : $answer;
-			$checked = (string)$key == (string)$answer ? ' checked="checked"' : '';
-			$opt = '-' . sanitize_key( $key );
-
-			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
-			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-radio-btn-lbl">';
-			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
-			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $value . '</span>' : '';
- 			$input_html .= "\n\t\t\t\t\t" . '</label>';
-			$input_html .= '<br/><div class="espresso-radio-btn-option-desc small-text grey-text">' . $desc . '</div>';
-			$input_html .= "\n\t\t\t\t" . '</li>';
-
+				$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
+				$input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-radio-btn-lbl">';
+				$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $label . '</span>' : '';
+				$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+				$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $label . '</span>' : '';
+				$input_html .= "\n\t\t\t\t\t" . '</label>';
+				$input_html .= $use_desc_4_label ? '' : '<span class="espresso-radio-btn-option-desc small-text grey-text">' . $desc . '</span>';
+				$input_html .= "\n\t\t\t\t" . '</li>';
+			}
 		}
 
 		$input_html .= "\n\t\t\t" . '</ul>';
@@ -904,7 +909,7 @@ class EEH_Form_Fields {
 		// set disabled tag
 		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
-		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
+		$radio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$extra = apply_filters( 'FHEE__EEH_Form_Fields__additional_form_field_attributes', '' );
 
@@ -927,7 +932,7 @@ class EEH_Form_Fields {
 			$checked = is_array( $answer ) && in_array( $text, $answer ) ? ' checked="checked"' : '';
 
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
-			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
+			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
