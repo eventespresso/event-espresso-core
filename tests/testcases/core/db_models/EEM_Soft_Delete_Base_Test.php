@@ -55,6 +55,44 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 
 
 
+	/**
+	 * This tests a soft delete trash and restore of a cpt model item.
+	 * Test prompted by https://events.codebasehq.com/projects/event-espresso/tickets/6625
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return void
+	 */
+	public function test_soft_trash_restore_cpt() {
+		//create attendee model object and dependencies.
+		$attendee = $this->new_model_obj_with_dependencies( 'Attendee' );
+
+		//verify have an attendeee object
+		$this->assertInstanceOf( 'EE_Attendee', $attendee );
+
+		//verify not trashed.
+		$status = $attendee->status();
+		$this->assertFalse( $status == 'trash' );
+
+		//k now let's trash it
+		EEM_Attendee::instance()->delete_by_ID( $attendee->ID() );
+
+		//verify
+		$trash_attendee = EEM_Attendee::instance()->get_one_by_ID( $attendee->ID() );
+		$this->assertInstanceOf( 'EE_Attendee', $trash_attendee );
+		$status = $trash_attendee->status();
+		$this->assertTrue( $status == 'trash' );
+
+		//now let's try to restore.
+		EEM_Attendee::instance()->restore_by_ID( $trash_attendee->ID() );
+		$restore_attendee = EEM_Attendee::instance()->get_one_by_ID( $trash_attendee->ID() );
+		$this->assertInstanceOf( 'EE_Attendee', $restore_attendee );
+		$status = $restore_attendee->status();
+		$this->assertFalse( $status == 'trash' );
+	}
+
+
+
 }
 
 // End of file EEM_Soft_Delete_Base_Test.php
