@@ -469,11 +469,13 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @param bool   $add_breaks
 	 * @return string
 	 */
-	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
+	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = '', $time_format = '', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
+		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired );
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
@@ -541,7 +543,7 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_date_range( $date_format = 'M jS', $time_format = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
+	function espresso_event_date_range( $date_format = 'M jS', $time_format = ' ', $single_dt_frmt = 'D M jS ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
