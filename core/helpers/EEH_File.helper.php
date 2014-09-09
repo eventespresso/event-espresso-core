@@ -257,7 +257,7 @@ class EEH_File extends EEH_Base {
 		if ( ! $wp_filesystem->put_contents( $full_file_path, $file_contents )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be written to.', 'event_espresso' ), $file_type, $full_file_path );
-				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path, 'f' );
 				throw new EE_Error( $msg );
 			}
 			return FALSE;

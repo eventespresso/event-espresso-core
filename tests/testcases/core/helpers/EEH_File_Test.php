@@ -69,7 +69,12 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$this->assertTrue( $wp_filesystem->is_dir( '/test/' ) );
 		$this->assertTrue( EEH_File::verify_filepath_and_permissions( '/test/' ) );
 		$wp_filesystem->chmod( '/test/', '000' );
-		$this->assertFalse( EEH_File::verify_filepath_and_permissions( '/test/' ) );
+		try{
+			EEH_File::verify_filepath_and_permissions( '/test/' ) ;
+			$this->fail(sprintf( __( 'An exception SHOULD have been thrown but wasn\'t', 'event_espresso' )));
+		}catch( EE_Error $e ) {
+			$this->assertTrue( TRUE );
+		}
 
 
 	}
@@ -82,8 +87,18 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$this->assertTrue( EEH_File::ensure_folder_exists_and_is_writable( $folder_path ) );
 		$this->assertTrue( EEH_File::verify_is_writable(  $folder_path ) );
 		$wp_filesystem->chmod( $folder_path, '000' );
-		$this->assertFalse( EEH_File::ensure_folder_exists_and_is_writable( $folder_path ) );
-		$this->assertFalse( EEH_File::verify_is_writable(  $folder_path ) );
+		try{
+			$this->assertFalse( EEH_File::ensure_folder_exists_and_is_writable( $folder_path ) );
+			$this->fail(sprintf( __( 'An exception SHOULD have been thrown but wasn\'t', 'event_espresso' )));
+		}catch( EE_Error $e ) {
+			$this->assertTrue( TRUE );
+		}
+		try{
+			$this->assertFalse( EEH_File::verify_is_writable(  $folder_path ) );
+			$this->fail(sprintf( __( 'An exception SHOULD have been thrown but wasn\'t', 'event_espresso' )));
+		}catch( EE_Error $e ) {
+			$this->assertTrue( TRUE );
+		}
 
 	}
 
@@ -95,8 +110,19 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$this->assertTrue( EEH_File::ensure_file_exists_and_is_writable( $file_path ) );
 		$this->assertTrue( EEH_File::verify_is_writable(  $file_path ) );
 		$wp_filesystem->chmod( $file_path, '000' );
-		$this->assertFalse( EEH_File::ensure_file_exists_and_is_writable( $file_path ) );
-		$this->assertFalse( EEH_File::verify_is_writable(  $file_path ) );
+		try{
+			$this->assertFalse( EEH_File::ensure_file_exists_and_is_writable( $file_path ) );
+			$this->fail(sprintf( __( 'An exception SHOULD have been thrown but wasn\'t', 'event_espresso' )));
+		}catch( EE_Error $e ) {
+			$this->assertTrue( TRUE );
+		}
+		try{
+			$this->assertFalse( EEH_File::verify_is_writable(  $file_path ) );
+			$this->fail(sprintf( __( 'An exception SHOULD have been thrown but wasn\'t', 'event_espresso' )));
+		}catch( EE_Error $e ) {
+			$this->assertTrue( TRUE );
+		}
+
 	}
 
 	public function test_get_file_contents(){
@@ -112,11 +138,12 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	public function test_write_to_file(){
 		global $wp_filesystem;
+		$wp_filesystem->chmod( '/', '755' );
 		$file_path = '/test.txt';
 		$content1 = '<html><body>hello</body></html>';
 		$content2 = '<xml><monkeys><monkey/></monkeys></xml>';
 		$this->assertFalse( $wp_filesystem->exists( $file_path ) );
-		$wp_filesystem->put_contents( $file_path, $content1 );
+		$wp_filesystem->put_contents( $file_path, $content1, '644' );
 		$this->assertTrue( $wp_filesystem->exists( $file_path ) );
 		$this->assertEquals( $content1, EEH_File::get_file_contents( $file_path ) );
 		//now add to it
