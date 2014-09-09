@@ -1866,7 +1866,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->use_remote_logging = FALSE;
 		$this->remote_logging_url = NULL;
 		$this->show_reg_footer = TRUE;
-		$this->affiliate_id = NULL;
+		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
 
