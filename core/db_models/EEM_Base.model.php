@@ -766,7 +766,7 @@ abstract class EEM_Base extends EE_Base{
 			//we already know what we want to update. So let's make the query simpler so it's a little more efficient
 			$query_params = array(
 				array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
-				'limit' => count( $model_objs_affected_ids ) );
+				'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
 		}
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
