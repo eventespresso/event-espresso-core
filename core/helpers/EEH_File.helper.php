@@ -139,12 +139,11 @@ class EEH_File extends EEH_Base {
 		$parent_folder = implode( DS, $folder_segments ) . DS;
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
-		if ( ! is_dir( $folder )) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		if ( ! $wp_filesystem->is_dir( $folder )) {
 			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder' )) {
 				return FALSE;
 			} else {
-				// load WP_Filesystem and set file permissions
-				$wp_filesystem = EEH_File::_get_wp_filesystem();
 				if ( ! $wp_filesystem->mkdir( $folder )) {
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 						$msg = sprintf( __( '"%s" could not be created.', 'event_espresso' ), $folder );
@@ -258,7 +257,7 @@ class EEH_File extends EEH_Base {
 		if ( ! $wp_filesystem->put_contents( $full_file_path, $file_contents )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be written to.', 'event_espresso' ), $file_type, $full_file_path );
-				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path, 'f' );
 				throw new EE_Error( $msg );
 			}
 			return FALSE;
@@ -298,7 +297,7 @@ class EEH_File extends EEH_Base {
 
 	/**
 	 * remove_filename_from_filepath
-	 * given a full path to a file including the filename itself, this removes  the filename and returns the path, up to, but NOT including the filename
+	 * given a full path to a file including the filename itself, this removes  the filename and returns the path, up to, but NOT including the filename OR slash
 	 *
 	 * @param string $full_file_path
 	 * @return string
@@ -309,7 +308,7 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * get_filename_from_filepath
+	 * get_filename_from_filepath. Arguably the same as basename()
 	 *
 	 * @param string $full_file_path
 	 * @return string
@@ -410,11 +409,16 @@ class EEH_File extends EEH_Base {
 		$class_to_folder_path = array();
 		foreach( $folder_paths as $folder_path ){
 			$folder_path = self::standardise_and_end_with_directory_separator( $folder_path );
-			$files_in_folder = glob($folder_path.'*');
+			// load WP_Filesystem and set file permissions
+			$wp_filesystem = EEH_File::_get_wp_filesystem();
+			$files_in_folder = $wp_filesystem->dirlist($folder_path, TRUE);// glob($folder_path.'*');
 			$class_to_folder_path = array();
-			foreach( $files_in_folder as $file_path ){
-				$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
-				$class_to_folder_path[$classname] = $file_path;
+			foreach( $files_in_folder as $file_path => $info_about_file ){
+				//only add files, not folders
+				if( $info_about_file[ 'type' ] == 'f' ){
+					$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
+					$class_to_folder_path[$classname] = $folder_path . $file_path;
+				}
 			}
 		}
 		return $class_to_folder_path;
