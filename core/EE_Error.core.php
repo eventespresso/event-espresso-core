@@ -608,6 +608,13 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		if ( empty( $msg )) {
+			EE_Error::doing_it_wrong( 'EE_Error::add_' . $type . '()', 'Notifications are not much use without a message! Please add a message.', EVENT_ESPRESSO_VERSION );
+		}
+		// todo: reimplement  the following in 4.5+
+//		if ( $type == 'errors' && ( empty( $file ) || empty( $func ) || empty( $line ))) {
+//			EE_Error::doing_it_wrong( 'EE_Error::add_error()', 'You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.', EVENT_ESPRESSO_VERSION );
+//		}
 		// get separate user and developer messages if they exist
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];

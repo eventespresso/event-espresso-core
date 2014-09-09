@@ -363,7 +363,14 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			! $transaction->paid()){//and there have been no payments on the transaction yet anyways
 			//so let's create a nice looking invoice including everything
 			foreach($total_line_item->get_items() as $line_item){
-				$this->addField('item_name_' . $item_num, substr($line_item->name(),0,127));
+				$this->addField('item_name_' . $item_num,
+						substr(
+								sprintf(
+										__( '%s for %s', 'event_espresso' ),
+										$line_item->name() ,
+										$line_item->ticket_event_name() ),
+								0,
+								127 ) );
 				$this->addField('amount_' . $item_num, $line_item->unit_price());
 				$this->addField('quantity_' . $item_num, $line_item->quantity());
 				$item_num++;
@@ -392,7 +399,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->addField('os0_'.$item_num,  $description);
 			$item_num++;
 		}
-		
+
 		if($paypal_settings['use_sandbox']){
 			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
 			$this->addField('amount_'.$item_num,0);
@@ -436,7 +443,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(!$this->validateIpn()){
 			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"));
+			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		//if the transaction's just an ID, swap it for a real EE_Transaction

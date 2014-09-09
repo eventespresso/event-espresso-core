@@ -189,27 +189,27 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 									}
 								} else {
 									// no array? must be an error
-									EE_Error::add_error(sprintf(__("No file seems to have been uploaded", "event_espresso")));
+									EE_Error::add_error(sprintf(__("No file seems to have been uploaded", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 									return FALSE;
 								}
 
 							} else {
-								EE_Error::add_error(sprintf(__("%s was not successfully uploaded", "event_espresso"),$filename));
+								EE_Error::add_error(sprintf(__("%s was not successfully uploaded", "event_espresso"),$filename), __FILE__, __FUNCTION__, __LINE__ );
 								return FALSE;
 							}
 
 						} else {
-							EE_Error::add_error( sprintf(__("%s was too large of a file and could not be uploaded. The max filesize is %s' KB.", "event_espresso"),$filename,$max_upload));
+							EE_Error::add_error( sprintf(__("%s was too large of a file and could not be uploaded. The max filesize is %s' KB.", "event_espresso"),$filename,$max_upload), __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
 
 					} else {
-						EE_Error::add_error( sprintf(__("%s  had an invalid file extension, not uploaded", "event_espresso"),$filename));
+						EE_Error::add_error( sprintf(__("%s  had an invalid file extension, not uploaded", "event_espresso"),$filename), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
 
 				} else {
-					EE_Error::add_error( $error_msg );
+					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;
 				}
 

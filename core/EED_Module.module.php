@@ -120,4 +120,3 @@ abstract class EED_Module extends EE_Configurable {
 
 }
 // End of file EED_Module.module.php
-// Location: /core/EED_Module.module.php

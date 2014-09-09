@@ -120,7 +120,13 @@ final class EE_System {
 		if ( ! $this->_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			exit();
+			return;
+		}
+		// check required PHP version
+		if ( ! $this->_minimum_php_version_required() ) {
+			unset( $_GET['activate'] );
+			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
+			return;
 		}
 		// check recommended WP version
 		if ( ! $this->_minimum_wp_version_recommended() ) {
@@ -203,6 +209,16 @@ final class EE_System {
 	}
 
 	/**
+	 * 	_minimum_php_version_required
+	 *
+	 * 	@access private
+	 * 	@return boolean
+	 */
+	private function _minimum_php_version_required() {
+		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
+	}
+
+	/**
 	 * 	_minimum_php_version_recommended
 	 *
 	 * 	@access private
@@ -237,6 +253,31 @@ final class EE_System {
 		</div>
 		<?php
 		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
+	}
+
+
+
+	/**
+	 * 	minimum_php_version_error
+	 *
+	 * 	@return void
+	 */
+	public function minimum_php_version_error() {
+		?>
+		<div class="error">
+		<p>
+		<?php
+		printf(
+			__( 'We\'re sorry, but Event Espresso requires PHP version %s or greater in order to operate. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+			EE_MIN_PHP_VER_REQUIRED,
+			PHP_VERSION,
+			'<br/>'
+		);
+		?>
+		</p>
+		</div>
+		<?php
+		deactivate_plugins( EE_PLUGIN_BASENAME );
 	}
 
 
@@ -425,6 +466,7 @@ final class EE_System {
 
 
 
+
 	/**
 	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
 	 * information about what versions of EE have been installed and activated,
@@ -537,7 +579,9 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _do_setup_validations( $request_type ) {
-		EEH_Activation::validate_messages_system();
+		if ( $request_type !== EE_System::req_type_new_activation ) {
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
+		}
 		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
 	}
 
@@ -652,7 +696,7 @@ final class EE_System {
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
-			EE_Error::add_error( $activation_errors );
+			EE_Error::add_error( $activation_errors, __FILE__, __FUNCTION__, __LINE__ );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
@@ -772,6 +816,7 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
+			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}

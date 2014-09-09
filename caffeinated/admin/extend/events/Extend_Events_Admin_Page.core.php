@@ -219,11 +219,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'event_ends_on' => __('Event Ends on', 'event_espresso'),
 			'event_datetime_actions' => __('Actions', 'event_espresso'),
 			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
-			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso'),
-			'clone_trooper_img_src' => EE_PLUGIN_DIR_URL . 'images/clone-trooper-16x16.png',
-			'clone_trooper_img_alt' => __('clone', 'event_espresso'),
-			'trash_img_src' => EE_PLUGIN_DIR_URL .'images/trash-16x16.png',
-			'trash_img_alt' => __('trash', 'event_espresso')
+			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 
@@ -909,7 +905,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				);
 		}
 
-		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
+		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
+
+
 
 		//let's first check if we have special requests coming in.
 		if ( isset( $this->_req_data['active_status'] ) ) {

@@ -33,10 +33,12 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
-		define( 'EE_MSG_CAF_ASSETS_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/assets/' );
-		define( 'EE_MSG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
-		define( 'EE_MSG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/' );
-		define( 'EE_MSG_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/templates/' );
+		if ( !defined( 'EE_MSG_CAF_ASSETS_PATH' ) ) {
+			define( 'EE_MSG_CAF_ASSETS_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/assets/' );
+			define( 'EE_MSG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
+			define( 'EE_MSG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/' );
+			define( 'EE_MSG_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/templates/' );
+		}
 	}
 
 	protected function _extend_page_config() {
@@ -75,7 +77,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	/**
 	 * This is the callback for the FHEE__manage_event-espresso_page_espresso_messages_columns to register the caffeinated columns for the global message templates list table.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param array  $columns   Original defined list of columns
 	 * @param string $screen_id The unique screen id for the page.
@@ -95,7 +97,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	/**
 	 * Callback for FHEE__EE_Admin_List_Table__column_actions__event-espresso_page_espresso_messages action that allows for adding the content for the registered "action" column.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param EE_Base_Class
 	 * @param string $screen_id Unique screen id for the page

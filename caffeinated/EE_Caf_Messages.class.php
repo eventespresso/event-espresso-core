@@ -3,7 +3,7 @@
  * This file contains the Caffeinated Messages class that handles plugging in all the caffeinated messages functionality.
  * @package      Event Espresso
  * @subpackage plugin api, messages
- * @since           %VER%
+ * @since           4.3.2
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -12,7 +12,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            %VER%
+ * @since            4.3.2
  * @author          Darren Ethier
  */
 class EE_Caf_Messages  {
@@ -29,7 +29,7 @@ class EE_Caf_Messages  {
 	/**
 	 * Contains all the hooks filters for setting up caffeinated messages functionality.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @return void
 	 */
@@ -347,7 +347,7 @@ class EE_Caf_Messages  {
 	/**
 	 * Takes care of registering the  message types that are only available in caffeinated EE.
 	 *
-	 * @since   %VER%
+	 * @since   4.3.2
 	 *
 	 * @return  void
 	 */
@@ -361,14 +361,6 @@ class EE_Caf_Messages  {
 			'messengers_to_activate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
-
-		//register payment refund message type
-		$setup_args = array(
-			'mtfilename' => 'EE_Payment_Refund_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
-			);
-		EE_Register_Message_Type::register( 'payment_refund', $setup_args );
 
 		//register payment reminder message type
 		$setup_args = array(
@@ -409,7 +401,7 @@ class EE_Caf_Messages  {
 	/**
 	 * Takes care of registering the  shortcode libraries implemented with caffeinated EE and set up related items.
 	 *
-	 * @since   %VER%
+	 * @since   4.3.2
 	 *
 	 * @return void
 	 */

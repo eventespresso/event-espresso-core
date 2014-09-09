@@ -216,7 +216,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 				return $value;
 			default:
 				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
-				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name));
+				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name), __FILE__, __FUNCTION__, __LINE__ );
 				return NULL;
 
 		}

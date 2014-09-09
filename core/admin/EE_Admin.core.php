@@ -171,11 +171,8 @@ final class EE_Admin {
 	*/
 	public function init() {
 
-		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
-		//however, we want to make use of the admin infrastructure still
-		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100 );
-		} else {
+		//only enable most of the EE_Admin IF we're not in full maintenance mode
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
@@ -473,58 +470,44 @@ final class EE_Admin {
 	/**
 	 * enqueue all admin scripts that need loaded for admin pages
 	 *
-	 * @accee public
+	 * @access public
 	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
+		// this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.
+		// Note: the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
 		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
-
-		//register cookie script for future dependencies
+		// register cookie script for future dependencies
 		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
-
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-			$jquery_validate_url = EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js';
 			// register jQuery Validate
-			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);
+			wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
 		}
-
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
-			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
-			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
-			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
-			$ee_joyride_css = EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css';
-
 			//joyride style
-			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
-			wp_register_style('ee-joyride-css', $ee_joyride_css, array('joyride-css'), EVENT_ESPRESSO_VERSION );
-
-			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
-
-			//joyride
-			wp_register_script('jquery-joyride', $joyride_js, array('jquery-cookie', 'joyride-modenizr'), '2.1', TRUE );
-
+			wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
+			wp_register_style('ee-joyride-css', EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css', array('joyride-css'), EVENT_ESPRESSO_VERSION );
+			wp_register_script('joyride-modernizr', EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js', array(), '2.1', TRUE );
+			//joyride JS
+			wp_register_script('jquery-joyride', EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js', array('jquery-cookie', 'joyride-modernizr'), '2.1', TRUE );
+			// wanna go for a joyride?
 			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
 		}
-
 		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
 			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
-
-
 		//accounting.js library
 		// @link http://josscrowcroft.github.io/accounting.js/
 		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
-			$acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
 			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee-accounting-core', $acct_js, array('underscore'), '0.3.2', TRUE );
+			wp_register_script( 'ee-accounting-core', EE_THIRD_PARTY_URL . 'accounting/accounting.js', array('underscore'), '0.3.2', TRUE );
 			wp_enqueue_script( 'ee-accounting' );
-
+			// array of settings to get converted to JSON array via wp_localize_script
 			$currency_config = array(
 				'currency' => array(
 					'symbol' => EE_Registry::instance()->CFG->currency->sign,

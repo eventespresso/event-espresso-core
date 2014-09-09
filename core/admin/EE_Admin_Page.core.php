@@ -654,6 +654,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
+		//targeted hook
+		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__' . $this->page_slug . '__' . $this->_req_action );
 
 	}
 
@@ -1069,7 +1071,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_help_tour = array();
 
 		//exit early if help tours are turned off globally
-		if ( ! EE_Registry::instance()->CFG->admin->help_tour_activation )
+		if ( ! EE_Registry::instance()->CFG->admin->help_tour_activation || ( defined( 'EE_DISABLE_HELP_TOURS' ) && EE_DISABLE_HELP_TOURS ) )
 			return;
 
 		//loop through _page_config to find any help_tour defined
@@ -2044,13 +2046,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 
 
-		if ( $delete ) {
+		if ( $delete && !empty( $id ) ) {
 			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
 			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 
-		$this->_template_args['publish_delete_link'] = $delete;
+		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
 		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
@@ -2265,7 +2267,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * This is used to display caf preview pages.
 	 *
-	 * @since %VER%
+	 * @since 4.3.2
 	 *
 	 * @param string $utm_campaign_source what is the key used for google analytics link
 	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
@@ -2350,7 +2352,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
 		//display message about search results?
-		$this->_template_args['before_list_table'] .= !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
+		$this->_template_args['before_list_table'] .= apply_filters( 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg', !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '', $this->page_slug, $this->_req_data, $this->_req_action );
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 

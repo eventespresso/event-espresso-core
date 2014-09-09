@@ -24,8 +24,9 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	protected $_addon = NULL;
 	protected $_main_file_path;
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';
-		parent::__construct($name, $data, $dataName);
+		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';require_once $this->_main_file_path;
+		//loading that file adds a hook, but we want to control when it hooks in
+		remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );		parent::__construct($name, $data, $dataName);
 	}
 	public function setUp(){
 		parent::setUp();
