@@ -42,8 +42,9 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_whats_new',
-			'overview' => '_overview',
+			//'default' => '_whats_new',
+			'default' => '_overview',
+			//'overview' => '_overview',
 			'credits' => '_credits',
 			);
 	}
@@ -52,13 +53,14 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			'default' => array(
+			/*'default' => array(
 				'nav' => array(
 					'label' => __('What\'s New', 'event_espresso'),
 					'order' => 10),
 				'require_nonce' => FALSE
-				),
-			'overview' => array(
+				),*/
+			//'overview' => array(
+			'default' => array(
 				'nav' => array(
 					'label' => __('About', 'event_espresso'),
 					'order' => 20),
@@ -85,21 +87,31 @@ class About_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _whats_new() {
-		$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
+		/*$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
 		$steps = $steps !== FALSE ? $steps : '';
 		$this->_admin_page_title = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$settings_message = $steps;
 		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
 		$template = EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
-		$this->display_about_admin_page();
+		$this->display_about_admin_page();*/
 	}
 
 
 
 	protected function _overview() {
-		$this->_template_args['admin_page_title'] = __('About Event Espresso', 'event_espresso');
+		/*$this->_template_args['admin_page_title'] = __('About Event Espresso', 'event_espresso');
 		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso');
+		$template = EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
+		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
+		$this->display_about_admin_page();*/
+
+		//Copied from _whats_new()
+		$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
+		$steps = $steps !== FALSE ? $steps : '';
+		$this->_admin_page_title = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
+		$settings_message = $steps;
+		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
 		$template = EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
@@ -109,14 +121,14 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _get_started_steps() {
 		$steps = '<h3>'.__('Getting Started').'</h3>';
-		$step_one = '<p>'.sprintf( __('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
-		$step_two = '<p>'.sprintf( __('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
-		$step_three = '<p>'.sprintf( __('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
+		$step_one = '<p>'.sprintf( __('%sStep 1%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
+		$step_two = '<p>'.sprintf( __('%sStep 2%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
+		$step_three = '<p>'.sprintf( __('%sStep 3%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
 
 		//done?
-		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
-		$done_step_two = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
-		$done_step_three = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
+		$done_step_one = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
+		$done_step_two = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
+		$done_step_three = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
 
 		//if ALL steps are done, let's just return FALSE so we don't display anything
 		if ( $done_step_one && $done_step_two && $done_step_three )

@@ -159,7 +159,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
@@ -421,7 +421,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}elseif( !empty($this->_req_data['QST_ID'])){
 			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
 		}else{
-			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")));
+			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
 	}
@@ -767,7 +767,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		if ( isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
 			if ( empty($this->_req_data['recaptcha_publickey']) || empty($this->_req_data['recaptcha_privatekey']) ) {
 				$this->_req_data['use_captcha'] = 0;
-				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso') );
+				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
 

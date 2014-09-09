@@ -854,11 +854,14 @@ class EEH_Activation {
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
 
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		//let's first setup an array of what we consider to be the default messengers.
 		$default_messengers = array( 'email' );
 
 		//let's determine if we've already got an active messengers option
-		$active_messengers = get_option('ee_active_messengers');
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 
 		//do an initial loop to determine if we need to continue
 		$def_ms = array();
@@ -869,9 +872,6 @@ class EEH_Activation {
 
 		//continue?
 		if ( empty( $def_ms ) ) return false;
-
-		//include our helper
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
@@ -921,7 +921,7 @@ class EEH_Activation {
 			}
 
 			//now let's save the settings for this messenger!
-			update_option( 'ee_active_messengers', $active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 
 			//let's generate all the templates
@@ -931,6 +931,62 @@ class EEH_Activation {
 
 		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
 		return $templates;
+	}
+
+
+
+
+
+
+	/**
+	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return void
+	 */
+	public static function validate_messages_system() {
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
+		//get active and installed  messengers/message types.
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$installed = EEH_MSG_Template::get_installed_message_objects();
+		$ims = $installed['messengers'];
+		$imts = $installed['message_types'];
+
+		$installed_messengers = $installed_mts = array();
+		//set up the arrays so they can be handelled easier.
+		foreach( $ims as $im ) {
+			$installed_messengers[$im->name] = $im;
+		}
+		foreach( $imts as $imt ) {
+			$installed_mts[$imt->name] = $imt;
+		}
+
+		//now let's loop through the active array and validate
+		foreach( $active_messengers as $messenger => $active_details ) {
+			//first let's see if this messenger is installed.
+			if ( ! isset( $installed_messengers[$messenger] ) ) {
+				//not set so let's just remove from actives and make sure templates are inactive.
+				unset( $active_messengers[$messenger] );
+				EEH_MSG_Template::update_to_inactive( $messenger );
+				continue;
+			}
+
+			//messenger is active, so let's just make sure that any active message types not installed are deactivated.
+			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
+			foreach ( $mts as $mt_name => $mt ) {
+				if ( ! isset( $installed_mts[$mt_name] )  ) {
+					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+					EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
+				}
+			}
+		}
+
+		//all done! let's update the active_messengers.
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		return;
 	}
 
 
@@ -1105,9 +1161,6 @@ class EEH_Activation {
 			echo $errors;
 		}
 	}
-
-
-
 
 }
 // End of file EEH_Activation.helper.php

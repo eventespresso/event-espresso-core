@@ -244,6 +244,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_edit_cpt_item'
 				),
 
+				'duplicate_attendee' => array(
+					'func' => '_duplicate_attendee',
+					'noheader' => TRUE
+					),
+
 				'insert_attendee'	=> array(
 					'func' => '_insert_or_update_attendee',
 					'args' => array(
@@ -645,23 +650,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_legend_items() {
 		$items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
 				),
 			'view_details' => array(
-				'class' => 'dashicons dashicons-search',
+				'class' => 'dashicons dashicons-clipboard',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
-				'class' => 'dashicons dashicons-businessman',
+				'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
 			'resend_registration' => array(
-				'class' => 'ee-icon ee-icon-email-send',
+				'class' => 'dashicons dashicons-email-alt',
 				'desc' => __('Resend Registration Details', 'event_espresso')
 				),
 			'view_transaction' => array(
-				'class' => 'ee-icon ee-icon-cash',
+				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
         		'approved_status' => array(
@@ -702,7 +707,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $EVT_ID ) {
 			$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
 			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
-			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing registrations for the event: %s%s', 'event_espressso'), '<h2>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h2>' ) : '';
+			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing registrations for the event: %s%s', 'event_espresso'), '<h2>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h2>' ) : '';
 		}
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -1256,8 +1261,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['taxes'] = array();
 		}
 
-		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-icon ee-icon-cash' );
-		$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-icon ee-icon-email-send right' );
+		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' );
+		$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' );
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
@@ -1377,7 +1382,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<img width="16" height="16" alt="' . __( 'Edit Question', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/pencil-16x16.png">
+						<div class="dashicons dashicons-edit"></div>
 					</a>
 				</td>
 			</tr>
@@ -1458,98 +1463,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
-		$registration = NULL;
-		// grab values for fname, lname, and email from qstns
-		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
-		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
-		$QST_email 	= isset( $qstns['email'] ) && ! empty( $qstns['email'] ) ? array_shift( array_values( $qstns['email'] )) : FALSE;
-		// check if fname, lname, and email were set (and possibly changed)
-		if ( $QST_fname && $QST_lname && $QST_email ) {
-			// load REG model
-		    $REG = EE_Registry::instance()->load_model( 'Registration' );
-			// get registration
-			$registration = $REG->get_one_by_ID( $REG_ID );
-			// and then get this registration's details
-			$attendee = $registration->attendee();
-			// check if the critical attendee details were changed
-			if ( $QST_fname != $attendee->fname() || $QST_lname != $attendee->lname() || $QST_email != $attendee->email() ) {
-				// we're either updating an already existing attendee or creating an entirely new attendee
-				//so grab the rest of the details
-				$QST_address 		= isset( $qstns['address'] ) && ! empty( $qstns['address'] ) ? array_shift( array_values( $qstns['address'] )) : NULL;
-				$QST_address2 	= isset( $qstns['address2'] ) && ! empty( $qstns['address2'] ) ? array_shift( array_values( $qstns['address2'] )) : NULL;
-				$QST_city 				= isset( $qstns['city'] ) && ! empty( $qstns['city'] ) ? array_shift( array_values( $qstns['city'] )) : NULL;
-				$QST_state 			= isset( $qstns['state'] ) && ! empty( $qstns['state'] ) ? array_shift( array_values( $qstns['state'] )) : NULL;
-				$QST_country 		= isset( $qstns['country'] ) && ! empty( $qstns['country'] ) ? array_shift( array_values( $qstns['country'] )) : NULL;
-				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
-				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;
-				// load attendee model
-				$ATT = EE_Registry::instance()->load_model( 'Attendee' );
-				// create array for query where statement
-				$where_cols_n_values = array('ATT_fname' => $QST_fname, 'ATT_lname' => $QST_lname, 'ATT_email' => $QST_email);
-				// do we already have an existing record for this "new" attendee ?
-				if ( $existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values )) {
-					// found a match
-					// copy details from existing attendee
-					$attendee = $existing_attendee;
-					// in case other details were updated
-					$attendee->set( 'ATT_address', $QST_address );
-					$attendee->set( 'ATT_address2', $QST_address2 );
-					$attendee->set( 'ATT_city', $QST_city );
-					// is state a string or a foreign key ?
-					if ( ! is_numeric( $QST_state )) {
-						$state = EEM_State::instance()->get_one( array( array('STA_name' => $QST_state ) ) );
-						if ( !empty( $state ) )
-							$QST_state = $state->ID();
-					}
-					$attendee->set( 'STA_ID', $QST_state );
-					// is country a string or a foreign key ?
-					if ( ! is_numeric( $QST_country )) {
-						$country = EEM_Country::instance()->get_one( array( array('CNT_name' => $QST_country ) ) );
-						if ( !empty( $country ) ) {
-							$QST_country = $country->ID();
-						}
-					}
-					$attendee->set( 'CNT_ISO', $QST_country );
-					$attendee->set( 'ATT_zip', $QST_zip );
-					$attendee->set( 'ATT_phone', $QST_phone );
-					// save to the db
-					$attendee->save();
-				} else {
-					// no existing attendee exists so create a new one
-					$attendee = EE_Attendee::new_instance( array(
-						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
-						'ATT_fname' => $Qst_fname,
-						'ATT_lname' => $QST_lname,
-						'ATT_email' => $QST_email,
-						'ATT_address' => $QST_address,
-						'ATT_address2' => $QST_address2,
-						'ATT_city' => $QST_city,
-						'STA_ID' => $QST_state,
-						'CNT_ISO' => $QST_country,
-						'ATT_zip' => $QST_zip,
-						'ATT_phone' => $QST_phone
-						)
-					);
-					// save to db
-					$new_id = $attendee->save();
-					// grab and set the new ID
-					if ( ! $new_id) {
-						$success = FALSE;
-						EE_Error::add_error( __('An error occurred. An ID for the new registration could not be retrieved.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-					}
-				}
-				if ( $attendee->ID() ) {
-//					echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//					var_dump( $attendee->ID() );
-					// now update the registration with the "new" attendee ID
-					$registration->set( 'ATT_ID', $attendee->ID() );
-					$registration->save();
-				}
-			}
-		}
 
-//		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//		var_dump( $attendee->ID() );
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $registration, $qstns );
 		// loop thru questions... FINALLY!!!
@@ -1672,6 +1586,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		/*@var $attendee EE_Attendee */
 		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EEM_Attendee::instance()->create_default_object();
 
+		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show cereate button or not)
+		if ( ! $this->_registration->is_primary_registrant() ) {
+			$primary_registration = $this->_registration->get_primary_registration();
+			$primary_attendee = $primary_registration->attendee();
+
+			if ( $attendee->ID() !== $primary_attendee->ID() ) {
+				//in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own custom attendee object so let's not worry about the primary reg.
+				$primary_registration = NULL;
+			}
+		} else {
+			$primary_registration = NULL;
+		}
+
 		$this->_template_args['ATT_ID'] = $attendee->ID();
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
 		$this->_template_args['lname'] = $attendee->lname();//$this->_registration->ATT_lname;
@@ -1683,6 +1610,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
 		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
+
+		//edit link
+		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
+		$this->_template_args['att_edit_label'] = $primary_registration instanceof EE_Registration ? __('View/Edit Contact', 'event_espresso') : __('View/Edit Contact' );
+
+		//create link
+		$this->_template_args['create_link'] = $primary_registration instanceof EE_Registration ? EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'duplicate_attendee',  '_REG_ID' => $this->_registration->ID() ), REG_ADMIN_URL ): '';
+		$this->_template_args['create_label'] = __('Create Contact', 'event_espresso');
+
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -2379,6 +2315,43 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
+
+	/**
+	 * This duplicates the attendee object for the given incoming registration id and attendee_id.
+	 * @return void
+	 */
+	protected function _duplicate_attendee() {
+		$action = !empty( $this->_req_data['return'] ) ? $this->_req_data['return'] : 'default';
+		//verify we have necessary info
+		if ( empty($this->_req_data['_REG_ID'] )  ) {
+			EE_Error::add_error( __('Unable to create the contact for the registration because the required paramaters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
+			$query_args = array( 'action' => $action );
+			$this->_redirect_after_action('', '', '', $query_args, TRUE);
+		}
+
+		//okay necessary deets present... let's dupe the incoming attendee and attach to incoming registration.
+		$registration = EEM_Registration::instance()->get_one_by_ID( $this->_req_data['_REG_ID'] );
+		$attendee = $registration->attendee();
+
+		//remove relation of existing attendee on registration
+		$registration->_remove_relation_to($attendee, 'Attendee' );
+		//new attendee
+		$new_attendee = clone $attendee;
+		$new_attendee->set( 'ATT_ID', 0 );
+		$new_attendee->save();
+
+		//add new attendee to reg
+		$registration->_add_relation_to( $new_attendee, 'Attendee');
+
+		EE_Error::add_success( __('New Contact record created.  Now make any edits you wish to make for this contact.', 'event_espresso') );
+
+		//redirect to edit page for attendee
+		$query_args = array( 'post' => $new_attendee->ID(), 'action' => 'edit_attendee' );
+
+		$this->_redirect_after_action( '', '', '', $query_args, TRUE );
+	}
+
+
 	//related to cpt routes
 	protected function _insert_update_cpt_item($post_id, $post) {
 		$success = true;
@@ -2414,7 +2387,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		if ( $success === FALSE )
-			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'));
+			EE_Error::add_error(__('Something went wrong with updating the meta table data for the registration.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 
 	}
 
@@ -2568,7 +2541,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint($this->_req_data['ATT_ID']);
-			$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+			//get attendee
+			$att = $ATT_MDL->get_one_by_ID( $ATT_ID );
+			$updated = $trash ? $att->delete() : $att->restore();
+			$updated = $att->save();
 			if ( ! $updated ) {
 				$success = 0;
 			}

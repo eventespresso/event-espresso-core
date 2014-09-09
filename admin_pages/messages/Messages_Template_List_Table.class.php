@@ -46,13 +46,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			'ajax' => TRUE, //for now,
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
-
 		$this->_columns = array(
 			//'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
 			'description' => __( 'Description', 'event_espresso' ),
-			'actions' => ''
 			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
@@ -129,7 +127,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	}
 
 	/**
-	 * we're just removing the search box for message tempaltes, not needed.
+	 * we're just removing the search box for message templates, not needed.
 	 * @return string (empty);
 	 */
 	function search_box( $text, $input_id ) {
@@ -148,19 +146,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	public function column_cb( $item ) {
 		return '';
 	}
-
-
-
-	/**
-	 * column_default
-	 * @param  object $item        item for row
-	 * @param  string $column_name name of column
-	 * @return string              column_name for default column
-	 */
-	function column_default($item, $column_name) {
-		return ( isset( $item->$column_name ) ) ? $item->column_name : '';
-	}
-
 
 
 
@@ -226,23 +211,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output
 		return __('feature in progress', 'event_espresso');
-	}
-
-	function column_actions( $item ) {
-
-		//first we consider whether this template has override set.  If it does then that means no custom templates can be created from this template as a base.  So let's just skip the button creation.
-		if ( $item->get('MTP_is_override' ) )
-			return '';
-
-
-		$create_args = array(
-			'GRP_ID' => $item->ID(),
-			'messenger' => $item->messenger(),
-			'message_type' => $item->message_type(),
-			'action' => 'add_new_message_template'
-			);
-		$create_link = EE_Admin_Page::add_query_args_and_nonce( $create_args, EE_MSG_ADMIN_URL );
-		return sprintf( '<a href="%s" class="button button-small">%s</a>', $create_link, __('Create Custom', 'event_espresso') );
 	}
 
 }

@@ -66,7 +66,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-dtt-ticket-metabox' => array(
 					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
-					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore', )
+					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore', 'heartbeat')
 					)
 				),
 			'deregisters' => array(
@@ -102,7 +102,29 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		add_action('AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__after_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
 		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
+		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
+	}
 
+
+
+	/**
+	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle accordingly.
+	 *
+	 * @param array  $response The existing heartbeat response array.
+	 * @param array  $data        The incoming data package.
+	 *
+	 * @return array  possibly appended response.
+	 */
+	public function heartbeat_response( $response, $data ) {
+		/**
+		 * check whether count of tickets is approaching the potential
+		 * limits for the server.
+		 */
+		if ( ! empty( $data['input_count'] ) ) {
+			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check($data['input_count']);
+		}
+
+		return $response;
 	}
 
 
@@ -606,7 +628,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		//set is_creating_event property.
 		$evtID = $evtobj->ID();
-		$this->_is_creating_event = absint($evtID) != 0 ? TRUE : FALSE;
+		$this->_is_creating_event = absint($evtID) != 0 ? FALSE : TRUE;
 
 		//default main template args
 		$main_template_args = array(
@@ -913,6 +935,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_tax_rows( $tktrow, $ticket ) {
 		$tax_rows = '';
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_tax_row.template.php';
+		$template_args = array();
 		$taxes = empty( $ticket ) ? EE_Taxes::get_taxes_for_admin() : $ticket->get_ticket_taxes_for_admin();
 		foreach ( $taxes as $tax ) {
 			$tax_added = $this->_get_tax_added( $tax, $ticket );

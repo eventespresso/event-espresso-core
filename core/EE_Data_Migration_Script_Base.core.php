@@ -34,7 +34,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * correspond to earlier exeecution
 	 * @var int
 	 */
-	protected $_priority = 10;
+	protected $_priority = 5;
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
@@ -92,9 +92,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Sets the mapping from old table primary keys to new table primary keys.
 	 * This mapping is automatically persisted as a property on the migration
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @param int|string $new_pk eg posts.ID
 	 * @return void
 	 */
@@ -109,9 +109,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Gets the new primary key, if provided with the OLD table and the primary key
 	 * of an item in the old table, and the new table
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_new_pk($old_table,$old_pk,$new_table){
@@ -125,9 +125,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Gets the old primary key, if provided with the OLD table,
 	 * and the new table and the primary key of an item in the new table
-	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param string $old_table with wpdb prefix (wp_). Eg: wp_events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
-	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_old_pk($old_table,$new_table,$new_pk){
@@ -179,8 +179,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		global $wpdb;
 		$old_table_name_sans_wp = str_replace($wpdb->prefix,"",$old_table_name);
 		$new_table_name_sans_wp = str_replace($wpdb->prefix,"",$new_table_name);
-		list($plugin_slug,$version) = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
-		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.$plugin_slug.'_'.$version.'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
+		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return substr( EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix . $migrates_to [ 'slug' ] . '_' . $migrates_to[ 'version' ] . '_' . $old_table_name_sans_wp . '_' . $new_table_name_sans_wp, 0, 64 );
 	}
 
 
@@ -340,7 +340,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param type $engine_string
 	 */
 	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=MyISAM '){
-		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
+		$currently_migrating = $this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() );
+		if( $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation  || $currently_migrating ){
 			$drop_pre_existing_tables = true;
 		}else{
 			$drop_pre_existing_tables = false;
@@ -502,7 +503,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * that will be updated to. Eg array('Core','4.1.0')
 	 */
 	public final function migrates_to_version(){
-		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return EE_Data_Migration_Manager::instance()->script_migrates_to_version( get_class( $this ) );
 	}
 
 	/**
@@ -515,13 +516,16 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function slug(){
 		$migrates_to_version_info = $this->migrates_to_version();
 		//the slug is the first part of the array
-		return $migrates_to_version_info[0];
+		return $migrates_to_version_info[ 'slug' ];
 	}
+
 	/**
 	 * Returns the script's priority relative to DMSs from other addons. However, when
 	 * two DMSs from the same addon/core apply, this is ignored (and instead the version that
 	 * the script migrates to is used to determine which to run first). The default is 5, but all core DMSs
-	 * normally have priority 10.
+	 * normally have priority 10. (So if you want a DMS "A" to run before DMS "B", both of which are from addons,
+	 * and both of which CAN run at the same time (ie, "B" doesn't depend on "A" to set
+	 * the database up so it can run), then you can set "A" to priority 3 or something.
 	 * @return int
 	 */
 	public function priority(){

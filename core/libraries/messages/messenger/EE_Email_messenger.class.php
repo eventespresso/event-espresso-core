@@ -179,17 +179,6 @@ class EE_Email_messenger extends EE_messenger  {
 				'format' => '%s',
 				'default' => get_bloginfo('admin_email')
 				),
-			'from' => array(
-				'input' => 'hidden',
-				'label' => '',
-				'type' => 'string',
-				'required' => FALSE,
-				'validation' => FALSE,
-				'format' => '%s',
-				'value' => get_bloginfo('admin_email'),
-				'default' => '',
-				'css_class' => ''
-				),
 			'subject' => array(
 				'input' => 'hidden',
 				'label' => '',
@@ -336,14 +325,10 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_message_types() {
 		$this->_default_message_types = array(
 			'payment',
+			'payment_refund',
 			'registration',
 			'not_approved_registration',
-			//'declined_registration',
-			//'cancelled_registration',
-			'pending_approval',
-			'payment_reminder',
-			'payment_declined',
-			'payment_refund'
+			'pending_approval'
 			);
 	}
 
@@ -361,9 +346,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
-
 		$success = wp_mail(html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
-
 		return $success;
 
 	}
@@ -396,8 +379,76 @@ class EE_Email_messenger extends EE_messenger  {
 			'Reply-To:' . $this->_from,
 			'Content-Type:text/html; charset=utf-8'
 			);
+
+		//but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the header.
+		add_filter( 'wp_mail_from',  array( $this, 'set_from_address' ), 100 );
+		add_filter( 'wp_mail_from_name', array( $this, 'set_from_name' ), 100 );
 		return $headers;
 	}
+
+
+
+
+	/**
+	 * This simply parses whatever is set as the $_from address and determines if it is in the format {name} <{email}> or just {email} and returns an array with the "from_name" and "from_email" as the values.
+	 *
+	 * Note from_name *MAY* be empty
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return array
+	 */
+	private function _parse_from() {
+		if ( strpos( $this->_from, '<' ) !== false ) {
+			$from_name = substr( $this->_from, 0, strpos( $this->_from, '<' ) - 1 );
+			$from_name = str_replace( '"', '', $from_name );
+			$from_name = trim( $from_name );
+
+			$from_email = substr( $this->_from, strpos( $this->_from, '<' ) + 1 );
+			$from_email = str_replace( '>', '', $from_email );
+			$from_email = trim( $from_email );
+		} else {
+			$from_name = '';
+			$from_email = trim( $this->_from );
+		}
+		return array( $from_name, $from_email );
+	}
+
+
+
+
+	/**
+	 * Callback for the wp_mail_from filter.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $from_email What the original from_email is.
+	 */
+	public function set_from_address( $from_email ) {
+		$parsed_from = $this->_parse_from();
+		return $parsed_from[1];
+	}
+
+
+
+
+	/**
+	 * Callback fro the wp_mail_from_name filter.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param string $from_name The original from_name.
+	 */
+	public function set_from_name( $from_name ) {
+		$parsed_from = $this->_parse_from();
+		if ( ! empty( $parsed_from[0] ) ) {
+			return $parsed_from[0];
+		} else {
+			return $from_name;
+		}
+	}
+
+
 
 	/**
 	 * setup body for email

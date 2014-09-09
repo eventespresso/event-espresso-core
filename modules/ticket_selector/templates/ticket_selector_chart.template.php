@@ -39,7 +39,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$ticket_price = $ticket_price * $ticket->min();
 			$ticket_bundle = TRUE;
 		}
-		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price );
+		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
 
 		$tkt_status = $ticket->ticket_status();
 		// check ticket status
@@ -205,20 +205,28 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												<tr>
 													<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
 												<?php if ( $price_mod->is_percent() ) { ?>
-													<td class="jst-rght small-text"><?php echo $price_mod->amount(); ?>%</td>
+													<td class="small-text"><?php echo $price_mod->desc(); ?> <?php echo $price_mod->amount(); ?>%</td>
 													<?php
 														$new_sub_total = $running_total * ( $price_mod->amount() / 100 );
 														$new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
 													?>
+												<?php } else { ?>
+													<?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
+													<td class="small-text"><?php echo $price_mod->desc(); ?></td>
+													<?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
+												<?php } ?>
 													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
 													<?php $running_total += $new_sub_total; ?>
-												<?php } else { ?>
-													<td class="small-text"><?php echo $price_mod->desc(); ?></td>
-												<?php } ?>
 												</tr>
 											<?php } ?>
-											<?php
-											foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
+											<?php if ( $ticket->taxable() ) { ?>
+												<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
+												<tr>
+													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
+													<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
+												</tr>
+
+												<?php foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
 												<tr>
 													<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
 													<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
@@ -226,6 +234,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
 													<?php $running_total += $tax_amount; ?>
 												</tr>
+												<?php } ?>
 											<?php } ?>
 												<tr>
 													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'Total Ticket Price', 'event_espresso' ); ?></b></td>
@@ -241,8 +250,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<section class="tckt-slctr-tkt-sale-dates-sctn">
 									<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 									<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
-									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->start_date() )) ; ?><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->end_date() )) ; ?><br/>
 								</section>
 								<br/>
 
@@ -297,16 +306,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												</tr>
 											</thead>
 											<tbody>
-											<?php foreach ( $datetimes as $datetime ) { ?>
+										<?php
+											foreach ( $datetimes as $datetime ) {
+												if ( $datetime instanceof EE_Datetime ) {
+										?>
 
 											<tr>
 												<td class="small-text">
 													<?php $datetime_name = $datetime->name(); ?>
 													<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
-													<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>
+													<?php echo $datetime->date_range( $date_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
 												<td class="cntr small-text">
-													<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>
+													<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
 												<td class="cntr small-text">
 													<?php echo $ticket->sold(); ?>
@@ -323,6 +335,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												</td>
 											</tr>
 											<?php } ?>
+										<?php } ?>
 											</tbody>
 										</table>
 									</div>

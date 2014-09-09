@@ -43,6 +43,39 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'about';
 	}
 
+	protected function _set_page_routes() {
+		$this->_page_routes = array(
+			'default' => '_whats_new',
+			'overview' => '_overview',
+			'credits' => '_credits',
+			);
+	}
+
+
+
+	protected function _set_page_config() {
+		$this->_page_config = array(
+			'default' => array(
+				'nav' => array(
+					'label' => __('What\'s New', 'event_espresso'),
+					'order' => 10),
+				'require_nonce' => FALSE
+				),
+			'overview' => array(
+				'nav' => array(
+					'label' => __('About', 'event_espresso'),
+					'order' => 20),
+				'require_nonce' => FALSE
+				),
+			'credits' => array(
+				'nav' => array(
+					'label' => __('Credits', 'event_espresso'),
+					'order' => 30),
+				'require_nonce' => FALSE
+				),
+			);
+	}
+
 
 	protected function _whats_new() {
 		$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;

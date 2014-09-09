@@ -1,6 +1,7 @@
 <div class="changelog">
-	<h2 class="about-headline-callout"><?php _e('Event Espresso, the most advanced event management system!', 'event_espresso'); ?></h2>
-	<p><img class="about-overview-img" src="http://ee-screenshots.s3.amazonaws.com/ee4/eventeditor-screen.jpg" /></p>
+	<h2 class="about-headline-callout"><?php _e('Welcome to the Decaf (free) Version of Event Espresso 4!', 'event_espresso'); ?></h2>
+	<p>Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!</p>
+	<p>Event Espresso is a <a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=plugin_description_tab&amp;utm_content=EE4+Decaf" rel="nofollow">WordPress event manager</a> which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.</p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
 			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/publish_meta_box.jpg">
@@ -61,6 +62,7 @@
 			<h3><?php _e('Turn your blog into a complete event registration and management system', 'event_espresso'); ?></h3>
 			<p><?php _e('Create a beautiful event page with ticket selection, venue details, and an integrated single page checkout system. With WordPress, Event Espresso, and Espresso Arabica 2014 (based on the "Twenty Fourteen" theme by WordPress), your events will certainly sell out faster than ever!', 'event_espresso'); ?></p>
 			<p><?php _e('With a striking design that does not compromise the simplicity of WordPress and Event Espresso 4, Espresso Arabica 2014 will be the best event theme on the market.', 'event_espresso'); ?></p>
+			<p><?php echo sprintf( __('%sLearn more >>%s', 'event_espresso'), '<a href="http://eventespresso.com/wiki/setup-event-espresso-arabica-theme/">', '</a>' ); ?></p>
 		</div>
 	</div>
 	<img src="http://ee-screenshots.s3.amazonaws.com/ee4/single-event-page.jpg">

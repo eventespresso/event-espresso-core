@@ -32,13 +32,6 @@ final class EE_Module_Request_Router {
 	private static $_previous_routes = array();
 
 	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
-
-	/**
 	 * 	@var 	WP_Query	$WP_Query
 	 *  @access 	public
 	 */
