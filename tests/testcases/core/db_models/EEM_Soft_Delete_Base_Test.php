@@ -63,12 +63,15 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_soft_trash_restore_cpt() {
+	public function test_soft_trash_restore_cpt_from_model_context() {
 		//create attendee model object and dependencies.
 		$attendee = $this->new_model_obj_with_dependencies( 'Attendee' );
 
 		//verify have an attendeee object
 		$this->assertInstanceOf( 'EE_Attendee', $attendee );
+
+		//use this attendee_id for every model request.
+		$att_id = $attendee->ID();
 
 		//verify not trashed.
 		$status = $attendee->status();
