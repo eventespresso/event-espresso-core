@@ -867,7 +867,17 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$shortcode_class . ' shortcode',
+					$shortcode_path . $shortcode_class . $shortcode_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -949,7 +959,17 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$module_class . ' module',
+					$module_path . $module_class . $module_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
@@ -1785,6 +1805,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1832,6 +1862,38 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 
