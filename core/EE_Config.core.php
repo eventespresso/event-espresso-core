@@ -130,11 +130,18 @@ final class EE_Config {
 	}
 
 
-		/**
+
+	/**
 	 * Resets the config
+	 * @param bool $hard_reset
 	 * @return EE_Config
 	 */
-	public static function reset(){
+	public static function reset( $hard_reset = FALSE ){
+		if ( $hard_reset ) {
+			self::$_instance->_config_option_names = array();
+			self::$_instance->_initialize_config();
+			self::$_instance->update_espresso_config();
+		}
 		if( self::$_instance instanceof EE_Config ){
 			self::$_instance->shutdown();
 		}
@@ -155,24 +162,9 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
-		//set defaults
 		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->gateway = new EE_Gateway_Config();
-		$this->environment = new EE_Environment_Config();
-		$this->addons = new stdClass();
-		// set _module_route_map
-		EE_Config::$_module_route_map = array();
-		// set _module_forward_map
-		EE_Config::$_module_forward_map = array();
-		// set _module_view_map
-		EE_Config::$_module_view_map = array();
+		// setup empty config classes
+		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
 		//  register shortcodes and modules
@@ -198,6 +190,35 @@ final class EE_Config {
 	 */
 	public static function get_current_theme() {
 		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+	}
+
+
+
+
+	/**
+	 * 		_initialize_config
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _initialize_config() {
+		//set defaults
+		$this->core = new EE_Core_Config();
+		$this->organization = new EE_Organization_Config();
+		$this->currency = new EE_Currency_Config();
+		$this->registration = new EE_Registration_Config();
+		$this->admin = new EE_Admin_Config();
+		$this->template_settings = new EE_Template_Config();
+		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
+		$this->addons = new stdClass();
+		// set _module_route_map
+		EE_Config::$_module_route_map = array();
+		// set _module_forward_map
+		EE_Config::$_module_forward_map = array();
+		// set _module_view_map
+		EE_Config::$_module_view_map = array();
 	}
 
 
