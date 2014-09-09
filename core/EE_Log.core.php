@@ -113,6 +113,9 @@ class EE_Log {
 
 
 	/**
+	 * 	_format_message
+	 * 	makes yer log entries look all purdy
+	 *
 	 * @param string $file
 	 * @param string $function
 	 * @param string $message
@@ -134,6 +137,9 @@ class EE_Log {
 
 
 	/**
+	 *	log
+	 * adds content to the EE_Log->_log property which gets written to file during the WP 'shutdown' hookpoint via the EE_Log::write_log() callback
+	 *
 	 * @param string $file
 	 * @param string $function
 	 * @param string $message
@@ -147,17 +153,24 @@ class EE_Log {
 
 	/**
 	 * write_log
+	 * appends the results of the 'AHEE_log' filter to the espresso log file
 	 */
 	public function write_log() {
-		//get existing log file and append new log info
-		$this->_log = EEH_File::get_file_contents( $this->_logs_folder . $this->_log_file ) . $this->_log;
-		EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log' );
+		try {
+			//get existing log file and append new log info
+			$this->_log = EEH_File::get_file_contents( $this->_logs_folder . $this->_log_file ) . $this->_log;
+			EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ));
+			return;
+		}
 	}
 
 
 
 	/**
 	 * send_log
+	 * sends the espresso log to a remote URL via a PHP cURL request
 	 */
 	public function send_log() {
 
@@ -191,7 +204,9 @@ class EE_Log {
 
 
 	/**
-	 * debug
+	 * write_debug
+	 * writes the contents of the current request's $_GET and $_POST arrays to a log file.
+	 * previous entries are overwritten
 	 */
 	public function write_debug() {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -202,7 +217,12 @@ class EE_Log {
 			foreach ( $_POST as $key => $value ) {
 				$this->_debug_log .= '$_POST["' . $key . '"] = "' . serialize($value) . '"' . PHP_EOL;
 			}
-			EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'Event Espresso Debug Log' );
+			try {
+				EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'Event Espresso Debug Log' );
+			} catch( EE_Error $e ){
+				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ));
+				return;
+			}
 		}
 	}
 

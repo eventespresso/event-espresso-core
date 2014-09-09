@@ -831,11 +831,20 @@ class EEH_Activation {
 				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
 		);
 		foreach ( $folders as $folder ) {
-			EEH_File::ensure_folder_exists_and_is_writable( $folder );
-			@ chmod( $folder, 0755 );
+			try {
+				EEH_File::ensure_folder_exists_and_is_writable( $folder );
+				@ chmod( $folder, 0755 );
+			} catch( EE_Error $e ){
+				EE_Error::add_error(
+					sprintf(
+						__(  'Could not create the folder at "%1$s" because: %2$s', 'event_espresso' ),
+						$folder,
+						'<br />' . $e->getMessage()
+					)
+				);
+				return;
+			}
 		}
-		//add .htaccess to logs
-		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . DS . 'logs' );
 	}
 
 

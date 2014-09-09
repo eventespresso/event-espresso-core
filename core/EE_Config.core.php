@@ -856,7 +856,17 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$shortcode_class . ' shortcode',
+					$shortcode_path . $shortcode_class . $shortcode_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -938,7 +948,17 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$module_class . ' module',
+					$module_path . $module_class . $module_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
