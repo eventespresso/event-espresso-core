@@ -157,11 +157,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 							if( move_uploaded_file( $temp_file, $path_to_file )) {
 
-//								if ( ! file_exists( $path_to_file )) {
-//									echo '<h1>NO FILE FOR YOU!!!  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//									die();
-//								}
-
 								// convert csv to array
 								$this->csv_array = $this->EE_CSV->import_csv_to_model_data_array( $path_to_file );
 

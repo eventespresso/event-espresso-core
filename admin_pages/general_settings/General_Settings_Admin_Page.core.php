@@ -497,9 +497,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : EE_Registry::instance()->CFG->admin->use_dashboard_widget;
 		EE_Registry::instance()->CFG->admin->events_in_dashboard = isset( $this->_req_data['events_in_dashboard'] ) ? absint( $this->_req_data['events_in_dashboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dashboard;
 		EE_Registry::instance()->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : EE_Registry::instance()->CFG->admin->use_event_timezones;
-		EE_Registry::instance()->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : EE_Registry::instance()->CFG->admin->use_full_logging;
-		EE_Registry::instance()->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : EE_Registry::instance()->CFG->admin->use_remote_logging;
-		EE_Registry::instance()->CFG->admin->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : EE_Registry::instance()->CFG->admin->remote_logging_url;
 		EE_Registry::instance()->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : EE_Registry::instance()->CFG->admin->show_reg_footer;
 		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
 		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
@@ -508,6 +505,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$what = 'Admin Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
+		$success = apply_filters( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__success', $success );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 
 	}

@@ -689,6 +689,10 @@ final class EE_System {
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
+		// enable logging?
+		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
+			EE_Registry::instance()->load_core( 'Log' );
+		}
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
