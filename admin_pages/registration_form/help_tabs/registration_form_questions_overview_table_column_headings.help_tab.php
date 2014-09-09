@@ -14,31 +14,31 @@
 <?php _e('This field is only shown to the admin. It is useful for understanding the difference between questions that appear to be similar but are used in various situations. Also shows if this question is a system question.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Type', 'event_espresso'); ?><br />
+<strong><?php _e('Type', 'event_espresso'); ?></strong><br />
 <?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-<strong><?php _e('Text', 'event_espresso'); ?><br />
+<strong><?php _e('Text', 'event_espresso'); ?></strong><br />
 <?php _e('This option is useful for questions that need a short response (less than 140 characters).', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Textarea', 'event_espresso'); ?><br />
+<strong><?php _e('Textarea', 'event_espresso'); ?></strong><br />
 <?php _e('This option is useful for long text answers such as paragraphs of information.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Single', 'event_espresso'); ?><br />
+<strong><?php _e('Single', 'event_espresso'); ?></strong><br />
 <?php _e('This option uses radio buttons and lets you choose a single answer.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Dropdown', 'event_espresso'); ?><br />
+<strong><?php _e('Dropdown', 'event_espresso'); ?></strong><br />
 <?php _e('This option option uses a dropdown field.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Multiple Choice', 'event_espresso'); ?><br />
+<strong><?php _e('Multiple Choice', 'event_espresso'); ?></strong><br />
 <?php _e('This option uses checkmark fields and allows multiple answers from a predetermined set of choices.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Date', 'event_espresso'); ?><br />
+<strong><?php _e('Date', 'event_espresso'); ?></strong><br />
 <?php _e('This option shows a calendar and allows users to select a date.', 'event_espresso'); ?>
 </li>
 </ul>
