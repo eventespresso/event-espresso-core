@@ -154,7 +154,7 @@ final class EE_Capabilities extends EE_Base {
 	 * @return array
 	 */
 	private function _init_caps_map() {
-		return array(
+		$caps =  array(
 			'administrator' => array(
 			//basic access
 				'ee_read_ee',
@@ -288,6 +288,8 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_event_type',
 				)
 			);
+
+		return apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
 	}
 
 
