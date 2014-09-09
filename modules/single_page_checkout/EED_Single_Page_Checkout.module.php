@@ -881,22 +881,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function display_registration_footer() {
 		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			if ( ! empty( EE_Registry::instance()->CFG->admin->affiliate_id )) {
-				$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
-				$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
-				echo apply_filters(
-					'FHEE__EE_Front_Controller__display_registration_footer',
-					sprintf(
-						__( '%1$sEvent Registration Powered by Event Espresso%2$sEvent Registration and Ticketing%3$s Powered by %4$sEvent Espresso - Event Registration and Management System for WordPress%5$sEvent Espresso%6$s', 'event_espresso' ),
-						'<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="',
-						'" target="_blank">',
-						'</a>',
-						'<a href="' . $url . '" title="',
-						'" target="_blank">',
-						'</a></div>'
-					)
-				);
-			}
+			EE_Registry::instance()->CFG->admin->affiliate_id = ! empty( EE_Registry::instance()->CFG->admin->affiliate_id ) ? EE_Registry::instance()->CFG->admin->affiliate_id : 'default';
+			$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
+			$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
+			echo apply_filters(
+				'FHEE__EE_Front_Controller__display_registration_footer',
+				sprintf(
+					__( '%1$sEvent Registration Powered by Event Espresso%2$sEvent Registration and Ticketing%3$s Powered by %4$sEvent Espresso - Event Registration and Management System for WordPress%5$sEvent Espresso%6$s', 'event_espresso' ),
+					'<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="',
+					'" target="_blank">',
+					'</a>',
+					'<a href="' . $url . '" title="',
+					'" target="_blank">',
+					'</a></div>'
+				)
+			);
 		}
 	}
 

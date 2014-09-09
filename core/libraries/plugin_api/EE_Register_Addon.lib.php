@@ -59,7 +59,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * 			      	an array indexed by role name (i.e. administrator,author ) and the values are an array of caps to add to the role.
 	 * 			      	'administrator' => array('read_addon', 'edit_addon' etc.).
 	 * 	         		}
-	 * 	        @type  EE_Meta_Capability_Map[] $capability_maps an array of EE_Meta_Capability_Map object for any addons that need to register any special meta mapped capabilities
+	 * 	        @type  EE_Meta_Capability_Map[] $capability_maps an array of EE_Meta_Capability_Map object for any addons that need to register any special meta mapped capabilities.  Should be indexed where the key is the EE_Meta_Capability_Map class name and the values are the arguments sent to the class.
 	 *			@type array $model_paths array of folders containing DB models @see EE_Register_Model
 	 *			@type array $class_paths array of folders containign DB classes @see EE_Register_Model
 	 *			@type array $model_extension_paths array of folders containing DB model extensions @see EE_Register_Model_Extension
