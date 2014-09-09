@@ -1191,7 +1191,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( EEH_File::exists( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
