@@ -413,11 +413,13 @@ class EEH_File extends EEH_Base {
 			$wp_filesystem = EEH_File::_get_wp_filesystem();
 			$files_in_folder = $wp_filesystem->dirlist($folder_path, TRUE);// glob($folder_path.'*');
 			$class_to_folder_path = array();
-			foreach( $files_in_folder as $file_path => $info_about_file ){
-				//only add files, not folders
-				if( $info_about_file[ 'type' ] == 'f' ){
-					$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
-					$class_to_folder_path[$classname] = $folder_path . $file_path;
+			if( $files_in_folder ) {
+				foreach( $files_in_folder as $file_path => $info_about_file ){
+					//only add files, not folders
+					if( $info_about_file[ 'type' ] == 'f' ){
+						$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
+						$class_to_folder_path[$classname] = $folder_path . $file_path;
+					}
 				}
 			}
 		}
