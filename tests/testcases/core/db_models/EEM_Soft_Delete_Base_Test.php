@@ -73,12 +73,15 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		//use this attendee_id for every model request.
 		$att_id = $attendee->ID();
 
+		//reset model
+		EE_Registry::instance()->reset_model('Attendee');
+
 		//verify not trashed.
 		$status = $attendee->status();
 		$this->assertFalse( $status == 'trash' );
 
 		//k now let's trash it
-		EEM_Attendee::instance()->delete_by_ID( $attendee->ID() );
+		EEM_Attendee::instance()->delete_by_ID( $att_id );
 
 		//verify
 		$trash_attendee = EEM_Attendee::instance()->get_one_by_ID( $attendee->ID() );
@@ -86,8 +89,11 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		$status = $trash_attendee->status();
 		$this->assertTrue( $status == 'trash' );
 
+		//reset model again
+		EE_Registry::instance()->reset_model('Attendee');
+
 		//now let's try to restore.
-		EEM_Attendee::instance()->restore_by_ID( $trash_attendee->ID() );
+		EEM_Attendee::instance()->restore_by_ID( $att_id );
 		$restore_attendee = EEM_Attendee::instance()->get_one_by_ID( $trash_attendee->ID() );
 		$this->assertInstanceOf( 'EE_Attendee', $restore_attendee );
 		$status = $restore_attendee->status();
