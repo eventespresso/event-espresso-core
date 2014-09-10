@@ -185,7 +185,18 @@ class EEH_Debug_Tools{
 	public function ee_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
 			$errors = ob_get_contents();
-			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', $errors );
+			if ( include( EE_HELPERS . 'EEH_File.helper.php' )) {
+				try {
+					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
+					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
+					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+				} catch( EE_Error $e ){
+					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+				}
+			} else {
+				// old school attempt
+				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+			}
 			update_option( 'ee_plugin_activation_errors', $errors );
 		}
 	}
