@@ -864,6 +864,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
+	 *
+	 * @param int $DTT_ID The datetime the registration is being checked against
+	 *
+	 * @return bool
+	 */
+	public function can_checkin( $DTT_ID ) {
+		$DTT_ID = absint( $DTT_ID );
+		//is there a datetime ticket that matches this dtt_ID?
+		$result = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
+		return $result instanceof EE_Datetime_Ticket;
+	}
+
+
+
+	/**
 	 * toggle Check-in status for this registration
 	 *
 	 * Check-ins are toggled in the following order:
@@ -877,6 +893,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( ! $this->can_checkin( $DTT_ID ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return FALSE;
 		}
 		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
 		//start by getting the current status so we know what status we'll be changing to.
@@ -918,6 +938,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return 0;
 			}
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return FALSE;
 		}
 		//get checkin object (if exists)
 		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
