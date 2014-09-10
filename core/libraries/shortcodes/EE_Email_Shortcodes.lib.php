@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Email_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Email_Shortcodes lists all shortcodes for various email addresses. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Email_Shortcodes lists all shortcodes for various email addresses.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Email_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -56,7 +56,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 
 		switch ( $shortcode ) {
-			
+
 			case '[SITE_ADMIN_EMAIL]' :
 				return $this->_get_site_admin_email();
 				break;
@@ -105,19 +105,19 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				return $this->_data->admin_email;
 			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $this->_data->admin_email . '>';
 		}
- 
+
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
-		
+
 		$admin_email = array();
- 
+
 		//loop through events and set the list of event_ids to retrieve so we can do ONE query.
 		foreach ( $this->_data->events as $event ) {
 			$ids[] = $event['ID'];
 		}
- 
+
 		//get all the events
 		$events = EE_Registry::instance()->load_model('Event')->get_all( array(array('EVT_ID' => array('IN', $ids ) ) ) );
- 
+
 		//now loop through each event and setup the details
 		$admin_details = array();
 		$cnt = 0;
@@ -129,7 +129,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$admin_details[$cnt]->last_name = $user->user_lastname;
 			$cnt++;
 		}
- 
+
 		//results?
 		if ( empty($admin_details) || !is_array($admin_details) ) {
 			$msg[] = __('The admin details could not be retrieved from the database.', 'event_espresso');
@@ -137,9 +137,9 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$msg[] = sprintf( __('Events Data: %s', 'event_espresso'), var_export($this->_data->events, TRUE) );
 			$msg[] = sprintf( __('Event IDS: %s', 'event_espresso'), var_export($ids, TRUE) );
 			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );
-			do_action( 'espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
+			do_action( 'AHEE_log', __FILE__, __FUNCTION__, implode( PHP_EOL, $msg ), 'shortcode_parser' );
 		}
- 
+
 		foreach ( $admin_details as $admin ) {
 			//only add an admin email if it is present.
 			if ( empty( $admin->email ) || $admin->email == '' ) continue;
@@ -148,10 +148,10 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				$admin_email[] = $admin->email;
 				continue;
 			}
- 
+
 			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $admin->email . '>';
 		}
- 
+
 		$admin_email = implode( ',', $admin_email );
 		return $admin_email;
 	}
