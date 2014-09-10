@@ -82,19 +82,16 @@ You will be able to fully manage basic events with Event Espresso Decaf. This wi
 
 = Do you monitor the WordPress.org support forums? =
 
-We do monitor the support forums on WordPress.org. You'll find a faster response time at the [support forums on our website](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forums+on+our+website&utm_campaign=ee4_decaf_plugin_faq_tab).
-
-= How do I display a single event on my page? =
-
-To display a single event on a page use the [SINGLEEVENT single_event_id="Unique Event ID"]
-
-= How do I display a list of events in the sidebar? =
-
-To display a list of events in the sidebar, use the Event Registration Widget.
+We DO NOT regularly monitor the support forums on WordPress.org. You'll find a faster response time at the [support forums on our website](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forums+on+our+website&utm_campaign=ee4_decaf_plugin_faq_tab).
 
 == Screenshots ==
 
-1.
+1. Multiple Ticket and Pricing Options
+2. Customized Confirmation Emails
+3. Customizable Event Designs
+4. Smart Single Page Checkout
+5. Contact Profiles
+6. Contact List
 
 == Changelog ==
 
