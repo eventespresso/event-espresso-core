@@ -29,7 +29,7 @@ Class  EE_New_Payment_Method extends EE_Addon {
 			'New_Payment_Method',
 			array(
 				'version' 					=> EE_NEW_PAYMENT_METHOD_VERSION,
-				'min_core_version' => '4.3.0',
+				'min_core_version' => '4.6.0.dev.000',
 				'main_file_path' 				=> EE_NEW_PAYMENT_METHOD_PLUGIN_FILE,
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
