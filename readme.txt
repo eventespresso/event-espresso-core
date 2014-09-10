@@ -41,7 +41,7 @@ But just in case you want some **advanced features**, you can grab a copy of our
 = Event Espresso Premium =
 
 * [Event Calendar](http://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Event+Calendar)
-* [Additional Payment Gateways](http://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net, IDEAL, Firstdata and PayPal Pro)
+* [Additional Payment Gateways](http://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net and PayPal Pro)
 * [Multiple Pricing and Ticket Options](http://eventespresso.com/features/multiple-ticket-pricing-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Multiple+Pricing+Options)
 * [Manual Registration](http://eventespresso.com/features/manual-registration/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Manual+Registration)
 * [Custom Post Type Support](http://eventespresso.com/features/custom-post-types/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Custom+Post+Type+Support)
@@ -92,6 +92,10 @@ We DO NOT regularly monitor the support forums on WordPress.org. You'll find a f
 4. Smart Single Page Checkout
 5. Contact Profiles
 6. Contact List
+7. In-app Documentation
+8. Customizable Country Settings
+9. Multiple Attendee Registration
+10. Accurate Attendee Manager
 
 == Changelog ==
 
