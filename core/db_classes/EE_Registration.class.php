@@ -872,6 +872,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function can_checkin( $DTT_ID ) {
 		$DTT_ID = absint( $DTT_ID );
+
+		//first check registration status
+		if ( ! $this->is_approved() ) {
+			return false;
+		}
 		//is there a datetime ticket that matches this dtt_ID?
 		$result = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
 		return $result instanceof EE_Datetime_Ticket;
