@@ -1,7 +1,7 @@
 === Event Espresso 4 - Event Management and Registration System ===
 Contributors: eventespresso
 Donate link: http://eventespresso.com/pricing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
-Tags: booking, buddypress, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, ticket, ticketing, tickets, training, virtual events, wordcamp, wordpress events
+Tags: booking, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, ticket, ticketing, tickets, training, virtual events, wordcamp, wordpress events
 Requires at least: 3.8
 Tested up to: 3.8.1
 Stable tag: 4.1
@@ -44,11 +44,10 @@ But just in case you want some **advanced features**, you can grab a copy of our
 * [Additional Payment Gateways](http://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net and PayPal Pro)
 * [Multiple Pricing and Ticket Options](http://eventespresso.com/features/multiple-ticket-pricing-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Multiple+Pricing+Options)
 * [Manual Registration](http://eventespresso.com/features/manual-registration/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Manual+Registration)
-* [Custom Post Type Support](http://eventespresso.com/features/custom-post-types/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Custom+Post+Type+Support)
 * [Reusable, Customizable Email Templates](http://eventespresso.com/features/confirmation-emails/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Reusable+Email+Templates)
 
 = Support =
-This version is self-supported only. We DO NOT regularly monitor the WordPress.org support forums. For faster support you can purchase a [support license] (http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and ask questions in our [support forum](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=ee4_decaf_plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
+This version is self-supported only. We DO NOT regularly monitor the WordPress.org support forums. For faster support you can purchase a [support license] (http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and ask questions in our [support forum](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=ee4_decaf_plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin.
 
 If your support issue is urgent, we also offer [priority event management support](http://eventespresso.com/product/premium-support-token/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=priority+event+management+support) (support tokens).
 
