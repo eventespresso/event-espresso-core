@@ -30,7 +30,7 @@ Class  EE_New_Addon extends EE_Addon {
 			'New_Addon',
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
-				'min_core_version' => '4.3.0',
+				'min_core_version' => '4.3.0.dev.000',
 				'main_file_path' 				=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'admin_callback'		=> 'additional_admin_hooks',
