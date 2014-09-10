@@ -409,6 +409,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _reset_db( $nuke_old_ee4_data = TRUE ){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+		EE_Registry::instance()->CFG->reset( TRUE );
 		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );

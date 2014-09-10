@@ -2472,7 +2472,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint($this->_req_data['ATT_ID']);
-			$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+			//get attendee
+			$att = $ATT_MDL->get_one_by_ID( $ATT_ID );
+			$updated = $trash ? $att->delete() : $att->restore();
+			$updated = $att->save();
 			if ( ! $updated ) {
 				$success = 0;
 			}
