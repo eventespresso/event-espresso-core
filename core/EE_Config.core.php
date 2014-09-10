@@ -130,11 +130,18 @@ final class EE_Config {
 	}
 
 
-		/**
+
+	/**
 	 * Resets the config
+	 * @param bool $hard_reset
 	 * @return EE_Config
 	 */
-	public static function reset(){
+	public static function reset( $hard_reset = FALSE ){
+		if ( $hard_reset ) {
+			self::$_instance->_config_option_names = array();
+			self::$_instance->_initialize_config();
+			self::$_instance->update_espresso_config();
+		}
 		if( self::$_instance instanceof EE_Config ){
 			self::$_instance->shutdown();
 		}
@@ -155,24 +162,9 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
-		//set defaults
 		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->gateway = new EE_Gateway_Config();
-		$this->environment = new EE_Environment_Config();
-		$this->addons = new stdClass();
-		// set _module_route_map
-		EE_Config::$_module_route_map = array();
-		// set _module_forward_map
-		EE_Config::$_module_forward_map = array();
-		// set _module_view_map
-		EE_Config::$_module_view_map = array();
+		// setup empty config classes
+		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
 		//  register shortcodes and modules
@@ -198,6 +190,35 @@ final class EE_Config {
 	 */
 	public static function get_current_theme() {
 		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+	}
+
+
+
+
+	/**
+	 * 		_initialize_config
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _initialize_config() {
+		//set defaults
+		$this->core = new EE_Core_Config();
+		$this->organization = new EE_Organization_Config();
+		$this->currency = new EE_Currency_Config();
+		$this->registration = new EE_Registration_Config();
+		$this->admin = new EE_Admin_Config();
+		$this->template_settings = new EE_Template_Config();
+		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
+		$this->addons = new stdClass();
+		// set _module_route_map
+		EE_Config::$_module_route_map = array();
+		// set _module_forward_map
+		EE_Config::$_module_forward_map = array();
+		// set _module_view_map
+		EE_Config::$_module_view_map = array();
 	}
 
 
@@ -883,7 +904,17 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$shortcode_class . ' shortcode',
+					$shortcode_path . $shortcode_class . $shortcode_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -965,7 +996,17 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$module_class . ' module',
+					$module_path . $module_class . $module_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
@@ -1801,6 +1842,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1845,9 +1896,41 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->use_remote_logging = FALSE;
 		$this->remote_logging_url = NULL;
 		$this->show_reg_footer = TRUE;
-		$this->affiliate_id = NULL;
+		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 

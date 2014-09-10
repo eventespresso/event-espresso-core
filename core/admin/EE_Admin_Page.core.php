@@ -1154,6 +1154,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _set_nav_tabs() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$i = 0;
 		foreach ( $this->_page_config as $slug => $config ) {
 			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) )
@@ -2052,7 +2053,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( empty( $name ) || ! $id ) {
 			//user error msg
-			$user_msg = __('An error occurred. A required form key or ID was not supplied.', 'event_espresso' );
+			$user_msg = __('A required form key or ID was not supplied.', 'event_espresso' );
 			//developer error msg
 			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -2550,7 +2551,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/
 	private function _sort_nav_tabs( $a, $b ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ($a['order'] == $b['order']) {
 	        return 0;
 	    }
@@ -2679,16 +2679,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set redirect url. Note if there is a "page" index in the $query_args then we go with vanilla admin.php route, otherwise we go with whatever is set as the _admin_base_url
 		$redirect_url = isset( $query_args['page'] ) ? admin_url('admin.php') : $this->_admin_base_url;
+		$notices = EE_Error::get_notices( FALSE );
 
 		// overwrite default success messages //BUT ONLY if overwrite not overridden
-		if ( !$override_overwrite ) {
+		if ( ! $override_overwrite || ! empty( $notices['errors'] )) {
 			EE_Error::overwrite_success();
 		}
 		// how many records affected ? more than one record ? or just one ?
-		if ( $success > 1 ) {
+		if ( $success > 1 && empty( $notices['errors'] )) {
 			// set plural msg
 			EE_Error::add_success( sprintf( __('The "%s" have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
-		} else if ( $success == 1 ) {
+		} else if ( $success == 1 && empty( $notices['errors'] )) {
 			// set singular msg
 			EE_Error::add_success( sprintf( __('The "%s" has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -3141,7 +3142,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', FALSE, $this->_req_data );
+		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
