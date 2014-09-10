@@ -109,11 +109,12 @@ class EE_messages {
 		//make sure $actives is an array
 		$actives = (array) $actives;
 
+		EE_Registry::instance()->load_helper( 'File' );
 		foreach ( $actives as $active ) {
 			$msg_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
 			$filename = $msg_name . '.class.php';
 			$load_file = $base_path . DS . $filename;
-			if ( file_exists($load_file) ) {
+			if ( EEH_File::exists($load_file) ) {
 				require_once($load_file);
 				$active_names[$active] = $msg_name;
 			} else {
