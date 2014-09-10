@@ -3142,7 +3142,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', FALSE, $this->_req_data );
+		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
