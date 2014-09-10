@@ -1,7 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
-		
-		
+
+
 class EEH_Debug_Tools{
 	/**
 	 * 	instance of the EEH_Autoloader object
@@ -9,7 +9,7 @@ class EEH_Debug_Tools{
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
-	
+
 	/**
 	 * float containing the start time for the timer
 	 */
@@ -69,7 +69,7 @@ class EEH_Debug_Tools{
 	/**
 	 * 	List All Hooked Functions
 	 * 	to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
-	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/  
+	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
 	 *
 	 * 	@return void
 	 */
@@ -98,24 +98,24 @@ class EEH_Debug_Tools{
 		}
 		return;
 	}
-	
-	
+
+
 	/**
-	 *	
+	 *
 	 */
 	public function start_timer(){
-		$mtime = microtime(); 
-		$mtime = explode(" ",$mtime); 
-		$mtime = $mtime[1] + $mtime[0]; 
-		$this->_starttime = $mtime; 
+		$mtime = microtime();
+		$mtime = explode(" ",$mtime);
+		$mtime = $mtime[1] + $mtime[0];
+		$this->_starttime = $mtime;
 	}
-	
+
 	public function stop_timer($string_to_display){
-		$mtime = microtime(); 
-		$mtime = explode(" ",$mtime); 
-		$mtime = $mtime[1] + $mtime[0]; 
-		$endtime = $mtime; 
-		$totaltime = ($endtime - $this->_starttime); 
+		$mtime = microtime();
+		$mtime = explode(" ",$mtime);
+		$mtime = $mtime[1] + $mtime[0];
+		$endtime = $mtime;
+		$totaltime = ($endtime - $this->_starttime);
 		$this->_times[] = $string_to_display.": $totaltime<br>";
 	 }
 	 public function show_times($output_now=true){
@@ -136,13 +136,24 @@ class EEH_Debug_Tools{
 	public function ee_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
 			$errors = ob_get_contents();
-			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', $errors );
+			if ( include( EE_HELPERS . 'EEH_File.helper.php' )) {
+				try {
+					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
+					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
+					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+				} catch( EE_Error $e ){
+					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+				}
+			} else {
+				// old school attempt
+				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+			}
 			update_option( 'ee_plugin_activation_errors', $errors );
-		}	
+		}
 	}
 
 
-	
+
 	/**
 	 * This basically mimics the WordPress _doing_it_wrong() function except adds our own messaging etc.  Very useful for providing helpful messages to developers when the method of doing something has been deprecated, or we want to make sure they use something the right way.
 	 *
@@ -157,9 +168,9 @@ class EEH_Debug_Tools{
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
 		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ) );
 	}
-	
-	
-	
+
+
+
 }
 
 
@@ -198,8 +209,8 @@ if ( !function_exists( 'dump_post' ) ) {
 }
 
 
-	
-	
+
+
 
 /**
  * 	@ print_r an array
@@ -217,18 +228,18 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 			$var_name = 'numeric';
 		} else {
 			$var_name = 'string';
-		}  
+		}
 	}
-	
+
 	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
 	$var_name = ucwords( $var_name );
 
-	
+
 	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3><b>' . $var_name . '</b></h3>';
 	echo print_r($var);
 	echo '</pre>';
-	
+
 
 	if( $die ) {
 		die();
