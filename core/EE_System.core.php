@@ -58,7 +58,7 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
-	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * Indicates a new activation, but we couldn't install everything properly because
 	 * EE was in maintenance mode. So when we exit maintenance mode, we will
 	 * consider the next request to be a reactivation and will verify default data
 	 * is in place and tables are setup
@@ -66,7 +66,7 @@ final class EE_System {
 	const req_type_activation_but_not_installed = 5;
 
 	/**
-	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 * option prefix for recording the activation history (like core's "espresso_db_update") of addons
 	 */
 	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -1294,6 +1294,9 @@ final class EE_System {
 			}
 		}
 	}
+
+
+
 }
 //EE_System::instance();
 
