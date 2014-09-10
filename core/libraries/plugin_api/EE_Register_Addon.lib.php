@@ -151,6 +151,32 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_extension_paths' => isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
 			'payment_method_paths' => isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
 		);
+		//check whether this addon version is compatible with EE core
+		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
+			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
+			//plugin activated fine when it didn't
+			if( isset( $_GET[ 'activate' ]) ) {
+				unset( $_GET[ 'activate' ] );
+			}
+			if( isset( $_REQUEST[ 'activate' ] ) ){
+				unset( $_REQUEST[ 'activate' ] );
+			}
+			//and show an error message indicating the plugin didn't activate properly
+			EE_Error::add_error(
+				sprintf(
+					__( 'The Event Espresso addon "%1$s" could not be activated because it requires Event Espresso Core version %2$s or higher in order to run. Your version of Event Espresso Core is currently at %3$s. Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+					$addon_name,
+					$setup_args[ 'min_core_version' ],
+					espresso_version()
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			if ( current_user_can( 'activate_plugins' )) {
+				require_once( ABSPATH.'wp-admin/includes/plugin.php' );
+				deactivate_plugins( plugin_basename( $addon_settings[ 'main_file_path' ] ), TRUE );
+			}
+			return;
+		}
 
 		//this is an activation request
 		if( did_action( 'activate_plugin' ) ){
