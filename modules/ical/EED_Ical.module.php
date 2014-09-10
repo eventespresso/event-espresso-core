@@ -94,7 +94,7 @@ class EED_Ical  extends EED_Module {
 				// submit buttons appear as buttons and are very compatible with a theme's style
 				case 'submit' :
 					$html .= '<form id="download-iCal-frm-' . $datetime->ID() . '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
-					$html .= '<input type="submit" class="ee-ical-sbmt" value="' . esc_attr( '&#xf145;' ) . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
+					$html .= '<input type="submit" class="ee-ical-sbmt" value="&#xf145;" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
 					$html .= '</form>';
 					break;
 				// buttons are just links that have been styled to appear as buttons, but may not be blend with a theme as well as submit buttons
