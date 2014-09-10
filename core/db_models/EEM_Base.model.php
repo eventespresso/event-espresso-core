@@ -674,7 +674,7 @@ abstract class EEM_Base extends EE_Base{
 			//we already know what we want to update. So let's make the query simpler so it's a little more efficient
 			$query_params = array(
 				array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
-				'limit' => count( $model_objs_affected_ids ) );
+				'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
 		}
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
@@ -2028,7 +2028,8 @@ abstract class EEM_Base extends EE_Base{
 	protected function _get_field_on_model($field_name,$model_name){
 		$model_class = 'EEM_'.$model_name;
 		$model_filepath = $model_class.".model.php";
-		if(file_exists($model_filepath)){
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( EEH_File::exists($model_filepath)){
 			require_once($model_filepath);
 			$model_instance=call_user_func($model_name."::instance");
 			/* @var $model_instance EEM_Base */

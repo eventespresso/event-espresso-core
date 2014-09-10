@@ -331,9 +331,6 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @return boolean
 	 */
 	function delete_or_restore($delete=true,$query_params = array()){
-		if ( ! $query_params ) {
-			return FALSE;
-		}
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		if ( $this->update (array($deletedFlagFieldName=>$delete), $query_params )) {

@@ -218,6 +218,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				}else{
 					$problems_string = $response['body'];
 				}
+				if( $problems_string == ''){
+					//no message to show? wack
+					if( isset( $response[ 'headers' ][ 'status' ] ) ){
+						$problems_string = $response[ 'headers' ][ 'status' ];
+					}else{
+						$problems_string = __( 'No response from Mijireh', 'event_espresso' );
+					}
+				}
 
 				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
 			}
