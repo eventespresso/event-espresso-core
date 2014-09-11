@@ -20,13 +20,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEM_Log
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EEM_Log extends EEM_Base{
-	
+
 	/**
 	 * the related object was created log type
 	 */
@@ -61,12 +61,12 @@ class EEM_Log extends EEM_Base{
 	 *
 	 *		@access public
 	 *		@return EEM_Log instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
@@ -86,8 +86,8 @@ class EEM_Log extends EEM_Base{
 				'LOG_time'=>new EE_Datetime_Field('LOG_time', __("Log Time", 'event_espresso'), false, current_time('timestamp')),
 				'OBJ_ID'=>new EE_Foreign_Key_String_Field('OBJ_ID', __("Object ID (int or string)", 'event_espresso'), true, NULL,$models_this_can_attach_to),
 				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Object Type", 'event_espresso'), true, NULL, $models_this_can_attach_to),
-				'LOG_type'=>new EE_Enum_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false, self::type_debug, 
-						array(							
+				'LOG_type'=>new EE_Enum_Text_Field('LOG_type', __("Type of log entry", "event_espresso"), false, self::type_debug,
+						array(
 							self::type_create=>  __("Create", "event_espresso"),
 							self::type_update=>  __("Update", "event_espresso"),
 							self::type_delete => __("Delete", "event_espresso"),
@@ -97,17 +97,25 @@ class EEM_Log extends EEM_Base{
 							)),
 				'LOG_message'=>new EE_Maybe_Serialized_Text_Field('LOG_message', __("Log Message (body)", 'event_espresso'), true),
 				'LOG_wp_user_id' => new EE_Integer_Field('LOG_wp_user_id', __("WP User ID who was logged in while this occurred", 'event_espresso'), true, $current_user ? $current_user->ID : NULL),
-				
+
 			));
 		$this->_model_relations = array();
 		foreach($models_this_can_attach_to as $model){
 			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
-		
+
 		parent::__construct();
 	}
 	/**
-	 * 
+	 * Resets the country
+	 * @return EEM_Log
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+	/**
+	 *
 	 * @param string $log_type !see the acceptable values of LOG_type in EEM_LOg::__construct
 	 * @param mixed $message array|string of the message you want to record
 	 * @param EE_Base_Class $related_model_obj
@@ -150,7 +158,7 @@ class EEM_Log extends EEM_Base{
 		$log->save();
 		return $log;
 	}
-	
+
 	/**
 	 * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
 	 * @param array $query_params @see EEM_Base::get_all

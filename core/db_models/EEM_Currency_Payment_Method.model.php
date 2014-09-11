@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEM_Currency_Payment_Method
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -34,12 +34,12 @@ class EEM_Currency_Payment_Method extends EEM_Base{
 	 *
 	 *		@access public
 	 *		@return EEM_Currency_Payment_Method
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
@@ -64,6 +64,14 @@ class EEM_Currency_Payment_Method extends EEM_Base{
 			'Payment_Method'=>new EE_Belongs_To_Relation()
 		);
 		parent::__construct();
+	}
+	/**
+	 * Resets the country
+	 * @return EEM_Currency_Payment_Method
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 }
 
