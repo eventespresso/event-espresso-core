@@ -212,12 +212,6 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
-		//if we're in maintenance mode level 2, DON'T run any queries
-		//because level 2 indicates the database needs updating and
-		//is probably out of sync with the code
-		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
-			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
-		}
 		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
@@ -1022,6 +1016,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return mixed
 	 */
 	private function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
+		//if we're in maintenance mode level 2, DON'T run any queries
+		//because level 2 indicates the database needs updating and
+		//is probably out of sync with the code
+		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
+			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
+		}
 		global $wpdb;
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );

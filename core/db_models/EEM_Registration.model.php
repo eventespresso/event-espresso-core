@@ -100,9 +100,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
-		$this->_get_registration_status_array();
-//		require_once(EE_CLASSES . 'EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters( 'FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 
 		$this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
@@ -206,14 +203,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		@access private
 	*		@return void
 	*/
-	private function _get_registration_status_array( $exclude = array() ) {
+	private static function _get_registration_status_array( $exclude = array() ) {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error
 		global $wpdb;
-		$old_wpdb_show_error = $wpdb->show_errors( FALSE );
 		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 		$results = $wpdb->get_results( $SQL );
-		$wpdb->show_errors( $old_wpdb_show_error );
 		if( $results ){
 			self::$_reg_status = array();
 			foreach ( $results as $status ) {
@@ -221,8 +216,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 					self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
 				}
 			}
-		}else{
-			return array();
 		}
 	}
 

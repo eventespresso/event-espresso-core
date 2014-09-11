@@ -708,7 +708,6 @@ final class EE_Registry {
 		$instance = self::instance();
 		$instance->CFG = EE_Config::reset();
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
-		EE_Maintenance_Mode::reset();
 		foreach( array_keys( $instance->non_abstract_db_models ) as $model_name ){
 			$instance->reset_model( $model_name );
 		}
