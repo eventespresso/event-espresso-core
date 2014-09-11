@@ -39,7 +39,7 @@ foreach ( $transaction->registrations() as $registration ) {
 						echo $registration->attendee()->full_name( TRUE );
 					}
 				?>
-p					<p class="tiny-text" style="margin: .75em 0 0;">
+					<p class="tiny-text" style="margin: .75em 0 0;">
 						<a class="ee-icon-only-lnk" href="<?php echo $registration->edit_attendee_information_url();?>" title="<?php _e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></span><?php _e('edit info', 'event_espresso');?></a>
 						<a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="<?php echo $resend_reg_confirmation_url;?>" title="<?php _e('Click here to resend the Registration Confirmation email', 'event_espresso');?>" rel="<?php echo $registration->reg_url_link();?>"><span class="dashicons dashicons-email-alt"></span><?php _e('resend email', 'event_espresso');?></a>
 					</p>

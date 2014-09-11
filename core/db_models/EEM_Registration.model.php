@@ -207,16 +207,22 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		@return void
 	*/
 	private function _get_registration_status_array( $exclude = array() ) {
-
+		//in the very rare circumstance that we are deleting a model's table's data
+		//and the table hasn't actually been created, this could have an error
 		global $wpdb;
+		$old_wpdb_show_error = $wpdb->show_errors( FALSE );
 		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 		$results = $wpdb->get_results( $SQL );
-
-		self::$_reg_status = array();
-		foreach ( $results as $status ) {
-			if ( ! in_array( $status->STS_ID, $exclude )) {
-				self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
+		$wpdb->show_errors( $old_wpdb_show_error );
+		if( $results ){
+			self::$_reg_status = array();
+			foreach ( $results as $status ) {
+				if ( ! in_array( $status->STS_ID, $exclude )) {
+					self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
+				}
 			}
+		}else{
+			return array();
 		}
 	}
 

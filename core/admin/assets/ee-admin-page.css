@@ -645,6 +645,9 @@ label.error { display : block; color : #FE2A00 !important; }
 	vertical-align : middle;
 }
 
+div.updated.ee-notices-attention {
+	border-left: 4px solid #E6DB55;
+}
 .espresso-notices.ee-nag-notice {
 	border-left : 4px solid #E76700;
 }
@@ -681,3 +684,124 @@ label.error { display : block; color : #FE2A00 !important; }
 .ee-numeric {
 	text-align : right;
 }
+
+
+
+/******************* BUTTONS ****************** */
+
+
+.ee-button,
+.ee-button:active,
+.ee-button:visited {
+	display: inline-block;
+	position: relative;
+	top: -2px;
+	margin: 0 0 1em;
+	background-color: #00B1CA;
+	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
+	border: 1px solid rgba(0,0,0,0.01) !important;
+	border-top: 1px solid rgba(255,255,255,0.5) !important;
+	border-bottom: 1px solid rgba(0,0,0,0.25) !important;
+	font-weight: normal;
+	cursor: pointer;
+	color: #fff !important;
+	text-decoration: none !important;
+	text-align: center;
+	line-height: 1em;
+/*	line-height: 1;*/
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+.ee-button:hover {
+	color: #fff !important;
+	background-color: #00c7e3;  /*4EBFDE*/
+}
+
+.ee-button:active { top:-1px; }
+
+/* REGISTER BUTTON */
+
+.ee-button.ee-register-button,
+.ee-button.ee-register-button:active,
+.ee-button.ee-register-button:visited {
+	margin: 0;
+	font-weight: bold;
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+}
+input.ee-register-button {
+	float: right;
+}
+
+
+/* BUTTON SIZES */
+
+.small.ee-button, .small.ee-button:visited {
+	font-size: 11px;
+	padding: 5px 10px 5px;
+}
+.ee-button, .ee-button:visited,
+.medium.ee-button, .medium.ee-button:visited {
+	font-size: 13px;
+	padding: 6px 12px 7px;
+}
+.big.ee-button, .big.ee-button:visited {
+	font-size: 14px;
+	padding: 8px 16px 9px;
+}
+.huge.ee-button, .huge.ee-button:visited {
+	font-size: 16px;
+	padding: 14px 32px 16px;
+}
+
+/* ROUND BUTTONS */
+.ee-round.ee-button {
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+.ee-roundish.ee-button {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+
+
+/* SHADOWY BUTTONS */
+.ee-shadow.ee-button {
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* BUTTON COLOURS */
+.ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; background-image: -moz-linear-gradient( center top , #F65077, #E44064 ); }
+.ee-pink.ee-button:hover { background-color: #F65077; background-image: none; }
+
+.ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; background-image: -moz-linear-gradient( center top , #80DD5E, #70CC50 ); }
+.ee-green.ee-button:hover { background-color: #80DD5E; background-image: none; }
+
+.ee-red.ee-button, .ee-red.ee-button:visited { background-color: #B4113F; background-image: -moz-linear-gradient( center top , #C8194E, #B4113F ); }
+.ee-red.ee-button:hover { 	background-color: #C8194E; background-image: none; }
+
+.ee-orange.ee-button, .ee-orange.ee-button:visited { background-color: #E76700; background-image: -moz-linear-gradient( center top , #FA730B, #E76700 ); }
+.ee-orange.ee-button:hover { background-color: #FA730B; background-image: none; }
+
+.ee-blue.ee-button, .ee-blue.ee-button:visited { background-color: #005B9E; background-image: -moz-linear-gradient( center top , #066DB1, #005B9E ); }
+.ee-blue.ee-button:hover { background-color: #066DB1; background-image: none; }
+
+.ee-yellow.ee-button, .ee-yellow.ee-button:visited { background-color: #F8D755; background-image: -moz-linear-gradient( center top , #FEDF6C, #F8D755 ); }
+.ee-yellow.ee-button:hover { background-color: #FEDF6C; background-image: none; }
+
+.ee-grey.ee-button, .ee-grey.ee-button:visited { background-color: #A39D9C; background-image: -moz-linear-gradient( center top , #B5B3B3, #A39D9C ); }
+.ee-grey.ee-button:hover { background-color: #B5B3B3; background-image: none; }
+
+.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited { background-color: #464549; background-image: -moz-linear-gradient( center top , #59595B, #464549 ); }
+.ee-dark-grey.ee-button:hover { background-color: #59595B; background-image: none; }
+
+.ee-black.ee-button, .ee-black.ee-button:visited { background-color: #2F3334; background-image: -moz-linear-gradient( center top , #424646, #2F3334 ); }
+.ee-black.ee-button:hover { background-color: #424646; background-image: none; }

@@ -864,6 +864,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
+	 *
+	 * @param mixed (int|EE_Datetime) $DTT_OR_DTTID The datetime the registration is being checked against
+	 * @param bool   $check_approved   This is used to indicate whether the caller wants can_checkin to also consider registration status as well as datetime access.
+	 *
+	 * @return bool
+	 */
+	public function can_checkin( $DTT_OR_ID, $check_approved = TRUE ) {
+		$DTT_ID = $this->get_model()->ensure_is_ID( $DTT_OR_ID );
+
+		//first check registration status
+		if (  $check_approved && ! $this->is_approved() ) {
+			return false;
+		}
+		//is there a datetime ticket that matches this dtt_ID?
+		return EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
+	}
+
+
+
+	/**
 	 * toggle Check-in status for this registration
 	 *
 	 * Check-ins are toggled in the following order:
@@ -871,12 +892,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * checked in -> checked out
 	 * checked out -> never checked in
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
+	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
-	public function toggle_checkin_status( $DTT_ID = NULL ) {
+	public function toggle_checkin_status( $DTT_ID = NULL, $verify = FALSE ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( $verify && ! $this->can_checkin( $DTT_ID ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return FALSE;
 		}
 		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
 		//start by getting the current status so we know what status we'll be changing to.
@@ -918,6 +944,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return 0;
 			}
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID, false ) ) {
+			EE_Error::add_error( sprintf( __( 'The checkin status for the given registration (ID:%d) and DTT_ID (%d) cannot be retrieved because the registration does not have access to that date and time.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return 0;
 		}
 		//get checkin object (if exists)
 		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
@@ -1067,6 +1097,31 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function set_reg_code( $REG_code = '' ) {
 		$this->set( 'REG_code', $REG_code );
+	}
+
+
+
+
+	/**
+	 * Returns all other registrations in the same group as this registrant.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_Registration[]  or empty array if this isn't a group registration.
+	 */
+	public function get_all_other_registrations_in_group() {
+		if ( $this->group_size() < 2 ) {
+			return array();
+		}
+
+		$query[0] = array(
+			'TXN_ID' => $this->transaction_ID(),
+			'REG_ID' => array( '!=', $this->ID() ),
+			'TKT_ID' => $this->ticket_ID()
+			);
+
+		$registrations = $this->get_model()->get_all( $query );
+		return $registrations;
 	}
 }
 /* End of file EE_Registration.class.php */

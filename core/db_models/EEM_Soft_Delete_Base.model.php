@@ -1,27 +1,10 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once( EE_MODELS . 'EEM_Base.model.php');
 /**
- * Event Espresso
+ * EEM_Soft_Delete_Base
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Description of EEM_Soft_Delete_Base
- *
- * @package			Event Espresso
- * @subpackage		includes/models/
- * @author				Michael Nelson
- *
- * ------------------------------------------------------------------------
  * About this class: modifies parent EEM_Base's behaviour to make usage of soft-deletable models
- * (ie, models that have a flag indicated they've been "soft-deleleted"/trashed).
+ * (ie, models that have a flag indicated they've been "soft-deleted"/trashed).
  * Generally, by adding EE_Soft_Delete_where_conditions's conditions, most queries
  * will ignore soft-deleted items. For example, see EEM_Soft_Delete_base::get_all(),
  * which will only fetch non-deleted items from the DB, treating soft-deleted items
@@ -36,11 +19,17 @@
  * default where conditions (ie, to only retrieve non-deleted items) will still apply. Eg
  * if querying EEM_Question::instance()->get_all(array(array('Question_Group.QSG_ID'=>3)),
  * will add WHERE conditions to the mysql query to only find rows that have a question group ID
- * of 3 AND THAT QUESTION GROUP ISNT' DELETED.
+ * of 3 AND THAT QUESTION GROUP IS NOT DELETED.
+ *
+ * @package			Event Espresso
+ * @subpackage		includes/models/
+ * @author				Michael Nelson
  */
-require_once( EE_MODELS . 'EEM_Base.model.php');
 abstract class EEM_Soft_Delete_Base extends EEM_Base{
 
+	/**
+	 * @param null $timezone
+	 */
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
 		if( ! $this->_default_where_conditions_strategy){
@@ -293,7 +282,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * this function will ignore whether the items have been soft-deleted or not.
 	 * @param boolean $delete true for deletem, false for restore
 	 * @param mixed $ID int if primary key is an int, string otherwise
-	 * @return boolean success
+	 * @return boolean
 	 */
 	public function delete_or_restore_by_ID($delete=true,$ID=FALSE){
 		if ( ! $ID ) {
@@ -309,13 +298,17 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 			return FALSE;
 		}
 	}
+
+
+
 	/**
 	 * Overrides parent's 'delete' method to instead do a soft delete on all rows that
 	 * meet the criteria in $where_col_n_values. This particular function ignores whether the items have been soft-deleted or not.
 	 * Note: because this item will be soft-deleted only,
 	 * doesn't block because of model dependencies
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return boolean success
+	 * @param bool  $block_deletes
+	 * @return boolean
 	 */
 	public function delete($query_params = array(), $block_deletes = false){
 		//no matter what, we WON'T block soft deletes.
@@ -326,7 +319,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * 'Undeletes' the chosen items. Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. However, this particular function ignores whether the items have been soft-deleted or not.
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return type
+	 * @return boolean
 	 */
 	public function restore($query_params = array()){
 		return $this->delete_or_restore(false, $query_params);
@@ -335,12 +328,9 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
 	 * @param boolean $delete true to indicate deletion, false to indicate restoration
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return boolean success
+	 * @return boolean
 	 */
 	function delete_or_restore($delete=true,$query_params = array()){
-		if ( ! $query_params ) {
-			return FALSE;
-		}
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		if ( $this->update (array($deletedFlagFieldName=>$delete), $query_params )) {
@@ -355,11 +345,15 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * they've been soft-deleted or not
 	 * @param array $field_n_values like EEM_Base::update's $fields_n_value
 	 * @param array $query_params like EEM_base::get_all's $query_params
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int number of items updated
 	 */
-	public function update_deleted_and_undeleted($fields_n_values, $query_params){
+	public function update_deleted_and_undeleted($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE ){
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-		return $this->update($fields_n_values, $query_params);
+		return $this->update($fields_n_values, $query_params, $keep_model_objs_in_sync );
 	}
 
 	/**
@@ -368,10 +362,14 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * If you want to update soft-deleted items also, use update_deleted_and_undeleted instead.
 	 * @param array $fields_n_values like EEM_base::update's $fields_n_values
 	 * @param array $query_params like EEM_base::get_all's $query_params
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int how many items were updated
 	 */
-	public function update($fields_n_values, $query_params){
-		return parent::update($fields_n_values,$query_params);
+	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE ){
+		return parent::update($fields_n_values,$query_params, $keep_model_objs_in_sync );
 	}
 
 

@@ -49,7 +49,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
-		//the accidental txn commit indicator option shouldnt' be set from the previous test
+		//the accidental txn commit indicator option shouldn't be set from the previous test
 		update_option( 'accidental_txn_commit_indicator', TRUE );
 
 //		$this->wp_actions_saved = $wp_actions;
@@ -65,14 +65,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+
+
+	/**
+	 * @param bool $short_circuit
+	 * @param string $table_name
+	 * @param string $sql
+	 * @return bool
+	 */
 	public function _short_circuit_db_implicit_commits( $short_circuit = FALSE, $table_name, $sql ){
 		$whitelisted_tables = apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array() );
 		if( in_array( $table_name, $whitelisted_tables ) ){
-//			echo "\r\n\r\nDONT shortcircuit $sql";
 			//it's not altering. it's ok
 			return FALSE;
 		}else{
-//			echo "3\r\n\r\nshort circuit:$sql";
 			return TRUE;
 		}
 	}
@@ -88,13 +94,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	protected function _detect_accidental_txn_commit(){
 		//for some reason WP waits until the start of the next test to do this. but
-		//we prefer to do it now so taht we can check for implicit commits
+		//we prefer to do it now so that we can check for implicit commits
 		$this->clean_up_global_scope();
 		//now we can check if there was an accidental implicit commit
 		if( ! self::$accidental_txn_commit_noted && get_option( 'accidental_txn_commit_indicator', FALSE ) ){
 			global $wpdb;
 			self::$accidental_txn_commit_noted = TRUE;
-			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldnt properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s", 'event_espresso' ),print_r( $wpdb->queries, TRUE) ) );
+			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s", 'event_espresso' ),print_r( $wpdb->queries, TRUE) ) );
 		}
 	}
 
@@ -259,7 +265,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if($in_there){
 			$this->assertTrue(true);
 		}else{
-			$this->assertTrue($in_there,  sprintf(__("Array %s does not contain %s", "event_espresso"),print_r($haystack,true),print_r($item,true)));
+			$this->assertTrue($in_there,  sprintf(__('Array %1$s does not contain %2$s', "event_espresso"), print_r($haystack,true), print_r($item,true) ));
 		}
 	}
 
@@ -274,7 +280,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if($not_in_there){
 			$this->assertTrue($not_in_there);
 		}else{
-			$this->assertTrue($not_in_there,  sprintf(__("Array %s DOES contain %s when it shouldn't", "event_espresso"),print_r($haystack,true),print_r($item,true)));
+			$this->assertTrue($not_in_there,  sprintf(__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso' ), print_r($haystack,true), print_r($item,true) ));
 		}
 	}
 	/**
@@ -286,7 +292,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if($option){
 			$this->assertTrue(true);
 		}else{
-			$this->assertNotNull($option,  sprintf(__("The WP Option '%s' does not exist but should", "event_espresso"),$option_name));
+			$this->assertNotNull($option,  sprintf(__('The WP Option "%s" does not exist but should', "event_espresso" ),$option_name));
 		}
 	}
 
@@ -298,14 +304,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function assertWPOptionDoesNotExist($option_name){
 		$option = get_option($option_name,NULL);
 		if( $option){
-			$this->assertNull($option,sprintf(__("The WP Option '%s' exists but shouldN'T", "event_espresso"),$option_name));
+			$this->assertNull( $option, sprintf( __('The WP Option "%s" exists but shouldn\'t', "event_espresso"), $option_name ) );
 		}else{
 			$this->assertTrue(true);
 		}
 	}
 
 	/**
-	 * COmpares two EE model objects by just looking at their field's values. If you want strict comparison just use ordinary '==='.
+	 * Compares two EE model objects by just looking at their field's values. If you want strict comparison just use ordinary '==='.
 	 * If you pass it two arrays of EE objects, that works too
 	 * @param EE_Base_Class|EE_Base_Class[] $expected_object
 	 * @param EE_Base_Class|EE_Base_Class[] $actual_object
@@ -323,7 +329,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			foreach( $expected_object->model_field_array() as $field_name => $expected_value ){
 				$actual_value = $actual_object->get( $field_name );
 				if( $expected_value != $actual_value ){
-					$this->fail( sprintf( __( 'EE objects of class "%s" did not match. They were: \r\n%s and \r\n%s', 'event_espresso' ), json_encode( $expected_object->model_field_array() ), json_encode( $actual_object->model_field_array() ) ) );
+					$this->fail(
+						sprintf(
+							__( 'EE objects of class "%1$s" did not match. They were: %2$s and %3$s', 'event_espresso' ),
+							get_class( $expected_object),
+							PHP_EOL . json_encode( $expected_object->model_field_array() ),
+							PHP_EOL . json_encode( $actual_object->model_field_array() )
+						)
+					);
 				}
 			}
 		}
@@ -333,7 +346,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 *Creates a model object and its required dependencies
 	 * @param string  $model_name
-	 * @param array   $args array of arguments to supply when constructing the model obejct
+	 * @param array   $args array of arguments to supply when constructing the model object
 	 * @param boolean $save
 	 * @throws EE_Error
 	 * @global int    $auto_made_thing_seed
@@ -388,7 +401,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$success = $model_obj->save();
 			if( ! $success ){
 				global $wpdb;
-				throw new EE_Error(sprintf("Coudl not save %s using %s. Error was %s",$model_name,json_encode($args),$wpdb->last_error));
+				throw new EE_Error(
+					sprintf(
+						__( 'Could not save %1$s using %2$s. Error was %3$s', 'event_espresso' ),
+						$model_name,
+						json_encode($args),
+						$wpdb->last_error
+					)
+				);
 			}
 		}
 		$auto_made_thing_seed++;
@@ -399,50 +419,22 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	/**
+	 * asserts that a table (even temporary one) exists
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
-	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
-	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
-	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
-	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
-	function assertTableExists($table_name,$model_name = 'Unknown') {
-		if( ! $this->_table_exists( $table_name) ){
+	function assertTableExists($table_name,$model_name = 'Unknown'){
+		if( ! EEH_Activation::table_exists( $table_name ) ){
 			global $wpdb;
 			$this->fail( $wpdb->last_error);
 		}
 	}
 
 	/**
-	 * Returns whether or not hte table exists
-	 * @global WPDB $wpdb
-	 * @param string $table_name
-	 * @param type $model_name
-	 * @return boolean whether the table exists or not. If you want to get the error
-	 * regarding the table's existence, you can use $wpdb->last_error
-	 */
-	protected function _table_exists( $table_name ){
-		global $wpdb;
-		if(strpos($table_name, $wpdb->prefix) !== 0){
-			$table_name = $wpdb->prefix.$table_name;
-		}
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->last_error = NULL;
-		$wpdb->show_errors( FALSE );
-		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_errors( $old_show_errors_value );
-		if( empty( $wpdb->last_error ) ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
-	}
-
-	/**
+	 * Asserts the table (even temporary one) does not exist
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
 	 * @global WPDB $wpdb
@@ -450,13 +442,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
 	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
-		if( $this->_table_exists( $table_name ) ){
-			$this->fail( sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
+		if( EEH_Activation::table_exists( $table_name ) ){
+			$this->fail(
+				sprintf(
+					__( 'Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso' ),
+					$table_name,
+					$model_name
+				)
+			);
 		}
 	}
 
 	/**
-	 * Modifies the $wp_actions global to make it look like certian actions were and weren't
+	 * Modifies the $wp_actions global to make it look like certain actions were and weren't
 	 * performed, so that EE_Register_Addon is deceived into thinking it's the right
 	 * time to register an addon etc
 	 * @global array $wp_actions
@@ -485,7 +483,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * Makes a complete transaction record with all associated data (ie, its line items,
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
 	 * Resets EE_Cart in the process though, FYI
-	 * @param type $options
+	 * @param array $options
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
@@ -503,7 +501,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
-			foreach($taxes as $priority => $taxes_at_priority){
+			foreach($taxes as $taxes_at_priority){
 				foreach($taxes_at_priority as $tax){
 					$reg_final_price += $reg_final_price * $tax->amount() / 100;
 				}
@@ -520,7 +518,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * Creates an interesting ticket, with a base price, dollar surcharge, and a percent surcharge,
 	 * which is for 2 different datetimes.
 	 * @param array $options {
-	 *	@type int $dollar_surcharge the dollar surcharge to add to thsi ticket
+	 *	@type int $dollar_surcharge the dollar surcharge to add to this ticket
 	 *	@type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
 	 *	@type int $datetimes the number of datetimes for this ticket
 	 * }

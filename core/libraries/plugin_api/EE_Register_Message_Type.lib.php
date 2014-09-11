@@ -76,7 +76,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
             EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
-					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
+					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular___messages_caf" hook.','event_espresso'),
 					$mt_name
 				),
 				'4.3.0'
