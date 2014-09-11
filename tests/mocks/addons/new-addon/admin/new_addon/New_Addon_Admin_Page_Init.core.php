@@ -39,9 +39,9 @@ class New_Addon_Admin_Page_Init extends EE_Admin_Page_Init  {
 		define( 'NEW_ADDON_LABEL', __( 'New_Addon', 'event_espresso' ));
 		define( 'EE_NEW_ADDON_ADMIN_URL', admin_url( 'admin.php?page=' . NEW_ADDON_PG_SLUG ));
 		define( 'EE_NEW_ADDON_ADMIN_ASSETS_PATH', EE_NEW_ADDON_ADMIN . 'assets' . DS );
-		define( 'EE_NEW_ADDON_ADMIN_ASSETS_URL', EE_NEW_ADDON_URL . 'assets' . DS );
+		define( 'EE_NEW_ADDON_ADMIN_ASSETS_URL', EE_NEW_ADDON_URL . 'admin' . DS . 'new_addon' . DS . 'assets' . DS );
 		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_PATH', EE_NEW_ADDON_ADMIN . 'templates' . DS );
-		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_URL', EE_NEW_ADDON_URL . 'templates' . DS );
+		define( 'EE_NEW_ADDON_ADMIN_TEMPLATE_URL', EE_NEW_ADDON_URL . 'admin' . DS . 'new_addon' . DS . 'templates' . DS );
 
 		parent::__construct();
 		$this->_folder_path = EE_NEW_ADDON_ADMIN;
@@ -54,28 +54,29 @@ class New_Addon_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 	protected function _set_init_properties() {
 		$this->label = NEW_ADDON_LABEL;
-		$this->menu_label = NEW_ADDON_LABEL;
-		$this->menu_slug = NEW_ADDON_PG_SLUG;
-		$this->capability = 'administrator';
 	}
 
 
 
 	/**
-	*		sets vars in parent for creating admin menu entry
+	*		_set_menu_map
 	*
-	*		@access 		public
+	*		@access 		protected
 	*		@return 		void
 	*/
-	public function get_menu_map() {
-		$map = array(
-			'group' => 'settings',
+	protected function _set_menu_map() {
+		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
+			'menu_group' => 'addons',
 			'menu_order' => 25,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
-			);
-		return $map;
+			'parent_slug' => 'espresso_events',
+			'menu_slug' => NEW_ADDON_PG_SLUG,
+			'menu_label' => NEW_ADDON_LABEL,
+			'capability' => 'administrator',
+			'admin_init_page' => $this
+		));
 	}
+
 
 
 }

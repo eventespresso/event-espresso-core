@@ -80,6 +80,16 @@ final class EE_Config {
 	 */
 	public $template_settings;
 
+
+
+	/**
+	 * Holds EE environment values.
+	 *
+	 * @var EE_Environment_Config
+	 */
+	public $environment;
+
+
 	/**
 	 *	@var 	array	$_config_option_names
 	 * 	@access 	private
@@ -139,6 +149,7 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -856,7 +867,17 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$shortcode_class . ' shortcode',
+					$shortcode_path . $shortcode_class . $shortcode_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -938,7 +959,17 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$module_class . ' module',
+					$module_path . $module_class . $module_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
@@ -1295,6 +1326,12 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = FALSE;
 		$this->thank_you_page_url = FALSE;
 		$this->cancel_page_url = FALSE;
+
+		//ueip constant check
+		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
+			$this->ee_ueip_optin = FALSE;
+			$this->ee_ueip_has_notified = TRUE;
+		}
 	}
 
 
@@ -1768,6 +1805,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1812,9 +1859,41 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->use_remote_logging = FALSE;
 		$this->remote_logging_url = NULL;
 		$this->show_reg_footer = TRUE;
-		$this->affiliate_id = NULL;
+		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 
@@ -2061,6 +2140,71 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+	}
+}
+
+
+
+
+/**
+ * Stores any EE Environment values that are referenced through the code.
+ *
+ * @since 4.4.0
+ * @package Event Espresso
+ * @subpackage  config
+ */
+class EE_Environment_Config extends EE_Config_Base {
+
+	/**
+	 * Hold any php environment variables that we want to track.
+	 *
+	 * @var stdClass;
+	 */
+	public $php;
+
+
+
+	/**
+	 * 	constructor
+	 */
+	public function __construct() {
+		$this->php = new stdClass();
+		$this->_set_php_values();
+	}
+
+
+	/**
+	 * This sets the php environment variables.
+	 *
+	 * @since 4.4.0
+	 * @return void
+	 */
+	protected function _set_php_values() {
+		$this->php->max_input_vars = ini_get( 'max_input_vars' );
+		$this->php->version = phpversion();
+	}
+
+
+
+	/**
+	 * helper method for determining whether input_count is
+	 * reaching the potential maximum the server can handle
+	 * according to max_input_vars
+	 *
+	 * @param int $input_count the count of input vars.
+	 *
+	 * @return array {
+	 *         An array that represents whether available space and if no available space the error message.
+	 *         @type bool $has_space		whether more inputs can be added.
+	 *         @type string $msg 		Any message to be displayed.
+	 * }
+	 */
+	public function max_input_vars_limit_check( $input_count = 0 ) {
+		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3', '>=' ) ) {
+			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		} else {
+			return '';
+		}
 	}
 }
 

@@ -1649,7 +1649,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * processes a test send request to do an actual messenger delivery test for the given message tempalte being tested
+	 * processes a test send request to do an actual messenger delivery test for the given message template being tested
 	 * @param  string $context      what context being tested
 	 * @param  string $messenger  	messenger being tested
 	 * @param  string $message_type message type being tested
@@ -1672,7 +1672,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( $success ) {
 			EE_Error::add_success( __('Test message sent', 'event_espresso') );
 		} else {
-			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ) );
+			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -1808,7 +1808,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MTPG = EEM_Message_Template_Group::instance();
 		//first let's GET this group
 		$MTG = $MTPG->get_one_by_ID( $GRP_ID );
-		//then delete permanently all the related Message Tempaltes
+		//then delete permanently all the related Message Templates
 		$deleted = $MTG->delete_related_permanently( 'Message_Template' );
 
 		if ( $deleted === 0 )
@@ -2378,7 +2378,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function update_mt_form() {
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
-			EE_Error::add_error( __('Require message type or messenger to send an updated form'));
+			EE_Error::add_error( __('Require message type or messenger to send an updated form'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_return_json();
 		}
 

@@ -24,9 +24,9 @@
 	<br/>
 	<br/>
 
-	<?php  do_action( 'AHEE__thank_you_page_overview_template__content' ); ?>
+	<?php  do_action( 'AHEE__thank_you_page_overview_template__content', $transaction ); ?>
 
 </div>
 <!-- end of espresso-thank-you-page-overview-dv -->
 
-<?php  do_action( 'AHEE__thank_you_page_overview_template__bottom' ); ?>
+<?php  do_action( 'AHEE__thank_you_page_overview_template__bottom', $transaction ); ?>

@@ -11,7 +11,7 @@
 define('EE_Event_Category_Taxonomy','espresso_event_category');
 //require_once( EE_MODELS . 'EEM_Base.model.php');
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
-	
+
 	/**
 	 * Searches for field on this model of type 'deleted_flag'. if it is found,
 	 * returns it's name. BUT That doesn't apply to CPTs. We should istnead usepost_status_field_name
@@ -34,7 +34,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			throw new EE_Error(sprintf(__('We are trying to find the post status flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?','event_espresso'),get_class($this),get_class($this)));
 		}
 	}
-	
+
 	/**
 	 * Alters the query params so that only trashed/soft-deleted items are considered
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -45,7 +45,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		$query_params[0][$post_status_field_name]=self::post_status_trashed;
 		return $query_params;
 	}
-	
+
 	/**
 	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
@@ -63,9 +63,6 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return boolean success
 	 */
 	function delete_or_restore($delete=true,$query_params = array()){
-		if ( ! $query_params ) {
-			return FALSE;
-		}
 		$post_status_field_name=$this->post_status_field_name();
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		$new_status = $delete ? self::post_status_trashed : 'draft';
@@ -75,8 +72,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			return FALSE;
 		}
 	}
-	
-	
+
+
 	/**
 	 * @var post_status_trashed the wp post status for trashed cpts
 	 */
@@ -156,7 +153,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 		if ( !$all ) {
 			foreach ( $all_fields as $name => $obj ) {
-				if ( $obj instanceof EE_DB_Only_Field_Base ) 
+				if ( $obj instanceof EE_DB_Only_Field_Base )
 					continue;
 				$fields_to_return[] = $name;
 			}
@@ -167,7 +164,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		return $fields_to_return;
 	}
 
-	
+
 	/**
 	 * Adds an event category with the specified name and description to the specified
 	 * $cpt_model_object. Intelligently adds a term if necessary, and adds a term_taxonomy if necessary,
@@ -209,8 +206,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		return $this->add_relationship_to($cpt_model_object, $term_taxonomy, 'Term_Taxonomy');
 	}
-	
-	
+
+
 	/**
 	 * Removed the category specified by name as having a relation to this event.
 	 * Does not remove the term or term_taxonomy.
@@ -292,7 +289,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	}
 
 	/**
-	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which 
+	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which
 	 * are a row from the posts table. If we're missing any fields required for the model,
 	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
 	 * make sure you are attaching all the model's fields onto the post)
@@ -302,11 +299,11 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	public function instantiate_class_from_post_object_orig($post){
 		$post = (array)$post;
 		$has_all_necessary_fields_for_table = true;
-		//check if the post has fields on the meta table already 
+		//check if the post has fields on the meta table already
 		foreach($this->_get_other_tables() as $table_obj){
 			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
 			foreach($fields_for_that_table as $field_name => $field_obj){
-				if( ! isset($post[$field_obj->get_table_column()]) 
+				if( ! isset($post[$field_obj->get_table_column()])
 					&& ! isset($post[$field_obj->get_qualified_column()])){
 					$has_all_necessary_fields_for_table = false;
 				}
@@ -314,7 +311,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		//if we don't have all the fields we need, then just fetch the proper model from the DB
 		if( ! $has_all_necessary_fields_for_table){
-			
+
 			return $this->get_one_by_ID($post['ID']);
 		}else{
 			return $this->instantiate_class_from_array_or_object($post);
@@ -326,11 +323,11 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		$post = (array)$post;
 		$tables_needing_to_be_queried = array();
-		//check if the post has fields on the meta table already 
+		//check if the post has fields on the meta table already
 		foreach($this->get_tables() as $table_obj){
 			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
 			foreach($fields_for_that_table as $field_name => $field_obj){
-				if( ! isset($post[$field_obj->get_table_column()]) 
+				if( ! isset($post[$field_obj->get_table_column()])
 					&& ! isset($post[$field_obj->get_qualified_column()])){
 					$tables_needing_to_be_queried[$table_obj->get_table_alias()] = $table_obj;
 				}
@@ -340,21 +337,21 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		if( $tables_needing_to_be_queried){
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well thats not too hard to query for
-				global $wpdb; 
+				global $wpdb;
 				$table_to_query = reset($tables_needing_to_be_queried);
 				if ( $missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A )) {
 					$post = array_merge($post,$missing_data);
-				}				
+				}
 			} else {
 				return $this->get_one_by_ID($post['ID']);
 			}
 		}
 		return $this->instantiate_class_from_array_or_object($post);
-		
+
 	}
-	
+
 	/**
-	 * Gets the post type associated with this 
+	 * Gets the post type associated with this
 	 * @return string
 	 */
 	public function post_type(){
@@ -369,5 +366,5 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		}
 		return $post_type_field->get_default_value();
 	}
-	
+
 }

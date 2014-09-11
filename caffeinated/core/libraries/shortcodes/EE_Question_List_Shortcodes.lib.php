@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Question_List_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Question_List_Shortcodes handles all shortcodes for custom questions and answers. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Question_List_Shortcodes handles all shortcodes for custom questions and answers.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Question_List_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -83,6 +83,10 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$ans_result = '';
 		$answers = ! empty($this->_extra_data['data']->registrations[$this->_data['data']->ID()]['ans_objs']) ? $this->_extra_data['data']->registrations[$this->_data['data']->ID()]['ans_objs'] : array();
 		foreach ( $answers as $answer ) {
+			$question = $answer->question();
+			if ( $question instanceof EE_Question and $question->admin_only() ) {
+						continue;
+					}
 			$ans_result .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $this->_extra_data);
 		}
 

@@ -289,6 +289,10 @@ class EE_Caf_Messages  {
 				$answers = !empty($recipient->registrations[$registration->ID()]['ans_objs']) ? $recipient->registrations[$registration->ID()]['ans_objs'] : array();
 				$question_list = '';
 				foreach ( $answers as $answer ) {
+					$question = $answer->question();
+					if ( $question instanceof EE_Question and $question->admin_only() ) {
+						continue;
+					}
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
@@ -331,6 +335,10 @@ class EE_Caf_Messages  {
 				$answers = $recipient->registrations[$registration->ID()]['ans_objs'];
 				$question_list = '';
 				foreach ( $answers as $answer ) {
+					$question = $answer->question();
+					if ( $question instanceof EE_Question and $question->admin_only() ) {
+						continue;
+					}
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
@@ -361,14 +369,6 @@ class EE_Caf_Messages  {
 			'messengers_to_activate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
-
-		//register payment refund message type
-		$setup_args = array(
-			'mtfilename' => 'EE_Payment_Refund_message_type.class.php',
-			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_refund/' => array( 'class' ) ),
-			'messengers_to_activate_with' => array( 'email' )
-			);
-		EE_Register_Message_Type::register( 'payment_refund', $setup_args );
 
 		//register payment reminder message type
 		$setup_args = array(
