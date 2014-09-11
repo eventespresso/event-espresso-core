@@ -447,36 +447,6 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 	/**
-	*		migrate question data
-	*
-	* 		usage: EEM_Event::instance()->migrate_question_data();
-	*
-	* 		@access		public
-	* 		@param		$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function migrate_question_data() {
-
-		global $wpdb;
-		$SQL = 'SELECT id, question_groups FROM ' . $wpdb->prefix . 'events_detail ORDER BY id';
-		if ( $results = $wpdb->get_results( $SQL )) {
-			foreach ( $results as $result ) {
-				$QSG_IDs = unserialize( $result->question_groups );
-				foreach ( $QSG_IDs as $QSG_ID ) {
-					if ( $wpdb->insert( $wpdb->prefix . 'esp_event_question_group', array( 'EVT_ID' => $result->id, 'QSG_ID' => $QSG_ID ), array( '%d', '%d' ))) {
-						echo '<h5>SUCCESS:    EVT_ID : ' . $result->id . '   QSG_ID : ' . $QSG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h5>';
-					} else {
-						echo '<h4>FAIL:    EVT_ID : ' . $result->id . '   QSG_ID : ' . $QSG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-					}
-				}
-			}
-		}
-
-	}
-
-
-
-	/**
 	 * Gets all events that are published and have event start time earlier than now and an event end time later than now
 	 *
 	 * @access public

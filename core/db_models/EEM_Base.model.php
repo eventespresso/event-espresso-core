@@ -467,7 +467,6 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but may want to
 	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
-	 * @global $wpdb
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
 	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
@@ -478,7 +477,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		global $wpdb;
 
 		//remember the custom selections, if any
 		if(is_array($columns_to_select)){
@@ -636,7 +634,6 @@ abstract class EEM_Base extends EE_Base{
 		 * @param array $query_params see EEM_Base::get_all()
 		 */
 		$fields_n_values = apply_filters( 'FHEE__EEM_Base__update__fields_n_values', $fields_n_values, $this, $query_params );
-		global $wpdb;
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
@@ -699,8 +696,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-		$rows_affected = $wpdb->query($SQL);
-		$this->show_db_query_if_previously_requested($SQL);
+		$rows_affected = $this->_do_wpdb_query('query', array( $SQL ) );
 		/**
 		 * Action called after a model update call has been made.
 		 *
@@ -723,7 +719,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array just like $wpdb->get_col()
 	 */
 	public function get_col( $query_params  = array(), $field_to_select = NULL ){
-		global $wpdb;
 
 		if( $field_to_select ){
 			$field = $this->field_settings_for( $field_to_select );
@@ -736,8 +731,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $field->get_qualified_column();
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-		$results =  $wpdb->get_col( $SQL );
-		$this->show_db_query_if_previously_requested($SQL);
+		$results =  $this->_do_wpdb_query('get_col', array( $SQL ) );
 		return $results;
 	}
 
@@ -772,7 +766,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got deleted
 	 */
 	function delete($query_params,$allow_blocking = true){
-		global $wpdb;
 		/**
 		 * Action called just before performing a real deletion query. You can use the
 		 * model and its $query_params to find exactly which items will be deleted
@@ -799,7 +792,6 @@ abstract class EEM_Base extends EE_Base{
 
 			//		/echo "delete sql:$SQL";
 			$rows_deleted = $this->_do_wpdb_query( 'query', array( $SQL ) );
-			//$wpdb->print_error();
 		}else{
 			$rows_deleted = 0;
 		}
@@ -962,7 +954,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
@@ -987,7 +978,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function sum($query_params, $field_to_sum = NULL){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 
 		if($field_to_sum){
@@ -1015,7 +1005,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $arguments_to_provide
 	 * @return mixed
 	 */
-	private function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
+	protected function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
 		//if we're in maintenance mode level 2, DON'T run any queries
 		//because level 2 indicates the database needs updating and
 		//is probably out of sync with the code
@@ -1138,7 +1128,6 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets all the related items of the specified $model_name, using $query_params.
 	 * Note: by default, we remove the "default query params"
 	 * because we want to get even deleted items etc.
-	 * @global $wpdb
 	 * @param mixed $id_or_obj EE_Base_Class child or its ID
 	 * @param string $model_name like 'Event', 'Registration', etc. always singular
 	 * @param array $query_params like EEM_Base::get_all
@@ -1287,7 +1276,6 @@ abstract class EEM_Base extends EE_Base{
 	 * if there were, then they would already be in the DB and this would fail); and in the future if someone
 	 * creates a model object with this ID (or grabs it from the DB) then it will be added to the
 	 * entity map at that time anyways. SO, no need for EEM_Base::insert ot add to the entity map
-	 * @global $wpdb
 	 * @param array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
 	 * in the model object's domain if $values_already_prepared_by_model_object is true. See comment about this at the top of EEM_Base)
 	 * @return int new primary key on main table that got inserted
@@ -1401,6 +1389,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array         $fields_n_values each key should be in _field's keys, and value should be an int, string or float
 	 * @param bool|int     $new_id
 	 * @throws EE_Error
+	 * @global $wpdb only used to get the $wpdb->insert_id after performin an insert
 	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 */
@@ -2041,7 +2030,6 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Constructs SQL for where clause, like "WHERE Event.ID = 23 AND Transaction.amount > 100" etc.
-	 * @global $wpdb
 	 * @param array $where_params like EEM_Base::get_all
 	 * @return string of SQL
 	 */
