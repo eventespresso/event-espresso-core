@@ -58,7 +58,7 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
-	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * Indicates a new activation, but we couldn't install everything properly because
 	 * EE was in maintenance mode. So when we exit maintenance mode, we will
 	 * consider the next request to be a reactivation and will verify default data
 	 * is in place and tables are setup
@@ -66,7 +66,7 @@ final class EE_System {
 	const req_type_activation_but_not_installed = 5;
 
 	/**
-	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 * option prefix for recording the activation history (like core's "espresso_db_update") of addons
 	 */
 	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -432,7 +432,6 @@ final class EE_System {
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
-                $this->check_ee3addons();
 				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
@@ -472,23 +471,6 @@ final class EE_System {
 				break;
 		}
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
-	}
-
-
-
-	/**
-	 * check to see if any ee3addons are active and if they are deactivate and throw up message.
-	 *
-	 * @param string $plugin
-	 * @param bool   $network_wide
-	 * @return void
-	 */
-	public function check_ee3addons( $plugin = '', $network_wide = false ) {
-		//check for and deactivate and EE3 addons and deactivate (user-proofing)
-		if ( ! class_exists( 'EEH_Activation' )) {
-			EE_Registry::instance()->load_helper('Activation');
-		}
-		EEH_Activation::screen_for_ee3_addons( $plugin );
 	}
 
 
@@ -716,6 +698,10 @@ final class EE_System {
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
+		// enable logging?
+		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
+			EE_Registry::instance()->load_core( 'Log' );
+		}
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
@@ -838,8 +824,6 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
-			//check ee3addons status
-			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
 			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
@@ -980,6 +964,7 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
+
 	}
 
 
@@ -1310,6 +1295,9 @@ final class EE_System {
 			}
 		}
 	}
+
+
+
 }
 //EE_System::instance();
 

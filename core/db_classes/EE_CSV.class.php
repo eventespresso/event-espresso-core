@@ -85,6 +85,31 @@
 		return self::$_instance;
 	}
 
+	/**
+	 * Opens a unicode or utf file (normal file_get_contents has difficulty readin ga unicode file. @see http://stackoverflow.com/questions/15092764/how-to-read-unicode-text-file-in-php
+	 * @param string $file_path
+	 * @return string
+	 * @throws EE_Error
+	 */
+	private function read_unicode_file($file_path){
+		$fc = "";
+		$fh = fopen($file_path,"rb");
+		if( ! $fh ){
+			throw new EE_Error( sprintf( __("Cannot open file for read: %s<br>\n", 'event_espresso'), $file_path ) );
+		}
+		$flen = filesize($file_path);
+		$bc = fread($fh, $flen);
+		for ($i=0; $i<$flen; $i++){
+			$c = substr($bc,$i,1);
+			if ((ord($c) != 0) && (ord($c) != 13)){
+			  $fc = $fc . $c;
+			}
+		}
+		if ((ord(substr($fc,0,1)) == 255) && (ord(substr($fc,1,1)) == 254))
+		$fc = substr($fc,2);
+		return ($fc);
+}
+
 
 	/**
 	 * Generic CSV-functionality to turn an entire CSV file into a single array that's
@@ -99,7 +124,7 @@
 
 		// because fgetcsv does not correctly deal with backslashed quotes such as \"
 		// we'll read the file into a string
-		$file_contents = file_get_contents( $path_to_file );
+		$file_contents = $this->read_unicode_file( $path_to_file );
 		// replace backslashed quotes with CSV enclosures
 		$file_contents = str_replace ( '\\"', '"""', $file_contents );
 		// HEY YOU! PUT THAT FILE BACK!!!
@@ -182,7 +207,7 @@
 				$headers = array();
 				continue;
 			}
-			if($data[0] == EE_CSV::metadata_header){
+			if( strpos( $data[0], EE_CSV::metadata_header ) !==FALSE ){
 				$model_name = EE_CSV::metadata_header;
 				//store like model data, we just won't try importing it etc.
 				$row = 1;

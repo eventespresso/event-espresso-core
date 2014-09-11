@@ -23,6 +23,8 @@
  */
 class EED_Single_Page_Checkout  extends EED_Module {
 
+	// ensures that SPCO only runs once
+	private static $_run = FALSE;
 	// base url for the site's registration checkout page - additional url params will be added to this
 	private $_reg_page_base_url = '';
 	// thank you page URL
@@ -464,17 +466,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP ) {
-		$this->init();
-		if ( $this->_transaction instanceof EE_Transaction ) {
-			// convert AJAX requests if JS is disabled
-			if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
-				$process_method = '_' . $this->_current_step;
-				call_user_func( array( $this, $process_method ));
-			} else if ( $this->_current_step == 'finalize_registration' ) {
-				$this->_process_finalize_registration();
-			} else {
-				$this->registration_checkout();
+		if ( ! EED_Single_Page_Checkout::$_run ) {
+			$this->init();
+			if ( $this->_transaction instanceof EE_Transaction ) {
+				// convert AJAX requests if JS is disabled
+				if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
+					$process_method = '_' . $this->_current_step;
+					call_user_func( array( $this, $process_method ));
+				} else if ( $this->_current_step == 'finalize_registration' ) {
+					$this->_process_finalize_registration();
+				} else {
+					$this->registration_checkout();
+				}
 			}
+			EED_Single_Page_Checkout::$_run = TRUE;
 		}
 	}
 
@@ -689,12 +694,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			foreach ( $registrations as $registration ) {
 
-				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+				if (( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
 				}
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				if ( ! $payment_required ) {
+				if ( ! $payment_required && ! $this->_reg_url_link == $registration->reg_url_link() ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
 				}
@@ -1720,11 +1725,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function display_registration_footer() {
 		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			if ( ! empty( EE_Registry::instance()->CFG->admin->affiliate_id )) {
-				$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
-				$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
-				echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></div>' );
-			}
+			EE_Registry::instance()->CFG->admin->affiliate_id = ! empty( EE_Registry::instance()->CFG->admin->affiliate_id ) ? EE_Registry::instance()->CFG->admin->affiliate_id : 'default';
+			$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
+			$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
+			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></div>' );
 		}
 	}
 
@@ -1770,13 +1774,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			break;
 		}
 
-		if ( $prev_step == $callback ) {
-			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
 		$notices = EE_Error::get_notices(FALSE);
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
+
+		if ( $prev_step == $callback && ! $error_msg ) {
+			$error_msg = __('A recursive loop was detected and the registration process was halted.', 'event_espresso');
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;

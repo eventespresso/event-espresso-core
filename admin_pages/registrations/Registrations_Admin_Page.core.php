@@ -101,7 +101,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'add-registrant' => __('Add New Registration', 'event_espresso'),
 					'add-attendee' => __('Add Contact', 'event_espresso'),
 					'edit' => __('Edit Contact', 'event_espresso'),
-					'report'=>  __("Registrations CSV Report", "event_espresso"),
+					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
+					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
 					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
 				),
 			'publishbox' => array(
@@ -2361,22 +2362,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function _registrations_report(){
+		EE_Registry::instance()->load_helper( 'File' );
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'registrations_report_for_event',
-			'EVT_ID' => $this->_req_data['EVT_ID'],
+			'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+		if ( EEH_File::exists(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export();
 		}
 	}
-	public function _contact_list_export(){
 
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+
+
+	public function _contact_list_export(){
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( EEH_File::exists(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export_attendees();
@@ -2616,7 +2621,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			// grab single id and delete
 			$ATT_ID = absint($this->_req_data['ATT_ID']);
-			$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+			//get attendee
+			$att = $ATT_MDL->get_one_by_ID( $ATT_ID );
+			$updated = $trash ? $att->delete() : $att->restore();
+			$updated = $att->save();
 			if ( ! $updated ) {
 				$success = 0;
 			}

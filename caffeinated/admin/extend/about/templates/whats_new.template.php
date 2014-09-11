@@ -9,7 +9,7 @@
 			array_pop( $ver );
 			$ver = implode( '.', $ver );
 		?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/#' . $ver ); ?>
+		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/' . $ver ); ?>
  	</p>
 </div>
 
@@ -57,27 +57,40 @@
 	<hr>
 	*/
 	?>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.4</h2>
+	<p>This release brings a few improvements to existing core features.</p>
+	<p><strong>Enhancements/Fixes</strong></p>
+		<ul>
+			<li>Enhancement: Added a link/button for attendees to resend registration or payment email </li>
+			<li>Enhancement: PayPal Standard - Send Event Name with shopping cart data</li> 
+			<li>Enhancement: Remove image captions on 'Events' page excerpts</li>
+			<li>Enhancement: Added template tag: espresso_get_events</li>
+			<li>Fixed: ESPRESSO_EVENTS shortcodes params getting overwritten </li>
+			<li>Fixed: Front-end Messages when Maximum Per-transaction Limit is 0 </li>
+			
+		</ul>
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
-	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
-<p><strong>New Features</strong></p>
-<ul>
-	<li>Duplicate Event</li>
-	<li>Ticket Required Option</li>
-	<li>Added iCal Integration</li>
-	<li>Drag-n-drop Answer Values</li>
-	<li>Order Questions by Question Group</li>
-	<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
-	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
-	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
-	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
-</ul>
-<strong>Fixes</strong>
-<ul>
-	<li>Gateways</li>
-	<li>Messages System</li>
-	<li>Migration Issues</li>
-	<li>Miscellaneous Spelling Errors</li>
-</ul>
+	<p>This release brought many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
+	<p><strong>New Features</strong></p>
+		<ul>
+			<li>Duplicate Event</li>
+			<li>Ticket Required Option</li>
+			<li>Added iCal Integration</li>
+			<li>Drag-n-drop Answer Values</li>
+			<li>Order Questions by Question Group</li>
+			<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
+			<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+			<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+			<li>New Hooks and Filters for Developers Added to the Registration Process</li>
+		</ul>
+	<p><strong>Fixes</strong></p>
+		<ul>
+			<li>Gateways</li>
+			<li>Messages System</li>
+			<li>Migration Issues</li>
+			<li>Miscellaneous Spelling Errors</li>
+		</ul>
+		
 
 <p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
 Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>

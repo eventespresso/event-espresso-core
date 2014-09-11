@@ -427,18 +427,18 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$datetime = date( 'Y-m-d H:i:s', (int) $datetime);
 
 		date_default_timezone_set( $this->_timezone );
-		$datetime = strtotime($datetime);
+		$timestamp = strtotime($datetime);
 
 		//if we don't have a datetime at this point then something has gone wrong
-		if ( ! $datetime ) {
-			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+		if ( $timestamp === NULL || $timestamp === FALSE) {
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used. Datetime passed in: %s producted timestamp: %s', 'event_espresso' ), $datetime, $timestamp )  );
 		}
 
 		//return to default for PHP
 		date_default_timezone_set('UTC');
 
 		//now that we have the string we can send this over to our string value conversion
-		return $datetime;
+		return $timestamp;
 	}
 
 
@@ -623,7 +623,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			} catch( Exception $e ) {
 				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
 				if ( strtotime( $date_string ) == 0 ) {
-					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to its formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
 				} else {
 					//ok give up, but don't throw an error
 					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
