@@ -56,7 +56,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		//setup a registration
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$d = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $r->get('TKT_ID') ) ) );
-		$this->assertInstancOf( 'EE_Datetime_Ticket', $d );
+		$this->assertInstanceOf( 'EE_Datetime_Ticket', $d );
 		$valid_DTT_ID = $d->get('DTT_ID');
 		$invalid_DTT_ID = 99999;
 
