@@ -743,7 +743,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set it\'s value to the appropriate method.', 'event_espresso' ), $this->_req_action );
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set its value to the appropriate method.', 'event_espresso' ), $this->_req_action );
 			throw new EE_Error( $error_msg );
 		}
 
@@ -752,7 +752,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg = sprintf( __( 'A default page route has not been set for the % admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
+			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set its value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
 
