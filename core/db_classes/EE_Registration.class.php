@@ -1115,7 +1115,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		$query[0] = array(
 			'TXN_ID' => $this->transaction_ID(),
-			'REG_ID' => array( '!=', $this->ID() )
+			'REG_ID' => array( '!=', $this->ID() ),
+			'TKT_ID' => $this->ticket_ID()
 			);
 
 		$registrations = $this->get_model()->get_all( $query );
