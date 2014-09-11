@@ -43,6 +43,55 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		$this->assertEquals($r->attendee()->fname(),$r->answer_value_to_question($q2,false));
 	}
 
+
+
+	/**
+	 * This verifies the can_checkin() method in EE_registrationa
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	function test_can_checkin() {
+		//setup a registration
+		$r = $this->new_model_obj_with_dependencies( 'Registration' );
+
+		$t = $this->new_ticket();
+
+		//let's assign the above ticket to our registration
+		$r->_add_relation_to( $t, 'Ticket' );
+		$r->save();
+
+		$d = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $r->get('TKT_ID') ) ) );
+		$this->assertInstanceOf( 'EE_Datetime_Ticket', $d );
+		$valid_DTT_ID = $d->get('DTT_ID');
+		$invalid_DTT_ID = 99999;
+
+		//k let's test the possible expected responses of can_checkin;
+		//IGNORING status
+		//test one: valid DTT and unapproved reg
+		$r->set_status( EEM_Registration::status_id_not_approved );
+		$this->assertTrue( $r->can_checkin( $valid_DTT_ID, false ) );
+
+		//test two: invalid DTT and approved reg
+		$r->set_status( EEM_Registration::status_id_approved );
+		$this->assertFalse( $r->can_checkin( $invalid_DTT_ID, false ) );
+
+		//including status
+		//test one: valid DTT and approved reg
+		$this->assertTrue( $r->can_checkin( $valid_DTT_ID ) );
+
+		//test two: invalid DTT and approved reg
+		$this->assertFalse( $r->can_checkin( $invalid_DTT_ID ) );
+
+		//test three: valid DTT and not approved reg
+		$r->set_status( EEM_Registration::status_id_not_approved );
+		$this->assertFalse( $r->can_checkin( $valid_DTT_ID ) );
+
+		//test four: invalid DTT and not approved reg
+		$this->assertFalse( $r->can_checkin( $invalid_DTT_ID ) );
+	}
+
 }
 
 // End of file EE_Registration_Test.php
