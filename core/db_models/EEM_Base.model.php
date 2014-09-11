@@ -1010,7 +1010,7 @@ abstract class EEM_Base extends EE_Base{
 		//because level 2 indicates the database needs updating and
 		//is probably out of sync with the code
 		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
-			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
+			throw new EE_Error(sprintf(__("Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.", "event_espresso")));
 		}
 		global $wpdb;
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
