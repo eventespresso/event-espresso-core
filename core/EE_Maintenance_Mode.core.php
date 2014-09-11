@@ -79,6 +79,11 @@ class EE_Maintenance_Mode {
 		return self::$_instance;
 	}
 
+	public static function reset(){
+		$i = self::$_instance;
+		$i->set_maintenance_mode_if_db_old();
+	}
+
 
 
 	/**
