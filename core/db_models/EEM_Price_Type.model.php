@@ -80,10 +80,6 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-//		global $wpdb;
-		// set table name
-//		$this->table_name = $wpdb->prefix . 'esp_price_type';
-		// set item names
 		$this->base_types = array(
 			EEM_Price_Type::base_type_base_price => __('Price','event_espresso'),
 			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'),
