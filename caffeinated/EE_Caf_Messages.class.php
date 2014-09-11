@@ -324,6 +324,10 @@ class EE_Caf_Messages  {
 				$answers = !empty($recipient->registrations[$registration->ID()]['ans_objs']) ? $recipient->registrations[$registration->ID()]['ans_objs'] : array();
 				$question_list = '';
 				foreach ( $answers as $answer ) {
+					$question = $answer->question();
+					if ( $question instanceof EE_Question and $question->admin_only() ) {
+						continue;
+					}
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
@@ -366,6 +370,10 @@ class EE_Caf_Messages  {
 				$answers = $recipient->registrations[$registration->ID()]['ans_objs'];
 				$question_list = '';
 				foreach ( $answers as $answer ) {
+					$question = $answer->question();
+					if ( $question instanceof EE_Question and $question->admin_only() ) {
+						continue;
+					}
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
