@@ -55,6 +55,13 @@ class EE_Registration_Test extends EE_UnitTestCase{
 	function test_can_checkin() {
 		//setup a registration
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
+
+		$t = $this->new_ticket();
+
+		//let's assign the above ticket to our registration
+		$r->_add_relation_to( $t, 'Ticket' );
+		$r->save();
+
 		$d = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $r->get('TKT_ID') ) ) );
 		$this->assertInstanceOf( 'EE_Datetime_Ticket', $d );
 		$valid_DTT_ID = $d->get('DTT_ID');
