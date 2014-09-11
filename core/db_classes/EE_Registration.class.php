@@ -866,20 +866,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
 	 *
-	 * @param int $DTT_ID The datetime the registration is being checked against
+	 * @param mixe (int|EE_Datetime) $DTT_OR_DTTID The datetime the registration is being checked against
 	 *
 	 * @return bool
 	 */
-	public function can_checkin( $DTT_ID ) {
-		$DTT_ID = absint( $DTT_ID );
+	public function can_checkin( $DTT_OR_ID ) {
+		$DTT_ID = $this->get_model()->ensure_is_ID( $DTT_OR_ID );
 
 		//first check registration status
 		if ( ! $this->is_approved() ) {
 			return false;
 		}
 		//is there a datetime ticket that matches this dtt_ID?
-		$result = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
-		return $result instanceof EE_Datetime_Ticket;
+		return EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
 	}
 
 
