@@ -23,7 +23,6 @@
  */
 class EE_CPT_Event_Strategy {
 
-
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
 	 *	@var 	object
@@ -36,12 +35,14 @@ class EE_CPT_Event_Strategy {
 	/**
 	 *    class constructor
 	 *
-	 * @access    public
-	 * @param $CPT
-	 * @return \EE_CPT_Event_Strategy
+	 * @access 	public
+	 * @param 	array 	$arguments
+	 * @return 	\EE_CPT_Event_Strategy
 	 */
-	public function __construct( $CPT ) {
-		$this->CPT = $CPT;
+	public function __construct( $arguments = array() ) {
+		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
+		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
+
 		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 		// here's the list of available filters in the WP_Query object
 		// 'posts_where'
@@ -54,6 +55,9 @@ class EE_CPT_Event_Strategy {
 		// 'posts_fields'
 		// 'posts_join'
 		$this->_add_filters();
+		$WP_Query->is_espresso_event_single = is_single() ? TRUE : FALSE;
+		$WP_Query->is_espresso_event_archive = is_archive() ? TRUE : FALSE;
+
 	}
 
 
@@ -111,7 +115,8 @@ class EE_CPT_Event_Strategy {
 	 *
 	 * @access    public
 	 * @param          $SQL
-	 * @param WP_Query $WP_Query
+	 * @param WP_Query $wp_query
+	 * @internal  param \WP_Query $WP_Query
 	 * @return    string
 	 */
 	public function posts_join( $SQL, WP_Query $wp_query ) {
@@ -134,7 +139,7 @@ class EE_CPT_Event_Strategy {
 	 * @return    string
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
-		global $wpdb;
+//		global $wpdb;
 		return $SQL;
 	}
 
@@ -146,7 +151,7 @@ class EE_CPT_Event_Strategy {
 	 * @access    public
 	 * @param          $SQL
 	 * @param WP_Query $wp_query
-	 * @return    void
+	 * @return    string
 	 */
 	public function posts_groupby( $SQL, WP_Query $wp_query ) {
 		if ( isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {

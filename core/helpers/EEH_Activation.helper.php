@@ -1162,9 +1162,6 @@ class EEH_Activation {
 		}
 	}
 
-
-
-
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php

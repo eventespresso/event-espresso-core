@@ -14,12 +14,12 @@
 * ------------------------------------------------------------------------
 *
 * Pricing_Admin_Page_Init class
-* 
+*
 * This is the init for the EE Pricing Admin Pages.  See EE_Admin_Page_Init for method inline docs.
 *
 * @package			Event Espresso
 * @subpackage		includes/core/admin/pricing/Pricing_Admin_Page_Init.core.php
-* @author				Brent Christensen 
+* @author				Brent Christensen
 *
 * ------------------------------------------------------------------------
 */
@@ -34,18 +34,18 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() { 
-		
+	public function __construct() {
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		define( 'PRICING_PG_SLUG', 'pricing' );	
-		define( 'PRICING_LABEL', __('Pricing', 'event_espresso'));	
-		define( 'PRICING_PG_NAME', ucwords( str_replace( '_', '', PRICING_PG_SLUG )));	
-		define( 'PRICING_ADMIN', EE_CORE_CAF_ADMIN . 'new' . DS . PRICING_PG_SLUG . DS );	
-		define( 'PRICING_ADMIN_URL', admin_url( 'admin.php?page=' . PRICING_PG_SLUG ));	
-		define( 'PRICING_ASSETS_PATH', PRICING_ADMIN . 'assets' . DS );		
-		define( 'PRICING_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . PRICING_PG_SLUG .'/assets/' );	
-		define( 'PRICING_TEMPLATE_PATH', PRICING_ADMIN . 'templates' . DS );	
+		define( 'PRICING_PG_SLUG', 'pricing' );
+		define( 'PRICING_LABEL', __('Pricing', 'event_espresso'));
+		define( 'PRICING_PG_NAME', ucwords( str_replace( '_', '', PRICING_PG_SLUG )));
+		define( 'PRICING_ADMIN', EE_CORE_CAF_ADMIN . 'new' . DS . PRICING_PG_SLUG . DS );
+		define( 'PRICING_ADMIN_URL', admin_url( 'admin.php?page=' . PRICING_PG_SLUG ));
+		define( 'PRICING_ASSETS_PATH', PRICING_ADMIN . 'assets' . DS );
+		define( 'PRICING_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . PRICING_PG_SLUG .'/assets/' );
+		define( 'PRICING_TEMPLATE_PATH', PRICING_ADMIN . 'templates' . DS );
 		define( 'PRICING_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new' . DS . PRICING_PG_SLUG . DS . 'templates/' );
 
 		parent::__construct();
@@ -59,29 +59,22 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 	protected function _set_init_properties() {
 		$this->label = PRICING_LABEL;
-		$this->menu_label = PRICING_LABEL;
-		$this->menu_slug = PRICING_PG_SLUG;
-		$this->capability = 'administrator';
 	}
 
 
 
-	/**
-	*		sets vars in parent for creating admin menu entry
-	* 
-	*		@access 		public
-	*		@return 		void
-	*/	
-	public function get_menu_map() {
-		$map = array(
-			'group' => 'management',
+	protected function _set_menu_map() {
+		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
+			'menu_group' => 'management',
 			'menu_order' => 20,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'events'
-			);
-		return $map;
+			'parent_slug' => 'espresso_events',
+			'menu_slug' => PRICING_PG_SLUG,
+			'menu_label' => PRICING_LABEL,
+			'capability' => 'administrator',
+			'admin_init_page' => $this
+			));
 	}
 
-
-}	
+}
 // end of file:	includes/core/admin/pricing/Pricing_Admin_Page_Init.core.php

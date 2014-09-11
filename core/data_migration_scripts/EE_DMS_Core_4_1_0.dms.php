@@ -38,6 +38,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
+		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_1_0_org_options(),
 			new EE_DMS_4_1_0_shortcodes(),
@@ -76,7 +77,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
-//			echo "$version_string can be mgirated fro";
+//			echo "$version_string can be migrated fro";
 			return true;
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";

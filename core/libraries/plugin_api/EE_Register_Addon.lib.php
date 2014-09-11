@@ -44,16 +44,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * (so that we can detect that the addon has activated on the subsequent request)
 	 *
 	 * @since    4.3.0
+	 * @param array $setup_args
 	 * @throws EE_Error
-	 * @param string $addon_name 		the EE_Addon's name. Required.
+	 * @internal param string $addon_name 		the EE_Addon's name. Required.
 	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
-	 * @internal param string admin_path            full server path to the folder where the addon\'s admin files reside
+	 * @internal param string admin_path 			full server path to the folder where the addon\'s admin files reside
 	 * @internal param string main_file_path the full server path to the main file loaded directly by WP
-	 * @internal param string autoloader_paths    an array of class names and the full server paths to those files. Required.
-	 * @internal param string dms_paths                an array of full server paths to folders that contain data migration scripts. Required.
-	 * @internal param string module_paths        an array of full server paths to any EED_Modules used by the addon
-	 * @internal param string shortcode_paths    an array of full server paths to folders that contain EES_Shortcodes
-	 * @internal param string widgets                    an array of full server paths to folders that contain WP_Widgets
+	 * @internal param string autoloader_paths 	an array of class names and the full server paths to those files. Required.
+	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
+	 * @internal param string module_paths 		an array of full server paths to any EED_Modules used by the addon
+	 * @internal param string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
+	 * @internal param string widgets 					an array of full server paths to folders that contain WP_Widgets
 	 * @type array message_types {
 	 *       		 An array of message types with the key as the message type name and the values as below:
 	 *
@@ -85,6 +86,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( isset( self::$_settings[ $addon_name ] ) && ! did_action( 'activate_plugin' ) ) {
 			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
 		}
+
+
 		// no class name for addon?
 		if ( empty( $setup_args['class_name'] )) {
 			// generate one by first separating name with spaces
@@ -125,7 +128,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'shortcode_paths' 	=> isset( $setup_args['shortcode_paths'] ) ? (array)$setup_args['shortcode_paths'] : array(),
 			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
-			'message_type' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array()
+			// array of PUE options used by the addon
+			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
+			'message_types' => isset( $setup_args['message_types'] ) ? (array) $setup_args['message_types'] : array(),
 		);
 
 		//this is an activation request
@@ -192,9 +197,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
-			foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
-				EE_Register_Message_Type::register( $message_type, $message_type_settings );
-			}
+				add_action( 'EE_Brewing_Regular___messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
 
@@ -276,6 +279,23 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 
 	/**
+	 * Callback for EE_Brewing_Regular__messages_caf hook used to register message types.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return void
+	 */
+	public static function register_message_types() {
+		foreach ( self::$_settings as $addon_name => $settings ) {
+			foreach( $settings['message_types'] as $message_type => $message_type_settings ) {
+				EE_Register_Message_Type::register( $message_type, $message_type_settings );
+			}
+		}
+	}
+
+
+
+	/**
 	 * This deregisters an addon that was previously registered with a specific addon_name.
 	 *
 	 * @since    4.3.0
@@ -321,6 +341,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}
+
+
 
 }
 // End of file EE_Register_Addon.lib.php
