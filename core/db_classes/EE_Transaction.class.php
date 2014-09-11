@@ -393,7 +393,7 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the reciept
+	 * Gets the URL for viewing the receipt
 	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
@@ -517,7 +517,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @param array $query_params
 	 * @return EE_Line_Item[]
 	 */
-	public function line_items( $query_params ) {
+	public function line_items( $query_params = array() ) {
 		return $this->get_many_related( 'Line_Item', $query_params );
 	}
 

@@ -19,7 +19,7 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_end( $additional_args = array() ) {
-		return '</table>';
+		return EEH_Formatter::nl(-1) . '</table>';
 	}
 
 
@@ -30,16 +30,21 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_input( $input ) {
-		$html = EEH_Formatter::nl(1) . '<tr>';
-		$html .= EEH_Formatter::nl(1) . '<th>';
-		$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
-		$html .= EEH_Formatter::nl(-1) . '</th>';
-		$html .= EEH_Formatter::nl() . '<td>';
-		$html .= EEH_Formatter::nl(1) . $input->get_html_for_input() . '<br/>';
-		$html .= EEH_Formatter::nl() . $input->get_html_for_errors() . '<br/>';
-		$html .= EEH_Formatter::nl() . $input->get_html_for_help();
-		$html .= EEH_Formatter::nl(-1) . '</td>';
-		$html .= EEH_Formatter::nl(-1) . '</tr>' .  EEH_Formatter::nl(-1);
+		$html = '';
+		if ( $input instanceof EE_Hidden_Input ) {
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
+		} else {
+			$html .= EEH_Formatter::nl(1) . '<tr>';
+			$html .= EEH_Formatter::nl(1) . '<th>';
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
+			$html .= EEH_Formatter::nl(-1) . '</th>';
+			$html .= EEH_Formatter::nl() . '<td>';
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
+			$html .= EEH_Formatter::nl() . $input->get_html_for_errors()/* . '<br/>'*/;
+			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_Formatter::nl(-1) . '</td>';
+			$html .= EEH_Formatter::nl(-1) . '</tr>' .  EEH_Formatter::nl(-1);
+		}
 		return $html;
 	}
 
@@ -48,15 +53,23 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	/**
 	 * Lays out a row for the subsection
 	 * @param EE_Form_Section_Proper $form_section
-	 * @param array $additional_args
 	 * @return string
 	 */
 	public function layout_subsection( $form_section ){
-		$html = EEH_Formatter::nl(1) . '<tr>';
-		$html .= EEH_Formatter::nl(1) . '<td colspan=2>';
-		$html .= EEH_Formatter::nl(1) . $form_section->get_html_and_js();
-		$html .= EEH_Formatter::nl(-1) . '</td>';
-		$html .= EEH_Formatter::nl(-1) . '</tr>';
+		$html = '';
+		if ( $form_section instanceof EE_Form_Section_HTML ) {
+			$html .= EEH_Formatter::nl(1) . $form_section->get_html_and_js();
+		} else {
+			$html .= EEH_Formatter::nl(1) . '<tr>';
+			$html .= EEH_Formatter::nl(1) . '<td colspan=2>';
+			$html .= EEH_Formatter::nl(1) . $form_section->get_html_and_js();
+			$html .= EEH_Formatter::nl(-1) . '</td>';
+			$html .= EEH_Formatter::nl(-1) . '</tr>';
+
+		}
 		return $html;
 	}
+
+
+
 }

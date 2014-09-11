@@ -1,8 +1,16 @@
-<?php
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
+ *
+ * Class EE_Form_Input_Base
+ *
  * For representing a single form input. Extends EE_Form_Section_Base because
  * it is a part of a form and shares a surprisingly large amount of functionality
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -62,6 +70,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected $_required;
 
 	/**
+	 * css class added to required inputs
+	 * @var string
+	 */
+	protected $_required_css_class = 'ee-required';
+
+	/**
 	 * css styles applied to button type inputs
 	 * @var string
 	 */
@@ -110,14 +124,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * @param array $options_array {
+	 * @param array $input_args {
 	 *		@type string $html_name the html name for the input
 	 *		@type string $html_label_id the id attribute to give to the html label tag
-	 *		@type string $html_label_class the class attribut eto give to the html label tag
+	 *		@type string $html_label_class the class attribute to give to the html label tag
 	 *		@type string $html_label_style the style attribute to give ot teh label tag
 	 *		@type string $html_label_text the text to put in the label tag
 	 *		@type string $html_label the full html label. If used, all other html_label_* args are invalid
-	 *		@type string @html_help_text text to put in help element
+	 *		@type string $html_help_text text to put in help element
 	 *		@type string $html_help_style style attribute to give to teh help element
 	 *		@type string $html_help_class class attribute to give to the help element
 	 *		@type string $default default value NORMALIZED (eg, if providing the default for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
@@ -163,7 +177,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
-		
+
 		$this->_display_strategy->_construct_finalize($this);
 
 		if ( $this->_validation_strategies ){
@@ -198,7 +212,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
 				$this->_html_name = $this->_parent_section->html_name_prefix() . "[{$this->name()}]";
 			}else{
-				$this->_html_name = $this->name;
+				$this->_html_name = $this->name();
 			}
 		}
 	}
@@ -313,8 +327,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @param EE_Validation_Strategy_Base $validation_strategy
 	 * @return void
 	 */
-	protected function _add_validation_strategy(EE_Validation_Strategy_Base $validation_strategy){
-		$this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
+	protected function _add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ){
+		$this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
@@ -398,25 +412,26 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * Picks out the form value that relates to this form input,
 	 * and stores it as the sanitized value on the form input, and sets the normalized value.
 	 * Returns whether or not any validation errors occurred
+	 *
 	 * @param array $req_data like $_POST
 	 * @return boolean whether or not there was an error
 	 */
-	protected function _normalize($req_data) {
-		try{
-			$raw_input = $this->find_form_data_for_this_section($req_data);
+	protected function _normalize( $req_data ) {
+		try {
+			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
-			if(is_array($raw_input)){
+			if ( is_array( $raw_input )) {
 				$this->_raw_value = array();
-				foreach($raw_input as $key => $value){
-					$this->_raw_value[$key] = $this->_sanitize($value);
+				foreach( $raw_input as $key => $value ) {
+					$this->_raw_value[ $key ] = $this->_sanitize( $value );
 				}
-			}else{
-				$this->_raw_value = $this->_sanitize($raw_input);
+			} else {
+				$this->_raw_value = $this->_sanitize( $raw_input );
 			}
 			//we want ot mostly leave the input alone in case we need to re-display it to the user
-			$this->_normalized_value = $this->_normalization_strategy->normalize($this->raw_value());
-		}catch(EE_Validation_Error $e){
-			$this->add_validation_error($e);
+			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
+		} catch ( EE_Validation_Error $e ) {
+			$this->add_validation_error( $e );
 		}
 	}
 
@@ -435,7 +450,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	function html_label_id(){
-		return $this->_html_label_id;
+		return ! empty( $this->_html_label_id ) ? $this->_html_label_id : $this->_html_id . '-lbl';
 	}
 
 
@@ -557,7 +572,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	function set_default($value){
 		$this->_normalized_value = $value;
-		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );;
+		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );
 	}
 
 	/**
@@ -588,6 +603,27 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function required(){
 		return $this->_required;
 	}
+
+
+
+	/**
+	 * @param string $required_css_class
+	 */
+	public function set_required_css_class( $required_css_class ) {
+		$this->_required_css_class = $required_css_class;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function required_css_class() {
+		return $this->_required_css_class;
+	}
+
+
+
 	/**
 	 * Sets the help text, in case
 	 * @param string $text
@@ -643,7 +679,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			default :
 				$button_css_attributes .= '';
 		}
-		$this->_button_css_attributes = $button_css_attributes . ' ' . $other_attributes;
+		$this->_button_css_attributes .= ! empty( $other_attributes ) ? $button_css_attributes . ' ' . $other_attributes : $button_css_attributes;
 	}
 
 
@@ -661,24 +697,33 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * find_form_data_for_this_section
+	 *
 	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
 	 * For example, if this form section's HTML name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
 	 * at $_REQUEST['my_form']['subform']['form_input_1']. (If that doesn't exist, we also check for this subsection's name
 	 * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
 	 * This function finds its value in the form.
+	 *
+	 * @param array $req_data
 	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
-	public function find_form_data_for_this_section($req_data){
-		//break up the html name by "[]"
-		$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
-		$success = preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
-
+	public function find_form_data_for_this_section( $req_data ){
+		// break up the html name by "[]"
+		if ( strpos( $this->html_name(), '[' ) !== FALSE ) {
+			$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
+		} else {
+			$before_any_brackets = $this->html_name();
+		}
+		// grab all of the segments
+		preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
 		if( isset( $matches[ 1 ] ) && is_array( $matches[ 1 ] ) ){
 			$name_parts = $matches[ 1 ];
 			array_unshift($name_parts, $before_any_brackets);
 		}else{
 			$name_parts = array( $before_any_brackets );
 		}
+		// now get the value for the input
 		$value = $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
 		if( $value === NULL ){
 			//check if this thing's name is at the TOP level of the request data
@@ -689,11 +734,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		return $value;
 	}
 
+
+
 	/**
 	 *
-	 * @param type $html_name_parts
-	 * @param type $req_data
-	 * @return boolean
+	 * @param array $html_name_parts
+	 * @param array $req_data
+	 * @return array | NULL
 	 */
 	public function _find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data){
 		$first_part_to_consider = array_shift( $html_name_parts );
@@ -707,6 +754,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return NULL;
 		}
 	}
+
+
+
 	/**
 	 * Checks if this form input's data is in the request data
 	 * @param array $req_data like $_POST

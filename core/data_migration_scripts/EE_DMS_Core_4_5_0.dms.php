@@ -29,8 +29,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.5.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
-			new EE_DMS_4_5_0_gateways(),
-			new EE_DMS_4_5_0_payment_method_currencies(),
 			new EE_DMS_4_5_0_update_wp_user_for_tickets(),
 			new EE_DMS_4_5_0_update_wp_user_for_prices(),
 			new EE_DMS_4_5_0_update_wp_user_for_price_types(),
@@ -104,25 +102,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  CNT_active tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
-
-		$table_name = 'esp_currency';
-		$sql = "CUR_code varchar(6) COLLATE utf8_bin NOT NULL,
-				CUR_single varchar(45) COLLATE utf8_bin DEFAULT 'dollar',
-				CUR_plural varchar(45) COLLATE utf8_bin DEFAULT 'dollars',
-				CUR_sign varchar(45) COLLATE utf8_bin DEFAULT '$',
-				CUR_dec_plc varchar(1) COLLATE utf8_bin NOT NULL DEFAULT '2',
-				CUR_active tinyint(1) DEFAULT '0',
-				PRIMARY KEY  (CUR_code)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
-
-
-		$table_name = 'esp_currency_payment_method';
-		$sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code  varchar(6) COLLATE utf8_bin NOT NULL,
-				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-
 
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -280,24 +259,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					KEY PAY_timestamp (PAY_timestamp)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
 
-		$table_name = 'esp_payment_method';
-		$sql = "PMD_ID int(11) NOT NULL AUTO_INCREMENT,
-				PMD_type varchar(124) DEFAULT NULL,
-				PMD_name varchar(255) DEFAULT NULL,
-				PMD_desc text,
-				PMD_admin_name varchar(255) DEFAULT NULL,
-				PMD_admin_desc text,
-				PMD_slug varchar(124) DEFAULT NULL,
-				PMD_order int(11) DEFAULT NULL,
-				PRC_ID int(11) DEFAULT NULL,
-				PMD_debug_mode tinyint(1) NOT NULL DEFAULT '0',
-				PMD_wp_user_id int(11) NOT NULL DEFAULT '0',
-				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
-				PMD_button_url varchar(1012) DEFAULT NULL,
-				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
-				PRIMARY KEY  (PMD_ID),
-				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = "esp_ticket_price";
@@ -550,8 +511,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
-		$this->add_default_admin_only_payments();
-		$this->insert_default_currencies();
 		return true;
 	}
 	/**
@@ -565,239 +524,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 	}
 
-	public function add_default_admin_only_payments(){
-		global $wpdb, $current_user;
-		$table_name = $wpdb->prefix."esp_payment_method";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
-
-			$SQL = "SELECT COUNT( * ) FROM " . $table_name;
-			$existing_payment_methods = $wpdb->get_var($SQL);
-			if ( ! $existing_payment_methods ) {
-				//make sure we hae payment method records for the following
-				//so admins can record payments for them from the admin page
-				$default_admin_only_payment_methods = array(
-					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
-					__("Cash", 'event_espresso')=>  __("Cash Deliverd Physically", 'event_espresso'),
-					__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
-					__("Credit Card", 'event_espresso') =>  __("Offline Credit Card Payment", 'event_espresso'),
-					__("Debit Card", 'event_espresso')=>  __("Offline Debit Payment", 'event_espresso'),
-					__("Invoice", 'event_espresso')=>  __("Invoice received with monies included", 'event_espresso'),
-					__("Money Order", 'event_espresso')=>'',
-					__("Paypal", 'event_espresso')=>  __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-				);
-
-				foreach($default_admin_only_payment_methods as $nicename => $description){
-					$slug = sanitize_key($nicename);
-				//check that such a payment method exists
-					$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
-					if( ! $exists){
-						$values = array(
-									'PMD_type'=>'Admin_Only',
-									'PMD_name'=>$nicename,
-									'PMD_admin_name'=>$nicename,
-									'PMD_admin_desc'=>$description,
-									'PMD_slug'=>$slug,
-									'PMD_wp_user_id'=>$current_user->ID,
-									'PMD_scope'=>serialize(array('ADMIN')),
-								);
-						$success = $wpdb->insert(
-								$table_name,
-								$values,
-								array(
-									'%s',//PMD_type
-									'%s',//PMD_name
-									'%s',//PMD_admin_name
-									'%s',//PMD_admin_desc
-									'%s',//PMD_slug
-									'%d',//PMD_wp_user_id
-									'%s',//PMD_scope
-								)
-								);
-						if( ! $success ){
-							$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
-						}
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * insert_default_countries
-	 *
-	 * 	@static
-	 * 	@return void
-	 */
-	public function insert_default_currencies() {
-
-		global $wpdb;
-		$currency_table = $wpdb->prefix."esp_currency";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
-
-			$SQL = "SELECT COUNT('CUR_code') FROM " . $currency_table;
-			$countries = $wpdb->get_var($SQL);
-			if ( ! $countries ) {
-				$SQL = "INSERT INTO " . $currency_table . "
-				( CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active) VALUES
-				( 'EUR',  'Euro',  'Euros',  '€',  2,1),
-				( 'AED',  'Dirham',  'Dirhams', 'د.إ',2,1),
-				( 'AFN',  'Afghani',  'Afghanis',  '؋', 2, 1),
-				( 'XCD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'ALL',  'Lek',  'Leks',  'Lek',  2,1),
-				( 'AMD',  'Dram',  'Dram',  'Դրամ',  2,1),
-				( 'ANG',  'Guilder',  'Guilders',  'ƒ',  2,1),
-				( 'AOA',  'Kwanza',  'Kwanzas',  '',  2,1),
-				( 'ARS',  'Peso',  'Pesos',  '$',  2,1),
-				( 'USD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'AUD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'AWG',  'Guilder',  'Guilders',  'ƒ',  2,1),
-				( 'BAM',  'Marka',  'Markas',  'KM',  2,1),
-				( 'BBD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'BDT',  'Taka',  'Takas',  '৳',  2,1),
-				( 'XOF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'BGN',  'Lev',  'Levs',  'лв',  2,1),
-				( 'BHD',  'Dinar',  'Dinars',  '',  3,1),
-				( 'BIF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'BMD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'BND',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'BOB',  'Boliviano',  'Bolivianos',  '\$b',  2,1),
-				( 'BRL',  'Real',  'Reals',  'R$',  2,1),
-				( 'BSD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'BTN',  'Ngultrum',  'Ngultrums',  '',  2,1),
-				( 'BWP',  'Pula',  'Pulas',  'P',  2,1),
-				( 'BYR',  'Ruble',  'Rubles',  'p.',  0,1),
-				( 'BZD',  'Dollar',  'Dollars',  'BZ$',  2,1),
-				( 'CAD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'CDF',  'Franc',  'Francs',  '₣',  2,1),
-				( 'XAF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'CHF',  'Franc',  'Francs',  '₣',  2,1),
-				( 'NZD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'CLP',  'Peso',  'Pesos',  '$',  0,1),
-				( 'CNY',  'Yuan Renminbi',  'Yuan Renminbis',  '¥',  2,1),
-				( 'COP',  'Peso',  'Pesos',  '$',  2,1),
-				( 'CRC',  'Colon',  'Colons',  '₡',  2,1),
-				( 'CUP',  'Peso',  'Pesos',  '₱',  2,1),
-				( 'CVE',  'Escudo',  'Escudos',  '',  2,1),
-				( 'CZK',  'Koruna',  'Korunas',  'Kč',  2,1),
-				( 'DJF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'DKK',  'Krone',  'Kroner',  'kr',  2,1),
-				( 'DOP',  'Peso',  'Pesos',  'RD$',  2,1),
-				( 'DZD',  'Dinar',  'Dinars',  '',  3,1),
-				( 'EGP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'MAD',  'Dirham',  'Dirhams',  '',  2,1),
-				( 'ERN',  'Nakfa',  'Nakfas',  '',  2,1),
-				( 'ETB',  'Birr',  'Birrs',  '',  2,1),
-				( 'FJD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'FKP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'GBP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'RUB',  'Ruble',  'Rubles',  'руб',  2,1),
-				( 'GHS',  'Cedi',  'Cedis',  '',  2,1),
-				( 'GIP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'GMD',  'Dalasi',  'Dalasis',  '',  2,1),
-				( 'GNF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'GTQ',  'Quetzal',  'Quetzals',  'Q',  2,1),
-				( 'GYD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'HKD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'HNL',  'Lempira',  'Lempiras',  'L',  2,1),
-				( 'HRK',  'Kuna',  'Kunas',  'kn',  2,1),
-				( 'HTG',  'Gourde',  'Gourdes',  '',  2,1),
-				( 'HUF',  'Forint',  'Forints',  'Ft',  2,1),
-				( 'IDR',  'Rupiah',  'Rupiahs',  'Rp',  2,1),
-				( 'ILS',  'Shekel',  'Shekels',  '₪',  2,1),
-				( 'INR',  'Rupee',  'Rupees',  '$',  2,1),
-				( 'IQD',  'Dinar',  'Dinars',  'د.ع',  3,1),
-				( 'IRR',  'Rial',  'Rials',  '﷼',  2,1),
-				( 'ISK',  'Króna',  'krónur',  'kr',  0,1),
-				( 'JMD',  'Dollar',  'Dollars',  'J$',  2,1),
-				( 'JOD',  'Dinar',  'Dinars',  '',  3,1),
-				( 'JPY',  'Yen',  'Yens',  '¥',  0,1),
-				( 'KES',  'Shilling',  'Shillings',  'S',  2,1),
-				( 'KGS',  'Som',  'Soms',  'лв',  2,1),
-				( 'KHR',  'Riels',  'Rielss',  '៛',  2,1),
-				( 'KMF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'KPW',  'Won',  'Wons',  '₩',  2,1),
-				( 'KRW',  'Won',  'Wons',  '₩',  0,1),
-				( 'KWD',  'Dinar',  'Dinars',  '',  3,1),
-				( 'KYD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'KZT',  'Tenge',  'Tenges',  'лв',  2,1),
-				( 'LAK',  'Kip',  'Kips',  '₭',  2,1),
-				( 'LBP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'LKR',  'Rupee',  'Rupees',  '₨',  2,1),
-				( 'LRD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'LSL',  'Loti',  'Lotis',  '',  2,1),
-				( 'LTL',  'Litas',  'Litass',  'Lt',  2,1),
-				( 'LYD',  'Dinar',  'Dinars',  '',  3,1),
-				( 'MDL',  'Leu',  'Leus',  '',  2,1),
-				( 'MGA',  'Ariary',  'Ariarys',  '',  2,1),
-				( 'MKD',  'Denar',  'Denars',  'ден',  2,1),
-				( 'MMK',  'Kyat',  'Kyats',  '',  2,1),
-				( 'MNT',  'Tugrik',  'Tugriks',  '₮',  2,1),
-				( 'MOP',  'Pataca',  'Patacas',  '',  2,1),
-				( 'MRO',  'Ouguiya',  'Ouguiyas',  '',  2,1),
-				( 'MUR',  'Rupee',  'Rupees',  '₨',  2,1),
-				( 'MVR',  'Rufiyaa',  'Rufiyaas',  '',  2,1),
-				( 'MWK',  'Kwacha',  'Kwachas',  '',  2,1),
-				( 'MXN',  'Peso',  'Pesos',  '$',  2,1),
-				( 'MYR',  'Ringgit',  'Ringgits',  'RM',  2,1),
-				( 'MZM',  'Meticail',  'Meticails',  '',  2,1),
-				( 'NAD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'XPF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'NGN',  'Naira',  'Nairas',  '₦',  2,1),
-				( 'NIO',  'Cordoba',  'Cordobas',  'C$',  2,1),
-				( 'NOK',  'Krone',  'Krones',  'kr',  2,1),
-				( 'NPR',  'Rupee',  'Rupees',  '₨',  2,1),
-				( 'OMR',  'Rial',  'Rials',  '﷼',  3,1),
-				( 'PAB',  'Balboa',  'Balboas',  'B/.',  2,1),
-				( 'PEN',  'Sol',  'Sols',  'S/.',  2,1),
-				( 'PGK',  'Kina',  'Kinas',  '',  2,1),
-				( 'PHP',  'Peso',  'Pesos',  '₱',  2,1),
-				( 'PKR',  'Rupee',  'Rupees',  '₨',  2,1),
-				( 'PLN',  'Zloty',  'Zlotys',  'zł',  2,1),
-				( 'PYG',  'Guarani',  'Guaranis',  'Gs',  0,1),
-				( 'QAR',  'Rial',  'Rials',  '﷼',  2,1),
-				( 'RON',  'Leu',  'Leus',  'lei',  2,1),
-				( 'RWF',  'Franc',  'Francs',  '₣',  0,1),
-				( 'SAR',  'Rial',  'Rials',  '﷼',  2,1),
-				( 'SBD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'SCR',  'Rupee',  'Rupees',  '₨',  2,1),
-				( 'SDG',  'Pound',  'Pounds',  '',  2,1),
-				( 'SEK',  'Krona',  'Kronor',  'kr',  2,1),
-				( 'SGD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'SHP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'SLL',  'Leone',  'Leones',  '',  2,1),
-				( 'SOS',  'Shilling',  'Shillings',  'S',  2,1),
-				( 'SRD',  'Dollar',  'Dollars',  '$',  2,1),
-				( 'STD',  'Dobra',  'Dobras',  '',  2,1),
-				( 'SYP',  'Pound',  'Pounds',  '£',  2,1),
-				( 'SZL',  'Lilangeni',  'Lilangenis',  '',  2,1),
-				( 'THB',  'Baht',  'Bahts',  '฿',  2,1),
-				( 'TJS',  'Somoni',  'Somonis',  '',  2,1),
-				( 'TMM',  'Manat',  'Manats',  '',  2,1),
-				( 'TND',  'Dinar',  'Dinars',  '',  3,1),
-				( 'TOP',  'Pa''anga',  'Pa''angas',  '',  2,1),
-				( 'TRY',  'Lira',  'Liras',  '$',  2,1),
-				( 'TTD',  'Dollar',  'Dollars',  'TT$',  2,1),
-				( 'TWD',  'Dollar',  'Dollars',  'NT$',  2,1),
-				( 'TZS',  'Shilling',  'Shillings',  'S',  2,1),
-				( 'UAH',  'Hryvnia',  'Hryvnias',  '₴',  2,1),
-				( 'UGX',  'Shilling',  'Shillings',  'S',  2,1),
-				( 'UYU',  'Peso',  'Pesos',  '\$U',  2,1),
-				( 'UZS',  'Som',  'Soms',  'лв',  2,1),
-				( 'VEB',  'Bolivar',  'Bolivars',  '',  2,1),
-				( 'VND',  'Dong',  'Dongs',  '₫',  2,1),
-				( 'VUV',  'Vatu',  'Vatus',  '',  0,1),
-				( 'WST',  'Tala',  'Talas ',  '',  2,1),
-				( 'YER',  'Rial',  'Rials',  '﷼',  2,1),
-				( 'ZAR',  'Rand',  'Rands',  'R',  2,1),
-				( 'ZMK',  'Kwacha',  'Kwachas',  '',  2,1),
-				( 'ZWD', 'Dollar', 'Dollars', 'Z$', 2,1);";
-				$wpdb->query($SQL);
-			}
-
-		}
-
-	}
 	/**
 	 * Determines which user id as the default creator for EE model objects which
 	 * are getting migrated. Filterable

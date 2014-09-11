@@ -2,22 +2,6 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
-
-/**
  * EE_Registration class
  *
  * @package 			Event Espresso
@@ -462,43 +446,33 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/receipt_body.template.php';
-		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
-
-		if ( $has_custom ) {
+		EE_Registry::instance()->load_helper( 'Template' );
+		// check if custom template exists
+		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/receipt_body.template.php' , array(), FALSE, FALSE, TRUE )) {
 			return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( 'launch' ) );
 		}
-
-
 		EE_Registry::instance()->load_helper('MSG_Template');
-
 		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?)
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
 			'MTP_message_type' => 'receipt',
-			);
-
-		//get global template first as the fallback
-		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-		//get evt_id from this registration obj
-		$template_qa['Event.EVT_ID'] = $this->event_ID();
-
+			'Event.EVT_ID' => $this->event_ID()
+		);
 		//get the message template group.
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
-
-		//if we don't have a $mtpg then return
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		// check instanceof
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+			// get global template as the fallback
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+		}
+		// if we STILL don't have an EE_Message_Template_Group, then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 			return '';
 		}
-
 		//validate $type
 		$type = $type == 'pdf' ? $type : 'html';
-
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $mtpg->ID(), $this->transaction_ID() );
+		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $msg_template_group->ID(), $this->transaction_ID() );
 	}
 
 
@@ -516,51 +490,40 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/invoice_body.template.php';
-		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
-
-		if ( $has_custom ) {
+		// check for custom template
+		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/invoice_body.template.php' , array(), FALSE, FALSE, TRUE ) ) {
 			if ( $type == 'html' ) {
 				return $this->invoice_url( 'launch' );
 			}
 			$route = $type == 'download' || $type == 'pdf' ? 'download_invoice' : 'launch_invoice';
-
 			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
 			if ( $type == 'html' ) {
 				$query_args['html'] = TRUE;
 			}
 			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
 		}
-
-
 		EE_Registry::instance()->load_helper('MSG_Template');
-
 		//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
 			'MTP_message_type' => 'invoice',
-			);
-
-		//get global template first as the fallback
-		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-		//get evt_id from this registration obj
-		$template_qa['Event.EVT_ID'] = $this->event_ID();
-
+			'Event.EVT_ID' => $this->event_ID()
+		);
 		//get the message template group.
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
-
-		//if we don't have a $mtpg then return
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		//if we don't have an EE_Message_Template_Group then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+			//get global template as the fallback
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
+		}
+		//if we don't have an EE_Message_Template_Group then return
+		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 			return '';
 		}
-
 		//validate $type
 		$type = $type == 'pdf' ? $type : 'html';
-
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'invoice', $this, $mtpg->ID(), $this->transaction_ID() );
+		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'invoice', $this, $msg_template_group->ID(), $this->transaction_ID() );
 	}
 
 
@@ -601,7 +564,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url() {
-		return add_query_arg( array( 'ee' => '_register', 'e_reg_url_link' => $this->reg_url_link(), 'step' => 'payment_options', 'revisit' => TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) );
+		return add_query_arg( array( 'e_reg_url_link' => $this->reg_url_link(), 'step' => 'payment_options', 'revisit' => TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) );
 	}
 
 
@@ -612,7 +575,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function edit_attendee_information_url() {
-		return add_query_arg( array( 'ee' => '_register', 'e_reg_url_link' => $this->reg_url_link(), 'step' => 'attendee_information', 'revisit' => TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) );
+		return add_query_arg( array( 'e_reg_url_link' => $this->reg_url_link(), 'step' => 'attendee_information', 'revisit' => TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) );
 	}
 
 
@@ -864,6 +827,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
+	 *
+	 * @param int $DTT_ID The datetime the registration is being checked against
+	 *
+	 * @return bool
+	 */
+	public function can_checkin( $DTT_ID ) {
+		$DTT_ID = absint( $DTT_ID );
+
+		//first check registration status
+		if ( ! $this->is_approved() ) {
+			return false;
+		}
+		//is there a datetime ticket that matches this dtt_ID?
+		$result = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
+		return $result instanceof EE_Datetime_Ticket;
+	}
+
+
+
+	/**
 	 * toggle Check-in status for this registration
 	 *
 	 * Check-ins are toggled in the following order:
@@ -877,6 +861,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( ! $this->can_checkin( $DTT_ID ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return FALSE;
 		}
 		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
 		//start by getting the current status so we know what status we'll be changing to.
@@ -918,6 +906,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return 0;
 			}
 			$DTT_ID = $datetime->ID();
+		//verify the registration can checkin for the given DTT_ID
+		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return FALSE;
 		}
 		//get checkin object (if exists)
 		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
@@ -1067,6 +1059,30 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function set_reg_code( $REG_code = '' ) {
 		$this->set( 'REG_code', $REG_code );
+	}
+
+
+
+
+	/**
+	 * Returns all other registrations in the same group as this registrant.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_Registration[]  or empty array if this isn't a group registration.
+	 */
+	public function get_all_other_registrations_in_group() {
+		if ( $this->group_size() < 2 ) {
+			return array();
+		}
+
+		$query[0] = array(
+			'TXN_ID' => $this->transaction_ID(),
+			'REG_ID' => array( '!=', $this->ID() )
+			);
+
+		$registrations = $this->get_model()->get_all( $query );
+		return $registrations;
 	}
 }
 /* End of file EE_Registration.class.php */

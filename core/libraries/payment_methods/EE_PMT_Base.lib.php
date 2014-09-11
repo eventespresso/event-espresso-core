@@ -25,44 +25,59 @@ abstract class EE_PMT_Base{
 	 * @var EE_Payment_Method
 	 */
 	protected $_pm_instance = NULL;
+
 	/**
 	 **
 	 * @var boolean
 	 */
 	protected $_requires_https = FALSE;
-	/** @var EE_Gateway */
+
+	/**
+	 * @var EE_Gateway
+	 */
 	protected $_gateway = NULL;
+
 	/**
 	 * @var EE_Payment_Method_Form
 	 */
 	protected $_settings_form = NULL;
+
 	/**
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_billing_form = NULL;
+
 	/**
 	 * String of the absolute path to the folder containing this file, with a trailing slash.
 	 * eg '/public_html/wp-site/wp-content/plugins/event-espresso/payment_methods/Invoice/'
 	 * @var string
 	 */
 	protected $_file_folder = NULL;
+
 	/**
 	 * String to the absolute URL to this file (useful for getting its web-accessible resources
 	 * like images, js, or css)
 	 * @var string
 	 */
 	protected $_file_url = NULL;
+
 	/**
 	 * Pretty name for the payment method
 	 * @var string
 	 */
 	protected $_pretty_name = NULL;
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $_default_button_url = NULL;
 
+	/**
+	 *
+	 * @var string
+	 */
+	protected $_default_description = NULL;
 
 
 	/**
@@ -80,8 +95,8 @@ abstract class EE_PMT_Base{
 		if($this->_gateway){
 			$this->_gateway->set_payment_model(EEM_Payment::instance());
 			$this->_gateway->set_payment_log(EEM_Log::instance());
-			EE_Registry::instance()->load_helper('Template');
-			$this->_gateway->set_template_helper(new EEH_Template());
+			EE_Registry::instance()->load_helper( 'Template' );
+			$this->_gateway->set_template_helper( new EEH_Template() );
 			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
 		}
@@ -117,10 +132,18 @@ abstract class EE_PMT_Base{
 		$this->_file_url = $file_path;
 	}
 
+	/**
+	 * Gets the default description on all payment methods of this type
+	 * @return string
+	 */
+	public function default_description(){
+		return $this->_default_description;
+	}
+
 
 
 	/**
-	 * Returns the folder containing the PMT child class, witha trailing slash
+	 * Returns the folder containing the PMT child class, with a trailing slash
 	 * @return string
 	 */
 	public function file_folder(){
@@ -145,7 +168,7 @@ abstract class EE_PMT_Base{
 	 */
 	function set_instance($payment_method_instance){
 		$this->_pm_instance = $payment_method_instance;
-		//if they have already requeste dthe settings form, make sure its
+		//if they have already requested the settings form, make sure its
 		//data matches this model object
 		if($this->_settings_form){
 			$this->settings_form()->populate_model_obj($payment_method_instance);
@@ -164,6 +187,8 @@ abstract class EE_PMT_Base{
 	function settings_form(){
 		if( ! $this->_settings_form){
 			$this->_settings_form = $this->generate_new_settings_form();
+			$this->_settings_form->set_payment_method_type( $this );
+			$this->_settings_form->_construct_finalize(NULL, NULL );
 			//if we have already assigned a model object to this pmt, make
 			//sure its reflected in teh form we just generated
 			if($this->_pm_instance){
@@ -180,6 +205,9 @@ abstract class EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	abstract function generate_new_settings_form();
+
+
+
 
 
 
@@ -288,19 +316,32 @@ abstract class EE_PMT_Base{
 			}else{
 				$billing_values = NULL;
 			}
-			if($this->_gateway instanceof EE_Offsite_Gateway){
-				$core_config = EE_Config::instance()->core;
-
-				$payment = $this->_gateway->set_redirection_info($payment,$billing_values,$return_url,
-						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'ee_payment_method'=>$this->_pm_instance->slug())),
-						$core_config->cancel_page_url());
-			}elseif($this->_gateway instanceof EE_Onsite_Gateway){
+			if( $this->_gateway instanceof EE_Offsite_Gateway ){
+				$payment = $this->_gateway->set_redirection_info(
+					$payment,
+					$billing_values,
+					$return_url,
+					EE_Config::instance()->core->txn_page_url(
+						array(
+							'e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),
+							'ee_payment_method'=>$this->_pm_instance->slug()
+						)
+					),
+					EE_Config::instance()->core->cancel_page_url()
+				);
+			} elseif ( $this->_gateway instanceof EE_Onsite_Gateway ) {
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_values);
 				$payment->save();
 				$transaction->update_based_on_payments();//also saves transaction
 				$transaction->finalize();
 			}else{
-				throw new EE_Error(sprintf(__("Gateway for payment method type '%s' is '%s', not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)", "event_espresso"),get_class($this), gettype( $this->_gateway ) ) );
+				throw new EE_Error(
+					sprintf(
+						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)', 'event_espresso' ),
+						get_class($this),
+						gettype( $this->_gateway )
+					)
+				);
 			}
 		}else{//no gateway provided
 			//so create no payment. The payment processor will know how to handle this
@@ -328,7 +369,7 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"), print_r( $this->_gateway, TRUE )));
 
 		}
-		$payment = $this->_gateway->handle_payment_update($req_data,$transaction);
+		$payment = $this->_gateway->handle_payment_update( $req_data, $transaction );
 		return $payment;
 	}
 
@@ -365,11 +406,11 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the payment this IPN is for. Children may often want to
 	 * override this to inspect the request
-	 * @param array $req_data
 	 * @param EE_Transaction $transaction
+	 * @param array $req_data
 	 * @return EE_Payment
 	 */
-	protected function find_payment_for_ipn($req_data,$transaction){
+	protected function find_payment_for_ipn( EE_Transaction $transaction, $req_data = array() ){
 		return $transaction->last_payment();
 	}
 
@@ -386,8 +427,8 @@ abstract class EE_PMT_Base{
 	 * and identifies the IPN as being for this payment method (not just fo ra payment method of this type)
 	 * @throws EE_Error
 	 */
-	public function handle_unclaimed_ipn($req_data){
-		throw new EE_Error(sprintf(__("Payment Method '%s' cannot handle unclaimed ipns", "event_espresso"),get_class($this)));
+	public function handle_unclaimed_ipn( $req_data = array() ){
+		throw new EE_Error(sprintf(__("Payment Method '%s' cannot handle unclaimed IPNs", "event_espresso"), get_class($this) ));
 	}
 
 

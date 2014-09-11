@@ -1,11 +1,27 @@
-<?php
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+/**
+ *
+ * Class EE_Radio_Button_Input
+ *
+ * configures a set of radio button inputs
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson, Brent Christensen
+ * @since 				$VID:$
+ *
+ */
 class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base{
 
-	function __construct( $radio_options, $options ){
-		$this->_set_display_strategy( new EE_Radio_Button_Display_Strategy( $radio_options ) );
+	/**
+	 * @param array $answer_options
+	 * @param array $input_settings
+	 */
+	function __construct( $answer_options, $input_settings ){
+		$this->_set_display_strategy( new EE_Radio_Button_Display_Strategy() );
 		$this->_add_validation_strategy( new EE_Enum_Validation_Strategy() );
-		parent::__construct( $radio_options, $options );
+		$this->_multiple_selections = TRUE;
+		parent::__construct( $answer_options, $input_settings );
 	}
 
 }

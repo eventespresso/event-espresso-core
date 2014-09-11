@@ -91,7 +91,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 
 	/**
 	 * Sanitizes input for this form section
-	 * @param $req_data is the full request data like $_POST
+	 * @param array $req_data is the full request data like $_POST
 	 * @return boolean of whether a normalization error occurred
 	 */
 	abstract protected function _normalize($req_data);

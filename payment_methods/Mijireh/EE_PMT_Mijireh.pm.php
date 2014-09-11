@@ -30,6 +30,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_Mijireh.gateway.php');
 		$this->_gateway = new EEG_Mijireh();
 		$this->_pretty_name = __("Mijireh", 'event_espresso');
+		$this->_default_description = __( 'After clicking "Finalize Registration", you will be able to enter your billing information and complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url() . 'lib' . DS . 'mijireh-checkout-logo.png';
 	}
@@ -61,16 +62,22 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	public function generate_new_billing_form() {
 		return NULL;
 	}
+
+
+
 	/**
 	 *
 	 * mijireh doesn't send an IPN in the usual sense
 	 * they just send the user back to our thank you page
 	 * and then we need to directly query them for the payment's status
 	 * @param EE_Transaction $transaction
+	 * @return \EE_Payment
 	 */
 	public function finalize_payment_for($transaction) {
 		return $this->handle_ipn($_REQUEST, $transaction);
 	}
-}
 
+
+
+}
 // End of file EE_PMT_Mijireh.pm.php

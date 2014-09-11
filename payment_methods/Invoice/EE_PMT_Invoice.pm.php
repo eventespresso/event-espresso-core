@@ -28,6 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_PMT_Invoice extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Invoice", 'event_espresso');
+		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
 	}
@@ -54,6 +55,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$pdf_stylesheet_input_name = 'pdf_stylesheet';
 		$show_on_page_name = 'show_on_page';
 		$form =  new EE_Payment_Method_Form(array(
+//				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
 					$pdf_stylesheet_input_name=>new EE_Select_Input(array('simple.css'), array(
 						'html_label_text'=>  sprintf(__("PDF Stylesheet %s", "event_espresso"),  $this->get_help_tab_link()),
@@ -98,6 +100,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$show_on_page_name);
 		return $form;
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
@@ -111,6 +116,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						),
 		);
 	}
+
+
+
  /**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -136,6 +144,8 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				$template_vars,
 				true);
 	}
-}
 
+
+
+}
 // End of file EE_PMT_Invoice.pm.php

@@ -692,11 +692,11 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	_reset_notices
+	*	reset_notices
 	*	@access private
 	*	@return void
 	*/
-    private static function _reset_notices(){
+	public static function reset_notices(){
     	self::$_espresso_notices['success'] = FALSE;
     	self::$_espresso_notices['attention'] = FALSE;
     	self::$_espresso_notices['errors'] = FALSE;
@@ -798,7 +798,7 @@ class EE_Error extends Exception {
 
 			if ($attention_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-				$css_class = is_admin() ? 'updated' : 'attention fade-away';
+				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
@@ -959,14 +959,13 @@ class EE_Error extends Exception {
 
 
 
-
-
 	/**
-	* 	_print_scripts
-	*
-	*	@access public
-	* 	@return 		void
-	*/
+	 *    _print_scripts
+	 *
+	 * @access 	public
+	 * @param 	bool $force_print
+	 * @return 	void
+	 */
 	private static function _print_scripts( $force_print = FALSE ) {
 		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
@@ -1060,37 +1059,21 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		$exception_log_file = str_replace( '\\', '/', EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' ) . self::$_exception_log_file;
-
-		if ( is_writable( EVENT_ESPRESSO_UPLOAD_DIR.'logs' ) && ! file_exists( $exception_log_file )) {
-			touch( $exception_log_file );
-			self::add_htaccess();
+		EE_Registry::instance()->load_helper( 'File' );
+		try {
+			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
+			if ( ! $clear ) {
+				//get existing log file and append new log info
+				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;
+			}
+			EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file, $exception_log );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Event Espresso error logging could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+			return;
 		}
 
-		if ( is_writable( $exception_log_file )) {
-			$fh = fopen( $exception_log_file, 'a' ) or die( 'Cannot open ' . $exception_log_file . ' file!' );
-			fwrite( $fh, $exception_log );
-			fclose( $fh );
-		} else {
-			echo '<div class="error"><p>'. sprintf( __( 'Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso' ), $exception_log_file ) . '</p></div>';
-		}
-
-	}
-
-
-
-	/**
-	 * simply adds .htaccess file to log dir.
-	 */
-	public static function add_htaccess() {
-		if ( !file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess' ) ) {
-			if ( file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all') )
-				do_action('AHEE_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder');
-			else
-  				do_action('AHEE_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
-		} else {
-			do_action('AHEE_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
-		}
 	}
 
 

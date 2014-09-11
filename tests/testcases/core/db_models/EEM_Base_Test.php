@@ -120,6 +120,64 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			throw $e;
 		}
 	}
+	public function test_get_col(){
+		$att1 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'one' ) );
+		$att2 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'two' ) );
+		$att3 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'three' ) );
+		$att4 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'four' ) );
+
+		$all = EEM_Attendee::instance()->get_col();
+		$this->assertArrayContains( $att1, $all );
+		$this->assertArrayContains( $att2, $all );
+		$this->assertArrayContains( $att3, $all );
+		$this->assertArrayContains( $att4, $all );
+
+		$just_two_and_threes_names = EEM_Attendee::instance()->get_col( array( array( 'ATT_fname' => array( 'IN', array( 'two', 'three' ) ) ) ), 'ATT_fname' );
+		$this->assertArrayDoesNotContain( 'one', $just_two_and_threes_names );
+		$this->assertArrayContains('two', $just_two_and_threes_names );
+		$this->assertArrayContains( 'three', $just_two_and_threes_names );
+		$this->assertArrayDoesNotContain( 'four', $just_two_and_threes_names );
+	}
+
+	/**
+	 *
+	 * @group current
+	 */
+	public function test_update__keeps_model_objs_in_sync(){
+		$att1 = EE_Attendee::new_instance( array( 'ATT_fname' => 'one' ) );
+		$att2 = EE_Attendee::new_instance( array( 'ATT_fname' => 'two' ) );
+		$att3 = EE_Attendee::new_instance( array( 'ATT_fname' => 'three' ) );
+		$att1->save();
+		$att2->save();
+		$att3->save();
+
+		//test taht when do perform an update, the model objects are updated also
+		$attm = EE_Registry::instance()->load_model( 'EEM_Attendee' );
+		$attm->update( array( 'ATT_fname' => 'win' ), array( array( 'ATT_fname' => 'two' ) ) );
+		$this->assertEquals( 'one', $att1->fname() );
+		$this->assertEquals( 'win', $att2->fname() );
+		$this->assertEquals( 'three', $att3->fname() );
+
+		//now test doing an update that should be more efficient wehre we DON'T update
+		//model objects
+		$attm->update( array( 'ATT_fname' => 'win_again'), array( array( 'ATT_fname' => 'one' ) ), FALSE );
+		$this->assertEquals( 'one', $att1->fname() );
+		$this->assertEquals( 'win', $att2->fname() );
+		$this->assertEquals( 'three', $att3->fname() );
+		global $wpdb;
+		$name_in_db = $wpdb->get_var( "select ATT_fname FROM " . $wpdb->prefix . "esp_attendee_meta WHERE ATT_ID = " . $att1->ID() );
+		$this->assertEquals( 'win_again', $name_in_db );
+
+		//also test to make sure there are no errors when there was nothing to update in the entity map
+		$att4 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'four' ) );
+		$wpdb->last_error = NULL;
+		EEM_Attendee::instance()->update( array( 'ATT_fname' => 'lose' ), array( array( 'ATT_fname' => 'four' ) ) );
+		$this->assertEmpty( $wpdb->last_error );
+
+		//and that there are no errors when nothing at all is updated
+		EEM_Attendee::instance()->update( array( 'ATT_fname' => 'lose_again'), array( array( 'ATT_fname' => 'nonexistent' ) ) );
+		$this->assertEmpty( $wpdb->last_error );
+	}
 }
 
 // End of file EEM_Base_Test.php

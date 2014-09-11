@@ -1,8 +1,16 @@
-<?php
-
-/*
- * Used for finding all payment method types that can be defined. Allows addons
- * to easily add other payment methods
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+/**
+ *
+ * Class EE_Payment_Method_Manager
+ *
+ * Used for finding all payment method types that can be defined.
+ * Allows addons to easily add other payment methods
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Michael Nelson
+ * @since 				$VID:$
+ *
  */
 class EE_Payment_Method_Manager {
 	/**
@@ -53,7 +61,7 @@ class EE_Payment_Method_Manager {
 	/**
 	 * 		register_payment_methods
 	 *
-	 * 		@return void
+	 * 		@return array
 	 */
 	function register_payment_methods() {
 		// grab list of installed modules
@@ -67,14 +75,17 @@ class EE_Payment_Method_Manager {
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', $this->_payment_method_types );
 	}
+
+
+
 	/**
-	 * 	register_payment_method- makes core aware of this paymetn method
+	 *    register_payment_method- makes core aware of this payment method
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$$payment_method_path - full path up to and including payment method folder
-	 *  @return 	void
+	 * @access public
+	 * @param string $payment_method_path - full path up to and including payment method folder
+	 * @return boolean
 	 */
-	public function register_payment_method( $payment_method_path = NULL ) {
+	public function register_payment_method( $payment_method_path = '' ) {
 		do_action( 'AHEE__EE_Payment_Method_Manager__register_payment_method__begin',$payment_method_path );
 		$module_ext = '.pm.php';
 		// make all separators match
@@ -95,7 +106,7 @@ class EE_Payment_Method_Manager {
 		// load the module class file
 		require_once( $payment_method_path . DS . $module_class . $module_ext );
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring payment method $module_class"); }
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -106,7 +117,7 @@ class EE_Payment_Method_Manager {
 		return TRUE;
 	}
 	/**
-	 * Checks if a paymetn method has been registered, and if so includes it
+	 * Checks if a payment method has been registered, and if so includes it
 	 * @param string $payment_method_name like 'Paypal_Pro', (ie classname without the prefix 'EEPM_')
 	 * @param boolean $force_recheck whether to force re-checking for new payment method types
 	 * @return boolean
@@ -174,4 +185,7 @@ class EE_Payment_Method_Manager {
 	public function payment_method_class_from_type($type){
 		return "EE_PMT_".$type;
 	}
+
+
+
 }

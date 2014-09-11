@@ -20,7 +20,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$output = $input->get_html_for_input();
 		$expected_output =
 '
-<select id="" name="" class="" style=""/>
+<select id="" name="" class="" style="">
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz">Baz</option>
@@ -43,7 +43,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$output = $input->get_html_for_input();
 		$expected_output =
 '
-<select id="" name="" class="" style=""/>
+<select id="" name="" class="" style="">
 	<optgroup label="code_var_names">
 		<option value="foo">Foo</option>
 		<option value="bar">Bar</option>

@@ -14,76 +14,10 @@
 class EE_Checkout {
 
 	/**
-	 * array of EE_SPCO_Reg_Step objects
-	 * @type EE_SPCO_Reg_Step[]
-	 */
-	public $reg_steps = array();
-
-	/**
-	 * where we are in the reg process
-	 * @type EE_SPCO_Reg_Step
-	 */
-	public $current_step = '';
-
-	/**
-	 * where we are going next in the reg process
-	 * @type EE_SPCO_Reg_Step
-	 */
-	public $next_step = '';
-
-	/**
-	 * the action being performed on the current step
-	 * @type string
-	 */
-	public $action = '';
-
-	/**
-	 * base url for the site's registration checkout page - additional url params will be added to this
-	 * @type string
-	 */
-	public $reg_page_base_url = '';
-
-	/**
-	 * base url for the site's registration cancelled page - additional url params will be added to this
-	 * @type string
-	 */
-	public $cancel_page_url = '';
-
-	/**
-	 * base url for the site's thank you page - additional url params will be added to this
-	 * @type string
-	 */
-	public $thank_you_page_url = '';
-
-	/**
-	 * redirect to thank you page ?
+	 * 	whether current request originated from the EE admin
 	 * @type bool
 	 */
-	public $redirect = FALSE;
-
-	/**
-	 * base url for any redirects - additional url params will be added to this
-	 * @type string
-	 */
-	public $redirect_url = '';
-
-	/**
-	 * form of POST data for use with off-site gateways
-	 * @type string
-	 */
-	public $redirect_form = '';
-
-	/**
-	 * array of data to be passed back to the client during AJAX requests
-	 * @type array
-	 */
-	public $json_response = array();
-
-	/**
-	 * reg_url_link for a previously saved registration
-	 * @type string
-	 */
-	public $reg_url_link = '';
+	public $admin_request = FALSE;
 
 	/**
 	 * whether returning to edit attendee information or to retry a payment
@@ -104,16 +38,98 @@ class EE_Checkout {
 	public $continue_reg = TRUE;
 
 	/**
+	 * redirect to thank you page ?
+	 * @type bool
+	 */
+	public $redirect = FALSE;
+
+	/**
+	 * generate the reg form or not ?
+	 * @type bool
+	 */
+	public $generate_reg_form = TRUE;
+
+	/**
+	 * the reg step slug from the incoming request
+	 * @type string
+	 */
+	public $step = '';
+
+	/**
+	 * the action being performed on the current step
+	 * @type string
+	 */
+	public $action = '';
+
+	/**
+	 * reg_url_link for a previously saved registration
+	 * @type string
+	 */
+	public $reg_url_link = '';
+
+	/**
+	 * string slug for the payment method that was selected during the payment options step
+	 * @type string
+	 */
+	public $selected_method_of_payment = '';
+
+	/**
+	 * base url for the site's registration checkout page - additional url params will be added to this
+	 * @type string
+	 */
+	public $reg_page_base_url = '';
+
+	/**
+	 * base url for the site's registration cancelled page - additional url params will be added to this
+	 * @type string
+	 */
+	public $cancel_page_url = '';
+
+	/**
+	 * base url for the site's thank you page - additional url params will be added to this
+	 * @type string
+	 */
+	public $thank_you_page_url = '';
+
+	/**
+	 * base url for any redirects - additional url params will be added to this
+	 * @type string
+	 */
+	public $redirect_url = '';
+
+	/**
+	 * form of POST data for use with off-site gateways
+	 * @type string
+	 */
+	public $redirect_form = '';
+
+	/**
+	 * a class for managing and creating the JSON encoded array of data that gets passed back to the client during AJAX requests
+	 * @type \EE_SPCO_JSON_Response
+	 */
+	public $json_response = NULL;
+
+	/**
+	 * where we are going next in the reg process
+	 * @type EE_SPCO_Reg_Step
+	 */
+	public $next_step = NULL;
+
+	/**
+	 * where we are in the reg process
+	 * @type EE_SPCO_Reg_Step
+	 */
+	public $current_step = NULL;
+
+	/**
 	 * 	$_cart - the current cart object
-	 * 	@access private
-	 *	@var EE_CART $_cart
+	 *	@var EE_CART
 	 */
 	public $cart = NULL;
 
 	/**
 	 * 	$_transaction - the current transaction object
-	 * 	@access private
-	 *	@var EE_Transaction $_transaction
+	 *	@var EE_Transaction
 	 */
 	public $transaction = NULL;
 
@@ -124,15 +140,8 @@ class EE_Checkout {
 	public $primary_attendee_obj = NULL;
 
 	/**
-	 * string slug for the payment method that was selected during the payment options step
-	 * @type string
-	 */
-	public $selected_method_of_payment = NULL;
-
-	/**
 	 *	$_payment_method - the payment method object for the selected method of payment
-	 * 	@access private
-	 *	@var EE_Payment_Method $_payment_method
+	 *	@type EE_Payment_Method
 	 */
 	public $payment_method = NULL;
 
@@ -148,6 +157,12 @@ class EE_Checkout {
 	 */
 	public $registration_form = NULL;
 
+	/**
+	 * array of EE_SPCO_Reg_Step objects
+	 * @type EE_SPCO_Reg_Step[]
+	 */
+	public $reg_steps = array();
+
 
 
 	/**
@@ -157,10 +172,12 @@ class EE_Checkout {
 	 * @return    \EE_Checkout
 	 */
 	public function __construct(  ) {
+		$this->json_response = new EE_SPCO_JSON_Response();
 		$this->reg_page_base_url = EE_Registry::instance()->CFG->core->reg_page_url();
 		$this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
+		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
 	}
 
 
@@ -217,7 +234,14 @@ class EE_Checkout {
 	public function set_current_step( $current_step = 'attendee_information' ) {
 		// grab what step we're on
 		$this->current_step = isset( $this->reg_steps[ $current_step ] ) ? $this->reg_steps[ $current_step ] : reset( $this->reg_steps );
-		$this->current_step->set_is_current_step( TRUE );
+		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
+			$this->current_step->set_is_current_step( TRUE );
+		} else {
+			EE_Error::add_error(
+				__( 'The current step could not be set.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
 	}
 
 
@@ -242,7 +266,7 @@ class EE_Checkout {
 		// advance one more spot ( if it exists )
 		$this->next_step = next( $this->reg_steps );
 		// verify instance
-		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step && $this->current_step->slug() != 'finalize_registration' ? $this->next_step  : NULL;
+		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step /*&& $this->current_step->slug() != 'finalize_registration' */? $this->next_step  : NULL;
 		// then back to current step to reset
 		prev( $this->reg_steps );
 	}
@@ -297,6 +321,37 @@ class EE_Checkout {
 			return 0;
 		}
 		return ( $reg_step_A->order() > $reg_step_B->order() ) ? 1 : -1;
+	}
+
+
+
+	/**
+	 * 	set_reg_step_JSON_info
+	 *
+	 * 	@access public
+	 * 	@return 	void
+	 */
+	public function set_reg_step_JSON_info() {
+		EE_Registry::$i18n_js_strings[ 'reg_steps' ] = array();
+		// pass basic reg step data to JS
+		foreach ( $this->reg_steps as $reg_step ) {
+			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
+		}
+	}
+
+
+
+	/**
+	 * 	reset_reg_steps
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function reset_reg_steps() {
+		$this->sort_reg_steps();
+		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
+		$this->set_next_step();
+		$this->set_reg_step_JSON_info();
 	}
 
 
@@ -371,34 +426,27 @@ class EE_Checkout {
 							$registration->set_transaction_id( $this->transaction->ID() );
 						}
 						// verify and save the attendee
-						$attendee = $registration->attendee();
-						if ( $attendee ) {
-							if ( $attendee instanceof EE_Attendee ) {
-//								d( $attendee );
-//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-								$attendee->save();
-								$registration->set_attendee_id( $attendee->ID() );
-								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
-									EE_Error::add_error(
-										__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
-										__FILE__, __FUNCTION__, __LINE__
-									);
-									return FALSE;
-								}
-							} else {
+					$attendee = $registration->attendee();
+						if ( $attendee instanceof EE_Attendee ) {
+//							d( $attendee );
+//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							$attendee->save();
+							$registration->set_attendee_id( $attendee->ID() );
+							if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
 								EE_Error::add_error(
-									__( 'An invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
+									__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
 									__FILE__, __FUNCTION__, __LINE__
 								);
 								return FALSE;
 							}
 						} else {
 							EE_Error::add_error(
-								__( 'No Attendee object was found when attempting to save your registration information.', 'event_espresso' ),
+								__( 'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
 								__FILE__, __FUNCTION__, __LINE__
 							);
 							return FALSE;
 						}
+
 						// save so that REG has ID
 						$registration->save();
 						// now save the answers
@@ -442,6 +490,27 @@ class EE_Checkout {
 			return FALSE;
 		}
 		return TRUE;
+	}
+
+
+
+	/**
+	 * mark_twain - print debug output
+	 * why Mark Twain? Something shouted by crewmen on a Mississippi riverboat to test the depth of the water; a crewman shouts "mark twain!"
+	 *
+	 * @param $class
+	 * @param $func
+	 * @param $file
+	 * @param $line
+	 * @param $extra
+	 * @return void
+	 */
+	function mark_twain( $class, $func, $file, $line, $extra = '' ) {
+		if ( EE_Registry::instance()->REQ->front_ajax  ) {
+			echo '<br/><span style="color:#2EA2CC;">' . $class . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . $func . '()</span><br/>';
+			echo $extra ? $extra . ' <br/>' : '';
+			echo '<span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b><br/>';
+		}
 	}
 
 

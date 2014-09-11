@@ -56,7 +56,7 @@ abstract class EE_SPCO_Reg_Step {
 	protected $_template = NULL;
 
 	/**
-	 * 	$_reg_form_name - class name for this step's reg form
+	 * 	$_reg_form_name - the form input name and id attribute
 	 * 	@access protected
 	 *	@var string $_reg_form_name
 	 */
@@ -233,7 +233,19 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_form_name() {
+		if ( empty( $this->_reg_form_name )) {
+			$this->set_reg_form_name( 'ee-spco-' . $this->slug() . '-reg-step-form' );
+		}
 		return $this->_reg_form_name;
+	}
+
+
+
+	/**
+	 * @param string $reg_form_name
+	 */
+	protected function set_reg_form_name( $reg_form_name ) {
+		$this->_reg_form_name = $reg_form_name;
 	}
 
 
@@ -244,9 +256,15 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_step_url( $action = '' ) {
-		$query_args = array( 'ee' => '_register', 'step' => $this->slug() );
+		$query_args = array( 'step' => $this->slug() );
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
+		}
+		if( $this->checkout->revisit ) {
+			$query_args['revisit'] = TRUE;
+		}
+		if( $this->checkout->reg_url_link ) {
+			$query_args['e_reg_url_link'] = $this->checkout->reg_url_link;
 		}
 		return add_query_arg( $query_args, $this->checkout->reg_page_base_url );
 	}
@@ -254,62 +272,66 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * creates the default hidden inputs section
 	 * @return EE_Form_Input_Base[]
 	 */
 	public function reg_step_hidden_inputs() {
-		// multidimensional array containing the following input details: id, name, value
-		$input_details = array(
-			array(
-				'id' => 'spco-' . $this->slug() . '-action',
-				'html_name' => 'ajax_action',
-				'value' => 'espresso_process_reg_step'
-			),
-			array(
-				'id' => 'spco-' . $this->slug() . '-noheader',
-				'html_name' => 'noheader',
-				'value' => '',
-				'normalization_strategy' => new EE_Boolean_Normalization()
-			),
-			array(
-				'id' => 'spco-' . $this->slug() . '-next-step',
-				'html_name' => 'next_step',
-				'value' => $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
-			),
-			array(
-				'id' => 'spco-reg_url_link',
-				'html_name' => 'e_reg_url_link',
-				'value' => $this->checkout->reg_url_link
-			),
-			array(
-				'id' => 'spco-revisit',
-				'html_name' => 'revisit',
-				'value' => $this->checkout->revisit,
-				'normalization_strategy' => new EE_Boolean_Normalization()
-			)
-		);
-		// array to hold generated inputs
-		$inputs = array();
-		// loop thru input details
-		foreach ( $input_details as $input ) {
-			// set array of args
-			$input_constructor_args = array(
-				'normalization_strategy' 	=> isset( $input['normalization_strategy'] ) ? $input['normalization_strategy'] : NULL,
-				'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
-				'html_name' 						=> $input['html_name'],
-				'html_id' 								=> $input['id'],
-				'default'								=> $input['value']
+		// hidden inputs for admin registrations
+		if ( $this->checkout->admin_request ) {
+			return new EE_Form_Section_Proper(
+				array(
+					'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+					'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
+					'subsections' 			=> array(
+						'next_step' 			=> new EE_Fixed_Hidden_Input(
+							array(
+								'html_name' 	=> 'next_step',
+								'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
+								'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
+							)
+						)
+					)
+				)
 			);
-			// generate input
-			$inputs[ $input['html_name'] ] = new EE_Hidden_Input( $input_constructor_args );
+		} else {
+			// hidden inputs for frontend registrations
+			return new EE_Form_Section_Proper(
+				array(
+					'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+					'html_id' 					=> 'ee-' . $this->slug() . '-hidden-inputs',
+					'subsections' 			=> array(
+						'action' 				=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'action',
+									'html_id' 			=> 'spco-' . $this->slug() . '-action',
+									'default' 			=> empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step'
+								)
+							),
+						'next_step' 			=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'next_step',
+									'html_id' 			=> 'spco-' . $this->slug() . '-next-step',
+									'default' 			=> $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
+								)
+							),
+						'e_reg_url_link' 	=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'e_reg_url_link',
+									'html_id' 			=> 'spco-reg_url_link',
+									'default' 			=> $this->checkout->reg_url_link
+								)
+							),
+						'revisit' 				=> new EE_Fixed_Hidden_Input(
+								array(
+									'html_name' 	=> 'revisit',
+									'html_id' 			=> 'spco-revisit',
+									'default' 			=> $this->checkout->revisit
+								)
+							)
+					)
+				)
+			);
 		}
-		// now set arguments for the entire hidden inputs section
-		$form_args = array(
-			'html_id' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
-			'subsections' 	=> $inputs,
-			'exclude' 	=> array(),
-			'layout_strategy'	=> new EE_Div_Per_Section_Layout()
-		);
-		return new EE_Form_Section_Proper( $form_args );
 	}
 
 
@@ -320,8 +342,7 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$action = empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step';
-			$html .= $this->reg_form->form_open( $this->reg_step_url( $action ));
+			$html .= $this->reg_form->form_open( $this->reg_step_url() );
 			$html .= $this->reg_form->get_html_and_js();
 			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
@@ -336,20 +357,37 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_step_submit_button() {
+		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			return '';
+		}
 		$sbmt_btn = new EE_Submit_Input( array(
-			'layout_strategy' => new EE_Div_Per_Section_Layout(),
-			'html_name' 		=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-			'html_id' 				=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
-			'html_class' 		=> 'spco-next-step-btn',
-			'default'				=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
+			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
+			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+			'html_id' 							=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
+			'html_class' 					=> 'spco-next-step-btn',
+			'other_html_attributes' 	=> ' rel="' . $this->slug() . '"',
+			'default'							=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
 		));
-		$sbmt_btn->set_button_css_attributes( TRUE, 'large', 'rel="' . $this->slug() . '"' );
+		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
 		ob_start();
+		if ( $this->checkout->admin_request ) {
+			echo EEH_Formatter::nl(1) . '<table class="form-table" style="margin-left:2em;">';
+			echo EEH_Formatter::nl(1) . '<tr>';
+			echo EEH_Formatter::nl(1) . '<th>';
+			echo EEH_Formatter::nl(-1) . '</th>';
+			echo EEH_Formatter::nl() . '<td style="padding-left:10px;">';
+		}
 		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
 		echo '<div id="spco-' . $this->slug() . '-whats-next-buttons-dv" class="spco-whats-next-buttons">';
 		echo $sbmt_btn->get_html_for_input();
 		echo '</div>';
 		echo '<!--end spco-whats-next-buttons-->';
+		if ( $this->checkout->admin_request ) {
+			echo EEH_Formatter::nl(-1) . '</td>';
+			echo EEH_Formatter::nl(-1) . '</tr>';
+			echo EEH_Formatter::nl(-1) . '</table>';
+			echo '<br />';
+		}
 		return ob_get_clean();
 	}
 
@@ -369,7 +407,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function edit_lnk_url() {
-		return 	add_query_arg( array( 'ee' => '_register', 'step' => $this->slug() ), $this->checkout->reg_page_base_url );
+		return 	add_query_arg( array( /*'ee' => '_register', */'step' => $this->slug() ), $this->checkout->reg_page_base_url );
 
 	}
 

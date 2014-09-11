@@ -15,7 +15,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  *
  * EE_Payment_Method class
- * Shoudl be parent of all paymetn method classes
+ * Should be parent of all payment method classes
  *
  * @package			Event Espresso
  * @subpackage		includes/classes/EE_Checkin.class.php
@@ -24,30 +24,39 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  */
 class EE_Payment_Method extends EE_Base_Class{
+
 	/**
 	 * Payment Method type object, which has all the info about this type of payment method,
 	 * including functions for processing payments, to get settings forms, etc.
-	 * @var EEPM_Base
+	 * @var EE_PMT_Base
 	 */
 	protected $_type_obj = NULL;
 
 
+
 	/**
 	 *
-	 * @param type $props_n_values
-	 * @param type $timezone
+	 * @param array $props_n_values
 	 * @return EE_Payment_Method
 	 */
 	public static function new_instance( $props_n_values = array()) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
 		return $has_object ? $has_object : new self( $props_n_values, FALSE );
 	}
 
 
+
+	/**
+	 *
+	 * @param array $props_n_values
+	 * @return EE_Payment_Method
+	 */
 	public static function new_instance_from_db ( $props_n_values = array()) {
 		return new self( $props_n_values, TRUE );
 	}
+
+
+
 	/**
 	 * Checks if there is a payment method class of the given 'PMD_type', and if so returns the classname.
 	 * Otherwise returns a normal EE_Payment_Method
@@ -55,15 +64,17 @@ class EE_Payment_Method extends EE_Base_Class{
 	 * the classname minus 'EEPM_')
 	 * @return string
 	 */
-	private static function _payment_method_type($props_n_values){
-		EE_Registry::instance()->load_lib('Payment_Method_Manager');
-		$type_string = isset($props_n_values['PMD_type']) ? $props_n_values['PMD_type'] : NULL;
-		if(EE_Payment_Method_Manager::instance()->payment_method_type_exists($type_string)){
-			return 'EEPM_'.$type_string;
-		}else{
-			return __CLASS__;
-		}
-	}
+//	private static function _payment_method_type($props_n_values){
+//		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+//		$type_string = isset($props_n_values['PMD_type']) ? $props_n_values['PMD_type'] : NULL;
+//		if(EE_Payment_Method_Manager::instance()->payment_method_type_exists($type_string)){
+//			return 'EEPM_'.$type_string;
+//		}else{
+//			return __CLASS__;
+//		}
+//	}
+
+
 
 	/**
 	 * Gets whether this payment method can be used anywhere at all (ie frontend cart, admin, etc)
@@ -72,8 +83,11 @@ class EE_Payment_Method extends EE_Base_Class{
 	function active() {
 		return array_intersect(array_keys(EEM_Payment_Method::instance()->scopes()),$this->scope());
 	}
+
+
+
 	/**
-	 * Sets this PM as active by making it usable wihtin the CART scope. Offline gateways
+	 * Sets this PM as active by making it usable within the CART scope. Offline gateways
 	 * are also usable from the admin-scope as well. DOES NOT SAVE it
 	 */
 	function set_active(){
@@ -85,13 +99,16 @@ class EE_Payment_Method extends EE_Base_Class{
 		$this->set_scope($default_scopes);
 	}
 
+
+
 	/**
-	 * Makes this paymetn method apply to NO scopes at all. DOES NOT SAVE it.
-	 * @return boolean
+	 * Makes this payment method apply to NO scopes at all. DOES NOT SAVE it.
 	 */
 	function deactivate(){
-		return $this->set_scope(array());
+		$this->set_scope(array());
 	}
+
+
 
 	/**
 	 * Gets button_url
@@ -101,14 +118,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_button_url');
 	}
 
+
+
 	/**
 	 * Sets button_url
 	 * @param string $button_url
-	 * @return boolean
 	 */
 	function set_button_url($button_url) {
-		return $this->set('PMD_button_url', $button_url);
+		$this->set('PMD_button_url', $button_url);
 	}
+
+
+
 	/**
 	 * Gets debug_mode
 	 * @return boolean
@@ -117,14 +138,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_debug_mode');
 	}
 
+
+
 	/**
 	 * Sets debug_mode
 	 * @param boolean $debug_mode
-	 * @return boolean
 	 */
 	function set_debug_mode($debug_mode) {
-		return $this->set('PMD_debug_mode', $debug_mode);
+		$this->set('PMD_debug_mode', $debug_mode);
 	}
+
+
+
 	/**
 	 * Gets description
 	 * @return string
@@ -133,14 +158,17 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_desc');
 	}
 
+
+
 	/**
 	 * Sets description
 	 * @param string $description
-	 * @return boolean
 	 */
 	function set_description($description) {
-		return $this->set('PMD_desc', $description);
+		$this->set('PMD_desc', $description);
 	}
+
+
 
 	/**
 	 * Gets name
@@ -150,14 +178,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_name');
 	}
 
+
+
 	/**
 	 * Sets name
 	 * @param string $name
-	 * @return boolean
 	 */
 	function set_name($name) {
-		return $this->set('PMD_name', $name);
+		$this->set('PMD_name', $name);
 	}
+
+
+
 	/**
 	 * Gets open_by_default
 	 * @return boolean
@@ -166,14 +198,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_open_by_default');
 	}
 
+
+
 	/**
 	 * Sets open_by_default
 	 * @param boolean $open_by_default
-	 * @return boolean
 	 */
 	function set_open_by_default($open_by_default) {
-		return $this->set('PMD_open_by_default', $open_by_default);
+		$this->set('PMD_open_by_default', $open_by_default);
 	}
+
+
+
 	/**
 	 * Gets order
 	 * @return int
@@ -182,14 +218,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_order');
 	}
 
+
+
 	/**
 	 * Sets order
 	 * @param int $order
-	 * @return boolean
 	 */
 	function set_order($order) {
-		return $this->set('PMD_order', $order);
+		$this->set('PMD_order', $order);
 	}
+
+
+
 	/**
 	 * Gets slug
 	 * @return string
@@ -198,14 +238,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_slug');
 	}
 
+
+
 	/**
 	 * Sets slug
 	 * @param string $slug
-	 * @return boolean
 	 */
 	function set_slug($slug) {
-		return $this->set('PMD_slug', $slug);
+		$this->set('PMD_slug', $slug);
 	}
+
+
+
 	/**
 	 * Gets type
 	 * @return string
@@ -214,14 +258,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_type');
 	}
 
+
+
 	/**
 	 * Sets type
 	 * @param string $type
-	 * @return boolean
 	 */
 	function set_type($type) {
-		return $this->set('PMD_type', $type);
+		$this->set('PMD_type', $type);
 	}
+
+
+
 	/**
 	 * Gets wp_user_id
 	 * @return int
@@ -230,14 +278,17 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_wp_user_id');
 	}
 
+
+
 	/**
 	 * Sets wp_user_id
 	 * @param int $wp_user_id
-	 * @return boolean
 	 */
 	function set_wp_user_id($wp_user_id) {
-		return $this->set('PMD_wp_user_id', $wp_user_id);
+		$this->set('PMD_wp_user_id', $wp_user_id);
 	}
+
+
 
 	/**
 	 * Gets admin_name
@@ -247,14 +298,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_admin_name');
 	}
 
+
+
 	/**
 	 * Sets admin_name
 	 * @param string $admin_name
-	 * @return boolean
 	 */
 	function set_admin_name($admin_name) {
-		return $this->set('PMD_admin_name', $admin_name);
+		$this->set('PMD_admin_name', $admin_name);
 	}
+
+
+
 	/**
 	 * Gets admin_desc
 	 * @return string
@@ -263,14 +318,18 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_admin_desc');
 	}
 
+
+
 	/**
 	 * Sets admin_desc
 	 * @param string $admin_desc
-	 * @return boolean
 	 */
 	function set_admin_desc($admin_desc) {
-		return $this->set('PMD_admin_desc', $admin_desc);
+		$this->set('PMD_admin_desc', $admin_desc);
 	}
+
+
+
 	/**
 	 * Gets scope
 	 * @return array
@@ -279,14 +338,16 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->get('PMD_scope');
 	}
 
+
+
 	/**
 	 * Sets scope
 	 * @param array $scope
-	 * @return boolean
 	 */
 	function set_scope($scope) {
-		return $this->set('PMD_scope', $scope);
+		$this->set('PMD_scope', $scope);
 	}
+
 
 
 	/**
@@ -311,14 +372,16 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->_type_obj;
 	}
 
+
+
 	/**
-	 * Returns a simple arrya of key-value pairs combining the payment method's fields (without the 'PMD_' prefix)
+	 * Returns a simple array of key-value pairs combining the payment method's fields (without the 'PMD_' prefix)
 	 * and the extra meta. Mostly used for passing off ot gateways.	 *
 	 * @return array
 	 */
 	public function settings_array(){
 		$fields = $this->model_field_array();
-		$extra_metas = $this->all_extra_meta_array();
+		$extra_meta = $this->all_extra_meta_array();
 		//remove the model's prefix from the fields
 		$combined_settings_array = array();
 		foreach($fields as $key => $value){
@@ -327,9 +390,11 @@ class EE_Payment_Method extends EE_Base_Class{
 				$combined_settings_array [$key_sans_model_prefix] = $value;
 			}
 		}
-		$combined_settings_array = array_merge($extra_metas,$combined_settings_array);
+		$combined_settings_array = array_merge( $extra_meta,$combined_settings_array );
 		return $combined_settings_array;
 	}
+
+
 
 	/**
 	 * Gets the HTML for displaying the payment method on a page.
@@ -347,8 +412,11 @@ class EE_Payment_Method extends EE_Base_Class{
 		</div>
 ';
 	}
+
+
+
 	/**
-	 * Gets all the currenices which are an option for this payment method
+	 * Gets all the currencies which are an option for this payment method
 	 * (as defined by the gateway and the currently active currencies)
 	 * @return EE_Currency[]
 	 */

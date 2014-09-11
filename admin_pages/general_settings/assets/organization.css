@@ -6,14 +6,15 @@
 }
 
 .form-table { width:100%;}
-#general-setting-country-details-tbl .regular-text, #general-setting-country-states-tbl .regular-text, .form-table .regular-text { width: 100%; }/**/
+.general-settings-country-input-td input[type="text"],
+.general-settings-country-state-input-td input[type="text"] { font-size: 14px !important; line-height: 1.3 !important; padding: 3px 5px !important; }
 
 #general-setting-country-states-tbl td text { padding: 0; margin: 0; width: 100%; }/**/
 #general-setting-country-states-tbl td ul { width: 100% }
 #general-setting-country-states-tbl td { margin:0; }/**/
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(1) { width: 10%; }
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) { /*width: 80%;*/ }
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) { width: 5%; min-width:122px; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(1) { width: 10%; padding-left: 0; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) { padding-left: 0; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) { width: 6%; min-width:140px; }
 #general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(4) { width: 5%; }
 
 .add-new-state-tbl td:first-child { width: 10%;}

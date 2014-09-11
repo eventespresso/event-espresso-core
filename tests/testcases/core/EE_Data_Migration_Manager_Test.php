@@ -47,6 +47,8 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	}
 	public function test_check_for_applicable_data_migration_scripts(){
 		$this->_pretend_current_db_state_is_at('3.1.37.7');
+		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_mock_dms'));
+		EE_Data_Migration_Manager::reset();
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		//check it contains the DMSs that apply, and that they're ordered correctly
 		$this->assertInstanceOf( 'EE_DMS_Core_1_0_0', array_shift($dmss));
@@ -85,7 +87,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_most_up_to_date_dms(){
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_5_0',$dms_classname);
+		$this->assertEquals('EE_DMS_Core_4_6_0',$dms_classname);
 	}
 
 	public function test_get_last_ran_script(){

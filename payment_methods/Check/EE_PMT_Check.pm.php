@@ -28,6 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_PMT_Check extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Check", 'event_espresso');
+		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'check-logo.png';
 	}
@@ -115,6 +116,8 @@ class EE_PMT_Check extends EE_PMT_Base{
 				$template_vars,
 				true);
 	}
-}
 
+
+
+}
 // End of file EEPMT_Check.pm.php

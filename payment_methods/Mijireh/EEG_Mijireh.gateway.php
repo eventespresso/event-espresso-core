@@ -116,13 +116,29 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
-		if(! empty($response['body'])){
+		if( ! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
+			if($response_body == NULL || ! isset($response_body->checkout_url)){
+				if( is_array( $response_body ) || is_object( $response_body)){
+					$response_body_as_array = (array)$response_body;
+					$problems_string = '';
+					foreach($response_body_as_array as $problem_parameter => $problems){
+						$problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));
+					}
+				}else{
+					$problems_string = $response['body'];
+				}
+
+				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
+			}
 			$payment->set_redirect_url($response_body->checkout_url);
 			$payment->set_txn_id_chq_nmbr($response_body->order_number);
 			$payment->set_details($response['body']);
 		}else{
-			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
+			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
+			EE_Error::add_error($error_message, __FILE__, __FUNCTION__, __LINE__ );
+			throw new EE_Error($error_message);
+
 		}
 		return $payment;
 	}
@@ -131,14 +147,12 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
  * instead they just redirect the user back to our website and then we need to query them
  * for the payment's status). Also note that the $update_info should be an array with the key
  * 'payment' containing the EEI_Payment to update
- * @param array $update_info{
- *	@type $payment EEI_Payment
- * }
- * @param type $transaction
+ * @param array $update_info unused. We just use the $transaction
+ * @param EEI_Transaction $transaction
  * @throws EE_Error
  */
 	public function handle_payment_update($update_info, $transaction) {
-		$payment = isset($update_info['payment']) ? $update_info['payment'] : NULL;
+		$payment = $transaction->last_payment();
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
 			$response = wp_remote_get($url,

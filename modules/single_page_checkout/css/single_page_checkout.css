@@ -206,7 +206,7 @@
 .spco-copy-attendee-chk-input-dv {
 	display:inline-block;
 	width: 32.5%;
-	min-width:198px;
+	min-width:193px;
 }
 .spco-copy-attendee-chk-pg {
 	display:inline-block;
@@ -256,6 +256,7 @@
 
 }
 
+#ee-single-page-checkout-dv input[type=radio],
 #ee-single-page-checkout-dv input[type=checkbox] {
 	position: relative;
 	top: -1px;
@@ -266,16 +267,18 @@
 	vertical-align: bottom;
 	*overflow: hidden;
 }
-.ee-checkbox-label-after {
-	display: inline-block;
-	padding-left: 20px;
-	text-indent: -20px;
+.ee-radio-label-before,
+.ee-checkbox-label-before {
+	display: inline-block !important;
 	cursor: pointer;
 	font-size: .9em;
 	line-height: 1em;
 }
-.ee-checkbox-label-before {
-	display: inline-block;
+.ee-radio-label-after,
+.ee-checkbox-label-after {
+	display: inline-block !important;
+	padding: .25em 1em .2em 20px;
+	text-indent: -20px;
 	cursor: pointer;
 	font-size: .9em;
 	line-height: 1em;
@@ -284,6 +287,31 @@
 	width:auto !important;
 }
 
+#ee-single-page-checkout-dv .nano-lbl {
+	width: 3.1%; min-width:50px; max-width:100%;
+}
+#ee-single-page-checkout-dv .micro-lbl {
+	width: 6.2%; min-width:100px; max-width:100%;
+}
+#ee-single-page-checkout-dv .tiny-lbl {
+	width: 12.4%; min-width:150px; max-width:100%;
+}
+#ee-single-page-checkout-dv .small-lbl {
+	width: 24.4%; min-width:200px; max-width:100%;
+}
+#ee-single-page-checkout-dv .medium-lbl {
+	width: 49%; min-width:300px; max-width:100%;
+}
+#ee-single-page-checkout-dv .big-lbl {
+	width:99%; min-width:300px; max-width:100%;
+}
+
+.ee-question-option-desc {
+	margin:0 0 0 .25em;
+	font-size:.9em;
+	letter-spacing:1px;
+	color:#999;
+}
 
 /***  VALIDATION  ***/
 #ee-single-page-checkout-dv .ee-asterisk,
@@ -325,7 +353,9 @@
 #method-of-payment-hdr {
 	margin:1.5em 0 .5em;
 }
-
+#ee-available-payment-method-inputs-method-of-payment-inputs-lbl {
+	display: none;
+}
 #ee-single-page-checkout-dv  .spco-payment-method-input-dv label {
 	display:inline;
 	float: left;

@@ -41,6 +41,26 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' ] );
 	}
 
+	public function test_update_txn_based_on_payment(){
+		//create a txn, and an UNSAVED payment. then call this.
+		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
+		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_approved, 'PAY_amount' => 10,  ), FALSE );
+		$this->assertEquals( 0, $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+
+		EE_Payment_Processor::instance()->update_txn_based_on_payment($txn, $payment);
+
+		//the payment should have been saved, and the txn appropriately updated
+		$this->assertNotEquals( 0,  $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( $payment, $txn->last_payment() );
+		$this->assertEquals( 10, $payment->amount() );
+		$this->assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
+		$this->assertEquals( 10, EEM_Payment::instance()->recalculate_total_payments_for_transaction( $txn->ID(), EEM_Payment::status_id_approved ) );
+		$this->assertEquals( 10, $txn->paid() );
+		$this->assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
+	}
+
 	public function test_process_payment__onsite__declined(){
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
@@ -70,33 +90,33 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
 		$payment = EE_Payment_Processor::instance()->process_payment( $pm, $transaction, NULL, NULL, 'success', 'CART', TRUE, TRUE );
 		$this->assertInstanceOf( 'EE_Payment', $payment );
-		//assert that the paymetn still has its default status
+		//assert that the payment still has its default status
 		$this->assertEquals( EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $payment->status() );
 		//assert that the we haven't notified of successful payment JUST yet...
 		$this->assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
 
 		//DECLINED IPN
 		$payment = EE_Payment_Processor::instance()->process_ipn( array('status' => EEM_Payment::status_id_pending, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
-		//payment should be what the gatewya set it to be, whcih was failed
+		//payment should be what the gateway set it to be, whcih was failed
 		$this->assertEquals( EEM_Payment::status_id_pending, $payment->status() );
 		//and the payment-approved action should have NOT been triggered
 		$this->assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
 
 		//SUCCESSFUL IPN
 		$payment = EE_Payment_Processor::instance()->process_ipn( array('status' => EEM_Payment::status_id_approved, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
-		//payment should be what the gatewya set it to be, whcih was failed
+		//payment should be what the gateway set it to be, whcih was failed
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		//and the payment-approved action should have been triggered
 		$this->assertEquals( $successful_payment_actions + 1, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
 
 		//DUPLICATE SUCCESS IPN
 		//for this, we need to reset payment model so we fetch a NEW payment object, instead of reusing the old
-		//and because the payment method caches a payment method type which caches a gateway which caches the paymetn model,
+		//and because the payment method caches a payment method type which caches a gateway which caches the payment model,
 		//we also need to reset the payment method
 		EEM_Payment::reset();
 		$pm = EEM_Payment_Method::reset()->get_one_by_ID( $pm->ID() );
 		$payment = EE_Payment_Processor::instance()->process_ipn( array('status' => EEM_Payment::status_id_approved, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
-		//payment should be what the gatewya set it to be, whcih was failed
+		//payment should be what the gateway set it to be, whcih was failed
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		//and the payment-approved action should have NOT been triggered this time because it's a duplicate
 		$this->assertEquals( $successful_payment_actions + 1, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );

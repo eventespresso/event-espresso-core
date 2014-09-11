@@ -261,7 +261,7 @@ class Invoice {
 		if($org_state){
 			$org_state_name = $org_state->name();
 		}else{
-			$org_state_name = 'Unknown';
+			$org_state_name = '';
 		}
 		$ReplaceValues = array(
 				stripslashes( $EE->CFG->organization->name ),

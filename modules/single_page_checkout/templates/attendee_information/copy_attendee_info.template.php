@@ -2,7 +2,7 @@
 
 	<p class="spco-copy-all-attendee-pg">
 		<label class="ee-checkbox-label-before ee-checkbox-label-wide"><?php  _e('Use Attendee #1\'s information for ALL attendees', 'event_espresso');?>
-			<input id="spco-copy-all-attendee-chk" class="spco-copy-all-attendee-chk ui-widget-content ui-corner-all" type="checkbox" value="copy-all">
+			<input id="spco-copy-all-attendee-chk" class="spco-copy-all-attendee-chk ee-do-not-validate" type="checkbox" value="copy-all">
 		</label>
 	</p>
 
@@ -17,12 +17,7 @@
 			<?php _e('Only copy the above information to the following selected additional attendees.', 'event_espresso'); ?>
 		</p>
 
-		<?php
-		//d( $spco_copy_attendee_chk );
-		foreach ( $spco_copy_attendee_chk as $spco_copy_chk ) {
-			echo $spco_copy_chk;
-		}
-		?>
+		<?php foreach ( $spco_copy_attendee_chk as $spco_copy_chk ) { echo $spco_copy_chk; } ?>
 
 	</div>
 	<div class="clear-float"></div>

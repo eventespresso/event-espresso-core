@@ -133,6 +133,28 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertTrue( $form->is_valid() );
 
 	}
+
+	/**
+	 * @group ticket_6505
+	 */
+	public function test_numeric_named_inputs(){
+		$form = new EE_Form_Section_Proper(
+			array(
+				'html_id' => 'ee-available-payment-method-inputs',
+				'subsections' => array(
+				0 => new EE_Radio_Button_Input(
+						array('one','two','three'),
+						array(
+						'html_name' => 'selected_method_of_payment',
+						'html_class' => 'spco-payment-method',
+						'default'    => 'three'
+						)
+					)
+				)
+			)
+		);
+		$this->assertEquals(1, count( $form->inputs() ) );
+	}
 }
 
 // End of file EE_Form_Section_Proper_Test.php

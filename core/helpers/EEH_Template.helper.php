@@ -369,7 +369,7 @@ class EEH_Template {
 
 	/**
 	 * This function is used for outputting the localized label for a given status id in the schema requested (and possibly plural).  The intended use of this function is only for cases where wanting a label outside of a related status model or model object (i.e. in documentation etc.)
-	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unkown' will be returned.
+	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unknown' will be returned.
 	 * @param  boolean $plural    Whether to return plural or not
 	 * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
 	 * @return string             The localized label for the status id.
@@ -381,14 +381,13 @@ class EEH_Template {
 
 
 
-
-
 	/**
 	 * This helper just returns a button or link for the given parameters
 	 * @param  string $url   the url for the link
-	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param  string $label What is the label you want displayed for the button
-	 * @return string        the html output for the button
+	 * @param  string $class what class is used for the button (defaults to 'button-primary')
+	 * @param string  $icon
+	 * @return string 	the html output for the button
 	 */
 	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
 		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
@@ -515,10 +514,14 @@ class EEH_Template {
 		$content .= '</div>' . "\n";
 		return $content;
 	}
+
+
+
 	/**
 	 * Gets HTML for laying out a deeply-nested array (and objects) in a format
 	 * that's nice for presenting in the wp admin
 	 * @param mixed $data
+	 * @return string
 	 */
 	public static function layout_array_as_table($data) {
 	if (is_object($data)) {

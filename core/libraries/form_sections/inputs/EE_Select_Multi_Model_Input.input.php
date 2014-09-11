@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * model objects, and the optional 'default' param CAN be an array of model objects too
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -30,21 +30,21 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 	protected $_naming_method;
 	/**
-	 * 
-	 * @param EE_Base_Class[] $model_objects_to_select_from
-	 * @param array $options_array {
-	 *	@type EE_Base_Class[] or arrray $default
-	 *	@type string $naming_method function name on the class which will be used for getting the displayed-name. Eg,
-	 *		if the class were an EE_Event, this could be slug(), description(), name() (default)
+	 *
+	 * @param EE_Base_Class[] $answer_options
+	 * @param array $input_settings {
+	 *		@var EE_Base_Class[] or array $default
+	 * 		@var string $naming_method function name on the class which will be used for getting the displayed-name.
+	 *     example: 	if the class were an EE_Event, this could be slug(), description(), name() (default)
 	 * }
 	 */
-	public function __construct($model_objects_to_select_from, $options_array = array()) {
-		if(isset($options_array['naming_method'])){
-			$this->set_option_naming_method($options_array['naming_method']);
+	public function __construct( $answer_options = array(), $input_settings ) {
+		if( isset( $input_settings['naming_method'] )){
+			$this->set_option_naming_method( $input_settings['naming_method'] );
 		}
-		parent::__construct($model_objects_to_select_from, $options_array);
+		parent::__construct( $answer_options, $input_settings );
 	}
-	
+
 	/**
 	 * Sets the method name which will be called when outputting the options list
 	 * @param string $method
@@ -52,16 +52,18 @@ class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 	public function set_option_naming_method($method){
 		$this->_naming_method = $method;
 	}
-	
-	
+
+
+
 	/**
 	 * You CAN pass an array of model objects instead of simple values for teh options
-	 * @param EE_Base_Class[] $select_options
+	 * @param EE_Base_Class[] $answer_options
+	 * @return null|void
 	 */
-	public function set_select_options($model_objects) {
+	public function set_select_options( $answer_options = array() ) {
 		//convert the model objects to select from into normal select options
 		$select_options = array();
-		foreach($model_objects as $model_obj){
+		foreach( $answer_options as $model_obj){
 			if($this->_naming_method){
 				$callback_on_class = $this->_naming_method;
 				$display_value = call_user_func(array($model_obj,$callback_on_class));
@@ -72,6 +74,9 @@ class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 		}
 		parent::set_select_options($select_options);
 	}
+
+
+
 	/**
 	 * if they passed in an array of model objects for the default, convert it
 	 * into the format EE_Select_Multiple expects

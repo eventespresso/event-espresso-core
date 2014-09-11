@@ -132,6 +132,29 @@ final class EE_Config {
 
 
 	/**
+	 * Resets the config
+	 * @param bool $hard_reset
+	 * @return EE_Config
+	 */
+	public static function reset( $hard_reset = FALSE ){
+		if ( $hard_reset ) {
+			self::$_instance->_config_option_names = array();
+			self::$_instance->_initialize_config();
+			self::$_instance->update_espresso_config();
+		}
+		if( self::$_instance instanceof EE_Config ){
+			self::$_instance->shutdown();
+		}
+		self::$_instance = NULL;
+		//we don't need to reset the static properties imo because those should
+		//only change when a module is added or removed. Currently we don't
+		//support removing a module during a request when it previously existed
+		return self::instance();
+	}
+
+
+
+	/**
 	 *    class constructor
 	 *
 	 * @access    private
@@ -139,24 +162,9 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
-		//set defaults
 		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->gateway = new EE_Gateway_Config();
-		$this->environment = new EE_Environment_Config();
-		$this->addons = new stdClass();
-		// set _module_route_map
-		EE_Config::$_module_route_map = array();
-		// set _module_forward_map
-		EE_Config::$_module_forward_map = array();
-		// set _module_view_map
-		EE_Config::$_module_view_map = array();
+		// setup empty config classes
+		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
 		//  register shortcodes and modules
@@ -182,6 +190,35 @@ final class EE_Config {
 	 */
 	public static function get_current_theme() {
 		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+	}
+
+
+
+
+	/**
+	 * 		_initialize_config
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _initialize_config() {
+		//set defaults
+		$this->core = new EE_Core_Config();
+		$this->organization = new EE_Organization_Config();
+		$this->currency = new EE_Currency_Config();
+		$this->registration = new EE_Registration_Config();
+		$this->admin = new EE_Admin_Config();
+		$this->template_settings = new EE_Template_Config();
+		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
+		$this->addons = new stdClass();
+		// set _module_route_map
+		EE_Config::$_module_route_map = array();
+		// set _module_forward_map
+		EE_Config::$_module_forward_map = array();
+		// set _module_view_map
+		EE_Config::$_module_view_map = array();
 	}
 
 
@@ -867,7 +904,17 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$shortcode_class . ' shortcode',
+					$shortcode_path . $shortcode_class . $shortcode_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -950,7 +997,17 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		try {
+			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
+		} catch( EE_Error $e ){
+			EE_Error::add_error(
+				sprintf(
+					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
+					$module_class . ' module',
+					$module_path . $module_class . $module_ext,
+					'<br />' . $e->getMessage()
+				)
+			);
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
@@ -1035,9 +1092,10 @@ final class EE_Config {
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	string 		$module - module name (classname without EED_ prefix)
 	 *  @param 	string 		$method_name - the actual module method to be routed to
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	bool
 	 */
-	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
+	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
 		$module_class = 'EED_' . $module;
@@ -1056,7 +1114,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
+		EE_Config::$_module_route_map[ $key ][ $route ] = array( 'EED_' . $module, $method_name );
 		return TRUE;
 	}
 
@@ -1067,15 +1125,28 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_route( $route = NULL ) {
+	public static function get_route( $route = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
 		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
-		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
-			return EE_Config::$_module_route_map[ $route ];
+		if ( isset( EE_Config::$_module_route_map[ $key ][ $route ] )) {
+			return EE_Config::$_module_route_map[ $key ][ $route ];
 		}
 		return NULL;
+	}
+
+
+
+	/**
+	 *    get_routes - get ALL module method routes
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_routes() {
+		return EE_Config::$_module_route_map;
 	}
 
 
@@ -1086,13 +1157,13 @@ final class EE_Config {
 	 * @access    public
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 * @param null       $forward
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    array|string  $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
+	public static function register_forward( $route = NULL, $status = 0, $forward = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1118,7 +1189,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
+		EE_Config::$_module_forward_map[ $key ][ $route ][ absint( $status ) ] = $forward;
 		return TRUE;
 	}
 
@@ -1130,12 +1201,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_forward( $route = NULL, $status = 0 ) {
+	public static function get_forward( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
-		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_forward_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_forward', EE_Config::$_module_forward_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1149,12 +1221,12 @@ final class EE_Config {
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
 	 * @param    string   $view
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
+	public static function register_view( $route = NULL, $status = 0, $view = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1164,7 +1236,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_view_map[ $route ][ absint( $status ) ] = $view;
+		EE_Config::$_module_view_map[ $key ][ $route ][ absint( $status ) ] = $view;
 		return TRUE;
 	}
 
@@ -1178,12 +1250,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_view( $route = NULL, $status = 0 ) {
+	public static function get_view( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
-		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_view_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_view', EE_Config::$_module_view_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1251,7 +1324,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
@@ -1305,6 +1378,12 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = FALSE;
 		$this->thank_you_page_url = FALSE;
 		$this->cancel_page_url = FALSE;
+
+		//ueip constant check
+		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
+			$this->ee_ueip_optin = FALSE;
+			$this->ee_ueip_has_notified = TRUE;
+		}
 	}
 
 
@@ -1489,7 +1568,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * twitter (twitter.com/twitterhandle)
+	 * twitter (twitter.com/twitter_handle)
 	 * @var string
 	 */
 	public $twitter;
@@ -1497,7 +1576,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * linkedin (linkedin.com/in/profilename)
+	 * linkedin (linkedin.com/in/profile_name)
 	 * @var string
 	 */
 	public $linkedin;
@@ -1505,7 +1584,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * pinterest (www.pinterest.com/profilename)
+	 * pinterest (www.pinterest.com/profile_name)
 	 * @var string
 	 */
 	public $pinterest;
@@ -1521,7 +1600,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * instragram (instagram.com/handle)
+	 * instagram (instagram.com/handle)
 	 * @var string
 	 */
 	public $instagram;
@@ -1592,7 +1671,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $sign;
 
 	/**
-	* Whether the currency sign shoudl come before the number or not
+	* Whether the currency sign should come before the number or not
 	* @var boolean $sign_b4
 	*/
 	public $sign_b4;
@@ -1805,6 +1884,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1849,9 +1938,41 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->use_remote_logging = FALSE;
 		$this->remote_logging_url = NULL;
 		$this->show_reg_footer = TRUE;
-		$this->affiliate_id = NULL;
+		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 

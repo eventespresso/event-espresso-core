@@ -136,6 +136,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__new_install");
+		do_action("AHEE__EE_Addon__new_install", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
@@ -150,6 +151,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function reactivation() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__reactivation");
+		do_action("AHEE__EE_Addon__reactivation", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
@@ -158,6 +160,7 @@ abstract class EE_Addon extends EE_Configurable {
 		$classname = get_class($this);
 //		echo "Deactivating $classname";die;
 		do_action("AHEE__{$classname}__deactivation");
+		do_action("AHEE__EE_Addon__deactivation", $this);
 		//check if the site no longer needs to be in maintenance mode
 		EE_Register_Addon::deregister( $this->name() );
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
@@ -197,7 +200,7 @@ abstract class EE_Addon extends EE_Configurable {
 			$current_data_migration_script->schema_changes_after_migration();
 			if ( $current_data_migration_script->get_errors() ) {
 				foreach( $current_data_migration_script->get_errors() as $error ) {
-					EE_Error::add_error( $error );
+					EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 		}
@@ -240,6 +243,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function upgrade() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__upgrade");
+		do_action("AHEE__EE_Addon__upgrade", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 	}
 
@@ -251,6 +255,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function downgrade() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__downgrade");
+		do_action("AHEE__EE_Addon__downgrade", $this);
 	}
 
 
@@ -340,25 +345,30 @@ abstract class EE_Addon extends EE_Configurable {
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation", $this );
 				$this->new_install();
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation_but_not_installed" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation_but_not_installed", $this );
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__reactivation" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__reactivation", $this );
 				$this->reactivation();
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__upgrade" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__upgrade", $this );
 				$this->upgrade();
 				$this->update_list_of_installed_versions($activation_history_for_addon );
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__downgrade" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__downgrade", $this );
 				$this->downgrade();
 				$this->update_list_of_installed_versions($activation_history_for_addon );
 				break;

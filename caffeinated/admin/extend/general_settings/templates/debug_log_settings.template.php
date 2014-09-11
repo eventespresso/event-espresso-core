@@ -16,7 +16,7 @@
 					<span class="reminder-spn">
 						<?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
 					</span><br/>
-					<?php echo sprintf( __('File is available at: %s', 'event_espresso'), '<b>/wp-content/uploads/espresso/logs/</b>' ); ?>
+					<?php echo sprintf( __('Once saved, this file will be available at: %s', 'event_espresso'), '<br /><b>/wp-content/uploads/espresso/logs/' . EE_Registry::instance()->CFG->admin->log_file_name() . '</b>' ); ?>
 				</p>
 
 			</td>

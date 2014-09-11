@@ -1,21 +1,5 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
  *
  * EE_Billing_Info_Form
  * Default form which can be used by payment method types for their billing info
@@ -24,9 +8,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @subpackage
  * @author				Mike Nelson
  *
- * ------------------------------------------------------------------------
  */
 class EE_Billing_Info_Form extends EE_Form_Section_Proper{
+
 	/**
 	 * The payment method this billing form is for
 	 * @var EE_Payment_Method
@@ -37,10 +21,10 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 
 	/**
 	 *
-	 * @param array $payment_method
+	 * @param EE_Payment_Method $payment_method
 	 * @param array $options_array @see EE_Form_Section_Proper::__construct()
 	 */
-	public function __construct($payment_method, $options_array= array()){
+	public function __construct( EE_Payment_Method $payment_method, $options_array= array()){
 		$this->_pm_instance = $payment_method;
 		$country_options = array();
 		$states_organized = array();
@@ -48,6 +32,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 		$countries = EEM_Country::instance()->get_all_active_countries();
 		if ( ! empty( $countries )) {
 			foreach($countries as $country){
+				/** @var $country EE_Country */
 				$country_options[$country->ID()] = $country->name();
 			}
 		}
@@ -55,6 +40,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 		$states = EEM_State::instance()->get_all_active_states();
 		if ( ! empty( $states )) {
 			foreach($states as $state){
+				/** @var $state EE_State */
 				$states_organized[$state->country()->name()][$state->name()] = $state->name();
 			}
 		}
@@ -87,6 +73,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	 */
 	public function populate_from_attendee( $attendee ){
 		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
+		/** @var $attendee EE_Attendee */
 		$state = $attendee->state_obj();
 		$country = $attendee->country_obj();
 		$this->populate_defaults(array(

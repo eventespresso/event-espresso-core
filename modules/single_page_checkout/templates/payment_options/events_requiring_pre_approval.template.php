@@ -6,5 +6,8 @@
 	<h6><?php _e('Events Requiring Pre-Approval:', 'event_espresso');?></h6>
 	<ul id="spco-pre-approval-events-ul"><?php echo $events_requiring_pre_approval; ?></ul>
 
-	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
-	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
+	<?php echo $default_hidden_inputs;  ?>
+	<?php echo $extra_hidden_inputs;  ?>
+
+	<!--	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">-->
+<!--	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />-->

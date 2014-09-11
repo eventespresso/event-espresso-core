@@ -70,6 +70,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	private $_show_try_pay_again_link = FALSE;
 
 	/**
+	 * whether payments are allowed at this time
+	 * @var boolean $_payments_closed
+	 */
+	private $_payments_closed = FALSE;
+
+	/**
 	 * whether the selected payment method is Bank, Check , Invoice, etc
 	 * @var boolean $_is_offline_payment_method
 	 */
@@ -283,7 +289,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = FALSE;
 		}
-		$this->_is_offline_payment_method = $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
+		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
+		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
@@ -325,9 +332,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 		$template_args['transaction'] = $this->_current_txn;
+		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
+ 		if ( $this->_is_primary && $this->_payments_closed && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 

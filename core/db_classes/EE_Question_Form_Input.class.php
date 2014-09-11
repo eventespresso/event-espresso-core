@@ -260,8 +260,39 @@ class EE_Question_Form_Input {
 					$class = isset( $input_types[ $field_ID ][ 'class' ] ) && ! empty( $input_types[ $field_ID ][ 'class' ] ) ? ' ' . $input_types[ $field_ID ][ 'class' ] : '';
 					// whether to apply htmlentities to answer
 					$htmlentities = isset( $input_types[ $field_ID ][ 'htmlentities' ] ) ? $input_types[ $field_ID ][ 'htmlentities' ] : TRUE;
+					// whether to apply htmlentities to answer
+					$label_b4 = isset( $input_types[ $field_ID ][ 'label_b4' ] ) ? $input_types[ $field_ID ][ 'label_b4' ] : FALSE;
+					// whether to apply htmlentities to answer
+					$use_desc_4_label = isset( $input_types[ $field_ID ][ 'use_desc_4_label' ] ) ? $input_types[ $field_ID ][ 'use_desc_4_label' ] : FALSE;
+
 					// create EE_Question_Form_Input object
-					$QFI = new EE_Question_Form_Input( EE_Question::new_instance( array( 'QST_ID' => 0, 'QST_display_text' => $field->get_nicename(), 'QST_type' => $type ) ), EE_Answer::new_instance( array( 'ANS_ID' => 0, 'QST_ID' => 0, 'REG_ID' => 0, 'ANS_value' => $value ) ), array( 'input_id' => $field_ID . '-' . $object->ID(), 'input_name' => $input_name, 'input_class' => $field_ID . $class, 'input_prefix' => '', 'append_qstn_id' => FALSE, 'htmlentities' => $htmlentities ) );
+					$QFI = new EE_Question_Form_Input(
+						EE_Question::new_instance(
+							array(
+								'QST_ID' => 0,
+								'QST_display_text' => $field->get_nicename(),
+								'QST_type' => $type
+							)
+						),
+						EE_Answer::new_instance(
+							array(
+								'ANS_ID' => 0,
+								'QST_ID' => 0,
+								'REG_ID' => 0,
+								'ANS_value' => $value
+							)
+						),
+						array(
+							'input_id' => $field_ID . '-' . $object->ID(),
+							'input_name' => $input_name,
+							'input_class' => $field_ID . $class,
+							'input_prefix' => '',
+							'append_qstn_id' => FALSE,
+							'htmlentities' => $htmlentities,
+							'label_b4' => $label_b4,
+							'use_desc_4_label' => $use_desc_4_label
+						)
+					);
 					// does question type have options ?
 					if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' ) ) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ][ 'options' ] ) ) {
 						foreach ( $input_types[ $field_ID ][ 'options' ] as $option ) {
@@ -345,10 +376,13 @@ class EE_Question_Form_Input {
 	/**
 	 *    get_meta
 	 * @access public
-	 * @param bool $key
+	 * @param mixed $key
 	 * @return mixed
 	 */
 	public function get_meta( $key = FALSE ) {
 		return $key && isset( $this->_QST_meta[ $key ] ) ? $this->_QST_meta[ $key ] : FALSE;
 	}
+
+
+
 }
