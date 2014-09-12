@@ -766,7 +766,7 @@ jQuery(document).ready( function($) {
 		process_response : function( next_step, response ) {
 			// alert( 'next_step = ' + next_step );
 			if ( typeof response !== 'undefined' && typeof response !== null ) {
-//				SPCO.console_log( 'process_response > outer_index', outer_index, true );
+
 				if ( typeof response.recaptcha_passed !== 'undefined' ) {
 					// hide recaptcha?
 					SPCO.process_recaptcha( response );
@@ -775,8 +775,6 @@ jQuery(document).ready( function($) {
 					SPCO.reload_recaptcha( response );
 				} else if ( typeof response.return_data !== 'undefined' ) {
 					// process valid response data
-//					SPCO.console_log( 'process_response > inner_index', inner_index, true );
-//					SPCO.console_log_obj( 'process_response > return_data = ', response.return_data );
 					if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
 						// get html for next reg step
 						SPCO.display_step( next_step, response );
@@ -851,6 +849,7 @@ jQuery(document).ready( function($) {
 		 * @param  {object} validation_rules
 		 */
 		set_new_validation_rules : function( next_step, validation_rules ) {
+//			SPCO.console_log( 'set_new_validation_rules > next_step', next_step, true );
 			// reset previous form validation rules
 			EEFV.reset_validation_rules();
 			// pass new rules for setup
