@@ -187,14 +187,14 @@ class EE_Message_Template_Defaults extends EE_Base {
 		//check if messenger is active
 		if ( !isset($active_messengers[$this->_m_name] ) ) {
 			$msg[] = __('Message Templates cannot be generated because the given messenger is not active', 'event_espresso');
-			$msg[] = sprintf( __('The "$_m_name" property has "%s" as it\'s value.  Check the spelling and make sure it matches an available messenger', 'event_espresso'), $this->_m_name );
+			$msg[] = sprintf( __('The "$_m_name" property has "%s" as its value.  Check the spelling and make sure it matches an available messenger', 'event_espresso'), $this->_m_name );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
 		//check if message type is installed
 		if ( !isset($active_messengers[$this->_m_name] ) ) {
 			$msg[] = __('Message Templates cannot be generated because the given message type is not installed', 'event_espresso');
-			$msg[] = sprintf( __('The "$_mt_name" property has "%s" as it\'s value.  Check the spelling and make sure it matches an available message type', 'event_espresso'), $this->_mt_name );
+			$msg[] = sprintf( __('The "$_mt_name" property has "%s" as its value.  Check the spelling and make sure it matches an available message type', 'event_espresso'), $this->_mt_name );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 

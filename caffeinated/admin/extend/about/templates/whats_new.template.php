@@ -9,7 +9,7 @@
 			array_pop( $ver );
 			$ver = implode( '.', $ver );
 		?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/' . $ver ); ?>
+		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/#' . $ver ); ?>
  	</p>
 </div>
 
