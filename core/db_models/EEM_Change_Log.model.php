@@ -121,6 +121,14 @@ class EEM_Change_Log extends EEM_Base{
 
 
 	/**
+	 * Resets the Log
+	 * @return EEM_Log
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+	/**
 	 *
 	 * @param string $log_type !see the acceptable values of LOG_type in EEM_LOg::__construct
 	 * @param mixed $message array|string of the message you want to record
