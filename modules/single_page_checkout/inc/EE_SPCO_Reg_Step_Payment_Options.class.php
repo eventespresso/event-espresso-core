@@ -84,7 +84,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// 	overpaid transactions
 		// 	$ 0.00 transactions (no payment required)
 		// TODO: if /when we implement donations, then this will need overriding
-		if ( $this->checkout->admin_request || $this->checkout->transaction->is_completed() || $this->checkout->transaction->is_overpaid() || $this->checkout->transaction->is_free() ) {
+		if ( ! $this->checkout->payment_required() ) {
 			$this->checkout->remove_reg_step( $this->_slug );
 			$this->checkout->reset_reg_steps();
 		}
