@@ -1,39 +1,21 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
-
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
- *
  * EE_Model_Parser
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 class EE_Model_Parser {
-	const table_alias_model_relation_chain_seperator = '__';
+	const table_alias_model_relation_chain_separator = '__';
 	const table_alias_model_relation_chain_prefix_end = '___';
 	/**
 	 * Adds a period onto the front and end of the string. This often helps in searching.
 	 * For example, if we want to find the model name "Event", it can be tricky when the following are possible
 	 * "","Event.EVT_ID","Event","Event_Venue.Venue.VNU_ID",etc. It's easier to look for ".Event." in
 	 * "..",".Event.EVT_ID.", ".Event.", and ".Event_Venue.Venue.VNU_ID", especially when the last example should NOT
-	 * be found because the "Event" model isn't mentioned- it's just a string that has a model name that conicidentally
+	 * be found because the "Event" model isn't mentioned- it's just a string that has a model name that coincidentally
 	 * has it as a substring
 	 * @param string $string_to_pad
 	 * @return string
@@ -42,7 +24,7 @@ class EE_Model_Parser {
 		return ".".$string_to_pad.".";
 	}
 	/**
-	 * Bsaically undoes _pad_with_periods
+	 * Basically undoes _pad_with_periods
 	 * @param string $string_to_trim
 	 * @return string
 	 */
@@ -50,9 +32,12 @@ class EE_Model_Parser {
 		return trim($string_to_trim,'.');
 	}
 
+
+
 	/**
-	 * Gets the calculatd table's alias
+	 * Gets the calculated table's alias
 	 * @param string $model_relation_chain or query param
+	 * @param        $this_model_name
 	 * @return string which can be added onto table aliases to make them unique
 	 */
 	public static function extract_table_alias_model_relation_chain_prefix($model_relation_chain,$this_model_name){
@@ -68,7 +53,7 @@ class EE_Model_Parser {
 		$model_relation_chain = self::trim_periods($model_relation_chain);
 		//eg 'Venue.Event_Venue'
 		//replace periods with double-underscores
-		$model_relation_chain = str_replace(".",self::table_alias_model_relation_chain_seperator,$model_relation_chain);
+		$model_relation_chain = str_replace(".",self::table_alias_model_relation_chain_separator,$model_relation_chain);
 		//eg 'Venue__Event_Venue'
 		if($model_relation_chain !=''){
 			$model_relation_chain = $model_relation_chain.self::table_alias_model_relation_chain_prefix_end;
@@ -112,8 +97,8 @@ class EE_Model_Parser {
 	}
 	/**
 	 * Gets the table alias model relation chain prefix from teh query param
-	 * @param type $query_param
-	 * @param type $table_alias_sans_prefix
+	 * @param array $query_param
+	 * @param string $table_alias_sans_prefix
 	 * @return string
 	 */
 	public static function extract_table_alias_model_relation_chain_from_query_param($query_param,$table_alias_sans_prefix){
@@ -124,9 +109,9 @@ class EE_Model_Parser {
 		$prefix = substr($query_param,0,$pos-1);
 		//turn last . indicates the end of the prefix
 		if($prefix){
-			return str_replace(".",self::table_alias_model_relation_chain_seperator,$prefix).self::table_alias_model_relation_chain_prefix_end;
+			return str_replace(".",self::table_alias_model_relation_chain_separator,$prefix).self::table_alias_model_relation_chain_prefix_end;
 		}
-
+		return '';
 	}
 }
 
