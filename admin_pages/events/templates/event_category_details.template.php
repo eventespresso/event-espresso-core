@@ -25,7 +25,7 @@
 				</label></th>
 			<td><?php echo $category_select; ?>
 					<br />
-					<p class="description"><?php _e('Categories are heirarchical.  You can change the parent for this category here.', 'event_espresso'); ?></p>
+					<p class="description"><?php _e('Categories are hierarchical.  You can change the parent for this category here.', 'event_espresso'); ?></p>
 			</td>
 		</tr>
 		<tr>

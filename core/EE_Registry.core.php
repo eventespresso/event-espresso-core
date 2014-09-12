@@ -704,7 +704,8 @@ final class EE_Registry {
 
 	/**
 	 * Resets the registry and everything in it (eventually, getting it to properly
-	 * reset absolutely everything will probably be tricky)
+	 * reset absolutely everything will probably be tricky. right now it just resets
+	 * the config, data migration manager, and the models)
 	 * @return EE_Registry
 	 */
 	public static function reset(){
@@ -712,6 +713,9 @@ final class EE_Registry {
 		$instance->CFG = EE_Config::reset();
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
 		$instance->LIB = new stdClass();
+		foreach( array_keys( $instance->non_abstract_db_models ) as $model_name ){
+			$instance->reset_model( $model_name );
+		}
 		return $instance;
 	}
 

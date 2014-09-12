@@ -77,7 +77,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		if ( reset( $answer_options ) instanceof EE_Question_Option ) {
 			$this->_options = $this->_process_question_options( $answer_options );
 		} else {
-			$this->_options = $this->_flatten_select_options( $answer_options );
+			$this->_options = $answer_options;
 		}
 		//d( $this->_options );
 		$select_option_keys = array_keys( $this->_options );

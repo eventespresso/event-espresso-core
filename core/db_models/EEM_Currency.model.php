@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEM_Currency
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -34,12 +34,12 @@ class EEM_Currency extends EEM_Base{
 	 *
 	 *		@access public
 	 *		@return EEM_Currency instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
@@ -64,8 +64,17 @@ class EEM_Currency extends EEM_Base{
 		$this->_model_relations = array(
 			'Payment_Method'=>new EE_HABTM_Relation('Currency_Payment_Method'),
 		);
-		
+
 		parent::__construct();
+	}
+
+	/**
+	 * Resets the country
+	 * @return EEM_Currency
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 	/**
 	 * Gets all thea ctive currencies, and orders them by their singular name, and then their code
@@ -99,7 +108,7 @@ class EEM_Currency extends EEM_Base{
 		}
 		return $currencies;
 	}
-	
+
 }
 
 // End of file EEM_Currency.model.php
