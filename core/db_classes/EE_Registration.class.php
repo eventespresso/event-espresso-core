@@ -938,19 +938,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return int            Integer representing Check-in status.
 	 */
 	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
-		if ( empty( $DTT_ID ) && empty( $checkin ) ) {
+		if ( empty( $DTT_ID ) && ! $checkin instanceof EE_Checkin ) {
 			$datetime = $this->get_related_primary_datetime();
 			if ( ! $datetime instanceof EE_Datetime ) {
 				return 0;
 			}
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID, false ) ) {
+		} elseif ( ! $checkin instanceof EE_Checkin && ! $this->can_checkin( $DTT_ID, false ) ) {
 			EE_Error::add_error( sprintf( __( 'The checkin status for the given registration (ID:%d) and DTT_ID (%d) cannot be retrieved because the registration does not have access to that date and time.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
-			return 0;
+			return false;
 		}
 		//get checkin object (if exists)
-		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
+		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
 				return 1; //checked in
