@@ -947,7 +947,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		//verify the registration can checkin for the given DTT_ID
 		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID, false ) ) {
 			EE_Error::add_error( sprintf( __( 'The checkin status for the given registration (ID:%d) and DTT_ID (%d) cannot be retrieved because the registration does not have access to that date and time.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
-			return 0;
+			return false;
 		}
 		//get checkin object (if exists)
 		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
