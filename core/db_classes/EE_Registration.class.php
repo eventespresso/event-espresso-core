@@ -900,7 +900,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} elseif ( $verify && ! $this->can_checkin( $DTT_ID ) ) {
+		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
 			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
