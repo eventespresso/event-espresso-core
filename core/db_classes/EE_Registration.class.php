@@ -872,7 +872,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return bool
 	 */
 	public function can_checkin( $DTT_OR_ID, $check_approved = TRUE ) {
-		$DTT_ID = $this->get_model()->ensure_is_ID( $DTT_OR_ID );
+		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
 
 		//first check registration status
 		if (  $check_approved && ! $this->is_approved() ) {
