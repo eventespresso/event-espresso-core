@@ -361,6 +361,21 @@ class EE_Checkout {
 	}
 
 
+	/**
+	 * payment_required
+	 * @return boolean
+	 */
+	public function payment_required() {
+		// if NOT:
+		//		registration via admin
+		//		completed TXN
+		//		overpaid TXN
+		//		free TXN ( total = 0.00 )
+		// then payment required is TRUE
+		return ! ( $this->admin_request || $this->transaction->is_completed() || $this->transaction->is_overpaid() || $this->transaction->is_free() ) ? TRUE : FALSE;
+	}
+
+
 
 	/**
 	 * 	stash_transaction_and_checkout
