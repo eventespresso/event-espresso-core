@@ -127,10 +127,29 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	get_txn
 	 *
 	 *  @access 	public
-	 *  @return 	mixed EE_Transaction || FALSE
+	 *  @return 	EE_Transaction
 	 */
 	public function get_txn() {
-		return $this->_current_txn instanceof EE_Transaction ? $this->_current_txn : FALSE;
+		if ( $this->_current_txn instanceof EE_Transaction ) {
+			return $this->_current_txn;
+		}
+		$TXN_model = EE_Registry::instance()->load_model( 'Transaction' );
+		if ( ! $TXN_model instanceof EEM_Transaction ) {
+			EE_Error::add_error(
+				__( 'The transaction model could not be established.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
+		$this->_current_txn = $TXN_model->get_transaction_from_reg_url_link( $this->_reg_url_link );
+		// verify TXN
+		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		return $this->_current_txn;
 	}
 
 
@@ -161,13 +180,37 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
+	 * 	get_reg_url_link
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	private function _get_reg_url_link() {
+		if ( ! empty( $this->_reg_url_link )) {
+			return;
+		}
+		// only do thank you page stuff if we have a REG_url_link in the url
+		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return;
+		}
+		// check for reg_url_link
+		$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+	}
+
+
+
+	/**
 	 * 	set_reg_url_link
 	 *
 	 *  @access 	public
 	 *  @param  	string $reg_url_link
 	 *  @return 	string
 	 */
-	public function set_reg_url_link( $reg_url_link= NULL ) {
+	public function set_reg_url_link( $reg_url_link = NULL ) {
 		$this->_reg_url_link = ! empty( $reg_url_link ) ? $reg_url_link : $this->_reg_url_link;
 	}
 
@@ -188,6 +231,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
 			return;
 		}
+		$this->_get_reg_url_link();
 		// resend_reg_confirmation_email ?
 		if ( EE_Registry::instance()->REQ->is_set( 'resend' )) {
 			EES_Espresso_Thank_You::resend_reg_confirmation_email();
@@ -236,27 +280,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
-		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return;
-		}
-		// check for reg_url_link
-		$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
-		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
-		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->_reg_url_link );
-		// verify TXN
-		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return;
-		}
-
+		$this->_get_reg_url_link();
+		$this->get_txn();
 
 		// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
 		if ( $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
@@ -370,7 +395,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $TXN instanceof EE_Transaction ) {
 			$notices = EE_Error::get_notices();
 			$response['espresso_thank_you_page'] = array (
-				'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
+				'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : sprintf( __( 'The information for your transaction could not be retrieved from the server or the transaction data received was invalid because of a technical reason. (%s)', 'event_espresso' ), __LINE__ )
 			);
 			return $response;
 		}
