@@ -844,7 +844,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got deleted
 	 */
 	function delete($query_params,$allow_blocking = true){
-		global $wpdb;
 		/**
 		 * Action called just before performing a real deletion query. You can use the
 		 * model and its $query_params to find exactly which items will be deleted
@@ -1957,7 +1956,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets an array of columns to select for this model, which are necessary for it to create its objects.
-	 * So that's going to be the columsn for all the fields on the model
+	 * So that's going to be the columns for all the fields on the model
 	 * @param string $model_relation_chain like 'Question.Question_Group.Event'
 	 * @return array numerically indexed, values are columns to select and rename, eg "Event.ID AS 'Event.ID'"
 	 */
@@ -1965,7 +1964,7 @@ abstract class EEM_Base extends EE_Base{
 		$fields = $this->field_settings();
 		$selects = array();
 		$table_alias_with_model_relation_chain_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model_name());
-		foreach($fields as $field_name => $field_obj){
+		foreach($fields as $field_obj){
 			$selects[] = $table_alias_with_model_relation_chain_prefix . $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$table_alias_with_model_relation_chain_prefix.$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
 		}
 		//make sure we are also getting the PKs of each table
@@ -2068,7 +2067,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $model_name
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
 	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
-	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original queyr param key 'Registration.Transaction.Payment.PAY_amount',
+	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original query param key 'Registration.Transaction.Payment.PAY_amount',
 	 * we want to extract 'Registration.Transaction.Payment', in case Payment wants to add default query params so that it will know
 	 * what models to prepend onto its default query params or in case it wants to rename tables (in case there are multiple joins to the same table)
 	 * @return void
@@ -2119,9 +2118,9 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Replaces the specified model in teh model relation chain with teh join model
-	 * @param type $model_name
-	 * @param type $join_model_name
-	 * @param type $model_relation_chain
+	 * @param string $model_name
+	 * @param string $join_model_name
+	 * @param string $model_relation_chain
 	 * @return string
 	 */
 	private function _replace_model_name_with_join_model_name_in_model_relation_chain($model_name,$join_model_name,$model_relation_chain){
@@ -2217,7 +2216,7 @@ abstract class EEM_Base extends EE_Base{
 			}else{
 				$field_obj = $this->_deduce_field_from_query_param($query_param);
 
-				//if it's not a normal field, mayeb it's a custom selection?
+				//if it's not a normal field, maybe it's a custom selection?
 				if( ! $field_obj){
 					if(isset( $this->_custom_selections[$query_param][1])){
 						$field_obj = $this->_custom_selections[$query_param][1];
@@ -2510,7 +2509,7 @@ abstract class EEM_Base extends EE_Base{
 	 * With $alias being a secondary table's alias, this will construct SQL like:
 	 * " INNER JOIN wp_esp_primary_table AS Primary_Table ON Primary_Table.pk = Secondary_Table.fk".
 	 *
-	 * @param string $alias table alias to join to (this table should already be in the FROM SQL clause)
+	 * @param string $alias_prefixed table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
 	function _construct_internal_join_to_table_with_alias($alias_prefixed){
@@ -3264,7 +3263,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets an array where keys are the primary keys and values are their 'names'
-	 * (as determined by the model object's name() function, which is oftne overridden)
+	 * (as determined by the model object's name() function, which is often overridden)
 	 * @param array $query_params like get_all's
 	 * @return string[]
 	 */
