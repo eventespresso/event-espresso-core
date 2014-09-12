@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Log
+ * EE_Change_Log
  *
  * @package			Event Espresso
  * @subpackage
@@ -25,27 +25,25 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Log extends EE_Base_Class{
+class EE_Change_Log extends EE_Base_Class{
 
 	/**
 	 *
-	 * @param type $props_n_values
-	 * @return EE_Log
+	 * @param array $props_n_values
+	 * @return EE_Change_Log
 	 */
 	public static function new_instance( $props_n_values = array() ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
 //		d( $has_object );
 		return $has_object ? $has_object : new self( $props_n_values);
 	}
 
 	/**
 	 *
-	 * @param type $props_n_values
-	 * @return EE_Log
+	 * @param array $props_n_values
+	 * @return EE_Change_Log
 	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
-		$classname = __CLASS__;
 //		$mapped_object = parent::_get_object_from_entity_mapper($props_n_values, $classname);
 //		d( $mapped_object );
 //		return $mapped_object ? $mapped_object : new self( $props_n_values, TRUE );
@@ -62,10 +60,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets message
 	 * @param mixed $message
-	 * @return boolean
 	 */
 	function set_message($message) {
-		return $this->set('LOG_message', $message);
+	 $this->set('LOG_message', $message);
 	}
 	/**
 	 * Gets time
@@ -78,10 +75,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets time
 	 * @param string $time
-	 * @return boolean
 	 */
 	function set_time($time) {
-		return $this->set('LOG_time', $time);
+		$this->set('LOG_time', $time);
 	}
 	/**
 	 * Gets log_type
@@ -94,10 +90,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets log_type
 	 * @param string $log_type
-	 * @return boolean
 	 */
 	function set_log_type($log_type) {
-		return $this->set('LOG_log_type', $log_type);
+		$this->set('LOG_log_type', $log_type);
 	}
 	/**
 	 * Gets type of the model object related to this log
@@ -110,10 +105,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets type
 	 * @param string $type
-	 * @return boolean
 	 */
 	function set_OBJ_type($type) {
-		return $this->set('OBJ_type', $type);
+		$this->set('OBJ_type', $type);
 	}
 	/**
 	 * Gets OBJ_ID (the ID of the item related to this log)
@@ -126,10 +120,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets OBJ_ID
 	 * @param mixed $OBJ_ID
-	 * @return boolean
 	 */
 	function set_OBJ_ID($OBJ_ID) {
-		return $this->set('OBJ_ID', $OBJ_ID);
+		$this->set('OBJ_ID', $OBJ_ID);
 	}
 	/**
 	 * Gets wp_user_id
@@ -142,10 +135,9 @@ class EE_Log extends EE_Base_Class{
 	/**
 	 * Sets wp_user_id
 	 * @param int $wp_user_id
-	 * @return boolean
 	 */
 	function set_wp_user_id($wp_user_id) {
-		return $this->set('LOG_wp_user_id', $wp_user_id);
+		$this->set('LOG_wp_user_id', $wp_user_id);
 	}
 
 	/**
@@ -167,7 +159,7 @@ class EE_Log extends EE_Base_Class{
 	 * _add_relation_to because you don't have to specify what type of model you're
 	 * associating it with
 	 * @param EE_Base_Class $object
-	 * @param type $save
+	 * @param boolean $save
 	 * @return boolean if $save=true, NULL is $save=false
 	 */
 	function set_object($object, $save = TRUE ) {
@@ -186,4 +178,4 @@ class EE_Log extends EE_Base_Class{
 	}
 }
 
-// End of file EE_Log.class.php
+// End of file EE_Change_Log.class.class.php
