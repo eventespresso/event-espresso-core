@@ -156,7 +156,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 */
 	public function display_errors($input){
 		if( $input->get_validation_errors() ){
-			return  "<span  id='" . $input->html_id() . "-error' class='ee-input-error small-text' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</span>";
+			return  "<span  id='" . $input->html_id() . "-error' class='red ee-red' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</span>";
 		}else{
 			return '';
 		}

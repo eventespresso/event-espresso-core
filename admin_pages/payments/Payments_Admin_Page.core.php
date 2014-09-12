@@ -470,7 +470,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}
 			//if we couldn't find the correct payment method type...
 			if( ! $correct_pmt_form_to_use ){
-				EE_Error::add_error(__("We could not find which payment method type your form submission related to. Please contact support", 'event_espresso'));
+				EE_Error::add_error(__("We could not find which payment method type your form submission related to. Please contact support", 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 			}
 			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
@@ -484,7 +484,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					sprintf(
 						__('Payment method of type %s was not saved because there were validation errors. They have been marked in the form', 'event_espresso'),
 						$pmt_obj instanceof EE_PMT_Base ? $pmt_obj->pretty_name() : __( '"(unknown)"', 'event_espresso' )
-					)
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
 				);
 			}
 		}
