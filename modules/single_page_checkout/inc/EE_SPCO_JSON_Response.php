@@ -249,7 +249,7 @@ class EE_SPCO_JSON_Response {
 	 * @return string
 	 */
 	public function redirect_form() {
-		return $this->_redirect_form;
+		return ! empty( $this->_redirect_form ) ? $this->_redirect_form : FALSE;
 	}
 
 

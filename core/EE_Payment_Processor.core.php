@@ -225,14 +225,15 @@ class EE_Payment_Processor{
 	 * should be called while loading the page that displays the payment's status. If the user is
 	 * sent to an offsite payment provider, this should be called upon returning from that offsite payment
 	 * provider.
-	 * @param EE_Transaction $transaction
+	 * @param EE_Transaction | int $transaction
 	 * @return EE_Payment
 	 */
-	public function finalize_payment_for($transaction){
-		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+	public function finalize_payment_for( $transaction ){
+		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
+		/** @var $transaction EE_Transaction */
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
-			$payment = $last_payment_method->type_obj()->finalize_payment_for($transaction);
+			$payment = $last_payment_method->type_obj()->finalize_payment_for( $transaction );
 			$this->update_txn_based_on_payment( $transaction, $payment );
 			return $payment;
 		}else{
