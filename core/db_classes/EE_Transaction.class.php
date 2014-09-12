@@ -601,7 +601,7 @@ class EE_Transaction extends EE_Base_Class {
 		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
 		if ( $new_reg ) {
 			// remove the transaction from the session before saving it to the db
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => NULL ) );
+			EE_Registry::instance()->SSN->reset_transaction();
 			// save the session (with it's session-less transaction) back to this transaction... we need to go deeper!
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
