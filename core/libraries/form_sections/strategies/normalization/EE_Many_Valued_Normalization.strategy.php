@@ -37,22 +37,21 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 	}
 	/**
 	 * Normalizes the input into an array, and normalizes each item according to its
-	 * individual item normalizaiton strategy
+	 * individual item normalization strategy
 	 * @param type $value_to_normalize
 	 * @return array
 	 */
 	public function normalize($value_to_normalize) {
-		$items_to_normalize = array();
-		if(is_array($value_to_normalize)){
+		if ( is_array( $value_to_normalize )){
 			$items_to_normalize = $value_to_normalize;
-		}elseif($value_to_normalize !== NULL){
-			$items_to_normalize = array($value_to_normalize);
-		}else{
+		} else if( $value_to_normalize !== NULL ){
+			$items_to_normalize = array( $value_to_normalize );
+		} else {
 			$items_to_normalize = array();
 		}
 		$normalized_array_value = array();
-		foreach($items_to_normalize as $key => $individual_item){
-			$normalized_array_value[$key] = $this->_individual_item_normalization_strategy->normalize($individual_item);
+		foreach( $items_to_normalize as $key => $individual_item ){
+			$normalized_array_value[ $key ] = $this->_individual_item_normalization_strategy->normalize( $individual_item );
 		}
 		return $normalized_array_value;
 	}
