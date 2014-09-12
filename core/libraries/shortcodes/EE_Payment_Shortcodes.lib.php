@@ -60,7 +60,8 @@ class EE_Payment_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[PAYMENT_METHOD]' :
-				return $payment->method();
+				//previously the column 'PAY_source' was known as 'PAY_method'
+				return $payment->source();
 				break;
 
 			case '[PAYMENT_AMOUNT]' :
@@ -68,7 +69,12 @@ class EE_Payment_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[PAYMENT_GATEWAY]' :
-				return $payment->gateway();
+				//previously teh column 'PMD_ID' was more-or-less 'PAY_gateway'
+				if( $payment->payment_method() instanceof EE_Payment_Method ){
+					return $payment->payment_method()->name();
+				}else{
+					return __( 'Unknown', 'event_espresso' );
+				}
 				break;
 
 			case '[PAYMENT_GATEWAY_RESPONSE]' :

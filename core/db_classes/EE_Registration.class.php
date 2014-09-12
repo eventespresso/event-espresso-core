@@ -464,6 +464,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		// check instanceof
 		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 			// get global template as the fallback
+			unset( $template_qa[ 'Event.EVT_ID' ] );
 			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
 		}
 		// if we STILL don't have an EE_Message_Template_Group, then return
