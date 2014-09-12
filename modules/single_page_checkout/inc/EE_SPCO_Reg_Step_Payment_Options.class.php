@@ -470,9 +470,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$info_html = EEH_HTML::h3 ( 'Important information regarding your payment', '', 'spco-payment-method-hdr' );
 			$info_html .= EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' );
 			// generate the billing form for payment method
-			$billing_form = $this->checkout->selected_method_of_payment == $payment_method->slug()
-				? $this->_get_billing_form_for_payment_method( $payment_method, TRUE )
-				: new EE_Form_Section_HTML();
+			$billing_form = $this->_get_billing_form_for_payment_method( $payment_method, TRUE );
 
 			return new EE_Form_Section_Proper(
 				array(
@@ -482,7 +480,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
 					'subsections' 			=> array(
 						'info' 					=> new EE_Form_Section_HTML( $info_html ),
-						'billing_form' 		=> $billing_form
+						'billing_form' 		=> $this->checkout->selected_method_of_payment == $payment_method->slug() ? $billing_form : new EE_Form_Section_HTML()
 					)
 				)
 			);
