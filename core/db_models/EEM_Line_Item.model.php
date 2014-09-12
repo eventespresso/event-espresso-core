@@ -40,12 +40,57 @@
 
 class EEM_Line_Item extends EEM_Base {
 
+	/**
+	 * Tax sub-total is just the total of all the taxes, which should be children
+	 * of this line item. There should only ever be one tax sub-total, and it should
+	 * be a direct child of
+	 */
 	const type_tax_sub_total = 'tax-sub-total';
+
+	/**
+	 * Tax line items indicate a tax applied to all the taxable line items.
+	 * Should not have any children line items.
+	 */
 	const type_tax = 'tax';
+
+	/**
+	 * Indicating individual items purchased, or discounts or surcharges.
+	 * The sum of all the regular line items  plus the tax items should equal
+	 * the grand total.
+	 * Possible children fo sub-line-items and cancellations.
+	 */
 	const type_line_item = 'line-item';
+
+	/**
+	 * line item indicating all the factors that make a single line item.
+	 * Sub-line items should have NO children line items.
+	 */
 	const type_sub_line_item = 'sub-item';
+
+	/**
+	 * line item indicating a sub-total (eg total for an event, or before taxes).
+	 * Direct children can be line items and other sub-totals
+	 *
+	 */
 	const type_sub_total = 'sub-total';
+
+	/**
+	 * line item for teh grand total of an order. Its direct children
+	 * should be tax subtotals and subtotals, and possibly a regular line item
+	 * indicating a transaction-wide discount/surcharge
+	 */
 	const type_total = 'total';
+
+	/**
+	 * When a line item is cancelled, a sub-line-item of type 'cancellation'
+	 * should be created, indicating the quantity that were cancelled
+	 * (because a line item could have a quantity of 4, and its cancellation item
+	 * could be for 3, indicating that there is still 1 item purchased).
+	 * When items are refunded, a cancellation line item should be made, which points
+	 * to teh payment model object which actually refunded the payment.
+	 * Cancellations should NOT have any children line items.
+	 */
+	const type_cancellation = 'cancellation';
 
 	// private instance of the EEM_Line_Item object
 	private static $_instance = NULL;
@@ -119,7 +164,8 @@ class EEM_Line_Item extends EEM_Base {
 							self::type_sub_total=>  __("Subtotal", "event_espresso"),
 							self::type_tax_sub_total => __("Tax Subtotal", "event_espresso"),
 							self::type_tax=>  __("Tax", "event_espresso"),
-							self::type_total=>  __("Total", "event_espresso"))),
+							self::type_total=>  __("Total", "event_espresso"),
+							self::type_cancellation=> __( 'Cancellation', 'event_espresso' ))),
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
 				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
 			)
