@@ -163,6 +163,12 @@ class EE_Checkout {
 	 */
 	public $reg_steps = array();
 
+	/**
+	 * array of EE_Payment_Method objects
+	 * @type EE_Payment_Method[]
+	 */
+	public $available_payment_methods = array();
+
 
 
 	/**
@@ -363,14 +369,8 @@ class EE_Checkout {
 	 * 	@return 	bool
 	 */
 	public function stash_transaction_and_checkout() {
-		if ( ! $this->reg_url_link ) {
-			EE_Registry::instance()->SSN->set_session_data(
-				array(
-					'checkout' => $this,
-					'transaction' => $this->transaction
-				)
-			);
-		}
+		EE_Registry::instance()->SSN->set_checkout( $this );
+		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
 	}
 
 
