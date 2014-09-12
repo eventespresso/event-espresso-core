@@ -17,7 +17,7 @@ class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base{
 	 * @param array $answer_options
 	 * @param array $input_settings
 	 */
-	function __construct( $answer_options, $input_settings ){
+	function __construct( $answer_options, $input_settings = array() ){
 		$this->_set_display_strategy( new EE_Radio_Button_Display_Strategy() );
 		$this->_add_validation_strategy( new EE_Enum_Validation_Strategy() );
 		$this->_multiple_selections = FALSE;
