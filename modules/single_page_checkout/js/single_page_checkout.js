@@ -663,7 +663,7 @@ jQuery(document).ready( function($) {
 				},
 
 				error: function( response ) {
-					SPCO.submit_reg_form_server_error( response );
+					SPCO.submit_reg_form_server_error();
 				}
 
 			});
@@ -703,7 +703,7 @@ jQuery(document).ready( function($) {
 				},
 
 				error: function( response ) {
-					return SPCO.submit_reg_form_server_error( response );
+					return SPCO.submit_reg_form_server_error();
 				}
 
 			});
@@ -750,7 +750,7 @@ jQuery(document).ready( function($) {
 				},
 
 				error: function( response ) {
-					return SPCO.submit_reg_form_server_error( response );
+					return SPCO.submit_reg_form_server_error();
 				}
 
 			});
@@ -809,11 +809,11 @@ jQuery(document).ready( function($) {
 					SPCO.get_next_reg_step( next_step );
 				} else {
 					// oh noes...
-					SPCO.submit_reg_form_server_error( response );
+					SPCO.submit_reg_form_server_error();
 				}
 
 			} else {
-				SPCO.submit_reg_form_server_error( response );
+				SPCO.submit_reg_form_server_error();
 			}
 		},
 
@@ -1039,11 +1039,9 @@ jQuery(document).ready( function($) {
 
 		/**
 		 * @function submit_reg_form_server_error
-		 * @param  {object} response
 		 */
-		submit_reg_form_server_error : function( response ) {
+		submit_reg_form_server_error : function() {
 			SPCO.hide_notices();
-			SPCO.console_log_object( 'submit_reg_form_server_error : ajax error response', response, 0 );
 			var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ), '' );
 			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			return false;
