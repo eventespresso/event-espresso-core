@@ -57,8 +57,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 				$this->_enforce_label_size = TRUE;
 			}
 		}
-		//d( $input_settings );
-		//d( $answer_options );
 		$this->set_select_options( $answer_options );
 		parent::__construct( $input_settings );
 	}
@@ -108,6 +106,9 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	public function options(){
 		return $this->_options;
 	}
+
+
+
 	/**
 	 * Returns an array which is guaranteed to not be multidimensional
 	 * @return array
@@ -115,6 +116,9 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	public function flat_options(){
 		return $this->_flatten_select_options($this->options());
 	}
+
+
+
 	/**
 	 * Makes sure $arr is a flat array, not a multidimensional one
 	 * @param array $arr
@@ -135,7 +139,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 				$flat_array[ $key ] = $value;
 				$this->_set_label_size( $value );
 			}
-			return is_array( $arr ) ? $arr : array( $arr );
 		}
 		return $flat_array;
 	}
@@ -152,6 +155,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			if ( $question_option instanceof EE_Question_Option ) {
 				$value = $this->_use_desc_in_label ? $question_option->value() . '<span class="ee-question-option-desc"> - ' . $question_option->desc() . '</span>' : $question_option->value();
 				$flat_array[ $question_option->value() ] = $value;
+				// calculate the strlen of the label, note that "123456" is just used as a spacer and does not appear in any output
 				$this->_use_desc_in_label ? $this->_set_label_size( $question_option->value() . '123456' . $question_option->desc() ) : $this->_set_label_size( $value );
 			} elseif ( is_array( $question_option )) {
 				$non_question_option = $this->_flatten_select_options( $question_option );

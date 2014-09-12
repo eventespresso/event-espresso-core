@@ -325,7 +325,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$valid = self::_validate_post_data('add_event_to_cart');
 			// d( $valid );
 
-			//check total tickets oredered vs max number of attendees that can register
+			//check total tickets ordered vs max number of attendees that can register
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 
 				// ordering too many tickets !!!
@@ -789,7 +789,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			// make it dance
 			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
-			// loco grande
 			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}

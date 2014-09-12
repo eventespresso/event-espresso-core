@@ -548,8 +548,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return array
 	 */
 	public function get_payment_logs($per_page = 50, $current_page = 0, $count = false){
+		EE_Registry::instance()->load_model( 'Change_Log' );
 		//we may need to do multiple queries (joining differently), so we actually wan tan array of query params
-		$query_params =  array(array('LOG_type'=>  EEM_Log::type_gateway));
+		$query_params =  array(array('LOG_type'=>  EEM_Change_Log::type_gateway));
 		//check if they've selected a specific payment method
 		if( isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== 'all'){
 			$query_params[0]['OR*pm_or_pay_pm'] = array('Payment.Payment_Method.PMD_ID'=>$this->_req_data['_payment_method'],
@@ -576,7 +577,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//add date
 			$start_date =wp_strip_all_tags( $this->_req_data['payment-filter-start-date'] );
 			$end_date = wp_strip_all_tags( $this->_req_data['payment-filter-end-date'] );
-			//make sure our timestampes start and end right at the boundaries for each day
+			//make sure our timestamps start and end right at the boundaries for each day
 			$start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
 			$end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 23:59:59';
 
@@ -592,7 +593,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		}
 		if($count){
-			return EEM_Log::instance()->count($query_params);
+			return EEM_Change_Log::instance()->count($query_params);
 		}
 		if(isset($this->_req_data['order'])){
 			$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
@@ -610,7 +611,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		//now they've requested to instead just download the file instead of viewing it.
 		if(isset($this->_req_data['download_results'])){
-			$wpdb_results = EEM_Log::instance()->get_all_efficiently($query_params);
+			$wpdb_results = EEM_Change_Log::instance()->get_all_efficiently($query_params);
 			header('Content-Disposition: attachment');
 			header("Content-Disposition: attachment; filename=ee_payment_logs_for_".sanitize_key(site_url()));
 			echo "<h1>Payment Logs for ".site_url()."</h1>";
@@ -620,15 +621,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			var_dump($wpdb_results);
 			die;
 		}
-		$results = EEM_Log::instance()->get_all($query_params);
+		$results = EEM_Change_Log::instance()->get_all($query_params);
 		return $results;
 
 	}
 	/**
 	 * Used by usort to RE-sort log query results, because we lose the ordering
 	 * because we're possibly combining the results from two queries
-	 * @param EE_Log $logA
-	 * @param EE_Log $logB
+	 * @param EE_Change_Log $logA
+	 * @param EE_Change_Log $logB
 	 * @return int
 	 */
 	protected function _sort_logs_again($logA,$logB){
@@ -646,11 +647,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _payment_log_details() {
-		/** @var $payment_log EE_Log */
-		$payment_log = EEM_Log::instance()->get_one_by_ID($this->_req_data['ID']);
+		EE_Registry::instance()->load_model( 'Change_Log' );
+		/** @var $payment_log EE_Change_Log */
+		$payment_log = EEM_Change_Log::instance()->get_one_by_ID($this->_req_data['ID']);
 		$payment_method = NULL;
 		$transaction = NULL;
-		if( $payment_log instanceof EE_Log ){
+		if( $payment_log instanceof EE_Change_Log ){
 			if( $payment_log->object() instanceof EE_Payment ){
 				$payment_method = $payment_log->object()->payment_method();
 				$transaction = $payment_log->object()->transaction();

@@ -19,12 +19,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * payment_log_details
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-/*@var EE_Log $payment_Log */
+/*@var EE_Change_Log $payment_Log */
 /*@var EE_Payment_Method $payment_Method*/
 /*@var EE_Transaction $transaction*/
 ?>
@@ -40,7 +40,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 				</th>
 				<td>
 					<?php echo $payment_log->ID()?>
-					
+
 				</td>
 			</tr>
 			<tr>
@@ -51,7 +51,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 				</th>
 				<td>
 					<?php echo $payment_method ? $payment_method->admin_name() : __("No Longer Exists", 'event_espresso')?>
-					
+
 				</td>
 			</tr>
 			<tr>
@@ -62,7 +62,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 				</th>
 				<td>
 					<?php echo $transaction ? $transaction->ID() : __("Could not be determined", 'event_espresso');?>
-					
+
 				</td>
 			</tr>
 			<tr>

@@ -59,6 +59,12 @@ class EE_SPCO_JSON_Response {
 	protected $_return_data = array();
 
 
+	/**
+	 *  @var array
+	 */
+	protected $_validation_rules = array();
+
+
 
 
 	/**
@@ -100,12 +106,16 @@ class EE_SPCO_JSON_Response {
 		if ( $this->success() ) {
 			$JSON_response['success'] = $this->success();
 		}
-		// set reg_step_html, IF it exists
-		if ( $this->reg_step_html() ) {
-			$JSON_response['reg_step_html'] = $this->reg_step_html();
-		}
 		// grab generic return data
 		$return_data = $this->return_data();
+		// add billing form validation rules
+		if ( $this->validation_rules() ) {
+			$return_data['validation_rules'] = $this->validation_rules();
+		}
+		// set reg_step_html, IF it exists
+		if ( $this->reg_step_html() ) {
+			$return_data['reg_step_html'] = $this->reg_step_html();
+		}
 		// set method of payment, IF it exists
 		if ( $this->method_of_payment() ) {
 			$return_data['method_of_payment'] = $this->method_of_payment();
@@ -294,6 +304,26 @@ class EE_SPCO_JSON_Response {
 	 */
 	public function return_data() {
 		return $this->_return_data;
+	}
+
+
+
+	/**
+	 * @param array $validation_rules
+	 */
+	public function add_validation_rules( $validation_rules = array() ) {
+		if ( is_array( $validation_rules ) && ! empty( $validation_rules )) {
+			$this->_validation_rules = array_merge( $this->_validation_rules, $validation_rules );
+		}
+	}
+
+
+
+	/**
+	 * @return array | bool
+	 */
+	public function validation_rules() {
+		return ! empty( $this->_validation_rules ) ? $this->_validation_rules : FALSE;
 	}
 
 

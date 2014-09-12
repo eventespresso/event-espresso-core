@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EEM_Log
+ * EEM_Change_Log
  *
  * @package			Event Espresso
  * @subpackage
@@ -25,14 +25,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EEM_Log extends EEM_Base{
+class EEM_Change_Log extends EEM_Base{
 
 	/**
 	 * the related object was created log type
 	 */
 	const type_create = 'create';
 	/**
-	 * the related obejct was updated (changed, or soft-deleted)
+	 * the related object was updated (changed, or soft-deleted)
 	 */
 	const type_update = 'update';
 	/**
@@ -53,25 +53,36 @@ class EEM_Log extends EEM_Base{
 	 * or request to process a payment
 	 */
 	const type_gateway = 'gateway';
-	// private instance of the EEM_Log object
+
+	/**
+	 * private instance of the EEM_Change_Log object
+	 * @access private
+	 * @var EEM_Change_Log $_instance
+	 */
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Log instance
+	 *		@return EEM_Change_Log
 	 */
 	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
+		// check if instance of EEM_Change_Log already exists
+		if ( ! self::$_instance instanceof EEM_Change_Log ) {
 			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
-		// EEM_Attendee object
 		return self::$_instance;
 	}
+
+
+
+	/**
+	 * constructor
+	 *	@access protected
+	 *	@return EEM_Change_Log
+	 */
 	protected function __construct(){
 		global $current_user;
 		$this->singular_item = __('Log','event_espresso');
@@ -106,8 +117,11 @@ class EEM_Log extends EEM_Base{
 
 		parent::__construct();
 	}
+
+
+
 	/**
-	 * Resets the country
+	 * Resets the Log
 	 * @return EEM_Log
 	 */
 	public static function reset(){
@@ -119,7 +133,7 @@ class EEM_Log extends EEM_Base{
 	 * @param string $log_type !see the acceptable values of LOG_type in EEM_LOg::__construct
 	 * @param mixed $message array|string of the message you want to record
 	 * @param EE_Base_Class $related_model_obj
-	 * @return EE_Log
+	 * @return EE_Change_Log
 	 */
 	public function log($log_type,$message,$related_model_obj){
 		if($related_model_obj instanceof EE_Base_Class){
@@ -129,7 +143,7 @@ class EEM_Log extends EEM_Base{
 			$obj_id = NULL;
 			$obj_type = NULL;
 		}
-		$log = EE_Log::new_instance(array(
+		$log = EE_Change_Log::new_instance(array(
 				'LOG_type'=>$log_type,
 				'LOG_message'=>$message,
 				'OBJ_ID'=>$obj_id,
@@ -138,19 +152,23 @@ class EEM_Log extends EEM_Base{
 		$log->save();
 		return $log;
 	}
+
+
+
 	/**
-	 * Adds a gateway log for teh specieid object, given its ID and type
-	 * @param mixed $message
-	 * @param mixed int|string $related_obj_id
+	 * Adds a gateway log for the specified object, given its ID and type
+	 * @param string  $message
+	 * @param mixed $related_obj_id
 	 * @param string $related_obj_type
-	 * @return EE_Log
+	 * @throws EE_Error
+	 * @return EE_Change_Log
 	 */
-	public function gateway_log($message,$related_obj_id,$related_obj_type){
+	public function gateway_log( $message, $related_obj_id, $related_obj_type ){
 		if( ! EE_Registry::instance()->is_model_name($related_obj_type)){
 			throw new EE_Error(sprintf(__("'%s' is not a model name. A model name must be provided when making a gateway log. Eg, 'Payment', 'Payment_Method', etc", "event_espresso"),$related_obj_type));
 		}
-		$log = EE_Log::new_instance(array(
-				'LOG_type'=>EEM_Log::type_gateway,
+		$log = EE_Change_Log::new_instance(array(
+				'LOG_type'=>EEM_Change_Log::type_gateway,
 				'LOG_message'=>$message,
 				'OBJ_ID'=>$related_obj_id,
 				'OBJ_type'=>$related_obj_type,
@@ -158,6 +176,8 @@ class EEM_Log extends EEM_Base{
 		$log->save();
 		return $log;
 	}
+
+
 
 	/**
 	 * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
@@ -167,6 +187,8 @@ class EEM_Log extends EEM_Base{
 	public function get_all_efficiently($query_params){
 		return $this->_get_all_wpdb_results($query_params);
 	}
-}
 
-// End of file EEM_Log.model.php
+
+
+}
+// End of file EEM_Change_Log.model.php

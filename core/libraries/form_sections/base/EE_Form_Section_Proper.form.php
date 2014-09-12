@@ -330,7 +330,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * (as the form section doesn't know where you necessarily want to send the information to), and except for a submit button.
 	 */
 	public function get_html_and_js(){
-		$this->_enqueue_and_localize_form_js();
+		$this->enqueue_js();
 		return $this->get_html();
 	}
 
@@ -343,6 +343,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function get_html(){
 		$this->ensure_construct_finalized_called();
 		return $this->_layout_strategy->layout_form();
+	}
+
+
+
+	/**
+	 * enqueues JS for the form
+	 * @return string
+	 */
+	public function enqueue_js(){
+		$this->_enqueue_and_localize_form_js();
 	}
 
 
@@ -370,19 +380,26 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function _enqueue_and_localize_form_js(){
 		$this->ensure_construct_finalized_called();
-		$validation_rules = $this->get_jquery_validation_rules();
-		$form_section_id = $this->html_id();
-		$form_errors = $this->subsection_validation_errors_by_html_name();
-		//actually, we don't want to localize jsut yet. There may be other forms on the page.
+		//actually, we don't want to localize just yet. There may be other forms on the page.
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
-		EE_Form_Section_Proper::$_js_localization['form_data'][] = array(
-			'form_section_id'=>'#'.$form_section_id,
-			'validation_rules'=>$validation_rules,
-			'errors'=> $form_errors
-		);
+		$this->localize_validation_rules();
 		add_action( 'get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
 		add_action( 'admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+	}
+
+
+
+	/**
+	 * add our form section data to a static variable accessible by all form sections
+	 * @return void
+	 */
+	public function localize_validation_rules(){
+		EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
+			'form_section_id'=> $this->html_id( TRUE ),
+			'validation_rules'=>$this->get_jquery_validation_rules(),
+			'errors'=> $this->subsection_validation_errors_by_html_name()
+		);
 	}
 
 
@@ -446,6 +463,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		return array(
 			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
 		);
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public static function js_localization() {
+		return self::$_js_localization;
 	}
 
 

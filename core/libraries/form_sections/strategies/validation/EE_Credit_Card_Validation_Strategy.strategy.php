@@ -1,8 +1,21 @@
 <?php
-
+/**
+ * Class EE_Credit_Card_Validation_Strategy
+ *
+ * Description
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
+ *
+ */
 class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
+
 	/**
 	 * just checks the field isn't blank
+	 * @param $normalized_value
+	 * @throws EE_Validation_Error
 	 * @return void
 	 */
 	function validate($normalized_value) {
@@ -10,11 +23,18 @@ class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 			throw new EE_Validation_Error(__("Please enter a valid credit card number", "event_espresso"), 'required');
 		}
 	}
-	
+
+
+
+	/**
+	 * gets additional validation rules for use in the jQuery validation JS corresponding to this field when displaying.
+	 *
+	 * @return array
+	 */
 	function get_jquery_validation_rule_array(){
 		return array('creditcard'=>true);
 	}
-	
+
 	/**
 	 * Uses regular expressions to verify $card_number is actually a credit card number
 	 * @param string $card_number
@@ -30,6 +50,6 @@ class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 		}
 
 	}
-	
-	
+
+
 }

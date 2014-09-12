@@ -343,13 +343,18 @@ abstract class EE_SPCO_Reg_Step {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
 			$html .= $this->reg_form->form_open( $this->reg_step_url() );
-			$html .= $this->reg_form->get_html_and_js();
+			if ( EE_Registry::instance()->REQ->ajax ) {
+				$this->reg_form->localize_validation_rules();
+				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
+				$html .= $this->reg_form->get_html();
+			} else {
+				$html .= $this->reg_form->get_html_and_js();
+			}
 			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
 		}
 		return $html;
 	}
-
 
 
 	/**

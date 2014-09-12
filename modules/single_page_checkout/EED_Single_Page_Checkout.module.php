@@ -329,9 +329,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
 			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
+			// and the registrations for the transaction
+			$this->_get_registrations( $this->checkout->transaction );
 		}
-		// and the registrations for the transaction
-		$this->_get_registrations( $this->checkout->transaction );
+		//		d( $this->checkout );
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// get reg form
@@ -382,7 +383,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize_checkout() {
 		// look in session for existing checkout
-		$checkout = EE_Registry::instance()->SSN->get_session_data( 'checkout' );
+		$checkout = EE_Registry::instance()->SSN->checkout();
 		// verify
 		if ( ! $checkout instanceof EE_Checkout ) {
 			// instantiate EE_Checkout object for handling the properties of the current checkout process
@@ -529,10 +530,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						if ( $this->checkout->current_step->success_message() != '' ) {
 							EE_Error::add_success( $this->checkout->current_step->success_message() );
 						}
-						// store our progress so far
-						$this->checkout->stash_transaction_and_checkout();
 						// pack it up, pack it in...
 						$this->_setup_redirect();
+						// store our progress so far
+						$this->checkout->stash_transaction_and_checkout();
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
@@ -607,7 +608,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _get_transaction_and_cart_for_current_session() {
 		// first check in the session
-		$transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
+		$transaction = EE_Registry::instance()->SSN->transaction();
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
 			// and get the cart that was used for that transaction
@@ -658,11 +659,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// first step: grab the registrants  { : o
 		$registrations = $transaction->registrations( array(), TRUE );
 		// verify registrations have been set
-		if ( $registrations == NULL ) {
+		if ( empty( $registrations )) {
 			// if no cached registrations, then check the db
-			if ( $transaction->registrations() == NULL ) {
-				// still nothing? then start from scratch
-				$this->_initialize_registrations( $transaction );
+			$registrations = $transaction->registrations();
+			// still nothing ? well as long as this isn't a revisit
+			if ( empty( $registrations ) && ! $this->checkout->revisit ) {
+				// generate new registrations from scratch
+				$registrations = $this->_initialize_registrations( $transaction );
 			}
 		}
 		// sort by their original registration order
@@ -690,10 +693,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access private
 	 * @param EE_Transaction $transaction
-	 * @return    void
+	 * @return    array
 	 */
 	private function _initialize_registrations( EE_Transaction $transaction ) {
-		//d($this->checkout->cart->all_ticket_quantity_count());
+		$registrations = array();
 		if ( $transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
 			$total_items = $this->checkout->cart->all_ticket_quantity_count();
@@ -738,14 +741,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
 					$transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-
+					$registrations[ $reg_url_link ] = $registration;
 				}
 			}
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $transaction ));
+			EE_Registry::instance()->SSN->set_transaction( $transaction );
 			EE_Registry::instance()->SSN->update();
-
-			//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		}
+		return $registrations;
 	}
 
 
@@ -801,7 +803,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->current_step->translate_js_strings();
 		// load JS
 		wp_enqueue_script( 'underscore' );
-		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 		// add css and JS for current step

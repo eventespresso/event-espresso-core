@@ -145,10 +145,11 @@ abstract class EE_Form_Section_Base {
 
 
 	/**
+	 * @param bool $add_pound_sign
 	 * @return string
 	 */
-	public function html_id(){
-		return $this->_html_id;
+	public function html_id( $add_pound_sign = FALSE ){
+		return $add_pound_sign ? '#' . $this->_html_id : $this->_html_id;
 	}
 
 

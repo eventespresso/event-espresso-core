@@ -81,7 +81,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			'html_id'=> 'ee-Paypal_Pro-billing-form',
 			'html_class'=> 'ee-billing-form',
 			'subsections'=>array(
-				'creditcard'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'credit_card'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'credit_card_type'=>new EE_Select_Input( array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types ))),//the options are set dynamically
 				'exp_month'=>new EE_Month_Input( TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'exp_year'=>new EE_Year_Input( TRUE, 1, 15, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
@@ -94,9 +94,9 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		if($this->_pm_instance->debug_mode()){
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
-				'creditcard'
+				'credit_card'
 			);
-			$billing_form->get_input('creditcard')->set_default('5424180818927383');
+			$billing_form->get_input('credit_card')->set_default('5424180818927383');
 			$billing_form->get_input('credit_card_type')->set_default('MasterCard');
 			$billing_form->get_input('exp_year')->set_default( date('Y') + 6 );
 			$billing_form->get_input('cvv')->set_default('115');

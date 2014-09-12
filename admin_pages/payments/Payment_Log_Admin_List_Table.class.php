@@ -45,7 +45,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 //			$this->_data = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
 //		}else{
 //			$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
-//		}		
+//		}
 		$this->_all_data_count = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
 	}
 
@@ -58,7 +58,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('payment log', 'event_espresso' ),
 			'plural' => __('payment logs', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -93,15 +93,15 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		}
 		$filters[] = EEH_Form_Fields::select_input('_payment_method', $payment_method_names, isset($this->_req_data['_payment_method']) ? $this->_req_data['_payment_method'] : 'all');
 
-		
+
 		$start_date = isset( $this->_req_data['payment-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['payment-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-6 months' ));
 		$end_date = isset( $this->_req_data['payment-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['payment-filter-end-date'] ) : date( 'm/d/Y' );
 		ob_start();
 		?>
 		<label for="txn-filter-start-date">Display Transactions from </label>
-		<input id="payment-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>" name="payment-filter-start-date" size="15"/>	
+		<input id="payment-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>" name="payment-filter-start-date" size="15"/>
 		<label for="txn-filter-end-date"> until </label>
-		<input id="payment-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>" name="payment-filter-end-date" size="15"/>	
+		<input id="payment-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>" name="payment-filter-end-date" size="15"/>
 		<?php
 		$filters[] = ob_get_contents();
 		ob_end_clean();
@@ -112,11 +112,11 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
 	}
-	
-	public function column_LOG_time(EE_Log $item){
+
+	public function column_LOG_time(EE_Change_Log $item){
 		return $item->get_datetime('LOG_time');
 	}
-	public function column_PMD_ID(EE_Log $item){
+	public function column_PMD_ID(EE_Change_Log $item){
 		if($item->object() instanceof EE_Payment_Method){
 			return $item->object()->admin_name();
 		}elseif($item->object() instanceof EE_Payment && $item->object()->payment_method()){
@@ -124,10 +124,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		}else{
 			return __("No longer exists", 'event_espresso');
 		}
-		
-		
+
+
 	}
-	public function column_TXN_ID(EE_Log $item){
+	public function column_TXN_ID(EE_Change_Log $item){
 		if($item->object() instanceof EE_Payment){
 			return $item->object()->TXN_ID();
 		}else{
@@ -136,8 +136,8 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	public function column_cb(EE_Log $item) {
-		
+	public function column_cb(EE_Change_Log $item) {
+
 		return sprintf( '<input type="checkbox" class="option_id" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
@@ -149,7 +149,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_id(EE_Log $item) {	
+	public function column_id(EE_Change_Log $item) {
 		$details_query_args = array(
 			'action'=>'payment_log_details',
 			'ID'=>$item->ID(),
@@ -162,7 +162,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 
 //	public function column_display_text(EE_Payment_Log $item) {
 //		$system_question = $item->is_system_question();
-//		
+//
 //		if ( !defined('REG_ADMIN_URL') )
 //			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 //
@@ -173,14 +173,14 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 //
 //
 //		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
-//		
+//
 //		$actions = array(
 //			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 //			);
-//	
+//
 //
 //		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
 //		$content .= $this->row_actions($actions);
-//		return $content;	
+//		return $content;
 //	}
 } //end class Registration_Form_Questions_Admin_List_Table
