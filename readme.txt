@@ -71,7 +71,6 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 9. Multiple Attendee Registration
 10. Accurate Attendee Manager
 11. Ticket Bundles
-12. 
 
 == Installation ==
 
