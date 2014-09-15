@@ -54,10 +54,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->_template = SPCO_TEMPLATES_PATH . 'payment_options_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
-		// load EEM_Payment_Method
-		EE_Registry::instance()->load_model( 'Payment_Method' );
-		// get all active payment methods
-		$this->checkout->available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
 	}
 
 
@@ -75,7 +71,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * @return boolean
+	 * @return void
 	 */
 	public function initialize_reg_step() {
 		// don't need payment options for:
@@ -87,7 +83,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_required() ) {
 			$this->checkout->remove_reg_step( $this->_slug );
 			$this->checkout->reset_reg_steps();
+			return;
 		}
+		// load EEM_Payment_Method
+		EE_Registry::instance()->load_model( 'Payment_Method' );
+		// get all active payment methods
+		$this->checkout->available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
 	}
 
 
