@@ -25,7 +25,8 @@ class EE_Capabilities_Test extends EE_UnitTestCase {
 	public function test_get_ee_capabilities() {
 		//test getting admin capabilities (default)
 		$admin_capabilities = EE_Registry::instance()->CAP->get_ee_capabilities();
-		$this->assertArrayHasNotKey( 'administrator', $admin_capabilities );
+		$this->assertFalse( isset( $admin_capabilities['administrator'] ) );
+		$this->assertTrue( is_array( $admin_capabilities ) && isset( $admin_capabilities[0] ) );
 		$first_cap = $admin_capabilities[0];
 		$this->assertEquals( 'ee_read_ee', $first_cap );
 
