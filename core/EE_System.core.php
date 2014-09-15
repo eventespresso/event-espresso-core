@@ -625,7 +625,7 @@ final class EE_System {
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
-		if( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
+		if( EE_Maintenance_Mode::instance()->real_level() ) {
 			//ok check if this is a new install while in MM...
 			if( $activation_history_for_addon ){
 				$req_type = EE_System::req_type_normal;
