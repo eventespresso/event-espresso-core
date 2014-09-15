@@ -866,20 +866,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
 	 *
-	 * @param int $DTT_ID The datetime the registration is being checked against
+	 * @param mixed (int|EE_Datetime) $DTT_OR_DTTID The datetime the registration is being checked against
+	 * @param bool   $check_approved   This is used to indicate whether the caller wants can_checkin to also consider registration status as well as datetime access.
 	 *
 	 * @return bool
 	 */
-	public function can_checkin( $DTT_ID ) {
-		$DTT_ID = absint( $DTT_ID );
+	public function can_checkin( $DTT_OR_ID, $check_approved = TRUE ) {
+		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
 
 		//first check registration status
-		if ( ! $this->is_approved() ) {
+		if (  $check_approved && ! $this->is_approved() ) {
 			return false;
 		}
 		//is there a datetime ticket that matches this dtt_ID?
-		$result = EEM_Datetime_Ticket::instance()->get_one( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
-		return $result instanceof EE_Datetime_Ticket;
+		return EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
 	}
 
 
@@ -892,15 +892,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * checked in -> checked out
 	 * checked out -> never checked in
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
+	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
-	public function toggle_checkin_status( $DTT_ID = NULL ) {
+	public function toggle_checkin_status( $DTT_ID = NULL, $verify = FALSE ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} elseif ( ! $this->can_checkin( $DTT_ID ) ) {
-			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ) );
+		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
+			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
@@ -937,19 +938,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return int            Integer representing Check-in status.
 	 */
 	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
-		if ( empty( $DTT_ID ) && empty( $checkin ) ) {
+		if ( empty( $DTT_ID ) && ! $checkin instanceof EE_Checkin ) {
 			$datetime = $this->get_related_primary_datetime();
 			if ( ! $datetime instanceof EE_Datetime ) {
 				return 0;
 			}
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} elseif ( empty( $checkin ) && ! $this->can_checkin( $DTT_ID ) ) {
-			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
-			return FALSE;
+		} elseif ( ! $checkin instanceof EE_Checkin && ! $this->can_checkin( $DTT_ID, false ) ) {
+			EE_Error::add_error( sprintf( __( 'The checkin status for the given registration (ID:%d) and DTT_ID (%d) cannot be retrieved because the registration does not have access to that date and time.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
+			return false;
 		}
 		//get checkin object (if exists)
-		$checkin = ! empty( $checkin ) ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
+		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
 				return 1; //checked in
@@ -1115,7 +1116,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		$query[0] = array(
 			'TXN_ID' => $this->transaction_ID(),
-			'REG_ID' => array( '!=', $this->ID() )
+			'REG_ID' => array( '!=', $this->ID() ),
+			'TKT_ID' => $this->ticket_ID()
 			);
 
 		$registrations = $this->get_model()->get_all( $query );

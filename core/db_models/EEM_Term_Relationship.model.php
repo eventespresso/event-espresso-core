@@ -94,8 +94,8 @@ class EEM_Term_Relationship extends EEM_Base {
 		}else{
 			$second_operand = 'tr.term_taxonomy_id';
 		}
-		$rows_affected = $wpdb->query("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
-from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)");
+		$rows_affected = $this->_do_wpdb_query( 'query' , array("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
+from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)" ) );
 		return $rows_affected;
 	}
 
