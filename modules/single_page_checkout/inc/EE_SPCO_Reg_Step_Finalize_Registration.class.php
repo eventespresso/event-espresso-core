@@ -81,7 +81,9 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			if ( $this->checkout->payment_required() ) {
 				// load Payment_Processor
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+				// verify it
 				if ( $payment_processor instanceof EE_Payment_Processor ) {
+					// try to finalize any payment that may have been attempted
 					$payment_processor->finalize_payment_for( $this->checkout->transaction );
 				}
 			}
