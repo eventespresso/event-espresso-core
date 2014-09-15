@@ -62,7 +62,6 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 == Screenshots ==
 
-
 1. Multiple Ticket and Pricing Options
 2. Customized Confirmation Emails
 3. Customizable Event Designs
