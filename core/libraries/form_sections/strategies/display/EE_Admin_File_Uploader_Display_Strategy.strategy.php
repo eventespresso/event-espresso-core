@@ -10,15 +10,15 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 		add_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin',array('EE_Admin_File_Uploader_Display_Strategy','enqueue_scripts'));
 		$input = $this->_input;
 		//only attempt to show the image if it at least exists
-		if( file_exists( $input->raw_value_in_form() ) ){
-			$image_src = $input->raw_value_in_form();
+		if( $this->src_exists( $input->raw_value() ) ){
+			$image_src = $input->raw_value();
 		}else{
 			$image_src = '';
 		}
 		return "<span class='ee_media_uploader_area'>".
-					"<img class='ee_media_image' src='$image_src' />".
 					"<input class='ee_media_url {$input->html_class()}' type='text' name='{$input->html_name()}' size='34' value='{$input->raw_value_in_form()}'>".
 					"<a href='#' class='ee_media_upload'><img src='".admin_url('images/media-button-image.gif')."' alt='Add an Image'></a>".
+					"<img class='ee_media_image' src='$image_src' />".
 				"</span>";
 	}
 	/**
@@ -34,6 +34,21 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 		wp_enqueue_media();
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
+	}
+
+	/**
+	 * Asserts an image actually exists as quickly as possible by sending a HEAD
+	 * request
+	 * @param string $src
+	 * @return boolean
+	 */
+	protected function src_exists( $src ){
+		$results = wp_remote_head( $src );
+		if( is_array( $results) && ! $results instanceof WP_Error){
+			return strpos($results['headers']['content-type'], "image" ) !== FALSE;
+		}else{
+			return FALSE;
+		}
 	}
 
 }
