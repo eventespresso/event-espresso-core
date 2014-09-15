@@ -63,7 +63,7 @@
 	<li>Miscellaneous Spelling Errors</li>
 </ul>
 
-<p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
+<p><a href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong></a><br>
 Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
 <ul>
 	<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">Ticket Bundles</a>
@@ -79,7 +79,7 @@ Starting with Event Espresso 4.3 you can offer graduated pricing based on ticket
 <li>Messages System – Default ‘From’ Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
 <li>Message Type – Newsletter message type</li>
 </ul>
-<p><a class="thickbox" href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><img class="alignright wp-image-96900 " src="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields-300x261.png" alt="acf-home-panel-fields" height="149" width="171"></a><strong>Advanced Custom Fields Integration</strong><br>
+<p><a href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><strong>Advanced Custom Fields Integration</strong></a><br>
 Fully customize WordPress edit screens with powerful custom fields.</p>
 <ul>
 <li><a href="http://eventespresso.com/2014/05/developers-corner-using-advanced-custom-fields-extend-ee4/" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
