@@ -51,7 +51,7 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_about',
 			'menu_label' => EE_ABOUT_LABEL,
-			'capability' => 'ee_read_ee',
+			'capability' => 'manage_options',
 			'maintenance_mode_parent' => 'espresso_maintenance_settings',
 			'admin_init_page' => $this
 			));
