@@ -136,7 +136,7 @@ class EEH_Debug_Tools{
 	public function ee_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
 			$errors = ob_get_contents();
-			if ( include( EE_HELPERS . 'EEH_File.helper.php' )) {
+			if ( include_once( EE_HELPERS . 'EEH_File.helper.php' )) {
 				try {
 					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
 					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
