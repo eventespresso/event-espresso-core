@@ -1,5 +1,7 @@
 <div class="padding">
-	<iframe id="ee-ads-iframe" src="http://eventespresso.com/ee4-admin-sidebar.php">
-		<p><?php _e('Your browser doesn\'t support iframes. What a pity.', 'event_espresso'); ?></p>
-	</iframe>
+	<p>Upgrade to an <a href="http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_highlights_widget&utm_content=link" target="_blank">Event Espresso 4 support license</a> to get access to dedicated support staff and premium features, such as a calendar, printable tickets and check-in capabilities, Mailchimp integration, and more!</p>
+	<a href="http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_highlights_widget&utm_content=banner" target="_blank"><img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/manage-events-faster-240x240.jpg"  /></a>
+	<p>Visit <a href="http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_highlights_widget&utm_content=link" target="_blank">Event Espresso</a> for more details.</p>
+</body>
+</html>
 </div>
