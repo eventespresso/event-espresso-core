@@ -44,7 +44,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_overview',
-				'capability' => 'ee_read_ee'
+				'capability' => 'manage_options'
 				),
 			//'overview' => '_overview',
 				//'func' => '_overview',
@@ -52,7 +52,7 @@ class About_Admin_Page extends EE_Admin_Page {
 				//),
 			'credits' => array(
 				'func' => '_credits',
-				'capability' => 'ee_read_ee'
+				'capability' => 'manage_options'
 				),
 			);
 	}

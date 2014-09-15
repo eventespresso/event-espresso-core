@@ -337,7 +337,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
-		EEH_Debug_Tools::instance()->start_timer( 'set_timezone: ' . $this->_class );
 		if($timezone !== NULL){
 			$this->_timezone = $timezone;
 		}
@@ -353,7 +352,6 @@ abstract class EEM_Base extends EE_Base{
 				$field->set_timezone( $timezone );
 			}
 		}
-		EEH_Debug_Tools::instance()->stop_timer( 'set_timezone: ' . $this->_class );
 	}
 
 
@@ -528,10 +526,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		EE_Registry::instance()->load_helper('Debug_Tools' );
-		EEH_Debug_Tools::instance()->start_timer( 'build query' );
-
-
 		//remember the custom selections, if any
 		if(is_array($columns_to_select)){
 			$this->_custom_selections = $columns_to_select;
@@ -545,10 +539,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-		EEH_Debug_Tools::instance()->stop_timer( 'build query');
-		EEH_Debug_Tools::instance()->start_timer( 'run query');
 		$results =  $this->_do_wpdb_query( 'get_results', array($SQL, $output ) );// $wpdb->get_results($SQL, $output);
-		EEH_Debug_Tools::instance()->stop_timer('run query');
 		return $results;
 	}
 
@@ -2803,7 +2794,6 @@ abstract class EEM_Base extends EE_Base{
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/
 	protected function _create_objects( $rows = array() ) {
-		EEH_Debug_Tools::instance()->start_timer( 'built objects' );
 		$array_of_objects=array();
 		if(empty($rows)){
 			return array();
@@ -2818,14 +2808,12 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
-			EEH_Debug_Tools::instance()->start_timer( 'build related: ' . $this->_class );
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
 			//that filtered out some fo the results, then we'd be caching an incomplete set
 			//so it requires a little more thought than just caching them immediately...)
 			foreach($this->_model_relations as $modelName => $relation_obj){
-				EEH_Debug_Tools::instance()->start_timer( 'build related object: ' . $modelName );
 				if( $relation_obj instanceof EE_Belongs_To_Relation){
 					//check if this model's INFO is present. If so, cache it on the model
 					$other_model = $relation_obj->get_other_model();
@@ -2839,11 +2827,8 @@ abstract class EEM_Base extends EE_Base{
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}
-				EEH_Debug_Tools::instance()->stop_timer( 'build related object: ' . $modelName );
 			}
-			EEH_Debug_Tools::instance()->stop_timer( 'build related: ' . $this->_class );
 		}
-		EEH_Debug_Tools::instance()->stop_timer('built objects');
 		return $array_of_objects;
 	}
 
@@ -2895,7 +2880,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
-		EEH_Debug_Tools::instance()->start_timer( 'instantiate_class_from_array_or_object' );
 		if( ! is_array( $cols_n_values ) && is_object( $cols_n_values )) {
 			$cols_n_values = get_object_vars( $cols_n_values );
 		}
@@ -2936,9 +2920,7 @@ abstract class EEM_Base extends EE_Base{
 		if ( $primary_key){
 			$classInstance = $this->get_from_entity_map( $primary_key );
 			if( ! $classInstance) {
-				EEH_Debug_Tools::instance()->start_timer( 'load_class: ' . $className );
 				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
-				EEH_Debug_Tools::instance()->stop_timer( 'load_class: ' . $className );
 				// add this new object to the entity map
 				$classInstance = $this->add_to_entity_map( $classInstance );
 			}
@@ -2948,7 +2930,6 @@ abstract class EEM_Base extends EE_Base{
 
 			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentionally override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );
-		EEH_Debug_Tools::instance()->stop_timer( 'instantiate_class_from_array_or_object' );
 		return $classInstance;
 	}
 	/**
