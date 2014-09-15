@@ -122,7 +122,7 @@ class EEM_Change_Log extends EEM_Base{
 
 	/**
 	 * Resets the Log
-	 * @return EEM_Log
+	 * @return EEM_Change_Log
 	 */
 	public static function reset(){
 		self::$_instance = NULL;
@@ -130,7 +130,7 @@ class EEM_Change_Log extends EEM_Base{
 	}
 	/**
 	 *
-	 * @param string $log_type !see the acceptable values of LOG_type in EEM_LOg::__construct
+	 * @param string $log_type !see the acceptable values of LOG_type in EEM__Change_Log::__construct
 	 * @param mixed $message array|string of the message you want to record
 	 * @param EE_Base_Class $related_model_obj
 	 * @return EE_Change_Log
