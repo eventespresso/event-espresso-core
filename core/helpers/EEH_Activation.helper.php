@@ -1214,6 +1214,35 @@ class EEH_Activation {
 		}
 	}
 
+	/**
+	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+	 * @global wpdb $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @return boolean
+	 */
+	public static function table_exists( $table_name ){
+		global $wpdb, $EZSQL_ERROR;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		//ignore if this causes an sql error
+		$old_error = $wpdb->last_error;
+		$old_suppress_errors = $wpdb->suppress_errors();
+		$old_show_errors_value = $wpdb->show_errors( FALSE );
+		$ezsql_error_cache = $EZSQL_ERROR;
+		$wpdb->get_results( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		$wpdb->suppress_errors( $old_suppress_errors );
+		$new_error = $wpdb->last_error;
+		$wpdb->last_error = $old_error;
+		$EZSQL_ERROR = $ezsql_error_cache;
+		if( empty( $new_error ) ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	}
+
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php
