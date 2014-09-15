@@ -676,7 +676,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		if( is_admin() ){
+		if( is_admin() && EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) ){
 			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
