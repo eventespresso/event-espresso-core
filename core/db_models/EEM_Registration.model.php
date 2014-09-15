@@ -201,11 +201,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error
 		global $wpdb;
-		$old_wpdb_show_error = $wpdb->show_errors( FALSE );
-		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-		$results = $wpdb->get_results( $SQL );
-		$wpdb->show_errors( $old_wpdb_show_error );
-		if( $results ){
+		EE_Registry::instance()->load_helper( 'Activation' );
+		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
+			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
+			$results = $wpdb->get_results( $SQL );
 			self::$_reg_status = array();
 			foreach ( $results as $status ) {
 				if ( ! in_array( $status->STS_ID, $exclude )) {
@@ -215,6 +214,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		}else{
 			return array();
 		}
+
 	}
 
 
