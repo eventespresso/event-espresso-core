@@ -46,7 +46,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			'wp_current_filter'=>$wp_current_filter
 		);
 		parent::setUp();
-		EE_Registry::reset();
+		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
