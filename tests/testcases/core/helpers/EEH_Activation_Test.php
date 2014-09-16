@@ -42,7 +42,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		//loop through $should_be_installed and verify that those that should be active ARE active.
 		foreach ( $should_be_installed as $msgr_name ) {
-			$this->assertTrue( isset( $active_messengers[$msgr_name] ), sprintf( 'The messenger %s should be active on fresh install, but it is not.', 'event_espresso' ) );
+			$this->assertTrue( isset( $active_messengers[$msgr_name] ), sprintf( 'The messenger %s should be active on fresh install, but it is not.', $msgr_name ) );
 		}
 
 		//now verify that the code doesn't run new message template generation etc.
