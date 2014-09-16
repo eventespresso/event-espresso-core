@@ -867,13 +867,23 @@ class EEH_Activation {
 	public static function generate_default_message_templates() {
 
 		$templates = FALSE;
-		$settings = $installed_messengers = array();
+		$settings = $installed_messengers = $default_messengers = array();
 
 		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
-		//let's first setup an array of what we consider to be the default messengers.
-		$default_messengers = array( 'email' );
+		//get all installed messenger objects
+		$installed = EEH_MSG_Template::get_installed_message_objects();
+
+		//let's setup the $installed messengers in an array AND the messengers that are set to be activated on install.
+		foreach ( $installed['messengers'] as $msgr ) {
+			if ( $msgr instanceof EE_messenger ) {
+				$installed_messengers[$msgr->name] = $msgr;
+				if ( $msgr->activate_on_install ) {
+					$default_messengers[] = $msgr->name;
+				}
+			}
+		}
 
 		//let's determine if we've already got an active messengers option
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
@@ -888,16 +898,6 @@ class EEH_Activation {
 		//continue?
 		if ( empty( $def_ms )) {
 			return FALSE;
-		}
-
-		//get all installed messenger objects
-		$installed = EEH_MSG_Template::get_installed_message_objects();
-
-		//let's setup the $installed messengers in an array
-		foreach ( $installed['messengers'] as $msgr ) {
-			if ( $msgr instanceof EE_messenger ) {
-				$installed_messengers[$msgr->name] = $msgr;
-			}
 		}
 
 		//setup the $installed_mts in an array
@@ -944,8 +944,10 @@ class EEH_Activation {
 			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 
-			//let's generate all the templates
-			$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			//let's generate all the templates but only if the messenger has default_mts (otherwise its just activated).
+			if ( !empty( $default_mts ) ) {
+				$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			}
 
 		}
 
