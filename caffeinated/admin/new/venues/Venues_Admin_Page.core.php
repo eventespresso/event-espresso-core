@@ -1030,7 +1030,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
 			'value' => EEH_Formatter::admin_format_content($this->_category->category_desc),
-			'class' => 'my_editor_custom'
+			'class' => 'my_editor_custom',
+			'wpeditor_args' => array( 'media_buttons' => FALSE )
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
 
@@ -1144,7 +1145,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( EEH_File::exists( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();

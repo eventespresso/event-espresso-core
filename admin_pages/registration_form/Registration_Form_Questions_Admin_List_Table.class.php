@@ -44,7 +44,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			$this->_data = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
 		}else{
 			$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
-		}		
+		}
 		$this->_all_data_count = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
@@ -57,7 +57,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('question', 'event_espresso' ),
 			'plural' => __('questions', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -105,13 +105,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_default($item) {
-		//return ( isset( $item->$column_name )) ? $item->$column_name : '';
-	}
 
-
-
-	public function column_id(EE_Question $item) {	
+	public function column_id(EE_Question $item) {
 		return $item->ID();
 	}
 
@@ -119,7 +114,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_display_text(EE_Question $item) {
 		$system_question = $item->is_system_question();
-		
+
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
@@ -130,15 +125,15 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
-		
+
 		$actions = array(
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
-	
+
 
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
 		$content .= $this->row_actions($actions);
-		return $content;	
+		return $content;
 	}
 
 
@@ -149,7 +144,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_values(EE_Question $item) {		
+	public function column_values(EE_Question $item) {
 		$optionNames=array();
 		$options= $item->options();
 		if(empty($options)){

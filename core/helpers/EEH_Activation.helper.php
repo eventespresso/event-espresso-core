@@ -820,6 +820,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_upload_directories() {
+		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
 				EVENT_ESPRESSO_UPLOAD_DIR,
@@ -827,16 +828,23 @@ class EEH_Activation {
 				EVENT_ESPRESSO_GATEWAY_DIR,
 				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
 				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
 		);
-		foreach ($folders as $folder) {
-			wp_mkdir_p($folder);
-			@ chmod($folder, 0755);
+		foreach ( $folders as $folder ) {
+			try {
+				EEH_File::ensure_folder_exists_and_is_writable( $folder );
+				@ chmod( $folder, 0755 );
+			} catch( EE_Error $e ){
+				EE_Error::add_error(
+					sprintf(
+						__(  'Could not create the folder at "%1$s" because: %2$s', 'event_espresso' ),
+						$folder,
+						'<br />' . $e->getMessage()
+					)
+				);
+				return;
+			}
 		}
-
-		//add .htaccess to logs
-		EE_Error::add_htaccess();
 	}
 
 
@@ -854,11 +862,14 @@ class EEH_Activation {
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
 
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		//let's first setup an array of what we consider to be the default messengers.
 		$default_messengers = array( 'email' );
 
 		//let's determine if we've already got an active messengers option
-		$active_messengers = get_option('ee_active_messengers');
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 
 		//do an initial loop to determine if we need to continue
 		$def_ms = array();
@@ -869,9 +880,6 @@ class EEH_Activation {
 
 		//continue?
 		if ( empty( $def_ms ) ) return false;
-
-		//include our helper
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
@@ -921,7 +929,7 @@ class EEH_Activation {
 			}
 
 			//now let's save the settings for this messenger!
-			update_option( 'ee_active_messengers', $active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 
 			//let's generate all the templates
@@ -931,6 +939,62 @@ class EEH_Activation {
 
 		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
 		return $templates;
+	}
+
+
+
+
+
+
+	/**
+	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return void
+	 */
+	public static function validate_messages_system() {
+		//include our helper
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
+		//get active and installed  messengers/message types.
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$installed = EEH_MSG_Template::get_installed_message_objects();
+		$ims = $installed['messengers'];
+		$imts = $installed['message_types'];
+
+		$installed_messengers = $installed_mts = array();
+		//set up the arrays so they can be handelled easier.
+		foreach( $ims as $im ) {
+			$installed_messengers[$im->name] = $im;
+		}
+		foreach( $imts as $imt ) {
+			$installed_mts[$imt->name] = $imt;
+		}
+
+		//now let's loop through the active array and validate
+		foreach( $active_messengers as $messenger => $active_details ) {
+			//first let's see if this messenger is installed.
+			if ( ! isset( $installed_messengers[$messenger] ) ) {
+				//not set so let's just remove from actives and make sure templates are inactive.
+				unset( $active_messengers[$messenger] );
+				EEH_MSG_Template::update_to_inactive( $messenger );
+				continue;
+			}
+
+			//messenger is active, so let's just make sure that any active message types not installed are deactivated.
+			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
+			foreach ( $mts as $mt_name => $mt ) {
+				if ( ! isset( $installed_mts[$mt_name] )  ) {
+					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+					EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
+				}
+			}
+		}
+
+		//all done! let's update the active_messengers.
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		return;
 	}
 
 
@@ -1106,8 +1170,34 @@ class EEH_Activation {
 		}
 	}
 
-
-
+	/**
+	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+	 * @global wpdb $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @return boolean
+	 */
+	public static function table_exists( $table_name ){
+		global $wpdb, $EZSQL_ERROR;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		//ignore if this causes an sql error
+		$old_error = $wpdb->last_error;
+		$old_suppress_errors = $wpdb->suppress_errors();
+		$old_show_errors_value = $wpdb->show_errors( FALSE );
+		$ezsql_error_cache = $EZSQL_ERROR;
+		$wpdb->get_results( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		$wpdb->suppress_errors( $old_suppress_errors );
+		$new_error = $wpdb->last_error;
+		$wpdb->last_error = $old_error;
+		$EZSQL_ERROR = $ezsql_error_cache;
+		if( empty( $new_error ) ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	}
 
 }
 // End of file EEH_Activation.helper.php

@@ -33,18 +33,18 @@ final class EE_System {
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
-	 * Also, if an addon is activated while the site is in maintenance mode, that is ALSO considered a
-	 * 'normal' request (because it shouldn't setup its default data because its tables might not exist).
-	 * Instead, the first request once EE is out of maintenance mode will be considered the addon's activation request
+	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
 	 */
 	const req_type_normal = 0;
 	/**
-	 * Indicates this is a brand new installation of EE, and we'll probably want to create db tables etc.
+	 * Indicates this is a brand new installation of EE so we should install
+	 * tables and default data etc
 	 */
 	const req_type_new_activation = 1;
 	/**
-	 * normal request except the activation hook was called... probably want to recheck database is ok
+	 * we've detected that EE has been reactivated (or EE was activated during maintenance mode,
+	 * and we just exited maintenance mode). We MUST check the database is setup properly
+	 * and that default data is setup too
 	 */
 	const req_type_reactivation = 2;
 	/**
@@ -56,6 +56,14 @@ final class EE_System {
 	 * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
+
+	/**
+	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * EE was in maintenance mode. So when we exit maintenance mode, we will
+	 * consider the next request to be a reactivation and will verify default data
+	 * is in place and tables are setup
+	 */
+	const req_type_activation_but_not_installed = 5;
 
 	/**
 	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
@@ -112,7 +120,13 @@ final class EE_System {
 		if ( ! $this->_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			exit();
+			return;
+		}
+		// check required PHP version
+		if ( ! $this->_minimum_php_version_required() ) {
+			unset( $_GET['activate'] );
+			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
+			return;
 		}
 		// check recommended WP version
 		if ( ! $this->_minimum_wp_version_recommended() ) {
@@ -195,6 +209,16 @@ final class EE_System {
 	}
 
 	/**
+	 * 	_minimum_php_version_required
+	 *
+	 * 	@access private
+	 * 	@return boolean
+	 */
+	private function _minimum_php_version_required() {
+		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
+	}
+
+	/**
 	 * 	_minimum_php_version_recommended
 	 *
 	 * 	@access private
@@ -223,6 +247,31 @@ final class EE_System {
 			$wp_version,
 			'<br/>',
 			'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
+		);
+		?>
+		</p>
+		</div>
+		<?php
+		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
+	}
+
+
+
+	/**
+	 * 	minimum_php_version_error
+	 *
+	 * 	@return void
+	 */
+	public function minimum_php_version_error() {
+		?>
+		<div class="error">
+		<p>
+		<?php
+		printf(
+			__( 'We\'re sorry, but Event Espresso requires PHP version %s or greater in order to operate. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+			EE_MIN_PHP_VER_REQUIRED,
+			PHP_VERSION,
+			'<br/>'
 		);
 		?>
 		</p>
@@ -265,10 +314,12 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.%sPlease note that Event Espresso will be dropping support for PHP 5.2 as of version 4.4.0%s', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
-				'<br/>'
+				'<br/>',
+				'<br/><span style="font-weight: bold;color: #d54e21;">',
+				'</span>'
 			)
 		);
 	}
@@ -352,7 +403,11 @@ final class EE_System {
 		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
 		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
 
-		if ( !$testsbypass && ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && ! is_user_logged_in() ) ) ) {
+		if ( !$testsbypass &&
+				( ! is_admin() ||
+				( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) ||
+				( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) ) ) {
+
 			return;
 		}
 		// load M-Mode class
@@ -372,12 +427,20 @@ final class EE_System {
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
+				break;
+			case EE_System::req_type_activation_but_not_installed:
+				//just record that it was activated, but don't install anything
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
+				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
@@ -389,11 +452,13 @@ final class EE_System {
 					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
 				}
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -402,6 +467,7 @@ final class EE_System {
 		}
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 	}
+
 
 
 
@@ -505,6 +571,28 @@ final class EE_System {
 	}
 
 
+
+
+	/**
+	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
+	 *
+	 * @since  4.3.1
+	 *
+	 * @param int $request_type What request type this is.  The paramater is included so that any future validations added to here can be restricted to only certain request types.
+	 *
+	 * @return void
+	 */
+	private function _do_setup_validations( $request_type ) {
+		if ( $request_type !== EE_System::req_type_new_activation ) {
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
+		}
+		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
+	}
+
+
+
+
+
 	/**
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
@@ -536,8 +624,17 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
-		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			$req_type = EE_System::req_type_normal;
+		//there are some exceptions if we're in maintenance mode. So are we in MM?
+		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+			//ok check if this is a new install while in MM...
+			if( $activation_history_for_addon ){
+				$req_type = EE_System::req_type_normal;
+			}else{
+				//so this should have been a "new install" request, but we're in MM
+				//so set things up so that when we exit MM, we will consider it a delayed install
+				//for that, WE LEAVE THE activation indicator option in place
+				$req_type = EE_System::req_type_activation_but_not_installed;
+			}
 		}else{
 			if( $activation_history_for_addon ){
 				//it exists, so this isn't a completely new install
@@ -548,7 +645,7 @@ final class EE_System {
 					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
-					if( get_option( $activation_indicator_option_name, FALSE )){
+					if( get_option( $activation_indicator_option_name, FALSE ) ){
 						$req_type = EE_System::req_type_reactivation;
 						delete_option( $activation_indicator_option_name );
 					} else {
@@ -557,9 +654,10 @@ final class EE_System {
 					}
 				}
 			} else {
-				//it doesn't exist. It's a completely new install
+				//brand new install and we're not in MM
 				$req_type = EE_System::req_type_new_activation;
 				delete_option( $activation_indicator_option_name );
+
 			}
 		}
 //		echo "req type for ".$activation_indicator_option_name." was $req_type";
@@ -595,10 +693,14 @@ final class EE_System {
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
+		// enable logging?
+		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
+			EE_Registry::instance()->load_core( 'Log' );
+		}
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
-			EE_Error::add_error( $activation_errors );
+			EE_Error::add_error( $activation_errors, __FILE__, __FUNCTION__, __LINE__ );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
@@ -718,6 +820,7 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
+			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
@@ -749,12 +852,29 @@ final class EE_System {
 			foreach ( $active_plugins as $active_plugin ) {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
-						deactivate_plugins( $active_plugin );
 						unset( $_GET['activate'] );
+						EE_System::deactivate_plugin( $active_plugin );
 					}
 				}
 			}
 		}
+	}
+
+
+
+	/**
+	 *    deactivate_plugin
+	 * usage:  EE_System::deactivate_plugin( plugin_basename( __FILE__ ));
+	 *
+	 * @access public
+	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+	 * @return    void
+	 */
+	public static function deactivate_plugin( $plugin_basename = '' ) {
+		if ( ! function_exists( 'deactivate_plugins' )) {
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
+		deactivate_plugins( $plugin_basename );
 	}
 
 

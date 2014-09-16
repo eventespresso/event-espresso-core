@@ -53,7 +53,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t->get_pretty('TXN_total'),'$0.00 <span class="currency-code">(USD)</span>');
 		$this->assertEquals($t->get('TXN_total'),0);
 	}
-	function test_saving(){
+	function test_save_string_pk(){
+		//test saving something with an auto-increment PK
+		$c = EE_Country::new_instance(array('CNT_ISO'=>'12'));
+		$results = $c->save();
+		$this->assertEquals($results,$c->ID());
+		$c->set('CNT_cur_code','FOO');
+		$results2 = $c->save();
+		$this->assertEquals(true,$results2);
+	}
+	function test_save_autoincrement_pk(){
+		//test saving something with an auto-increment PK
 		$t = EE_Transaction::new_instance();
 		$id = $t->save();
 		$this->assertNotNull($id);
@@ -61,6 +71,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t2 = EEM_Transaction::instance()->get_one_by_ID($id);
 		$this->assertEquals($id,$t2->ID());
 	}
+
+//	function test_save_no_pk(){
+		//@todo: make this test work
+		//the following is known to not work for the time-being (the models
+		//system should be improved to allow this, when we get time)
+//		$term_taxonomy = $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
+//		$e = $this->new_model_obj_with_dependencies('Event');
+//		$tr = EE_Term_Relationship::new_instance(array('object_id'=>$e->ID()));
+//		$results = $tr->save();
+//		$this->assertNotNull($results);
+//	}
 	function test_add_relation_to(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -207,7 +228,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//test that clear cache for an item that ISN'T cached doesn't produce an error.
 		$response = $t->clear_cache('Registration');
 		$this->assertNull( $response );
-		
+
 		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
 		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
 		$t->cache('Registration', $r);
@@ -215,7 +236,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$rs_cached = $t->get_all_from_cache('Registration');
 		$this->assertArrayContains($r, $rs_cached);
 		$this->assertArrayContains($r2,$rs_cached);
-		//ok but if we call clear cache again without specifying what we want, 
+		//ok but if we call clear cache again without specifying what we want,
 		//we should actually do nothing
 		$r_null = $t->clear_cache('Registration');
 		$this->assertNull($r_null);
@@ -226,9 +247,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertTrue($success);
 		$cached_regs = $t->get_all_from_cache('Registration');
 		$this->assertEmpty($cached_regs);
-		
+
 	}
-	
+
 	/**
 	 * test that after we've cached something, we can remove it specifically
 	 * by only knowing the object
@@ -250,13 +271,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r3 = EE_Registration::new_instance(array('REG_code'=>'mystery monkey'));
 		$r_null = $t->clear_cache('Registration', $r3);
 		$this->assertNull($r_null);
-		
+
 	}
-	
+
 	/**
 	 * test that after we've cached something using a specific index,
 	 * we can remove it using a specific index
-	 * 
+	 *
 	 */
 	function test_clear_cache__specific_index(){
 		$t = EE_Transaction::new_instance();
@@ -274,7 +295,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r_null = $t->clear_cache('Registration','mystery monkey');
 		$this->assertNull($r_null);
 	}
-	
+
 	/**
 	 * tests that clearing the cache on a belongsTo relation works
 	 */
@@ -289,6 +310,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t,$t_removed);
 		$t_null = $r->get_one_from_cache('Transaction');
 		$this->assertNull($t_null);
+	}
+	/**
+	 * @group current_bug
+	 */
+	function test_update_extra_meta(){
+		$t = EE_Transaction::new_instance( array( 'TXN_total' => 39 ) );
+		$t->save();
+		$t->update_extra_meta( 'work', 'maybe' );
+		$this->assertEquals( 'maybe', $t->get_extra_meta( 'work ', TRUE ) );
+		$t->update_extra_meta( 'work', 'yes' );
+		$this->assertEquals( 'yes', $t->get_extra_meta( 'work', TRUE ) );
 	}
 }
 

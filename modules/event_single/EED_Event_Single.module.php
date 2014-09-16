@@ -53,10 +53,6 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Event_Single', 'filter_config' ), 10 );
-//		add_filter( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', array( 'EED_Event_Single', 'set_default_settings' ));
-		add_action( 'AHEE__template_settings__template__before_settings_form', array( 'EED_Event_Single', 'template_settings_form' ), 10 );
-		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Event_Single', 'update_template_settings' ), 10, 2 );
 		add_action( 'wp_loaded', array( 'EED_Event_Single', 'set_definitions' ), 2 );
 	}
 
@@ -73,71 +69,6 @@ class EED_Event_Single  extends EED_Module {
 	public static function set_definitions() {
 		define( 'EVENT_SINGLE_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
-	}
-
-
-
-
-
-	/**
-	 * 	filter_config
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function filter_config( $CFG ) {
-		return $CFG;
-	}
-
-
-
-
-	/**
-	 * 	set_default_settings
-	 *
-	 *  @access 	public
-	 *  @static
-	 *  @return 	void
-	 */
-	public static function set_default_settings( $CFG ) {
-		$CFG->display_status_banner_single = ! empty( $CFG->display_status_banner_single) ? $CFG->display_status_banner_single : FALSE;
-		$CFG->display_venue = ! empty( $CFG->display_venue) ? $CFG->display_venue : TRUE;
-		return $CFG;
-	}
-
-
-
-
-	/**
-	 * 	filter_config
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function update_template_settings( $CFG, $REQ ) {
-		$CFG->EED_Event_Single = new EE_Event_Single_Config();
-		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
-		$CFG->EED_Event_Single->display_venue = !empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
-		return $CFG;
-	}
-
-
-
-
-
-
-	/**
-	 * 	template_settings_form
-	 *
-	 *  @access 	public
-	 *  @static
-	 *  @return 	void
-	 */
-	public static function template_settings_form() {
-		$EE = EE_Registry::instance();
-		$EE->CFG->template_settings->EED_Event_Single = isset( $EE->CFG->template_settings->EED_Event_Single ) ? $EE->CFG->template_settings->EED_Event_Single : new EE_Event_Single_Config();
-		$EE->CFG->template_settings->EED_Event_Single = apply_filters( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Event_Single );
-		EEH_Template::display_template( EVENT_SINGLE_TEMPLATES_PATH . 'admin-event-single-settings.template.php', $EE->CFG->template_settings->EED_Event_Single );
 	}
 
 
@@ -309,8 +240,9 @@ class EED_Event_Single  extends EED_Module {
 	public function wp_enqueue_scripts() {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
+			EE_Registry::instance()->load_helper( 'File' );
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+			if ( EEH_File::exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
 				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
