@@ -364,7 +364,7 @@ class EE_Payment_Method extends EE_Base_Class{
 					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate an EE addon?", "event_espresso"),$class_name));
 				}
 				$r = new ReflectionClass( $class_name );
-				$this->_type_obj = $r->newInstanceArgs( array( $this ));
+					$this->_type_obj = $r->newInstanceArgs( array( $this ));
 			} else {
 				throw new EE_Error( sprintf( __( 'A payment method of type "%s" does not exist', 'event_espresso' ), $this->type() ));
 			}
@@ -454,6 +454,17 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->type_obj()->payment_occurs() == EE_PMT_Base::offline;
 	}
 
+	/**
+	 * Overrides default __sleep so the object type is NOT cached.
+	 * This way we can rely on the normal EE_Payment_Method::type_obj() logic
+	 * to load the required classes, and don't need them at the time of unserilaization
+	 * @return array
+	 */
+	public function __sleep(){
+		$properties =  get_object_vars( $this );
+		unset($properties[ '_type_obj' ] );
+		return array_keys( $properties );
+	}
 
 
 }
