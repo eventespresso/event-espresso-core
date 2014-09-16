@@ -194,6 +194,7 @@ class EE_Maintenance_Mode {
 	 * @return    string
 	 */
 	public static function template_include( $template_path ) {
+		EE_Registry::instance()->load_helper( 'Template' );
 		$template_located = EEH_Template::locate_template( EE_TEMPLATES . 'maintenance_mode.template.php', FALSE, FALSE );
 		return $template_located ? $template_located : $template_path;
 	}
