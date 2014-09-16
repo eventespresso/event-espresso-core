@@ -115,7 +115,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		//when they return to our site
 		//so in case teh IPN is arriving later, let's try to process an IPN!
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
+			return EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
+		}else{
+			return parent::finalize_payment_for( $transaction );
 		}
 	}
 

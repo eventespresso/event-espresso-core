@@ -75,8 +75,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			$this->checkout->toggle_transaction_status();
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
-			// finalize the TXN, which will in turn, finalize all of it's registrations
-			$this->checkout->transaction->finalize();
 			// payment required ?
 			if ( $this->checkout->payment_required() ) {
 				// load Payment_Processor
@@ -87,6 +85,9 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 					$payment_processor->finalize_payment_for( $this->checkout->transaction );
 				}
 			}
+
+			// finalize the TXN, which will in turn, finalize all of it's registrations
+			$this->checkout->transaction->finalize();
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// setup URL for redirect
