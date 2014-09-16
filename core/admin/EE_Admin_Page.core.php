@@ -708,6 +708,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function set_wp_page_slug($wp_page_slug) {
 		$this->_wp_page_slug = $wp_page_slug;
+
+		//if in network admin then we need to append "-network" to the page slug. Why? Because that's how WP rolls...
+		if ( is_network_admin() ) {
+			$this->_wp_page_slug .= '-network';
+		}
 	}
 
 	/**
@@ -2263,6 +2268,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
+
 		$template_path = $sidebar ?  EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
 		if ( defined('DOING_AJAX' ) )
