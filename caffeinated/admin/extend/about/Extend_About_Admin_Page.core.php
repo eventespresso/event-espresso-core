@@ -45,9 +45,18 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_whats_new',
-			'overview' => '_overview',
-			'credits' => '_credits',
+			'default' => array(
+				'func' => '_whats_new',
+				'capability' => 'manage_options'
+				),
+			'overview' => array(
+				'func' => '_overview',
+				'capability' => 'manage_options'
+				),
+			'credits' => array(
+				'func' => '_credits',
+				'capability' => 'manage_options'
+				)
 			);
 	}
 
