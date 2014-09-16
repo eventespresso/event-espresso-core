@@ -1747,6 +1747,20 @@ abstract class EE_Base_Class{
 		}
 	}
 
+	/**
+	 * Re-add this model object to the entity map. But how do we know this
+	 * model object we're unserializing is actually up-to-date? How do we know it
+	 * hasn't changed in teh database? We don't. It's quite possible this will overwrite
+	 * whatever's in the database. You should have thought about that before serializing
+	 * a model object and storing it. But at very least we can attempt to avoid
+	 * having duplicate
+	 */
+	public function __wakeup(){
+		if( $this->ID() ){
+			$this->get_model()->add_to_entity_map( $this );
+		}
+	}
+
 
 
 
