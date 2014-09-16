@@ -175,6 +175,11 @@ abstract class EE_Admin_Page_Menu_Map  {
 				case 'menu_callback' :
 					break;
 
+				case 'capability' :
+					//filter the capability.
+					$value = apply_filters( 'FHEE_management_capability', (string) $value, NULL );
+					break;
+
 				default :
 					$value = (string) $value;
 					break;
