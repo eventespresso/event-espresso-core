@@ -79,6 +79,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		$role = get_role( 'administrator' );
 		$this->assertContains( $this->_valid_capabilities['capabilities']['administrator'], $role->capabilities );
 
+		//make sure we didn't erase the existing capabilities (@see https://events.codebasehq.com/projects/event-espresso/tickets/6700)
+		$this->assertContains( array( 'ee_read_ee', 'ee_read_event' ), $role->capabilities, 'Looks like registering capabilities is overwriting default capabilites, that will cause problems' );
+
 		//setup user
 		$this->setupUser();
 	}
