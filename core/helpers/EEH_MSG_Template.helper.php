@@ -364,7 +364,7 @@ class EEH_MSG_Template {
 	 */
 	public static function is_messenger_active( $messenger ) {
 		self::_set_autoloader();
-		$MSG = EE_Registry::instance()->load_lib('messenger');
+		$MSG = EE_Registry::instance()->load_lib('messages');
 		$active_messengers = $MSG->get_active_messengers();
 		$active_messengers = array_keys( $active_messengers );
 		return in_array( $messenger, $active_messengers );
