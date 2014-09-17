@@ -29,7 +29,9 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$this->_migration_stages = array(
 			new EE_DMS_4_6_0_gateways(),
 			new EE_DMS_4_6_0_payment_method_currencies(),
-			new EE_DMS_4_6_0_question_types()
+			new EE_DMS_4_6_0_question_types(),
+			new EE_DMS_4_6_0_country_system_question(),
+			new EE_DMS_4_6_0_state_system_question()
 		);
 		parent::__construct();
 	}
