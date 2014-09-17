@@ -30,7 +30,6 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage{
 		$this->_pretty_name = __( 'Question Types', 'event_espresso' );
 		$this->_question_table_name = $wpdb->prefix.'esp_question';
 		$this->_question_type_conversions = array(
-			'DROPDOWN' 	=> 'SELECT',
 			'MULTIPLE' 			=> 'CHECKBOX',
 			'SINGLE' 				=> 'RADIO_BTN'
 		);
