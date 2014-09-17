@@ -53,7 +53,7 @@ class EE_Question_Answer_Form_Section extends EE_Form_Section_Proper {
 				$input_class = 'EE_Select_Input';
 				break;
 			// Multiple
-			case EEM_Question::QST_type_multiple :
+			case EEM_Question::QST_type_checkbox :
 				$input_class = 'EE_Checkbox_Multi_Input';
 				break;
 			// Date
