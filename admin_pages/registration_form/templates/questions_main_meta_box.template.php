@@ -204,7 +204,7 @@ $has_answers = $question->has_answers();
 					</a><br/>
 
 					<p class="description">
-						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
+						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
 					</p>
 					<?php if ( $has_answers ) : ?>
 					<p class="description" style="color:#D54E21;">
