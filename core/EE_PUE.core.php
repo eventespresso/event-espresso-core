@@ -214,7 +214,7 @@ class EE_PUE {
 		?>
 		<div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
 			<div id="data-collect-optin-options-container">
-				<span class="dashicons dashicons-welcome-view-site"></span>
+				<span class="dashicons dashicons-admin-site"></span>
 				<span class="data-optin-text"><?php echo EE_PUE::espresso_data_collection_optin_text(); ?></span>
 				<span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
 				<button class="button-secondary data-optin-button" value="no"><?php _e('Dismiss', 'event_espresso'); ?></button>
