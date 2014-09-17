@@ -199,7 +199,7 @@ class EE_PUE {
 		} else {
 			$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 			$settings_url .= '#UXIP_settings';
-			echo sprintf( __( 'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s', 'event_espresso' ), '<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" traget="_blank">', '</a>', '<a href="' . $settings_url . '" target="_blank">', '</a>' );
+			echo sprintf( __( 'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s.', 'event_espresso' ), '<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" traget="_blank">', '</a>', '<a href="' . $settings_url . '" target="_blank">', '</a>' );
 		}
 	}
 
