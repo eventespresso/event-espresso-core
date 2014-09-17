@@ -26,17 +26,23 @@ require_once( EE_CLASSES . 'EE_Question.class.php');
 
 class EEM_Question extends EEM_Soft_Delete_Base {
 
+	// constant used to indicate that the question type is COUNTRY
+	const QST_type_country = 'COUNTRY';
+
 	// constant used to indicate that the question type is DATE
 	const QST_type_date = 'DATE';
 
 	// constant used to indicate that the question type is DROPDOWN
 	const QST_type_dropdown = 'DROPDOWN';
 
-	// constant used to indicate that the question type is MULTIPLE
-	const QST_type_multiple = 'MULTIPLE';
+	// constant used to indicate that the question type is CHECKBOX
+	const QST_type_checkbox = 'CHECKBOX';
 
-	// constant used to indicate that the question type is SINGLE
-	const QST_type_single = 'SINGLE';
+	// constant used to indicate that the question type is RADIO_BTN
+	const QST_type_radio = 'RADIO_BTN';
+
+	// constant used to indicate that the question type is STATE
+	const QST_type_state = 'STATE';
 
 	// constant used to indicate that the question type is TEXT
 	const QST_type_text = 'TEXT';
@@ -82,7 +88,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	private $_allowed_question_types;
 	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
 	 * but they can be extended
 	 * @return string[]
 	 */
@@ -97,9 +103,11 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Question::QST_type_text =>__('Text','event_espresso'),
 				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
-				EEM_Question::QST_type_single =>__('Radio Buttons','event_espresso'),
-				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
-				EEM_Question::QST_type_multiple =>__('Checkboxes','event_espresso'),
+				EEM_Question::QST_type_checkbox =>__('Checkboxes','event_espresso'),
+				EEM_Question::QST_type_radio =>__('Radio Buttons','event_espresso'),
+				EEM_Question::QST_type_dropdown =>__('Select Box','event_espresso'),
+				EEM_Question::QST_type_country =>__('Country','event_espresso'),
+				EEM_Question::QST_type_state =>__('State/Province','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date','event_espresso')
 			)
 		);
