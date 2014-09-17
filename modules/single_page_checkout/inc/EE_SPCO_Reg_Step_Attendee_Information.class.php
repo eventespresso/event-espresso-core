@@ -496,7 +496,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$has_options = TRUE;
 				break;
 			// Multiple
-			case EEM_Question::QST_type_multiple :
+			case EEM_Question::QST_type_checkbox :
 				$input_class = 'EE_Checkbox_Multi_Input';
 				$has_options = TRUE;
 				break;
