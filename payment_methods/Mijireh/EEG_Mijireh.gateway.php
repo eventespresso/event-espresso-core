@@ -116,6 +116,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
+		$this->log(array('get checkout url request_args' => $args, 'response' => $response ), $payment);
 		if( ! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
 			if($response_body == NULL || ! isset($response_body->checkout_url)){
@@ -155,11 +156,12 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$payment = $transaction->last_payment();
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
-			$response = wp_remote_get($url,
-					array('headers' => array(
+			$request_args = array('headers' => array(
 			'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
 			'Accept'=>'application/json'
-			)));
+			));
+			$response = wp_remote_get($url, $request_args );
+			$this->log( array( ' get paymetn status request_args' => $request_args, 'response' => $response ), $payment );
 			if($response && isset($response['body']) && $response_body = json_decode($response['body'])){
 				switch($response_body->status){
 					case 'paid':
