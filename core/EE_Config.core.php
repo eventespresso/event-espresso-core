@@ -2218,9 +2218,6 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * @return void
 	 */
 	public function recheck_values() {
-		if ( ! is_admin() ) {
-			return;
-		}
 		$this->_set_php_values();
 	}
 }
