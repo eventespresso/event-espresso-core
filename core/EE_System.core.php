@@ -96,7 +96,9 @@ final class EE_System {
 	 * @return EE_System
 	 */
 	public static function reset(){
-		self::$_instance = NULL;
+		self::$_instance->_req_type = NULL;
+		self::instance()->detect_activations_or_upgrades();
+		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
 	}
 
