@@ -45,7 +45,7 @@ class EE_Question_Answer_Form_Section extends EE_Form_Section_Proper {
 				$input_class = 'EE_Text_Area_Input';
 				break;
 			// Single
-			case EEM_Question::QST_type_single :
+			case EEM_Question::QST_type_radio :
 				$input_class = 'EE_Checkbox_Multi_Input';
 				break;
 			// Dropdown
