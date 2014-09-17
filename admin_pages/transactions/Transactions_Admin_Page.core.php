@@ -470,7 +470,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
-
+			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			$this->_template_args['send_payment_reminder_button'] = EEH_MSG_Template::is_mt_active( 'payment_reminder' )
 				 && $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code
 				 && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code
