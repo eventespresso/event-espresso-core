@@ -76,9 +76,6 @@ final class EE_Admin {
 		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
-		//reset Environment config (we only do this on admin page loads);
-		EE_Registry::instance()->CFG->environment->recheck_values();
-
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
 
