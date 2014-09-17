@@ -882,6 +882,14 @@ abstract class EE_Data_Migration_Class_Base{
  */
 abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage{
 	protected $_old_table;
+	/**
+	 * Set in the constructor to add this sql to both the counting query in
+	 * EE_Data_Migration_Script_Stage_Table::_count_records_to_migrate() and
+	 * EE_Data_Migration_Script_Stage_Table::_get_rows().
+	 * Eg "where column_name like '%some_value%'"
+	 * @var string
+	 */
+	protected $_extra_where_sql;
 
 
 
@@ -896,9 +904,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	 * @return int number of items ACTUALLY migrated
 	 */
 	function _migration_step($num_items=50){
-		global $wpdb;
-		$start_at_record = $this->count_records_migrated();
-		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
+		$rows = $this->_get_rows( $num_items );
 		$items_actually_migrated = 0;
 		foreach($rows as $old_row){
 			$this->_migrate_old_row($old_row);
@@ -910,6 +916,21 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 		return $items_actually_migrated;
 	}
 
+	/**
+	 * Gets the rows for each migration stage from the old table
+	 * @global type $wpdb
+	 * @param int $limit
+	 * @return array of arrays like $wpdb->get_results($sql, ARRAY_A)
+	 */
+	protected function _get_rows( $limit ){
+		global $wpdb;
+		$start_at_record = $this->count_records_migrated();
+		$pre_sql = "SELECT * FROM {$this->_old_table} {$this->_extra_where_sql} LIMIT %d, %d";
+		$query = $wpdb->prepare($pre_sql,$start_at_record,$limit);
+		echo "Get rows: $query";
+		return $wpdb->get_results($query,ARRAY_A);
+	}
+
 
 
 	/**
@@ -918,7 +939,8 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	 */
 	function _count_records_to_migrate() {
 		global $wpdb;
-		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
+		$query = $wpdb->prepare( "SELECT COUNT(*) FROM {$this->_old_table} {$this->_extra_where_sql}", NULL );
+		$count = $wpdb->get_var( $query );
 		return $count;
 	}
 
