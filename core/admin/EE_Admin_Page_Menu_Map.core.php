@@ -187,8 +187,8 @@ abstract class EE_Admin_Page_Menu_Map  {
 		}
 
 		//filter capabilities (both static and dynamic)
-		$this->capability = apply_filters( 'FHEE_managment_capability', $this->capability, NULL );
-		$this->capability = apply_filters( 'FHEE_' . $this->menu_slug . '_capability', $this->capability, NULL )
+		$this->capability = apply_filters( 'FHEE_management_capability', $this->capability, NULL );
+		$this->capability = apply_filters( 'FHEE_' . $this->menu_slug . '_capability', $this->capability, NULL );
 
 		//Might need to change parent slug depending on maintenance mode.
 		if ( ! empty( $this->maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance )  {
