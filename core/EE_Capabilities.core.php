@@ -451,6 +451,26 @@ final class EE_Capabilities extends EE_Base {
 		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can_for_blog__user_can', $user_can, $context, $blog_id, $cap, $id );
 		return $user_can;
 	}
+
+
+
+	/**
+	 * This helper method just returns an array of registered EE capabilities.
+	 * Note this array is filtered.  It is assumed that all available EE capabilities are assigned to the administrator role.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $role  If empty then the entire role/capability map is returned.  Otherwise just the capabilities for the given role are returned.
+	 *
+	 * @return array
+	 */
+	public function get_ee_capabilities( $role = 'administrator' ) {
+		$capabilities = $this->_init_caps_map();
+		if ( empty( $role ) ) {
+			return $capabilities;
+		}
+		return isset( $capabilities[$role] ) ? $capabilities[$role] : array();
+	}
 }
 
 

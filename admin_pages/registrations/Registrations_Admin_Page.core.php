@@ -1991,10 +1991,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
 		// gotta start with a clean slate if we're not coming here via ajax
-		if ( !defined('DOING_AJAX' ) && ( !isset($this->_req_data['processing_registration']) || isset( $this->_req_data['step_error'] ) ) )
+		if ( ! defined('DOING_AJAX' ) && ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ))) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		}
 
 		$this->_template_args['event_name'] = '' ;
 		// event name
@@ -2053,11 +2055,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
 		$cart = EE_Registry::instance()->SSN->get_session_data('cart');
 		$step = empty( $cart ) ? 'ticket' : 'questions';
-
 		switch ( $step ) {
 			case 'ticket' :
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
-				$template_args['content'] = EED_Ticket_Selector::display_ticket_selector( $this->_reg_event );
+				$template_args['content'] = EED_Ticket_Selector::instance()->display_ticket_selector( $this->_reg_event );
 				$template_args['step_button_text'] = __('Add Tickets and Continue to Registrant Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = FALSE;
 				break;
@@ -2177,7 +2178,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function _process_registration_step() {
+
 		$this->_set_reg_event();
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
+
 		//what step are we on?
 		$cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
 		$step = empty( $cart ) ? 'ticket' : 'questions';
@@ -2191,7 +2195,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		switch ( $step ) {
 			case 'ticket' :
 				//process ticket selection
-				$success = EED_Ticket_Selector::process_tickets_selection_from_admin();
+				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
 				if ( $success ) {
 					EE_Error::add_success( __('Tickets Selected. Now complete the registration.'), 'event_espresso');
 				} else {
