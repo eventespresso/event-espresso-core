@@ -54,7 +54,7 @@ function espresso_update_option_order() {
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if ( val=='SINGLE' || val=='CHECKBOX'){
+	if ( val=='RADIO_BTN' || val=='CHECKBOX'){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc(true);
 	}else if(val=='DROPDOWN'){
