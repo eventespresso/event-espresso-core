@@ -436,101 +436,28 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Gets the string which represents the URL trigger for the receipt template in the message template system.
-	 * @param string $type 'pdf' or 'html'.  Default 'html'.
+	 * @param string $messenger 'pdf' or 'html'.  Default 'html'.
 	 * @return string
 	 */
-	public function receipt_url( $type = 'html' ) {
-
-		/**
-		 * The below will be deprecated one version after this.  We check first if there is a custom receipt template already in use on old system.  If there is then we just return the standard url for it.
-		 *
-		 * @since 4.5.0
-		 */
-		EE_Registry::instance()->load_helper( 'Template' );
-		// check if custom template exists
-		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/receipt_body.template.php' , array(), FALSE, FALSE, TRUE )) {
-			return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( 'launch' ) );
-		}
-		EE_Registry::instance()->load_helper('MSG_Template');
-		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?)
-		$template_qa = array(
-			'MTP_is_active' => TRUE,
-			'MTP_messenger' => 'html',
-			'MTP_message_type' => 'receipt',
-			'Event.EVT_ID' => $this->event_ID()
-		);
-		//get the message template group.
-		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
-		// check instanceof
-		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
-			// get global template as the fallback
-			unset( $template_qa[ 'Event.EVT_ID' ] );
-			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		}
-		// if we STILL don't have an EE_Message_Template_Group, then return
-		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
-			return '';
-		}
-		//validate $type
-		$type = $type == 'pdf' ? $type : 'html';
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $msg_template_group->ID(), $this->transaction_ID() );
+	public function receipt_url( $messenger = 'html' ) {
+		return apply_filters( 'FHEE__EE_Registration__receipt_url__receipt_url', '', $this, $messenger, 'receipt' );
 	}
 
 
 
 	/**
 	 * Gets the string which represents the URL trigger for the invoice template in the message template system.
-	 * @param string $type 'pdf' or 'html'.  Default 'html'.
+	 * @param string $messenger 'pdf' or 'html'.  Default 'html'.
 	 * @return string
 	 */
-	public function invoice_url( $type = 'html' ) {
-
-		/**
-		 * The below will be deprecated one version after this.  We check first if there is a custom invoice template already in use on old system.  If there is then we just return the standard url for it.
-		 *
-		 * @since 4.5.0
-		 */
-		EE_Registry::instance()->load_helper('Template');
-		// check for custom template
-		if ( EEH_Template::locate_template( '/modules/gateways/Invoice/lib/templates/invoice_body.template.php' , array(), FALSE, FALSE, TRUE ) ) {
-			if ( $type == 'html' ) {
-				return $this->invoice_url( 'launch' );
-			}
-			$route = $type == 'download' || $type == 'pdf' ? 'download_invoice' : 'launch_invoice';
-			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
-			if ( $type == 'html' ) {
-				$query_args['html'] = TRUE;
-			}
-			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
-		}
-		EE_Registry::instance()->load_helper('MSG_Template');
-		//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
-		$template_qa = array(
-			'MTP_is_active' => TRUE,
-			'MTP_messenger' => 'html',
-			'MTP_message_type' => 'invoice',
-			'Event.EVT_ID' => $this->event_ID()
-		);
-		//get the message template group.
-		$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
-		//if we don't have an EE_Message_Template_Group then return
-		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
-			//get global template as the fallback
-			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ));
-		}
-		//if we don't have an EE_Message_Template_Group then return
-		if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
-			return '';
-		}
-		//validate $type
-		$type = $type == 'pdf' ? $type : 'html';
-		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'invoice', $this, $msg_template_group->ID(), $this->transaction_ID() );
+	public function invoice_url( $messenger = 'html' ) {
+		return apply_filters( 'FHEE__EE_Registration__invoice_url__invoice_url', '', $this, $messenger, 'invoice' );
 	}
 
 
 
 	/**
-	 *        get Registration URL Link
+	 * get Registration URL Link
 	 * @access        public
 	 */
 	public function reg_url_link() {
