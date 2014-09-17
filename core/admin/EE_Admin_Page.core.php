@@ -90,7 +90,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_search_btn_label;
 	protected $_search_box_callback;
 
-	//for holding current screen object provided by WP
+	/**
+	 * WP Current Screen object
+	 *
+	 * @var WP_Screen
+	 */
 	protected $_current_screen;
 
 	//for holding EE_Admin_Hooks object when needed (set via set_hook_object())
