@@ -103,7 +103,7 @@ class EE_Maintenance_Mode {
 	 * retrieves the maintenance mode option value from the db
 	 * @return int
 	 */
-	private function _real_level(){
+	public function real_level(){
 		return get_option( self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance );
 	}
 
@@ -113,7 +113,7 @@ class EE_Maintenance_Mode {
 	 * @return boolean
 	 */
 	public function models_can_query(){
-		return $this->_real_level() != EE_Maintenance_Mode::level_2_complete_maintenance;
+		return $this->real_level() != EE_Maintenance_Mode::level_2_complete_maintenance;
 	}
 
 	/**
@@ -126,7 +126,7 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		$real_maintenance_mode_level = $this->_real_level();
+		$real_maintenance_mode_level = $this->real_level();
 		//if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
 		if( ( ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) && //only on frontend or ajax requests
 			current_user_can('administrator') && //when the user is an admin
@@ -174,7 +174,7 @@ class EE_Maintenance_Mode {
 	 *  @return 	string
 	 */
 	public function load_assets_required_for_m_mode() {
-		if ( $this->_real_level() == EE_Maintenance_Mode::level_2_complete_maintenance && ! wp_script_is( 'espresso_core', 'enqueued' )) {
+		if ( $this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance && ! wp_script_is( 'espresso_core', 'enqueued' )) {
 			wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 			wp_enqueue_style('espresso_default');
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -194,6 +194,7 @@ class EE_Maintenance_Mode {
 	 * @return    string
 	 */
 	public static function template_include( $template_path ) {
+		EE_Registry::instance()->load_helper( 'Template' );
 		$template_located = EEH_Template::locate_template( EE_TEMPLATES . 'maintenance_mode.template.php', FALSE, FALSE );
 		return $template_located ? $template_located : $template_path;
 	}
@@ -236,7 +237,7 @@ class EE_Maintenance_Mode {
 	 */
 	public function display_maintenance_mode_notice() {
 		// check if M-mode is engaged and for EE shortcode
-		if ( $this->_real_level() && current_user_can( 'administrator' ) && ! is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
+		if ( $this->real_level() && current_user_can( 'administrator' ) && ! is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
 			printf(
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
 				'<div id="ee-m-mode-admin-notice-dv" class=""><a class="close-espresso-notice" title="',

@@ -225,7 +225,7 @@ $has_answers = $question->has_answers();
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';
-					$disabled = $required_on ? ' disabled="disabled"' : '';
+					$disabled = $required_on || ! empty( $disabled ) ? ' disabled="disabled"' : '';
 					$id =  ! empty( $disabled ) && in_array( $QST_system, $system_required) ? '_disabled' : '';
 					$requiredOptions=array(
 						array('text'=>'Optional','id'=>0),
@@ -235,10 +235,10 @@ $has_answers = $question->has_answers();
 					?>
 						<p><span id="required_toggled_on" class="description" style="color:#D54E21;<?php echo $show_required_msg; ?>">
 						<?php _e('Required is set to optional, and this field is disabled, because the question is Admin-Only.','event_espresso')?>
-					</span></p>
-					<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
-						<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
-					</span></p>
+						</span></p>
+						<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
+							<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
+						</span></p>
 					<?php if ( ! empty( $disabled ) && in_array( $QST_system, $system_required ) ) { ?>
 						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 						<p><span class="description" style="color:#D54E21;">

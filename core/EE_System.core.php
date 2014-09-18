@@ -403,7 +403,11 @@ final class EE_System {
 		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
 		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
 
-		if ( !$testsbypass && ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && ! is_user_logged_in() ) ) ) {
+		if ( !$testsbypass &&
+				( ! is_admin() ||
+				( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) ||
+				( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) ) ) {
+
 			return;
 		}
 		// load M-Mode class
@@ -621,7 +625,7 @@ final class EE_System {
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
-		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			//ok check if this is a new install while in MM...
 			if( $activation_history_for_addon ){
 				$req_type = EE_System::req_type_normal;
@@ -689,6 +693,10 @@ final class EE_System {
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
+		// enable logging?
+		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
+			EE_Registry::instance()->load_core( 'Log' );
+		}
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
