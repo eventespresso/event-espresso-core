@@ -13,7 +13,6 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table{
-	protected $_last_migrated_row = 0;
 	function __construct(){
 		global $wpdb;
 		$this->_old_table = $wpdb->postmeta;
@@ -64,7 +63,6 @@ class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table{
 			$new_billing_info[ $new_input_name ] = $input_value;
 		}
 		update_post_meta( $old_row[ 'post_id' ], $old_row[ 'meta_key' ], $new_billing_info );
-		$this->_last_migrated_row = $old_row[ 'meta_id' ];
 	}
 	/**
 	 *

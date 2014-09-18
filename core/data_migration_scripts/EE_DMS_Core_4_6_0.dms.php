@@ -32,7 +32,9 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_6_0_question_types(),
 			new EE_DMS_4_6_0_country_system_question(),
 			new EE_DMS_4_6_0_state_system_question(),
-			new EE_DMS_4_6_0_billing_info()
+			new EE_DMS_4_6_0_billing_info(),
+			new EE_DMS_4_6_0_transactions(),
+			new EE_DMS_4_6_0_payments()
 		);
 		parent::__construct();
 	}
@@ -263,7 +265,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					TXN_ID int(10) unsigned DEFAULT NULL,
 					STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
 					PAY_timestamp datetime NOT NULL default '0000-00-00 00:00:00',
-					PMD_source varchar(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_source varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount decimal(10,3) DEFAULT NULL,
 					PMD_ID int(11) DEFAULT NULL,
 					PAY_gateway_response text COLLATE utf8_bin,
