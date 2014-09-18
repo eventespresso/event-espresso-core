@@ -17,7 +17,9 @@ class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table{
 	function __construct(){
 		global $wpdb;
 		$this->_old_table = $wpdb->postmeta;
+		$this->_pretty_name = __('Billing Info', 'event_espresso');
 		$this->_update_where_sql();
+		parent::__construct();
 	}
 	protected function _migrate_old_row( $old_row ) {
 		$new_billing_info = array();
@@ -76,7 +78,7 @@ class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table{
 		return $wpdb->get_var( $wpdb->prepare( "SELECT STA_name FROM " . $wpdb->prefix . "esp_state WHERE STA_ID = %d", $id ) );
 	}
 	function _update_where_sql(){
-		$this->_extra_where_sql = "WHERE meta_key LIKE 'billing_info_%%' AND meta_id > $this->_last_migrated_row";
+		$this->_extra_where_sql = "WHERE meta_key LIKE 'billing_info_%' AND meta_id > $this->_last_migrated_row";
 	}
 
 

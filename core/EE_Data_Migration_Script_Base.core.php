@@ -925,9 +925,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	protected function _get_rows( $limit ){
 		global $wpdb;
 		$start_at_record = $this->count_records_migrated();
-		$pre_sql = "SELECT * FROM {$this->_old_table} {$this->_extra_where_sql} LIMIT %d, %d";
-		$query = $wpdb->prepare($pre_sql,$start_at_record,$limit);
-		echo "Get rows: $query";
+		$query = "SELECT * FROM {$this->_old_table} {$this->_extra_where_sql} " . $wpdb->prepare("LIMIT %d, %d",$start_at_record,$limit);
 		return $wpdb->get_results($query,ARRAY_A);
 	}
 
@@ -939,7 +937,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	 */
 	function _count_records_to_migrate() {
 		global $wpdb;
-		$query = $wpdb->prepare( "SELECT COUNT(*) FROM {$this->_old_table} {$this->_extra_where_sql}", NULL );
+		$query =  "SELECT COUNT(*) FROM {$this->_old_table} {$this->_extra_where_sql}";
 		$count = $wpdb->get_var( $query );
 		return $count;
 	}
