@@ -822,7 +822,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'TXN_ID' => $payment['TXN_ID'],
 					'STS_ID' => $payment['status'],
 					'PAY_timestamp' => $payment['date'],
-					'PMD_source'=>  EEM_Payment_Method::scope_admin,
+					'PAY_source'=>  EEM_Payment_Method::scope_admin,
 					'PMD_ID' => $payment['PMD_ID'],
 					'PAY_amount' => $amount,
 					'PAY_gateway_response' => '',
@@ -1048,7 +1048,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.REG_group_size' => array( 'LIKE' , $sstr ),
 				'Registration.Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
-				'Payment.PMD_source' => array('LIKE', $sstr),
+				'Payment.PAY_source' => array('LIKE', $sstr),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $sstr),
 				'TXN_session_data' => array( 'LIKE', $sstr )
 				);
