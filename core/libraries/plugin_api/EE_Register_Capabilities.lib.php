@@ -78,9 +78,9 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 *
 	 * @return array merged in new caps.
 	 */
-	public static function register_capabilities( $caps ) {
+	public static function register_capabilities( $incoming_caps ) {
 		foreach ( self::$_registry as $ref => $caps ) {
-			$caps = array_merge( $caps, $caps['caps'] );
+			$incoming_caps = array_merge( $incoming_caps, $caps['caps'] );
 			//have caps been initialized yet?
 			$caps_init = get_option( 'ee_caps_init', array() );
 			if ( ! isset( $caps_init[$ref] ) ) {
@@ -94,7 +94,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 				update_option( 'ee_caps_init', $caps_init );
 			}
 		}
-		return $caps;
+		return $incoming_caps;
 	}
 
 
