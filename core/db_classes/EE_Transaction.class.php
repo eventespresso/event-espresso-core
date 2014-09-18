@@ -374,8 +374,8 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
-		if ( empty( $REG ) ) {
-			return FALSE;
+		if ( ! $REG instanceof EE_Registration ) {
+			return '';
 		}
 		return $REG->invoice_url( $type );
 	}
@@ -399,8 +399,8 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
-		if ( empty( $REG ) ) {
-			return FALSE;
+		if ( ! $REG instanceof EE_Registration ) {
+			return '';
 		}
 		return $REG->receipt_url( $type );
 	}

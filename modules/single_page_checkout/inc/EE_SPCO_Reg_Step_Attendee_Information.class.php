@@ -474,43 +474,43 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
 
-		$has_options = FALSE;
-
 		switch ( $question->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				$input_class = 'EE_Text_Input';
+				return new EE_Text_Input( $input_constructor_args );
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
-				$input_class = 'EE_Text_Area_Input';
+				return new EE_Text_Area_Input( $input_constructor_args );
 				break;
-			// Single
-			case EEM_Question::QST_type_single :
-				$input_class = 'EE_Radio_Button_Input';
-				$has_options = TRUE;
+			// Radio Buttons
+			case EEM_Question::QST_type_radio :
+				return new EE_Radio_Button_Input( $question->options(), $input_constructor_args );
 				break;
 			// Dropdown
 			case EEM_Question::QST_type_dropdown :
-				$input_class = 'EE_Select_Input';
-				$has_options = TRUE;
+				return new EE_Select_Input( $question->options(), $input_constructor_args );
 				break;
-			// Multiple
-			case EEM_Question::QST_type_multiple :
-				$input_class = 'EE_Checkbox_Multi_Input';
-				$has_options = TRUE;
+			// State Dropdown
+			case EEM_Question::QST_type_state :
+				return new EE_State_Select_Input( NULL, $input_constructor_args );
+				break;
+			// Country Dropdown
+			case EEM_Question::QST_type_country :
+				return new EE_Country_Select_Input( NULL, $input_constructor_args );
+				break;
+			// Checkboxes
+			case EEM_Question::QST_type_checkbox :
+				return new EE_Checkbox_Multi_Input( $question->options(), $input_constructor_args );
 				break;
 			// Date
 			case EEM_Question::QST_type_date :
-				$input_class = 'EE_Text_Input';
+				return new EE_Text_Input( $input_constructor_args );
 				break;
 			// fallback
 			default :
-				$input_class = 'EE_Text_Input';
+				return new EE_Text_Input( $input_constructor_args );
 		}
-
-		return $has_options ? new $input_class( $question->options(), $input_constructor_args ) : new $input_class( $input_constructor_args );
-
 	}
 
 

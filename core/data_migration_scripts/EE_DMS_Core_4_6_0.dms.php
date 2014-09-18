@@ -29,7 +29,10 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$this->_migration_stages = array(
 			new EE_DMS_4_6_0_gateways(),
 			new EE_DMS_4_6_0_payment_method_currencies(),
-			);
+			new EE_DMS_4_6_0_question_types(),
+			new EE_DMS_4_6_0_country_system_question(),
+			new EE_DMS_4_6_0_state_system_question()
+		);
 		parent::__construct();
 	}
 	public function can_migrate_from_version($version_array) {
@@ -530,6 +533,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
+		/** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
 		$script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
 
 		//(because many need to convert old string states to foreign keys into the states table)
