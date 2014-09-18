@@ -39,4 +39,31 @@ class EE_Capabilities_Test extends EE_UnitTestCase {
 		$this->assertEmpty( $caps );
 	}
 
+	public function test_add_new_capabilities() {
+		global $wp_roles;
+		new WP_User();
+		//check the current user is an admin
+		$user = $this->factory->user->create_and_get();
+		$this->assertInstanceOf( 'WP_User', $user );
+		$user->add_role( 'administrator' );
+		$this->assertFalse( EE_Registry::instance()->CAP->user_can($user, 'ee_new_cap', 'test' ) );
+
+		//ok now add another cap, and re-init stuff and verify it got added correctly
+		//add a new cap
+		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, 'add_new_caps' ) );
+		EE_Registry::instance()->CAP->init_caps();
+		//check it got added
+		$this->assertArrayContains( 'ee_new_cap', EE_Registry::instance()->CAP->get_ee_capabilities( 'administrator' ) );
+		//then check newly-created users get that new role
+		//refresh teh roles' caps and the user object
+		$wp_roles->reinit();
+		$user_refreshed = get_user_by('id', $user->ID );
+		$this->assertTrue( EE_Registry::instance()->CAP->user_can($user_refreshed, 'ee_new_cap', 'test' ) );
+	}
+
+	public function add_new_caps( $existing_caps ){
+		$existing_caps['administrator'][] = 'ee_new_cap';
+		return $existing_caps;
+	}
+
 } //end EE_Capabilities_Test class
