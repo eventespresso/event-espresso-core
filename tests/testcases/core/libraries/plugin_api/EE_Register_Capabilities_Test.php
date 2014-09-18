@@ -63,17 +63,16 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 	private function _pretend_capabilities_registered() {
 		//pretend correct hookpoint set.
 		global $wp_actions;
-		unset( $wp_actions['AHEE__EE_System__core_loaded_and_ready'] );
-
+		unset( $wp_actions['AHEE__EE_Capabilities__init_role_caps__complete'] );
 		//register capabilities
 		EE_Register_Capabilities::register( 'Test_Capabilities', $this->_valid_capabilities );
 
 		EE_Registry::instance()->load_core( 'Capabilities' );
-		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
+		EE_Capabilities::instance()->init_caps();
 
 		//validate caps were registered and init saved.
-		$caps_init = get_option( 'ee_caps_init', array() );
-		$this->assertTrue( isset( $caps_init['Test_Capabilities'] ) );
+		$admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
+		$this->assertArrayContains( 'test_read', $admin_caps_init );
 
 		//verify new caps are in the role
 		$role = get_role( 'administrator' );
