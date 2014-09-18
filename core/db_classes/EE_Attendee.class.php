@@ -499,7 +499,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	 */
 	public function get_billing_info_postmeta_name($payment_method){
 		if( $payment_method->type_obj() instanceof EE_PMT_Base ){
-			return 'billing_info_' . get_class( $payment_method->type_obj() );
+			return 'billing_info_' . $payment_method->type_obj()->system_name();
 		}else{
 			return NULL;
 		}

@@ -28,11 +28,6 @@
  */
 class EE_Transaction extends EE_Base_Class {
 
-	/**
-	 * The last -used payment method on this transaction
-	 * @var EE_Payment_Method
-	 */
-	protected $_Payment_Method = NULL;
 
 	/**
 	 *
