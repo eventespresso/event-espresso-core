@@ -57,13 +57,13 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage{
 	 */
 	private function _get_all_questions_that_require_conversion( $limit = 0, $offset = 0 ){
 		global $wpdb;
-		$SQL = "SELECT * FROM %s WHERE QST_type IN ('%s')";
 		$question_types = implode( "','", array_keys( $this->_question_type_conversions ));
+		$SQL = "SELECT * FROM %s WHERE QST_type IN ('$question_types')";
 		if ( $limit ) {
 			$SQL .= "LIMIT %d OFFSET %d";
-			$questions = $wpdb->query( $wpdb->prepare( $SQL, $this->_question_table_name, $question_types, $limit, $offset ));
+			$questions = $wpdb->query( $wpdb->prepare( $SQL, $this->_question_table_name, $limit, $offset ));
 		} else {
-			$questions = $wpdb->query( $wpdb->prepare( $SQL, $this->_question_table_name, $question_types ));
+			$questions = $wpdb->query( $wpdb->prepare( $SQL, $this->_question_table_name ));
 		}
 		return $questions;
 	}
