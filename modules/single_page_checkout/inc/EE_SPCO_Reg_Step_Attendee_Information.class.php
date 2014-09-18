@@ -485,8 +485,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			case EEM_Question::QST_type_textarea :
 				$input_class = 'EE_Text_Area_Input';
 				break;
-			// Single
-			case EEM_Question::QST_type_single :
+			// Radio Buttons
+			case EEM_Question::QST_type_radio :
 				$input_class = 'EE_Radio_Button_Input';
 				$has_options = TRUE;
 				break;
@@ -495,7 +495,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$input_class = 'EE_Select_Input';
 				$has_options = TRUE;
 				break;
-			// Multiple
+			// State Dropdown
+			case EEM_Question::QST_type_state :
+				$input_class = 'EE_State_Select_Input';
+				$has_options = TRUE;
+				break;
+			// Country Dropdown
+			case EEM_Question::QST_type_country :
+				$input_class = 'EE_Country_Select_Input';
+				$has_options = TRUE;
+				break;
+			// Checkboxes
 			case EEM_Question::QST_type_checkbox :
 				$input_class = 'EE_Checkbox_Multi_Input';
 				$has_options = TRUE;
