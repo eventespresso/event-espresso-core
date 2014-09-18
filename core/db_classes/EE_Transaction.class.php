@@ -191,18 +191,24 @@ class EE_Transaction extends EE_Base_Class {
 	}
 
 
-
 	/**
-	 * 	datetime
-	 * 	Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
-	 * 	Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *    datetime
+	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
+	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
 	 *
 	 * @access 	public
-	 * @param 	boolean $format - whether to format date  - defaults to FALSE (return timestamp)
-	 * @return mixed
+	 * @param 	boolean $format - whether to return a formatted date string
+	 * @param 	bool       $gmt - whether to return raw timestamp with no UTC offset applied
+	 * @return 	string | int
 	 */
-	public function datetime( $format = FALSE ) {
-		return $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
+	public function datetime( $format = FALSE, $gmt = FALSE ) {
+		if ( $format ) {
+			return $this->get_pretty( 'TXN_timestamp' );
+		} else if ( $gmt ) {
+			return $this->get_raw( 'TXN_timestamp' );
+		} else {
+			return $this->get( 'TXN_timestamp' );
+		}
 	}
 
 
