@@ -457,12 +457,12 @@ class EE_Payment_Method extends EE_Base_Class{
 	/**
 	 * Overrides default __sleep so the object type is NOT cached.
 	 * This way we can rely on the normal EE_Payment_Method::type_obj() logic
-	 * to load the required classes, and don't need them at the time of unserilaization
+	 * to load the required classes, and don't need them at the time of unserialization
 	 * @return array
 	 */
 	public function __sleep(){
 		$properties =  get_object_vars( $this );
-		unset($properties[ '_type_obj' ] );
+		unset( $properties[ '_type_obj' ] );
 		return array_keys( $properties );
 	}
 

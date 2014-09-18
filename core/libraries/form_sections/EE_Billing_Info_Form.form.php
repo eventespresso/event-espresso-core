@@ -26,24 +26,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	 */
 	public function __construct( EE_Payment_Method $payment_method, $options_array= array()){
 		$this->_pm_instance = $payment_method;
-		$country_options = array();
-		$states_organized = array();
-		// get possibly cached list of countries
-		$countries = EEM_Country::instance()->get_all_active_countries();
-		if ( ! empty( $countries )) {
-			foreach($countries as $country){
-				/** @var $country EE_Country */
-				$country_options[$country->ID()] = $country->name();
-			}
-		}
-		// get possibly cached list of states
-		$states = EEM_State::instance()->get_all_active_states();
-		if ( ! empty( $states )) {
-			foreach($states as $state){
-				/** @var $state EE_State */
-				$states_organized[$state->country()->name()][$state->name()] = $state->name();
-			}
-		}
+
 		$options_array['subsections'] = array_merge(
 			array(
 				'first_name' 	=> new EE_Text_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
@@ -52,8 +35,8 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 				'address'			=> new EE_Text_Input( array( 'html_label_text'=>  __( 'Address', 'event_espresso'), 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'address2'		=> new EE_Text_Input( array( 'html_label_text'=> __( 'Address 2', 'event_espresso'), 'html_class' => 'ee-billing-qstn' )),
 				'city'					=> new EE_Text_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
-				'state' 				=> new EE_Select_Input( $states_organized, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
-				'country' 			=> new EE_Select_Input( $country_options, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'state' 				=> new EE_State_Select_Input( NULL, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'country' 			=> new EE_Country_Select_Input( NULL, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'zip'					=> new EE_Text_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'phone'			=> new EE_Text_Input( array( 'html_class' => 'ee-billing-qstn' )),
 			),

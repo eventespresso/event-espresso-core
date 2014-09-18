@@ -578,11 +578,11 @@ class EEH_Form_Fields {
 					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, TRUE );
 				break;
 
-			case 'SINGLE' :
+			case 'RADIO_BTN' :
 					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, $label_b4, $use_desc_4_label );
 				break;
 
-			case 'MULTIPLE' :
+			case 'CHECKBOX' :
 					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 

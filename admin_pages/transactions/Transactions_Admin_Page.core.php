@@ -579,7 +579,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 
 		// process payment details
-		if ( ! $this->_template_args['payments'] = $this->_transaction->get_many_related('Payment') ) {
+		$this->_template_args['payments'] = $this->_transaction->get_many_related('Payment');
+		if ( ! $this->_template_args['payments'] ) {
 			$this->_template_args['payments'] = FALSE;
 		}
 

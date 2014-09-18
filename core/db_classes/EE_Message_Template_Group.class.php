@@ -249,7 +249,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		if ( empty( $mtps ) ) {
 			return array();
 		}
-		//note contexts could have MULTIPLE fields per context. So we return the objects indexed by context AND field.
+		//note contexts could have CHECKBOX fields per context. So we return the objects indexed by context AND field.
 		foreach ( $mtps as $mtp ) {
 			$mtps_arr[ $mtp->get( 'MTP_context' ) ][ $mtp->get( 'MTP_template_field' ) ] = $mtp;
 		}
