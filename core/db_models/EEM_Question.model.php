@@ -105,10 +105,10 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
 				EEM_Question::QST_type_checkbox =>__('Checkboxes','event_espresso'),
 				EEM_Question::QST_type_radio =>__('Radio Buttons','event_espresso'),
-				EEM_Question::QST_type_dropdown =>__('Select Box','event_espresso'),
-				EEM_Question::QST_type_country =>__('Country','event_espresso'),
-				EEM_Question::QST_type_state =>__('State/Province','event_espresso'),
-				EEM_Question::QST_type_date =>__('Date','event_espresso')
+				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
+				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
+				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
+				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
 			)
 		);
 
