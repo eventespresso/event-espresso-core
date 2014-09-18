@@ -453,6 +453,7 @@ class EEH_Activation {
 	 * @return void
 	 */
 	public static function create_database_tables() {
+		EE_Registry::instance()->load_core( 'Data_Migration_Manager' );
 		//find the migration script that sets the database to be compatible with the code
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
