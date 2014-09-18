@@ -86,7 +86,8 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_all_data_count;		
+		$this->_views['all']['count'] = $this->_all_data_count;	
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_tickets', 'trash_ticket'))	
 		$this->_views['trashed']['count'] = $this->_trashed_count;		
 	}
 
