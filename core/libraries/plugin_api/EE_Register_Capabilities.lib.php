@@ -49,8 +49,8 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 		}
 
 		//make sure this is not registered too late
-		if ( did_action( 'AHEE__EE_System__core_loaded_and_ready' ) ) {
-			EE_Error::doing_it_wrong( __METHOD__, sprintf( __('%s has been registered too late.  Please ensure that EE_Register_Capabilities::register has been called at some point before the "AHEE__EE_System__core_loaded_and_ready" action hook has been called.', 'event_espresso'), $cap_reference ), '4.5.0' );
+		if ( did_action( 'AHEE__EE_Capabilities__init_role_caps__complete' ) ) {
+			EE_Error::doing_it_wrong( __METHOD__, sprintf( __('%s has been registered too late.  Please ensure that EE_Register_Capabilities::register has been called at some point before the "AHEE__EE_Capabilities__init_role_caps__complete" action hook has been called.', 'event_espresso'), $cap_reference ), '4.5.0' );
 		}
 
 		//some preliminary sanitization and setting to the $_registry property
@@ -80,19 +80,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 */
 	public static function register_capabilities( $incoming_caps ) {
 		foreach ( self::$_registry as $ref => $caps ) {
-			$incoming_caps = array_merge( $incoming_caps, $caps['caps'] );
-			//have caps been initialized yet?
-			$caps_init = get_option( 'ee_caps_init', array() );
-			if ( ! isset( $caps_init[$ref] ) ) {
-				foreach( $caps['caps'] as $role => $caps_to_add ) {
-					foreach ( $caps_to_add as $cap ) {
-						EE_Capabilities::instance()->add_cap_to_role( $role, $cap );
-					}
-				}
-				//record initialized
-				$caps_init[$ref] = 1;
-				update_option( 'ee_caps_init', $caps_init );
-			}
+			$incoming_caps = array_merge( $caps, $caps['caps'] );
 		}
 		return $incoming_caps;
 	}
