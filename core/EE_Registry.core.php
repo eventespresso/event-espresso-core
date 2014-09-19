@@ -251,7 +251,8 @@ final class EE_Registry {
 		$core_paths = array(
 			EE_CORE,
 			EE_ADMIN,
-			EE_CPTS
+			EE_CPTS,
+			EE_CORE . 'data_migration_scripts' . DS
 		);
 		$core_paths = apply_filters( 'FHEE__EE_Registry__load_core__core_paths', $core_paths );
 		// retrieve instantiated class
