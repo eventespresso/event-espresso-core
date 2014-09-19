@@ -411,16 +411,6 @@ final class EE_System {
 	public function detect_if_activation_or_upgrade() {
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
-		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
-		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
-
-		if ( !$testsbypass &&
-				( ! is_admin() ||
-				( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) ||
-				( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) ) ) {
-
-			return;
-		}
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
@@ -682,7 +672,11 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		if( is_admin() && EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) ){
+		//if current user is an admin and it's not an ajax request
+		if(
+				EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) &&
+				! ( defined('DOING_AJAX') && DOING_AJAX  )
+				){
 			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();

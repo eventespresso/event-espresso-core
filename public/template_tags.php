@@ -354,9 +354,9 @@ if ( ! function_exists( 'espresso_event_status' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_active_status( $EVT_ID );
-		} else {
-			return EEH_Event_View::event_active_status( $EVT_ID );
+			return '';
 		}
+		return EEH_Event_View::event_active_status( $EVT_ID );
 	}
 }
 
@@ -375,9 +375,9 @@ if ( ! function_exists( 'espresso_event_categories' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
-		} else {
-			return EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
+			return '';
 		}
+		return EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
 	}
 }
 
@@ -390,7 +390,7 @@ if ( ! function_exists( 'espresso_event_tickets_available' )) {
 	 * @param int  $EVT_ID
 	 * @param bool $echo
 	 * @param bool $format
-	 * @return object
+	 * @return string
 	 */
 	function espresso_event_tickets_available( $EVT_ID = 0, $echo = TRUE, $format = TRUE ) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
@@ -414,10 +414,11 @@ if ( ! function_exists( 'espresso_event_tickets_available' )) {
 			}
 			if ( $echo && ! $format ) {
 				echo $html;
-			} else {
-				return $html;
+				return '';
 			}
+			return $html;
 		}
+		return '';
 	}
 }
 
@@ -446,7 +447,9 @@ if ( ! function_exists( 'espresso_event_date' )) {
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_date( $date_format = 'D M jS', $time_format = 'g:i a', $EVT_ID = FALSE ) {
+	function espresso_event_date( $date_format = '', $time_format = '', $EVT_ID = FALSE ) {
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
@@ -506,9 +509,9 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 		}
 		if ( $echo ) {
 			echo $html;
-		} else {
-			return $html;
+			return '';
 		}
+		return $html;
 	}
 }
 
@@ -523,7 +526,9 @@ if ( ! function_exists( 'espresso_event_end_date' )) {
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_end_date( $date_format = 'D M jS', $time_format = 'g:i a', $EVT_ID = FALSE ) {
+	function espresso_event_end_date( $date_format = '', $time_format = '', $EVT_ID = FALSE ) {
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_end_date__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_end_date__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
@@ -538,21 +543,29 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 *
 	 * @param string $date_format
 	 * @param string $time_format
-	 * @param string $single_dt_frmt
-	 * @param string $single_tm_frmt
+	 * @param string $single_date_format
+	 * @param string $single_time_format
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_date_range( $date_format = 'M jS', $time_format = ' ', $single_dt_frmt = 'D M jS ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
+	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE ) {
+		// formats when there is an actual date range
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
+		// format if there is only one date to display ie: no date range
+		$single_date_format = ! empty( $single_date_format ) ? $single_date_format : get_option( 'date_format' );
+		$single_time_format = ! empty( $single_time_format ) ? $single_time_format : get_option( 'time_format' );
+		$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );
+		$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', $single_time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$the_event_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID )));
 		$the_event_end_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )));
 		if ( $the_event_date != $the_event_end_date ) {
-			echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $date_format . ', Y' . ' ' . $time_format, strtotime( EEH_Event_View::the_latest_event_date( $date_format . ', Y', $time_format, $EVT_ID )));
+			echo $the_event_date . __( ' - ', 'event_espresso' ) . $the_event_end_date;
 		} else {
-			echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_earliest_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
+			echo $the_event_date;
 		}
 	}
 }
@@ -587,9 +600,9 @@ if ( ! function_exists( 'espresso_event_link_url' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_link_url( $EVT_ID );
-		} else {
-			return EEH_Event_View::event_link_url( $EVT_ID );
+			return '';
 		}
+		return EEH_Event_View::event_link_url( $EVT_ID );
 	}
 }
 
@@ -625,9 +638,9 @@ if ( ! function_exists( 'espresso_event_content_or_excerpt' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_content_or_excerpt( $num_words, $more );
-		} else {
-			return EEH_Event_View::event_content_or_excerpt( $num_words, $more );
+			return '';
 		}
+		return EEH_Event_View::event_content_or_excerpt( $num_words, $more );
 	}
 }
 
@@ -645,9 +658,9 @@ if ( ! function_exists( 'espresso_event_phone' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_phone( $EVT_ID );
-		} else {
-			return EEH_Event_View::event_phone( $EVT_ID );
+			return '';
 		}
+		return EEH_Event_View::event_phone( $EVT_ID );
 	}
 }
 
@@ -666,9 +679,9 @@ if ( ! function_exists( 'espresso_edit_event_link' )) {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::edit_event_link( $EVT_ID );
-		} else {
-			return EEH_Event_View::edit_event_link( $EVT_ID );
+			return '';
 		}
+		return EEH_Event_View::edit_event_link( $EVT_ID );
 	}
 }
 
@@ -888,9 +901,9 @@ if ( ! function_exists( 'espresso_venue_excerpt' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
-		} else {
-			return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			return '';
 		}
+		return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
 	}
 }
 
@@ -910,9 +923,9 @@ if ( ! function_exists( 'espresso_venue_categories' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
-		} else {
-			return EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
+			return '';
 		}
+		return EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
 	}
 }
 
@@ -931,9 +944,9 @@ if ( ! function_exists( 'espresso_venue_address' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_address( $type, $VNU_ID );
-		} else {
-			return EEH_Venue_View::venue_address( $type, $VNU_ID );
+			return '';
 		}
+		return EEH_Venue_View::venue_address( $type, $VNU_ID );
 	}
 }
 
@@ -952,9 +965,9 @@ if ( ! function_exists( 'espresso_venue_raw_address' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
-		} else {
-			return EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
+			return '';
 		}
+		return EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
 	}
 }
 
@@ -989,9 +1002,9 @@ if ( ! function_exists( 'espresso_venue_gmap' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
-		} else {
-			return EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
+			return '';
 		}
+		return EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
 	}
 }
 
@@ -1008,9 +1021,9 @@ if ( ! function_exists( 'espresso_venue_phone' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_phone( $VNU_ID );
-		} else {
-			return EEH_Venue_View::venue_phone( $VNU_ID );
+			return '';
 		}
+		return EEH_Venue_View::venue_phone( $VNU_ID );
 	}
 }
 
@@ -1028,9 +1041,9 @@ if ( ! function_exists( 'espresso_venue_website' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_website_link( $VNU_ID );
-		} else {
-			return EEH_Venue_View::venue_website_link( $VNU_ID );
+			return '';
 		}
+		return EEH_Venue_View::venue_website_link( $VNU_ID );
 	}
 }
 

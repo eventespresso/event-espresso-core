@@ -2252,6 +2252,20 @@ class EE_Environment_Config extends EE_Config_Base {
 			return '';
 		}
 	}
+
+
+
+
+	/**
+	 * The purpose of this method is just to force rechecking php values so if they've changed, they get updated.
+	 *
+	 * @since 4.4.1
+	 *
+	 * @return void
+	 */
+	public function recheck_values() {
+		$this->_set_php_values();
+	}
 }
 
 

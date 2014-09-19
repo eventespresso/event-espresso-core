@@ -49,9 +49,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	// well... according to the server...
 	private $_user_agent = NULL;
 
-	// well... according to the server...
-	private $_ip_address = NULL;
-
 	// array for defining default session vars
 	private $_default_session_vars = array (
 		'id' => NULL,
@@ -72,7 +69,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
-	 *		@return class instance
+	 *		@return \EE_Session
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
@@ -102,7 +99,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		define( 'ESPRESSO_SESSION', TRUE );
 
 		// retrieve session options from db
-		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
+		$session_settings = get_option( 'ee_session_settings' );
+		if ( $session_settings !== FALSE ) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
 				// set values for class properties
@@ -173,13 +171,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-	/**
-	 * @retrieve session data
-	 * @access	public
-	 * @return	array
-	 */
+	 /**
+	  * @retrieve  session data
+	  * @access    public
+	  * @param null $key
+	  * @return    array
+	  */
 	public function get_session_data( $key = NULL ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
@@ -191,14 +188,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-
-	/**
-	 * @set session data
-	 * @access	public
-	 * @return	TRUE on success, FALSE on fail
-	 */
+	 /**
+	  * @set       session data
+	  * @access    public
+	  * @param $data
+	  * @return    TRUE on success, FALSE on fail
+	  */
 	public function set_session_data( $data ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -320,6 +315,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$this->_set_defaults();
 		}
 
+		$session_data = $this->_default_session_vars;
+
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
@@ -354,9 +351,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				break;
 
 				case 'pages_visited' :
-					if ( $page_visit = $this->_get_page_visit() ) {
+					$page_visit = $this->_get_page_visit();
+					if ( $page_visit ) {
 						// set pages visited where the first will be the http referrer
-						$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
+						$this->_session_data[ 'pages_visited' ][ $this->_time ] = $page_visit;
 						// we'll only save the last 10 page visits.
 						$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );
 					}
@@ -394,7 +392,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *			@create session data array
 	 *		  @access public
-	 *			@return void
+	 *			@return bool
 	 */
 	private function _create_espresso_session( ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -413,6 +411,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	private function _save_session_to_db() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		if ( ! EE_Registry::instance()->REQ instanceof EE_Request_Handler || ! EE_Registry::instance()->REQ->is_espresso_page() ) {
+			return FALSE;
+		}
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
 		// encrypt it if we are using encryption
@@ -482,7 +483,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *			@get the full page request the visitor is accessing
 	 *		  	@access public
-	 *			@return void
+	 *			@return string
 	 */
 	public function _get_page_visit() {
 
@@ -526,11 +527,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		}
 
-		if ( $page_visit != home_url('/') . 'wp-admin/admin-ajax.php' ) {
-			return $page_visit;
-		} else {
-			return FALSE;
-		}
+		return $page_visit != home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
 
 	}
 
@@ -539,15 +536,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *			@the current wp user id
-	 *		  @access public
-	 *			@return void
+	 *	@the current wp user id
+	 *	@access public
+	 *	@return int | NULL
 	 */
 	public function _wp_user_id() {
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
-		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-		return $this->_wp_user_id;
+		return $user instanceof WP_User ? $user->ID : NULL;
 	}
 
 
@@ -575,7 +571,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @access public
 	  * @param array $data_to_reset
 	  * @param bool  $show_all_notices
-	  * @return bool
+	  * @return TRUE on success, FALSE on fail
 	  */
 	public function reset_data( $data_to_reset = array(), $show_all_notices = FALSE ) {
 		// if $data_to_reset is not in an array, then put it in one
@@ -611,7 +607,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				}
 
 			} else if ( $show_all_notices ) {
-				// opps! that session var does not exist!
+				// oops! that session var does not exist!
 				EE_Error::add_error( sprintf( __( 'The session item provided, %s, is invalid or does not exist.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 				$return_value = FALSE;
 			}
