@@ -72,7 +72,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase {
 	 */
 	public function test_current_user_can_and_user_can() {
 		global $current_user;
-		$orig_user = $current_user;
 		//setup our user and set as current user.
 		$user = $this->factory->user->create_and_get();
 		$this->assertInstanceOf( 'WP_User', $user );
@@ -112,7 +111,6 @@ class EE_Capabilities_Test extends EE_UnitTestCase {
 
 		$this->assertTrue( EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'tests' ) );
 		$this->assertTrue( EE_Registry::instance()->CAP->user_can( $user, 'ee_read_ee', 'tests' ) );
-		$currrent_user = $orig_user;
 	}
 
 } //end EE_Capabilities_Test class
