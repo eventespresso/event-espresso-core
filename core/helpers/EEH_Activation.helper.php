@@ -865,7 +865,7 @@ class EEH_Activation {
 	 */
 	public static function generate_default_message_templates() {
 
-		$templates = FALSE;
+		$success = FALSE;
 		$settings = $installed_messengers = $default_messengers = array();
 
 		//include our helper
@@ -894,11 +894,6 @@ class EEH_Activation {
 			$def_ms[] = $msgr;
 		}
 
-		//continue?
-		if ( empty( $def_ms )) {
-			return FALSE;
-		}
-
 		//setup the $installed_mts in an array
 		foreach ( $installed['message_types'] as $imt ) {
 			if ( $imt instanceof EE_message_type ) {
@@ -906,52 +901,91 @@ class EEH_Activation {
 			}
 		}
 
-		//loop through default array
-		foreach ( $def_ms as $messenger ) {
-			//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
-			if ( ! isset( $installed_messengers[$messenger] )) {
-				continue;
-			}
-			/** @var EE_messenger[] $installed_messengers  */
-			$default_mts = $installed_messengers[$messenger]->get_default_message_types();
-			$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-			foreach ( $default_mts as $mt ) {
-				//we need to setup any initial settings for message types
-				/** @var EE_message_type[] $installed_mts */
-				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-				if ( !empty( $settings_fields ) ) {
-					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
+		//loop through default array for default messengers (if present)
+		if ( ! empty( $def_ms ) ) {
+			foreach ( $def_ms as $messenger ) {
+				//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
+				if ( ! isset( $installed_messengers[$messenger] )) {
+					continue;
+				}
+				/** @var EE_messenger[] $installed_messengers  */
+				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
+				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
+				foreach ( $default_mts as $mt ) {
+					//we need to setup any initial settings for message types
+					/** @var EE_message_type[] $installed_mts */
+					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+					if ( !empty( $settings_fields ) ) {
+						foreach ( $settings_fields as $field => $values ) {
+							$settings[$field] = $values['default'];
+						}
+					} else {
+						$settings = array();
 					}
-				} else {
-					$settings = array();
+
+					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
 				}
 
-				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
-			}
+				//setup any initial settings for the messenger
+				$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
 
-			//setup any initial settings for the messenger
-			$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
+				if ( !empty( $msgr_settings ) ) {
+					foreach ( $msgr_settings as $field => $value ) {
+						$active_messengers[$messenger]['settings'][$field] = $value;
+					}
+				}
 
-			if ( !empty( $msgr_settings ) ) {
-				foreach ( $msgr_settings as $field => $value ) {
-					$active_messengers[$messenger]['settings'][$field] = $value;
+				//now let's save the settings for this messenger! Must do now because the validator checks the db for active messengers to validate.
+				EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+
+				//let's generate all the templates but only if the messenger has default_mts (otherwise its just activated).
+				if ( !empty( $default_mts ) ) {
+					$success = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
 				}
 			}
+		} //end check for empty( $def_ms )
+		else {
+			//still need to see if there are any message types to activate for active messengers
+			foreach ( $active_messengers as $messenger => $settings ) {
+				$msg_obj = $settings['obj'];
+				if ( ! $msg_obj instanceof EE_messenger ) {
+					continue;
+				}
 
-			//now let's save the settings for this messenger!
-			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+				$all_default_mts = $msg_obj->get_default_message_types();
+				$new_default_mts = array();
+
+				//loop through each default mt reported by the messenger and make sure its set in its active db entry.
+				foreach( $all_default_mts as $mt ) {
+					//already active? already has generated templates?
+					if ( isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
+						continue;
+					}
+					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+					if ( !empty( $settings_fields ) ) {
+						foreach ( $settings_fields as $field => $values ) {
+							$settings[$field] = $values['default'];
+						}
+					} else {
+						$settings = array();
+					}
+					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
+					$new_default_mts[] = $mt;
+				}
 
 
-			//let's generate all the templates but only if the messenger has default_mts (otherwise its just activated).
-			if ( !empty( $default_mts ) ) {
-				$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+				if ( ! empty( $new_default_mts ) ) {
+					$success = EEH_MSG_Template::generate_new_templates( $messenger, $new_default_mts, '', TRUE );
+				}
+
 			}
-
 		}
 
-		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
-		return $templates;
+		//now let's save the settings for this messenger!
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+
+		//that's it!
+		return $success;
 	}
 
 
