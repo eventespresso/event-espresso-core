@@ -395,12 +395,10 @@ final class EE_Capabilities extends EE_Base {
 	 * @return bool  Whether user can or not.
 	 */
 	public function current_user_can( $cap, $context, $id = 0 ) {
-		$user_can = ! empty( $id ) ? current_user_can( $cap, $id ) : current_user_can( $cap );
-
 		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can__' . $context, $user_can, $cap, $id );
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can', $user_can, $context, $cap, $id );
-		return $user_can;
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__current_user_can__cap__' . $context,  $cap, $id );
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__current_user_can__cap', $filtered_cap, $context, $cap, $id );
+		return ! empty( $id ) ? current_user_can( $filtered_cap, $id ) : current_user_can( $filtered_cap );
 	}
 
 
@@ -418,12 +416,10 @@ final class EE_Capabilities extends EE_Base {
 	 * @return bool Whether user can or not.
 	 */
 	public function user_can( $user, $cap, $context, $id = 0 ) {
-		$user_can = ! empty( $id ) ? user_can( $user, $cap, $id ) : user_can( $user, $cap );
-
 		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can__' . $context, $user_can, $user, $cap, $id );
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can', $user_can, $user, $context, $cap, $id );
-		return $user_can;
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__user_can__cap__' . $context, $cap, $user, $id );
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__user_can__cap', $filtered_cap, $context, $cap, $user,  $id );
+		return ! empty( $id ) ? user_can( $user, $filtered_cap, $id ) : user_can( $user, $filtered_cap );
 	}
 
 
