@@ -98,16 +98,19 @@ class EEH_MSG_Template {
 	 * @param  string $messenger     messenger
 	 * @param  string $message_type message type
 	 * @param  int $GRP_ID        GRP ID ( if a custom template) (if not provided then we're just doing global template check)
+	 * @param  bool  $update_to_active if true then we also toggle the template to active.
 	 * @return bool                true = generated, false = hasn't been generated.
 	 */
-	public static function already_generated( $messenger, $message_type, $GRP_ID = 0 ) {
+	public static function already_generated( $messenger, $message_type, $GRP_ID = 0, $update_to_active = TRUE ) {
 		self::_set_autoloader();
 		$MTP = EEM_Message_Template::instance();
 
 		//what method we use depends on whether we have an GRP_ID or not
 		$count = empty( $GRP_ID ) ? EEM_Message_Template::instance()->count( array( array( 'Message_Template_Group.MTP_messenger' => $messenger, 'Message_Template_Group.MTP_message_type' => $message_type, 'Message_Template_Group.MTP_is_global' => TRUE ) ) ) :  $MTP->count( array( array( 'GRP_ID' => $GRP_ID ) ) );
 
-		self::update_to_active( $messenger, $message_type );
+		if ( $update_to_active ) {
+			self::update_to_active( $messenger, $message_type );
+		}
 
 		return ( $count > 0 ) ? TRUE : FALSE;
 	}
