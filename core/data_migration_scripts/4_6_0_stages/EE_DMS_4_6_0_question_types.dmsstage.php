@@ -32,11 +32,7 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table {
 			'MULTIPLE' 			=> 'CHECKBOX',
 			'SINGLE' 				=> 'RADIO_BTN'
 		);
-		$or_sql = array();
-		foreach( array_keys( $this->_question_type_conversions ) as $type_to_convert ){
-			$or_sql[] = "'$type_to_convert'";
-		}
-		$this->_extra_where_sql = "WHERE QST_type IN (" . implode( ',', $or_sql ) . ')' ;
+		$this->_extra_where_sql = "WHERE QST_type IN (' " . implode( "', '", $this->_question_type_conversions ) . " ')" ;
 		parent::__construct();
 	}
 
@@ -49,10 +45,10 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table {
 		if ( $question['QST_ID'] && isset( $this->_question_type_conversions[ $question['QST_type'] ] )) {
 			$success = $wpdb->update(
 				$this->_old_table,
-				array( 'QST_type' => $this->_question_type_conversions[ $question['QST_type'] ] ),
-				array( 'QST_ID' => $question['QST_ID'] ),
-				array( '%s' ), //CUR_code
-				array( '%d' ) //CUR_code
+				array( 'QST_type' => $this->_question_type_conversions[ $question['QST_type'] ] ), 	// data
+				array( 'QST_ID' => $question['QST_ID'] ),  // where
+				array( '%s' ),   // data format
+				array( '%d' )  // where format
 			);
 			if ( ! $success ) {
 				$this->add_error(
