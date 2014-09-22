@@ -56,6 +56,11 @@ class EE_Log {
 	 */
 	private static $_instance;
 
+	/**
+	 * @var Exception
+	 */
+	private $_setup_error;
+
 
 	/**
 	 * @return EE_Log
@@ -94,7 +99,8 @@ class EE_Log {
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
 		} catch( EE_Error $e ){
-			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+			$this->_setup_error = $e;
+			add_action( 'admin_init', array( $this, 'setup_error' ));
 			return;
 		}
 
@@ -223,6 +229,16 @@ class EE_Log {
 				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ));
 				return;
 			}
+		}
+	}
+
+
+	/**
+	 * setup_error
+	 */
+	public function setup_error() {
+		if ( $this->_setup_error instanceof Exception ) {
+			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), $this->_setup_error->getMessage() ));
 		}
 	}
 
