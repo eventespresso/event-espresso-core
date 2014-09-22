@@ -139,6 +139,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				__( 'The transaction model could not be established.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
+			return NULL;
 		}
 		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
 		$this->_current_txn = $TXN_model->get_transaction_from_reg_url_link( $this->_reg_url_link );
@@ -148,6 +149,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
+			return NULL;
 		}
 		return $this->_current_txn;
 	}
@@ -281,8 +283,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public function init() {
 		$this->_get_reg_url_link();
-		$this->get_txn();
-
+		if ( ! $this->get_txn() ) {
+			return NULL;
+		}
 		// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
 		if ( $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
 			$this->_current_txn->set_status( EEM_Transaction::incomplete_status_code );
@@ -336,14 +339,15 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->init();
 
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return '';
+			return EE_Error::get_notices();
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
+		if ( ! empty( $template_args['TXN_receipt_url'] )) {
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.', 'event_espresso' );
+		} else {
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation.', 'event_espresso' );
+		}
 		$template_args['transaction'] = $this->_current_txn;
 		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
@@ -643,7 +647,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		foreach ( $payments as $payment ) {
 			$template_args['payments'][] = $this->get_payment_row_html( $payment );
 		}
-		//create a hackey payment object, but dont save it
+		//create a hacky payment object, but dont save it
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
 			'STS_ID'=>EEM_Payment::status_id_pending,
