@@ -35,7 +35,7 @@ class EEH_File extends EEH_Base {
 		global $wp_filesystem;
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			$credentials = is_admin() ? request_filesystem_credentials( '' ) : array();
+			$credentials = is_admin() && did_action( 'init' ) ? request_filesystem_credentials( '' ) : array();
 			if ( $credentials === FALSE ) {
 				return NULL;
 			}
