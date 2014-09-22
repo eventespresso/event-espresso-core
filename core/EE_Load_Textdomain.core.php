@@ -40,16 +40,18 @@ class EE_Load_Textdomain extends EE_Base {
 		self::_maybe_get_langfile();
 		//now load the textdomain
 		EE_Registry::instance()->load_helper( 'File' );
-		try {
-			if ( ! empty( self::$_lang ) && EEH_File::exists( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' )) {
-				load_plugin_textdomain( 'event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC );
+			if ( ! empty( self::$_lang )) {
+				try {
+					if (  EEH_File::exists( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' )) {
+						load_plugin_textdomain('event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC);
+					}
+				} catch( EE_Error $e ){
+					EE_Error::add_error( sprintf( __(  'The Event Espresso plugin textdomain could not be loaded because: %s', 'event_espresso' ), $e->getMessage() ));
+					return;
+				}
 			} else {
 				load_plugin_textdomain( 'event_espresso', FALSE, dirname( EE_PLUGIN_BASENAME ) . '/languages/');
 			}
-		} catch( EE_Error $e ){
-			EE_Error::add_error( sprintf( __(  'The Event Espresso plugin textdomain could not be loaded because: %s', 'event_espresso' ), $e->getMessage() ));
-			return;
-		}
 
 	}
 
