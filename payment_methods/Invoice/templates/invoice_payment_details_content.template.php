@@ -37,8 +37,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 			<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 		</a></p>
 	<?php
-	if (isset($page_instructions)) {
-		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_instructions) . '</p></div>';
+	if (isset($instructions)) {
+		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($instructions) . '</p></div>';
 	}
 	if (isset($page_payable_to)) {
 		?>
