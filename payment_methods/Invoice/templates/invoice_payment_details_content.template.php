@@ -19,14 +19,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * invoice_payment_details_content
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-if (!$show_on_page){
-	return;
-}
 ?>
 <div class="event-display-boxes">
 	<?php if (isset($page_title)) { ?>
@@ -40,8 +37,8 @@ if (!$show_on_page){
 			<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 		</a></p>
 	<?php
-	if (isset($page_instructions)) {
-		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_instructions) . '</p></div>';
+	if (isset($instructions)) {
+		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($instructions) . '</p></div>';
 	}
 	if (isset($page_payable_to)) {
 		?>
@@ -51,7 +48,7 @@ if (!$show_on_page){
 		</p>
 		<?php
 	}
-	
+
 	if (isset($payment_address)) {
 		?>
 		<div class="address-block">

@@ -53,7 +53,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				$organization_name = 'unknown';
 			}
 		$pdf_stylesheet_input_name = 'pdf_stylesheet';
-		$show_on_page_name = 'show_on_page';
+		$page_title_input_name = 'page_title';
 		$form =  new EE_Payment_Method_Form(array(
 //				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
@@ -62,25 +62,14 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_help_text'=>  __("Load a custom/pre-made style sheet
 	to change the look of your invoices.", 'event_espresso'),
 					)),
-					'pdf_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("PDF Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
-					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
 						'html_label_text'=>  sprintf(__("PDF Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
-					$show_on_page_name=>new EE_Yes_No_Input(array(
-						'html_help_text'=>  __("Show as an option on your payment page?", 'event_espresso'),
-					)),
-					'page_title'=>new EE_Text_Input(array(
+					$page_title_input_name =>new EE_Text_Input(array(
 						'html_label_text'=>  sprintf(__("Payment Page Title %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Invoice Payments", 'event_espresso')
-					)),
-					'page_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send Invoice to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
 					)),
 					'page_payable_to'=>new EE_Text_Input(array(
 						'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  $this->get_help_tab_link()),
@@ -90,14 +79,18 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=> $default_address,
 					)),
+					'instructions'=>new EE_Text_Area_Input(array(
+						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
+					)),
 				),
 				'include'=>array(
 					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
-					'pdf_stylesheet','pdf_instructions','pdf_logo_image',
-					'show_on_page', 'page_title','page_instructions','page_payable_to','page_address_payable'),
+					'pdf_stylesheet','pdf_logo_image',
+					'page_title','page_payable_to','page_address_payable','instructions'),
 			));
 		$form->add_subsections(array('header1'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_display.template.php')),$pdf_stylesheet_input_name);
-		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$show_on_page_name);
+		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$page_title_input_name);
 		return $form;
 	}
 
@@ -133,9 +126,8 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						array(
 							'payment_method'=>$this->_pm_instance,
 							'payment'=>$payment,
-							'show_on_page'=>true,
 							'page_title'=>'',
-							'page_instructions'=>'',
+							'instructions'=>'',
 							'page_payable_to'=>'',
 							'page_address_payable'=>'',
 							),
