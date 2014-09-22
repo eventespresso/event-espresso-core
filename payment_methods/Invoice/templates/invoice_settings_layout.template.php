@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * invoice_settings_layout
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -33,7 +33,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	?>
 	<tr>
 		<th><h4><?php _e("Invoice Display Settings", 'event_espresso');?></h4></th>
-		<td>						
+		<td>
 			<span class="description"><?php _e("The following settings affect the content and/or appearance of the downloadable PDF invoice.", 'event_espresso');?></span>
 		</td>
 	</tr><?php
@@ -43,12 +43,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	}
 	?><tr>
 		<th><h4><?php _e("Invoice Gateway Settings", 'event_espresso');?></h4></th>
-		<td>						
+		<td>
 			<span class="description"><?php _e("The following settings affect the functioning of the Invoice gateway.", 'event_espresso');?></span>
 		</td>
 	</tr>
 	<?php
-	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('show_on_page', 'page_title','page_instructions','page_payable_to','page_address_payable')));
+	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array( 'page_title','page_instructions','page_payable_to','page_address_payable')));
 	foreach($inputs_to_show as $input){
 		echo $layout_strategy->layout_input($input);
 	}

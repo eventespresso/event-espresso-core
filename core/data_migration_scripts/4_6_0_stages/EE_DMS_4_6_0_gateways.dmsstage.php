@@ -143,7 +143,6 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'pdf_stylesheet' => isset( $old_gateway_settings[ 'invoice_css' ] ) ? $old_gateway_settings[ 'invoice_css' ] : NULL,
 					'pdf_instructions' => $old_gateway_settings[ 'pdf_instructions' ],
 					'pdf_logo_image' => $old_gateway_settings[ 'invoice_logo_url' ],
-					'show_on_page' => $old_gateway_settings[ 'show' ],
 					'page_title' => isset( $old_gateway_settings[ 'page_title' ] ) ? $old_gateway_settings[ 'page_title' ] : '',
 					'page_instructions' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
 					'page_payable_to' => isset( $old_gateway_settings[ 'payable_to' ] ) ? $old_gateway_settings[ 'payable_to' ] : '',

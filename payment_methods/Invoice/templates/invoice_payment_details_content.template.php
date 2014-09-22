@@ -19,14 +19,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * invoice_payment_details_content
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-if (!$show_on_page){
-	return;
-}
 ?>
 <div class="event-display-boxes">
 	<?php if (isset($page_title)) { ?>
@@ -51,7 +48,7 @@ if (!$show_on_page){
 		</p>
 		<?php
 	}
-	
+
 	if (isset($payment_address)) {
 		?>
 		<div class="address-block">
