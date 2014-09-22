@@ -121,12 +121,8 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 			case 'Bank':
 				$extra_meta_key_values = array(
 					'page_title'=>$old_gateway_settings['page_title'],
-					'payment_instructions'=>$old_gateway_settings['bank_instructions'],
-				'name_on_bank_account'=>$old_gateway_settings['account_name'],
-				'bank_account_number'=>$old_gateway_settings['account_number'],
-				'bank_name'=>$old_gateway_settings['bank_name'],
-				'bank_address'=>$old_gateway_settings['bank_address']
-				);
+					'payment_instructions'=>
+					sprintf('%1$s<br/>Name on Bank Account: %2$s<br/>Bank Account Number: %3$s<br/>Bank Name: %4$s<br/>Bank Address:%5$s', 'event_espresso'), $old_gateway_settings['bank_instructions'] , $old_gateway_settings['account_name'], $old_gateway_settings['account_number'], $old_gateway_settings['bank_name'], $old_gateway_settings['bank_address'] );
 				$desc = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
 				break;
 			case 'Check':
