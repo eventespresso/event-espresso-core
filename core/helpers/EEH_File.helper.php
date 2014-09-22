@@ -35,7 +35,11 @@ class EEH_File extends EEH_Base {
 		global $wp_filesystem;
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			if ( ! WP_Filesystem() ) {
+			$credentials = is_admin() ? request_filesystem_credentials( '' ) : array();
+			if ( $credentials === FALSE ) {
+				return NULL;
+			}
+			if ( ! WP_Filesystem( $credentials )) {
 				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
 			}
 		}
