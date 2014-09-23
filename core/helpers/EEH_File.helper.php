@@ -43,8 +43,12 @@ class EEH_File extends EEH_Base {
 		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			// if some eager beaver's just trying to get in there too early...
-			if ( ! did_action( 'wp_loaded' ) && WP_DEBUG ) {
-				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed because the WP Filesystem can not be accessed until after the "wp_loaded" hook has run.', 'event_espresso'));
+			if ( ! did_action( 'wp_loaded' )) {
+				$msg = __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso');
+				if ( WP_DEBUG ) {
+					$msg .= '<br />' .  __('The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.', 'event_espresso');
+				}
+				throw new EE_Error( $msg );
 			} else {
 				// should be loaded if we are past the wp_loaded hook...
 				if ( ! function_exists( 'WP_Filesystem' )) {
@@ -74,7 +78,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function display_request_filesystem_credentials_form() {
 		if ( ! empty( EEH_File::$_credentials_form )) {
-			echo '<div class="espresso-notices error"><p>' . EEH_File::$_credentials_form . '</p></div>';
+			echo '<div class="updated espresso-notices-attention"><p>' . EEH_File::$_credentials_form . '</p></div>';
 		}
 	}
 
