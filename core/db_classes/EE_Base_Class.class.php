@@ -536,7 +536,6 @@ abstract class EE_Base_Class{
 			/* @type EE_Base_Class $newly_saved_object*/
 			// now get the type of relation
 			$relationship_to_model = $this->get_model()->related_settings_for( $relationName );
-//			printr( $relationship_to_model, '$relationship_to_model  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// if this is a 1:1 relationship
 			if( $relationship_to_model instanceof EE_Belongs_To_Relation ) {
 				// then just replace the cached object with the newly saved object
