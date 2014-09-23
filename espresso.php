@@ -427,6 +427,12 @@ interface EEI_Line_Item{
 	function get_total_tax();
 
 	/**
+	 * Returns the name of the event the ticket is for
+	 * @return string
+	 */
+	function ticket_event_name();
+
+	/**
 	 * Saves this line item to the DB, and recursively saves its descendants.
 	 * Also sets the transaction on this line item and all its descendants before saving
 	 * @param int $txn_id if none is provided, assumes $this->TXN_ID()
