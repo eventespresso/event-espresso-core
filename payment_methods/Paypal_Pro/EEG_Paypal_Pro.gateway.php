@@ -90,7 +90,6 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		$order_description  = sprintf(__("'Event Registrations from %s", "event_espresso"),get_bloginfo('name'));
 		//charge for the full amount. Show itemized list
 		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
-			$total_to_pay = $transaction->total();
 			$item_num = 1;
 			$total_line_item = $transaction->total_line_item();
 			$order_items = array();
@@ -122,22 +121,21 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$tax_amount = $total_line_item->get_total_tax();
 		}else{
 			$order_items = array();
-			$total_to_pay = $payment->amount();
-			$item_amount = $total_to_pay;
-			$single_item_desc = sprintf(__("Partial payment of %s. Total paid to date: %s", "event_espresso"),$total_to_pay,$transaction->remaining());
-				$tax_amount = 0;
-				array_push($order_items,array(
-					// Item Name.  127 char max.
-					'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
-					// Item description.  127 char max.
-					'l_desc' => $single_item_desc,
-					// Cost of individual item.
-					'l_amt' => $total_to_pay,
-					// Item Number.  127 char max.
-					'l_number' => 1,
-					// Item quantity.  Must be any positive integer.
-					'l_qty' => 1,
-				));
+			$item_amount = $payment->amount();
+			$single_item_desc = sprintf(__("Partial payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
+			$tax_amount = 0;
+			array_push($order_items,array(
+				// Item Name.  127 char max.
+				'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
+				// Item description.  127 char max.
+				'l_desc' => $single_item_desc,
+				// Cost of individual item.
+				'l_amt' => $payment->amount(),
+				// Item Number.  127 char max.
+				'l_number' => 1,
+				// Item quantity.  Must be any positive integer.
+				'l_qty' => 1,
+			));
 		}
 		// Populate data arrays with order data.
 		$DPFields = array(
@@ -172,91 +170,92 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			'business' => ''
 		);
 		$PayerName = array(
-					// Payer's salutation.  20 char max.
-					'salutation' => '',
-					// Payer's first name.  25 char max.
-					'firstname' => substr($billing_info['first_name'],0,25),
-					// Payer's middle name.  25 char max.
-					'middlename' => '',
-					// Payer's last name.  25 char max.
-					'lastname' => substr($billing_info['last_name'],0,25),
-					// Payer's suffix.  12 char max.
-					'suffix' => ''
-			);
+			// Payer's salutation.  20 char max.
+			'salutation' => '',
+			// Payer's first name.  25 char max.
+			'firstname' => substr($billing_info['first_name'],0,25),
+			// Payer's middle name.  25 char max.
+			'middlename' => '',
+			// Payer's last name.  25 char max.
+			'lastname' => substr($billing_info['last_name'],0,25),
+			// Payer's suffix.  12 char max.
+			'suffix' => ''
+		);
 
-			$BillingAddress = array(
-					// Required.  First street address.
-					'street' => $billing_info['address'],
-					// Second street address.
-					'street2' => $billing_info['address2'],
-					// Required.  Name of City.
-					'city' => $billing_info['city'],
-					// Required. Name of State or Province.
-					'state' => substr($billing_info['state'],0,40),
-					// Required.  Country code.
-					'countrycode' => $billing_info['country'],
-					// Required.  Postal code of payer.
-					'zip' => $billing_info['zip'],
-					// Phone Number of payer.  20 char max.
-					'shiptophonenum' => substr($billing_info['phone'],0,20)
-			);
+		$BillingAddress = array(
+			// Required.  First street address.
+			'street' => $billing_info['address'],
+			// Second street address.
+			'street2' => $billing_info['address2'],
+			// Required.  Name of City.
+			'city' => $billing_info['city'],
+			// Required. Name of State or Province.
+			'state' => substr($billing_info['state'],0,40),
+			// Required.  Country code.
+			'countrycode' => $billing_info['country'],
+			// Required.  Postal code of payer.
+			'zip' => $billing_info['zip'],
+			// Phone Number of payer.  20 char max.
+			'shiptophonenum' => substr($billing_info['phone'],0,20)
+		);
 
 
-			$PaymentDetails = array(
-					// Required.  Total amount of order, including shipping, handling, and tax.
-					'amt' => $this->format_currency($total_to_pay),
-					// Required.  Three-letter currency code.  Default is USD.
-					'currencycode' => $payment->currency_code(),
-					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
-					'itemamt' => $this->format_currency($item_amount),//
-					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
-					'shippingamt' => '',
-					// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
-					'handlingamt' => '',
-					// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
-					'taxamt' => $this->format_currency($tax_amount),
-					// Description of the order the customer is purchasing.  127 char max.
-					'desc' => $order_description,
-					// Free-form field for your own use.  256 char max.
-					'custom' => $primary_registrant ? $primary_registrant->ID() : '',
-					// Your own invoice or tracking number
-					'invnum' => wp_generate_password(12,false),//$transaction->ID(),
-					// URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
-					'notifyurl' => ''
-			);
+		$PaymentDetails = array(
+			// Required.  Total amount of order, including shipping, handling, and tax.
+			'amt' => $this->format_currency($payment->amount()),
+			// Required.  Three-letter currency code.  Default is USD.
+			'currencycode' => $payment->currency_code(),
+			// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
+			'itemamt' => $this->format_currency($item_amount),//
+			// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
+			'shippingamt' => '',
+			// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
+			'handlingamt' => '',
+			// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
+			'taxamt' => $this->format_currency($tax_amount),
+			// Description of the order the customer is purchasing.  127 char max.
+			'desc' => $order_description,
+			// Free-form field for your own use.  256 char max.
+			'custom' => $primary_registrant ? $primary_registrant->ID() : '',
+			// Your own invoice or tracking number
+			'invnum' => wp_generate_password(12,false),//$transaction->ID(),
+			// URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
+			'notifyurl' => ''
+		);
 		// Wrap all data arrays into a single, "master" array which will be passed into the class function.
-			$PayPalRequestData = array(
-					'DPFields' => $DPFields,
-					'CCDetails' => $CCDetails,
-					'PayerName' => $PayerName,
-					'BillingAddress' => $BillingAddress,
-					'PaymentDetails' => $PaymentDetails,
-					'OrderItems' => $order_items,
-			);
-			$this->_log_clean_request($PayPalRequestData, $payment);
-			try{
-				$PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
-				//remove PCI-sensitive data so it doesn't get stored
-				$PayPalResult = $this->_log_clean_response($PayPalResult,$payment);
-				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
-				if($this->_APICallSuccessful($PayPalResult)){
-					$payment->set_status($this->_pay_model->approved_status());
-				}else{
-					$payment->set_status($this->_pay_model->declined_status());
-				}
-				$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
-				$payment->set_gateway_response($message);
-				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
-
-				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
-				$payment->set_extra_accntng($primary_registration_code);
-				$payment->set_details($PayPalResult);
-				return $payment;
-			}catch(Exception $e){
-				$payment->set_status($this->_pay_model->failed_status());
-				$payment->set_gateway_response($e->getMessage());
-				return $payment;
+		$PayPalRequestData = array(
+				'DPFields' => $DPFields,
+				'CCDetails' => $CCDetails,
+				'PayerInfo' => $PayerInfo,
+				'PayerName' => $PayerName,
+				'BillingAddress' => $BillingAddress,
+				'PaymentDetails' => $PaymentDetails,
+				'OrderItems' => $order_items,
+		);
+		$this->_log_clean_request($PayPalRequestData, $payment);
+		try{
+			$PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
+			//remove PCI-sensitive data so it doesn't get stored
+			$PayPalResult = $this->_log_clean_response($PayPalResult,$payment);
+			$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
+			if($this->_APICallSuccessful($PayPalResult)){
+				$payment->set_status($this->_pay_model->approved_status());
+			}else{
+				$payment->set_status($this->_pay_model->declined_status());
 			}
+			$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
+			$payment->set_gateway_response($message);
+			$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
+
+			$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
+			$payment->set_extra_accntng($primary_registration_code);
+			$payment->set_details($PayPalResult);
+			return $payment;
+		}catch(Exception $e){
+			$payment->set_status($this->_pay_model->failed_status());
+			$payment->set_gateway_response($e->getMessage());
+			return $payment;
+		}
 	}
 	/**
 	 * CLeans out sensitive CC data and then logs it, and returns the cleaned request
