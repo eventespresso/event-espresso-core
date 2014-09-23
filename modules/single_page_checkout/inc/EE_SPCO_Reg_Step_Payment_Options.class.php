@@ -632,11 +632,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 			default:
 				$result = $this->_process_payment();
-//				printr( $result, '$result  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//				printr( $this->checkout, '$this->checkout  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//				d( $result );
-//				d( $this->checkout );
-//				die();
 				return $result;
 
 		}
@@ -709,7 +704,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->_onsite_payment_success( $payment );
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
-			if ( $payment->redirect_url() ){
+			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
@@ -930,7 +925,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return TRUE;
 		}
 		// verify payment object
-		if ( ! $payment instanceof EE_Payment ) {
+		if ( $payment instanceof EE_Payment ) {
+			if ( $payment->gateway_response() != '' && $payment->status() != EEM_Payment::status_id_approved || $payment->status() != EEM_Payment::status_id_pending ) {
+				EE_Error::add_error( $payment->gateway_response(), __FILE__, __FUNCTION__, __LINE__ );
+			}
+		} else {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
