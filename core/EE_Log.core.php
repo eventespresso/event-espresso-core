@@ -56,10 +56,6 @@ class EE_Log {
 	 */
 	private static $_instance;
 
-	/**
-	 * @var Exception
-	 */
-	private $_setup_error;
 
 
 	/**
@@ -82,8 +78,6 @@ class EE_Log {
 			return;
 		}
 
-		EE_Registry::instance()->load_helper( 'File' );
-
 		$this->_logs_folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS;
 		$this->_log_file = EE_Registry::instance()->CFG->admin->log_file_name();
 		$this->_log = '';
@@ -92,18 +86,7 @@ class EE_Log {
 		$this->_remote_logging_url = EE_Registry::instance()->CFG->admin->remote_logging_url;
 		$this->_remote_log = '';
 
-		try {
-			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR );
-			EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder );
-			EEH_File::add_htaccess_deny_from_all( $this->_logs_folder );
-			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
-			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
-		} catch( EE_Error $e ){
-			$this->_setup_error = $e;
-			add_action( 'admin_init', array( $this, 'setup_error' ));
-			return;
-		}
-
+		add_action( 'admin_init', array( $this, 'verify_filesystem' ), -10 );
 		add_action( 'AHEE_log', array( $this, 'log' ), 10, 4 );
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			add_action( 'shutdown', array( $this, 'write_log' ), 9999 );
@@ -114,6 +97,27 @@ class EE_Log {
 			add_action( 'shutdown', array( $this, 'send_log' ), 9999 );
 		}
 
+	}
+
+
+
+	/**
+	 *	verify_filesystem
+	 * tests that the required files and folders exist and are writable
+	 *
+	 */
+	public function verify_filesystem() {
+		try {
+			EE_Registry::instance()->load_helper( 'File' );
+			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR );
+			EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder );
+			EEH_File::add_htaccess_deny_from_all( $this->_logs_folder );
+			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
+			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+			return;
+		}
 	}
 
 
@@ -167,7 +171,7 @@ class EE_Log {
 			$this->_log = EEH_File::get_file_contents( $this->_logs_folder . $this->_log_file ) . $this->_log;
 			EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log' );
 		} catch( EE_Error $e ){
-			EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ));
+			EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 	}
@@ -226,19 +230,9 @@ class EE_Log {
 			try {
 				EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'Event Espresso Debug Log' );
 			} catch( EE_Error $e ){
-				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ));
+				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
-		}
-	}
-
-
-	/**
-	 * setup_error
-	 */
-	public function setup_error() {
-		if ( $this->_setup_error instanceof Exception ) {
-			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), $this->_setup_error->getMessage() ));
 		}
 	}
 
