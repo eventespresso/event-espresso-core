@@ -78,24 +78,27 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func'=>'_payment_methods_list',
+				'capability' => 'ee_read_payment_methods'
+			),
+			'payment_settings' => array(
+				'func' => '_payment_settings',
 				'capability' => 'ee_manage_gateways'
 			),
-			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
 				'noheader'=>TRUE,
-				'capability' => 'ee_manage_gateways'
+				'capability' => 'ee_edit_payment_method'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
 				'noheader'=>TRUE,
-				'capability' => 'ee_manage_gateways'
+				'capability' => 'ee_delete_payment_method'
 				),
 			'update_payment_method'=>array(
 				'func'=>'_update_payment_method',
 				'noheader'=>TRUE,
 				'headers_sent_route'=>'default',
-				'capability' => 'ee_manage_gateways'
+				'capability' => 'ee_edit_payment_method'
 			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
@@ -104,11 +107,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				),
 			'payment_log'=> array(
 				'func'=> '_payment_log_overview_list_table',
-				'capability' => 'ee_manage_gateways'
+				'capability' => 'ee_read_payment_methods'
 			),
 			'payment_log_details'=> array(
 				'func'=>'_payment_log_details',
-				'capability' => 'ee_manage_gateways'
+				'capability' => 'ee_read_payment_method'
 			)
 			);
 	}
