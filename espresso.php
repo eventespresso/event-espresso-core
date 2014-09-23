@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.6.0.dev.012';
+		return '4.6.0.dev.013';
 	}
 } else {
 	unset( $_GET['activate'] );
