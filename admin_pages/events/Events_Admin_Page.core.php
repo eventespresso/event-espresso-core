@@ -1840,7 +1840,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//Message Template Groups
-		$this->_cpt_model_obj->delete_related_permanently('Message_Template_Group');
+		$this->_cpt_model_obj->_remove_relations( 'Message_Template_Group' );
 
 
 		//term taxonomies
