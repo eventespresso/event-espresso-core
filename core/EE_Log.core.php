@@ -115,7 +115,7 @@ class EE_Log {
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
 		} catch( EE_Error $e ){
-			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), ' &nbsp; &nbsp; ' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 	}
@@ -171,7 +171,7 @@ class EE_Log {
 			$this->_log = EEH_File::get_file_contents( $this->_logs_folder . $this->_log_file ) . $this->_log;
 			EEH_File::write_to_file( $this->_logs_folder . $this->_log_file, $this->_log, 'Event Espresso Log' );
 		} catch( EE_Error $e ){
-			EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso log file because: %s', 'event_espresso' ), ' &nbsp; &nbsp; ' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 	}
@@ -230,7 +230,7 @@ class EE_Log {
 			try {
 				EEH_File::write_to_file( $this->_logs_folder . $this->_debug_file, $this->_debug_log, 'Event Espresso Debug Log' );
 			} catch( EE_Error $e ){
-				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), '<br />' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( sprintf( __(  'Could not write to the Event Espresso debug log file because: %s', 'event_espresso' ), ' &nbsp; &nbsp; ' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
 		}
