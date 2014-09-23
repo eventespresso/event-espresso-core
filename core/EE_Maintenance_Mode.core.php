@@ -178,6 +178,20 @@ class EE_Maintenance_Mode {
 
 
 	/**
+	 *    disable_frontend_for_maintenance
+	 *
+	 *   returns TRUE if M-Mode is engaged and the current request is not for the admin
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public static function disable_frontend_for_maintenance() {
+		return ! is_admin() && EE_Maintenance_Mode::instance()->level() ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * 	load_assets_required_for_m_mode
 	 *
 	 *  @access 	public

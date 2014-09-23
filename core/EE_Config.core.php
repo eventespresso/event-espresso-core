@@ -736,6 +736,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -751,6 +754,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function initialize_shortcodes_and_modules() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		// allow shortcodes to set hooks for the rest of the system
 		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -767,6 +773,9 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
 		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
