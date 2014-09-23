@@ -437,26 +437,30 @@ class EEH_File extends EEH_Base {
 	}
 
 
-
 	/**
 	 * takes teh folder name (with or without trailing slash) and finds the files it in,
 	 * and what the class's name inside of each should be.
 	 * @param array $folder_paths
+	 * @param bool  $use_WP_FS
+	 * @throws \EE_Error
 	 * @return array where keys are what the class names SHOULD be, and values are their filepaths
-	 * @throws EE_Error
 	 */
-	public static function get_contents_of_folders( $folder_paths = array() ){
+	public static function get_contents_of_folders( $folder_paths = array(), $use_WP_FS = FALSE ){
 		$class_to_folder_path = array();
 		foreach( $folder_paths as $folder_path ){
 			$folder_path = self::standardise_and_end_with_directory_separator( $folder_path );
-			// load WP_Filesystem and set file permissions
-			$wp_filesystem = EEH_File::_get_wp_filesystem();
-			$files_in_folder = $wp_filesystem->dirlist($folder_path, TRUE);// glob($folder_path.'*');
+			if ( $use_WP_FS ) {
+				// load WP_Filesystem and set file permissions
+				$wp_filesystem = EEH_File::_get_wp_filesystem();
+				$files_in_folder = $wp_filesystem->dirlist( $folder_path, TRUE );
+			} else {
+				$files_in_folder = glob( $folder_path . '*' );
+			}
 			$class_to_folder_path = array();
-			if( $files_in_folder ) {
-				foreach( $files_in_folder as $file_path => $info_about_file ){
+			if ( $files_in_folder ) {
+				foreach( $files_in_folder as $file_path => $file ){
 					//only add files, not folders
-					if( $info_about_file[ 'type' ] == 'f' ){
+					if (( $use_WP_FS && $file[ 'type' ] == 'f' ) || ( ! $use_WP_FS && ! is_dir( $file ))){
 						$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
 						$class_to_folder_path[$classname] = $folder_path . $file_path;
 					}
