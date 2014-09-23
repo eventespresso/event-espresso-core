@@ -788,7 +788,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// check if transaction has a primary registrant and that it has a related Attendee object
 			if ( ! $this->_transaction_has_primary_registrant() ) {
 				// need to at least gather some primary registrant data before attempting payment
-				if ( ! $this->_capture_primary_registration_data_from_billing_form() ) {
+				if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form && ! $this->_capture_primary_registration_data_from_billing_form() ) {
 					return FALSE;
 				}
 			}
