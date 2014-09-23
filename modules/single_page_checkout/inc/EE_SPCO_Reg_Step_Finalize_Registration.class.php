@@ -25,7 +25,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$this->_name = __('Finalize Registration', 'event_espresso');
 		$this->_submit_button_text = $this->_name;
 		$this->_template = '';
-//		$this->_template = SPCO_TEMPLATES_PATH . 'finalize_registration_main.template.php';
 		$this->checkout = $checkout;
 
 	}
@@ -96,18 +95,9 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$this->checkout->thank_you_page_url
 			);
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-
-//			echo '<h2 style="color:#E76700;">TRUE<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-//			d( $this->checkout );
-//			printr( $this->checkout, '$this->checkout  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//			die();
 			return TRUE;
 		}
 		$this->checkout->redirect = FALSE;
-//		echo '<h2 style="color:#E76700;">FALSE<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-//		d( $this->checkout );
-//		printr( $this->checkout, '$this->checkout  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		die();
 		return FALSE;
 
 	}
