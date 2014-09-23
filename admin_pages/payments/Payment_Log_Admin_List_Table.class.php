@@ -47,8 +47,15 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 //			$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
 //		}
 		$this->_all_data_count = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
+		add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons',array($this,'add_download_logs_checkbox'));
 	}
 
+	/**
+	 * adds a checkbox to the bottom of the list table, instead of at the top with the rest of the filters
+	 */
+	public function add_download_logs_checkbox(){
+		echo "<input type='checkbox' id='download_results' name='download_results' value='true'><label for='download_results'>".__("Download Results", 'event_espresso')."</label>";
+	}
 
 
 
@@ -105,7 +112,6 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		<?php
 		$filters[] = ob_get_contents();
 		ob_end_clean();
-		$filters[] = "<label for='download_results'>".__("Download Results", 'event_espresso')."</label><input type='checkbox' id='download_results' name='download_results' value='true'>";
 		return $filters;
 	}
 
