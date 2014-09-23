@@ -904,17 +904,13 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		try {
-			EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' );
-		} catch( EE_Error $e ){
-			EE_Error::add_error(
-				sprintf(
-					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
-					$shortcode_class . ' shortcode',
-					$shortcode_path . $shortcode_class . $shortcode_ext,
-					'<br />' . $e->getMessage()
-				)
+		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
+			$msg = sprintf(
+				__( 'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s', 'event_espresso' ),
+				$shortcode_class,
+				$shortcode_path . DS . $shortcode_class . $shortcode_ext
 			);
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -996,23 +992,13 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		try {
-			EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' );
-		} catch( EE_Error $e ){
-			EE_Error::add_error(
-				sprintf(
-					__(  'The %1$s filepath "%2$s" could not be verified because: %3$s', 'event_espresso' ),
-					$module_class . ' module',
-					$module_path . $module_class . $module_ext,
-					'<br />' . $e->getMessage()
-				)
-			);
+		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
+			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
 		require_once( $module_path . $module_class . $module_ext );
-		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
 		// verify that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
