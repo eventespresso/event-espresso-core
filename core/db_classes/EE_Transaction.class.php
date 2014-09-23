@@ -191,7 +191,6 @@ class EE_Transaction extends EE_Base_Class {
 	}
 
 
-
 	/**
 	 *    datetime
 	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted date string including the UTC (timezone) offset.
@@ -207,7 +206,6 @@ class EE_Transaction extends EE_Base_Class {
 		// grab either the formatted datetime (which INCLUDES the UTC offset ) OR the UTC+0 unix timestamp
 		$datetime = $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
 		// if either the formatted datetime or the UTC+0 unix timestamp is requested, then return that
-		// but if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
 		return $GMT || $format ? $datetime : $this->get_raw( 'TXN_timestamp' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	}
 
