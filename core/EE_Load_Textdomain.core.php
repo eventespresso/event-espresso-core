@@ -31,7 +31,7 @@ class EE_Load_Textdomain extends EE_Base {
 
 
 	/**
-	 * this takes care of retrieving a matching textdomain for event espresso for the current WPLANG from EE github repo (if necessary) and then loading it for translations.
+	 * this takes care of retrieving a matching textdomain for event espresso for the current WPLANG from EE GitHub repo (if necessary) and then loading it for translations.
 	 * should only be called in wp plugins_loaded callback
 	 *
 	 * @return void
@@ -40,8 +40,8 @@ class EE_Load_Textdomain extends EE_Base {
 		self::_maybe_get_langfile();
 		//now load the textdomain
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( ! empty( self::$_lang ) && EEH_File::exists( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' )) {
-			load_plugin_textdomain( 'event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC );
+		if ( ! empty( self::$_lang ) && is_readable( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' )) {
+			load_plugin_textdomain('event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC);
 		} else {
 			load_plugin_textdomain( 'event_espresso', FALSE, dirname( EE_PLUGIN_BASENAME ) . '/languages/');
 		}
