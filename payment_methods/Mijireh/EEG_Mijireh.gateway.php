@@ -74,7 +74,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$order = array(
 			'total'=>$this->format_currency($payment->amount()),
 			'return_url'=>$return_url,
-			'items'=>$items,
+			'items'=>$this->_prepare_for_mijireh( $items ),
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
@@ -86,12 +86,9 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				$primary_attendee->state_ID()  &&
 				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
-			$send_address_info = TRUE;
-		}else{
-			$send_address_info = FALSE;
-		}
-		if( $send_address_info ){
 			$shipping_address = array(
+				'first_name'=>$primary_attendee->fname(),
+				'last_name'=>$primary_attendee->lname(),
 				'street' => $primary_attendee->address(),
 				'city' => $primary_attendee->city(),
 				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
@@ -129,6 +126,14 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				}else{
 					$problems_string = $response['body'];
 				}
+				if( $problems_string == ''){
+					//no message to show? wack
+					if( isset( $response[ 'headers' ][ 'status' ] ) ){
+						$problems_string = $response[ 'headers' ][ 'status' ];
+					}else{
+						$problems_string = __( 'No response from Mijireh', 'event_espresso' );
+					}
+				}
 
 				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
 			}
@@ -142,6 +147,26 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 
 		}
 		return $payment;
+	}
+
+	/**
+	 * goes through $data and ensures there are no percent signs in it
+	 * (which, strangely, kill mijireh)
+	 * @param mixed $data
+	 * @return mixed same type as $data
+	 */
+	private function _prepare_for_mijireh( $data ){
+		if( is_array( $data ) ){
+			$prepared_data = array();
+			foreach($data as $key => $datum ){
+				$prepared_data[ $key ] = $this->_prepare_for_mijireh( $datum );
+			}
+			return $prepared_data;
+		}elseif(is_string( $data ) ){
+			return str_replace( '%', 'percent', $data );
+		}else{
+			return $data;
+		}
 	}
 /**
  * Handles the payment update (note: mijireh doesn't send an IPN in the usual sense,
