@@ -107,7 +107,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 				}
 			}else{//partial payment
-				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
+				$order_description = sprintf(__("Payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
 			}
 
 

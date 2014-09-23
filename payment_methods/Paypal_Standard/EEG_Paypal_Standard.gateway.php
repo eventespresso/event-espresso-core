@@ -85,7 +85,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the entire transaction,
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
-				$redirect_args['item_name_' . $item_num] = substr($line_item->name(),0,127);
+				$redirect_args['item_name_' . $item_num] = substr(
+						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
 				if( $this->_paypal_shipping ){
@@ -95,7 +96,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}else{
 			//this is a partial payment, so we can't really show all the line items
-			$redirect_args['item_name_' . $item_num] = substr( sprintf(__("Payment for registration %s", "event_espresso"),$primary_registrant->reg_code()), 0, 127 );
+			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			$item_num++;
 

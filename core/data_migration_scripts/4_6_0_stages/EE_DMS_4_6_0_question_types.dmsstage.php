@@ -32,7 +32,7 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table {
 			'MULTIPLE' 			=> 'CHECKBOX',
 			'SINGLE' 				=> 'RADIO_BTN'
 		);
-		$this->_extra_where_sql = "WHERE QST_type IN (' " . implode( "', '", $this->_question_type_conversions ) . " ')" ;
+		$this->_extra_where_sql = "WHERE QST_type IN (' " . implode( "', '", array_merge( array_keys( $this->_question_type_conversions ), $this->_question_type_conversions ) ) . " ')" ;
 		parent::__construct();
 	}
 
