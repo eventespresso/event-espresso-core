@@ -28,22 +28,54 @@ require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_File extends EEH_Base {
 
 	/**
+	 * @var string $_credentials_form
+	 */
+	private static $_credentials_form;
+
+
+
+	/**
 	 * @throws EE_Error
 	 * @return WP_Filesystem_Base
 	 */
 	private static function _get_wp_filesystem() {
 		global $wp_filesystem;
+		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			$credentials = is_admin() && did_action( 'init' ) ? request_filesystem_credentials( '' ) : array();
-			if ( $credentials === FALSE ) {
-				return NULL;
-			}
-			if ( ! WP_Filesystem( $credentials )) {
-				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+			// if some eager beaver's just trying to get in there too early...
+			if ( ! did_action( 'wp_loaded' ) && WP_DEBUG ) {
+				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed because the WP Filesystem can not be accessed until after the "wp_loaded" hook has run.', 'event_espresso'));
+			} else {
+				// should be loaded if we are past the wp_loaded hook...
+				if ( ! function_exists( 'WP_Filesystem' )) {
+					require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				}
+				// basically check for direct or previously configured access
+				if ( ! WP_Filesystem() ) {
+					// turn on output buffering so that we can capture the credentials form
+					ob_start();
+					$credentials = request_filesystem_credentials( '' );
+					// store credentials form for the time being
+					EEH_File::$_credentials_form = ob_get_clean();
+					// if credentials do NOT exist
+					if ( $credentials === FALSE ) {
+						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
+						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+					}
+				}
 			}
 		}
 		return $wp_filesystem;
+	}
+
+
+	/**
+	 * display_request_filesystem_credentials_form
+	 */
+	public static function display_request_filesystem_credentials_form() {
+		if ( ! empty( EEH_File::$_credentials_form )) {
+			echo '<div class="espresso-notices error"><p>' . EEH_File::$_credentials_form . '</p></div>';
+		}
 	}
 
 
