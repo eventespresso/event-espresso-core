@@ -238,24 +238,25 @@ final class EE_Registry {
 	}
 
 
-
 	/**
 	 *    loads core classes - must be singletons
 	 *
 	 * @access    public
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed  $arguments
+	 * @param bool   $load_only
 	 * @return mixed
 	 */
-	public function load_core ( $class_name, $arguments = array() ) {
+	public function load_core ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$core_paths = array(
 			EE_CORE,
 			EE_ADMIN,
-			EE_CPTS
+			EE_CPTS,
+			EE_CORE . 'data_migration_scripts' . DS
 		);
 		$core_paths = apply_filters( 'FHEE__EE_Registry__load_core__core_paths', $core_paths );
 		// retrieve instantiated class
-		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments );
+		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
 	}
 
 

@@ -155,11 +155,11 @@ class EE_Data_Migration_Manager{
 		);
 		//make sure we've included the base migration script, because we may need the EE_Data_Migration_Script_Error class
 		//to be defined, because right now it doesn't get autoloaded on its own
-		EE_Registry::instance()->load_core('Data_Migration_Script_Error');
-		EE_Registry::instance()->load_core('Data_Migration_Class_Base');
-		EE_Registry::instance()->load_core('Data_Migration_Script_Stage');
-		EE_Registry::instance()->load_core('Data_Migration_Script_Stage_Table');
-		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
+		EE_Registry::instance()->load_core( 'Data_Migration_Class_Base', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Base', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Error', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
 	}
 
 

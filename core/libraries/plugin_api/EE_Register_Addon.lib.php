@@ -308,7 +308,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		require_once  EE_THIRD_PARTY . 'pue' . DS . 'pue-client.php';
 		// cycle thru settings
 		foreach ( self::$_settings as $settings ) {
-			if ( isset( $settings['pue_options'] )) {
+			if ( ! empty( $settings['pue_options'] )) {
 				// initiate the class and start the plugin update engine!
 				new PluginUpdateEngineChecker(
 				// host file URL

@@ -43,21 +43,10 @@ class EE_PMT_Bank extends EE_PMT_Base{
 					'default'=>  __("Electronic Funds Transfers", 'event_espresso')
 				)),
 				'payment_instructions'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-					'default'=>  __("Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date.", 'event_espresso')
+					'html_label_text'=>  sprintf(__("Payment Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+					'html_help_text' => __( 'Provide instructions on how registrants can send the bank draft payment. Eg, mention your account name, bank account number, bank name, bank routing code, and bank address, etc.', 'event_espresso' ),
+					'default'=>  __('Please initiate an electronic payment using the following bank information: <br/> Account Onwer: Luke Skywalker <br/>Bank Account # 1234567890 <br/>Bank Name: Rebellion Bank <br/>Routing Number: 12345 <br/>Bank Address: 12345 Wookie Rd., Planet Corellian. <br/>  Payment must be received within 48 hours of event date.', 'event_espresso')
 				)),
-				'name_on_bank_account'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Name on Bank Account %s", "event_espresso"),  $this->get_help_tab_link()),
-				)),
-				'bank_account_number'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Account # %s", "event_espresso"),  $this->get_help_tab_link()),
-				)),
-				'bank_name'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Name %s", "event_espresso"),  $this->get_help_tab_link()),
-				)),
-				'bank_address'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Address %s", "event_espresso"),  $this->get_help_tab_link()),
-				))
 			),
 			'exclude'=>array('PMD_debug_mode')
 		));
@@ -91,10 +80,6 @@ class EE_PMT_Bank extends EE_PMT_Base{
 							'payment'=>$payment,
 							'page_title'=>'',
 							'payment_instructions'=>'',
-							'name_on_bank_account'=>'',
-							'bank_account_number'=>'',
-							'bank_name'=>'',
-							'bank_address'=>''
 							),
 						$extra_meta_for_payment_method);
 		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php',

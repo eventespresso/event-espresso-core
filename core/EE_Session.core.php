@@ -526,6 +526,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	private function _save_session_to_db() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		if ( ! EE_Registry::instance()->REQ instanceof EE_Request_Handler || ! EE_Registry::instance()->REQ->is_espresso_page() ) {
+			return FALSE;
+		}
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
 		// encrypt it if we are using encryption
@@ -639,11 +642,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		}
 
-		if ( $page_visit != home_url('/') . 'wp-admin/admin-ajax.php' ) {
-			return $page_visit;
-		} else {
-			return '';
-		}
+		return $page_visit != home_url( '/wp-admin/admin-ajax.php' ) ? $page_visit : '';
 
 	}
 
@@ -686,7 +685,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @access public
 	  * @param array $data_to_reset
 	  * @param bool  $show_all_notices
-	  * @return bool
+	  * @return TRUE on success, FALSE on fail
 	  */
 	public function reset_data( $data_to_reset = array(), $show_all_notices = FALSE ) {
 		// if $data_to_reset is not in an array, then put it in one

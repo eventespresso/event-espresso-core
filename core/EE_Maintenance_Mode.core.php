@@ -152,6 +152,7 @@ class EE_Maintenance_Mode {
 	 * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
 	 */
 	public function set_maintenance_mode_if_db_old(){
+		EE_Registry::instance()->load_core( 'Data_Migration_Manager' );
 		if( EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
 			update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
 			return true;
@@ -203,6 +204,7 @@ class EE_Maintenance_Mode {
 	 * @return    string
 	 */
 	public static function template_include( $template_path ) {
+		EE_Registry::instance()->load_helper( 'Template' );
 		$template_located = EEH_Template::locate_template( EE_TEMPLATES . 'maintenance_mode.template.php', FALSE, FALSE );
 		return $template_located ? $template_located : $template_path;
 	}

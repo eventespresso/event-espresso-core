@@ -66,6 +66,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 				'required'=>TRUE
 			)
 		);
+		$this->_layout_strategy = new EE_Admin_Two_Column_Layout();
 		parent::__construct($options_array);
 	}
 
