@@ -18,6 +18,17 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  */
 class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
+
+	/**
+	 * All the currencies supported by this gateway. Add any others you like,
+	 * as contained in the esp_currency table
+	 * @var array
+	 */
+	protected $_currencies_supported = array(
+					'USD',
+					'GBP',
+					'CAD',
+					'AUD');
 	/**
 	 *
 	 * @param EEI_Payment $payment

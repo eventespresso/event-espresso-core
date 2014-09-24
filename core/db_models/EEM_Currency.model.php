@@ -101,7 +101,7 @@ class EEM_Currency extends EEM_Base{
 		}else{
 			$currencies_supported = EE_Gateway::all_currencies_supported;
 		}
-		if($currencies_supported == EE_Gateway::all_currencies_supported){
+		if($currencies_supported == EE_Gateway::all_currencies_supported || empty( $currencies_supported ) ) {
 			$currencies = $this->get_all_active();
 		}else{
 			$currencies = $this->get_all_active(array(array('CUR_code'=>array('IN',$currencies_supported))));

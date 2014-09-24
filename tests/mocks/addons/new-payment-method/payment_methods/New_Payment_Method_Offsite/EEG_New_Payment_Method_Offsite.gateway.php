@@ -18,6 +18,16 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  */
 class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
+
+	/**
+	 * This gateway supports all currencies by default. To limit it to
+	 * only certain currencies, specify them here
+	 * @var array
+	 */
+	protected $_currencies_supported = array(
+		//all
+	);
+
 	/**
 	 *
 	 * @param arrat $update_info {
