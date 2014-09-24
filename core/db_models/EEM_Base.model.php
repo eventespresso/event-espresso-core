@@ -2001,15 +2001,15 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//check if this is a special logic query param
-		elseif(in_array($query_param, $this->_logic_query_param_keys)){
+		elseif(in_array($query_param, $this->_logic_query_param_keys, TRUE)){
 			if($allow_logic_query_params){
 				return;
 			}else{
 				throw new EE_Error(
 					sprintf(
-						__( 'Logic query params ("%1$s") are being used incorrectly with the following query params ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s', 'event_espresso' ),
+						__( 'Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s', 'event_espresso' ),
 						implode( '", "', $this->_logic_query_param_keys ),
-						implode( '", "', $query_param ),
+						$query_param ,
 						get_class( $this ),
 						'<br />',
 						"\t" . ' $passed_in_query_info = <pre>' . print_r( $passed_in_query_info, TRUE ) . '</pre>' . "\n\t" . ' $query_param_type = ' . $query_param_type . "\n\t" . ' $original_query_param = ' . $original_query_param
