@@ -29,6 +29,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_PMT_Admin_Only extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Admin Only", 'event_espresso');
+		$this->_default_button_url = '';
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_billing_form() {

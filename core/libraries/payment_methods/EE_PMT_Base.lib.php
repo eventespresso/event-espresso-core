@@ -106,7 +106,7 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
 		}
 		//if the child didn't specify a default button, use the credit card one
-		if( ! $this->_default_button_url){
+		if( $this->_default_button_url === NULL){
 			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
 	}
