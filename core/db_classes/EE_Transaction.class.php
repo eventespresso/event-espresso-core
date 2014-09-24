@@ -191,22 +191,29 @@ class EE_Transaction extends EE_Base_Class {
 	}
 
 
+
 	/**
 	 *    datetime
-	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted date string including the UTC (timezone) offset.
-	 *    Formatting options, including the UTC offset, are set via the WP General Settings page.
-	 *    A second boolean param will apply the UTF timezone offset to the unix timestamp
 	 *
-	 * @access    public
-	 * @param    boolean $format - whether to format date  - FALSE (default) returns RAW timestamp in UTC+0, TRUE returns formatted date string including the UTC offset
-	 * @param    bool       $GMT - if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
-	 * @return    mixed
+	 *    Returns the transaction datetime as:
+	 * 			- unix timestamp format including the UTC (timezone) offset (default)
+	 * 			- formatted date string including the UTC (timezone) offset ($format = TRUE ($gmt has no affect with this option))
+	 * 			- unix timestamp format in UTC+0 (GMT) ($gmt = TRUE)
+	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *
+	 * @access 	public
+	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string
+	 * @param 	boolean 	$gmt - whether to return a unix timestamp with UTC offset applied (default) or no UTC offset applied
+	 * @return 	string | int
 	 */
-	public function datetime( $format = FALSE, $GMT = TRUE ) {
-		// grab either the formatted datetime (which INCLUDES the UTC offset ) OR the UTC+0 unix timestamp
-		$datetime = $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
-		// if either the formatted datetime or the UTC+0 unix timestamp is requested, then return that
-		return $GMT || $format ? $datetime : $this->get_raw( 'TXN_timestamp' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+	public function datetime( $format = FALSE, $gmt = FALSE ) {
+		if ( $format ) {
+			return $this->get_pretty( 'TXN_timestamp' );
+		} else if ( $gmt ) {
+			return $this->get_raw( 'TXN_timestamp' );
+		} else {
+			return $this->get( 'TXN_timestamp' );
+		}
 	}
 
 
