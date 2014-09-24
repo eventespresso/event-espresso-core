@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Datetime_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/db_classes
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
-	
+
 	function test_increase_sold(){
 		$d = EE_Datetime::new_instance();
 		$this->assertEquals($d->get('DTT_sold'),0);
@@ -94,8 +94,43 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertEquals('Jan 15, 1970 6:56 am - Sep 29, 1970 11:46 am',$d->get_dtt_display_name());
 		$this->assertEquals('monkey time',$d->get_dtt_display_name(true));
 	}
-	
-	
+
+	/**
+	 * @group 6744
+	 */
+	function test_new_instance__different_timezone(){
+		//tests that if we save a datetime while in a different timezone
+		//that the time is still saved as GMT
+		//make sure WordPress Timezone is set
+		//also important note: remember that a proper 'timestamp' is always in UTC.
+		//But we use 'timestamps' from other timezones too (just UTC 'timestamp' plus time offset)
+		update_option( 'timezone_string', 'America/Vancouver' );
+		$gmt_timestamp = current_time( 'timestamp', TRUE );
+		$gmt_mysql_date = date( 'Y-m-d H:i:s', $gmt_timestamp );
+		$gmt_timestamp_offset_by_timezone = $gmt_timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$end_time = $gmt_timestamp_offset_by_timezone + HOUR_IN_SECONDS;
+		$dtt = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $gmt_timestamp_offset_by_timezone, 'DTT_EVT_end' => $end_time ), get_option( 'timezone_string') );
+		//the timestamp stored as the raw value should be the vancouver 'timestamp'
+		$this->assertEquals( $gmt_timestamp_offset_by_timezone, $dtt->get_raw('DTT_EVT_start' ) );
+		//because we supposedly never permannently change the default timezone in PHP, this should be equal
+		$this->assertEquals( $gmt_mysql_date, gmdate('Y-m-d H:i:s', $gmt_timestamp ) );
+		//check that when we request to see a particular time, it should be shown in vancouver timezone
+		$this->assertEquals( date( 'Y-m-d H:i:s', $gmt_timestamp_offset_by_timezone), $dtt->get_date('DTT_EVT_start', 'Y-m-d H:i:s' ) );
+
+		$dtt->save();
+		//now get it as-is in the DB
+		$start_times_for_datetime = EEM_Datetime::instance()->get_col( array( array( 'DTT_ID' => $dtt->ID() ) ), 'DTT_EVT_start' );
+
+		//calculate what the current time should be in GMT
+		$this->assertEquals( array( $gmt_mysql_date ), $start_times_for_datetime );
+	}
+
+	public function tearDown(){
+		update_option( 'timezone_string', '');
+		parent::tearDown();
+	}
+
+
 }
 
 // End of file EE_Datetime_Test.php
