@@ -161,6 +161,15 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * @return boolean
+	 */
+	public function is_final_step() {
+		return $this->slug() === 'finalize_registration' ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * @param int $order
 	 */
 	public function set_order( $order ) {

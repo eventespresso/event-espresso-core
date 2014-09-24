@@ -951,7 +951,9 @@ jQuery(document).ready( function($) {
 						messages_displayed = true;
 					}
 				});
-			}
+			} else {
+                SPCO.display_messages( msg );
+            }
 		},
 
 
