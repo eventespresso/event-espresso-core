@@ -178,6 +178,14 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		EEM_Attendee::instance()->update( array( 'ATT_fname' => 'lose_again'), array( array( 'ATT_fname' => 'nonexistent' ) ) );
 		$this->assertEmpty( $wpdb->last_error );
 	}
+
+	/**
+	 * @group 6767
+	 */
+	function test_two_joins(){
+		EEM_Attendee::instance()->get_all( array( array( 'Registration.Event.EVT_name' => 'bob' ) ) );
+		$this->assertTrue(TRUE, 'No exception thrown' );
+	}
 }
 
 // End of file EEM_Base_Test.php
