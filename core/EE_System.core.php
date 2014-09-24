@@ -671,11 +671,17 @@ final class EE_System {
 	 */
 	public function redirect_to_about_ee() {
 		//if current user is an admin and it's not an ajax request
-		if(
-				EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) &&
-				! ( defined('DOING_AJAX') && DOING_AJAX  )
-				){
-			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  )){
+			$query_params =  array( 'page' => 'espresso_about' );
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {
+			    $query_params['new_activation'] = TRUE;
+			}
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_reactivation ) {
+			    $query_params['reactivation'] = TRUE;
+			}
+			$url = add_query_arg( $query_params, admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
 		}
