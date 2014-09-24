@@ -615,6 +615,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->cart = EE_Registry::instance()->load_core( 'Cart' );
 			// and then create a new transaction
 			$transaction = $this->_initialize_transaction();
+			// save it so that we have an ID for other objects to use
+			$transaction->save();
 		}
 		return $transaction;
 	}
