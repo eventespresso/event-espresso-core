@@ -531,7 +531,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// if it exists, get billing form for the selected payment method
 		if( $payment_method->type_obj()->billing_form() instanceof EE_Billing_Info_Form ) {
 			if ( $this->_transaction_has_primary_registrant() ) {
-				$payment_method->type_obj()->billing_form()->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
+				$payment_method->type_obj()->billing_form()->populate_from_attendee( $this->checkout->primary_attendee_obj );
 			}
 			if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
 				EE_Error::add_success(
@@ -561,7 +561,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	@return 		bool
 	 */
 	private function _transaction_has_primary_registrant() {
-		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
+		return $this->checkout->primary_attendee_obj instanceof EE_Attendee ? TRUE : FALSE;
+//		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
 	}
 
 
@@ -926,7 +927,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// verify payment object
 		if ( $payment instanceof EE_Payment ) {
-			if ( $payment->gateway_response() != '' && $payment->status() != EEM_Payment::status_id_approved || $payment->status() != EEM_Payment::status_id_pending ) {
+			if ( $payment->status() != EEM_Payment::status_id_approved && $payment->status() != EEM_Payment::status_id_pending && $payment->gateway_response() != '' ) {
 				EE_Error::add_error( $payment->gateway_response(), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		} else {
