@@ -629,9 +629,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				EE_Error::add_error( __( 'An invalid Registration object was discovered when attempting to process your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 				return FALSE;
 			}
-			$reg_cache_ID = $registration->ID() ? $registration->ID() : $registration->reg_url_link();
+			$reg_url_link = $registration->reg_url_link();
+			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// reg_url_link exists ?
-			if ( $reg_cache_ID ) {
+			if ( $reg_url_link ) {
 				// should this registration be processed during this visit ?
 				if ( $this->checkout->visit_allows_processing_of_this_registration( $registration ) ) {
 					// if NOT revisiting, then let's save the registration now, so that we have a REG_ID to use when generating other objects
@@ -643,21 +644,20 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					// grab related answer objects
 					$answers = $registration->answers();
 					// printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-					$this->_attendee_data[ $reg_cache_ID ] = array();
-					// unset( $valid_data[ $reg_cache_ID ]['additional_attendee_reg_info'] );
-					if ( isset( $valid_data[ $reg_cache_ID ] )) {
-						//printr( $valid_data[ $reg_cache_ID ], '$valid_data[ $reg_cache_ID ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					$this->_attendee_data[ $reg_url_link ] = array();
+					// unset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] );
+					if ( isset( $valid_data[ $reg_url_link ] )) {
 						// do we need to copy basic info from primary attendee ?
-						$copy_primary = isset( $valid_data[ $reg_cache_ID ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_cache_ID ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
+						$copy_primary = isset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
 						// filter form input data for this registration
-						$valid_data[ $reg_cache_ID ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $reg_cache_ID ] );
-						// printr( $valid_data[ $reg_cache_ID ], '$valid_data[ $reg_cache_ID ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						$valid_data[ $reg_url_link ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $reg_url_link ] );
+						// printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						if ( isset( $valid_data['primary_attendee'] )) {
 							$primary_registrant['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 							unset( $valid_data['primary_attendee'] );
 						}
 						// now loop through our array of valid post data && process attendee reg forms
-						foreach ( $valid_data[ $reg_cache_ID ] as $form_section => $form_inputs ) {
+						foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs ) {
 							if ( ! in_array( $form_section, $non_input_form_sections )) {
 								foreach ( $form_inputs as $form_input => $input_value ) {
 									// check for critical inputs
@@ -665,7 +665,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 										return FALSE;
 									}
 									// store a bit of data about the primary attendee
-									if ( $att_nmbr == 1 && $reg_cache_ID == $primary_registrant['line_item_id'] && ! empty( $input_value )) {
+									if ( $att_nmbr == 1 && $reg_url_link == $primary_registrant['line_item_id'] && ! empty( $input_value )) {
 										$primary_registrant[ $form_input ] = $input_value;
 									} else if ( $copy_primary && isset( $primary_registrant[ $form_input ] ) && $input_value == NULL ) {
 										$input_value = $primary_registrant[ $form_input ];
@@ -677,23 +677,22 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 									}
 								}
 							}
-						}  // end of foreach ( $valid_data[ $reg_cache_ID ] as $form_section => $form_inputs )
+						}  // end of foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs )
 					}
-					// printr( $this->_attendee_data[ $reg_cache_ID ], '$this->_attendee_data[ $reg_cache_ID ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					// this registration does not require additional attendee information ?
 					if ( $copy_primary && $att_nmbr > 1 && $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 						// just copy the primary registrant
 						$attendee = $this->checkout->primary_attendee_obj;
 					} else {
 						// have we met before?
-						$attendee = $this->_find_existing_attendee( $registration, $this->_attendee_data[ $reg_cache_ID ] );
+						$attendee = $this->_find_existing_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
 						// did we find an already existing record for this attendee ?
 						if ( $attendee instanceof EE_Attendee ) {
-							$attendee = $this->_update_existing_attendee_data( $attendee, $this->_attendee_data[ $reg_cache_ID ] );
+							$attendee = $this->_update_existing_attendee_data( $attendee, $this->_attendee_data[ $reg_url_link ] );
 						} else {
 							// ensure critical details are set for additional attendees
-							$this->_attendee_data[ $reg_cache_ID ] = $att_nmbr > 1 ? $this->_copy_critical_attendee_details_from_primary_registrant( $this->_attendee_data[ $reg_cache_ID ] ) : $this->_attendee_data[ $reg_cache_ID ];
-							$attendee = $this->_create_new_attendee( $registration, $this->_attendee_data[ $reg_cache_ID ] );
+							$this->_attendee_data[ $reg_url_link ] = $att_nmbr > 1 ? $this->_copy_critical_attendee_details_from_primary_registrant( $this->_attendee_data[ $reg_url_link ] ) : $this->_attendee_data[ $reg_url_link ];
+							$attendee = $this->_create_new_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
 						}
 						// who's #1 ?
 						if ( $att_nmbr == 1 ) {
@@ -702,10 +701,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					}
 					// add relation to registration, set attendee ID, and cache attendee
 					$this->_associate_attendee_with_registration( $registration, $attendee );
+					//printr($attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
 
 					// d( $attendee );
 					if ( ! $registration->attendee() instanceof EE_Attendee ) {
-						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_cache_ID ), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
 					// if we've gotten this far, then let's save what we have
@@ -715,12 +715,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 //					printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_cache_ID )) {
+				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 
 			}  else {
 				EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				// remove malformed data
-				unset( $valid_data[ $reg_cache_ID ] );
+				unset( $valid_data[ $reg_url_link ] );
 				return FALSE;
 			}
 
