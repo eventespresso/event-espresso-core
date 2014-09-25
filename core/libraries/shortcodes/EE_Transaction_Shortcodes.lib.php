@@ -231,15 +231,22 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string url or html
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
-		if( $this->_data->txn instanceof EE_Transaction &&
-				$this->_data->txn->payment_method() instanceof EE_Payment_Method &&
-				$this->_data->txn->payment_method()->type_obj() instanceof EE_PMT_Invoice ){
-				$pm = $this->_data->txn->payment_method();
-				$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
+		//try to get the invoice payment method's logo for this transaction image first
+		if( $this->_data->txn instanceof EE_Transaction ){
+			$pm = EEM_Payment_Method::instance()->get_one( array( array(
+				'Payment.TXN_ID' => $this->_data->txn->ID(),
+				'PMD_type' => 'Invoice'
+			), 'order_by' => array( 'Payment.PAY_ID' => 'DESC' ) ) );
+		}else{
+			//maybe they didn't use an invoice payment method. Just grab the first invoice payment method we find
+			$pm  = EEM_Payment_Method::instance()->get_one_of_type('Invoice');
+		}
+		if ( $pm instanceof EE_Payment_Method ){
+			$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
 		}else{
 			$invoice_logo_url = NULL;
 		}
-		if ( empty($invoice_logo_url ) ) {
+		if( empty( $invoice_logo_url ) ){
 			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
 		}
 
@@ -252,7 +259,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		//image tags have been requested.
-		$image_size = getimagesize( $image_size );
+		$image_size = getimagesize( $invoice_logo_url );
 		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
 	}
 
