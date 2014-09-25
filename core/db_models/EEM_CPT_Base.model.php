@@ -379,7 +379,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well that's not too hard to query for
 				$table_to_query = reset($tables_needing_to_be_queried);
-				$missing_data = $this->_do_wpdb_query( 'get_row', array( "SELECT * FROM $table_to_query->get_table_name() WHERE $table_to_query->get_fk_on_table() = " . $post['ID'], ARRAY_A ));
+				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . '=' . $post['ID'], ARRAY_A ));
 				if ( ! empty( $missing_data )) {
 					$post = array_merge( $post, $missing_data );
 				}
