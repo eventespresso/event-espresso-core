@@ -231,12 +231,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string url or html
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = ! empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-
-		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
-			$invoice_logo_url = $invoice_settings['invoice_logo_url'];
-		} else {
+		if( $this->_data->txn instanceof EE_Transaction &&
+				$this->_data->txn->payment_method() instanceof EE_Payment_Method &&
+				$this->_data->txn->payment_method()->type_obj() instanceof EE_PMT_Invoice ){
+				$pm = $this->_data->txn->payment_method();
+				$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
+		}else{
+			$invoice_logo_url = NULL;
+		}
+		if ( empty($invoice_logo_url ) ) {
 			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
 		}
 
