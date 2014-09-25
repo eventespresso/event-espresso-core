@@ -847,9 +847,7 @@ class EEH_Activation {
 						$folder,
 						'<br />' . $e->getMessage()
 					),
-					__FILE__,
-					__FUNCTION__,
-					__LINE__
+					__FILE__, __FUNCTION__, __LINE__
 				);
 				return;
 			}
