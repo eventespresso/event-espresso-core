@@ -237,20 +237,27 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
 			//remove PCI-sensitive data so it doesn't get stored
 			$PayPalResult = $this->_log_clean_response($PayPalResult,$payment);
-			$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
-			if($this->_APICallSuccessful($PayPalResult)){
-				$payment->set_status($this->_pay_model->approved_status());
-			}else{
-				$payment->set_status($this->_pay_model->declined_status());
-			}
-			$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
-			$payment->set_gateway_response($message);
-			$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
 
-			$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
-			$payment->set_extra_accntng($primary_registration_code);
-			$payment->set_details($PayPalResult);
-			return $payment;
+			$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
+			if( empty($PayPalResult[ 'RAWRESPONSE' ] ) ) {
+				$payment->set_status( $this->_pay_model->failed_status() ) ;
+				$payment->set_gateway_response( __( 'No response received from Paypal Pro', 'event_espresso' ) );
+				$payment->set_details($PayPalResult);
+			}else{
+				if($this->_APICallSuccessful($PayPalResult)){
+					$payment->set_status($this->_pay_model->approved_status());
+				}else{
+					$payment->set_status($this->_pay_model->declined_status());
+				}
+				$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
+				$payment->set_gateway_response($message);
+				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
+
+				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
+				$payment->set_extra_accntng($primary_registration_code);
+				$payment->set_details($PayPalResult);
+				return $payment;
+			}
 		}catch(Exception $e){
 			$payment->set_status($this->_pay_model->failed_status());
 			$payment->set_gateway_response($e->getMessage());
