@@ -850,6 +850,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// load template and add to output sent that gets filtered into the_content()
 			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
 		}
+		// store our progress so far
+		$this->checkout->stash_transaction_and_checkout();
 	}
 
 
