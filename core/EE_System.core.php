@@ -573,7 +573,9 @@ final class EE_System {
 
 
 	/**
-	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
+	 * This method holds any setup validations that are done on all request types excluding the normal request type.
+	 * Note that this is similar to functionality that should be contained in EEH_Activation::system_initialization, initialize_db_and_folders, and initialize_db_content,
+	 * except this is called even upon downgrades
 	 *
 	 * @since  4.3.1
 	 *
@@ -582,7 +584,7 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _do_setup_validations( $request_type ) {
-		if ( $request_type !== EE_System::req_type_new_activation ) {
+		if ( $request_type !== EE_System::req_type_new_activation && EE_Maintenance_Mode::instance()->models_can_query() ) {
 			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
 		}
 		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
