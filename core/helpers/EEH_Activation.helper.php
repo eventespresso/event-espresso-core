@@ -847,7 +847,8 @@ class EEH_Activation {
 						__(  'Could not create the folder at "%1$s" because: %2$s', 'event_espresso' ),
 						$folder,
 						'<br />' . $e->getMessage()
-					)
+					),
+					__FILE__, __FUNCTION__, __LINE__
 				);
 				return;
 			}
