@@ -964,12 +964,12 @@ jQuery(document).ready( function($) {
 		 */
 		display_messages : function( msg ){
 //			SPCO.console_log_object( 'display_messages : msg' + ' = ', msg );
-			if ( typeof msg.success !== 'undefined' && msg.success ) {
+            if ( typeof msg.errors !== 'undefined' && msg.errors ) {
+                SPCO.show_event_queue_ajax_msg( 'error', msg.errors, 10000 );
+            } else if ( typeof msg.attention !== 'undefined' && msg.attention ) {
+                SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, 10000 );
+            } else if ( typeof msg.success !== 'undefined' && msg.success ) {
 				SPCO.show_event_queue_ajax_msg( 'success', msg.success, 4000 );
-			} else if ( typeof msg.attention !== 'undefined' && msg.attention ) {
-				SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, 10000 );
-			} else if ( typeof msg.errors !== 'undefined' && msg.errors ) {
-				SPCO.show_event_queue_ajax_msg( 'error', msg.errors, 10000 );
 			}
 		},
 
