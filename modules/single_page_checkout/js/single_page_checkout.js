@@ -848,7 +848,7 @@ jQuery(document).ready( function($) {
 		 * @param  {object} validation_rules
 		 */
 		set_new_validation_rules : function( next_step, validation_rules ) {
-			SPCO.console_log( 'set_new_validation_rules : next_step', next_step, true );
+			//SPCO.console_log( 'set_new_validation_rules : next_step', next_step, true );
 			// reset previous form validation rules
 			EEFV.reset_validation_rules();
 			// pass new rules for setup
@@ -857,13 +857,13 @@ jQuery(document).ready( function($) {
 			// the form id for the current step
 			var form_id = 'ee-spco-' + next_step + '-reg-step-form';
 			if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-				SPCO.console_log( 'set_new_validation_rules : form_id', form_id, false );
+				//SPCO.console_log( 'set_new_validation_rules : form_id', form_id, false );
 				SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 				SPCO.set_validation_defaults();
 				SPCO.current_form_to_validate.resetForm();
 			}
-			SPCO.console_log_object( 'get_validation_rules : EEFV.validation_rules_per_html_form ', EEFV.validation_rules_per_html_form, 0 );
-			SPCO.console_log_object( 'get_validation_rules : EEFV.form_validators ', EEFV.form_validators, 0 );
+			//SPCO.console_log_object( 'get_validation_rules : EEFV.validation_rules_per_html_form ', EEFV.validation_rules_per_html_form, 0 );
+			//SPCO.console_log_object( 'get_validation_rules : EEFV.form_validators ', EEFV.form_validators, 0 );
 
 		},
 
