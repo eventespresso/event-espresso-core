@@ -1,8 +1,8 @@
 <?php
 
 /**
- * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction 
- * (because Registration's TXN_ID field is on Registration, and points to the Transaction's PK) 
+ * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction
+ * (because Registration's TXN_ID field is on Registration, and points to the Transaction's PK)
  */
 require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 
