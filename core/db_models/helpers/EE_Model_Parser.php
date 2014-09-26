@@ -95,23 +95,59 @@ class EE_Model_Parser {
 		}
 		return $prefix;
 	}
+
 	/**
-	 * Gets the table alias model relation chain prefix from teh query param
-	 * @param array $query_param
-	 * @param string $table_alias_sans_prefix
+	 * Gets the table alias model relation chain prefix (ie, what can be prepended onto
+	 * EE_Model_Field::get_qualified_column() to get the proper column name for that field
+	 * in a specific query) from teh query param (eg 'Registration.Event.EVT_ID').
+	 *
+	 * @param string $model_name of the model on which the related query param was found to be belong
+	 * @param string $original_query_param
 	 * @return string
 	 */
-	public static function extract_table_alias_model_relation_chain_from_query_param($query_param,$table_alias_sans_prefix){
-		$pos = strpos($query_param,$table_alias_sans_prefix);
-		if($pos == 0){
-			return '';
-		}
-		$prefix = substr($query_param,0,$pos-1);
-		//turn last . indicates the end of the prefix
-		if($prefix){
-			return str_replace(".",self::table_alias_model_relation_chain_separator,$prefix).self::table_alias_model_relation_chain_prefix_end;
-		}
-		return '';
+	public static function extract_table_alias_model_relation_chain_from_query_param($model_name, $original_query_param){
+		$relation_chain = self::extract_model_relation_chain($model_name, $original_query_param);
+		$table_alias_with_model_relation_chain_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($relation_chain, $model_name);
+		return $table_alias_with_model_relation_chain_prefix;
+}
+	/**
+	 * Gets the model relation chain to $model_name from the $original_query_param.
+	 * Eg, if $model_name were 'Payment', and $original_query_param were 'Registration.Transaction.Payment.PAY_ID',
+	 * this would return 'Registration.Transaction.Payment'. Also if the query param were 'Registration.Transaction.Payment'
+	 * and $model_name were 'Payment', it should return 'Registration.Transaction.Payment'
+	 * @param string $model_name
+	 * @param string $original_query_param
+	 * @return string
+	 */
+	public static function extract_model_relation_chain($model_name,$original_query_param){
+		//prefix and postfix both with a period, as this facilitates searching
+		$model_name = EE_Model_Parser::pad_with_periods($model_name);
+		$original_query_param = EE_Model_Parser::pad_with_periods($original_query_param);
+		$pos_of_model_string = strpos($original_query_param, $model_name);
+		//eg, if we're looking for the model relation chain from Event to Payment, the original query param is probably something like
+		//"Registration.Transaction.Payment.PAY_ID", $pos_of_model_string points to the 'P' or Payment. We want the string
+		//"Registration.Transaction.Payment"
+		$model_relation_chain = substr($original_query_param, 0,$pos_of_model_string+strlen($model_name));
+		return EE_Model_Parser::trim_periods($model_relation_chain);
+	}
+
+	/**
+	 * Replaces the specified model in teh model relation chain with teh join model.
+	 * Eg EE_Model_Parser::replace_model_name_with_join_model_name_in_model_relation_chain(
+	 * "Ticket", "Datetime_Ticket", "Datetime.Ticket" ) will return
+	 * "Datetime.Datetime_Ticket" which can be used to find the table alias model relation chain prefix
+	 * using EE_Model_Parser::extract_table_alias_model_relation_chain_prefix
+	 * @param string $model_name
+	 * @param string $join_model_name
+	 * @param string $model_relation_chain
+	 * @return string
+	 */
+	public static function replace_model_name_with_join_model_name_in_model_relation_chain($model_name,$join_model_name,$model_relation_chain){
+		$model_name = EE_Model_Parser::pad_with_periods($model_name);
+		$join_model_name = EE_Model_Parser::pad_with_periods($join_model_name);
+		$model_relation_chain = EE_Model_Parser::pad_with_periods($model_relation_chain);
+		$replaced_with_periods = str_replace($model_name,$join_model_name,$model_relation_chain);
+		return EE_Model_Parser::trim_periods($replaced_with_periods);
 	}
 }
 

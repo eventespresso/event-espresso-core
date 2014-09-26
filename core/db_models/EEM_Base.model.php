@@ -288,11 +288,7 @@ abstract class EEM_Base extends EE_Base{
 				/** @var $field_obj EE_Model_Field_Base | EE_Primary_Key_Field_Base */
 				//primary key field base has a slightly different _construct_finalize
 				/** @var $field_obj EE_Model_Field_Base */
-				$field_obj->_construct_finalize( $table_alias, $field_name );
-				if($field_obj instanceof EE_Primary_Key_Field_Base){
-					/** @var $field_obj EE_Primary_Key_Field_Base */
-					$field_obj->_construct_finalize_set_model_name($this->get_this_model_name());
-				}
+				$field_obj->_construct_finalize( $table_alias, $field_name, $this->get_this_model_name() );
 			}
 		}
 
@@ -1957,7 +1953,7 @@ abstract class EEM_Base extends EE_Base{
 		$tables = $this->get_tables();
 		if(count($tables) > 1){
 			foreach($tables as $table_obj){
-				$qualified_pk_column = $table_obj->get_fully_qualified_pk_column();
+				$qualified_pk_column = $table_alias_with_model_relation_chain_prefix . $table_obj->get_fully_qualified_pk_column();
 				if( ! in_array($qualified_pk_column,$selects)){
 					$selects[] = "$qualified_pk_column AS '$qualified_pk_column'";
 				}
@@ -2070,13 +2066,13 @@ abstract class EEM_Base extends EE_Base{
 	private function _add_join_to_model($model_name, EE_Model_Query_Info_Carrier $passed_in_query_info,$original_query_param){
 		$relation_obj = $this->related_settings_for($model_name);
 
-		$model_relation_chain = $this->_extract_model_relation_chain($model_name, $original_query_param);
+		$model_relation_chain = EE_Model_Parser::extract_model_relation_chain($model_name, $original_query_param);
 		//check if the relation is HABTM, because then we're essentially doing two joins
 		//If so, join first to the JOIN table, and add its data types, and then continue as normal
 		if($relation_obj instanceof EE_HABTM_Relation){
 			$join_model_obj = $relation_obj->get_join_model();
 			//replace the model specified with the join model for this relation chain, whi
-			$relation_chain_to_join_model = $this->_replace_model_name_with_join_model_name_in_model_relation_chain($model_name, $join_model_obj->get_this_model_name(), $model_relation_chain);
+			$relation_chain_to_join_model = EE_Model_Parser::replace_model_name_with_join_model_name_in_model_relation_chain($model_name, $join_model_obj->get_this_model_name(), $model_relation_chain);
 			$new_query_info = new EE_Model_Query_Info_Carrier(
 					array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()),
 					$relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model));
@@ -2087,43 +2083,6 @@ abstract class EEM_Base extends EE_Base{
 				array($model_relation_chain=>$model_name),
 				$relation_obj->get_join_statement($model_relation_chain));
 		$passed_in_query_info->merge( $new_query_info  );
-	}
-
-	/**
-	 * Gets the model relation chain to $model_name from the $original_query_param.
-	 * Eg, if $model_name were 'Payment', and $original_query_param were 'Registration.Transaction.Payment.PAY_ID',
-	 * this would return 'Registration.Transaction.Payment'. Also if the query param were 'Registration.Transaction.Payment'
-	 * and $model_name were 'Payment', it should return 'Registration.Transaction.Payment'
-	 * @param string $model_name
-	 * @param string $original_query_param
-	 * @return string
-	 */
-	private function _extract_model_relation_chain($model_name,$original_query_param){
-		//prefix and postfix both with a period, as this facilitates searching
-		$model_name = EE_Model_Parser::pad_with_periods($model_name);
-		$original_query_param = EE_Model_Parser::pad_with_periods($original_query_param);
-		$pos_of_model_string = strpos($original_query_param, $model_name);
-		//eg, if we're looking for the model relation chain from Event to Payment, the original query param is probably something like
-		//"Registration.Transaction.Payment.PAY_ID", $pos_of_model_string points to the 'P' or Payment. We want the string
-		//"Registration.Transaction.Payment"
-		$model_relation_chain = substr($original_query_param, 0,$pos_of_model_string+strlen($model_name));
-		return EE_Model_Parser::trim_periods($model_relation_chain);
-	}
-
-
-	/**
-	 * Replaces the specified model in teh model relation chain with teh join model
-	 * @param string $model_name
-	 * @param string $join_model_name
-	 * @param string $model_relation_chain
-	 * @return string
-	 */
-	private function _replace_model_name_with_join_model_name_in_model_relation_chain($model_name,$join_model_name,$model_relation_chain){
-		$model_name = EE_Model_Parser::pad_with_periods($model_name);
-		$join_model_name = EE_Model_Parser::pad_with_periods($join_model_name);
-		$model_relation_chain = EE_Model_Parser::pad_with_periods($model_relation_chain);
-		$replaced_with_periods = str_replace($model_name,$join_model_name,$model_relation_chain);
-		return EE_Model_Parser::trim_periods($replaced_with_periods);
 	}
 
 
@@ -2241,8 +2200,9 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
 		$field = $this->_deduce_field_from_query_param($query_param);
+
 		if( $field ){
-			$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($query_param, $field->get_qualified_column());
+			$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param( $field->get_model_name(), $query_param );
 			return $table_alias_prefix . $field->get_qualified_column();
 		}elseif(array_key_exists($query_param,$this->_custom_selections)){
 			//maybe it's custom selection item?
