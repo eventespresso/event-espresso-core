@@ -439,7 +439,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 				=> 'ee-available-payment-method-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
-					'method_of_payment_inputs' => new EE_Radio_Button_Input (
+					'' => new EE_Radio_Button_Input (
 						$available_payment_method_options,
 						array(
 							'html_name' 				=> 'selected_method_of_payment',
