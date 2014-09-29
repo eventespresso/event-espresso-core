@@ -162,20 +162,22 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $include_expired = TRUE, $include_deleted= TRUE, $limit = NULL  ) {
-
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
 
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
 
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('Y-m-d H:i:s'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
+//			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('Y-m-d H:i:s'));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
 		}
-
+		$this->show_next_x_db_queries();
 		$result = $this->get_all( $query_params );
-
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
 		return $result;
 	}
 

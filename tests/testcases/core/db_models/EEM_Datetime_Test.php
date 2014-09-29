@@ -30,7 +30,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	 * @group 6744
 	 */
 	public function test_get_datetimes_for_event_ordered_by_DTT_order__different_timezone() {
-
+		echo "\r\n\r\ntest_get_datetimes_for_event_ordered_by_DTT_order__different_timezone";
 		//make sure WordPress Timezone is set
 		update_option( 'timezone_string', 'America/Vancouver' );
 
@@ -74,7 +74,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	 * @group 6744
 	 */
 	public function test_get_datetimes_for_event_ordered_by_DTT_order__default_timezone() {
-
+echo "\r\n\r\ntest_get_datetimes_for_event_ordered_by_DTT_order__default_timezone";
 		//make sure WordPress Timezone is set
 //		update_option( 'timezone_string', 'America/Toronto' );
 		$this->assertEquals( '', get_option( 'timezone_string' ) );
