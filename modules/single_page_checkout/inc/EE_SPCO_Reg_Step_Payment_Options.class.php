@@ -529,7 +529,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method, $setup_validation_rules = FALSE ) {
 		// if it exists, get billing form for the selected payment method
-		if( $payment_method->type_obj()->billing_form( $this->checkout->transaction ) instanceof EE_Billing_Info_Form ) {
+		if( $payment_method->type_obj()->billing_form( $this->checkout->transaction ) instanceof EE_Billing_Attendee_Info_Form ) {
 			if ( $this->_transaction_has_primary_registrant() ) {
 				$payment_method->type_obj()->billing_form()->populate_from_attendee( $this->checkout->primary_attendee_obj );
 			}
@@ -784,7 +784,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// check if transaction has a primary registrant and that it has a related Attendee object
 			if ( ! $this->_transaction_has_primary_registrant() ) {
 				// need to at least gather some primary registrant data before attempting payment
-				if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form && ! $this->_capture_primary_registration_data_from_billing_form() ) {
+				if ( $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form && ! $this->_capture_primary_registration_data_from_billing_form() ) {
 					return FALSE;
 				}
 			}

@@ -25,7 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 /**
- * @var $form_section EE_Billing_Info_Form
+ * @var $form_section EE_Billing_Attendee_Info_Form
  */
 if($form_section->payment_method()->debug_mode()){
 ?><div class="sandbox-panel">

@@ -507,12 +507,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * Saves the billing info to the attendee. @see EE_Attendee::billing_info_for_payment_method() which is used to retrieve it
-	 * @param EE_Form_Section_Proper $billing_form
+	 * @param EE_Billing_Attendee_Info_Form $billing_form
 	 * @param EE_Payment_Method $payment_method
 	 * @return boolean
 	 */
 	public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method){
-		if( ! $billing_form instanceof EE_Form_Section_Proper ){
+		if( ! $billing_form instanceof EE_Billing_Attendee_Info_Form ){
 			EE_Error::add_error( __( 'Cannot save billing info because there is none.', 'event_espresso' ) );
 			return false;
 		}

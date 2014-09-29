@@ -23,7 +23,7 @@ class EE_PMT_Mock_Onsite extends EE_PMT_Base{
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_billing_form() {
-		$form = new EE_Billing_Info_Form($this->_pm_instance,array(
+		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
 			'name'=>'Mock_Onsite_Form',
 			'subsections'=>array(
 				'status' => new EE_Text_Input(),//this will become the payments status when processing payments on this mock object
