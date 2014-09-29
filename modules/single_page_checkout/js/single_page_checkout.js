@@ -854,6 +854,7 @@ jQuery(document).ready( function($) {
 			// pass new rules for setup
 			EEFV.setup_validation_rules( validation_rules.form_data );
 			EEFV.apply_rules();
+            EEFV.add_url_validator();
 			// the form id for the current step
 			var form_id = 'ee-spco-' + next_step + '-reg-step-form';
 			if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
