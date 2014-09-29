@@ -350,7 +350,7 @@ abstract class EE_PMT_Base{
 			$payment = NULL;
 		}
 		//if there is billing info, clean it and save it now
-		if( $billing_info instanceof EE_Billing_Info_Form ){
+		if( $billing_info instanceof EE_Billing_Attendee_Info_Form ){
 			$this->_save_billing_info_to_attendee( $billing_info, $transaction );
 		}
 		return $payment;
@@ -380,7 +380,7 @@ abstract class EE_PMT_Base{
 	/**
 	 * Saves the billing info onto the attendee of the primary registrant on this transaction, and
 	 * cleans it first.
-	 * @param EE_Billing_Info_Form $billing_form
+	 * @param EE_Billing_Attendee_Info_Form $billing_form
 	 * @param EE_Transaction $transaction
 	 * @return boolean success
 	 */

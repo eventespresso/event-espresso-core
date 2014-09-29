@@ -63,9 +63,9 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$items_purchased = $t->items_purchased();
 		$first_item = array_shift( $items_purchased );
 		$second_item = array_shift( $items_purchased );
-		$this->assertEquals( $first_item->ticket()->name(), $rargs[ 'item_name_1' ] );
+		$this->assertEquals( sprintf( '%s for %s', $first_item->ticket()->name(), $first_item->ticket_event_name() ), $rargs[ 'item_name_1' ] );
 		$this->assertEquals( $first_item->ticket()->price(), $rargs[ 'amount_1' ] );
-		$this->assertEquals( $second_item->ticket()->name(), $rargs[ 'item_name_2' ] );
+		$this->assertEquals( sprintf( '%s for %s', $second_item->ticket()->name(), $second_item->ticket_event_name() ), $rargs[ 'item_name_2' ] );
 		$this->assertEquals( $second_item->ticket()->price(), $rargs[ 'amount_2' ] );
 		$this->assertEquals( 1, $rargs[ 'quantity_1' ] );
 		$this->assertEquals( $t->tax_total(), $rargs[ 'tax' ] );

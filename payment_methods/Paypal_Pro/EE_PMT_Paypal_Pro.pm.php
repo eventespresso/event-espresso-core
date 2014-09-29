@@ -90,7 +90,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
 
-		$billing_form = new EE_Billing_Info_Form( $this->_pm_instance, $form_args );
+		$billing_form = new EE_Billing_Attendee_Info_Form( $this->_pm_instance, $form_args );
 		if($this->_pm_instance->debug_mode()){
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
@@ -109,7 +109,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	/**
 	 *  Possibly adds debug content to paypal billing form
 	 * @param string $form_begin_content
-	 * @param EE_Billing_Info_Form $form_section
+	 * @param EE_Billing_Attendee_Info_Form $form_section
 	 * @return string
 	 */
 	public static function generate_billing_form_debug_content( $form_begin_content, $form_section ){

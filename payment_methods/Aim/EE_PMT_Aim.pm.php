@@ -35,7 +35,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_billing_form() {
-		$form = new EE_Billing_Info_Form($this->_pm_instance,array(
+		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
 			'name'=>'AIM_Form',
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(array(
