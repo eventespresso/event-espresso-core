@@ -158,7 +158,7 @@ class EE_Checkout {
 
 	/**
 	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
-	 * @type EE_Billing_Info_Form
+	 * @type EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
 	 */
 	public $billing_form = NULL;
 

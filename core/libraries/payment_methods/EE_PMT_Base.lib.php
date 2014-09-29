@@ -228,7 +228,7 @@ abstract class EE_PMT_Base{
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form
+	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
 		if( ! $this->_billing_form ){
