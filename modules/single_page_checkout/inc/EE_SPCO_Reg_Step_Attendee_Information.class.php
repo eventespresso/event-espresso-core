@@ -913,7 +913,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 *    _associate_attendee_with_registration
+	 *    _associate_registration_with_transaction
 	 *
 	 * @param EE_Registration $registration
 	 * @return void

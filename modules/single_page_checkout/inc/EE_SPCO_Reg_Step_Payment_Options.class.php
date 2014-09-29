@@ -439,7 +439,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 				=> 'ee-available-payment-method-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
-					'method_of_payment_inputs' => new EE_Radio_Button_Input (
+					'' => new EE_Radio_Button_Input (
 						$available_payment_method_options,
 						array(
 							'html_name' 				=> 'selected_method_of_payment',
@@ -529,7 +529,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method, $setup_validation_rules = FALSE ) {
 		// if it exists, get billing form for the selected payment method
-		if( $payment_method->type_obj()->billing_form() instanceof EE_Billing_Info_Form ) {
+		if( $payment_method->type_obj()->billing_form( $this->checkout->transaction ) instanceof EE_Billing_Info_Form ) {
 			if ( $this->_transaction_has_primary_registrant() ) {
 				$payment_method->type_obj()->billing_form()->populate_from_attendee( $this->checkout->primary_attendee_obj );
 			}
