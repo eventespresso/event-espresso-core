@@ -1214,7 +1214,8 @@ jQuery(document).ready(function($) {
 
 			} else {
 				//make sure tkt sell until date matches the date-time start date for the first date.
-				var tkt_end_date = tktHelper.eemoment($('.event-datetime-DTT_EVT_start').first().val()).startOf('day').format('YYYY-MM-DD h:mm a');
+				var dtt_end_date = $('.event-datetime-DTT_EVT_start').first().val();
+				var tkt_end_date = tktHelper.eemoment(dtt_end_date, 'YYYY-MM-DD h:mm a').startOf('day').format('YYYY-MM-DD h:mm a');
 				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
 

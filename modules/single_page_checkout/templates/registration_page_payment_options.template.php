@@ -133,7 +133,7 @@
 				if ( $payment instanceof EE_Payment ) {
 ?>
                     <tr class="reg-page-totals-spn">
-                        <td class="jst-rght"><?php echo __('Payment: ', 'event_espresso') . date_i18n( $pay_date_frmt, (int)$payment->timestamp() ); ?></td>
+						<td class="jst-rght"><?php echo __('Payment: ', 'event_espresso') . date_i18n( $pay_date_frmt, strtotime( $payment->timestamp() )); ?></td>
                         <td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $payment->amount() );?></td>
                         <?php	do_action( 'AHEE__registration_page_payment_options__payment_info_table_payment_row_end', $payment ); ?>
                     </tr>
