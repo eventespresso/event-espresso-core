@@ -170,12 +170,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 		if( ! $include_expired){
 			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
-//			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('Y-m-d H:i:s'));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
 		}
-		$this->show_next_x_db_queries();
+
 		$result = $this->get_all( $query_params );
 		$this->assume_values_already_prepared_by_model_object( $old_assumption );
 		return $result;
