@@ -26,15 +26,38 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Invoice extends EE_PMT_Base{
+
+
+
+	/**
+	 *
+	 * @param EE_Payment_Method $pm_instance
+	 * @return EE_PMT_Invoice
+	 */
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Invoice", 'event_espresso');
 		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
 	}
-	public function generate_new_billing_form() {
+
+
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @return NULL
+	 */
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		return NULL;
 	}
+
+
+
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
 	public function generate_new_settings_form() {
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 				$organization = EE_Registry::instance()->CFG->organization;

@@ -38,7 +38,7 @@ class EE_State_Select_Input extends EE_Select_Input{
 			if ( ! empty( $states )) {
 				foreach( $states as $state ){
 					if ( $state instanceof EE_State ) {
-						$state_options[ $state->ID() ] = $state->name();
+						$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
 					}
 				}
 			} else {

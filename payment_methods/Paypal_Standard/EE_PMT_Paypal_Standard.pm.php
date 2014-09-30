@@ -35,9 +35,10 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 
 	/**
 	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
 	 * @return NULL
 	 */
-	public function generate_new_billing_form() {
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		return NULL;
 	}
 
@@ -108,7 +109,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	 * of the payment). Fed a transaction because it's always assumed to be the last payment that
 	 *
 	 * @param EE_Transaction $transaction
-	 * @return void
+	 * @return EE_Payment
 	 */
 	public function finalize_payment_for($transaction){
 		//paypal standard actually sends teh IPN info along with the user

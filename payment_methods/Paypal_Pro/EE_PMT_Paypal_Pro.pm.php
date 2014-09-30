@@ -65,12 +65,13 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	}
 
 
-
 	/**
 	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @throws \EE_Error
 	 * @return EE_Billing_Info_Form
 	 */
-	public function generate_new_billing_form() {
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		$allowed_types = $this->_pm_instance->get_extra_meta( 'credit_card_types', TRUE );
 		if( ! $allowed_types){//if allowed types is a string or empty array or null...
 			$allowed_types = array();
