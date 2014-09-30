@@ -533,6 +533,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $this->_transaction_has_primary_registrant() ) {
 				$payment_method->type_obj()->billing_form()->populate_from_attendee( $this->checkout->primary_attendee_obj );
 			}
+		}
+		if( $payment_method->type_obj()->billing_form( $this->checkout->transaction ) instanceof EE_Billing_Info_Form ) {
 			if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
 				EE_Error::add_success(
 					apply_filters(

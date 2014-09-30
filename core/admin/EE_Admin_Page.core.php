@@ -401,6 +401,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * admin_footer_scripts
 	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply to all pages/views loaded by child class.
@@ -608,8 +609,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//load admin_notices - global, page class, and view specific
 		add_action( 'admin_notices', array( $this, 'admin_notices_global'), 5 );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
-		if ( method_exists( $this, 'admin_notices_' . $this->_current_view ) )
+		if ( method_exists( $this, 'admin_notices_' . $this->_current_view ) ) {
 			add_action( 'admin_notices', array( $this, 'admin_notices_' . $this->_current_view ), 15 );
+		}
+
+		//load network admin_notices - global, page class, and view specific
+		add_action( 'network_admin_notices', array( $this, 'network_admin_notices_global'), 5 );
+		if ( method_exists( $this, 'network_admin_notices_' . $this->_current_view ) ) {
+			add_action( 'network_admin_notices', array( $this, 'network_admin_notices_' . $this->_current_view ) );
+		}
 
 		//this will save any per_page screen options if they are present
 		$this->_set_per_page_screen_options();
@@ -1301,6 +1309,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function admin_notices_global() {
+		$this->_display_no_javascript_warning();
+		$this->_display_espresso_notices();
+	}
+
+
+
+
+	public function network_admin_notices_global() {
 		$this->_display_no_javascript_warning();
 		$this->_display_espresso_notices();
 	}
@@ -2936,11 +2952,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = $notices ? array( 'notices' => $data ) : $data;
 		//is there already a transient for this route?  If there is then let's ADD to that transient
-		if ( $existing = get_transient( $transient ) ) {
+		$existing = is_multisite() && is_network_admin() ? get_site_transient( $transient ) : get_transient( $transient );
+		if ( $existing ) {
 			$data = array_merge( (array) $data, (array) $existing );
 		}
 
-		set_transient( $transient, $data, 8 );
+		if ( is_multisite() && is_network_admin() ) {
+			set_site_transient( $transient, $data, 8 );
+		} else {
+			set_transient( $transient, $data, 8 );
+		}
 	}
 
 
@@ -2955,9 +2976,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$user_id = get_current_user_id();
 		$route = !$route ? $this->_req_action : $route;
 		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
-		$data = get_transient( $transient );
+		$data = is_multisite() && is_network_admin() ? get_site_transient( $transient ) : get_transient( $transient );
 		//delete transient after retrieval (just in case it hasn't expired);
-		delete_transient( $transient );
+		if ( is_multisite() && is_network_admin() ) {
+			delete_site_transient( $transient );
+		} else {
+			delete_transient( $transient );
+		}
 		return $notices && isset( $data['notices'] ) ? $data['notices'] : $data;
 	}
 
@@ -2979,6 +3004,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			foreach ( $results as $result ) {
 				$transient = str_replace( '_transient_', '', $result->option_name );
 				get_transient( $transient );
+				if ( is_multisite() && is_network_admin() ) {
+					get_site_transient( $transient );
+				}
 			}
 		}
 	}
