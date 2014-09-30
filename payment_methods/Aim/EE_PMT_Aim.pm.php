@@ -27,6 +27,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_PMT_Aim extends EE_PMT_Base{
 
+
+	/**
+	 *
+	 * @param EE_Payment_Method $pm_instance
+	 * @return EE_PMT_Aim
+	 */
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
@@ -34,7 +40,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		$this->_default_description = __( 'Please provide the following billing information', 'event_espresso' );
 		parent::__construct($pm_instance);
 	}
-	public function generate_new_billing_form() {
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @return EE_Billing_Info_Form
+	 */
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
 			'name'=>'AIM_Form',
 			'subsections'=>array(
@@ -57,10 +69,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		}
 		return $form;
 	}
+
+
+
 	/**
 	 * Possibly adds debug content to billing form
-	 * @param type $original_opening_content
-	 * @param type $form_section
+	 * @param string $original_opening_content
+	 * @param string $form_section
 	 * @return string
 	 */
 	public static function generate_new_billing_form_debug_content($original_opening_content,$form_section){
@@ -70,6 +85,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		$show = $pm->debug_mode() || $sending_tests;
 		return EEH_Template::display_template(dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php',array('form_section'=>$form_section,'show'=>$show),true).$original_opening_content;
 	}
+
+
+
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
 	public function generate_new_settings_form() {
 		EE_Registry::instance()->load_helper('Template');
 		$form = new EE_Payment_Method_Form(array(
@@ -90,6 +112,9 @@ class EE_PMT_Aim extends EE_PMT_Base{
 //		$form->get_input('PMD_debug_mode')->set_html_help_text(__("Account is on Authorize.net's sandbox server", 'event_espresso'));
 		return $form;
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
