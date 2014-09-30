@@ -60,30 +60,14 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				'cvv'=>new EE_CVV_Input(),
 			)
 		));
-		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_AIM_Form',array('EE_PMT_Aim','generate_new_billing_form_debug_content'),10,2);
 		if($this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta('test_transactions',true,false)){
 			$form->get_input('credit_card')->set_default('4007000000027');
 			$form->get_input('exp_year')->set_default('2020');
 			$form->get_input('cvv')->set_default(('123'));
 			$form->add_subsections(array('fyi_about_autofill'=> $form->payment_fields_autofilled_notice_html() ),'credit_card');
+			$form->add_subsections(array('debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php' )), 'first_name' );
 		}
 		return $form;
-	}
-
-
-
-	/**
-	 * Possibly adds debug content to billing form
-	 * @param string $original_opening_content
-	 * @param string $form_section
-	 * @return string
-	 */
-	public static function generate_new_billing_form_debug_content($original_opening_content,$form_section){
-		EE_Registry::instance()->load_helper('Template');
-		$pm = $form_section->payment_method();
-		$sending_tests = $pm->get_extra_meta('test_transactions',true,false);
-		$show = $pm->debug_mode() || $sending_tests;
-		return EEH_Template::display_template(dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php',array('form_section'=>$form_section,'show'=>$show),true).$original_opening_content;
 	}
 
 
