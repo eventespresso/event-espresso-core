@@ -26,15 +26,32 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
+
+
+	/**
+	 * @param null $pm_instance
+	 * @return EE_PMT_Check
+	 */
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Check", 'event_espresso');
 		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'check-logo.png';
 	}
-	public function generate_new_billing_form() {
-		return ;
+
+
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @return NULL
+	 */
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
+		return NULL;
 	}
+
+
+
 	/**
 	 * Overrides parent to dynamically set some defaults, but only when the form is requested
 	 * @return EE_Form_Section_Proper
@@ -79,6 +96,9 @@ class EE_PMT_Check extends EE_PMT_Base{
 		));
 		return parent::settings_form();
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
@@ -92,6 +112,8 @@ class EE_PMT_Check extends EE_PMT_Base{
 						),
 		);
 	}
+
+
 
 	/**
 	 * For adding any html output ab ove the payment overview.
