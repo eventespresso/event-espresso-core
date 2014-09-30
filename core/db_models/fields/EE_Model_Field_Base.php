@@ -3,10 +3,10 @@
 /**
  * Base class for all EE_*_Field classes. These classes are for providing information and functions specific to each
  * field. They define the field's data type for insertion into the db (eg, if the value should be treated as an int, float, or string),
- * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within 
+ * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within
  * EEM_Base or EE_Base_Class which depend on the field's type. (ie, you shouldn't need any logic within your model
  * or model object which are dependent on the field's type, ideally). For example, EE_Serialized_Text_Field, specifies that any fields of this type
- * should be serialized before insertion into the db (prepare_for_insertion_into_db()), 
+ * should be serialized before insertion into the db (prepare_for_insertion_into_db()),
  * should be considered a string when inserting, updating, or using in a where clause for any queries (get_wpdb_data_type()),
  * should be unserialized when being retrieved from the db (prepare_for_set_from_db()), and whatever else.
  */
@@ -18,12 +18,24 @@ abstract class EE_Model_Field_Base{
 	var $_nullable;
 	var $_default_value;
 	var $_other_config;
+
+	/**
+	 * @param      $table_column
+	 * @param      $nicename
+	 * @param      $nullable
+	 * @param null $default_value
+	 */
 	function __construct($table_column, $nicename, $nullable, $default_value = null){
 		$this->_table_column = $table_column;
 		$this->_nicename = $nicename;
 		$this->_nullable = $nullable;
 		$this->_default_value = $default_value;
 	}
+
+	/**
+	 * @param $table_alias
+	 * @param $name
+	 */
 	function _construct_finalize($table_alias, $name){
 		$this->_table_alias = $table_alias;
 		$this->_name = $name;
@@ -34,6 +46,11 @@ abstract class EE_Model_Field_Base{
 	function get_table_column(){
 		return $this->_table_column;
 	}
+
+	/**
+	 * @throws \EE_Error
+	 * @return string
+	 */
 	function get_name(){
 		if($this->_name){
 			return $this->_name;
@@ -63,6 +80,10 @@ abstract class EE_Model_Field_Base{
 	function get_default_value(){
 		return $this->_default_value;
 	}
+
+	/**
+	 * @return string
+	 */
 	function get_qualified_column(){
 		return $this->get_table_alias().".".$this->get_table_column();
 	}
@@ -87,7 +108,7 @@ abstract class EE_Model_Field_Base{
 	function prepare_for_use_in_db($value_of_field_on_model_object){
 		return $value_of_field_on_model_object;
 	}
-	
+
 	/**
 	 * When creating a brand-new model object, or setting a particular value for one of its fields, this function
 	 * is called before setting it on the model object. We may want to strip slashes, unserialize the value, etc.
@@ -98,8 +119,8 @@ abstract class EE_Model_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object){
 		return $value_inputted_for_field_on_model_object;
 	}
-	
-	
+
+
 	/**
 	 * When instantiating a model object from DB results, this function is called before setting each field.
 	 * We may want to serialize the value, etc. By default, we return the value using prepare_for_set() method as that is the one child classes will most often define.
@@ -109,20 +130,20 @@ abstract class EE_Model_Field_Base{
 	function prepare_for_set_from_db($value_found_in_db_for_model_object){
 		return $this->prepare_for_set($value_found_in_db_for_model_object);
 	}
-	
+
 	/**
 	 * When echoing a field's value on a model object, this function is run to prepare the value for presentation in a webpage.
 	 * For example, we may want to output floats with 2 decimal places by default, dates as "Monday Jan 12, 2013, at 3:23pm" instead of
-	 * "8765678632", or any other modifications to how the value should be displayed, but not modified itself. 
+	 * "8765678632", or any other modifications to how the value should be displayed, but not modified itself.
 	 * @param mixed $value_on_field_to_be_outputted
 	 * @return mixed
 	 */
-	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null){
+	function prepare_for_pretty_echoing( $value_on_field_to_be_outputted ){
 		return $value_on_field_to_be_outputted;
 	}
-	
+
 	abstract function get_wpdb_data_type();
-	
+
 	/**
 	 * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part
 	 * of the model objects (ie, client code shouldn't care to ever see their value... if client code does
