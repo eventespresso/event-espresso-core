@@ -26,15 +26,38 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Bank extends EE_PMT_Base{
+
+
+
+	/**
+	 *
+	 * @param EE_Payment_Method $pm_instance
+	 * @return EE_PMT_Bank
+	 */
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Bank", 'event_espresso');
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'bank-logo.png';
 		$this->_default_description = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
 	}
-	public function generate_new_billing_form() {
+
+
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @return NULL
+	 */
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		return NULL;
 	}
+
+
+
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
 	public function generate_new_settings_form() {
 		return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
@@ -51,6 +74,9 @@ class EE_PMT_Bank extends EE_PMT_Base{
 			'exclude'=>array('PMD_debug_mode')
 		));
 	}
+
+
+
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
@@ -64,6 +90,8 @@ class EE_PMT_Bank extends EE_PMT_Base{
 						),
 		);
 	}
+
+
 
 	/**
 	 * For adding any html output ab ove the payment overview.
