@@ -16,16 +16,34 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 	const help_tab_link = 'ee_mock_onsite_help';
+
+	/**
+	 *
+	 * @param EE_Payment_Method $pm_instance
+	 * @return EE_PMT_New_Payment_Method_Offsite
+	 */
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_New_Payment_Method_Offsite.gateway.php');
 		$this->_gateway = new EEG_New_Payment_Method_Offsite();
 		$this->_pretty_name = __("New Payment Method Offsite", 'event_espresso');
 		parent::__construct($pm_instance);
 	}
-	public function generate_new_billing_form() {
+
+
+
+	/**
+	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
+	 * @return NULL
+	 */
+	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		return NULL;
 	}
 
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
 	public function generate_new_settings_form() {
 		EE_Registry::instance()->load_helper('Template');
 		$form = new EE_Payment_Method_Form(array(
