@@ -88,8 +88,6 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'exp_year'=>new EE_Year_Input( TRUE, 1, 15, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'cvv'=>new EE_CVV_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 			));
-		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
-		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
 
 		$billing_form = new EE_Billing_Attendee_Info_Form( $this->_pm_instance, $form_args );
 		if($this->_pm_instance->debug_mode()){
@@ -97,25 +95,13 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
 				'credit_card'
 			);
+			$billing_form->add_subsections( array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php')), 'first_name' );
 			$billing_form->get_input('credit_card')->set_default('5424180818927383');
 			$billing_form->get_input('credit_card_type')->set_default('MasterCard');
 			$billing_form->get_input('exp_year')->set_default( date('Y') + 6 );
 			$billing_form->get_input('cvv')->set_default('115');
 		}
 		return $billing_form;
-	}
-
-
-
-	/**
-	 *  Possibly adds debug content to paypal billing form
-	 * @param string $form_begin_content
-	 * @param EE_Billing_Attendee_Info_Form $form_section
-	 * @return string
-	 */
-	public static function generate_billing_form_debug_content( $form_begin_content, $form_section ){
-		EE_Registry::instance()->load_helper('Template');
-		return EEH_Template::display_template(dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php',array('form_section'=>$form_section),true).$form_begin_content;
 	}
 
 
