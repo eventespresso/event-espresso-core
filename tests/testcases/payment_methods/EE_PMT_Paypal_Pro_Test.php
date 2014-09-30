@@ -33,6 +33,12 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	 * }
 	 */
 	private $_test_billing_info = array();
+
+	/**
+	 * @param string   $name
+	 * @param array  $data
+	 * @param string $dataName
+	 */
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 		$this->_test_settings = array(
@@ -60,6 +66,9 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		);
 	}
 
+	/**
+	 * setUp
+	 */
 	public function setUp(){
 		$return_value = parent::setUp();
 		//EEG_Paypal_Pro uses $_SERVER at some point, so we need to pretend this is a regular request
@@ -69,6 +78,10 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		add_filter('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', '__return_false' );
 		return $return_value;
 	}
+
+	/**
+	 * test_do_direct_payment__success
+	 */
 	public function test_do_direct_payment__success(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Pro' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
@@ -82,6 +95,10 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status() );
 		$this->assertEquals( $t->total(), $p_processed->amount() );
 	}
+
+	/**
+	 * test_do_direct_payment__fail
+	 */
 	public function test_do_direct_payment__fail(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Pro' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
@@ -103,6 +120,10 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Payment::status_id_declined, $p_processed->status() );
 		$this->assertEquals( $amount_to_pay, $p_processed->amount() );
 	}
+
+	/**
+	 * test_do_direct_payment__partial_payment
+	 */
 	public function test_do_direct_payment__partial_payment(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Pro' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
@@ -118,7 +139,10 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status() );
 		$this->assertEquals( $t->total() - $paid_so_far, $p_processed->amount() );
 	}
+
 	/**
+	 * test_do_direct_payment__total_mismatch
+	 *
 	 * tests that even if the line items are too complicated for the gateway to handle,
 	 * it can at least send the total payable
 	 */
@@ -139,9 +163,13 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		$this->assertEquals( $t->total(), $p_processed->amount() );
 	}
 
+	/**
+	 * test_generate_new_billing_form
+	 */
 	public function test_generate_new_billing_form(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Pro', 'PMD_debug_mode' => TRUE ) );
-		$form = $ppm->type_obj()->generate_new_billing_form();
+		$t = $this->new_typical_transaction();
+		$ppm->type_obj()->generate_new_billing_form( $t );
 	}
 }
 
