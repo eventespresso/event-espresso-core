@@ -238,12 +238,12 @@ abstract class EE_PMT_Base{
 	}
 
 
-
 	/**
 	 * Creates the billing form for this payment method type
+	 * @param \EE_Transaction $transaction
 	 * @return EE_Billing_Info_Form
 	 */
-	abstract function generate_new_billing_form();
+	abstract function generate_new_billing_form( EE_Transaction $transaction = NULL );
 
 
 
@@ -281,7 +281,7 @@ abstract class EE_PMT_Base{
 	 * @throws EE_Error
 	 */
 	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
-		//@todo: add surcharge for the payment method, if any
+		// @todo: add surcharge for the payment method, if any
 		if($this->_gateway){
 			//there is a gateway, so we're going to make a payment object
 			//but wait! do they already have a payment in progress that we thought was failed?
