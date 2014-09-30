@@ -57,7 +57,7 @@ define( 'EVENT_ESPRESSO_VERSION', espresso_version());
 define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
 define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
 define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
-define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3.2' );
+define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.33' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 
