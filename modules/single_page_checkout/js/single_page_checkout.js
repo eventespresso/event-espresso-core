@@ -746,7 +746,7 @@ jQuery(document).ready( function($) {
 				success: function( response ){
 //					SPCO.console_log_object( 'display_payment_method : response', response );
 					response.return_data.payment_method = payment_method;
-					SPCO.process_response( 'payment_method', response );
+					SPCO.process_response( 'payment_options', response );
 				},
 
 				error: function( response ) {
@@ -774,6 +774,12 @@ jQuery(document).ready( function($) {
 					// or reload recaptcha ?
 					SPCO.reload_recaptcha( response );
 				} else if ( typeof response.return_data !== 'undefined' ) {
+
+                    // and if any new validation rules were sent...
+                    if ( typeof response.return_data.validation_rules !== 'undefined' ) {
+                        // remove any previous js validation rules
+                        SPCO.remove_old_validation_rules();
+                    }
 					// process valid response data
 					if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
 						// get html for next reg step
@@ -791,11 +797,11 @@ jQuery(document).ready( function($) {
 						// plz_select_method_of_payment_prompt
 						SPCO.plz_select_method_of_payment_prompt( response );
 					}
-					// and if any new validation rules were sent...
-					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
-						// add new form's js validation rules to the mix
-						SPCO.set_new_validation_rules( next_step, response.return_data.validation_rules );
-					}
+                    // and if any new validation rules were sent...
+                    if ( typeof response.return_data.validation_rules !== 'undefined' ) {
+                        // add new form's js validation rules to the mix
+                        SPCO.set_new_validation_rules( next_step, response.return_data.validation_rules );
+                    }
 
 				} else if ( typeof response.errors !== 'undefined' ) {
 					// no response...
@@ -843,25 +849,30 @@ jQuery(document).ready( function($) {
 
 
 		/**
+		 * @function remove_old_validation_rules
+		 */
+        remove_old_validation_rules : function() {
+			EEFV.remove_rules();
+		},
+
+
+
+		/**
 		 * @function set_new_validation_rules
 		 * @param  {string} next_step
 		 * @param  {object} validation_rules
 		 */
 		set_new_validation_rules : function( next_step, validation_rules ) {
 			//SPCO.console_log( 'set_new_validation_rules : next_step', next_step, true );
-			// reset previous form validation rules
-			EEFV.reset_validation_rules();
 			// pass new rules for setup
-			EEFV.setup_validation_rules( validation_rules.form_data );
-			EEFV.apply_rules();
-            EEFV.add_url_validator();
+			EEFV.initialize( validation_rules.form_data );
 			// the form id for the current step
 			var form_id = 'ee-spco-' + next_step + '-reg-step-form';
+            //SPCO.console_log( 'set_new_validation_rules : form_id', form_id, false );
 			if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-				//SPCO.console_log( 'set_new_validation_rules : form_id', form_id, false );
 				SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 				SPCO.set_validation_defaults();
-				SPCO.current_form_to_validate.resetForm();
+                SPCO.current_form_to_validate.resetForm();
 			}
 			//SPCO.console_log_object( 'get_validation_rules : EEFV.validation_rules_per_html_form ', EEFV.validation_rules_per_html_form, 0 );
 			//SPCO.console_log_object( 'get_validation_rules : EEFV.form_validators ', EEFV.form_validators, 0 );
