@@ -24,7 +24,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->go_to('http://localhost/');
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
-		$billing_form = $pm->type_obj()->billing_form();
+		$billing_form = $pm->type_obj()->billing_form( $transaction );
 		$billing_form->receive_form_submission( array(
 			'status'=>  EEM_Payment::status_id_approved,
 			'credit_card' => '4111 1111 1111 1111',
@@ -64,7 +64,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	public function test_process_payment__onsite__declined(){
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
-		$billing_form = $pm->type_obj()->billing_form();
+		$billing_form = $pm->type_obj()->billing_form( $transaction );
 		$billing_form->receive_form_submission( array(
 			'status'=>  EEM_Payment::status_id_declined,
 			'credit_card' => '4111 1111 1111 1111',

@@ -234,6 +234,14 @@ abstract class EE_PMT_Base{
 		if( ! $this->_billing_form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
+		//if we know who the attendee is, and this is a billing form
+		//that uses attendee info, populate it
+		if( $this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
+				$transaction instanceof EE_Transaction &&
+				$transaction->primary_registration() instanceof EE_Registration &&
+				$transaction->primary_registration()->attendee() instanceof EE_Attendee ){
+			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
+		}
 		return $this->_billing_form;
 	}
 
