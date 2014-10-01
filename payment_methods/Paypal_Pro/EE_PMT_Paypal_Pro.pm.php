@@ -80,7 +80,6 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		$form_args = array(
 			'name'=> $form_name,
 			'html_id'=> 'ee-Paypal_Pro-billing-form',
-			'html_class'=> 'ee-billing-form',
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'credit_card_type'=>new EE_Select_Input( array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types ))),//the options are set dynamically
