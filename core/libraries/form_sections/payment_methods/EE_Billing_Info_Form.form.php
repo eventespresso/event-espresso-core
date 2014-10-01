@@ -35,10 +35,6 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 
 
 
-
-
-
-
 	/**
 	 * Sets the payment method for this billing form
 	 * @param EE_Payment_Method $payment_method
@@ -59,6 +55,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	}
 
 
+
 	/**
 	 * payment_fields_autofilled_notice_html
 	 * @return string
@@ -72,6 +69,15 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 				'important-notice'
 			)
 		);
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function html_class(){
+		return ! empty( $this->_html_class ) ? $this->_html_class . ' ee-billing-form' : 'ee-billing-form';
 	}
 
 
