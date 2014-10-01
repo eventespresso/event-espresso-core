@@ -47,11 +47,14 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$org_config = EE_Registry::instance()->CFG->organization;
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+
 		$this->_payment_settings['active'] = '';
 
 		//dynamic info for templates
 		$this->_payment_settings['invoice_logo_url'] = '';
-		$this->_payment_settings['template_payment_instructions'] = __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.', 'event_espresso');
+		$this->_payment_settings['template_payment_instructions'] = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 		$this->_payment_settings['template_invoice_company_name'] = '';
 		$this->_payment_settings['template_invoice_address'] = '';
 
