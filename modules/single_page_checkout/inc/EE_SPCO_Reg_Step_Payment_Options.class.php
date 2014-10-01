@@ -511,7 +511,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				sprintf( __( 'You have selected "%s" as your method of payment', 'event_espresso' ), $this->checkout->payment_method->name() )
 			)
 		);
-		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
+		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, TRUE );
 		$billing_info = $payment_method_billing_info instanceof EE_Form_Section_Proper ? $payment_method_billing_info->get_html() : '';
 		$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $billing_info ));
 		return TRUE;
@@ -541,6 +541,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $setup_validation_rules && EE_Registry::instance()->REQ->ajax ) {
 				// then we need to setup the validation rules for this payment method
 				$payment_method->type_obj()->billing_form()->localize_validation_rules();
+				// and add them to the JSON response
+				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
 			}
 			return $payment_method->type_obj()->billing_form();
 		}
