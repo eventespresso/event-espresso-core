@@ -112,8 +112,14 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'pdf_stylesheet','pdf_logo_image',
 					'page_title','page_payable_to','page_address_payable','instructions'),
 			));
-		$form->add_subsections(array('header1'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_display.template.php')),$pdf_stylesheet_input_name);
-		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$page_title_input_name);
+		$form->add_subsections(
+			array( 'header1' => new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_display.template.php' )),
+			$pdf_stylesheet_input_name
+		);
+		$form->add_subsections(
+			array( 'header2'=>new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php' )),
+			$page_title_input_name
+		);
 		return $form;
 	}
 
@@ -127,37 +133,39 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	public function help_tabs_config(){
 		return array(
 			$this->get_help_tab_name() => array(
-						'title' => __('Invoice Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_invoice'
-						),
+				'title' => __('Invoice Settings', 'event_espresso'),
+				'filename' => 'payment_methods_overview_invoice'
+			),
 		);
 	}
 
 
-
- /**
-	 * For adding any html output ab ove the payment overview.
+	/**
+	 * For adding any html output above the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
 	 * Other gateways may want to override this, such as offline gateways.
+	 *
+	 * @param \EE_Payment $payment
 	 * @return string
 	 */
-	public function payment_overview_content(EE_Payment $payment){
+	public function payment_overview_content( EE_Payment $payment ){
 		EE_Registry::instance()->load_helper('Template');
-		$extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
-		$transaction = $payment->transaction();
-		$template_vars = array_merge(
-						array(
-							'payment_method'=>$this->_pm_instance,
-							'payment'=>$payment,
-							'page_title'=>'',
-							'instructions'=>'',
-							'page_payable_to'=>'',
-							'page_address_payable'=>'',
-							),
-						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
-				$template_vars,
-				true);
+		return EEH_Template::display_template(
+			$this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
+			array_merge(
+				array(
+					'payment_method'			=> $this->_pm_instance,
+					'payment'						=> $payment,
+					'page_title'						=> '',
+					'instructions'					=> '',
+					'page_payable_to'			=> '',
+					'page_address_payable'	=> '',
+					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'pdf' )
+				),
+				$this->_pm_instance->all_extra_meta_array()
+			),
+			TRUE
+		);
 	}
 
 
