@@ -26,21 +26,23 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 ?>
 <div class="event-display-boxes">
-	<?php if (isset($page_title)) { ?>
-
-		<?php
-		echo '<h4 id="invoice_title" class="payment_type_title section-heading">' . stripslashes_deep($page_title) . '</h4>';
-	}
-
-	?>
-	<p><a href="<?php echo $payment->transaction()->primary_registration()->invoice_url('download') ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
-			<?php _e('Download PDF Invoice', 'event_espresso'); ?>
-		</a></p>
 	<?php
-	if (isset($instructions)) {
+	if ( ! empty( $page_title )) {
+		echo '<h4 id="invoice_title" class="payment_type_title section-heading">' . stripslashes_deep( $page_title ) . '</h4>';
+	}
+	if ( ! empty( $invoice_url )) {
+	?>
+	<p>
+		<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button" target="_blank">
+			<?php _e('Download PDF Invoice', 'event_espresso'); ?>
+		</a>
+	</p>
+	<?php
+	}
+	if ( ! empty( $instructions )) {
 		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($instructions) . '</p></div>';
 	}
-	if (isset($page_payable_to)) {
+	if ( ! empty( $page_payable_to )) {
 		?>
 		<p>
 			<span class="section-title"><?php _e('Payable to:', 'event_espresso'); ?></span>
@@ -49,7 +51,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		<?php
 	}
 
-	if (isset($payment_address)) {
+	if ( ! empty( $payment_address )) {
 		?>
 		<div class="address-block">
 			<?php echo wpautop(stripslashes_deep($page_address_payable)); ?>
