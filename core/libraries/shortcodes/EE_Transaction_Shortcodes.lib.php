@@ -46,6 +46,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
 			'[INVOICE_LOGO]' => __('This returns the logo uploaded via the invoice settings page wrapped in img_tags and with a "logo screen" classes. The image size is also set in the img tags automatically to match the uploaded logo.', 'event_espresso'),
+			'[INVOICE_COMPANY_NAME]' => __('This will parse to either: the value of the "Company Name" field in the invoice payment method settings; if that is blank, then the value of the Company Name in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso'),
+			'[INVOICE_COMPANY_ADDRESS]' => __('This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_PAYMENT_INSTRUCTIONS]' => __('This will parse to the value of the "Payment Instructions" field found on the Invoice payment methods settings page', 'event_espresso' ),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
 			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
@@ -100,6 +103,18 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			case '[INVOICE_LOGO]' :
 				return $this->_get_invoice_logo( TRUE );
+				break;
+
+			case '[INVOICE_COMPANY_NAME]' :
+				return $this->_get_invoice_company_name();
+				break;
+
+			case '[INVOICE_COMPANY_ADDRESS]' :
+				return $this->_get_invoice_company_address();
+				break;
+
+			case '[INVOICE_PAYMENT_INSTRUCTIONS]' :
+				return $this->_get_invoice_payment_instructions();
 				break;
 
 
@@ -251,6 +266,73 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		//image tags have been requested.
 		$image_size = getimagesize( $image_size );
 		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+	}
+
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice company name shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_company_name() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$company_name = ! empty( $invoice_settings['template_invoice_company_name'] ) ? $invoice_settings['template_invoice_company_name'] : '';
+		$company_name = empty( $company_name ) ? EE_Registry::instance()->CFG->organization->name : $company_name;
+		return $company_name;
+	}
+
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice company address shortcode.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_company_address() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$company_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
+		if ( empty( $company_address ) ) {
+			$organization = EE_Registry::instance()->CFG->organization;
+			$company_address = $organization->address_1 . '<br>';
+			$company_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
+			$company_address .= $organization->city . '<br>';
+
+			//state
+			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
+			$company_address .= $state instanceof EE_State ? $state->name()  : '';
+
+			//Country
+			$company_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
+			$company_address .= ! empty( $organization->zip ) ? $organization->zip : '';
+		}
+		return $company_address;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payment instructions shortcode.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payment_instructions() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
 	}
 
 
