@@ -57,6 +57,8 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['template_payment_instructions'] = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 		$this->_payment_settings['template_invoice_company_name'] = '';
 		$this->_payment_settings['template_invoice_address'] = '';
+		$this->_payment_settings['template_invoice_tax_number'] = '';
+		$this->_payment_settings['template_invoice_email'] = '';
 
 
 		//show on thank you page
@@ -75,6 +77,8 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['template_payment_instructions'] = isset( $_POST['template_payment_instructions'] ) ? trim(strip_tags($_POST['template_payment_instructions'] ) ) : '';
 		$this->_payment_settings['template_invoice_company_name'] = isset( $_POST['template_invoice_company_name'] ) ? trim(strip_tags($_POST['template_invoice_company_name'] ) ) : '';
 		$this->_payment_settings['template_invoice_address'] = isset( $_POST['template_invoice_address'] ) ? trim(strip_tags($_POST['template_invoice_address'] ) ) : '';
+		$this->_payment_settings['template_invoice_email'] = isset( $_POST['template_invoice_email'] ) ? trim(strip_tags($_POST['template_invoice_email'] ) ) : '';
+		$this->_payment_settings['template_invoice_tax_number'] = isset( $_POST['template_invoice_tax_number'] ) ? trim(strip_tags($_POST['template_invoice_tax_number'] ) ) : '';
 
 		//info shown on thankyou page
 		$this->_payment_settings['page_instructions'] = trim(strip_tags($_POST['page_instructions']));
@@ -101,6 +105,26 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					<td>
 						<input type="text" name="template_invoice_company_name" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_company_name'])); ?>"><br>
 						<span class="description"><?php _e('The <code>[INVOICE_COMPANY_NAME]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the company name set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_invoice_email"><?php _e('Company Email:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="template_invoice_email" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_email'])); ?>"><br>
+						<span class="description"><?php _e('The <code>[INVOICE_COMPANY_EMAIL]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the company email set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_invoice_tax_number"><?php _e('Company Tax Number:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="template_invoice_tax_number" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_tax_number'])); ?>"><br>
+						<span class="description"><?php _e('The <code>[INVOICE_COMPANY_TAX_NUMBER_*]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the company tax number set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 

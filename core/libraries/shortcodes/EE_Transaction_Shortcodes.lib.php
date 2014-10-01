@@ -49,6 +49,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_COMPANY_NAME]' => __('This will parse to either: the value of the "Company Name" field in the invoice payment method settings; if that is blank, then the value of the Company Name in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso'),
 			'[INVOICE_COMPANY_ADDRESS]' => __('This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
 			'[INVOICE_PAYMENT_INSTRUCTIONS]' => __('This will parse to the value of the "Payment Instructions" field found on the Invoice payment methods settings page', 'event_espresso' ),
+			'[INVOICE_COMPANY_EMAIL]' => __('This will parse to either: the value of the "Company Email" field in the invoice payment method settings; if that is blank, then the value of the Company Email in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_COMPANY_TAX_NUMBER_*]' => __('This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: <code>[INVOICE_COMPANY_TAX_NUMBER_* prefix="GST:"]</code> and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
 			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
@@ -115,6 +117,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			case '[INVOICE_PAYMENT_INSTRUCTIONS]' :
 				return $this->_get_invoice_payment_instructions();
+				break;
+
+			case '[INVOICE_COMPANY_EMAIL]' :
+				return $this->_get_invoice_company_email();
 				break;
 
 
@@ -189,6 +195,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
 			return $this->_get_custom_total_oweing( $shortcode );
+		}
+
+		if ( strpos( $shortcode, '[INVOICE_COMPANY_TAX_NUMBER_*' ) !== FALSE ) {
+			return $this->_get_invoice_company_tax_number( $shortcode );
 		}
 
 		return '';
@@ -285,6 +295,54 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$company_name = ! empty( $invoice_settings['template_invoice_company_name'] ) ? $invoice_settings['template_invoice_company_name'] : '';
 		$company_name = empty( $company_name ) ? EE_Registry::instance()->CFG->organization->name : $company_name;
 		return $company_name;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice company email shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_company_email() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$company_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
+		$company_email = empty( $company_email ) ? EE_Registry::instance()->CFG->organization->email : $company_email;
+		return $company_email;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice company tax number shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $shortcode
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_company_tax_number( $shortcode ) {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$company_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
+		$company_tax_number = empty( $company_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $company_tax_number;
+
+		if ( empty( $company_tax_number ) ) {
+			return '';
+		}
+
+		//any attributes?
+		$attrs = $this->_get_shortcode_attrs( $shortcode );
+
+		//prefix?
+		$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __( 'VAT/Tax Number: ', 'event_espresso' );
+		return $prefix . $company_tax_number;
 	}
 
 
