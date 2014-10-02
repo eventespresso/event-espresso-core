@@ -106,6 +106,10 @@ class EE_SPCO_JSON_Response {
 		if ( $this->success() ) {
 			$JSON_response['success'] = $this->success();
 		}
+		// set redirect_url, IF it exists
+		if ( $this->redirect_url() ) {
+			$JSON_response['redirect_url'] = $this->redirect_url();
+		}
 		// grab generic return data
 		$return_data = $this->return_data();
 		// add billing form validation rules
@@ -123,10 +127,6 @@ class EE_SPCO_JSON_Response {
 		// set "plz_select_method_of_payment" message, IF it exists
 		if ( $this->plz_select_method_of_payment() ) {
 			$return_data['plz_select_method_of_payment'] = $this->plz_select_method_of_payment();
-		}
-		// set redirect_url, IF it exists
-		if ( $this->redirect_url() ) {
-			$return_data['redirect_url'] = $this->redirect_url();
 		}
 		// set redirect_form, IF it exists
 		if ( $this->redirect_form() ) {
