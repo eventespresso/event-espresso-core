@@ -457,6 +457,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _initialize_reg_steps() {
 		foreach ( $this->checkout->reg_steps as $reg_step ) {
 			$reg_step->initialize_reg_step();
+			// i18n
+			$reg_step->translate_js_strings();
 		}
 	}
 
@@ -524,7 +526,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// good registrant, you get to proceed
 						if ( $this->checkout->current_step->success_message() != '' ) {
-							EE_Error::add_success( $this->checkout->current_step->success_message() );
+//							if ( $this->checkout->next_step->is_final_step() ) {
+//
+//							}
+							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
 						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();
@@ -797,7 +802,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_enqueue_style( 'single_page_checkout' );
 		// i18n
 		$this->translate_js_strings();
-		$this->checkout->current_step->translate_js_strings();
 		// load JS
 		wp_enqueue_script( 'underscore' );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
