@@ -1436,7 +1436,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// verify object
 				if ( $registration instanceof EE_Registration ) {
-					// if event is sold out but this is NOT a revisit
+					// if the event's default_registration_status is set to "Approved", then make sure it's set as such
+					if( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
+						$registration->set_status( EEM_Registration::status_id_approved );
+					}
+					// if this is a revisit OR first visit and event is NOT sold out
 					if ( $this->_revisit  || ( ! $this->_revisit && ! ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )))) {
 						// EITHER a) first time thru SPCO so process ALL registrations
 						// OR b) primary registrant is editing info, so process ALL registrations
