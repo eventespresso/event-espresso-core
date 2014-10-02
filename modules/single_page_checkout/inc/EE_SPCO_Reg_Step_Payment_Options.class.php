@@ -54,16 +54,27 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->_template = SPCO_TEMPLATES_PATH . 'payment_options_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
+		$this->set_instructions( __('Please select a method of payment and provide any necessary billing information before proceeding.', 'event_espresso'));
 	}
 
 
 
+	/**
+	 * translate_js_strings
+	 * @return void
+	 */
 	public function translate_js_strings() {
 		EE_Registry::$i18n_js_strings['no_payment_method'] = __( 'Please select a method of payment in order to continue.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['invalid_payment_method'] = __( 'A valid method of payment could not be determined. Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['forwarding_to_offsite'] = __( 'Forwarding to Secure Payment Provider.', 'event_espresso' );
 	}
 
+
+
+	/**
+	 * enqueue_styles_and_scripts
+	 * @return void
+	 */
 	public function enqueue_styles_and_scripts() {
 
 	}
@@ -71,6 +82,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
+	 * initialize_reg_step
 	 * @return void
 	 */
 	public function initialize_reg_step() {
@@ -376,7 +388,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function _setup_payment_options() {
 		// switch up header depending on number of available payment methods
 		$payment_method_header = count( $this->checkout->available_payment_methods ) > 1
-			? apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Available Methods of Payment', 'event_espresso' ))
+			? apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Please Select Your Method of Payment', 'event_espresso' ))
 			: apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Method of Payment', 'event_espresso' ));
 		$available_payment_methods = array(
 			// display the "Payment Method" header
@@ -508,10 +520,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EE_Error::add_success(
 			apply_filters(
 				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-				sprintf( __( 'You have selected "%s" as your method of payment', 'event_espresso' ), $this->checkout->payment_method->name() )
+				sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
 			)
 		);
-		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
+		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, TRUE );
 		$billing_info = $payment_method_billing_info instanceof EE_Form_Section_Proper ? $payment_method_billing_info->get_html() : '';
 		$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $billing_info ));
 		return TRUE;
@@ -533,7 +545,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				EE_Error::add_success(
 					apply_filters(
 						'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-						sprintf( __( 'You have selected "%s" as your method of payment', 'event_espresso' ), $payment_method->name() )
+						sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $payment_method->name() )
 					)
 				);
 			}
@@ -541,6 +553,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $setup_validation_rules && EE_Registry::instance()->REQ->ajax ) {
 				// then we need to setup the validation rules for this payment method
 				$payment_method->type_obj()->billing_form()->localize_validation_rules();
+				// and add them to the JSON response
+				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
 			}
 			return $payment_method->type_obj()->billing_form();
 		}
@@ -755,6 +769,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( $this->checkout->billing_form->is_valid() ) {
 					return TRUE;
 				}
+//				printr($this->checkout->billing_form->get_validation_errors(), '$this->checkout->billing_form->get_validation_errors()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
 				EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 				EE_Error::add_error( __( 'The billing form was not submitted or something prevented it\'s submission.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

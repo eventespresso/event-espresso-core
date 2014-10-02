@@ -38,6 +38,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
+		$this->set_instructions( __('Please answer the following registration questions before proceeding.', 'event_espresso'));
 	}
 
 
@@ -588,7 +589,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 //		 printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
-		$this->_set_success_message( __('Attendee information has been successfully submitted.', 'event_espresso' ));
+		$this->_set_success_message( __('The Attendee Information Step has been successfully completed.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );

@@ -30,14 +30,28 @@ jQuery(document).ready(function($){
 		/**
 		 *	@function initialize
 		 */
-		initialize : function() {
+		initialize : function( form_data ) {
 //			console.log( ' ' );
 //			console.log( JSON.stringify( 'EEFV.initialize > ee_form_section_vars.form_data: ', null, 4 ));
 //			console.log( ee_form_section_vars.form_data );
-			EEFV.setup_validation_rules( ee_form_section_vars.form_data );
+            // reset previous form validation rules
+            EEFV.reset_validation_rules();
+			EEFV.setup_validation_rules( form_data );
 			EEFV.apply_rules();
 			EEFV.add_url_validator();
+			//console.log( EEFV.validation_rules_per_html_form );
+			//console.log( EEFV.form_validators );
 		},
+
+
+
+        /**
+         *	@function reset_validation_rules
+         */
+        reset_validation_rules : function() {
+            EEFV.validation_rules_per_html_form = {};
+            EEFV.form_validators = {};
+        },
 
 
 
@@ -90,19 +104,62 @@ jQuery(document).ready(function($){
 //			console.log( JSON.stringify( 'EEFV.apply_rules', null, 4 ));
 //			console.log( JSON.stringify( 'EEFV.apply_rules > EEFV.validation_rules_per_html_form: ', null, 4 ));
 //			console.log( EEFV.validation_rules_per_html_form );
+
 			//now apply those validation rules to each html form, and show the server-side errors properly
-			$.each( EEFV.validation_rules_per_html_form, function( index, validation_rules_per_form ){
-//				console.log( JSON.stringify( 'EEFV.apply_rules > index: ' + index, null, 4 ));
-				EEFV.form_validators[ index ] = $( '#'+index ).validate({
-					rules : validation_rules_per_form.rules
-				});
-				// console.log( JSON.stringify( 'validator: ' + validator, null, 4 ));
-				if ( typeof EEFV.form_validators[ index ] !== 'undefined' ) {
-					EEFV.form_validators[ index ].showErrors( validation_rules_per_form.errors );
-				}
+			$.each( EEFV.validation_rules_per_html_form, function( form_id, form_validation ){
+				//console.log( JSON.stringify( 'EEFV.apply_rules > form_id: ' + form_id, null, 4 ));
+                if ( typeof form_validation.rules !== 'undefined' ) {
+
+                    EEFV.form_validators[ form_id ] = $( '#'+form_id ).validate();
+                    //console.log( JSON.stringify( 'EEFV.apply_rules > form_validation.errors: ', null, 4 ));
+                    //console.log( form_validation.errors );
+                    if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
+                        EEFV.form_validators[ form_id ].showErrors( form_validation.errors );
+                    }
+
+                    $.each( form_validation.rules, function ( input_name, validation_rules ) {
+                        //console.log(JSON.stringify( 'apply_rules > EEFV.form_validators > input_name: ' + input_name, null, 4));
+                        //console.log(JSON.stringify( 'apply_rules > EEFV.form_validators > validation_rules: ', null, 4));
+                        //console.log(validation_rules );
+                        var form_input = $("input[name='" + input_name + "']");
+                        if ( ! form_input.length ) {
+                            form_input = $("select[name='" + input_name + "']");
+                        }
+                        if ( form_input.length ) {
+                            form_input.rules( 'add', validation_rules );
+                        }
+                    });
+
+                }
 			});
 //			console.log( JSON.stringify( 'apply_rules > EEFV.form_validators: ', null, 4 ));
 //			console.log( EEFV.form_validators );
+		},
+
+
+
+		/**
+		 *	@function remove_rules
+		 */
+		remove_rules : function() {
+			// remove any previously applied validation rules for each html form
+			$.each( EEFV.form_validators, function( form_id ){
+				if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' && typeof EEFV.form_validators[ form_id ].settings !== 'undefined' ) {
+                    //console.log( JSON.stringify( 'remove_rules > EEFV.form_validators > form_id: ' + form_id, null, 4 ));
+                    $.each( EEFV.form_validators[ form_id ].settings.rules, function( input_name, validation_rules ){
+                        var form_input = $("input[name='" + input_name + "']");
+                        if ( ! form_input.length ) {
+                            form_input = $("select[name='" + input_name + "']");
+                        }
+                        if ( form_input.length ) {
+                            form_input.rules('remove');
+                            //console.log( JSON.stringify( 'remove_rules > EEFV.form_validators > input_name: ' + input_name, null, 4 ));
+                        }
+                    });
+				}
+			});
+			//console.log( JSON.stringify( 'remove_rules > EEFV.form_validators: ', null, 4 ));
+			//console.log( EEFV.form_validators );
 		},
 
 
@@ -123,16 +180,6 @@ jQuery(document).ready(function($){
 				},
 				ee_form_section_vars.localized_error_messages.validUrl
 			);
-		},
-
-
-
-		/**
-		 *	@function reset_validation_rules
-		 */
-		reset_validation_rules : function() {
-			EEFV.validation_rules_per_html_form = {};
-			EEFV.form_validators = {};
 		},
 
 
@@ -161,7 +208,7 @@ jQuery(document).ready(function($){
 	/**
 	 *	run EEFV
 	 */
-	EEFV.initialize();
+	EEFV.initialize( ee_form_section_vars.form_data );
 
 });
 

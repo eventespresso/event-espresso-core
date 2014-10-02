@@ -70,6 +70,13 @@ abstract class EE_SPCO_Reg_Step {
 	private $_success_message = NULL;
 
 	/**
+	 * 	$_instructions - a brief description of how to complete the reg step. Usually displayed in conjunction with the previous step's success message.
+	 * 	@access private
+	 *	@var string $_instructions
+	 */
+	private $_instructions = NULL;
+
+	/**
 	 * 	$_valid_data - the normalized and validated data for this step
 	 * 	@access public
 	 *	@var array $_valid_data
@@ -201,7 +208,6 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function success_message() {
-//		return ! empty( $this->_success_message ) ? $this->_success_message : sprintf( __('%s successfully submitted', 'event_espresso'), $this->_name );
 		return $this->_success_message;
 	}
 
@@ -223,6 +229,24 @@ abstract class EE_SPCO_Reg_Step {
 	 */
 	protected function _reset_success_message() {
 		$this->_success_message = '';
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function _instructions() {
+		return $this->_instructions;
+	}
+
+
+
+	/**
+	 * @param string $instructions
+	 */
+	public function set_instructions( $instructions ) {
+		$this->_instructions = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_instructions__instructions', $instructions, $this );
 	}
 
 
