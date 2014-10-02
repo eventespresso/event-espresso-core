@@ -95,6 +95,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$this->checkout->thank_you_page_url
 			);
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+			// set a hook point
+			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout );
 			return TRUE;
 		}
 		$this->checkout->redirect = FALSE;
