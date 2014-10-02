@@ -264,7 +264,7 @@
 	height: 13px;
 	padding: 0;
 	margin:0 .5em;
-	vertical-align: bottom;
+	vertical-align: middle;
 	*overflow: hidden;
 }
 .ee-radio-label-before,
@@ -359,9 +359,10 @@
 #ee-single-page-checkout-dv  .spco-payment-method-input-dv label {
 	display:inline;
 	float: left;
+    margin:0 38px 38px 0;
 }
 #ee-single-page-checkout-dv  .spco-payment-method-input-dv label + label {
-	margin-left: 38px;
+	/*margin-left: 38px;*/
 }
 
 .spco-payment-method-dv {
