@@ -799,10 +799,10 @@ class EEH_Activation {
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
 					('ESN', 'SENT', 'email', 0, NULL, 1),
-					('MSN', 'SENT', 'message_queue', 0, NULL, 0),
-					('MFL', 'FAIL', 'message_queue', 0, NULL, 1),
-					('MID', 'IDLE', 'message_queue', 0, NULL, 1),
-					('MRT', 'RETRY', 'message_queue', 0, NULL, 0);";
+					('MSN', 'SENT', 'message', 0, NULL, 0),
+					('MFL', 'FAIL', 'message', 0, NULL, 1),
+					('MID', 'IDLE', 'message', 0, NULL, 1),
+					('MRT', 'RETRY', 'message', 0, NULL, 0);";
 			$wpdb->query($SQL);
 
 		}
