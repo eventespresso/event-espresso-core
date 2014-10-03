@@ -411,29 +411,6 @@ class EE_Checkout {
 
 
 
-	/**
-	 * 	toggle_transaction_status
-	 * 	changes TXN status based on monies owing
-	 *
-	 * 	@access public
-	 * 	@return 	void
-	 */
-	public function toggle_transaction_status() {
-		// if TXN status has not been updated already due to a payment, and is still set as "failed"...
-		if ( $this->transaction->status_ID() == EEM_Transaction::failed_status_code ) {
-			//but monies are still owing...
-			if ( $this->transaction->total() > 0 ) {
-				// then update to incomplete
-				$this->transaction->set_status( EEM_Transaction::incomplete_status_code );
-			} else {
-				// or update to complete
-				$this->transaction->set_status( EEM_Transaction::complete_status_code );
-			}
-		}
-		$this->transaction->save();
-	}
-
-
 
 	/**
 	 * 	visit_allows_processing_of_this_registration
