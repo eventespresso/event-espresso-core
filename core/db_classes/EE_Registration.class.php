@@ -76,26 +76,30 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 *
 	 * @access        public
 	 * @param string $new_STS_ID
+	 * @return bool
 	 */
 	public function set_status( $new_STS_ID = '' ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
-		// if status has changed TO approved
-		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
-			// reserve a space by incrementing ticket and datetime sold values
-			$this->_reserve_registration_space();
-			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
-			// OR if status has changed FROM  approved
-		} else {
-			if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
+		// if status has changed
+		if ( $old_STS_ID != $new_STS_ID  ) {
+			// TO approved
+			if ( $new_STS_ID == EEM_Registration::status_id_approved ) {
+				// reserve a space by incrementing ticket and datetime sold values
+				$this->_reserve_registration_space();
+				do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
+			// OR FROM  approved
+			} else if ( $old_STS_ID == EEM_Registration::status_id_approved ) {
 				// release a space by decrementing ticket and datetime sold values
 				$this->_release_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
 			}
+			// update status
+			parent::set( 'STS_ID', $new_STS_ID );
+			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+			return TRUE;
 		}
-		// update status
-		parent::set( 'STS_ID', $new_STS_ID );
-		do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+		return FALSE;
 	}
 
 
