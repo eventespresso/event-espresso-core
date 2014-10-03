@@ -41,11 +41,12 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * Those are stored individually on each subsection.
 	 * @var EE_Validation_Error[]
 	 */
-	protected $_validation_errors;
+	protected $_validation_errors = array();
 
 	/**
 	 * Errors on this form section. Note: EE_Form_Section_Proper
 	 * has another function for getting all errors in this form section and subsections
+	 * called get_validation_errors_accumulated
 	 * @return EE_Validation_Error[]
 	 */
 	public function get_validation_errors(){

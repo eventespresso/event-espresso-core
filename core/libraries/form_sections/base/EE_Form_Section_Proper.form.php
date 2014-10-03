@@ -498,7 +498,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	protected function _normalize($req_data) {
 		$this->_received_submission = TRUE;
 		foreach($this->get_validatable_subsections() as $subsection){
-			$subsection->_normalize($req_data);
+			try{
+				$subsection->_normalize($req_data);
+			}catch( EE_Validation_Error $e ){
+				$subsection->add_validation_error( $e );
+			}
 		}
 	}
 
@@ -803,7 +807,27 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		return FALSE;
 	}
 
-
+	/**
+	 * Gets validation errors for this form section and subsections
+	 *
+	 * Similar to EE_Form_Section_Validatable::get_validation_errors() except this
+	 * gets the validation errors for ALL subsection
+	 * @return EE_Validation_Error[]
+	 */
+	public function get_validation_errors_accumulated() {
+		$validation_errors = $this->get_validation_errors();
+		foreach($this->get_validatable_subsections() as $subsection ) {
+			if( $subsection instanceof EE_Form_Section_Proper ) {
+				$validation_errors_on_this_subsection = $subsection->get_validation_errors_accumulated();
+			} else {
+				$validation_errors_on_this_subsection =  $subsection->get_validation_errors();
+			}
+			if( $validation_errors_on_this_subsection ){
+				$validation_errors = array_merge( $validation_errors, $validation_errors_on_this_subsection );
+			}
+		}
+		return $validation_errors;
+	}
 
 }
 
