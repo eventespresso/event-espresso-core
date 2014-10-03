@@ -207,6 +207,19 @@ class EEM_State extends EEM_Base {
 
 	}
 
+	/**
+	 * Gets the state's name by its ID
+	 * @param string $state_ID
+	 * @return string
+	 */
+	public function get_state_name_by_ID( $state_ID ){
+		$names = $this->get_col( array( array( 'STA_ID' => $state_ID ), 'limit' => 1), 'STA_name' );
+		if( is_array( $names ) && ! empty( $names ) ){
+			return reset( $names );
+		}else{
+			return '';
+		}
+	}
 
 
 }

@@ -8,7 +8,7 @@
  * @subpackage 	includes/classes/EE_Registration.class.php
  * @author 				Mike Nelson, Brent Christensen
  */
-class EE_Registration extends EE_Soft_Delete_Base_Class {
+class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration {
 
 	/**
 	 *

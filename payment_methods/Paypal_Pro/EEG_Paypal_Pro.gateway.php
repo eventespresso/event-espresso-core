@@ -190,7 +190,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			// Required.  Name of City.
 			'city' => $billing_info['city'],
 			// Required. Name of State or Province.
-			'state' => substr($billing_info['state'],0,40),
+			'state' => substr( $billing_info['state'], 0, 40 ),
 			// Required.  Country code.
 			'countrycode' => $billing_info['country'],
 			// Required.  Postal code of payer.

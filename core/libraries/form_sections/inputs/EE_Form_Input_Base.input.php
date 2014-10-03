@@ -537,6 +537,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	function normalized_value(){
 		return $this->_normalized_value;
 	}
+
+	/**
+	 * Returns the normalized value is a presentable way. By default this is just
+	 * the normalized value by itself, but it can be overridden for when that's not
+	 * the best thing to display
+	 * @return string
+	 */
+	function pretty_value(){
+		return $this->_normalized_value;
+	}
 	/**
 	 * When generating the JS for the jquery validation rules like<br>
 	 * <code>$( "#myform" ).validate({

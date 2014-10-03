@@ -1700,6 +1700,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
+		if( ! $query_params ){
+			$query_params = array();
+		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
 		if(array_key_exists(0,$query_params)){
 			$where_query_params = $query_params[0];

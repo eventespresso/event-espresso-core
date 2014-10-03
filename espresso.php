@@ -447,6 +447,30 @@ interface EEI_Registration{
 	 * @return string
 	 */
 	function reg_code();
+
+	/**
+	 * Gets the attendee corresponding to this registration
+	 * @return EEI_Attendee
+	 */
+	function attendee();
+}
+/**
+ * Contact information for a person who registers for an event
+ */
+interface EEI_Attendee {
+	function email();
+	function fname();
+	function lname();
+	function address();
+	function address2();
+	function city();
+	function state_name();
+	function country_name();
+	/**
+	 * @return country's ISO code
+	 */
+	function country_ID();
+	function phone();
 }
 interface EEI_Payment_Method{
 

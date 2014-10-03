@@ -93,10 +93,8 @@ abstract class EE_PMT_Base{
 		$this->_set_file_folder();
 		$this->_set_file_url();
 		if($this->_gateway){
-			EE_Registry::instance()->load_model( 'Payment' );
-			$this->_gateway->set_payment_model(EEM_Payment::instance());
-			EE_Registry::instance()->load_model( 'Change_Log' );
-			$this->_gateway->set_payment_log(EEM_Change_Log::instance());
+			$this->_gateway->set_payment_model( EEM_Payment::instance() );
+			$this->_gateway->set_payment_log( EEM_Change_Log::instance() );
 			EE_Registry::instance()->load_helper( 'Template' );
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			EE_Registry::instance()->load_helper( 'Line_Item' );
@@ -321,11 +319,7 @@ abstract class EE_PMT_Base{
 			//make sure the payment has been saved to show we started it, and so it has an ID
 			//should the gateway try to log it
 			$payment->save();
-			if($billing_info instanceof EE_Form_Section_Proper ){
-				$billing_values = $billing_info->input_values();
-			}else{
-				$billing_values = NULL;
-			}
+			$billing_values = $this->_get_billing_values_from_form( $billing_info );
 			if( $this->_gateway instanceof EE_Offsite_Gateway ){
 				$payment = $this->_gateway->set_redirection_info(
 					$payment,
@@ -362,6 +356,21 @@ abstract class EE_PMT_Base{
 			$this->_save_billing_info_to_attendee( $billing_info, $transaction );
 		}
 		return $payment;
+	}
+
+	/**
+	 * Gets the values we want to pass onto the gateway. Normally these
+	 * are just the 'pretty' values, but there may be times the data may need
+	 * a  little massaging
+	 * @param EE_Billing_Info_Form $billing_form
+	 * @return array
+	 */
+	protected function _get_billing_values_from_form( $billing_form ){
+		if($billing_form instanceof EE_Form_Section_Proper ){
+			return $billing_form->input_pretty_values();
+		}else{
+			return NULL;
+		}
 	}
 
 

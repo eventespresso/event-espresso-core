@@ -216,6 +216,27 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		return $size;
 	}
 
+	/**
+	 * Returns the pretty value for the normalized value
+	 * @return string
+	 */
+	function pretty_value(){
+		$options = $this->flat_options();
+		$unnormalized_value_choices = $this->get_normalization_strategy()->unnormalize( $this->_normalized_value );
+		if( ! $this->_multiple_selections ){
+			$unnormalized_value_choices = array( $unnormalized_value_choices );
+		}
+		$pretty_strings = array();
+		foreach( $unnormalized_value_choices as $unnormalized_value_choice ){
+			if( isset( $options[ $unnormalized_value_choice ] ) ){
+				$pretty_strings[] =  $options[ $unnormalized_value_choice ];
+			}else{
+				$pretty_strings[] = $this->normalized_value();
+			}
+		}
+		return implode(", ", $pretty_strings );
+	}
+
 
 
 }

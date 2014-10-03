@@ -602,6 +602,21 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		return $input_values;
 	}
 
+	/**
+	 * Similar to EE_Form_Section_Proper::input_values(), except this returns the 'display_value'
+	 * of each input. On some inputs (especially radio boxes or checkboxes), the value stored
+	 * is not necessarily the value we want to display to users. This creates an array
+	 * wher ekeys are the input names, and values are their display values
+	 * @return array
+	 */
+	public function input_pretty_values(){
+		$input_values = array();
+		foreach($this->inputs() as $name => $input_obj){
+			$input_values[$name] = $input_obj->pretty_value();
+		}
+		return $input_values;
+	}
+
 
 
 	/**
