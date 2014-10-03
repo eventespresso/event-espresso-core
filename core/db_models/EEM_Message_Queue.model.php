@@ -33,9 +33,22 @@ class EEM_Message_Queue extends EEM_Base {
 	const priority_medium = 1;
 	const priority_low = 2;
 
+	/**
+	 * indicates this message was sent at the time modified
+	 */
 	const status_sent = 'MSN';
+	/**
+	 * indicates this message is waiting to be sent
+	 */
 	const status_idle = 'MID';
+	/**
+	 * indicates an attempt was a made to send this message
+	 * at the scheduled time, but it failed at the time modified
+	 */
 	const status_failed = 'MFL';
+	/**
+	 * indicates the message was successfully resent at the time modified
+	 */
 	const status_retry = 'MRT';
 
 
@@ -131,7 +144,18 @@ class EEM_Message_Queue extends EEM_Base {
 	 */
 	public function message_sent( $attendee, $message_type ){
 		$attendee_ID = EEM_Attendee::instance()->ensure_is_ID( $attendee );
-		return $this->exists( array( array( 'Attendee.ATT_ID' => $attendee_ID, 'MSQ_message_type' => $message_type) ) );
+		return $this->exists( array( array(
+			'Attendee.ATT_ID' => $attendee_ID,
+			'MSQ_message_type' => $message_type,
+			'STS_ID' => array( 'IN', $this->stati_indicating_sent() ) ) ) );
+	}
+
+	/**
+	 * Returns stati that indicate the message HAS been sent
+	 * @return array of strings for possible stati
+	 */
+	public function stati_indicating_sent(){
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_sent', array( self::status_sent, self::status_retry ) );
 	}
 
 }
