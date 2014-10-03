@@ -13,6 +13,22 @@
 
 class EE_Registration_Processor {
 
+	/**
+	 * @access private
+	 * @type $_registration EE_Registration
+	 */
+	private $_registration = NULL;
+
+
+
+	/**
+	 * @param \EE_Registration $registration
+	 * @return EE_Registration_Processor
+	 */
+	function __construct( EE_Registration $registration ) {
+		$this->_registration = $registration;
+	}
+
 
 
 	/**
@@ -46,6 +62,27 @@ class EE_Registration_Processor {
 		}
 		return array( 'new_reg' => $new_reg, 'to_approved' => $update_reg );
 	}
+
+
+
+	/**
+	 * generates reg code
+	 * @return boolean
+	 */
+	private function _generate_new_reg_code() {
+		// generate a reg code ?
+		if ( ! $this->reg_code() ) {
+			// figure out where to start parsing the reg code
+			$chars = strpos( $this->reg_url_link(), '-' ) + 4;
+			$new_reg_code = array( $this->transaction_ID(), $this->ticket_ID(), substr( $this->reg_url_link(), 0, $chars ) . substr( $this->reg_url_link(), - 3 ));
+			$new_reg_code = implode( '-', $new_reg_code );
+			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );
+			$this->set_reg_code( $new_reg_code );
+			return TRUE;
+		}
+		return FALSE;
+	}
+
 
 
 }
