@@ -14,6 +14,27 @@
 abstract class EE_SPCO_Reg_Step {
 
 	/**
+	 * 	$_completed - TRUE if this step has fully completed it's duties
+	 * 	@access protected
+	 *	@type bool $_completed
+	 */
+	protected $_completed = FALSE;
+
+	/**
+	 * 	$_is_current_step - TRUE if this is the current step
+	 * 	@access protected
+	 *	@type bool $_is_current_step
+	 */
+	protected $_is_current_step = FALSE;
+
+	/**
+	 * 	$_order - when the reg step should be run relative to other steps
+	 * 	@access protected
+	 *	@type int $_template
+	 */
+	protected $_order = 0;
+
+	/**
 	 * 	$_slug - URL param for this step
 	 * 	@access protected
 	 *	@type string $_slug
@@ -33,20 +54,6 @@ abstract class EE_SPCO_Reg_Step {
 	 *	@type string $_slug
 	 */
 	protected $_submit_button_text = NULL;
-
-	/**
-	 * 	$_order - when the reg step should be run relative to other steps
-	 * 	@access protected
-	 *	@type int $_template
-	 */
-	protected $_order = NULL;
-
-	/**
-	 * 	$_is_current_step - TRUE if this is the current step
-	 * 	@access protected
-	 *	@type bool $_is_current_step
-	 */
-	protected $_is_current_step = FALSE;
 
 	/**
 	 * 	$_template - template name
@@ -128,6 +135,33 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	abstract public function update_reg_step();
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function completed() {
+		return $this->_completed;
+	}
+
+
+
+	/**
+	 * set_completed - toggles $_completed to TRUE
+	 */
+	public function set_completed() {
+		$this->_completed = TRUE;
+	}
+
+
+
+	/**
+	 * set_completed - toggles $_completed to FALSE
+	 */
+	public function set_not_completed() {
+		$this->_completed = FALSE;
+	}
 
 
 
