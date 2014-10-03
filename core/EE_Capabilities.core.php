@@ -494,6 +494,9 @@ final class EE_Capabilities extends EE_Base {
  */
 abstract class EE_Meta_Capability_Map {
 	public $meta_cap;
+	/**
+	 * @var EEM_Base
+	 */
 	protected $_model;
 	protected $_model_name;
 	public $published_cap = '';
@@ -511,13 +514,13 @@ abstract class EE_Meta_Capability_Map {
 	 * @param string $meta_cap     What meta capability is this mapping.
 	 * @param array  $map_values   array {
 	 * 		//array of values that MUST match a count of 4.  It's okay to send an empty string for capabilities that don't get mapped to.
-	 * 		@type param string A string representing the model name. Required.  String's
+	 * 		@type $map_values[0] string A string representing the model name. Required.  String's
 	 * 		      	    	       should always be used when Menu Maps are registered via the
 	 * 		      	    	       plugin API as models are not allowed to be instantiated when
 	 * 		      	    	       in maintenance mode 2 (migrations).
-	 * 		@type param string represents the capability used for published. Optional.
-	 * 		@type param string represents the capability used for "others". Optional.
-	 * 		@type param string represents the capability used for private. Optional.
+	 * 		@type $map_values[1] string represents the capability used for published. Optional.
+	 * 		@type $map_values[2] string represents the capability used for "others". Optional.
+	 * 		@type $map_values[3] string represents the capability used for private. Optional.
 	 * 	}
 	 * @throws EE_Error
 	 */
@@ -546,7 +549,7 @@ abstract class EE_Meta_Capability_Map {
 	/**
 	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
-	 * The actual logic is carried out by implemntor classes in their definition of _map_meta_caps.
+	 * The actual logic is carried out by implementer classes in their definition of _map_meta_caps.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -666,7 +669,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 				}
 			} else {
 				//the user is trying to edit someone else's obj
-				if ( !empty( $this->others_cap ) ) {
+				if ( ! empty( $this->others_cap ) ) {
 					$caps[] = $this->others_cap;
 				}
 				if ( ! empty( $this->published_cap ) && $obj->status() == 'publish' ) {
@@ -677,10 +680,10 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 			}
 		} else {
 			//not a cpt object so handled differently
-			if ( $obj->wp_user() && $user_id == $obj->wp_user() ) {
+			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
 				$caps[] = $cap;
 			} else {
-				if ( !empty( $this->others_cap ) ) {
+				if ( ! empty( $this->others_cap ) ) {
 					$caps[] = $this->others_cap;
 				}
 			}
@@ -784,7 +787,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 			}
 		} else {
 			//not a cpt object so handled differently
-			if ( $obj->wp_user() && $user_id == $obj->wp_user() ) {
+			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
 				$caps[] = $cap;
 			} elseif ( !empty( $this->private_cap ) ) {
 				$caps[] = $this->private_cap;
