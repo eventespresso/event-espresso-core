@@ -72,7 +72,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 
 
 	/**
-	 * Performs validation on this form section (and subsections). Should be called after _sanitize()
+	 * Performs validation on this form section (and subsections). Should be called after _normalize()
 	 * @param array $req_data
 	 * @return boolean of whether or not the form section is valid
 	 */

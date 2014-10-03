@@ -183,7 +183,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 				)
 			)
 		);
-		$form->receive_form_submission( array(
+		$post_data = array(
 			'Form' => array(
 				'radio1' => 'four-invalid',
 				'input2' => '',
@@ -191,7 +191,11 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 					'input3' => 'non-number',
 					'input4' => 'whatever-ok'
 				))
-		));
+		);
+		$form->receive_form_submission( $post_data );
+		//submit twice, which should be fine; it shoudl jsut reset before
+		//2nd submission
+		$form->receive_form_submission( $post_data );
 		$this->assertFalse( $form->is_valid() );
 		$all_errors = $form->get_validation_errors_accumulated();
 		$this->assertEquals( 3, count( $all_errors ) );

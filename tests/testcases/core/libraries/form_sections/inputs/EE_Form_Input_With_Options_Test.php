@@ -54,6 +54,8 @@ class EE_Form_Input_With_Options_Test extends EE_UnitTestCase{
 		$form->receive_form_submission( array( 'checkbox1' => array( 'option_nonexistent' ) ) );
 		$this->assertFalse( $form->is_valid() );
 		$form->receive_form_submission( array( 'checkbox1' => 'option1' ) );
+		$this->assertTrue( $form->is_valid() );
+		$form->receive_form_submission( array( 'checkbox1' => 'option_nonexistent' ) );
 		$this->assertFalse( $form->is_valid() );
 	}
 

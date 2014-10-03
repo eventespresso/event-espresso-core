@@ -497,6 +497,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	protected function _normalize($req_data) {
 		$this->_received_submission = TRUE;
+		$this->_validation_errors = array();
 		foreach($this->get_validatable_subsections() as $subsection){
 			try{
 				$subsection->_normalize($req_data);
