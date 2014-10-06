@@ -129,7 +129,6 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 				$extra_meta_key_values = array(
 					'check_title'=> $old_gateway_settings['check_title'],
 					'payment_instructions'=>$old_gateway_settings['check_instructions'],
-					'payable_to'=>$old_gateway_settings['payable_to'],
 					'address_to_send_payment'=>$old_gateway_settings['payment_address']
 				);
 				$desc = __( 'On the next page you will be given instructions on how to make a payment by check', 'event_espresso' );
@@ -141,7 +140,6 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'pdf_logo_image' => $old_gateway_settings[ 'invoice_logo_url' ],
 					'page_title' => isset( $old_gateway_settings[ 'page_title' ] ) ? $old_gateway_settings[ 'page_title' ] : '',
 					'page_instructions' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
-					'page_payable_to' => isset( $old_gateway_settings[ 'payable_to' ] ) ? $old_gateway_settings[ 'payable_to' ] : '',
 					'page_address_payable' => isset( $old_gateway_settings[ 'address_payable' ] ) ? $old_gateway_settings[ 'address_payable' ] : '',
 				);
 				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );

@@ -59,70 +59,52 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
-		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
-				$organization = EE_Registry::instance()->CFG->organization;
-				$organization_name = $organization->name;
-				$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
-				$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
-				$default_address .= $organization->city != '' ? $organization->city : '';
-				$default_address .= ( $organization->city != '' && $organization->STA_ID != '') ? ', ' : '<br />';
-				$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
-				$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) ;
-				$default_address .=  $state ? $state->name() . '<br />' : '';
-				$default_address .= $country ? $country->name(). '<br />' : '';
-				$default_address .= $organization->zip != '' ? $organization->zip : '';
-			}else{
-				$default_address = 'unknown';
-				$organization_name = 'unknown';
-			}
-		$pdf_stylesheet_input_name = 'pdf_stylesheet';
-		$page_title_input_name = 'page_title';
+		$pdf_payee_input_name = 'pdf_payee_name';
+		$confirmation_text_input_name = 'confirmation_text';
 		$form =  new EE_Payment_Method_Form(array(
 //				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
-					$pdf_stylesheet_input_name=>new EE_Select_Input(array('simple.css'), array(
-						'html_label_text'=>  sprintf(__("PDF Stylesheet %s", "event_espresso"),  $this->get_help_tab_link()),
-						'html_help_text'=>  __("Load a custom/pre-made style sheet
-	to change the look of your invoices.", 'event_espresso'),
+					$pdf_payee_input_name => new EE_Text_Input(array(
+						'html_label_text' => sprintf( __( 'Payee Name %s', 'event_espresso' ), $this->get_help_tab_link())
+					)),
+					'pdf_payee_email' => new EE_Text_Input(array(
+						'html_label_text' => sprintf( __( 'Payee Email %s', 'event_espresso' ), $this->get_help_tab_link()),
+					)),
+					'pdf_payee_tax_number' => new EE_Text_Input(array(
+						'html_label_text' => sprintf( __( 'Payee Tax Number %s', 'event_espresso' ), $this->get_help_tab_link()),
+						)),
+					'pdf_payee_address' => new EE_Text_Area_Input(array(
+						'html_label_text' => sprintf( __( 'Payee Address %s', 'event_espresso' ), $this->get_help_tab_link()),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("PDF Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
-						'html_label_text'=>  sprintf(__("PDF Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_label_text'=>  sprintf(__("Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
-					$page_title_input_name =>new EE_Text_Input(array(
-						'html_label_text'=>  sprintf(__("Payment Page Title %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Invoice Payments", 'event_espresso')
+					$confirmation_text_input_name =>new EE_Text_Area_Input(array(
+						'html_label_text'=>  sprintf(__("Confirmation Text %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  __("Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.", 'event_espresso')
 					)),
-					'page_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send Invoice to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
-					)),
-					'page_payable_to'=>new EE_Text_Input(array(
-						'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=> $organization_name
-					)),
-					'page_address_payable'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=> $default_address,
+					'page_extra_info'=>new EE_Text_Area_Input(array(
+						'html_label_text'=>  sprintf(__("Extra Info %s", "event_espresso"),  $this->get_help_tab_link()),
 					)),
 				),
 				'include'=>array(
 					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
-					'pdf_stylesheet','pdf_instructions','pdf_logo_image',
-					'page_title','page_instructions','page_payable_to','page_address_payable'),
+					$pdf_payee_input_name, 'pdf_payee_email', 'pdf_payee_tax_number', 'pdf_payee_address', 'pdf_instructions','pdf_logo_image',
+					$confirmation_text_input_name, 'page_extra_info'),
 			));
 		$form->add_subsections(
 			array( 'header1' => new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_display.template.php' )),
-			$pdf_stylesheet_input_name
+			$pdf_payee_input_name
 		);
 		$form->add_subsections(
 			array( 'header2'=>new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php' )),
-			$page_title_input_name
+			$confirmation_text_input_name
 		);
 		return $form;
 	}
@@ -162,7 +144,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment'						=> $payment,
 					'page_title'						=> '',
 					'page_instructions'					=> '',
-					'page_address_payable'	=> '',
+					'page_extra_info'	=> '',
 					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'pdf' )
 				),
 				$this->_pm_instance->all_extra_meta_array()
