@@ -13,12 +13,26 @@
 
 class EE_Transaction_Processor {
 
+	private $_registration_query_where_params = array();
+
 
 
 	/**
+	 * @param array $registration_query_where_params
 	 * @return EE_Transaction_Processor
 	 */
-	function __construct() {
+	function __construct( $registration_query_where_params = array() ) {
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_where_params( $registration_query_where_params );
+	}
+
+
+
+	/**
+	 * @param array $registration_query_where_params
+	 */
+	private function _set_registration_query_where_params( $registration_query_where_params ) {
+		$this->_registration_query_where_params = ! empty( $registration_query_where_params ) ? $registration_query_where_params : array( 'order_by' => array( 'REG_count' => 'ASC' ));
 	}
 
 
@@ -50,28 +64,79 @@ class EE_Transaction_Processor {
 
 
 	/**
+	 * 	manually_update_registration_statuses
+	 *
+	 * 	@access public
+	 * @param EE_Transaction $transaction
+	 * @param string  	$new_reg_status
+	 * @param array 	$registration_query_where_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * 	@return 	boolean
+	 */
+	public function manually_update_registration_statuses( EE_Transaction $transaction, $new_reg_status = '', $registration_query_where_params = array() ) {
+		$status_updates = FALSE;
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_where_params( $registration_query_where_params );
+		// loop through cached registrations
+		foreach ( $transaction->registrations( $this->_registration_query_where_params ) as $registration ) {
+			if ( $registration instanceof EE_Registration ) {
+				// if the status was updated, then set flag to TRUE, otherwise carry over previous value
+				$status_updates = $registration_processor->manually_update_registration_status( $registration, $new_reg_status ) ? TRUE : $status_updates;
+			}
+		}
+		return $status_updates;
+	}
+
+
+	/**
+	 * 	toggle_registration_status_for_approved_events
+	 *
+	 * 	@access public
+	 * @param EE_Transaction $transaction
+	 * @param array 	$registration_query_where_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * 	@return 	boolean
+	 */
+	public function toggle_registration_status_for_approved_events( EE_Transaction $transaction, $registration_query_where_params = array() ) {
+		$status_updates = FALSE;
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_where_params( $registration_query_where_params );
+		// loop through cached registrations
+		foreach ( $transaction->registrations( $this->_registration_query_where_params ) as $registration ) {
+			if ( $registration instanceof EE_Registration ) {
+				// if the status was updated, then set flag to TRUE, otherwise carry over previous value
+				$status_updates = $registration_processor->toggle_registration_status_for_approved_events( $registration ) ? TRUE : $status_updates;
+			}
+		}
+		return $status_updates;
+	}
+
+
+
+
+	/**
 	 * possibly toggles TXN status
 	 * cycles thru related registrations and calls finalize_registration() on each
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param array          $query_params
-	 * @param bool           $new_transaction
-	 * @param bool           $from_admin
+	 * @param array 	$registration_query_where_params - array of query WHERE params to use when retrieving cached registrations from a transaction
 	 * @return void
 	 */
-	public function finalize( EE_Transaction $transaction, $query_params = array(), $new_transaction = FALSE ) {
+	public function finalize( EE_Transaction $transaction, $registration_query_where_params = array() ) {
 		$reg_approved = FALSE;
 		/** @type EE_Registration_Processor $registration_processor */
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 		// make sure some query params are set for retrieving registrations
-		$query_params = ! empty( $query_params ) ? $query_params : array(  'order_by' => array( 'REG_count' => 'ASC' ));
+		$this->_set_registration_query_where_params( $registration_query_where_params );
 		// loop through cached registrations
-		foreach ( $transaction->registrations( $query_params ) as $registration ) {
+		foreach ( $transaction->registrations( $this->_registration_query_where_params ) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
-				$reg_approved = $registration_processor->finalize( $registration, $new_transaction ) ? TRUE : $reg_approved;
+				$reg_approved = $registration_processor->finalize( $registration ) ? TRUE : $reg_approved;
 			}
 		}
-		do_action( 'AHEE__EE_Transaction__finalize__transaction', $transaction, $new_transaction, $reg_approved, $from_admin );
+		do_action( 'AHEE__EE_Transaction__finalize__transaction', $transaction, $reg_approved );
 	}
 
 
