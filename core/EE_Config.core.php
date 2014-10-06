@@ -699,6 +699,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -714,6 +717,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function initialize_shortcodes_and_modules() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		// allow shortcodes to set hooks for the rest of the system
 		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -730,6 +736,9 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return;
+		}
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
 		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
@@ -867,7 +876,13 @@ final class EE_Config {
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
+		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
+			$msg = sprintf(
+				__( 'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s', 'event_espresso' ),
+				$shortcode_class,
+				$shortcode_path . DS . $shortcode_class . $shortcode_ext
+			);
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// load the shortcode class file
@@ -949,13 +964,13 @@ final class EE_Config {
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
+		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
+			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
 		require_once( $module_path . $module_class . $module_ext );
-		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
 		// verify that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
@@ -1785,6 +1800,16 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_full_logging;
 
 	/**
+	* @var string $log_file_name
+	*/
+	public $log_file_name;
+
+	/**
+	* @var string $debug_file_name
+	*/
+	public $debug_file_name;
+
+	/**
 	* @var boolean $use_remote_logging
 	*/
 	public $use_remote_logging;
@@ -1832,6 +1857,38 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->affiliate_id = 'default';
 		$this->help_tour_activation = TRUE;
 	}
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function log_file_name( $reset = FALSE ) {
+		if ( empty( $this->log_file_name ) || $reset ) {
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->log_file_name;
+	}
+
+
+
+
+	/**
+	 * @param bool $reset
+	 * @return string
+	 */
+	public function debug_file_name( $reset = FALSE ) {
+		if ( empty( $this->debug_file_name ) || $reset ) {
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		}
+		return $this->debug_file_name;
+	}
+
+
+
 
 }
 
@@ -2143,6 +2200,20 @@ class EE_Environment_Config extends EE_Config_Base {
 		} else {
 			return '';
 		}
+	}
+
+
+
+
+	/**
+	 * The purpose of this method is just to force rechecking php values so if they've changed, they get updated.
+	 *
+	 * @since 4.4.1
+	 *
+	 * @return void
+	 */
+	public function recheck_values() {
+		$this->_set_php_values();
 	}
 }
 

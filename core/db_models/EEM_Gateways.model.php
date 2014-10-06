@@ -152,17 +152,18 @@ Class EEM_Gateways {
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
+			EE_Registry::instance()->load_helper( 'File' );
 			foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 				$classname = 'EE_' . $gateway;
 				$filename = $classname . '.class.php';
 				if ($in_uploads) {
-					if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+					if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 					} else {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
 				} else {
-					if (file_exists(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
+					if ( is_readable(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
 						require_once(EE_GATEWAYS . DS . $gateway . DS . $filename);
 					} else {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
@@ -212,12 +213,12 @@ Class EEM_Gateways {
 
 		$this->_all_gateways = array_merge($upload_gateways, $gateways);
 		//printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+		EE_Registry::instance()->load_helper( 'File' );
 		foreach ($this->_all_gateways as $gateway => $in_uploads) {
 			$classname = 'EE_' . $gateway;
 			$filename = $classname . '.class.php';
 			if ($in_uploads) {
-				if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+				if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 				} else {
 					$msg = sprintf(
@@ -227,7 +228,7 @@ Class EEM_Gateways {
 					);
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
-			} else if (file_exists(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename)) {
+			} else if ( is_readable(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename)) {
 //				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				require_once(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
@@ -282,7 +283,7 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
-		
+
 		//echo "updateing usermeta with payment settings";var_dump($this->_payment_settings);
 		$old_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
@@ -682,38 +683,7 @@ Class EEM_Gateways {
 		return TRUE;
 	}
 
-	/**
-	 * Requires the given gateway for later use. Does not instantiate the gateway, however.
-	 * By default, searches for the gateway named $gateway in
-	 * wp-uploads/espresso/gateways/$gateway/EE_$gateway.class.php
-	 * next in
-	 * wp-content/plugins/{event-espresso}/gateawys/$gateway/EE_$gateway}.class.php.
-	 * Gateway developers may use FHEE__EEM_Gateways__get_gateway_filepath__default_filepath to override the filepath,
-	 * or FHEE__EEM_Gateways__get_gateway_filepath__filename to override the file's name,
-	 * or FHEE__EEM_Gateways__get_gateway_filepath__classname to override the class's name, given the gateway's name.
-	 * Each of these filters is passed the gateway's name.
-	 *
-	 * @param string $gateway_name usually the folder's name where the gateway is stored. Eg, Paypal_Standard, 2checkout, Check, etc.
-	 * @return void just requires the gateway. Doesn't return it
-	 */
-	/*public static function require_gateway($gateway_name){
-		$classname = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__classname', 'EE_' . $gateway_name,$gateway_name);
-		$filename = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__filename',$classname . '.class.php',$gateway_name);
-		$default_gateway_filepath = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__default_filepath',EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . $filename,$gateway_name);
-		if (file_exists($default_gateway_filepath)) {
-			require_once($default_gateway_filepath);
-		} else if (file_exists(EE_GATEWAYS . DS . $gateway_name . DS . $filename)) {
-			require_once(EE_GATEWAYS . DS . $gateway_name . DS . $filename);
-		} else {
-			$msg = sprintf(
-					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'),
-					'<b>' . $filename . '</b>',
-					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . '</b>',
-					'<b>' . EE_GATEWAYS . DS . $gateway_name . DS . '</b>'
-			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-	}*/
+
 
 
 
@@ -728,9 +698,10 @@ Class EEM_Gateways {
 		$gateway = 'Invoice';
 		$classname = 'EE_' . $gateway;
 		$filename = $classname . '.class.php';
-		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
-		} else if (file_exists(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
+		} else if ( is_readable(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
 			require_once(EE_GATEWAYS . DS . $gateway . DS . $filename);
 		} else {
 			$msg = sprintf(

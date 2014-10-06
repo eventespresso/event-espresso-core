@@ -820,6 +820,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_upload_directories() {
+		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
 				EVENT_ESPRESSO_UPLOAD_DIR,
@@ -827,16 +828,23 @@ class EEH_Activation {
 				EVENT_ESPRESSO_GATEWAY_DIR,
 				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
 				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
 		);
-		foreach ($folders as $folder) {
-			wp_mkdir_p($folder);
-			@ chmod($folder, 0755);
+		foreach ( $folders as $folder ) {
+			try {
+				EEH_File::ensure_folder_exists_and_is_writable( $folder );
+				@ chmod( $folder, 0755 );
+			} catch( EE_Error $e ){
+				EE_Error::add_error(
+					sprintf(
+						__(  'Could not create the folder at "%1$s" because: %2$s', 'event_espresso' ),
+						$folder,
+						'<br />' . $e->getMessage()
+					)
+				);
+				return;
+			}
 		}
-
-		//add .htaccess to logs
-		EE_Error::add_htaccess();
 	}
 
 
@@ -1159,6 +1167,35 @@ class EEH_Activation {
 		}
 		if ( $errors != '' ) {
 			echo $errors;
+		}
+	}
+
+	/**
+	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+	 * @global wpdb $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @return boolean
+	 */
+	public static function table_exists( $table_name ){
+		global $wpdb, $EZSQL_ERROR;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		//ignore if this causes an sql error
+		$old_error = $wpdb->last_error;
+		$old_suppress_errors = $wpdb->suppress_errors();
+		$old_show_errors_value = $wpdb->show_errors( FALSE );
+		$ezsql_error_cache = $EZSQL_ERROR;
+		$wpdb->get_results( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		$wpdb->suppress_errors( $old_suppress_errors );
+		$new_error = $wpdb->last_error;
+		$wpdb->last_error = $old_error;
+		$EZSQL_ERROR = $ezsql_error_cache;
+		if( empty( $new_error ) ){
+			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 

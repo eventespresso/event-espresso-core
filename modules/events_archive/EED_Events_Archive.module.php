@@ -365,13 +365,13 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function wp_enqueue_scripts() {
-	// get some style
-	if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
-		// first check uploads folder
-		if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
-			wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
-		} else {
-			wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
+		// get some style
+		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
+			// first check uploads folder
+			EE_Registry::instance()->load_helper( 'File' );
+			if ( EEH_File::is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
+			} else {
 		}
 		wp_enqueue_style( $this->theme );
 

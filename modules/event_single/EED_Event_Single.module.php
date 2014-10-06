@@ -240,8 +240,9 @@ class EED_Event_Single  extends EED_Module {
 	public function wp_enqueue_scripts() {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
+			EE_Registry::instance()->load_helper( 'File' );
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+			if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
 				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));

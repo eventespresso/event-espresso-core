@@ -1194,6 +1194,8 @@ class PU_PluginInfo {
 			$info->sections = array('description' => '');
 		}
 
+		$this->slug = ! empty( $this->slug ) ? $this->slug : '';
+
 		return $info;
 	}
 }

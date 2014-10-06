@@ -400,14 +400,15 @@ final class EE_Front_Controller {
 					wp_enqueue_style('espresso_custom_css');
 				}
 
-				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
+				EE_Registry::instance()->load_helper( 'File' );
+				if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
 					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				}
 				wp_enqueue_style('espresso_default');
 
-				if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css' )) {
+				if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css' )) {
 					wp_register_style( 'espresso_style', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 				} else {
 					wp_register_style( 'espresso_style', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );

@@ -95,6 +95,26 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	protected function _format_float($float){
 		return number_format($float, 2);
 	}
+
+	/**
+	 * goes through $data and ensures there are no percent signs in it
+	 * (which, strangely, kill mijireh)
+	 * @param mixed $data
+	 * @return mixed same type as $data
+	 */
+	private function _prepare_for_mijireh( $data ){
+		if( is_array( $data ) ){
+			$prepared_data = array();
+			foreach($data as $key => $datum ){
+				$prepared_data[ $key ] = $this->_prepare_for_mijireh( $datum );
+			}
+			return $prepared_data;
+		}elseif(is_string( $data ) ){
+			return str_replace( '%', 'percent', $data );
+		}else{
+			return $data;
+		}
+	}
 	/**
 	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send the user to.
 	 * Also, in order to later be able to find the status of the gateway's transaction, we immediately create an ee payment
@@ -143,7 +163,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$order = array(
 			'total'=>$this->_format_float($total_to_charge),
 			'return_url'=>$this->_get_return_url($primary_registrant),
-			'items'=>$items,
+			'items'=> $this->_prepare_for_mijireh( $items ),
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
@@ -197,6 +217,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					}
 				}else{
 					$problems_string = $response['body'];
+				}
+				if( $problems_string == ''){
+					//no message to show? wack
+					if( isset( $response[ 'headers' ][ 'status' ] ) ){
+						$problems_string = $response[ 'headers' ][ 'status' ];
+					}else{
+						$problems_string = __( 'No response from Mijireh', 'event_espresso' );
+					}
 				}
 
 				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
