@@ -248,13 +248,15 @@ final class EE_Registry {
 	 * @return mixed
 	 */
 	public function load_core ( $class_name, $arguments = array(), $load_only = FALSE ) {
-		$core_paths = array(
-			EE_CORE,
-			EE_ADMIN,
-			EE_CPTS,
-			EE_CORE . 'data_migration_scripts' . DS
+		$core_paths = apply_filters(
+			'FHEE__EE_Registry__load_core__core_paths',
+			array(
+				EE_CORE,
+				EE_ADMIN,
+				EE_CPTS,
+				EE_CORE . 'data_migration_scripts' . DS
+			)
 		);
-		$core_paths = apply_filters( 'FHEE__EE_Registry__load_core__core_paths', $core_paths );
 		// retrieve instantiated class
 		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
 	}
@@ -276,8 +278,6 @@ final class EE_Registry {
 
 
 
-
-
 	/**
 	 *	loads object creating classes - must be singletons
 	 *
@@ -290,8 +290,9 @@ final class EE_Registry {
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		$paths = apply_filters('FHEE__EE_Registry__load_class__paths',array(
+			EE_CORE,
 			EE_CLASSES,
-			EE_CORE
+			EE_BUSINESS
 		));
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
