@@ -108,11 +108,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_PAYEE_NAME]' :
-				return $this->_get_invoice_company_name();
+				return $this->_get_invoice_payee_name();
 				break;
 
 			case '[INVOICE_PAYEE_ADDRESS]' :
-				return $this->_get_invoice_company_address();
+				return $this->_get_invoice_payee_address();
 				break;
 
 			case '[INVOICE_PAYMENT_INSTRUCTIONS]' :
@@ -120,7 +120,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_PAYEE_EMAIL]' :
-				return $this->_get_invoice_company_email();
+				return $this->_get_invoice_payee_email();
 				break;
 
 
@@ -198,7 +198,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== FALSE ) {
-			return $this->_get_invoice_company_tax_number( $shortcode );
+			return $this->_get_invoice_payee_tax_number( $shortcode );
 		}
 
 		return '';
@@ -293,43 +293,43 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company name shortcode
+	 * Used to retrieve the appropriate content for the invoice payee name shortcode
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_name() {
+	private function _get_invoice_payee_name() {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_name = ! empty( $invoice_settings['template_invoice_company_name'] ) ? $invoice_settings['template_invoice_company_name'] : '';
-		$company_name = empty( $company_name ) ? EE_Registry::instance()->CFG->organization->name : $company_name;
-		return $company_name;
+		$payee_name = ! empty( $invoice_settings['template_invoice_payee_name'] ) ? $invoice_settings['template_invoice_payee_name'] : '';
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		return $payee_name;
 	}
 
 
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company email shortcode
+	 * Used to retrieve the appropriate content for the invoice payee email shortcode
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_email() {
+	private function _get_invoice_payee_email() {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
-		$company_email = empty( $company_email ) ? EE_Registry::instance()->CFG->organization->email : $company_email;
-		return $company_email;
+		$payee_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		return $payee_email;
 	}
 
 
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company tax number shortcode
+	 * Used to retrieve the appropriate content for the invoice payee tax number shortcode
 	 *
 	 * @since 4.5.0
 	 *
@@ -337,13 +337,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_tax_number( $shortcode ) {
+	private function _get_invoice_payee_tax_number( $shortcode ) {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
-		$company_tax_number = empty( $company_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $company_tax_number;
+		$payee_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
+		$payee_tax_number = empty( $payee_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $payee_tax_number;
 
-		if ( empty( $company_tax_number ) ) {
+		if ( empty( $payee_tax_number ) ) {
 			return '';
 		}
 
@@ -352,7 +352,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//prefix?
 		$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __( 'VAT/Tax Number: ', 'event_espresso' );
-		return $prefix . $company_tax_number;
+		return $prefix . $payee_tax_number;
 	}
 
 
@@ -360,31 +360,31 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company address shortcode.
+	 * Used to retrieve the appropriate content for the invoice payee address shortcode.
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_address() {
+	private function _get_invoice_payee_address() {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
-		if ( empty( $company_address ) ) {
+		$payee_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
+		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
-			$company_address = $organization->address_1 . '<br>';
-			$company_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
-			$company_address .= $organization->city . '<br>';
+			$payee_address = $organization->address_1 . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
+			$payee_address .= $organization->city . '<br>';
 
 			//state
 			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
-			$company_address .= $state instanceof EE_State ? $state->name()  : '';
+			$payee_address .= $state instanceof EE_State ? $state->name()  : '';
 
 			//Country
-			$company_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
-			$company_address .= ! empty( $organization->zip ) ? $organization->zip : '';
+			$payee_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
+			$payee_address .= ! empty( $organization->zip ) ? $organization->zip : '';
 		}
-		return $company_address;
+		return $payee_address;
 	}
 
 
