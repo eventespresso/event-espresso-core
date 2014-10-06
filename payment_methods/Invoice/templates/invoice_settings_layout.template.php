@@ -37,7 +37,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 			<span class="description"><?php _e("The following settings affect the content and/or appearance of the downloadable PDF invoice.", 'event_espresso');?></span>
 		</td>
 	</tr><?php
-	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('pdf_stylesheet','instructions','pdf_logo_image')));
+	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('pdf_stylesheet','pdf_instructions','pdf_logo_image')));
 	foreach($inputs_to_show as $input){
 		echo $layout_strategy->layout_input($input);
 	}
@@ -48,7 +48,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		</td>
 	</tr>
 	<?php
-	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array( 'page_title','instructions','page_payable_to','page_address_payable')));
+	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array( 'page_title','page_instructions','page_payable_to','page_address_payable')));
 	foreach($inputs_to_show as $input){
 		echo $layout_strategy->layout_input($input);
 	}

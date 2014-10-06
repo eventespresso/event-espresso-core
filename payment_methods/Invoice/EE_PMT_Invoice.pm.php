@@ -85,6 +85,10 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_help_text'=>  __("Load a custom/pre-made style sheet
 	to change the look of your invoices.", 'event_espresso'),
 					)),
+					'pdf_instructions'=>new EE_Text_Area_Input(array(
+						'html_label_text'=>  sprintf(__("PDF Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
+					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
 						'html_label_text'=>  sprintf(__("PDF Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
@@ -94,6 +98,10 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_label_text'=>  sprintf(__("Payment Page Title %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Invoice Payments", 'event_espresso')
 					)),
+					'page_instructions'=>new EE_Text_Area_Input(array(
+						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
+						'default'=>  __("Please send Invoice to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
+					)),
 					'page_payable_to'=>new EE_Text_Input(array(
 						'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=> $organization_name
@@ -102,15 +110,11 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=> $default_address,
 					)),
-					'instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
-						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
-					)),
 				),
 				'include'=>array(
 					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
-					'pdf_stylesheet','pdf_logo_image',
-					'page_title','page_payable_to','page_address_payable','instructions'),
+					'pdf_stylesheet','pdf_instructions','pdf_logo_image',
+					'page_title','page_instructions','page_payable_to','page_address_payable'),
 			));
 		$form->add_subsections(
 			array( 'header1' => new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_display.template.php' )),
@@ -157,8 +161,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment_method'			=> $this->_pm_instance,
 					'payment'						=> $payment,
 					'page_title'						=> '',
-					'instructions'					=> '',
-					'page_payable_to'			=> '',
+					'page_instructions'					=> '',
 					'page_address_payable'	=> '',
 					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'pdf' )
 				),

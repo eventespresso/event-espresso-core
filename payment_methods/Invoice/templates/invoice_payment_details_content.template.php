@@ -38,9 +38,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		</a>
 	</p>
 	<?php
-	}
-	if ( ! empty( $instructions )) {
-		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($instructions) . '</p></div>';
+
+	if (isset($page_instructions)) {
+		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_instructions) . '</p></div>';
 	}
 	if ( ! empty( $page_payable_to )) {
 		?>
