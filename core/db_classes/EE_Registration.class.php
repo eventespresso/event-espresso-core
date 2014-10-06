@@ -977,11 +977,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @param    string $REG_code Registration Code
 	 */
 	public function set_reg_code( $REG_code ) {
-		if ( empty( $REG_code )) {
+		if ( empty( $REG_code ) && $this->ID() ) {
 			EE_Error::add_error( __( 'REG_code can not be empty.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		if ( ! $this->reg_code() ) {
-			$this->set( 'REG_code', $REG_code );
+			parent::set( 'REG_code', $REG_code );
 		} else {
 			EE_Error::doing_it_wrong(
 				__CLASS__ . '::' . __FUNCTION__,
