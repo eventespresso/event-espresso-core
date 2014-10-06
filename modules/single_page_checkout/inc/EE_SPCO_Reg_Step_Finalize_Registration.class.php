@@ -70,23 +70,28 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	public function process_reg_step() {
 		// ensure all data gets saved to the db and all model object relations get updated
 		if ( $this->checkout->save_all_data() ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// at this point we'll consider a TXN to not have failed
-			$this->checkout->toggle_transaction_status();
+			if ( $transaction_processor->toggle_transaction_status( $this->checkout->transaction )) {
+				$this->checkout->transaction->save();
+			}
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
 			// payment required ?
 			if ( $this->checkout->payment_required() ) {
-				// load Payment_Processor
+				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-				// verify it
-				if ( $payment_processor instanceof EE_Payment_Processor ) {
-					// try to finalize any payment that may have been attempted
-					$payment_processor->finalize_payment_for( $this->checkout->transaction );
-				}
+				// try to finalize any payment that may have been attempted
+				$payment_processor->finalize_payment_for( $this->checkout->transaction );
 			}
-
-			// finalize the TXN, which will in turn, finalize all of it's registrations
-			$this->checkout->transaction->finalize();
+			if ( $this->checkout->revisit ) {
+				// just update the status for the registrations
+				$transaction_processor->toggle_registration_status_if_no_monies_owing( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+			} else {
+				// finalize the TXN, which will in turn, finalize all of it's registrations
+				$transaction_processor->finalize( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+			}
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// setup URL for redirect
