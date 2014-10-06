@@ -2,11 +2,6 @@
 /**
  * This is the template for the html messenger and receipt message type main content field.
  */
-
-//figure out what to use for payment instructions that is dependent on whether the corresponding value is existent in invoice settings from an old install.
-$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
-$invoice_settings = isset( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-$payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 ?>
 <div class="print_button_div">
 	<form method="post" action="[DISPLAY_PDF_URL]" >
@@ -21,17 +16,13 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 			<td id="logo-dv">
 				[INVOICE_LOGO]
 				<div class="vcard" id="company-address">
-					<div class="fn org"><strong>[COMPANY]</strong></div>
+					<div class="fn org"><strong>[INVOICE_COMPANY_NAME]</strong></div>
 					<div class="adr">
-						<div class="street-address">[CO_ADD1][CO_ADD2]
-						</div>
-						<!-- street-address -->
-						<div class="locality">[CO_CITY], [CO_STATE]</div>
-						<div id="company-postcode"><span class="postal-code">[CO_ZIP]</span></div>
+						[INVOICE_COMPANY_ADDRESS]
 					</div>
 					<!-- adr -->
-					<div class="email">[CO_EMAIL]</div>
-					<div class="vat">[CO_TAX_NUMBER_*]</div>
+					<div class="email">[INVOICE_COMPANY_EMAIL]</div>
+					<div class="vat">[INVOICE_COMPANY_TAX_NUMBER_*]</div>
 				</div>
 			</td>
 			<td>
