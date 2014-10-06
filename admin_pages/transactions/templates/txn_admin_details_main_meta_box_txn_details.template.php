@@ -167,12 +167,12 @@
 			?>
 			<?php endforeach; // $payment?>
 			<?php
-				$pay_totals_class = $payment_total > $grand_raw_total ? ' red-text' : '';
+				$pay_totals_class = $payment_total > $grand_raw_total ? ' important-notice' : '';
 				$overpaid = $payment_total > $grand_raw_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
 			?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
@@ -182,7 +182,7 @@
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
@@ -321,7 +321,7 @@
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
 						<?php foreach ( $payment_methods as $method ) : ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>		
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>
