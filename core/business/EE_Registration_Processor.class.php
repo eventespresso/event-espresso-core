@@ -2,7 +2,7 @@
 /**
  * Class EE_Registration_Processor
  *
- * Description
+ * Provides method for manipulating and processing changes with regards to an EE_Registration
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -13,71 +13,158 @@
 
 class EE_Registration_Processor {
 
-	/**
-	 * @access private
-	 * @type $_registration EE_Registration
-	 */
-	private $_registration = NULL;
-
 
 
 	/**
-	 * @param \EE_Registration $registration
 	 * @return EE_Registration_Processor
 	 */
-	function __construct( EE_Registration $registration ) {
-		$this->_registration = $registration;
+	function __construct() {
 	}
 
 
 
 	/**
-	 * generates reg code if that has yet to been done,
-	 * sets reg status based on transaction status and event pre-approval setting
+	 * generates reg_url_link
 	 *
-	 * @param  bool $from_admin      used to indicate the request is initiated by admin
-	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
-	 * @return array    an array with two boolean values, first indicates if new reg, second indicates if reg status was updated.
+	 * @param int           $att_nmbr
+	 * @param \EE_Line_Item $item
+	 * @return string
 	 */
-	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
-		$update_reg = FALSE;
-		$new_reg = FALSE;
-		// update reg status if no monies are owing AND ( the REG status is pending payment and we're not doing this from admin ) OR ( the event default reg status is Approved )
-		if ( ( ( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) || $this->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
-			// automatically toggle status to approved
-			$this->set_status( EEM_Registration::status_id_approved );
-			$update_reg = TRUE;
-		}
-		//if we're doing this from admin and we have 'txn_reg_status_change' in the $_REQUEST then let's use that to trigger the status change.
-		if ( $from_admin && isset( $_REQUEST[ 'txn_reg_status_change' ] ) && isset( $_REQUEST[ 'txn_reg_status_change' ][ 'reg_status' ] ) && $_REQUEST[ 'txn_reg_status_change' ][ 'reg_status' ] != 'NAN' ) {
-			$this->set_status( $_REQUEST[ 'txn_reg_status_change' ][ 'reg_status' ] );
-			$update_reg = TRUE;
-		}
-		// generate REG codes for NEW registrations
-		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
-		// save the registration?
-		if ( $update_reg || $new_reg ) {
-			do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
-			$this->save();
-		}
-		return array( 'new_reg' => $new_reg, 'to_approved' => $update_reg );
+	public function generate_reg_url_link( $att_nmbr = 0, EE_Line_Item $item ) {
+		return $att_nmbr . '-' . $item->code();
 	}
 
 
 
 	/**
 	 * generates reg code
-	 * @return boolean
+	 *
+	 * @param \EE_Registration $registration
+	 * @return string
 	 */
-	private function _generate_new_reg_code() {
-		// generate a reg code ?
-		if ( ! $this->reg_code() ) {
-			// figure out where to start parsing the reg code
-			$chars = strpos( $this->reg_url_link(), '-' ) + 4;
-			$new_reg_code = array( $this->transaction_ID(), $this->ticket_ID(), substr( $this->reg_url_link(), 0, $chars ) . substr( $this->reg_url_link(), - 3 ));
-			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );
-			$this->set_reg_code( $new_reg_code );
+	public function generate_reg_code( EE_Registration $registration ) {
+	// figure out where to start parsing the reg code
+		$chars = strpos( $registration->reg_url_link(), '-' ) + 4;
+		// TXN_ID + TKT_ID + first 3 and last 3 chars of reg_url_link
+		$new_reg_code = array(
+			$registration->transaction_ID(),
+			$registration->ticket_ID(),
+			substr( $registration->reg_url_link(), 0, $chars ) . substr( $registration->reg_url_link(), - 3 )
+		);
+		// now put it all together
+		$new_reg_code = implode( '-', $new_reg_code );
+		return apply_filters( 'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code', $new_reg_code, $registration );
+	}
+
+
+
+	/**
+	 * 	manually_update_registration_status
+	 *
+	 * 	@access public
+	 * @param EE_Registration $registration
+	 * @param string           $new_reg_status
+	 * 	@return 	boolean
+	 */
+	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '' ) {
+		// get current REG_Status
+		$old_reg_status = $registration->status_ID();
+		// toggle reg status to approved IF the event default reg status is approved
+		if ( ! empty( $new_reg_status ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
+			// toggle status to approved
+			if ( $registration->set_status( $new_reg_status )) {
+				$registration->save();
+				// send messages
+				$this->registration_status_changed(
+					$registration,
+					array(
+						'manually_updated' 	=> TRUE,
+						'old_reg_status' 			=> $old_reg_status,
+						'new_reg_status' 		=> $new_reg_status
+					)
+				);
+			}
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+	/**
+	 * 	toggle_registration_status_for_approved_events
+	 *
+	 * 	@access public
+	 * @param EE_Registration $registration
+	 * 	@return 	boolean
+	 */
+	public function toggle_registration_status_for_approved_events( EE_Registration $registration ) {
+		// toggle reg status to approved IF the event default reg status is approved
+		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
+			// toggle status to approved
+			$registration->set_status( EEM_Registration::status_id_approved );
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+	/**
+	 * 	toggle_registration_status_if_no_monies_owing
+	 *
+	 * 	@access public
+	 * @param EE_Registration $registration
+	 * 	@return 	boolean
+	 */
+	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration ) {
+		// toggle reg status to approved IF
+		if (
+			// REG status is pending payment
+			$registration->status_ID() == EEM_Registration::status_id_pending_payment
+			// AND no monies are owing
+			&& ( $registration->transaction()->is_completed() || $registration->transaction()->is_overpaid() || $registration->transaction()->is_free() )
+		) {
+			// toggle status to approved
+			$registration->set_status( EEM_Registration::status_id_approved );
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 *    registration_status_changed
+	 *
+	 * @access public
+	 * @param EE_Registration $registration
+	 * @param array           $additional_conditions
+	 * @return    void
+	 */
+	public function registration_status_changed( EE_Registration $registration, $additional_conditions = array() ) {
+		do_action(
+			'AHEE__EE_Registration_Processor__trigger_registration_status_changed_hook',
+			$registration,
+			apply_filters(
+				'FHEE__EE_Registration_Processor__trigger_registration_status_changed_hook__additional_conditions',
+				$additional_conditions
+			)
+		);
+	}
+
+
+
+	/**
+	 * sets reg status based either on passed param or on transaction status and event pre-approval setting
+	 *
+	 * @param \EE_Registration $registration
+	 * @return bool
+	 */
+	public function finalize(  EE_Registration $registration ) {
+		// if we're doing this from admin and we have a $new_reg_status
+		if ( $this->toggle_registration_status_for_approved_events( $registration ) || $this->toggle_registration_status_if_no_monies_owing( $registration )) {
+			// send messages
+			$this->registration_status_changed( $registration, array( 'finalized' => TRUE ));
+			$registration->save();
 			return TRUE;
 		}
 		return FALSE;
