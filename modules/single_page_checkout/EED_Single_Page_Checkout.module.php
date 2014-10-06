@@ -704,6 +704,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _initialize_registrations( EE_Transaction $transaction ) {
 		$registrations = array();
 		if ( $transaction instanceof EE_Transaction ) {
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			$att_nmbr = 0;
 			$this->checkout->total_ticket_count = $this->checkout->cart->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
@@ -727,23 +729,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				//do the following for each ticket of this type they selected
 				for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$reg_url_link = $att_nmbr . '-' . $item->code();
-
+					$reg_url_link = $registration_processor->generate_reg_url_link( $att_nmbr, $item );
+					// grab default reg status for the event, if set
 					$event_default_registration_status = $event->default_registration_status();
 					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+					// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
+					$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
 					// now create a new registration for the ticket
 					$registration = EE_Registration::new_instance( array(
-						'EVT_ID' => $event->ID(),
-						'TXN_ID' => $transaction->ID(),
-						'TKT_ID' => $ticket->ID(),
-						'STS_ID' => $STS_ID,
-						'REG_date' => $transaction->datetime(),
-						'REG_final_price' => $ticket->price(),
-						'REG_session' => EE_Registry::instance()->SSN->id(),
-						'REG_count' => $att_nmbr,
-						'REG_group_size' => $this->checkout->total_ticket_count,
-						'REG_url_link'	=> $reg_url_link
+						'EVT_ID' 					=> $event->ID(),
+						'TXN_ID' 					=> $transaction->ID(),
+						'TKT_ID' 					=> $ticket->ID(),
+						'STS_ID' 					=> $STS_ID,
+						'REG_date' 				=> $transaction->datetime(),
+						'REG_final_price' 	=> $ticket->price(),
+						'REG_session' 			=> EE_Registry::instance()->SSN->id(),
+						'REG_count' 			=> $att_nmbr,
+						'REG_group_size' 	=> $this->checkout->total_ticket_count,
+						'REG_url_link'			=> $reg_url_link
 					));
+					$registration->set_reg_code( $registration_processor->generate_reg_code( $registration ));
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
 					$transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
