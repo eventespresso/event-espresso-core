@@ -187,10 +187,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 				<tr>
 					<th>
 						<label for="page_instructions"><?php _e('Confirmation Text:', 'event_espresso'); ?></label>
-						<p class="description"><?php _e('This text appears on the thank you page after a registration using Invoice as the payment method.', 'event_espresso'); ?></p>
+
 					</th>
 					<td>
 						<textarea name="page_instructions" cols="50" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['page_instructions'])); ?></textarea>
+						<span class="description"><?php _e('This text appears on the thank you page after a registration using Invoice as the payment method.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 
