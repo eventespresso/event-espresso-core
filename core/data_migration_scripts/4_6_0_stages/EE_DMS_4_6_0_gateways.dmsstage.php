@@ -144,6 +144,10 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'page_confirmation_text' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
 					'page_extra_info' => isset( $old_gateway_settings[ 'payment_address' ] ) ? $old_gateway_settings[ 'payment_address' ] : '',
 				);
+				//if they didnt want the invoiec gateway to show, pretend it was inactive
+				if( ! $old_gateway_settings['show'] ){
+					$active = FALSE;
+				}
 				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );
 				break;
 			case 'Mijireh':
