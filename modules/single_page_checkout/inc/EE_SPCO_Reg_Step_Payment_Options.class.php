@@ -708,6 +708,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->_finalize_primary_registrant_prior_to_payment() ) {
 			return FALSE;
 		}
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		$transaction_processor->toggle_registration_status_for_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
 		// attempt payment
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
 		// onsite payment?
