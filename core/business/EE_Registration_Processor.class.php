@@ -102,6 +102,7 @@ class EE_Registration_Processor {
 		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
+			$registration->save();
 			return TRUE;
 		}
 		return FALSE;
@@ -125,6 +126,7 @@ class EE_Registration_Processor {
 		) {
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
+			$registration->save();
 			return TRUE;
 		}
 		return FALSE;
@@ -164,7 +166,6 @@ class EE_Registration_Processor {
 		if ( $this->toggle_registration_status_for_approved_events( $registration ) || $this->toggle_registration_status_if_no_monies_owing( $registration )) {
 			// send messages
 			$this->registration_status_changed( $registration, array( 'finalized' => TRUE ));
-			$registration->save();
 			return TRUE;
 		}
 		return FALSE;
