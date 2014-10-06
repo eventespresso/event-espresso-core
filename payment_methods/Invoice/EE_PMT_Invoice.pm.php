@@ -60,7 +60,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 */
 	public function generate_new_settings_form() {
 		$pdf_payee_input_name = 'pdf_payee_name';
-		$confirmation_text_input_name = 'confirmation_text';
+		$confirmation_text_input_name = 'page_confirmation_text';
 		$form =  new EE_Payment_Method_Form(array(
 //				'payment_method_type' => $this,
 				'extra_meta_inputs'=>array(
@@ -142,8 +142,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				array(
 					'payment_method'			=> $this->_pm_instance,
 					'payment'						=> $payment,
-					'page_title'						=> '',
-					'page_instructions'					=> '',
+					'page_confirmation_text'					=> '',
 					'page_extra_info'	=> '',
 					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'pdf' )
 				),

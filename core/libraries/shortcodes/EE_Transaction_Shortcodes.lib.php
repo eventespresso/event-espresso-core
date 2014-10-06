@@ -108,11 +108,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_PAYEE_NAME]' :
-				return $this->_get_invoice_company_name();
+				return $this->_get_invoice_payee_name();
 				break;
 
 			case '[INVOICE_PAYEE_ADDRESS]' :
-				return $this->_get_invoice_company_address();
+				return $this->_get_invoice_payee_address();
 				break;
 
 			case '[INVOICE_PAYMENT_INSTRUCTIONS]' :
@@ -120,7 +120,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_PAYEE_EMAIL]' :
-				return $this->_get_invoice_company_email();
+				return $this->_get_invoice_payee_email();
 				break;
 
 
@@ -198,7 +198,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== FALSE ) {
-			return $this->_get_invoice_company_tax_number( $shortcode );
+			return $this->_get_invoice_payee_tax_number( $shortcode );
 		}
 
 		return '';
@@ -239,9 +239,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_payment_gateway() {
-		if ( !is_object( $this->_data->txn ) )
-			return '';
-		return $this->_data->txn->selected_gateway();
+		$pm = $this->_get_payment_method();
+		return $pm instanceof EE_Payment_Method ? $pm->name() : '';
 	}
 
 
@@ -257,15 +256,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
 		//try to get the invoice payment method's logo for this transaction image first
-		if( $this->_data->txn instanceof EE_Transaction ){
-			$pm = EEM_Payment_Method::instance()->get_one( array( array(
-				'Payment.TXN_ID' => $this->_data->txn->ID(),
-				'PMD_type' => 'Invoice'
-			), 'order_by' => array( 'Payment.PAY_ID' => 'DESC' ) ) );
-		}else{
-			//maybe they didn't use an invoice payment method. Just grab the first invoice payment method we find
-			$pm  = EEM_Payment_Method::instance()->get_one_of_type('Invoice');
-		}
+		$pm = $this->_get_payment_method();
 		if ( $pm instanceof EE_Payment_Method ){
 			$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
 		}else{
@@ -293,43 +284,59 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company name shortcode
+	 * Used to retrieve the appropriate content for the invoice payee name shortcode
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_name() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_name = ! empty( $invoice_settings['template_invoice_company_name'] ) ? $invoice_settings['template_invoice_company_name'] : '';
-		$company_name = empty( $company_name ) ? EE_Registry::instance()->CFG->organization->name : $company_name;
-		return $company_name;
+	private function _get_invoice_payee_name() {
+		$payee_name = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_name = $pm->get_extra_meta( 'pdf_payee_name', TRUE );
+		}
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		return $payee_name;
+	}
+
+	/**
+	 * gets the payment method for this transaction. Otherwise gets a default one.
+	 */
+	private function _get_payment_method(){
+		if( $this->_data->txn instanceof EE_Transaction ) {
+			return $this->_data->txn->payment_method();
+		}else{
+			//get the first payment method we can find
+			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment::instance()->get_one_of_type('Invoice'));
+		}
 	}
 
 
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company email shortcode
+	 * Used to retrieve the appropriate content for the invoice payee email shortcode
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_email() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
-		$company_email = empty( $company_email ) ? EE_Registry::instance()->CFG->organization->email : $company_email;
-		return $company_email;
+	private function _get_invoice_payee_email() {
+		$payee_email = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_email = $pm->get_extra_meta( 'pdf_payee_email', TRUE );
+		}
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		return $payee_email;
 	}
 
 
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company tax number shortcode
+	 * Used to retrieve the appropriate content for the invoice payee tax number shortcode
 	 *
 	 * @since 4.5.0
 	 *
@@ -337,13 +344,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_tax_number( $shortcode ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
-		$company_tax_number = empty( $company_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $company_tax_number;
+	private function _get_invoice_payee_tax_number( $shortcode ) {
+		$payee_tax_number = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_tax_number = $pm->get_extra_meta( 'pdf_payee_tax_number', TRUE );
+		}
+		$payee_tax_number = empty( $payee_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $payee_tax_number;
 
-		if ( empty( $company_tax_number ) ) {
+		if ( empty( $payee_tax_number ) ) {
 			return '';
 		}
 
@@ -352,7 +361,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//prefix?
 		$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __( 'VAT/Tax Number: ', 'event_espresso' );
-		return $prefix . $company_tax_number;
+		return $prefix . $payee_tax_number;
 	}
 
 
@@ -360,31 +369,33 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * Used to retrieve the appropriate content for the invoice company address shortcode.
+	 * Used to retrieve the appropriate content for the invoice payee address shortcode.
 	 *
 	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
-	private function _get_invoice_company_address() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$company_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
-		if ( empty( $company_address ) ) {
+	private function _get_invoice_payee_address() {
+		$payee_address = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_address = $pm->get_extra_meta( 'pdf_payee_address', TRUE );
+		}
+		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
-			$company_address = $organization->address_1 . '<br>';
-			$company_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
-			$company_address .= $organization->city . '<br>';
+			$payee_address = $organization->address_1 . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
+			$payee_address .= $organization->city . '<br>';
 
 			//state
 			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
-			$company_address .= $state instanceof EE_State ? $state->name()  : '';
+			$payee_address .= $state instanceof EE_State ? $state->name()  : '';
 
 			//Country
-			$company_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
-			$company_address .= ! empty( $organization->zip ) ? $organization->zip : '';
+			$payee_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
+			$payee_address .= ! empty( $organization->zip ) ? $organization->zip : '';
 		}
-		return $company_address;
+		return $payee_address;
 	}
 
 
@@ -398,9 +409,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payment_instructions() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
+		$instructions = NULL;
+		$pm = $this->_get_payment_method();
+		return ( $pm instanceof EE_Payment_Method ) ? $pm->get_extra_meta( 'pdf_instructions', TRUE) : '';
 	}
 
 

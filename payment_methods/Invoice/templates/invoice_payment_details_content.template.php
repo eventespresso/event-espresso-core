@@ -39,11 +39,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		</p>
 		<?php
 
-		if (isset($page_instructions)) {
-			echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_instructions) . '</p></div>';
+		if (isset($page_confirmation_text)) {
+			echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_confirmation_text) . '</p></div>';
 		}
 
-		if ( ! empty( $payment_address )) {
+		if ( ! empty( $page_extra_info )) {
 			?>
 			<div class="address-block">
 				<?php echo wpautop(stripslashes_deep($page_extra_info)); ?>

@@ -122,7 +122,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 				$extra_meta_key_values = array(
 					'page_title'=>$old_gateway_settings['page_title'],
 					'payment_instructions'=>
-					sprintf('%1$s<br/>Name on Bank Account: %2$s<br/>Bank Account Number: %3$s<br/>Bank Name: %4$s<br/>Bank Address:%5$s', 'event_espresso'), $old_gateway_settings['bank_instructions'] , $old_gateway_settings['account_name'], $old_gateway_settings['account_number'], $old_gateway_settings['bank_name'], $old_gateway_settings['bank_address'] );
+					sprintf( __('%1$s<br/>Name on Bank Account: %2$s<br/>Bank Account Number: %3$s<br/>Bank Name: %4$s<br/>Bank Address:%5$s', 'event_espresso'), $old_gateway_settings['bank_instructions'] , $old_gateway_settings['account_name'], $old_gateway_settings['account_number'], $old_gateway_settings['bank_name'], $old_gateway_settings['bank_address'] ) );
 				$desc = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
 				break;
 			case 'Check':
@@ -135,13 +135,19 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 				break;
 			case 'Invoice':
 				$extra_meta_key_values = array(
-					'pdf_stylesheet' => isset( $old_gateway_settings[ 'invoice_css' ] ) ? $old_gateway_settings[ 'invoice_css' ] : NULL,
-					'pdf_instructions' => $old_gateway_settings[ 'pdf_instructions' ],
+					'pdf_payee_name' => $old_gateway_settings['template_invoice_payee_name'],
+					'pdf_payee_email' => $old_gateway_settings['template_invoice_email'],
+					'pdf_payee_tax_number' => $old_gateway_settings['template_invoice_tax_number'],
+					'pdf_payee_address' => $old_gateway_settings['template_invoice_address'],
+					'pdf_instructions' => $old_gateway_settings[ 'template_payment_instructions' ],
 					'pdf_logo_image' => $old_gateway_settings[ 'invoice_logo_url' ],
-					'page_title' => isset( $old_gateway_settings[ 'page_title' ] ) ? $old_gateway_settings[ 'page_title' ] : '',
-					'page_instructions' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
-					'page_address_payable' => isset( $old_gateway_settings[ 'address_payable' ] ) ? $old_gateway_settings[ 'address_payable' ] : '',
+					'page_confirmation_text' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
+					'page_extra_info' => isset( $old_gateway_settings[ 'payment_address' ] ) ? $old_gateway_settings[ 'payment_address' ] : '',
 				);
+				//if they didnt want the invoiec gateway to show, pretend it was inactive
+				if( ! $old_gateway_settings['show'] ){
+					$active = FALSE;
+				}
 				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );
 				break;
 			case 'Mijireh':
