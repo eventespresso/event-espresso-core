@@ -125,6 +125,20 @@ class EEM_Country extends EEM_Base {
 		return self::$_active_countries;
 	}
 
+	/**
+	 * Gets the country's name by its ISO
+	 * @param string $country_ISO
+	 * @return string
+	 */
+	public function get_country_name_by_ISO( $country_ISO ){
+		$names = $this->get_col( array( array( 'CNT_ISO' => $country_ISO ), 'limit' => 1), 'CNT_name' );
+		if( is_array( $names ) && ! empty( $names ) ){
+			return reset( $names );
+		}else{
+			return '';
+		}
+	}
+
 }
 // End of file EEM_Country.model.php
 // Location: /includes/models/EEM_Country.model.php

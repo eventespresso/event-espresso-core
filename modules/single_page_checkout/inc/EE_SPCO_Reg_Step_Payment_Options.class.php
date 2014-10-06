@@ -772,8 +772,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( $this->checkout->billing_form->is_valid() ) {
 					return TRUE;
 				}
+				$validation_errors = $this->checkout->billing_form->get_validation_errors_accumulated();
+				$error_strings = array();
+				foreach( $validation_errors as $validation_error ){
+					if( $validation_error instanceof EE_Validation_Error ){
+						$error_strings[] = sprintf('%1$s: %2$s', $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() );
+					}
+				}
 //				printr($this->checkout->billing_form->get_validation_errors(), '$this->checkout->billing_form->get_validation_errors()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
-				EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( sprintf( __( 'One or more billing form inputs are invalid and require correction before proceeding. %1$s %2$s', 'event_espresso' ), '<br/>', implode( '<br/>', $error_strings )  ), __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 				EE_Error::add_error( __( 'The billing form was not submitted or something prevented it\'s submission.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}

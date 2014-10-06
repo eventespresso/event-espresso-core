@@ -31,34 +31,27 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		echo '<h4 id="invoice_title" class="payment_type_title section-heading">' . stripslashes_deep( $page_title ) . '</h4>';
 	}
 	if ( ! empty( $invoice_url )) {
-	?>
-	<p>
-		<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button" target="_blank">
-			<?php _e('Download PDF Invoice', 'event_espresso'); ?>
-		</a>
-	</p>
-	<?php
-	}
-	if ( ! empty( $instructions )) {
-		echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($instructions) . '</p></div>';
-	}
-	if ( ! empty( $page_payable_to )) {
 		?>
 		<p>
-			<span class="section-title"><?php _e('Payable to:', 'event_espresso'); ?></span>
-			<span class="highlight"><?php echo $page_payable_to; ?></span>
+			<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button" target="_blank">
+				<?php _e('Download PDF Invoice', 'event_espresso'); ?>
+			</a>
 		</p>
 		<?php
-	}
 
-	if ( ! empty( $payment_address )) {
+		if (isset($page_instructions)) {
+			echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($page_instructions) . '</p></div>';
+		}
+
+		if ( ! empty( $payment_address )) {
+			?>
+			<div class="address-block">
+				<?php echo wpautop(stripslashes_deep($page_extra_info)); ?>
+			</div>
+			<?php
+		}
 		?>
-		<div class="address-block">
-			<?php echo wpautop(stripslashes_deep($page_address_payable)); ?>
-		</div>
-		<?php
+	</div>
+	<?php
 	}
-	?>
-</div>
-<?php
 // End of file invoice_payment_details_content.template.php

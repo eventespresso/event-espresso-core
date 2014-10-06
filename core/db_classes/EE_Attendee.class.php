@@ -24,7 +24,7 @@
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
+class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address, EEI_Attendee {
 
 	/**
 	 * Sets some dynamic defaults

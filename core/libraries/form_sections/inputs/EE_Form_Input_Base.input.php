@@ -417,6 +417,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return boolean whether or not there was an error
 	 */
 	protected function _normalize( $req_data ) {
+		//any existing validation errors don't apply so clear them
+		$this->_validation_errors = array();
 		try {
 			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
@@ -533,6 +535,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return mixed
 	 */
 	function normalized_value(){
+		return $this->_normalized_value;
+	}
+
+	/**
+	 * Returns the normalized value is a presentable way. By default this is just
+	 * the normalized value by itself, but it can be overridden for when that's not
+	 * the best thing to display
+	 * @return string
+	 */
+	function pretty_value(){
 		return $this->_normalized_value;
 	}
 	/**

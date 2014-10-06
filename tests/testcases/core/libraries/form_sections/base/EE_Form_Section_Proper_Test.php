@@ -143,7 +143,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 				'html_id' => 'ee-available-payment-method-inputs',
 				'subsections' => array(
 				0 => new EE_Radio_Button_Input(
-						array('one','two','three'),
+						array( 'one' => 'One','two' => 'Two', 'three' => 'Three' ),
 						array(
 						'html_name' => 'selected_method_of_payment',
 						'html_class' => 'spco-payment-method',
@@ -154,6 +154,67 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 			)
 		);
 		$this->assertEquals(1, count( $form->inputs() ) );
+	}
+
+	/**
+	 * @group 6781
+	 */
+	public function test_get_validation_errors_accumulated(){
+		$form = new EE_Form_Section_Proper(
+			array(
+				'name' => 'Form',
+				'subsections' => array(
+					'radio1' => new EE_Radio_Button_Input(
+							array( 'one' => 'One','two' => 'Two', 'three' => 'Three' ),
+							array(
+							'html_class' => 'spco-payment-method',
+							'default'    => 'three'
+							)
+						),
+					'input2' => new EE_Text_Input( array(
+						'required' => TRUE
+					)),
+					'subsubsection' => new EE_Form_Section_Proper( array(
+						'subsections' => array(
+							'input3' => new EE_Float_Input(),
+							'input4' => new EE_Text_Input()
+							)
+					))
+				)
+			)
+		);
+		$post_data = array(
+			'Form' => array(
+				'radio1' => 'four-invalid',
+				'input2' => '',
+				'subsubsection' => array(
+					'input3' => 'non-number',
+					'input4' => 'whatever-ok'
+				))
+		);
+		$form->receive_form_submission( $post_data );
+		//submit twice, which should be fine; it shoudl jsut reset before
+		//2nd submission
+		$form->receive_form_submission( $post_data );
+		$this->assertFalse( $form->is_valid() );
+		$all_errors = $form->get_validation_errors_accumulated();
+		$this->assertEquals( 3, count( $all_errors ) );
+		$error1 = array_shift( $all_errors );
+		$error2 = array_shift( $all_errors );
+		$error3 = array_shift( $all_errors );
+
+
+		$this->assertInstanceOf( 'EE_Validation_Error', $error1 );
+		$this->assertInstanceOf( 'EE_Radio_Button_Input', $error1->get_form_section() );
+		$this->assertEquals( 'radio1', $error1->get_form_section()->name() );
+
+
+		$this->assertInstanceOf( 'EE_Validation_Error', $error2 );
+		$this->assertInstanceOf( 'EE_Text_Input', $error2->get_form_section() );
+		$this->assertEquals( 'input2', $error2->get_form_section()->name() );
+		$this->assertInstanceOf( 'EE_Validation_Error', $error3 );
+		$this->assertInstanceOf( 'EE_Float_Input', $error3->get_form_section() );
+		$this->assertEquals( 'input3', $error3->get_form_section()->name() );
 	}
 }
 

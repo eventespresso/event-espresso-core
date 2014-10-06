@@ -75,7 +75,8 @@ class EEM_Status extends EEM_Base {
 							'registration'=>  __("Registration", "event_espresso"),
 							'transaction'=>  __("Transaction", "event_espresso"),
 							'payment'=>  __("Payment", "event_espresso"),
-							'email'=>  __("Email", "event_espresso")
+							'email'=>  __("Email", "event_espresso"),
+							'message_queue' => __( 'Message', 'event_espresso' ),
 						)),
 				'STS_can_edit'=>new EE_Boolean_Field('STS_can_edit', __('Editable?','event_espresso'), false),
 				'STS_desc'=>new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),

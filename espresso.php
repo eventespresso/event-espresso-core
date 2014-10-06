@@ -3,7 +3,7 @@
   Plugin Name:	Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.6.0.dev.012
+  Version: 			4.6.0.dev.015
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.6.0.dev.013';
+		return '4.6.0.dev.015';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -448,6 +448,30 @@ interface EEI_Registration{
 	 * @return string
 	 */
 	function reg_code();
+
+	/**
+	 * Gets the attendee corresponding to this registration
+	 * @return EEI_Attendee
+	 */
+	function attendee();
+}
+/**
+ * Contact information for a person who registers for an event
+ */
+interface EEI_Attendee {
+	function email();
+	function fname();
+	function lname();
+	function address();
+	function address2();
+	function city();
+	function state_name();
+	function country_name();
+	/**
+	 * @return country's ISO code
+	 */
+	function country_ID();
+	function phone();
 }
 interface EEI_Payment_Method{
 

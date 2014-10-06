@@ -83,17 +83,17 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
-				$primary_attendee->state_ID()  &&
-				$primary_attendee->country_ID()  &&
+				$primary_attendee->state_name()  &&
+				$primary_attendee->country_name()  &&
 				$primary_attendee->zip()  ){
 			$shipping_address = array(
 				'first_name'=>$primary_attendee->fname(),
 				'last_name'=>$primary_attendee->lname(),
 				'street' => $primary_attendee->address(),
 				'city' => $primary_attendee->city(),
-				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
+				'state_province' => $primary_attendee->state_name(),
 				'zip_code' => $primary_attendee->zip(),
-				'country' => $primary_attendee->country_ID()
+				'country' => $primary_attendee->country_name()
 			);
 			if( $primary_attendee->address2() ){
 				$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
