@@ -48,16 +48,21 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 * Overrides parent set() method so that all calls to set( 'STS_ID', $STS_ID ) can be routed to internal set_status()
+	 * Overrides parent set() method so that all calls to set( 'REG_code', $REG_code ) OR set( 'STS_ID', $STS_ID ) can be routed to internal methods
 	 * @param string $field_name
 	 * @param mixed  $field_value
 	 * @param bool   $use_default
 	 */
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
-		if ( $field_name == 'STS_ID' ) {
-			$this->set_status( $field_value );
-		} else {
-			parent::set( $field_name, $field_value, $use_default );
+		switch( $field_name ) {
+			case 'REG_code' :
+				$this->set_reg_code( $field_value );
+				break;
+			case 'STS_ID' :
+				$this->set_status( $field_value );
+				break;
+			default :
+				parent::set( $field_name, $field_value, $use_default );
 		}
 	}
 
@@ -71,26 +76,30 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 *
 	 * @access        public
 	 * @param string $new_STS_ID
+	 * @return bool
 	 */
 	public function set_status( $new_STS_ID = '' ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
-		// if status has changed TO approved
-		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
-			// reserve a space by incrementing ticket and datetime sold values
-			$this->_reserve_registration_space();
-			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
-			// OR if status has changed FROM  approved
-		} else {
-			if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
+		// if status has changed
+		if ( $old_STS_ID != $new_STS_ID  ) {
+			// TO approved
+			if ( $new_STS_ID == EEM_Registration::status_id_approved ) {
+				// reserve a space by incrementing ticket and datetime sold values
+				$this->_reserve_registration_space();
+				do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
+			// OR FROM  approved
+			} else if ( $old_STS_ID == EEM_Registration::status_id_approved ) {
 				// release a space by decrementing ticket and datetime sold values
 				$this->_release_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
 			}
+			// update status
+			parent::set( 'STS_ID', $new_STS_ID );
+			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+			return TRUE;
 		}
-		// update status
-		parent::set( 'STS_ID', $new_STS_ID );
-		do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+		return FALSE;
 	}
 
 
@@ -910,7 +919,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			$update_reg = TRUE;
 		}
 		// generate REG codes for NEW registrations
-		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
+//		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
 		if ( $update_reg || $new_reg ) {
 			do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
@@ -929,25 +938,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		return $this->get_first_related( 'Transaction' );
 	}
 
-
-
-	/**
-	 * generates reg code
-	 * @return boolean
-	 */
-	private function _generate_new_reg_code() {
-		// generate a reg code ?
-		if ( ! $this->reg_code() ) {
-			// figure out where to start parsing the reg code
-			$chars = strpos( $this->reg_url_link(), '-' ) + 4;
-			$new_reg_code = array( $this->transaction_ID(), $this->ticket_ID(), substr( $this->reg_url_link(), 0, $chars ) . substr( $this->reg_url_link(), - 3 ), $this->transaction()->is_completed() ? 1 : 0 );
-			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );
-			$this->set_reg_code( $new_reg_code );
-			return TRUE;
-		}
-		return FALSE;
-	}
 
 
 
@@ -986,8 +976,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @access    public
 	 * @param    string $REG_code Registration Code
 	 */
-	public function set_reg_code( $REG_code = '' ) {
-		$this->set( 'REG_code', $REG_code );
+	public function set_reg_code( $REG_code ) {
+		if ( empty( $REG_code ) && $this->ID() ) {
+			EE_Error::add_error( __( 'REG_code can not be empty.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		if ( ! $this->reg_code() ) {
+			parent::set( 'REG_code', $REG_code );
+		} else {
+			EE_Error::doing_it_wrong(
+				__CLASS__ . '::' . __FUNCTION__,
+				__( 'Can not change a registration REG_code once it has been set.', 'event_espresso' ),
+				'4.6.0'
+			);
+		}
 	}
 
 

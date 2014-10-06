@@ -249,10 +249,19 @@ class EE_Checkout {
 	 * @param string $current_step
 	 * @return    void
 	 */
-	public function set_current_step( $current_step = 'attendee_information' ) {
+	public function set_current_step( $current_step ) {
 		// grab what step we're on
 		$this->current_step = isset( $this->reg_steps[ $current_step ] ) ? $this->reg_steps[ $current_step ] : reset( $this->reg_steps );
+		// verify instance
 		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
+			// we don't want to repeat completed steps if this is the first time through SPCO
+			if ( $this->current_step->completed() && ! $this->revisit ) {
+				// so advance to the next step
+				$this->set_next_step();
+				// and attempt to set it as the current step
+				$this->set_current_step( $this->next_step->slug() );
+				return;
+			}
 			$this->current_step->set_is_current_step( TRUE );
 		} else {
 			EE_Error::add_error(
@@ -400,29 +409,6 @@ class EE_Checkout {
 		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
 	}
 
-
-
-	/**
-	 * 	toggle_transaction_status
-	 * 	changes TXN status based on monies owing
-	 *
-	 * 	@access public
-	 * 	@return 	void
-	 */
-	public function toggle_transaction_status() {
-		// if TXN status has not been updated already due to a payment, and is still set as "failed"...
-		if ( $this->transaction->status_ID() == EEM_Transaction::failed_status_code ) {
-			//but monies are still owing...
-			if ( $this->transaction->total() > 0 ) {
-				// then update to incomplete
-				$this->transaction->set_status( EEM_Transaction::incomplete_status_code );
-			} else {
-				// or update to complete
-				$this->transaction->set_status( EEM_Transaction::complete_status_code );
-			}
-		}
-		$this->transaction->save();
-	}
 
 
 
