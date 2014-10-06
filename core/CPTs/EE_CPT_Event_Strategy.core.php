@@ -55,8 +55,10 @@ class EE_CPT_Event_Strategy {
 		// 'posts_fields'
 		// 'posts_join'
 		$this->_add_filters();
-		$WP_Query->is_espresso_event_single = is_single() ? TRUE : FALSE;
-		$WP_Query->is_espresso_event_archive = is_archive() ? TRUE : FALSE;
+		if ( $WP_Query instanceof WP_Query ) {
+			$WP_Query->is_espresso_event_single = is_single() ? TRUE : FALSE;
+			$WP_Query->is_espresso_event_archive = is_archive() ? TRUE : FALSE;
+		}
 
 	}
 
