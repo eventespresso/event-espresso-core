@@ -46,11 +46,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
 			'[INVOICE_LOGO]' => __('This returns the logo uploaded via the invoice settings page wrapped in img_tags and with a "logo screen" classes. The image size is also set in the img tags automatically to match the uploaded logo.', 'event_espresso'),
-			'[INVOICE_COMPANY_NAME]' => __('This will parse to either: the value of the "Company Name" field in the invoice payment method settings; if that is blank, then the value of the Company Name in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso'),
-			'[INVOICE_COMPANY_ADDRESS]' => __('This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_PAYEE_NAME]' => __('This will parse to either: the value of the "Company Name" field in the invoice payment method settings; if that is blank, then the value of the Company Name in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso'),
+			'[INVOICE_PAYEE_ADDRESS]' => __('This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
 			'[INVOICE_PAYMENT_INSTRUCTIONS]' => __('This will parse to the value of the "Payment Instructions" field found on the Invoice payment methods settings page', 'event_espresso' ),
-			'[INVOICE_COMPANY_EMAIL]' => __('This will parse to either: the value of the "Company Email" field in the invoice payment method settings; if that is blank, then the value of the Company Email in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
-			'[INVOICE_COMPANY_TAX_NUMBER_*]' => __('This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: <code>[INVOICE_COMPANY_TAX_NUMBER_* prefix="GST:"]</code> and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ),
+			'[INVOICE_PAYEE_EMAIL]' => __('This will parse to either: the value of the "Company Email" field in the invoice payment method settings; if that is blank, then the value of the Company Email in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_PAYEE_TAX_NUMBER_*]' => __('This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: <code>[INVOICE_PAYEE_TAX_NUMBER_* prefix="GST:"]</code> and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
 			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
@@ -107,11 +107,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return $this->_get_invoice_logo( TRUE );
 				break;
 
-			case '[INVOICE_COMPANY_NAME]' :
+			case '[INVOICE_PAYEE_NAME]' :
 				return $this->_get_invoice_company_name();
 				break;
 
-			case '[INVOICE_COMPANY_ADDRESS]' :
+			case '[INVOICE_PAYEE_ADDRESS]' :
 				return $this->_get_invoice_company_address();
 				break;
 
@@ -119,7 +119,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return $this->_get_invoice_payment_instructions();
 				break;
 
-			case '[INVOICE_COMPANY_EMAIL]' :
+			case '[INVOICE_PAYEE_EMAIL]' :
 				return $this->_get_invoice_company_email();
 				break;
 
@@ -197,7 +197,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			return $this->_get_custom_total_oweing( $shortcode );
 		}
 
-		if ( strpos( $shortcode, '[INVOICE_COMPANY_TAX_NUMBER_*' ) !== FALSE ) {
+		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== FALSE ) {
 			return $this->_get_invoice_company_tax_number( $shortcode );
 		}
 

@@ -16,13 +16,13 @@
 			<td id="logo-dv">
 				[INVOICE_LOGO]
 				<div class="vcard" id="company-address">
-					<div class="fn org"><strong>[INVOICE_COMPANY_NAME]</strong></div>
+					<div class="fn org"><strong>[INVOICE_PAYEE_NAME]</strong></div>
 					<div class="adr">
-						[INVOICE_COMPANY_ADDRESS]
+						[INVOICE_PAYEE_ADDRESS]
 					</div>
 					<!-- adr -->
-					<div class="email">[INVOICE_COMPANY_EMAIL]</div>
-					<div class="vat">[INVOICE_COMPANY_TAX_NUMBER_*]</div>
+					<div class="email">[INVOICE_PAYEE_EMAIL]</div>
+					<div class="vat">[INVOICE_PAYEE_TAX_NUMBER_*]</div>
 				</div>
 			</td>
 			<td>
