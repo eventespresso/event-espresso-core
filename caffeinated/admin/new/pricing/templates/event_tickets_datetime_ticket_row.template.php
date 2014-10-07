@@ -53,7 +53,7 @@
 			<textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
 
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID ); ?>
-			
+
 			<div class="basic-ticket-container">
 				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
 				<div style="clear:both"></div>
@@ -99,7 +99,7 @@
 				</button>
 				<div class="ticket-is-required-container">
 					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_required]" class="edit-ticket-TKT_required" value="1"<?php echo $TKT_required ? ' checked="checked"' : ''; ?><?php echo $disabled ? ' disabled' : ''; ?>>
-					<label for="edit-ticket-TKT_required"><?php _e('This ticket is required.', 'event_espresso'); ?></label>
+					<label for="edit-ticket-TKT_required"><?php _e('This ticket is required (will appear first in frontend ticket lists).', 'event_espresso'); ?></label>
 				</div>
 				<div class="ticket-is-taxable-container">
 					<?php if ( !empty($tax_rows) ) { ?>
