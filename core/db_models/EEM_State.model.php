@@ -213,6 +213,10 @@ class EEM_State extends EEM_Base {
 	 * @return string
 	 */
 	public function get_state_name_by_ID( $state_ID ){
+		if( isset( self::$_all_states[ $state_ID ] ) &&
+				self::$_all_states[ $state_ID ] instanceof EE_State ){
+			return self::$_all_states[ $state_ID ]->name();
+		}
 		$names = $this->get_col( array( array( 'STA_ID' => $state_ID ), 'limit' => 1), 'STA_name' );
 		if( is_array( $names ) && ! empty( $names ) ){
 			return reset( $names );

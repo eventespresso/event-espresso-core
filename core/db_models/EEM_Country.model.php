@@ -131,6 +131,10 @@ class EEM_Country extends EEM_Base {
 	 * @return string
 	 */
 	public function get_country_name_by_ISO( $country_ISO ){
+		if( isset( self::$_all_countries[ $country_ISO ] ) &&
+				self::$_all_countries[ $country_ISO ] instanceof EE_Country ){
+			return self::$_all_countries[ $country_ISO ]->name();
+		}
 		$names = $this->get_col( array( array( 'CNT_ISO' => $country_ISO ), 'limit' => 1), 'CNT_name' );
 		if( is_array( $names ) && ! empty( $names ) ){
 			return reset( $names );
