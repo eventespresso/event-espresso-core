@@ -264,7 +264,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					MSG_address_to varchar(100) NOT NULL DEFAULT '',
 					MSG_address_from varchar(100) NOT NULL DEFAULT '',
 					MSG_priority tinyint NOT NULL DEFAULT '0',
-					STS_ID tinyint(1) NOT NULL DEFAULT '1',
+					STS_ID varchar(3) NOT NULL DEFAULT '1',
 					MSG_created datetime DEFAULT '0000-00-00 00:00:00',
 					MSG_modified datetime DEFAULT '0000-00-00 00:00:00',
 					PRIMARY KEY  (MSG_ID)";
