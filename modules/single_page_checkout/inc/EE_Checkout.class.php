@@ -399,12 +399,54 @@ class EE_Checkout {
 
 
 	/**
+	 * 	initialize_txn_reg_steps_array
+	 *
+	 * 	@access public
+	 * 	@return 	array
+	 */
+	public function initialize_txn_reg_steps_array() {
+		$txn_reg_steps_array = array();
+		foreach ( $this->reg_steps as $reg_step ) {
+			$txn_reg_steps_array[ $reg_step->slug() ] = FALSE;
+		}
+		return $txn_reg_steps_array;
+	}
+
+
+
+	/**
+	 * 	update_txn_reg_steps_array
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function update_txn_reg_steps_array() {
+		$updated = FALSE;
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		foreach ( $this->reg_steps as $reg_step ) {
+			if ( $reg_step->completed() ) {
+				$updated = $transaction_processor->set_reg_step_completed( $this->transaction, $reg_step->slug() ) ? TRUE : $updated;
+			}
+		}
+		if ( $updated ) {
+			$this->transaction->save();
+		}
+		return $updated;
+	}
+
+
+
+	/**
 	 * 	stash_transaction_and_checkout
 	 *
 	 * 	@access public
 	 * 	@return 	bool
 	 */
 	public function stash_transaction_and_checkout() {
+		if ( ! $this->revisit ) {
+			$this->update_txn_reg_steps_array();
+		}
 		EE_Registry::instance()->SSN->set_checkout( $this );
 		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
 	}
