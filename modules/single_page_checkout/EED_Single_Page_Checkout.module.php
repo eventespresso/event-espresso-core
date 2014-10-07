@@ -315,13 +315,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
-		$this->_instantiate_reg_steps();
+		$this->_load_and_instantiate_reg_steps();
 		// set the current step
 		$this->checkout->set_current_step( $this->checkout->step );
 		// and the next step
 		$this->checkout->set_next_step();
-		// and whether or not to generate a reg form for this request
-		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
 		// was there already a valid transaction in the checkout from the session ?
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
@@ -395,54 +393,78 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// or some other kind of revisit ?
 		$this->checkout->revisit = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
+		// and whether or not to generate a reg form for this request
+		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
 	}
 
 
 
 	/**
-	 *    _instantiate_reg_steps
+	 *    _load_and_instantiate_reg_steps
 	 *  instantiates each reg step based on the loaded reg_steps array
 	 *
 	 * @access    private
 	 * @throws EE_Error
 	 * @return    array
 	 */
-	private function _instantiate_reg_steps() {
-		// loop through folders
-		foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
-			// we need a
-			if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
-				// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
-				if ( $this->checkout->reg_url_link && $this->checkout->step !== $reg_step['slug'] && $reg_step['slug'] !== 'finalize_registration' ) {
-					continue;
-				}
-				// instantiate step class using file path and class name
-				$reg_step_obj = EE_Registry::instance()->load_file( $reg_step['file_path'], $reg_step['class_name'], 'class', $this->checkout, FALSE  );
-				// did we gets the goods ?
-				if ( $reg_step_obj instanceof EE_SPCO_Reg_Step ) {
-					// set reg step order based on config
-					$reg_step_obj->set_order( $order );
-					// add instantiated reg step object to the master reg steps array
-					$this->checkout->add_reg_step( $reg_step_obj );
-				}
+	private function _load_and_instantiate_reg_steps() {
+		// have reg_steps already been instantiated ?
+		if ( empty( $this->checkout->reg_steps )) {
+			// if not, then loop through raw reg steps array
+			foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
+				$this->_load_and_instantiate_reg_step( $reg_step, $order );
+			}
+			EE_Registry::instance()->CFG->registration->skip_reg_confirmation = TRUE;
+			EE_Registry::instance()->CFG->registration->reg_confirmation_last = TRUE;
+			// skip the registration_confirmation page ?
+			if ( EE_Registry::instance()->CFG->registration->skip_reg_confirmation ) {
+				// just remove it from the reg steps array
+				$this->checkout->remove_reg_step( 'registration_confirmation' );
+			} else if ( EE_Registry::instance()->CFG->registration->reg_confirmation_last && isset( 	$this->checkout->reg_steps['registration_confirmation'] )) {
+				// set the order to something big like 100
+				$this->checkout->set_reg_step_order( 'registration_confirmation', 100 );
+			}
+			// filter the array for good luck
+			$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
+			// finally re-sort based on the reg step class order properties
+			$this->checkout->sort_reg_steps();
+		} else {
+			foreach ( $this->checkout->reg_steps as $reg_step ) {
+				// set all current step stati to FALSE
+				$reg_step->set_is_current_step( FALSE );
 			}
 		}
-		EE_Registry::instance()->CFG->registration->skip_reg_confirmation = TRUE;
-		EE_Registry::instance()->CFG->registration->reg_confirmation_last = TRUE;
-		// skip the registration_confirmation page ?
-		if ( EE_Registry::instance()->CFG->registration->skip_reg_confirmation ) {
-			// just remove it from the reg steps array
-			$this->checkout->remove_reg_step( 'registration_confirmation' );
-		} else if ( EE_Registry::instance()->CFG->registration->reg_confirmation_last && isset( 	$this->checkout->reg_steps['registration_confirmation'] )) {
-			// set the order to something big like 100
-			$this->checkout->set_reg_step_order( 'registration_confirmation', 100 );
-		}
-		// filter the array for good luck
-		$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
-		// finally re-sort based on the reg step class order properties
-		$this->checkout->sort_reg_steps();
 		// make reg step details available to JS
 		$this->checkout->set_reg_step_JSON_info();
+	}
+
+
+
+	/**
+	 * 	 _load_and_instantiate_reg_step
+	 *
+	 * @access    private
+	 * @param array $reg_step
+	 * @param int   $order
+	 * @return    void
+	 */
+	private function _load_and_instantiate_reg_step( $reg_step= array(), $order = 0 ) {
+		// we need a file_path, class_name, and slug to add a reg step
+		if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
+			// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
+			if ( $this->checkout->reg_url_link && $this->checkout->step !== $reg_step['slug'] && $reg_step['slug'] !== 'finalize_registration' ) {
+				return;
+			}
+			// instantiate step class using file path and class name
+			$reg_step_obj = EE_Registry::instance()->load_file( $reg_step['file_path'], $reg_step['class_name'], 'class', $this->checkout, FALSE  );
+			// did we gets the goods ?
+			if ( $reg_step_obj instanceof EE_SPCO_Reg_Step ) {
+				// set reg step order based on config
+				$reg_step_obj->set_order( $order );
+				// add instantiated reg step object to the master reg steps array
+				$this->checkout->add_reg_step( $reg_step_obj );
+			}
+		}
 	}
 
 
@@ -640,10 +662,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		try {
 			// create new TXN
 			return EE_Transaction::new_instance( array(
-				'TXN_timestamp' => current_time( 'timestamp' ),
-				'TXN_total' => $this->checkout->cart->get_cart_grand_total(),
-				'TXN_paid' => 0,
-				'STS_ID' => EEM_Transaction::failed_status_code,
+				'TXN_timestamp' 	=> current_time( 'timestamp' ),
+//				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
+				'TXN_total' 				=> $this->checkout->cart->get_cart_grand_total(),
+				'TXN_paid' 				=> 0,
+				'STS_ID' 					=> EEM_Transaction::failed_status_code,
 			));
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);

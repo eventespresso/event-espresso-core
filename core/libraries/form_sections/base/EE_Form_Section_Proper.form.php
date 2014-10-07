@@ -580,7 +580,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Gets all the subsections (inputs, proper subsections, or html-only sections).
 	 * Consider using inputs() or subforms()
 	 * if you only want form inputs or proper form sections.
-	 * @return EE_Form_Section[]
+	 * @return EE_Form_Section_Proper[]
 	 */
 	public function subsections(){
 		$this->ensure_construct_finalized_called();
@@ -606,7 +606,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Similar to EE_Form_Section_Proper::input_values(), except this returns the 'display_value'
 	 * of each input. On some inputs (especially radio boxes or checkboxes), the value stored
 	 * is not necessarily the value we want to display to users. This creates an array
-	 * wher ekeys are the input names, and values are their display values
+	 * where keys are the input names, and values are their display values
 	 * @return array
 	 */
 	public function input_pretty_values(){
@@ -771,7 +771,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Gets the name, but first checks _construct_finalize has been called. If not,
 	 * calls it (assumes there is no parent and that we want the name to be whatever
 	 * was set, which is probably nothing, or the classname)
-	 * @return sting
+	 * @return string
 	 */
 	public function name(){
 		$this->ensure_construct_finalized_called();

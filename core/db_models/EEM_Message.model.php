@@ -1,29 +1,11 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * Message Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
  * @author				Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
-
-
 class EEM_Message extends EEM_Base {
 
   	// private instance of the Message object
@@ -60,7 +42,7 @@ class EEM_Message extends EEM_Base {
 	 *		@Constructor
 	 *		@access protected
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
+	 *		@return EEM_Message
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Message','event_espresso');
@@ -90,7 +72,7 @@ class EEM_Message extends EEM_Base {
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), FALSE, self::priority_medium, $allowed_stati ),
 				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), FALSE, self::status_idle, 'Status' ),
 				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), FALSE, current_time('timestamp' ) ),
-				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modifieid', 'event_espresso' ), TRUE, current_time('timestamp') )
+				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), TRUE, current_time('timestamp') )
 			)
 		);
 		$this->_model_relations = array(
@@ -129,6 +111,8 @@ class EEM_Message extends EEM_Base {
 
 	/**
 	 * resets the model and returns it
+	 *
+	 * @param null $timezone
 	 * @return EEM_Message
 	 */
 	public static function reset( $timezone = NULL ){

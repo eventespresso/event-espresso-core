@@ -29,10 +29,68 @@ class EE_Transaction_Processor {
 
 
 	/**
+	 * @access private
 	 * @param array $registration_query_where_params
 	 */
 	private function _set_registration_query_where_params( $registration_query_where_params ) {
 		$this->_registration_query_where_params = ! empty( $registration_query_where_params ) ? $registration_query_where_params : array( 'order_by' => array( 'REG_count' => 'ASC' ));
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid TXN_reg_step, this sets the step as completed
+	 *
+	 * @access public
+	 * @param \EE_Transaction $transaction
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 */
+	public function set_reg_step_completed(  EE_Transaction $transaction, $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, TRUE );
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid TXN_reg_step slug, this sets the step as NOT completed
+	 *
+	 * @access public
+	 * @param \EE_Transaction $transaction
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 */
+	public function set_reg_step_not_completed(  EE_Transaction $transaction, $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, FALSE );
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid reg step slug, this sets the TXN_reg_step as completed
+	 *
+	 * @access private
+	 * @param \EE_Transaction $transaction
+	 * @param string          $reg_step_slug
+	 * @param                 $status
+	 * @return boolean
+	 */
+	private function _set_reg_step_completed_status(  EE_Transaction $transaction, $reg_step_slug, $status ) {
+		// ensure boolean value
+		$status = is_bool( $status ) ? $status : FALSE;
+		// get reg steps array
+		$txn_reg_steps = $transaction->reg_steps();
+		// if reg step exists AND it's current value doesn't match the incoming value
+		if ( isset( $txn_reg_steps[ $reg_step_slug ] ) && $txn_reg_steps[ $reg_step_slug ] !== $status ) {
+			// update completed status
+			$txn_reg_steps[ $reg_step_slug ] = $status;
+			$transaction->set_reg_steps( $txn_reg_steps );
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 
@@ -130,17 +188,18 @@ class EE_Transaction_Processor {
 
 
 	/**
-	 * possibly toggles TXN status
-	 * cycles thru related registrations and calls finalize_registration() on each
+	 * _call_method_on_registrations_via_Registration_Processor
+	 * cycles thru related registrations and calls the requested method on each
 	 *
-	 * @param string         $method_name
+	 * @access private
+	 * @param string 	$method_name
 	 * @param EE_Transaction $transaction
-	 * @param array          $registration_query_where_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * @param string         $additional_param
+	 * @param array 	$registration_query_where_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @param string 	$additional_param
 	 * @throws \EE_Error
 	 * @return boolean
 	 */
-	public function _call_method_on_registrations_via_Registration_Processor( $method_name,  EE_Transaction $transaction, $registration_query_where_params = array(), $additional_param = NULL ) {
+	private function _call_method_on_registrations_via_Registration_Processor( $method_name,  EE_Transaction $transaction, $registration_query_where_params = array(), $additional_param = NULL ) {
 		$response = FALSE;
 		/** @type EE_Registration_Processor $registration_processor */
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
