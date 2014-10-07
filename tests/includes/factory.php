@@ -1029,7 +1029,8 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		$registration = $this->_maybe_chained( $registration, $args );
 		//only run finalize if $chained because it requires EE_Transaction
 		if ( $this->_chained ) {
-			$registration->finalize();
+			// todo: REG_code is no longer generated via $registration->finalize() but through EE_Registration_Processor::generate_reg_code() as is REG_url_link, so this method may need to handle the creation of those items
+//			$registration->finalize();
 			$registration->save();
 		}
 		return $registrationID ? $registration : false;
