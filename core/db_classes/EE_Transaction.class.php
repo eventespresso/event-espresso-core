@@ -114,11 +114,31 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 * Gets TXN_reg_steps
-	 * @return array
+	 * @return EE_SPCO_Reg_Step[]
 	 */
 	function reg_steps() {
 //		return $this->get( 'TXN_reg_steps' );
 		return array();
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed
+	 *
+	 * returns TRUE if ALL reg steps have been marked as completed
+	 *
+	 * @return boolean
+	 */
+	function all_reg_steps_completed() {
+		// loop thru reg steps array
+		foreach ( $this->reg_steps() as $reg_step ) {
+			// if any reg step is NOT completed, then just leave
+			if( ! $reg_step->completed() ) {
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 
 
@@ -597,39 +617,6 @@ class EE_Transaction extends EE_Base_Class {
 			$item = EEH_Line_Item::create_default_total_line_item();
 		}
 		return $item;
-	}
-
-
-
-	/**
-	 * cycles thru related registrations and calls finalize_registration() on each
-	 *
-	 * @param  bool $from_admin      used to indicate the request is initiated by admin
-	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
-	 * @return void
-	 */
-	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
-		$new_reg = FALSE;
-		$reg_to_approved = FALSE;
-		foreach ( $this->registrations( array(  'order_by' => array( 'REG_count' => 'ASC' ))) as $registration ) {
-			if ( $registration instanceof EE_Registration ) {
-				$reg_msg = $registration->finalize( $from_admin, $flip_reg_status );
-				$new_reg = $reg_msg[ 'new_reg' ] ? TRUE : $new_reg;
-				$reg_to_approved = $reg_msg[ 'to_approved' ] ? TRUE : $reg_to_approved;
-			}
-		}
-		$reg_msg = array( 'new_reg' => $new_reg, 'to_approved' => $reg_to_approved );
-		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
-		if ( $new_reg ) {
-			// remove the transaction from the session before saving it to the db
-			EE_Registry::instance()->SSN->reset_transaction();
-			// save the session (with it's session-less transaction) back to this transaction... we need to go deeper!
-			$this->set_txn_session_data( EE_Registry::instance()->SSN );
-			// save the transaction to the db
-			$this->save();
-			do_action( 'AHEE__EE_Transaction__finalize__new_transaction', $this, $from_admin );
-		}
-		do_action( 'AHEE__EE_Transaction__finalize__all_transaction', $this, $reg_msg, $from_admin );
 	}
 
 
