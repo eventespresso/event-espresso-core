@@ -604,6 +604,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class | NULL
 	 */
 	function get_one($query_params = array()){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::get_one', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		$query_params['limit'] = 1;
 		$items = $this->get_all($query_params);
 		if(empty($items)){
@@ -666,6 +670,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
 	function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::update', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		/**
 		 * Action called before a model update call has been made.
 		 *
@@ -1266,6 +1274,10 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::sum_related', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		//we're just going to use the query params on the related model's normal get_all query,
 		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
@@ -1700,7 +1712,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
-		if( ! $query_params ){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
 		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
@@ -3167,6 +3180,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::get_one_copy', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		$query_params['limit'] = 1;
 		$copies = $this->get_all_copies($model_object_or_attributes_array,$query_params);
 		if(is_array($copies)){

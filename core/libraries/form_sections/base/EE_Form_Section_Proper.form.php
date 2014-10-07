@@ -415,7 +415,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			if( $subsection instanceof EE_Form_Input_Base ){
 				$inputs[ $subsection->html_name() ] = $subsection;
 			}elseif($subsection instanceof EE_Form_Section_Proper ){
-				$inputs += $subsection->get_all_inputs_in_subsections();
+				$inputs += $subsection->inputs_in_subsections();
 			}
 		}
 		return $inputs;
