@@ -86,6 +86,7 @@ class EEM_Transaction extends EEM_Base {
 				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized session data','event_espresso'), true, ''),
 				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, ''),
 				'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __("Last Used Payment Method", 'event_espresso'), true, NULL, 'Payment_Method'),
+				'TXN_reg_steps' => new EE_Serialized_Text_Field( 'TXN_reg_steps', __( 'Registration Steps', 'event_espresso' ), FALSE, array() ),
 			)
 		);
 		$this->_model_relations = array(
