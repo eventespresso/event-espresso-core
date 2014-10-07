@@ -103,6 +103,27 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * Sets TXN_reg_steps array
+	 * @param array $txn_reg_steps
+	 */
+	function set_reg_steps( $txn_reg_steps ) {
+//		$this->set( 'TXN_reg_steps', $txn_reg_steps );
+	}
+
+
+
+	/**
+	 * Gets TXN_reg_steps
+	 * @return array
+	 */
+	function reg_steps() {
+//		return $this->get( 'TXN_reg_steps' );
+		return array();
+	}
+
+
+
+	/**
 	 *
 	 * @return string of transaction's total cost, with currency symbol and decimal
 	 */
@@ -652,6 +673,8 @@ class EE_Transaction extends EE_Base_Class {
 		return $attendee->billing_info_for_payment_method($payment_method);
 	}
 
+
+
 	/**
 	 * Gets PMD_ID
 	 * @return int
@@ -659,6 +682,8 @@ class EE_Transaction extends EE_Base_Class {
 	function payment_method_ID() {
 		return $this->get('PMD_ID');
 	}
+
+
 
 	/**
 	 * Sets PMD_ID
@@ -668,6 +693,8 @@ class EE_Transaction extends EE_Base_Class {
 	function set_payment_method_ID($PMD_ID) {
 		$this->set('PMD_ID', $PMD_ID);
 	}
+
+
 
 	/**
 	 * Gets the last-used payment method on this transaction
