@@ -97,7 +97,11 @@ final class EE_System {
 	 */
 	public static function reset(){
 		self::$_instance->_req_type = NULL;
+		//we need to reset the migration manager in order for it to detect DMSs properly
+		EE_Data_Migration_Manager::reset();
 		self::instance()->detect_activations_or_upgrades();
+		//make sure none of the old hooks are left hanging around
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
 		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
 	}

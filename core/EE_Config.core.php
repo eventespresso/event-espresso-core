@@ -921,7 +921,10 @@ final class EE_Config {
 					$shortcode_class . ' shortcode',
 					$shortcode_path . $shortcode_class . $shortcode_ext,
 					'<br />' . $e->getMessage()
-				)
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
 			);
 			return FALSE;
 		}
