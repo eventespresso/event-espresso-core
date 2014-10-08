@@ -211,7 +211,7 @@ Class EEM_Gateways {
 			$upload_gateways[$sub] = TRUE;
 		}
 
-		$this->_all_gateways = array_merge($upload_gateways, $gateways);
+		$this->_all_gateways = array_merge( $gateways, $upload_gateways );
 		//printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		EE_Registry::instance()->load_helper( 'File' );
 		foreach ($this->_all_gateways as $gateway => $in_uploads) {
