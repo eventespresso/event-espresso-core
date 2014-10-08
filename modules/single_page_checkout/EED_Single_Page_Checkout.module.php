@@ -665,7 +665,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// create new TXN
 			return EE_Transaction::new_instance( array(
 				'TXN_timestamp' 	=> current_time( 'timestamp' ),
-//				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
+				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
 				'TXN_total' 				=> $this->checkout->cart->get_cart_grand_total(),
 				'TXN_paid' 				=> 0,
 				'STS_ID' 					=> EEM_Transaction::failed_status_code,

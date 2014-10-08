@@ -455,6 +455,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					  TXN_session_data text COLLATE utf8_bin,
 					  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
 					  PMD_ID int(11) DEFAULT NULL,
+					  TXN_reg_steps text, 
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";

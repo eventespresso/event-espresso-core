@@ -107,7 +107,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @param array $txn_reg_steps
 	 */
 	function set_reg_steps( $txn_reg_steps ) {
-//		$this->set( 'TXN_reg_steps', $txn_reg_steps );
+		$this->set( 'TXN_reg_steps', $txn_reg_steps );
 	}
 
 
@@ -117,8 +117,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_SPCO_Reg_Step[]
 	 */
 	function reg_steps() {
-//		return $this->get( 'TXN_reg_steps' );
-		return array();
+		return $this->get( 'TXN_reg_steps' );
 	}
 
 
