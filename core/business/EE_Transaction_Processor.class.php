@@ -156,7 +156,7 @@ class EE_Transaction_Processor {
 	 * 	@return 	boolean
 	 */
 	public function toggle_registration_statuses_if_no_monies_owing( EE_Transaction $transaction, $registration_query_params = array() ) {
-		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'toggle_registration_statuses_if_no_monies_owing', $transaction, $registration_query_params );
+		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'toggle_registration_status_if_no_monies_owing', $transaction, $registration_query_params );
 		do_action( 'AHEE__EE_Transaction_Processor__toggle_registration_statuses_if_no_monies_owing', $transaction, $status_updates );
 		return $status_updates;
 	}
