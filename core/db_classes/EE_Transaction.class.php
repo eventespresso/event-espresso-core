@@ -170,7 +170,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return float amount remaining
 	 */
 	public function remaining() {
-		return $this->total() - $this->paid();
+		return (float)( $this->total() - $this->paid() );
 	}
 
 
