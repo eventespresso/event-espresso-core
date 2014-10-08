@@ -155,6 +155,31 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
+		//heartbeat stuff
+		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
+
+	}
+
+
+
+	/**
+	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle accordingly.
+	 *
+	 * @param array  $response The existing heartbeat response array.
+	 * @param array  $data        The incoming data package.
+	 *
+	 * @return array  possibly appended response.
+	 */
+	public function heartbeat_response( $response, $data ) {
+		/**
+		 * check whether count of tickets is approaching the potential
+		 * limits for the server.
+		 */
+		if ( ! empty( $data['input_count'] ) ) {
+			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check($data['input_count']);
+		}
+
+		return $response;
 	}
 
 
@@ -204,6 +229,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function load_scripts_styles_edit() {
+		wp_register_script( 'ee-event-editor-heartbeat', EVENTS_CAF_ASSETS_URL . 'event-editor-heartbeat.js', array( 'ee_admin_js', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
+
 		/**
 		 * load accounting js.
 		 */
@@ -212,6 +239,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		wp_enqueue_script('event_editor_js');
+		wp_enqueue_script('ee-event-editor-heartbeat');
 
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
@@ -222,6 +250,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
+		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
