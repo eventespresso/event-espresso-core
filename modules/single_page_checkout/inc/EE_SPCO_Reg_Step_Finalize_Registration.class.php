@@ -73,7 +73,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// at this point we'll consider a TXN to not have failed
-			if ( $transaction_processor->toggle_transaction_status( $this->checkout->transaction )) {
+			if ( $transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction )) {
 				$this->checkout->transaction->save();
 			}
 			// save TXN data to the cart
@@ -85,13 +85,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				// try to finalize any payment that may have been attempted
 				$payment_processor->finalize_payment_for( $this->checkout->transaction );
 			}
-			if ( $this->checkout->revisit ) {
-				// just update the status for the registrations
-				$transaction_processor->toggle_registration_status_if_no_monies_owing( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
-			} else {
+			// if this is the first time through the checkout
+			if ( ! $this->checkout->revisit ) {
 				// finalize the TXN, which will in turn, finalize all of it's registrations
-				$transaction_processor->finalize( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+				$reg_status_updates = $transaction_processor->finalize( $this->checkout->transaction );
+			} else {
+				// just update the status for the registrations
+				$reg_status_updates = $transaction_processor->toggle_registration_statuses_if_no_monies_owing( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
 			}
+			// update the TXN if payment conditions have changed
+			$transaction_processor->check_and_update_transaction_completion( $this->checkout->transaction );
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// setup URL for redirect
@@ -101,7 +104,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			);
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			// set a hook point
-			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout );
+			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $reg_status_updates );
 			return TRUE;
 		}
 		$this->checkout->redirect = FALSE;
