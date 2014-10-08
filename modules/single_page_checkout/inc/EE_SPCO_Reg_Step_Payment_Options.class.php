@@ -705,38 +705,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 		}
 		// ensure primary registrant has been fully processed
-		if ( ! $this->_finalize_primary_registrant_prior_to_payment() ) {
+		if ( ! $this->_setup_primary_registrant_prior_to_payment() ) {
 			return FALSE;
 		}
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		$transaction_processor->toggle_registration_status_for_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
-		// attempt payment
-		$payment = $this->_attempt_payment( $this->checkout->payment_method );
-		// onsite payment?
-		if ( $this->checkout->payment_method->is_on_site() ) {
-			$this->_onsite_payment_success( $payment );
-		} else if ( $this->checkout->payment_method->is_off_site() ) {
-			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
-			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
-				$this->checkout->redirect = TRUE;
-				$this->checkout->redirect_form = $payment->redirect_form();
-				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
-				// set JSON response
-				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
-			}
-
-		} else {
-			$this->checkout->redirect = TRUE;
-			$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->checkout->next_step->slug() ), $this->checkout->reg_page_base_url );
-			// set JSON response
-			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-			return TRUE;
-		}
+		// in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
+		$transaction_processor->toggle_registration_statuses_for_default_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+		// attempt payment and process the results
+		$payment = $this->_post_payment_processing( $this->_attempt_payment( $this->checkout->payment_method ));
 		// please note that offline payment methods will NOT make a payment,
-		// but instead just mark themselves as the PMD_ID on the transaction
+		// but instead just mark themselves as the PMD_ID on the transaction, and return TRUE
 		// so for either on-site / off-site payments OR off-line payment methods
-		return $payment instanceof EE_Payment ? TRUE : FALSE;
+		return $payment instanceof EE_Payment || $payment === TRUE ? TRUE : FALSE;
 
 	}
 
@@ -793,7 +774,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * _finalize_primary_registrant_prior_to_payment
+	 * _setup_primary_registrant_prior_to_payment
 	 * ensures that the primary registrant has a valid attendee object created with the critical details populated (first & last name & email)
 	 * and that both the transaction object and primary registration object have been saved
 	 * plz note that any other registrations will NOT be saved at this point (because they may not have any details yet)
@@ -801,7 +782,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @access private
 	 * @return bool
 	 */
-		private function _finalize_primary_registrant_prior_to_payment() {
+		private function _setup_primary_registrant_prior_to_payment() {
 			// check if transaction has a primary registrant and that it has a related Attendee object
 			if ( ! $this->_transaction_has_primary_registrant() ) {
 				// need to at least gather some primary registrant data before attempting payment
@@ -818,8 +799,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$primary_registration->set_transaction_id( $this->checkout->transaction->ID() );
 			// save what we have so far
 			$primary_registration->save();
-			// ensure primary registration been finalized
-			$primary_registration->finalize();
 			return TRUE;
 		}
 
@@ -967,6 +946,37 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 
+	/**
+	 * _post_payment_processing
+	 *
+	 * @access private
+	 * @param EE_Payment $payment
+	 * @return bool
+	 */
+	private function _post_payment_processing( $payment = NULL ) {
+		// On-Site payment?
+		if ( $this->checkout->payment_method->is_on_site() ) {
+			$this->_onsite_payment_success( $payment );
+			// Off-Site payment?
+		} else if ( $this->checkout->payment_method->is_off_site() ) {
+			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
+			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
+				$this->checkout->redirect = TRUE;
+				$this->checkout->redirect_form = $payment->redirect_form();
+				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
+				// set JSON response
+				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
+			}
+			// Off-Line payment?
+		} else {
+			$this->checkout->redirect = TRUE;
+			$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->checkout->next_step->slug() ), $this->checkout->reg_page_base_url );
+			// set JSON response
+			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+			return TRUE;
+		}
+		return $payment;
+	}
 
 
 
