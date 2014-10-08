@@ -907,7 +907,7 @@ class EE_Error extends Exception {
 			);
 			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #E76700;">
+			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #fcb93c;">
 				<p>' . $pan_message . '</p>
 				<a class="dismiss-ee-nag-notice hide-if-no-js" style="float: right; cursor: pointer; text-decoration:none;" rel="' . $pan_name . '">
 					<span class="dashicons dashicons-dismiss" style="position:relative; top:-1px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'

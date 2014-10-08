@@ -114,7 +114,7 @@ class EE_messages {
 			$msg_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
 			$filename = $msg_name . '.class.php';
 			$load_file = $base_path . DS . $filename;
-			if ( EEH_File::exists($load_file) ) {
+			if ( is_readable($load_file) ) {
 				require_once($load_file);
 				$active_names[$active] = $msg_name;
 			} else {

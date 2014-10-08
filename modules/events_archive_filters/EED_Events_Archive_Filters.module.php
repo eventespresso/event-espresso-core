@@ -294,6 +294,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function posts_join_for_orderby( $orderby_params = array() ) {
+		global $wpdb;
 		$SQL= '';
 		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
 		foreach( $orderby_params as $orderby ) {
@@ -682,12 +683,12 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
 			EE_Registry::instance()->load_helper( 'File' );
-			if ( EEH_File::exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
+			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
 				wp_register_style( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
 			} else {
 				wp_register_style( 'archive-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
 			}
-			if ( EEH_File::exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js' )) {
+			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js' )) {
 				wp_register_script( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
 				wp_register_script( 'archive-espresso_events', EVENTS_ARCHIVE_ASSETS_URL . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE );
