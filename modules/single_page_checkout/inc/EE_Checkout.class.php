@@ -61,6 +61,12 @@ class EE_Checkout {
 	public $step = '';
 
 	/**
+	 * the reg step slug for a step being edited
+	 * @type string
+	 */
+	public $edit_step = '';
+
+	/**
 	 * the action being performed on the current step
 	 * @type string
 	 */

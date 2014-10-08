@@ -307,7 +307,7 @@ abstract class EE_PMT_Base{
 					array_merge(
 						$duplicate_properties,
 						array(
-							'PAY_timestamp' => current_time('mysql',false),
+							'PAY_timestamp' => current_time( 'mysql' ),
 							'PAY_txn_id_chq_nmbr' => NULL,
 							'PAY_po_number' => NULL,
 							'PAY_extra_accntng' => NULL,
@@ -337,7 +337,9 @@ abstract class EE_PMT_Base{
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_values);
 				$payment->save();
 				$transaction->update_based_on_payments();//also saves transaction
-				$transaction->finalize();
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->toggle_registration_statuses_if_no_monies_owing( $transaction );
 			}else{
 				throw new EE_Error(
 					sprintf(

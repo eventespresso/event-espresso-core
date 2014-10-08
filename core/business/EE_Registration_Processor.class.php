@@ -63,17 +63,20 @@ class EE_Registration_Processor {
 	 *
 	 * 	@access public
 	 * @param EE_Registration $registration
-	 * @param string           $new_reg_status
-	 * 	@return 	boolean
+	 * @param string 	$new_reg_status
+	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * 	@return boolean
 	 */
-	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '' ) {
+	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = TRUE ) {
 		// get current REG_Status
 		$old_reg_status = $registration->status_ID();
 		// toggle reg status to approved IF the event default reg status is approved
 		if ( ! empty( $new_reg_status ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
 			// toggle status to approved
 			if ( $registration->set_status( $new_reg_status )) {
-				$registration->save();
+				if ( $save ) {
+					$registration->save();
+				}
 				// send messages
 				$this->registration_status_changed(
 					$registration,
@@ -90,19 +93,23 @@ class EE_Registration_Processor {
 	}
 
 
+
 	/**
-	 * 	toggle_registration_status_for_approved_events
+	 *    toggle_registration_statuses_for_default_approved_events
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Registration $registration
-	 * 	@return 	boolean
+	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @return boolean
 	 */
-	public function toggle_registration_status_for_approved_events( EE_Registration $registration ) {
+	public function toggle_registration_status_for_default_approved_events( EE_Registration $registration, $save = TRUE ) {
 		// toggle reg status to approved IF the event default reg status is approved
 		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
-			$registration->save();
+			if ( $save ) {
+				$registration->save();
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -110,13 +117,14 @@ class EE_Registration_Processor {
 
 
 	/**
-	 * 	toggle_registration_status_if_no_monies_owing
+	 * 	toggle_registration_statuses_if_no_monies_owing
 	 *
 	 * 	@access public
 	 * @param EE_Registration $registration
-	 * 	@return 	boolean
+	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * 	@return boolean
 	 */
-	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration ) {
+	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE ) {
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
@@ -126,7 +134,9 @@ class EE_Registration_Processor {
 		) {
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
-			$registration->save();
+			if ( $save ) {
+				$registration->save();
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -139,8 +149,8 @@ class EE_Registration_Processor {
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param array           $additional_conditions
-	 * @return    void
+	 * @param array 	$additional_conditions
+	 * @return void
 	 */
 	public function registration_status_changed( EE_Registration $registration, $additional_conditions = array() ) {
 		do_action(
@@ -162,13 +172,22 @@ class EE_Registration_Processor {
 	 * @return bool
 	 */
 	public function finalize(  EE_Registration $registration ) {
-		// if we're doing this from admin and we have a $new_reg_status
-		if ( $this->toggle_registration_status_for_approved_events( $registration ) || $this->toggle_registration_status_if_no_monies_owing( $registration )) {
-			// send messages
-			$this->registration_status_changed( $registration, array( 'finalized' => TRUE ));
-			return TRUE;
+		$old_reg_status = $registration->status_ID();
+		// if the registration status gets updated, then save the registration
+		if ( $this->toggle_registration_status_for_default_approved_events( $registration, FALSE ) || $this->toggle_registration_status_if_no_monies_owing( $registration, FALSE )) {
+			$registration->save();
 		}
-		return FALSE;
+		$new_reg_status = $registration->status_ID();
+		// send messages
+		$this->registration_status_changed(
+			$registration,
+			array(
+				'finalized' => TRUE,
+				'old_reg_status' 			=> $old_reg_status,
+				'new_reg_status' 		=> $new_reg_status
+			)
+		);
+		return $new_reg_status == EEM_Registration::status_id_approved ? TRUE : FALSE;
 	}
 
 
