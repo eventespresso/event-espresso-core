@@ -386,11 +386,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 		// which step is being requested ?
 		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
+		// which step is being edited ?
+		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
 		$this->checkout->action = $this->checkout->admin_request && $this->checkout->action == 'process_registration_step' ? 'process_reg_step' : $this->checkout->action;
 		// returning to edit ?
-		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
+		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', '' );
 		// or some other kind of revisit ?
 		$this->checkout->revisit = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 		// and whether or not to generate a reg form for this request
@@ -550,8 +552,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						if ( $this->checkout->current_step->success_message() != '' ) {
 							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
 						}
-						// did we just successfully complete the processing for this step ?
-						if ( $this->checkout->action == 'process_reg_step' ) {
+						// did we just successfully complete the processing for this step, and this is NOT the Finalize Registration step ?
+						if ( $this->checkout->action == 'process_reg_step' && ! $this->checkout->current_step->is_final_step() ) {
 							// mark this reg step as completed
 							$this->checkout->current_step->set_completed();
 						}
