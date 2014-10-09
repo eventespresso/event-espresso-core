@@ -120,7 +120,8 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 * @return void.
 	 */
 	public  function enqueue_scripts_styles() {
-		do_action( 'AHEE__EE_Pdf_messenger__enqueue_scripts_styles', '' );
+		parent::enqueue_scripts_styles();
+		do_action( 'AHEE__EE_Pdf_messenger__enqueue_scripts_styles');
 	}
 
 
