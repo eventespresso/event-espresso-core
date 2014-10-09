@@ -78,7 +78,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		}
 		//check dmss weren't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//check that we didn't register the addon's deactivaiton hook either
 		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
@@ -110,7 +110,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		}
 		//check dmss werne't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//check that we didn't register the addon's deactivaiton hook either
 		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
@@ -133,7 +133,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		//check DMSs were setup properly too
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//and check the deactivation hook was setup properly
 		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
@@ -143,8 +143,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
 		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 
-		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
+		$dms = EE_Registry::instance()->load_dms('New_Addon_1_0_0');
 		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+		$dms->set_migrating( FALSE );
 		$dms->schema_changes_before_migration();
 		$dms->schema_changes_after_migration();
 		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
@@ -175,7 +176,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 //		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 //		//check DMSs were setup properly too
 //		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-//		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+//		$this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 //
 //		//and check the deactivation hook was setup properly
 //		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
@@ -185,7 +186,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 //		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
 //		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 //
-//		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
+//		$dms = EE_Registry::instance()->load_dms('New_Addon_1_0_0');
 //		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
 //		$dms->schema_changes_before_migration();
 //		$dms->schema_changes_after_migration();
@@ -252,7 +253,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 		//verify DMSs deregistered
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		$this->_stop_pretending_addon_hook_time();
 		$this->_stop_pretending_after_plugin_activation();
