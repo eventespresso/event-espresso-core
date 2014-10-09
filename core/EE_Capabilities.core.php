@@ -48,6 +48,10 @@ final class EE_Capabilities extends EE_Base {
 	 */
 	private $_meta_caps = array();
 
+	/**
+	 * the name of the wp option used to store caps previously initialized
+	 */
+	const option_name = 'ee_caps_initialized';
 
 
 
@@ -78,7 +82,6 @@ final class EE_Capabilities extends EE_Base {
 	 * @return \EE_Capabilities
 	 */
 	private function __construct() {
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'init_caps' ));
 	}
 
 
@@ -311,24 +314,21 @@ final class EE_Capabilities extends EE_Base {
 
 
 		//first let's determine if these caps have already been set.
-		$cap_to_check = empty( $custom_map ) ? reset($this->_caps_map) : reset($custom_map);
-		$cap_to_check = reset($cap_to_check); //should be the first capability in the first role array.
-		$caps_are_set = get_option( 'ee_caps_initialized' );
-
-		if ( ! $reset && !empty( $caps_are_set ) && is_array( $caps_are_set ) && in_array( $cap_to_check, $caps_are_set ) ) {
-			return;
-		}
-
-		//loop through the _init_caps_map for each role and add the caps to the role.
-		foreach ( $caps_map as $role => $caps ) {
-			foreach ( $caps as $cap ) {
-				$this->add_cap_to_role( $role, $cap );
+		$caps_set_before = get_option( self::option_name, array() );
+		//if not reset, see what caps are new for each role. if they're new, add them.
+		foreach( $caps_map as $role => $caps_for_role ) {
+			foreach( $caps_for_role as $cap ) {
+				//first check we haven't already added this cap before, or it's a reset
+				if( $reset || ! isset( $caps_set_before[ $role ] ) || ! in_array( $cap, $caps_set_before[ $role ] ) ) {
+					$this->add_cap_to_role( $role, $cap );
+					$caps_set_before[ $role ][] = $cap;
+				}
 			}
 		}
 
 		//now let's just save the cap that has been set.
-		$caps_are_set[] = $cap_to_check;
-		update_option( 'ee_caps_initialized', $caps_are_set );
+		update_option( self::option_name, $caps_set_before );
+		do_action( 'AHEE__EE_Capabilities__init_role_caps__complete', $caps_set_before );
 	}
 
 
@@ -395,12 +395,10 @@ final class EE_Capabilities extends EE_Base {
 	 * @return bool  Whether user can or not.
 	 */
 	public function current_user_can( $cap, $context, $id = 0 ) {
-		$user_can = ! empty( $id ) ? current_user_can( $cap, $id ) : current_user_can( $cap );
-
 		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can__' . $context, $user_can, $cap, $id );
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can', $user_can, $context, $cap, $id );
-		return $user_can;
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__current_user_can__cap__' . $context,  $cap, $id );
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__current_user_can__cap', $filtered_cap, $context, $cap, $id );
+		return ! empty( $id ) ? current_user_can( $filtered_cap, $id ) : current_user_can( $filtered_cap );
 	}
 
 
@@ -418,12 +416,10 @@ final class EE_Capabilities extends EE_Base {
 	 * @return bool Whether user can or not.
 	 */
 	public function user_can( $user, $cap, $context, $id = 0 ) {
-		$user_can = ! empty( $id ) ? user_can( $user, $cap, $id ) : user_can( $user, $cap );
-
 		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can__' . $context, $user_can, $user, $cap, $id );
-		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can', $user_can, $user, $context, $cap, $id );
-		return $user_can;
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__user_can__cap__' . $context, $cap, $user, $id );
+		$filtered_cap = apply_filters( 'FHEE__EE_Capabilities__user_can__cap', $filtered_cap, $context, $cap, $user,  $id );
+		return ! empty( $id ) ? user_can( $user, $filtered_cap, $id ) : user_can( $user, $filtered_cap );
 	}
 
 

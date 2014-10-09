@@ -28,18 +28,58 @@ require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_File extends EEH_Base {
 
 	/**
+	 * @var string $_credentials_form
+	 */
+	private static $_credentials_form;
+
+
+
+	/**
 	 * @throws EE_Error
 	 * @return WP_Filesystem_Base
 	 */
 	private static function _get_wp_filesystem() {
 		global $wp_filesystem;
+		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-			if ( ! WP_Filesystem() ) {
-				throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+			// if some eager beaver's just trying to get in there too early...
+			if ( ! did_action( 'wp_loaded' )) {
+				$msg = __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso');
+				if ( WP_DEBUG ) {
+					$msg .= '<br />' .  __('The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.', 'event_espresso');
+				}
+				throw new EE_Error( $msg );
+			} else {
+				// should be loaded if we are past the wp_loaded hook...
+				if ( ! function_exists( 'WP_Filesystem' )) {
+					require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				}
+				// basically check for direct or previously configured access
+				if ( ! WP_Filesystem() ) {
+					// turn on output buffering so that we can capture the credentials form
+					ob_start();
+					$credentials = request_filesystem_credentials( '' );
+					// store credentials form for the time being
+					EEH_File::$_credentials_form = ob_get_clean();
+					// if credentials do NOT exist
+					if ( $credentials === FALSE ) {
+						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
+						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+					}
+				}
 			}
 		}
 		return $wp_filesystem;
+	}
+
+
+	/**
+	 * display_request_filesystem_credentials_form
+	 */
+	public static function display_request_filesystem_credentials_form() {
+		if ( ! empty( EEH_File::$_credentials_form )) {
+			echo '<div class="updated espresso-notices-attention"><p>' . EEH_File::$_credentials_form . '</p></div>';
+		}
 	}
 
 
@@ -399,33 +439,31 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * takes teh folder name (with or without trailing slash) and finds the files it in,
+	 * takes the folder name (with or without trailing slash) and finds the files it in,
 	 * and what the class's name inside of each should be.
 	 * @param array $folder_paths
+	 * @throws \EE_Error
 	 * @return array where keys are what the class names SHOULD be, and values are their filepaths
-	 * @throws EE_Error
 	 */
 	public static function get_contents_of_folders( $folder_paths = array() ){
 		$class_to_folder_path = array();
 		foreach( $folder_paths as $folder_path ){
 			$folder_path = self::standardise_and_end_with_directory_separator( $folder_path );
 			// load WP_Filesystem and set file permissions
-			$wp_filesystem = EEH_File::_get_wp_filesystem();
-			$files_in_folder = $wp_filesystem->dirlist($folder_path, TRUE);// glob($folder_path.'*');
+			$files_in_folder = glob( $folder_path . '*' );
 			$class_to_folder_path = array();
-			if( $files_in_folder ) {
-				foreach( $files_in_folder as $file_path => $info_about_file ){
+			if ( $files_in_folder ) {
+				foreach( $files_in_folder as $file_path ){
 					//only add files, not folders
-					if( $info_about_file[ 'type' ] == 'f' ){
+					if ( ! is_dir( $file_path )){
 						$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
-						$class_to_folder_path[$classname] = $folder_path . $file_path;
+						$class_to_folder_path[$classname] = $file_path;
 					}
 				}
 			}
 		}
 		return $class_to_folder_path;
 	}
-
 
 }
 // End of file EEH_File.helper.php
