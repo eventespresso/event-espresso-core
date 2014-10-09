@@ -277,6 +277,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
 		$installed_refs = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', $installed_refs );
+		$this->_caffeinated_extends = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__caffeinated_extends', $this->_caffeinated_extends );
 
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
@@ -590,7 +591,7 @@ class EE_Admin_Page_Loader {
 					}
 				}
 			}
-		}
+		}/**/
 
 		//if we've got _caf_autoloaders set then let's register the autoloader method
 //		if ( !empty( $this->_caf_autoloader ) ) {
