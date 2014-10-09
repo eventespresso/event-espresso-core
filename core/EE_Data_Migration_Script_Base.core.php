@@ -5,8 +5,14 @@
  */
 abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Base{
 
-
-
+	/**
+	 * Set by client code to indicate this DMS is being ran as part of a proper migration,
+	 * instead of being used to merely setup (or verify) the database structure.
+	 * Defaults to TRUE, so client code that's NOT using this DMS as part of a proper migration
+	 * should call EE_Data_Migration_Script_Base::set_migrating( FALSE )
+	 * @var boolean
+	 */
+	protected $_migrating = TRUE;
 	/**
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
 	 * @var EE_Data_Migration_Script_Stage[] $migration_functions
@@ -355,7 +361,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param string $engine_string
 	 */
 	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=InnoDB '){
-		$currently_migrating = $this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() );
+		//we want to know if we are currently performing a migration. We could just believe what was set on the _migrating property, but let's double-check (ie the script should apply and we should be in MM)
+		$currently_migrating = $this->_migrating &&
+				$this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() ) &&
+				EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance;
 		if( $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation  || $currently_migrating ){
 			$drop_pre_existing_tables = true;
 		}else{
@@ -545,6 +554,17 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	public function priority(){
 		return $this->_priority;
+	}
+
+	/**
+	 * Sets whether or not this DMS is being ran as part of a migratation, instead of
+	 * just being used to setup (or verify) the current database structure matches
+	 * what the latest DMS indicates it should be
+	 * @param boolean $migrating
+	 * @return void
+	 */
+	public function set_migrating( $migrating = TRUE ){
+		$this->_migrating = $migrating;
 	}
 }
 

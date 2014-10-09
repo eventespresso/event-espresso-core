@@ -145,6 +145,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
 		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+		$dms->set_migrating( FALSE );
 		$dms->schema_changes_before_migration();
 		$dms->schema_changes_after_migration();
 		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
