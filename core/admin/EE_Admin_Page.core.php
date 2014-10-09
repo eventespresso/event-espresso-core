@@ -1995,7 +1995,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  	<div id="espresso_news_post_box_content" class="infolinks">
 	  		<?php
 	  		// Get RSS Feed(s)
-	  		$url = urlencode('http://eventespresso.com/feed/');
+	  		$feed_url = apply_filters( 'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url', 'http://eventespresso.com/feed/' );
+	  		$url = urlencode($feed_url);
 	  		self::cached_rss_display( 'espresso_news_post_box_content', $url );
 
 	  		?>
