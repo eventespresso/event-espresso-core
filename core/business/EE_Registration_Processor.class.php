@@ -165,6 +165,7 @@ class EE_Registration_Processor {
 						'manually_updated' 		=> FALSE,
 						'payment_updates' 		=> FALSE,
 						'status_updates' 			=> FALSE,
+						'finalized' 						=> FALSE,
 						'reg_steps' 						=> array(),
 						'old_txn_status' 				=> NULL,
 						'last_payment'				=> NULL,
