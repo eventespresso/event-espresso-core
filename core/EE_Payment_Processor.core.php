@@ -321,7 +321,7 @@ class EE_Payment_Processor{
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			//ok, now process the transaction according to the payment
-			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $txn );
+			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $txn, $payment );
 		}
 	}
 }
