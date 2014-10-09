@@ -448,8 +448,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		if ( ! $this->ID() ) {
 			$this->save();
 		}
+		/** @type EEM_Payment $PAY */
+		$PAY = EE_Registry::instance()->load_model( 'Payment', $this->_timezone );
 		// recalculate and set  total paid
-		return EE_Registry::instance()->load_model( 'Payment', $this->_timezone )->update_payment_transaction( $this, 'processed' );
+		return $PAY->update_payment_transaction( $this, 'processed' );
 	}
 
 
