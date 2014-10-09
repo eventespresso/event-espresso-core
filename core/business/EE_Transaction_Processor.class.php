@@ -271,20 +271,24 @@ class EE_Transaction_Processor {
 	}
 
 
+
 	/**
 	 * finalize
-	 * 	this can only be called if ALL reg steps have been completed
+	 *    this can only be called if ALL reg steps have been completed
 	 * cycles thru related registrations and calls finalize_registration() on each
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @param \EE_Payment    $payment
+	 * @param array          $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @throws \EE_Error
 	 * @return array
 	 */
-	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $registration_query_params = array() ) {
+	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, EE_Payment $payment = NULL, $registration_query_params = array() ) {
 		// array of details to aid in decision making by systems
 		$update_params = array(
 			'old_txn_status' 	=> $transaction->status_ID(),
-			'reg_steps' 			=> $transaction->reg_steps()
+			'reg_steps' 			=> $transaction->reg_steps(),
+			'last_payment'	=> $payment
 		);
 		// possibly make adjustments due to new payments
 		$update_params['payment_updates'] = $this->calculate_total_payments_and_update_status( $transaction );
