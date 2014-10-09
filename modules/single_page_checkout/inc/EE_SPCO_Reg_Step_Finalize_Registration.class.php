@@ -83,10 +83,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 				// try to finalize any payment that may have been attempted, but do NOT update TXN
-				$payment_processor->finalize_payment_for( $this->checkout->transaction, FALSE );
+				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, FALSE );
+			} else {
+				$payment = NULL;
 			}
 			// update the TXN if payment conditions have changed
-			$txn_update_params = $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+			$txn_update_params = $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
+				$this->checkout->transaction,
+				$payment,
+				$this->checkout->reg_cache_where_params
+			);
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// setup URL for redirect
