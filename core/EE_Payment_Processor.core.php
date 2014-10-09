@@ -160,7 +160,9 @@ class EE_Payment_Processor{
 			 */
 			$payment = NULL;
 			if($transaction && $payment_method){
+				/** @type EE_Transaction $transaction */
 				$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+				/** @type EE_Payment_Method $payment_method */
 				$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
 				if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
 						$payment = $payment_method->type_obj()->handle_ipn( $_req_data, $transaction );
@@ -217,6 +219,9 @@ class EE_Payment_Processor{
 			throw $e;
 		}
 	}
+
+
+
 	/**
 	 * Should be called just before displaying the payment attempt results to the user,
 	 * when the payment attempt has finished. Some payment methods may have special
@@ -225,16 +230,21 @@ class EE_Payment_Processor{
 	 * should be called while loading the page that displays the payment's status. If the user is
 	 * sent to an offsite payment provider, this should be called upon returning from that offsite payment
 	 * provider.
+	 *
 	 * @param EE_Transaction | int $transaction
+	 * @param bool                 $update_txn
+	 * @throws \EE_Error
 	 * @return EE_Payment
 	 */
-	public function finalize_payment_for( $transaction ){
+	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		/** @var $transaction EE_Transaction */
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
 			$payment = $last_payment_method->type_obj()->finalize_payment_for( $transaction );
-			$this->update_txn_based_on_payment( $transaction, $payment );
+			if ( $update_txn ) {
+				$this->update_txn_based_on_payment( $transaction, $payment );
+			}
 			return $payment;
 		}else{
 			return NULL;
@@ -299,18 +309,19 @@ class EE_Payment_Processor{
 				//we should have already done that action
 			}
 		}else{
-			if( $payment instanceof EE_Payment) {
+			if ( $payment instanceof EE_Payment ) {
 				//we need to save this payment in order for transaction to be updated correctly
 				//(because it queries teh DB to find the total amount paid, and saving puts
 				//the payment into the DB)
 				$payment->save();
+				if( $payment->just_approved() ){
+					do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $txn, $payment );
+				}
 			}
-//			$payment = EEM_Payment::instance()->ensure_is_obj( $payment );
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			//ok, now process the transaction according to the payment
-			$txn->update_based_on_payments($save_txn);//also saves transaction
-			if( $payment->just_approved() ){
-				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $txn, $payment );
-			}
+			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $txn );
 		}
 	}
 }
