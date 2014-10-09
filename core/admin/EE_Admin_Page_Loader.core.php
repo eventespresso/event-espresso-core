@@ -593,10 +593,7 @@ class EE_Admin_Page_Loader {
 			}
 		}/**/
 
-		//if we've got _caf_autoloaders set then let's register the autoloader method
-//		if ( !empty( $this->_caf_autoloader ) ) {
-//			spl_autoload_register(array( $this, 'caffeinated_autoloaders') );
-//		}
+		$ee_admin_hooks = apply_filters( 'FHEE__EE_Admin_Page_Loader__set_caffeinated__ee_admin_hooks', $ee_admin_hooks );
 
 		return $installed_refs;
 
