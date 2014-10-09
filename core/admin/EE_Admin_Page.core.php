@@ -1958,8 +1958,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('New @ Event Espresso', 'event_espresso') );
+		add_meta_box('espresso_news_post_box', $news_box_title, array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
 	}
 
 
