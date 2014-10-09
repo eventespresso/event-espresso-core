@@ -288,7 +288,8 @@ class EE_Transaction_Processor {
 		$update_params = array(
 			'old_txn_status' 	=> $transaction->status_ID(),
 			'reg_steps' 			=> $transaction->reg_steps(),
-			'last_payment'	=> $payment
+			'last_payment'	=> $payment,
+			'finalized' 			=> $this->final_reg_step_completed( $transaction )
 		);
 		// possibly make adjustments due to new payments
 		$update_params['payment_updates'] = $this->calculate_total_payments_and_update_status( $transaction );
@@ -301,7 +302,7 @@ class EE_Transaction_Processor {
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
 		// if we've made it this far, and the 'finalize_registration' step has not yet been completed
-		if ( $this->all_reg_steps_completed_except_final_step( $transaction ) ) {
+		if ( $this->all_reg_steps_completed_except_final_step( $transaction )) {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 		}
 		return $update_params;
