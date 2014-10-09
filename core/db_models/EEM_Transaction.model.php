@@ -204,6 +204,32 @@ class EEM_Transaction extends EEM_Base {
 
 
 
+
+
+	/**
+	 * Updates the provided EE_Transaction with all the applicable payments
+	 * (or fetch the EE_Transaction from its ID)
+	 *
+	 * @deprecated
+	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @param boolean $save_txn whether or not to save the transaction during this function call
+	 * @return boolean success
+	 */
+	public function update_based_on_payments( $transaction_obj_or_id, $save_txn = TRUE ){
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf( __( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ), 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()' ),
+			'4.6.0'
+		);
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->ensure_is_obj( $transaction_obj_or_id ));
+	}
+
+
+
+
+
 }
 // End of file EEM_Transaction.model.php
 // Location: /includes/models/EEM_Transaction.model.php
