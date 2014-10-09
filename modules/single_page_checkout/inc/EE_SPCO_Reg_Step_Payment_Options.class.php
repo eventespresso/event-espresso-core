@@ -988,44 +988,50 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	@return 	boolean
 	 */
 	private function _onsite_payment_success( $payment ) {
-		// check results
-		switch ( $payment->status() ) {
+		// verify payment validity
+		if ( $payment instanceof EE_Payment ) {
+			// check results
+			switch ( $payment->status() ) {
 
-			// good payment
-			case EEM_Payment::status_id_approved :
-				EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				return TRUE;
-				break;
+				// good payment
+				case EEM_Payment::status_id_approved :
+					EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					return TRUE;
+					break;
 
-			// slow payment
-			case EEM_Payment::status_id_pending :
-				EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				return TRUE;
-				break;
+				// slow payment
+				case EEM_Payment::status_id_pending :
+					EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					return TRUE;
+					break;
 
-			// don't wanna payment
-			case EEM_Payment::status_id_cancelled :
-				EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				break;
+				// don't wanna payment
+				case EEM_Payment::status_id_cancelled :
+					EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					return FALSE;
+					break;
 
-			// not enough payment
-			case EEM_Payment::status_id_declined :
-				EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				break;
+				// not enough payment
+				case EEM_Payment::status_id_declined :
+					EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					return FALSE;
+					break;
 
-			// bad payment
-			case EEM_Payment::status_id_failed :
-				EE_Error::add_error(
-					sprintf(
-						__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
-					),
-					__FILE__, __FUNCTION__, __LINE__
-				);
-				break;
+				// bad payment
+				case EEM_Payment::status_id_failed :
+					// default to error below
+					break;
 
+			}
 		}
+		EE_Error::add_error(
+			sprintf(
+				__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+				'<br/>',
+				EE_Registry::instance()->CFG->organization->email
+			),
+			__FILE__, __FUNCTION__, __LINE__
+		);
 		return FALSE;
 	}
 

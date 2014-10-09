@@ -70,15 +70,15 @@ class EE_Registration_Processor {
 	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = TRUE ) {
 		// get current REG_Status
 		$old_reg_status = $registration->status_ID();
-		// toggle reg status to approved IF the event default reg status is approved
-		if ( ! empty( $new_reg_status ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
-			// toggle status to approved
+		// toggle reg status but only if it has changed and the user can do so
+		if ( $old_reg_status !== $new_reg_status && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
+			// change status to new value
 			if ( $registration->set_status( $new_reg_status )) {
 				if ( $save ) {
 					$registration->save();
 				}
 				// send messages
-				$this->registration_status_changed(
+				$this->trigger_registration_update_notifications(
 					$registration,
 					array(
 						'manually_updated' 	=> TRUE,
@@ -95,7 +95,7 @@ class EE_Registration_Processor {
 
 
 	/**
-	 *    toggle_registration_statuses_for_default_approved_events
+	 *    toggle_registration_status_for_default_approved_events
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
@@ -149,16 +149,31 @@ class EE_Registration_Processor {
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param array 	$additional_conditions
+	 * @param array 	$additional_details
 	 * @return void
 	 */
-	public function registration_status_changed( EE_Registration $registration, $additional_conditions = array() ) {
+	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
 		do_action(
-			'AHEE__EE_Registration_Processor__trigger_registration_status_changed_hook',
+			'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 			$registration,
 			apply_filters(
-				'FHEE__EE_Registration_Processor__trigger_registration_status_changed_hook__additional_conditions',
-				$additional_conditions
+				'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
+				array_merge(
+					// defaults
+					array(
+						'checkout_or_payment' => FALSE,
+						'manually_updated' 		=> FALSE,
+						'payment_updates' 		=> FALSE,
+						'status_updates' 			=> FALSE,
+						'finalized' 						=> FALSE,
+						'reg_steps' 						=> array(),
+						'old_txn_status' 				=> NULL,
+						'last_payment'				=> NULL,
+						'old_reg_status' 				=> NULL,
+						'new_reg_status' 			=> NULL
+					),
+					$additional_details
+				)
 			)
 		);
 	}
@@ -169,9 +184,10 @@ class EE_Registration_Processor {
 	 * sets reg status based either on passed param or on transaction status and event pre-approval setting
 	 *
 	 * @param \EE_Registration $registration
+	 * @param array 	$additional_details
 	 * @return bool
 	 */
-	public function finalize(  EE_Registration $registration ) {
+	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		$old_reg_status = $registration->status_ID();
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, FALSE ) || $this->toggle_registration_status_if_no_monies_owing( $registration, FALSE )) {
@@ -179,12 +195,15 @@ class EE_Registration_Processor {
 		}
 		$new_reg_status = $registration->status_ID();
 		// send messages
-		$this->registration_status_changed(
+		$this->trigger_registration_update_notifications(
 			$registration,
-			array(
-				'finalized' => TRUE,
-				'old_reg_status' 			=> $old_reg_status,
-				'new_reg_status' 		=> $new_reg_status
+			array_merge(
+				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
+				array(
+					'checkout_or_payment' 	=> TRUE,
+					'old_reg_status' 					=> $old_reg_status,
+					'new_reg_status' 				=> $new_reg_status
+				)
 			)
 		);
 		return $new_reg_status == EEM_Registration::status_id_approved ? TRUE : FALSE;

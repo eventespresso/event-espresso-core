@@ -74,7 +74,7 @@ class EED_Messages  extends EED_Module {
 	public static function set_hooks() {
 		//actions
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
-		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
+		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 2 );
 		//filters
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
@@ -92,7 +92,7 @@ class EED_Messages  extends EED_Module {
 		//actions
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
-		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
+		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		//filters
@@ -386,56 +386,50 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * Trigger for Registration messages
 	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
-	 * @param  EE_Transaction $transaction
-	 * @param  array $reg_msg
-	 * @param  bool $from_admin
+	 *
+	 * @param EE_Registration $registration
+	 * @param array $extra_details
 	 * @return void
 	 */
-	public static function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
+	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 		self::_load_controller();
-
-		//for now we're ONLY doing this from frontend UNLESS we have the toggle to send.
-		if ( $from_admin ) {
-			$messages_toggle = !empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) && $_REQUEST['txn_reg_status_change']['send_notifications'] ? TRUE : FALSE;
-			if ( ! $messages_toggle )
+		// make sure appropriate admin params are set for sending messages
+		if ( is_admin() && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 				return; //no messages sent please.
 		}
 		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
-		if ( ! $reg_msg['new_reg'] && ! $reg_msg['to_approved'] )
+		if ( ! ( $extra_details['finalized'] || ( $extra_details['new_reg_status'] == EEM_Registration::status_id_approved && $extra_details['new_reg_status'] != $extra_details['old_reg_status'] ))) {
 			return;
+		}
+		EE_Registry::instance()->load_helper('MSG_Template');
+		// send the message type matching the status if that message type is active.
+		$message_type = self::_get_reg_status_array( $registration->status_ID() );
+		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
+			self::$_EEMSG->send_message(
+				$message_type,
+				array( $registration->transaction(), NULL )
+			);
+		}
 
-		$data = array( $transaction, NULL );
-
-		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
-		$registration = $transaction->get_first_related('Registration');
-		$reg_status = $registration instanceof EE_Registration ? $registration->status_ID() : '';
-
-		//send the message type matching the status if that message type is active.
-		//first an array to match for class name
-		$status_match_array = self::_get_reg_status_array();
-
-		$active_mts = self::$_EEMSG->get_active_message_types();
-
-		if ( in_array( $status_match_array[$reg_status], $active_mts ) )
-			self::$_EEMSG->send_message( $status_match_array[$reg_status], $data );
-
-		return; //if we get here then there is no active message type for this status.
 	}
 
 
 
 	/**
 	 * Simply returns an array indexed by Registration Status ID and the related message_type name associated with that status id.
+	 *
+	 * @param string $reg_status
 	 * @return array
 	 */
-	protected static function _get_reg_status_array() {
-		return array(
+	protected static function _get_reg_status_array( $reg_status = '' ) {
+		$reg_status_array = array(
 			EEM_Registration::status_id_approved => 'registration',
 			EEM_Registration::status_id_pending_payment => 'pending_approval',
 			EEM_Registration::status_id_not_approved => 'not_approved_registration',
 			EEM_Registration::status_id_cancelled => 'cancelled_registration',
 			EEM_Registration::status_id_declined => 'declined_registration'
-			);
+		);
+		return isset( $reg_status_array[ $reg_status ] ) ? $reg_status_array[ $reg_status ] : $reg_status_array;
 	}
 
 

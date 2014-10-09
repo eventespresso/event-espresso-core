@@ -286,7 +286,7 @@ abstract class EE_PMT_Base{
 	 * @return \EE_Base_Class|\EE_Payment|null
 	 * @throws EE_Error
 	 */
-	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
+	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
 		// @todo: add surcharge for the payment method, if any
 		if($this->_gateway){
 			//there is a gateway, so we're going to make a payment object
@@ -316,8 +316,7 @@ abstract class EE_PMT_Base{
 					)
 				);
 			}
-			//make sure the payment has been saved to show we started it, and so it has an ID
-			//should the gateway try to log it
+			//make sure the payment has been saved to show we started it, and so it has an ID should the gateway try to log it
 			$payment->save();
 			$billing_values = $this->_get_billing_values_from_form( $billing_info );
 			if( $this->_gateway instanceof EE_Offsite_Gateway ){
@@ -336,10 +335,9 @@ abstract class EE_PMT_Base{
 			} elseif ( $this->_gateway instanceof EE_Onsite_Gateway ) {
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_values);
 				$payment->save();
-				$transaction->update_based_on_payments();//also saves transaction
 				/** @type EE_Transaction_Processor $transaction_processor */
 				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				$transaction_processor->toggle_registration_statuses_if_no_monies_owing( $transaction );
+				$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 			}else{
 				throw new EE_Error(
 					sprintf(

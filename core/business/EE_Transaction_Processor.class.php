@@ -39,6 +39,115 @@ class EE_Transaction_Processor {
 
 
 	/**
+	 * _reg_steps_completed
+	 *
+	 * if $check_all is TRUE, then returns TRUE if ALL reg steps have been marked as completed,
+	 * if a $reg_step_slug is provided, then this step will be skipped when testing for completion
+	 *
+	 * if $check_all is FALSE and a $reg_step_slug is provided, then ONLY that reg step will be tested for completion
+	 *
+	 * @access private
+	 * @param EE_Transaction $transaction
+	 * @param string $reg_step_slug
+	 * @param bool   $check_all
+	 * @return boolean
+	 */
+	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
+		// loop thru reg steps array
+		foreach ( $transaction->reg_steps() as $slug => $reg_step_completed ) {
+			// if NOT checking ALL steps (only checking one step)
+			if ( ! $check_all ) {
+				// and this is the one
+				if ( $slug == $reg_step_slug ) {
+					return $reg_step_completed;
+				} else {
+					// skip to next reg step in loop
+					continue;
+				}
+			}
+			// if any reg step is NOT completed (ignoring any specific steps), then just leave
+			if( ! $reg_step_completed && $slug != $reg_step_slug ) {
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed
+	 *
+	 * returns TRUE if ALL reg steps have been marked as completed
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed( EE_Transaction $transaction ) {
+		return $this->_reg_steps_completed( $transaction );
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed_except
+	 *
+	 * returns TRUE if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param string $exception
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed_except( EE_Transaction $transaction, $exception = '' ) {
+		return $this->_reg_steps_completed( $transaction, $exception );
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed_except
+	 *
+	 * returns TRUE if ALL reg steps, except the final step, have been marked as completed
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed_except_final_step( EE_Transaction $transaction ) {
+		return $this->_reg_steps_completed( $transaction, 'finalize_registration' );
+	}
+
+
+
+	/**
+	 * reg_step_completed
+	 *
+	 * returns TRUE if a specific reg step has been marked as completed
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param string $reg_step_slug
+	 * @return boolean
+	 */
+	public function reg_step_completed( EE_Transaction $transaction, $reg_step_slug ) {
+		return $this->_reg_steps_completed( $transaction, $reg_step_slug, FALSE );
+	}
+
+
+
+	/**
+	 * completed_final_reg_step
+	 *
+	 * returns TRUE if the finalize_registration reg step has been marked as completed
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	public function final_reg_step_completed( EE_Transaction $transaction ) {
+		return $this->_reg_steps_completed( $transaction, 'finalize_registration', FALSE );
+	}
+
+
+
+	/**
 	 * set_reg_step_completed
 	 * given a valid TXN_reg_step, this sets the step as completed
 	 *
@@ -47,7 +156,7 @@ class EE_Transaction_Processor {
 	 * @param string          $reg_step_slug
 	 * @return boolean
 	 */
-	public function set_reg_step_completed(  EE_Transaction $transaction, $reg_step_slug ) {
+	public function set_reg_step_completed( EE_Transaction $transaction, $reg_step_slug ) {
 		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, TRUE );
 	}
 
@@ -62,7 +171,7 @@ class EE_Transaction_Processor {
 	 * @param string          $reg_step_slug
 	 * @return boolean
 	 */
-	public function set_reg_step_not_completed(  EE_Transaction $transaction, $reg_step_slug ) {
+	public function set_reg_step_not_completed( EE_Transaction $transaction, $reg_step_slug ) {
 		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, FALSE );
 	}
 
@@ -78,7 +187,7 @@ class EE_Transaction_Processor {
 	 * @param                 $status
 	 * @return boolean
 	 */
-	private function _set_reg_step_completed_status(  EE_Transaction $transaction, $reg_step_slug, $status ) {
+	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
 		// ensure boolean value
 		$status = is_bool( $status ) ? $status : FALSE;
 		// get reg steps array
@@ -164,50 +273,90 @@ class EE_Transaction_Processor {
 
 
 	/**
-	 * possibly toggles TXN status
+	 * finalize
+	 *    this can only be called if ALL reg steps have been completed
 	 * cycles thru related registrations and calls finalize_registration() on each
 	 *
 	 * @param EE_Transaction $transaction
+	 * @param \EE_Payment    $payment
+	 * @param array          $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @throws \EE_Error
+	 * @return array
+	 */
+	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, EE_Payment $payment = NULL, $registration_query_params = array() ) {
+		// array of details to aid in decision making by systems
+		$update_params = array(
+			'old_txn_status' 	=> $transaction->status_ID(),
+			'reg_steps' 			=> $transaction->reg_steps(),
+			'last_payment'	=> $payment,
+			'finalized' 			=> $this->final_reg_step_completed( $transaction )
+		);
+		// possibly make adjustments due to new payments
+		$update_params['payment_updates'] = $this->calculate_total_payments_and_update_status( $transaction );
+		// now update the registrations and add the results to our $update_params
+		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
+			'update_registration_after_checkout_or_payment',
+			$transaction,
+			$registration_query_params,
+			$update_params
+		);
+		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
+		// if we've made it this far, and the 'finalize_registration' step has not yet been completed
+		if ( $this->all_reg_steps_completed_except_final_step( $transaction )) {
+			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
+		}
+		return $update_params;
+	}
+
+
+
+
+	/**
+	 * Updates the provided EE_Transaction with all the applicable payments
+	 * (or fetch the EE_Transaction from its ID)
+	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
 	 * @return boolean
 	 */
-	public function check_and_update_transaction_completion( EE_Transaction $transaction ) {
-		if ( ! $transaction->all_reg_steps_completed() ) {
-			return FALSE;
+	public function calculate_total_payments_and_update_status( EE_Transaction $transaction ){
+		/** @type EEM_Payment $PAY */
+		$PAY = EE_Registry::instance()->load_model( 'Payment' );
+		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(), EEM_Payment::status_id_approved );
+		// if total paid has changed
+		if ( $total_paid != $transaction->paid() ) {
+			$transaction->set_paid( $total_paid );
+			// maybe update status, and make sure to save transaction if not done already
+			if ( ! $this->update_transaction_status( $transaction )) {
+				$transaction->save();
+			}
+			return TRUE;
 		}
-		// zero monies owing
-		if ( $transaction->is_free() || $transaction->remaining() == 0 ) {
-			// update to complete
-			$transaction->set_status( EEM_Transaction::complete_status_code );
-		} else if ( $transaction->paid() > $transaction->total() ) {
-			// paid too much so update to overpaid
-			$transaction->set_status( EEM_Transaction::overpaid_status_code );
-		} else {
-			return FALSE;
-		}
-		return TRUE;
+		return FALSE;
 	}
 
 
 
 	/**
-	 * finalize
-	 *
-	 * cycles thru related registrations and calls finalize_registration() on each
+	 * possibly toggles TXN status
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean
 	 */
-	public function finalize( EE_Transaction $transaction ) {
-		// don't repeat this step if this TXN has already been finalized
-		if ( $transaction->all_reg_steps_completed() ) {
+	public function update_transaction_status( EE_Transaction $transaction ) {
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		if ( $transaction->paid() > $transaction->total() ){
+			$new_txn_status = EEM_Transaction::overpaid_status_code;
+		} else if ( $transaction->paid() == $transaction->total() ) {
+			$new_txn_status = EEM_Transaction::complete_status_code;
+		} else if ( $transaction->paid() < $transaction->total() ) {
+			$new_txn_status = EEM_Transaction::incomplete_status_code;
+		} else {
 			return FALSE;
 		}
-		// now update the registrations
-		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'finalize', $transaction );
-		do_action( 'AHEE__EE_Transaction_Processor__finalize', $transaction, $status_updates );
-		// if we've made it this far, then set the 'finalize_registration' as completed
-		$this->set_reg_step_completed( $transaction, 'finalize_registration' );
-		return $status_updates;
+		if ( $new_txn_status !== $transaction->status_ID() ) {
+			$transaction->set_status( $new_txn_status );
+			return $transaction->save() ? TRUE : FALSE;
+		}
+		return FALSE;
 	}
 
 

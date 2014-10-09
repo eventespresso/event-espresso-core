@@ -834,15 +834,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			);
 			if( ! $payment->save() ){
-				$msg = __( 'An error occurred. The payment has not been processed succesfully.', 'event_espresso' );
+				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
 			if( $payment->apply_payment_to_transaction() ){
-				$msg =__('The payment has been processed succesfully.', 'event_espresso');
+				$msg =__('The payment has been processed successfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
-				$msg = __( 'An error occurred. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				$msg = __( 'An error occurred. The payment was processed successfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 

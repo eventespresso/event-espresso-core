@@ -82,19 +82,17 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			if ( $this->checkout->payment_required() ) {
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-				// try to finalize any payment that may have been attempted
-				$payment_processor->finalize_payment_for( $this->checkout->transaction );
-			}
-			// if this is the first time through the checkout
-			if ( ! $this->checkout->revisit ) {
-				// finalize the TXN, which will in turn, finalize all of it's registrations
-				$reg_status_updates = $transaction_processor->finalize( $this->checkout->transaction );
+				// try to finalize any payment that may have been attempted, but do NOT update TXN
+				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, FALSE );
 			} else {
-				// just update the status for the registrations
-				$reg_status_updates = $transaction_processor->toggle_registration_statuses_if_no_monies_owing( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+				$payment = NULL;
 			}
 			// update the TXN if payment conditions have changed
-			$transaction_processor->check_and_update_transaction_completion( $this->checkout->transaction );
+			$txn_update_params = $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
+				$this->checkout->transaction,
+				$payment,
+				$this->checkout->reg_cache_where_params
+			);
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// setup URL for redirect
@@ -104,7 +102,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			);
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			// set a hook point
-			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $reg_status_updates );
+			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
 			return TRUE;
 		}
 		$this->checkout->redirect = FALSE;
