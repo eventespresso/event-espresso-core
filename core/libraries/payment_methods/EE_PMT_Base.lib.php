@@ -337,7 +337,7 @@ abstract class EE_PMT_Base{
 				$payment->save();
 				/** @type EE_Transaction_Processor $transaction_processor */
 				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction );
+				$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 			}else{
 				throw new EE_Error(
 					sprintf(
