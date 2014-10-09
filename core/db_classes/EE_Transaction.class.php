@@ -123,26 +123,6 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * all_reg_steps_completed
-	 *
-	 * returns TRUE if ALL reg steps have been marked as completed
-	 *
-	 * @return boolean
-	 */
-	function all_reg_steps_completed() {
-		// loop thru reg steps array
-		foreach ( $this->reg_steps() as $reg_step ) {
-			// if any reg step is NOT completed, then just leave
-			if( ! $reg_step->completed() ) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
-
-
-
-	/**
 	 *
 	 * @return string of transaction's total cost, with currency symbol and decimal
 	 */
@@ -464,11 +444,12 @@ class EE_Transaction extends EE_Base_Class {
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
 	 * that apply to it
-	 * @param boolean $save_txn whether or not to save the transaction during this function call
 	 * @return boolean success of the application
 	 */
-	public function update_based_on_payments($save_txn = true){
-		return $this->get_model()->update_based_on_payments($this,$save_txn);
+	public function update_based_on_payments(){
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
 	}
 
 
