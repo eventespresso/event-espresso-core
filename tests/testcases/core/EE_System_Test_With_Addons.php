@@ -53,6 +53,13 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * @var array
 	 */
 	protected $_current_db_state = array();
+
+	/**
+	 * For when we are detecting an upgrade in an addon, we pretend its old database
+	 * version was this
+	 * @var string
+	 */
+	protected $_pretend_addon_previous_version = '0.0.1.dev.000';
 	/**
 	 * tests that we're correctly detecting activation or upgrades in registered
 	 * addons.
@@ -89,14 +96,14 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		global $wp_actions;
 		$this->_addon_classname = get_class($this->_addon);
 		//first make sure the mock DMS can migrate from v 0.0.1
-		$dms = new EE_DMS_New_Addon_0_0_2();
-		$this->assertTrue($dms->can_migrate_from_version(array($this->_addon_name=>'0.0.1')));
+		$dms = new EE_DMS_New_Addon_1_0_0();
+		$this->assertTrue( $dms->can_migrate_from_version( array( $this->_addon_name=> $this->_pretend_addon_previous_version ) ) );
 
 		//it should have an entry in its activation history and db state
 		$activation_history_option_name = $this->_addon->get_activation_history_option_name();
-		update_option($activation_history_option_name,array($this->_addon->version()));
+		update_option( $activation_history_option_name, array( $this->_pretend_addon_previous_version ) );
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
-		$db_state[$this->_addon_name] = '0.0.1';
+		$db_state[$this->_addon_name] = $this->_pretend_addon_previous_version;
 		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
 		//pretend the activation indicator option was set (by WP calling its activation hook)
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
@@ -123,14 +130,14 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	public function test_detect_activations_or_upgrades__upgrade_on_normal_request(){
 		global $wp_actions;
 		//first make sure the mock DMS can migrate from v 0.0.1
-		$dms = new EE_DMS_New_Addon_0_0_2();
-		$this->assertTrue($dms->can_migrate_from_version(array($this->_addon_name=>'0.0.1')));
+		$dms = new EE_DMS_New_Addon_1_0_0();
+		$this->assertTrue($dms->can_migrate_from_version(array($this->_addon_name=>$this->_pretend_addon_previous_version)));
 
 		//it should have an entry in its activation history and db state
 		$activation_history_option_name = $this->_addon->get_activation_history_option_name();
-		update_option($activation_history_option_name,array($this->_addon->version()));
+		update_option($activation_history_option_name,array( $this->_pretend_addon_previous_version ));
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
-		$db_state[$this->_addon_name] = '0.0.1';
+		$db_state[$this->_addon_name] = $this->_pretend_addon_previous_version;
 		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
 
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__upgrade"]) ? $wp_actions["AHEE__{$this->_addon_classname}__upgrade"] : 0;
@@ -155,7 +162,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$activation_history_option_name = $this->_addon->get_activation_history_option_name();
 		update_option($activation_history_option_name,array($this->_addon->version()));
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
-		$db_state['New_Addon'] = '0.0.1';
+		$db_state['New_Addon'] = $this->_addon->version();
 		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
 
 		//set the activator option
@@ -235,7 +242,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//double-check that worked fine
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//ensure this is the only addon
 		$this->assertEquals(1,count(EE_Registry::instance()->addons));
@@ -280,7 +287,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 			}
 			//verify DMSs deregistered
 			$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-			$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+			$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 			$this->_stop_pretending_addon_hook_time();
 		}
 		parent::tearDown();
