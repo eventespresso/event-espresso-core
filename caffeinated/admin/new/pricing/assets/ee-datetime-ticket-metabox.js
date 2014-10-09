@@ -1214,7 +1214,8 @@ jQuery(document).ready(function($) {
 
 			} else {
 				//make sure tkt sell until date matches the date-time start date for the first date.
-				var tkt_end_date = tktHelper.eemoment($('.event-datetime-DTT_EVT_start').first().val()).startOf('day').format('YYYY-MM-DD h:mm a');
+				var dtt_end_date = $('.event-datetime-DTT_EVT_start').first().val();
+				var tkt_end_date = tktHelper.eemoment(dtt_end_date, 'YYYY-MM-DD h:mm a').startOf('day').format('YYYY-MM-DD h:mm a');
 				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
 
@@ -2311,28 +2312,5 @@ jQuery(document).ready(function($) {
 		var id = e.dttinst.id.replace('edit-ticket-TKT_start_date-', '');
 		id = id.replace('edit-ticket-TKT_end_date-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
-	});
-
-
-	/**  HEARTBEAT HOOKS **/
-
-	//hooking into the heartbeat send.
-	$(document).on('heartbeat-send', function(e, data) {
-		//get a count of all inputs on the page.
-		var input_count = $('input').length + $('select').length + $('textarea').length;
-		data['input_count'] = input_count;
-		data['ee_admin_ajax'] = true;
-	});
-
-	//Listen for the custom event "heartbeat-tick" on $(document).
-	$(document).on( 'heartbeat-tick', function(e, data) {
-		if ( ! data['max_input_vars_check'] )
-				return;
-
-		//if no space left then let's show a dialog with the message.
-		if ( ! data['max_input_vars_check'] !== '' ) {
-			dialogHelper.displayModal().addContent( data['max_input_vars_check'] );
-		}
-		return;
 	});
 });

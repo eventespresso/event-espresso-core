@@ -157,13 +157,13 @@ Class EEM_Gateways {
 				$classname = 'EE_' . $gateway;
 				$filename = $classname . '.class.php';
 				if ($in_uploads) {
-					if ( EEH_File::exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+					if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 						require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 					} else {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
 				} else {
-					if ( EEH_File::exists(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
+					if ( is_readable(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
 						require_once(EE_GATEWAYS . DS . $gateway . DS . $filename);
 					} else {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
@@ -211,14 +211,14 @@ Class EEM_Gateways {
 			$upload_gateways[$sub] = TRUE;
 		}
 
-		$this->_all_gateways = array_merge($upload_gateways, $gateways);
+		$this->_all_gateways = array_merge( $gateways, $upload_gateways );
 		//printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		EE_Registry::instance()->load_helper( 'File' );
 		foreach ($this->_all_gateways as $gateway => $in_uploads) {
 			$classname = 'EE_' . $gateway;
 			$filename = $classname . '.class.php';
 			if ($in_uploads) {
-				if ( EEH_File::exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+				if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 				} else {
 					$msg = sprintf(
@@ -228,7 +228,7 @@ Class EEM_Gateways {
 					);
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
-			} else if ( EEH_File::exists(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename)) {
+			} else if ( is_readable(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename)) {
 //				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				require_once(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
@@ -699,9 +699,9 @@ Class EEM_Gateways {
 		$classname = 'EE_' . $gateway;
 		$filename = $classname . '.class.php';
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( EEH_File::exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
+		if ( is_readable(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
-		} else if ( EEH_File::exists(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
+		} else if ( is_readable(EE_GATEWAYS . DS . $gateway . DS . $filename)) {
 			require_once(EE_GATEWAYS . DS . $gateway . DS . $filename);
 		} else {
 			$msg = sprintf(

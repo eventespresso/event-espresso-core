@@ -249,7 +249,7 @@ final class EE_System {
 		<p>
 		<?php
 		printf(
-			__( 'We\'re sorry, but Event Espresso requires WordPress version %s or greater in order to operate. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s', 'event_espresso' ),
+			__( 'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
 			EE_MIN_WP_VER_REQUIRED,
 			$wp_version,
 			'<br/>',
@@ -275,10 +275,11 @@ final class EE_System {
 		<p>
 		<?php
 		printf(
-			__( 'We\'re sorry, but Event Espresso requires PHP version %s or greater in order to operate. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
 			EE_MIN_PHP_VER_REQUIRED,
 			PHP_VERSION,
-			'<br/>'
+			'<br/>',
+			'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 		);
 		?>
 		</p>
@@ -300,7 +301,7 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
+				__( 'Event Espresso recommends WordPress version %1$s or greater in order for everything to operate properly. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
 				EE_MIN_WP_VER_RECOMMENDED,
 				$wp_version,
 				'<br/>',
@@ -321,12 +322,11 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.%sPlease note that Event Espresso will be dropping support for PHP 5.2 as of version 4.4.0%s', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
 				'<br/>',
-				'<br/><span style="font-weight: bold;color: #d54e21;">',
-				'</span>'
+				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 			)
 		);
 	}
@@ -409,16 +409,6 @@ final class EE_System {
 	public function detect_if_activation_or_upgrade() {
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
-		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
-		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
-
-		if ( !$testsbypass &&
-				( ! is_admin() ||
-				( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) ||
-				( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) ) ) {
-
-			return;
-		}
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
@@ -680,7 +670,11 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		if( is_admin() && EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) ){
+		//if current user is an admin and it's not an ajax request
+		if(
+				EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) &&
+				! ( defined('DOING_AJAX') && DOING_AJAX  )
+				){
 			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
