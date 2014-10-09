@@ -149,16 +149,30 @@ class EE_Registration_Processor {
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param array 	$additional_conditions
+	 * @param array 	$additional_details
 	 * @return void
 	 */
-	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_conditions = array() ) {
+	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
 		do_action(
 			'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 			$registration,
 			apply_filters(
 				'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
-				$additional_conditions
+				array_merge(
+					// defaults
+					array(
+						'checkout_or_payment' => FALSE,
+						'manually_updated' 		=> FALSE,
+						'payment_updates' 		=> FALSE,
+						'status_updates' 			=> FALSE,
+						'reg_steps' 						=> array(),
+						'old_txn_status' 				=> NULL,
+						'last_payment'				=> NULL,
+						'old_reg_status' 				=> NULL,
+						'new_reg_status' 			=> NULL
+					),
+					$additional_details
+				)
 			)
 		);
 	}
@@ -169,10 +183,10 @@ class EE_Registration_Processor {
 	 * sets reg status based either on passed param or on transaction status and event pre-approval setting
 	 *
 	 * @param \EE_Registration $registration
-	 * @param array 	$additional_conditions
+	 * @param array 	$additional_details
 	 * @return bool
 	 */
-	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_conditions = array() ) {
+	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		$old_reg_status = $registration->status_ID();
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, FALSE ) || $this->toggle_registration_status_if_no_monies_owing( $registration, FALSE )) {
@@ -183,7 +197,7 @@ class EE_Registration_Processor {
 		$this->trigger_registration_update_notifications(
 			$registration,
 			array_merge(
-				is_array( $additional_conditions ) ? $additional_conditions : array( $additional_conditions ),
+				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
 				array(
 					'checkout_or_payment' 	=> TRUE,
 					'old_reg_status' 					=> $old_reg_status,
