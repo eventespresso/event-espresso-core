@@ -45,9 +45,6 @@ function ee_deprecated_finalize_transaction( EE_Checkout $checkout, $status_upda
 	}
 }
 add_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', 'ee_deprecated_finalize_transaction', 10, 2 );
-
-
-
 /**
  * ee_deprecated_finalize_registration
  *
@@ -69,7 +66,7 @@ function ee_deprecated_finalize_registration( EE_Registration $registration ) {
 		do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $registration, ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )));
 	}
 }
-add_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', 'ee_deprecated_finalize_registration', 10, 2 );
+add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', 'ee_deprecated_finalize_registration', 10, 1 );
 
 
 
