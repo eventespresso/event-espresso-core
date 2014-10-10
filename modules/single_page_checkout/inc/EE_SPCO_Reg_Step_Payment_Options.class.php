@@ -622,6 +622,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function process_reg_step() {
 		// how have they chosen to pay?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		// choose your own adventure based on method_of_payment
 		switch(  $this->checkout->selected_method_of_payment ) {
 
 			case 'events_sold_out' :
@@ -712,8 +713,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
 		$transaction_processor->toggle_registration_statuses_for_default_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
-		// attempt payment and process the results
-		$payment = $this->_post_payment_processing( $this->_attempt_payment( $this->checkout->payment_method ));
+		// attempt payment
+		$payment = $this->_attempt_payment( $this->checkout->payment_method );
+		// process results
+		$payment = $this->_post_payment_processing( $this->_validate_payment( $payment ));
 		// please note that offline payment methods will NOT make a payment,
 		// but instead just mark themselves as the PMD_ID on the transaction, and return TRUE
 		// so for either on-site / off-site payments OR off-line payment methods
@@ -922,6 +925,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 		}
+		return $payment;
+	}
+
+
+
+	/**
+	 * _validate_payment
+	 *
+	 * @access private
+	 * @param EE_Payment $payment
+	 * @return EE_Payment | FALSE
+	 */
+	private function _validate_payment( $payment = NULL ) {
 		if ( $this->checkout->payment_method->is_off_line() ) {
 			return TRUE;
 		}
@@ -963,14 +979,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
-				$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
+				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
 				// set JSON response
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
 			}
 			// Off-Line payment?
 		} else {
 			$this->checkout->redirect = TRUE;
-			$this->checkout->redirect_url = add_query_arg(  array( 'step' => $this->checkout->next_step->slug() ), $this->checkout->reg_page_base_url );
+			$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 			// set JSON response
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			return TRUE;
