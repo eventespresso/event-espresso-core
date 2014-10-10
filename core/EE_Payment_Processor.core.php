@@ -64,36 +64,21 @@ class EE_Payment_Processor{
 	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
 	 * @param EE_Billing_Info_Form 		$billing_form 	(or probably null, if it's an offline or offsite payment method). receive_form_submission() should
 	 *                                             										have already been called on the billing form (ie, its inputs should have their normalized values set).
-	 * @param string               				$success_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
+	 * @param string               				$return_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
 	 * @param bool                 				$by_admin
 	 * @param boolean              				$save_txn 		whether or not to save the transaction as part of this function call
 	 * @return EE_Payment | NULL
 	 */
-	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_form = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
-		//overwrite billing info for testing
-//		$billing_info = array(
-//			'first_name'=>'payman',
-//			'last_name'=>'lordy',
-//			'email'=>'few@fewf.efw',
-//			'address'=>'1124 wonky rd',
-//			'address2'=>'#32',
-//			'city'=>'powerlo',
-//			'state'=>'ark',
-//			'country'=>'US',
-//			'zip'=>'12345',
-//			'phone'=>'2503242342',
-//			'credit_card'=>'5424180818927383',
-//			'credit_card_type'=>'MasterCard',
-//			'exp_month'=>'02',
-//			'exp_year'=>'2020',
-//			'cvv'=>'115',
-//		);
+	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
+		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
+		// verify transaction
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
-		$transaction->set_payment_method_ID($payment_method->ID());
-		if( $payment_method->type_obj() instanceof EE_PMT_Base){
-			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
+		$transaction->set_payment_method_ID( $payment_method->ID() );
+		// verify payment method type
+		if ( $payment_method->type_obj() instanceof EE_PMT_Base ){
+			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $return_url, NULL, $method, $by_admin );
 			//offline gateways DON'T return a payment object, so check it
 			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 			return $payment;
