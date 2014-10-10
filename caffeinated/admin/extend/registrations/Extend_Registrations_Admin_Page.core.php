@@ -81,7 +81,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'event_registrations'=> array(
 				'func' => '_event_registrations_list_table',
-				'capability' => 'ee_read_registrations',
+				'capability' => 'ee_read_checkins',
 				)
 			);
 
