@@ -148,6 +148,21 @@ class EE_Transaction_Processor {
 
 
 	/**
+	 * set_reg_step_initiated
+	 * given a valid TXN_reg_step, this sets it's value to a unix timestamp
+	 *
+	 * @access public
+	 * @param \EE_Transaction $transaction
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 */
+	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, current_time( 'timestamp' ));
+	}
+
+
+
+	/**
 	 * set_reg_step_completed
 	 * given a valid TXN_reg_step, this sets the step as completed
 	 *
@@ -179,27 +194,40 @@ class EE_Transaction_Processor {
 
 	/**
 	 * set_reg_step_completed
-	 * given a valid reg step slug, this sets the TXN_reg_step as completed
+	 * given a valid reg step slug, this sets the TXN_reg_step completed status which is either:
+	 *
 	 *
 	 * @access private
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
-	 * @param                 $status
+	 * @param boolean | int $status
 	 * @return boolean
 	 */
 	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
-		// ensure boolean value
-		$status = is_bool( $status ) ? $status : FALSE;
+		// validate status
+		$status = is_bool( $status ) || is_numeric( $status ) ? $status : FALSE;
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
-		// if reg step exists AND it's current value doesn't match the incoming value
-		if ( isset( $txn_reg_steps[ $reg_step_slug ] ) && $txn_reg_steps[ $reg_step_slug ] !== $status ) {
-			// update completed status
-			$txn_reg_steps[ $reg_step_slug ] = $status;
-			$transaction->set_reg_steps( $txn_reg_steps );
-			return TRUE;
+		// if reg step does NOT exist
+		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] )) {
+			return FALSE;
 		}
-		return FALSE;
+		// if  it's current status value matches the incoming value (no change)
+		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
+			return FALSE;
+		}
+		// if  we're trying to complete a step that hasn't even started
+		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
+			return FALSE;
+		}
+		// if  we're trying to set a start time for an already completed step
+		if ( is_numeric( $status ) && $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
+			return FALSE;
+		}
+		// update completed status
+		$txn_reg_steps[ $reg_step_slug ] = $status;
+		$transaction->set_reg_steps( $txn_reg_steps );
+		return TRUE;
 	}
 
 
@@ -273,9 +301,8 @@ class EE_Transaction_Processor {
 
 
 	/**
-	 * finalize
-	 *    this can only be called if ALL reg steps have been completed
-	 * cycles thru related registrations and calls finalize_registration() on each
+	 * update_transaction_and_registrations_after_checkout_or_payment
+	 * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param \EE_Payment    $payment
@@ -284,12 +311,14 @@ class EE_Transaction_Processor {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, EE_Payment $payment = NULL, $registration_query_params = array() ) {
+		$finalized = $this->final_reg_step_completed( $transaction );
+
 		// array of details to aid in decision making by systems
 		$update_params = array(
 			'old_txn_status' 	=> $transaction->status_ID(),
 			'reg_steps' 			=> $transaction->reg_steps(),
 			'last_payment'	=> $payment,
-			'finalized' 			=> $this->final_reg_step_completed( $transaction )
+			'finalized' 			=> $finalized
 		);
 		// possibly make adjustments due to new payments
 		$update_params['payment_updates'] = $this->calculate_total_payments_and_update_status( $transaction );
@@ -301,8 +330,8 @@ class EE_Transaction_Processor {
 			$update_params
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
-		// if we've made it this far, and the 'finalize_registration' step has not yet been completed
-		if ( $this->all_reg_steps_completed_except_final_step( $transaction )) {
+		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
+		if ( is_numeric( $finalized ) && $finalized !== TRUE ) {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 		}
 		return $update_params;
