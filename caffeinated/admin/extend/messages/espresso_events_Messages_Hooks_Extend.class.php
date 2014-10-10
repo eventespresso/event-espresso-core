@@ -31,6 +31,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
 
 	public function __construct( EE_Admin_Page $adminpage ) {
+		/**
+		 * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
+		 */
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'messages_events_editor_metabox' ) ) {
+			return;
+		}
 		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
 		parent::__construct( $adminpage );
 	}
@@ -42,13 +48,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return void
 	 */
 	protected function _extend_properties() {
-
-		/**
-		 * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
-		 */
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'messages_events_editor_metabox' ) ) {
-			return;
-		}
 
 		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
 		$this->_ajax_func = array(
