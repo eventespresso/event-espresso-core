@@ -397,8 +397,8 @@ class EED_Messages  extends EED_Module {
 		if ( is_admin() && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 				return; //no messages sent please.
 		}
-		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
-		if ( ! ( $extra_details['finalized'] || ( $extra_details['new_reg_status'] == EEM_Registration::status_id_approved && $extra_details['new_reg_status'] != $extra_details['old_reg_status'] ))) {
+		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
+		if ( ! $extra_details['finalized'] ||  $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
 			return;
 		}
 		EE_Registry::instance()->load_helper('MSG_Template');
