@@ -29,18 +29,19 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	protected $_access_key;
 
 	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
+
+
+
 	/**
 	 * @param EE_Payment $payment to process
-	 * @param string $return_url URL to send the user to after a successful payment on the payment provider's website
-	 * @param string $fail_url URL to send the user to after a failed payment attempt on teh payment provider's website
-	 * @param string $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
-	 * @param boolean $send_full_itemized_list whether or not to try itemizing all the items purchased when
-	 * informing the payment provider of the purchase or not. If charging for the entire transaction, this is usually
-	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for,
-	 * so its usually set to FALSE in that case
+	 * @param array      $billing_info but should be empty for this gateway
+	 * @param string     $return_url URL to send the user to after a successful payment on the payment provider's website
+	 * @param string     $notify_url URL to send the instant payment notification
+	 * @param string     $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
+	 * @throws \EE_Error
 	 * @return EE_Payment
 	 */
-	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $cancel_url = NULL) {
+	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL) {
 		/* @var $transaction EE_Transaction */
 		$transaction = $payment->transaction();
 
