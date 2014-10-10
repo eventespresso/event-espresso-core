@@ -627,20 +627,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		/** setup reg status bulk actions **/
 		$def_reg_status_actions['approve_registration'] = __('Approve Registrations', 'event_espresso');
-		if ( in_array( $match_array['approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['approve_and_notify_registration'] = __('Approve and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['decline_registration'] = __('Decline Registrations', 'event_espresso');
-		if ( in_array( $match_array['decline_registration'], $active_mts ) )
+		if ( in_array( $match_array['decline_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['decline_and_notify_registration'] = __('Decline and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['pending_registration'] = __('Set Registrations to Pending Payment', 'event_espresso');
-		if ( in_array( $match_array['pending_registration'], $active_mts ) )
+		if ( in_array( $match_array['pending_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to Pending Payment and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['no_approve_registration'] = __('Set Registrations to Not Approved', 'event_espresso');
-		if ( in_array( $match_array['no_approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['no_approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to Not Approved and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['cancel_registration'] = __('Cancel Registrations', 'event_espresso');
-		if ( in_array( $match_array['cancel_registration'], $active_mts ) )
+		if ( in_array( $match_array['cancel_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['cancel_and_notify_registration'] = __('Cancel Registrations and Notify', 'event_espresso');
+		}
 
 		$this->_views = array(
 			'all' => array(
