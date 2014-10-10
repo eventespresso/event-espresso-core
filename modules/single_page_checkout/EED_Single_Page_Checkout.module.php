@@ -479,6 +479,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _initialize_reg_steps() {
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		// set the start time for this reg step
+		if ( ! $transaction_processor->set_reg_step_initiated( $this->checkout->transaction, $this->checkout->current_step->slug() ) ) {
+			if ( WP_DEBUG ) {
+				EE_Error::add_error( sprintf(__( 'The "%1$s" registration step was not initialized properly.', 'event_espresso' ), $this->checkout->current_step->name() ), __FILE__, __FUNCTION__, __LINE__ );
+			}
+		};
+		// now loop thru all steps to call their individual "initialize" methods and set i18n strings for JS
 		foreach ( $this->checkout->reg_steps as $reg_step ) {
 			$reg_step->initialize_reg_step();
 			// i18n
