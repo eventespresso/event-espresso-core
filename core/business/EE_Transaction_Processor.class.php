@@ -311,8 +311,8 @@ class EE_Transaction_Processor {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, EE_Payment $payment = NULL, $registration_query_params = array() ) {
+		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
-
 		// array of details to aid in decision making by systems
 		$update_params = array(
 			'old_txn_status' 	=> $transaction->status_ID(),
