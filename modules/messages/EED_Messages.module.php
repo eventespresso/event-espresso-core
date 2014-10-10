@@ -395,10 +395,10 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		// make sure appropriate admin params are set for sending messages
 		if ( is_admin() && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
-				return; //no messages sent please.
+			return; //no messages sent please.
 		}
 		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
-		if ( ! $extra_details['finalized'] ||  $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
+		if ( ! is_numeric( $extra_details['finalized'] ) || $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
 			return;
 		}
 		EE_Registry::instance()->load_helper('MSG_Template');
