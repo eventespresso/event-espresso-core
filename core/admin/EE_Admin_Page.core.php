@@ -1247,6 +1247,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
 		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
 		if ( empty( $capability ) && empty( $route_to_check )  ) {
@@ -1256,7 +1257,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
-		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $route_to_check, $id ) ) && ! defined( 'DOING_AJAX')) {
 			if ( $verify_only ) {
 				return FALSE;
 			} else {
