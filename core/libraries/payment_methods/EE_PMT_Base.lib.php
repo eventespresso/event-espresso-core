@@ -288,7 +288,7 @@ abstract class EE_PMT_Base{
 	 */
 	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
 		// @todo: add surcharge for the payment method, if any
-		if($this->_gateway){
+		if ( $this->_gateway ) {
 			//there is a gateway, so we're going to make a payment object
 			//but wait! do they already have a payment in progress that we thought was failed?
 			$duplicate_properties = array(
@@ -302,7 +302,7 @@ abstract class EE_PMT_Base{
 			$payment = EEM_Payment::instance()->get_one( array( $duplicate_properties ));
 			//if we didn't already have a payment in progress for the same thing,
 			//then we actually want to make a new payment
-			if ( ! $payment){
+			if ( ! $payment instanceof EE_Payment ){
 				$payment = EE_Payment::new_instance(
 					array_merge(
 						$duplicate_properties,
@@ -319,7 +319,14 @@ abstract class EE_PMT_Base{
 			//make sure the payment has been saved to show we started it, and so it has an ID should the gateway try to log it
 			$payment->save();
 			$billing_values = $this->_get_billing_values_from_form( $billing_info );
+			// if there is billing info, clean it and save it now
+			if( $billing_info instanceof EE_Billing_Attendee_Info_Form ){
+				$this->_save_billing_info_to_attendee( $billing_info, $transaction );
+			}
+
+			//  Offsite Gateway
 			if( $this->_gateway instanceof EE_Offsite_Gateway ){
+
 				$payment = $this->_gateway->set_redirection_info(
 					$payment,
 					$billing_values,
@@ -332,13 +339,14 @@ abstract class EE_PMT_Base{
 					),
 					EE_Config::instance()->core->cancel_page_url()
 				);
+
+			//  Onsite Gateway
 			} elseif ( $this->_gateway instanceof EE_Onsite_Gateway ) {
+
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_values);
 				$payment->save();
-				/** @type EE_Transaction_Processor $transaction_processor */
-				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
-			}else{
+
+			} else {
 				throw new EE_Error(
 					sprintf(
 						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)', 'event_espresso' ),
@@ -347,13 +355,11 @@ abstract class EE_PMT_Base{
 					)
 				);
 			}
-		}else{//no gateway provided
+
+		} else {
+			//no gateway provided
 			//so create no payment. The payment processor will know how to handle this
 			$payment = NULL;
-		}
-		//if there is billing info, clean it and save it now
-		if( $billing_info instanceof EE_Billing_Attendee_Info_Form ){
-			$this->_save_billing_info_to_attendee( $billing_info, $transaction );
 		}
 		return $payment;
 	}
