@@ -719,7 +719,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _registration_legend_items() {
-		$items = array(
+		$fc_items = array(
 			'star-icon' => array(
 				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
@@ -732,14 +732,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
-			'resend_registration' => array(
-				'class' => 'dashicons dashicons-email-alt',
-				'desc' => __('Resend Registration Details', 'event_espresso')
-				),
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				),
+				)
+ 			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
+			$fc_items['resend_registration'] = array(
+				'class' => 'dashicons dashicons-email-alt',
+				'desc' => __('Resend Registration Details', 'event_espresso')
+				);
+		} else {
+			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
+		}
+
+		$sc_items = array(
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
@@ -760,8 +767,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
 				)
- 			);
-		return $items;
+			);
+		return array_merge( $fc_items, $sc_items );
 	}
 
 
