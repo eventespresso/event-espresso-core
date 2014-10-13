@@ -36,8 +36,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * called by EE_Data_Migration_Script_Base's __construct() method so children don't have to
 	 * @param EE_Data_Migration_Script_Base $migration_script
 	 */
-	public function _construct_finalize($migration_script)
-	{
+	public function _construct_finalize($migration_script) {
 		$this->_migration_script = $migration_script;
 	}
 
@@ -48,8 +47,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * @param int $num_items_to_migrate
 	 * @return int
 	 */
-	public function migration_step($num_items_to_migrate = 50)
-	{
+	public function migration_step($num_items_to_migrate = 50) {
 		//before we run the migration step, we want ot take note of warnings that get outputted
 		ob_start();
 		$items_migrated = $this->_migration_step($num_items_to_migrate);
@@ -78,8 +76,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * Counts the records that have been migrated so far
 	 * @return int
 	 */
-	public function count_records_migrated()
-	{
+	public function count_records_migrated() {
 		return $this->_records_migrated;
 	}
 
@@ -87,8 +84,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * returns an array of strings describing errors
 	 * @return array
 	 */
-	public function get_errors()
-	{
+	public function get_errors() 	{
 		return $this->_errors;
 	}
 
@@ -98,8 +94,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * to have been made from the properties_as_array() function.
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
-	public function instantiate_from_array_of_properties($array_of_properties)
-	{
+	public function instantiate_from_array_of_properties($array_of_properties) {
 		unset($array_of_properties['class']);
 		foreach ($array_of_properties as $property_name => $property_value) {
 			$this->$property_name = $property_value;
@@ -110,8 +105,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * Gets the script this is a stage of
 	 * @return EE_Data_Migration_Script_Base
 	 */
-	protected function get_migration_script()
-	{
+	protected function get_migration_script() {
 		return $this->_migration_script;
 	}
 

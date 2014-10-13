@@ -56,7 +56,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 
 	/**
 	 * Gets the rows for each migration stage from the old table
-	 * @global type $wpdb
+	 * @global wpdb $wpdb
 	 * @param int $limit
 	 * @return array of arrays like $wpdb->get_results($sql, ARRAY_A)
 	 */

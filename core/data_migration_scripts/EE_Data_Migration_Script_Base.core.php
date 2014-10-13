@@ -22,6 +22,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @var boolean
 	 */
 	protected $_migrating = TRUE;
+
 	/**
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
 	 * @var EE_Data_Migration_Script_Stage[] $migration_functions
@@ -33,6 +34,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @var boolean
 	 */
 	protected $_schema_changes_before_migration_ran = null;
+
 	/**
 	 * Indicates we've already ran the schema changes that needed to happen AFTER the data migration
 	 * @var boolean
@@ -44,12 +46,24 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @var string
 	 */
 	protected $_feedback_message;
+
 	/**
 	 * Indicates the script's priority. Like wp's add_action and add_filter, lower numbers
 	 * correspond to earlier execution
 	 * @var int
 	 */
 	protected $_priority = 5;
+
+	/**
+	 * Multi-dimensional array that defines the mapping from OLD table Primary Keys
+	 * to NEW table Primary Keys.
+	 * Top-level array keys are OLD table names (minus the "wp_" part),
+	 * 2nd-level array keys are NEW table names (again, minus the "wp_" part),
+	 * 3rd-level array keys are the OLD table primary keys
+	 * and 3rd-level array values are the NEW table primary keys
+	 * @var array
+	 */
+	protected $_mappings = array();
 
 
 
@@ -73,6 +87,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	abstract public function  can_migrate_from_version($current_database_state_of);
+
+
+
 	/**
 	 * Performs database schema changes that need to occur BEFORE the data is migrated.
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
@@ -81,6 +98,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean of success
 	 */
 	abstract public function schema_changes_before_migration();
+
+
+
 	/**
 	 * Performs the database schema changes that need to occur AFTER the data has been migrated.
 	 * Usually this will mean we'll be removing old columns. Eg, if we were changing passwords
@@ -91,23 +111,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	abstract public function schema_changes_after_migration();
 
-	/**
-	 * Place to add hooks and filters for tweaking the migrations page, in order
-	 * to customize it
-	 */
-	public function migration_page_hooks(){
-		//by default none are added because we normally like the default look of the migration page
-	}
-	/**
-	 * Multi-dimensional array that defines the mapping from OLD table Primary Keys
-	 * to NEW table Primary Keys.
-	 * Top-level array keys are OLD table names (minus the "wp_" part),
-	 * 2nd-level array keys are NEW table names (again, minus the "wp_" part),
-	 * 3rd-level array keys are the OLD table primary keys
-	 * and 3rd-level array values are the NEW table primary keys
-	 * @var array
-	 */
-	protected $_mappings = array();
+
 
 	/**
 	 * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
@@ -121,6 +125,18 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * Place to add hooks and filters for tweaking the migrations page, in order
+	 * to customize it
+	 */
+	public function migration_page_hooks(){
+		//by default none are added because we normally like the default look of the migration page
+	}
+
+
 
 	/**
 	 * Sets the mapping from old table primary keys to new table primary keys.
@@ -139,6 +155,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$this->_mappings[$old_table][$new_table][$old_pk] = $new_pk;
 	}
 
+
+
 	/**
 	 * Gets the new primary key, if provided with the OLD table and the primary key
 	 * of an item in the old table, and the new table
@@ -155,6 +173,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return isset($this->_mappings[$old_table][$new_table][$old_pk]) ? $this->_mappings[$old_table][$new_table][$old_pk] : null;
 	}
+
+
+
 	/**
 	 * Gets the old primary key, if provided with the OLD table,
 	 * and the new table and the primary key of an item in the new table
@@ -178,6 +199,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return null;
 	}
 
+
+
 	/**
 	 * Gets the mapping array option specified by the table names
 	 * @param string $old_table_name
@@ -188,6 +211,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$option =  get_option($this->_get_mapping_option_name($old_table_name, $new_table_name),array());
 		return $option;
 	}
+
+
 
 	/**
 	 * Updates the mapping option specified by the table names with the array provided
@@ -202,6 +227,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return $success;
 	}
 
+
+
 	/**
 	 * Gets the option name for this script to map from $old_table_name to $new_table_name
 	 * @param string $old_table_name
@@ -215,6 +242,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
 		return substr( EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix . $migrates_to [ 'slug' ] . '_' . $migrates_to[ 'version' ] . '_' . $old_table_name_sans_wp . '_' . $new_table_name_sans_wp, 0, 64 );
 	}
+
 
 
 	/**
@@ -236,6 +264,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $count;
 	}
+
+
 
 	/**
 	 * Returns the number of records updated so far. Usually this is easiest to do
@@ -315,6 +345,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return $num_records_actually_migrated;
 	}
 
+
+
 	/**
 	 * Updates the feedback message according to what was done during this migration stage.
 	 * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records migrated from that stage
@@ -363,6 +395,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 		}
 	}
+
+
+
 	/**
 	 * Wrapper for EEH_Activation::create_table. However, takes into account the request type when
 	 * deciding what to pass for its 4th arg, $drop_pre_existing_tables. Using this function, instead
@@ -395,6 +430,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 	}
 
+
+
 	/**
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
@@ -417,6 +454,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 	}
 
+
+
 	/**
 	 * Gets the request type for the plugin (core or addon) that corresponds to this DMS
 	 * @return int one of EE_System::_req_type_* constants
@@ -435,6 +474,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 	}
 
+
+
 	/**
 	 * returns an array of strings describing errors by all the script's stages
 	 * @return array
@@ -449,6 +490,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $all_errors;
 	}
+
+
+
 	/**
 	 * Indicates whether or not this migration script should continue
 	 * @return boolean
@@ -456,6 +500,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function can_continue(){
 		return in_array($this->get_status(),  EE_Data_Migration_Manager::instance()->stati_that_indicate_to_continue_single_migration_script);
 	}
+
+
 
 	/**
 	 * Gets all the data migration stages associated with this script. Note:
@@ -470,6 +516,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		return $stages;
 	}
 
+
+
 	/**
 	 * Gets a string which should describe what's going on currently with this migration, which
 	 * can be displayed to the user
@@ -478,6 +526,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function get_feedback_message(){
 		return $this->_feedback_message;
 	}
+
+
 
 	/**
 	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
@@ -500,6 +550,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $properties;
 	}
+
+
 
 	/**
 	 * Sets all of the properties of this script stage to match what's in the array, which is assumed
@@ -524,6 +576,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 		}
 	}
+
+
+
 	/**
 	 * Gets the migration data from the array $migration_stage_data_arrays (which is an array of arrays, each of which
 	 * is pretty well identical to EE_Data_Migration_Stage objects except all their properties are array indexes)
@@ -540,6 +595,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return null;
 	}
+
+
+
 	/**
 	 * Returns the version that this script migrates to, based on the script's name.
 	 * Cannot be overwritten because lots of code needs to know which version a script
@@ -550,6 +608,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public final function migrates_to_version(){
 		return EE_Data_Migration_Manager::instance()->script_migrates_to_version( get_class( $this ) );
 	}
+
+
 
 	/**
 	 * Gets this addon's slug as it would appear in the current_db_state wp option,
@@ -563,6 +623,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		//the slug is the first part of the array
 		return $migrates_to_version_info[ 'slug' ];
 	}
+
+
 
 	/**
 	 * Returns the script's priority relative to DMSs from other addons. However, when
@@ -580,7 +642,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
 	/**
-	 * Sets whether or not this DMS is being ran as part of a migratation, instead of
+	 * Sets whether or not this DMS is being ran as part of a migration, instead of
 	 * just being used to setup (or verify) the current database structure matches
 	 * what the latest DMS indicates it should be
 	 * @param boolean $migrating
