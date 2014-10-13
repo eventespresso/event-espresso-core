@@ -96,9 +96,9 @@ class EEH_Array extends EEH_Base {
 
 	/**
 	 * Shorthand for isset( $arr[ $index ] ) ? $arr[ $index ] : $default
-	 * @param type $arr
-	 * @param type $index
-	 * @param type $default
+	 * @param array $arr
+	 * @param mixed $index
+	 * @param mixed $default
 	 * @return mixed
 	 */
 	public static function is_set( $arr, $index, $default ) {
