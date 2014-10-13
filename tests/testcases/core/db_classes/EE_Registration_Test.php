@@ -55,7 +55,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
 			)
 		);
 		$r->set_reg_code( $registration_processor->generate_reg_code( $r ));
-		$registration_processor->finalize( $r );
+		$registration_processor->update_registration_after_checkout_or_payment( $r );
 		$this->assertNotNull($r->reg_code());
 		$this->assertEquals(EEM_Registration::status_id_approved,$r->status_ID());
 	}
