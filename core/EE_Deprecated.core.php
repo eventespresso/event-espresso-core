@@ -268,7 +268,7 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	public function process_resend( $success, $req_data ) {
 		self::doing_it_wrong_call( __METHOD__ );
-		EED_Messages::process_resend( $success, $req_data );
+		EED_Messages::process_resend( $req_data );
 	}
 
 	/**
