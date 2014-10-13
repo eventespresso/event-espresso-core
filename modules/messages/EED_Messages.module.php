@@ -394,7 +394,7 @@ class EED_Messages  extends EED_Module {
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 		self::_load_controller();
 		// make sure appropriate admin params are set for sending messages
-		if ( is_admin() && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
+		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 			return; //no messages sent please.
 		}
 		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
@@ -439,59 +439,52 @@ class EED_Messages  extends EED_Module {
 	 * Message triggers for a resend registration confirmation (in admin)
 	 *
 	 * @access public
-	 * @param  bool $success incoming success value (we return true or false on success/fail)
 	 * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
 	 * @return bool          success/fail
 	 */
-	public static function process_resend( $success = TRUE, $req_data ) {
+	public static function process_resend( $req_data ) {
 
 		//first let's make sure we have the reg id (needed for resending!);
 		if ( ! isset( $req_data['_REG_ID'] ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			$success = FALSE;
+			return FALSE;
 		}
 
 		//get reg object from reg_id
-		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
+		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID( $req_data['_REG_ID'] );
 
 		//if no reg object then send error
 		if ( ! $reg instanceof EE_Registration ) {
 			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
-			$success = FALSE;
+			return FALSE;
 		}
 
+		self::_load_controller();
 
-		if ( $success ) {
-			self::_load_controller();
-
-			//get status_match_array
-			$status_match_array = self::_get_reg_status_array();
-			$active_mts = self::$_EEMSG->get_active_message_types();
-
-			if ( ! in_array( $status_match_array[$reg->status_ID()], $active_mts ) ) {
-				$success = FALSE;
-				EE_Error::add_error(
-					sprintf(
-						__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
-						$status_match_array[$reg->status_ID()],
-						'<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
-						'</a>'
-					)
-				);
-				return $success;
-			}
-
-			$success = self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg );
+		//get status_match_array
+		$status_match_array = self::_get_reg_status_array();
+		$active_mts = self::$_EEMSG->get_active_message_types();
+		if ( ! in_array( $status_match_array[ $reg->status_ID() ], $active_mts ) ) {
+			EE_Error::add_error(
+				sprintf(
+					__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
+					$status_match_array[ $reg->status_ID() ],
+					'<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
+					'</a>'
+				)
+			);
+			return FALSE;
 		}
 
-		if ( $success ) {
+		if ( self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) ) {
 			EE_Error::overwrite_success();
 			EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
+			return TRUE;
 		} else {
 			EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		return $success;
+		return FALSE;
 	}
 
 
