@@ -70,6 +70,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	private $_show_try_pay_again_link = FALSE;
 
 	/**
+	 * whether payments are allowed at this time
+	 * @var boolean $_payments_closed
+	 */
+	private $_payments_closed = FALSE;
+
+	/**
 	 * whether the selected payment method is Bank, Check , Invoice, etc
 	 * @var boolean $_is_offline_payment_method
 	 */
@@ -121,10 +127,31 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	get_txn
 	 *
 	 *  @access 	public
-	 *  @return 	mixed EE_Transaction || FALSE
+	 *  @return 	EE_Transaction
 	 */
 	public function get_txn() {
-		return $this->_current_txn instanceof EE_Transaction ? $this->_current_txn : FALSE;
+		if ( $this->_current_txn instanceof EE_Transaction ) {
+			return $this->_current_txn;
+		}
+		$TXN_model = EE_Registry::instance()->load_model( 'Transaction' );
+		if ( ! $TXN_model instanceof EEM_Transaction ) {
+			EE_Error::add_error(
+				__( 'The transaction model could not be established.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return NULL;
+		}
+		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
+		$this->_current_txn = $TXN_model->get_transaction_from_reg_url_link( $this->_reg_url_link );
+		// verify TXN
+		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return NULL;
+		}
+		return $this->_current_txn;
 	}
 
 
@@ -155,13 +182,37 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
+	 * 	get_reg_url_link
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	private function _get_reg_url_link() {
+		if ( ! empty( $this->_reg_url_link )) {
+			return;
+		}
+		// only do thank you page stuff if we have a REG_url_link in the url
+		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return;
+		}
+		// check for reg_url_link
+		$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+	}
+
+
+
+	/**
 	 * 	set_reg_url_link
 	 *
 	 *  @access 	public
 	 *  @param  	string $reg_url_link
 	 *  @return 	string
 	 */
-	public function set_reg_url_link( $reg_url_link= NULL ) {
+	public function set_reg_url_link( $reg_url_link = NULL ) {
 		$this->_reg_url_link = ! empty( $reg_url_link ) ? $reg_url_link : $this->_reg_url_link;
 	}
 
@@ -182,36 +233,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
 			return;
 		}
-		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return;
-		}
-		// check for reg_url_link
-		$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
-		// and retrieve the current TXN
-		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-		// verify TXN
-		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return;
-		}
+		$this->_get_reg_url_link();
+		// resend_reg_confirmation_email ?
 		if ( EE_Registry::instance()->REQ->is_set( 'resend' )) {
-			return EES_Espresso_Thank_You::resend_reg_confirmation_email();
+			EES_Espresso_Thank_You::resend_reg_confirmation_email();
 		}
-		// soon to be derprecated
-		EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
-		EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 		// load assets
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
-		return;
 	}
 
 
@@ -253,15 +282,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function init() {
-		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
-		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->_reg_url_link );
-		// verify TXN
-		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return;
+		$this->_get_reg_url_link();
+		if ( ! $this->get_txn() ) {
+			return NULL;
 		}
 		// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
 		if ( $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
@@ -282,10 +305,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = FALSE;
 		}
-		$this->_is_offline_payment_method = in_array( $this->_current_txn->selected_gateway( TRUE ), array( 'Bank', 'Check', 'Invoice' ));
-		if ( $this->_current_txn->last_payment() instanceof EE_Payment && $this->_current_txn->last_payment()->gateway() != NULL ) {
-			$this->_is_offline_payment_method = in_array( $this->_current_txn->last_payment()->gateway(), array( 'Bank', 'Check', 'Invoice' ));
-		}
+		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
+		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
@@ -318,18 +339,20 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->init();
 
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return '';
+			return EE_Error::get_notices();
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
+		if ( ! empty( $template_args['TXN_receipt_url'] )) {
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.', 'event_espresso' );
+		} else {
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation.', 'event_espresso' );
+		}
 		$template_args['transaction'] = $this->_current_txn;
+		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
+ 		if ( $this->_is_primary && $this->_payments_closed && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 
@@ -340,95 +363,96 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
-	 * 	thank_you_page_IPN_monitor
-	 * 	this basically just pulls the TXN based on the reg_url_link sent from the server,
-	 * 	then checks that the TXN status is not failed, and that no other errors have been generated.
-	 * 	it also calculates the IPN wait time since the Thank You page was first loaded
+	 *    thank_you_page_IPN_monitor
+	 *    this basically just pulls the TXN based on the reg_url_link sent from the server,
+	 *    then checks that the TXN status is not failed, and that no other errors have been generated.
+	 *    it also calculates the IPN wait time since the Thank You page was first loaded
 	 *
-	 *  @access 	public
-	 * @param array  $response
-	 * @param array  $data
-	 * @param string $screen_id
-	 *  @return 	array
+	 * @access    public
+	 * @param array $response
+	 * @param array $data
+	 * @return    array
 	 */
 	public static function thank_you_page_IPN_monitor( $response = array(), $data = array() ) {
 		// does this heartbeat contain our data ?
-		if ( isset( $data['espresso_thank_you_page'] )) {
-			// check for reg_url_link in the incoming heartbeat data
-			if ( ! isset( $data['espresso_thank_you_page']['e_reg_url_link'] )) {
-				$response['espresso_thank_you_page'] = array (
-					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' )
-				);
-				return $response;
-			}
-			// kk heartbeat has our data
-			$response['espresso_thank_you_page'] = array();
-			// set defs, instantiate the thank you page class, and get the ball rolling
-			EES_Espresso_Thank_You::set_definitions();
-			$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
-			$espresso_thank_you_page->set_reg_url_link( $data['espresso_thank_you_page']['e_reg_url_link'] );
-			$espresso_thank_you_page->init();
-			//get TXN
-			$TXN = $espresso_thank_you_page->get_txn();
-			// no TXN? then get out
-			if ( ! $TXN instanceof EE_Transaction ) {
-				$notices = EE_Error::get_notices();
-				$response['espresso_thank_you_page'] = array (
-					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
-				);
-				return $response;
-			}
-			// grab transient of TXN's status
-			$txn_status = isset( $data['espresso_thank_you_page']['txn_status'] ) ? $data['espresso_thank_you_page']['txn_status'] : NULL;
-			// has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
-			if ( $txn_status !== $TXN->status_ID() ) {
-				// switch between two possible basic outcomes
-				switch( $TXN->status_ID()) {
-					// TXN has been updated in some way
-					case EEM_Transaction::overpaid_status_code:
-					case EEM_Transaction::complete_status_code:
-					case EEM_Transaction::incomplete_status_code:
-						// send updated TXN results back to client,
-						$response['espresso_thank_you_page'] = array(
-							'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-							'txn_status' => $TXN->status_ID()
-						);
-						break;
-					// or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
-					case EEM_Transaction::failed_status_code:
-					default:
-						// keep on waiting...
-						return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
-				}
-
-			// or is the TXN still failed (never been updated) ???
-			} else if ( $TXN->failed() ) {
-				// keep on waiting...
-				return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
-			}
-			// TXN is happening so let's get the payments now
-			// if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
-			$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
-			// then check for payments
-			$payments = $espresso_thank_you_page->get_txn_payments( $since );
-			// has a payment been processed ?
-			if ( ! empty( $payments ) || $espresso_thank_you_page->_is_offline_payment_method ) {
-				if ( $since ) {
+		if ( ! isset( $data['espresso_thank_you_page'] )) {
+			return $response;
+		}
+		// check for reg_url_link in the incoming heartbeat data
+		if ( ! isset( $data['espresso_thank_you_page']['e_reg_url_link'] )) {
+			$response['espresso_thank_you_page'] = array (
+				'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' )
+			);
+			return $response;
+		}
+		// kk heartbeat has our data
+		$response['espresso_thank_you_page'] = array();
+		// set_definitions, instantiate the thank you page class, and get the ball rolling
+		EES_Espresso_Thank_You::set_definitions();
+		/** @var $espresso_thank_you_page EES_Espresso_Thank_You */
+		$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
+		$espresso_thank_you_page->set_reg_url_link( $data['espresso_thank_you_page']['e_reg_url_link'] );
+		$espresso_thank_you_page->init();
+		//get TXN
+		$TXN = $espresso_thank_you_page->get_txn();
+		// no TXN? then get out
+		if ( ! $TXN instanceof EE_Transaction ) {
+			$notices = EE_Error::get_notices();
+			$response['espresso_thank_you_page'] = array (
+				'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : sprintf( __( 'The information for your transaction could not be retrieved from the server or the transaction data received was invalid because of a technical reason. (%s)', 'event_espresso' ), __LINE__ )
+			);
+			return $response;
+		}
+		// grab transient of TXN's status
+		$txn_status = isset( $data['espresso_thank_you_page']['txn_status'] ) ? $data['espresso_thank_you_page']['txn_status'] : NULL;
+		// has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
+		if ( $txn_status !== $TXN->status_ID() ) {
+			// switch between two possible basic outcomes
+			switch( $TXN->status_ID()) {
+				// TXN has been updated in some way
+				case EEM_Transaction::overpaid_status_code:
+				case EEM_Transaction::complete_status_code:
+				case EEM_Transaction::incomplete_status_code:
+					// send updated TXN results back to client,
 					$response['espresso_thank_you_page'] = array(
-						'new_payments' => $espresso_thank_you_page->get_new_payments( $payments ),
 						'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
 						'txn_status' => $TXN->status_ID()
 					);
-				} else {
-					$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
-				}
-				// reset time to check for payments
-				$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
-			} else {
-				$response['espresso_thank_you_page']['get_payments_since'] = $since;
+					break;
+				// or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
+				case EEM_Transaction::failed_status_code:
+				default:
+					// keep on waiting...
+					return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
 			}
 
+		// or is the TXN still failed (never been updated) ???
+		} else if ( $TXN->failed() ) {
+			// keep on waiting...
+			return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
 		}
+		// TXN is happening so let's get the payments now
+		// if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
+		$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
+		// then check for payments
+		$payments = $espresso_thank_you_page->get_txn_payments( $since );
+		// has a payment been processed ?
+		if ( ! empty( $payments ) || $espresso_thank_you_page->_is_offline_payment_method ) {
+			if ( $since ) {
+				$response['espresso_thank_you_page'] = array(
+					'new_payments' => $espresso_thank_you_page->get_new_payments( $payments ),
+					'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
+					'txn_status' => $TXN->status_ID()
+				);
+			} else {
+				$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
+			}
+			// reset time to check for payments
+			$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
+		} else {
+			$response['espresso_thank_you_page']['get_payments_since'] = $since;
+		}
+
 		return $response;
 	}
 
@@ -489,7 +513,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => $reg_url_link )));
 			if ( $registration instanceof EE_Registration ) {
 				// resend email
-				EED_Messages::process_resend( TRUE, array( '_REG_ID' => $registration->ID() ));
+				EED_Messages::process_resend( array( '_REG_ID' => $registration->ID() ));
 			} else {
 				EE_Error::add_error(
 					__( 'The Registration Confirmation email could not be sent because a valid Registration could not be retrieved from the database.', 'event_espresso' ),
@@ -591,7 +615,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->timestamp() . '
 					</td>
 					<td>
-						' . str_replace( '_', ' ', $payment->gateway() ) . '
+						' . $payment->payment_method()->name() . '
 					</td>
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '
@@ -624,15 +648,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['payments'][] = $this->get_payment_row_html( $payment );
 		}
 		//create a hacky payment object, but dont save it
-		$gateway_name = $this->_current_txn->selected_gateway();
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
 			'STS_ID'=>EEM_Payment::status_id_pending,
 			'PAY_timestamp'=>current_time('timestamp'),
 			'PAY_amount'=>$this->_current_txn->total(),
-			'PAY_gateway'=>$gateway_name
+			'PMD_ID'=>$this->_current_txn->payment_method_ID()
 		));
-		$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
+		$template_args['gateway_content'] = $this->_current_txn->payment_method()->type_obj()->payment_overview_content($payment);//EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
 		// link to SPCO payment_options
 		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
 		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;

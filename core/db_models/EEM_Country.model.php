@@ -50,11 +50,13 @@ class EEM_Country extends EEM_Base {
 	}
 
 	/**
-	 * resets the model and returns it
+	 * Resets the country
 	 * @return EEM_Country
 	 */
 	public static function reset(){
 		self::$_instance = NULL;
+		self::$_active_countries = NULL;
+		self::$_all_countries = NULL;
 		return self::instance();
 	}
 
@@ -99,7 +101,7 @@ class EEM_Country extends EEM_Base {
 	/**
 	*		_get_countries
 	*
-	* 		@access		private
+	* 		@access		public
 	*		@return 		array
 	*/
 	public function get_all_countries() {
@@ -111,8 +113,9 @@ class EEM_Country extends EEM_Base {
 
 	/**
 	*		_get_countries
-	*
-	* 		@access		private
+	*		Gets and caches the list of active countries. If you know the list of active countries
+	*		has changed during this request, first use EEM_Country::reset() to flush the cache
+	* 		@access		public
 	*		@return 		array
 	*/
 	public function get_all_active_countries() {
@@ -120,6 +123,24 @@ class EEM_Country extends EEM_Base {
 			self::$_active_countries =  $this->get_all( array( array( 'CNT_active' => TRUE ), 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_countries;
+	}
+
+	/**
+	 * Gets the country's name by its ISO
+	 * @param string $country_ISO
+	 * @return string
+	 */
+	public function get_country_name_by_ISO( $country_ISO ){
+		if( isset( self::$_all_countries[ $country_ISO ] ) &&
+				self::$_all_countries[ $country_ISO ] instanceof EE_Country ){
+			return self::$_all_countries[ $country_ISO ]->name();
+		}
+		$names = $this->get_col( array( array( 'CNT_ISO' => $country_ISO ), 'limit' => 1), 'CNT_name' );
+		if( is_array( $names ) && ! empty( $names ) ){
+			return reset( $names );
+		}else{
+			return '';
+		}
 	}
 
 }
