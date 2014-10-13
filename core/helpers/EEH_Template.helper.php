@@ -241,14 +241,14 @@ class EEH_Template {
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return mixed boolean | string
+	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
-			return FALSE;
+			return '';
 		}
 		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
@@ -264,7 +264,7 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
-		return FALSE;
+		return '';
 	}
 
 
@@ -369,7 +369,7 @@ class EEH_Template {
 
 	/**
 	 * This function is used for outputting the localized label for a given status id in the schema requested (and possibly plural).  The intended use of this function is only for cases where wanting a label outside of a related status model or model object (i.e. in documentation etc.)
-	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unkown' will be returned.
+	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unknown' will be returned.
 	 * @param  boolean $plural    Whether to return plural or not
 	 * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
 	 * @return string             The localized label for the status id.
@@ -381,14 +381,13 @@ class EEH_Template {
 
 
 
-
-
 	/**
 	 * This helper just returns a button or link for the given parameters
 	 * @param  string $url   the url for the link
-	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param  string $label What is the label you want displayed for the button
-	 * @return string        the html output for the button
+	 * @param  string $class what class is used for the button (defaults to 'button-primary')
+	 * @param string  $icon
+	 * @return string 	the html output for the button
 	 */
 	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
 		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
@@ -515,6 +514,60 @@ class EEH_Template {
 		$content .= '</div>' . "\n";
 		return $content;
 	}
+
+
+
+	/**
+	 * Gets HTML for laying out a deeply-nested array (and objects) in a format
+	 * that's nice for presenting in the wp admin
+	 * @param mixed $data
+	 * @return string
+	 */
+	public static function layout_array_as_table($data) {
+	if (is_object($data)) {
+		$data = (array)$data;
+	}
+	EE_Registry::instance()->load_helper('Array');
+	ob_start();
+	if (is_array($data)) {
+		if (EEH_Array::is_associative_array($data)) {
+			?>
+			<table class="widefat">
+				<tbody>
+					<?php
+					foreach ($data as $data_key => $data_values) {
+						?>
+						<tr>
+							<td>
+								<?php echo $data_key;?>
+							</td>
+							<td>
+								<?php echo self::layout_array_as_table($data_values);?>
+							</td>
+						</tr>
+						<?php
+					}?>
+				</tbody>
+			</table>
+			<?php
+		}
+		else {
+			?>
+			<ul>
+				<?php
+				foreach ($data as $datum) {
+					echo "<li>"; echo self::layout_array_as_table($datum);echo "</li>";
+				}?>
+			</ul>
+			<?php
+		}
+	}
+	else {
+		//simple value
+		echo $data;
+	}
+	return ob_get_clean();
+}
 
 
 

@@ -70,8 +70,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t->ID(),$id);
 		$t2 = EEM_Transaction::instance()->get_one_by_ID($id);
 		$this->assertEquals($id,$t2->ID());
-	}
 
+		//and check that its correctly saved to the model's entity map
+		$existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map( $id );
+		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
+	}
+	
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
