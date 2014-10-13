@@ -3179,16 +3179,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
-		$this->_template_args['success'] = $success;
-		return $success;
+		$this->_template_args['success'] = EED_Messages::process_resend( $this->_req_data );
+		do_action( 'AHEE__EE_Admin_Page___process_resend_registration', $this->_template_args['success'], $this->_req_data );
+		return $this->_template_args['success'];
 	}
+
 
 
 	/**
 	 * This automatically processes any payment message notifications when manual payment has been applied.
 	 *
 	 * @access protected
+	 * @param \EE_Payment $payment
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
