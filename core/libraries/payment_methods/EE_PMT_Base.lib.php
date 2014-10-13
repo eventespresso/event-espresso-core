@@ -319,10 +319,6 @@ abstract class EE_PMT_Base{
 			//make sure the payment has been saved to show we started it, and so it has an ID should the gateway try to log it
 			$payment->save();
 			$billing_values = $this->_get_billing_values_from_form( $billing_info );
-			// if there is billing info, clean it and save it now
-			if( $billing_info instanceof EE_Billing_Attendee_Info_Form ){
-				$this->_save_billing_info_to_attendee( $billing_info, $transaction );
-			}
 
 			//  Offsite Gateway
 			if( $this->_gateway instanceof EE_Offsite_Gateway ){
@@ -361,6 +357,12 @@ abstract class EE_PMT_Base{
 			//so create no payment. The payment processor will know how to handle this
 			$payment = NULL;
 		}
+
+		// if there is billing info, clean it and save it now
+		if( $billing_info instanceof EE_Billing_Attendee_Info_Form ){
+			$this->_save_billing_info_to_attendee( $billing_info, $transaction );
+		}
+
 		return $payment;
 	}
 
