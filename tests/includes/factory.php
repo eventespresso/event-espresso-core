@@ -1116,7 +1116,7 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 
 
 	/**
-	 * If chained, the EE_Status objecdt.
+	 * If chained, the EE_Status object.
 	 *
 	 * @since  4.3.0
 	 * @var EE_Status
@@ -1133,10 +1133,12 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 	protected $_chained;
 
 
+
 	/**
 	 * constructor
 	 *
 	 * @param EE_UnitTest_Factory $factory
+	 * @param bool                $chained
 	 */
 	public function __construct( $factory = NULL, $chained = FALSE ) {
 		parent::__construct( $factory );
@@ -1181,7 +1183,7 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 
 
 	/**
-	 * This handles connecting a tranaction to related items when the chained flag is true.
+	 * This handles connecting a transaction to related items when the chained flag is true.
 	 *
 	 * @since 4.3.0
 	 *

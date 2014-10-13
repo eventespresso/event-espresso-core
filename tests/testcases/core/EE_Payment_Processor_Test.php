@@ -179,13 +179,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	protected function _new_typical_transaction(){
 		/** @type EE_Transaction $transaction */
 		$transaction = $this->new_model_obj_with_dependencies( 'Transaction', array( 'TXN_total'=>10.00 ) );
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		$transaction_processor->set_reg_step_completed( $transaction, 'attendee_information' );
-		$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
-		$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 		/** @type EE_Ticket $ticket */
 		$ticket = $this->new_model_obj_with_dependencies( 'Ticket' , array( 'TKT_price' => 10.0 ) );
+		/** @type WP_User $user */
 		$user = $this->factory->user->create_and_get();
 		$user->add_role('administrator');
 		/** @type EE_Event $e */
@@ -205,7 +201,11 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			'DTT_EVT_end' => current_time( 'timestamp' ) + 5 * 60 * 60 ) );
 
 		$dtt->_add_relation_to( $ticket, 'Ticket' );
-
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		$transaction_processor->set_reg_step_completed( $transaction, 'attendee_information' );
+		$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+		$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 		return $transaction;
 	}
 }
