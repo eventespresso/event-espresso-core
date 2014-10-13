@@ -760,7 +760,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$error_strings = array();
 				foreach( $validation_errors as $validation_error ){
 					if( $validation_error instanceof EE_Validation_Error ){
-						$error_strings[] = sprintf('%1$s: %2$s', $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() );
+						$form_section = $validation_error->get_form_section();
+						if( $form_section instanceof EE_Form_Input_Base ){
+							$label = $form_section->html_label_text();
+						}elseif( $form_section instanceof EE_Form_Section_Base ){
+							$label = $form_section->name();
+						}else{
+							$label = __( 'Validation Error', 'event_espresso' );
+						}
+						$error_strings[] = sprintf('%1$s: %2$s', $label, $validation_error->getMessage() );
 					}
 				}
 //				printr($this->checkout->billing_form->get_validation_errors(), '$this->checkout->billing_form->get_validation_errors()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
