@@ -53,8 +53,12 @@ class EE_Transaction_Processor {
 	 * @return boolean
 	 */
 	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
-		// loop thru reg steps array
-		foreach ( $transaction->reg_steps() as $slug => $reg_step_completed ) {
+		$reg_steps = $transaction->reg_steps();
+		if ( ! is_array( $reg_steps ) || empty( $reg_steps )) {
+			return FALSE;
+		}
+		// loop thru reg steps array)
+		foreach ( $reg_steps as $slug => $reg_step_completed ) {
 			// if NOT checking ALL steps (only checking one step)
 			if ( ! $check_all ) {
 				// and this is the one
