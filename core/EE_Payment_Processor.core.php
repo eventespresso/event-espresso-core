@@ -37,7 +37,7 @@ class EE_Payment_Processor{
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
+		if ( self::$_instance === NULL  || ! ( self::$_instance instanceof EE_Payment_Processor )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
