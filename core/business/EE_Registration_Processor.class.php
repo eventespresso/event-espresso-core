@@ -27,11 +27,11 @@ class EE_Registration_Processor {
 	 * generates reg_url_link
 	 *
 	 * @param int           $att_nmbr
-	 * @param \EE_Line_Item $item
+	 * @param EE_Line_Item | string $item
 	 * @return string
 	 */
-	public function generate_reg_url_link( $att_nmbr = 0, EE_Line_Item $item ) {
-		return $att_nmbr . '-' . $item->code();
+	public function generate_reg_url_link( $att_nmbr, $item ) {
+		return $item instanceof EE_Line_Item ? $att_nmbr . '-' . $item->code() :  $att_nmbr . '-' . $item;
 	}
 
 
