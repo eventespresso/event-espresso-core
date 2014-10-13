@@ -1022,6 +1022,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 	 * @return EE_Registration|false
 	 */
 	public function create_object( $args ) {
+		static $att_nmbr = 0;
 		$registration = EE_Registration::new_instance( $args );
 		//some things have to be set after the registration has been instantiated.
 		$registration->set( 'REG_session', uniqid() );
@@ -1030,10 +1031,9 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		//only run finalize if $chained because it requires EE_Transaction
 		if ( $this->_chained ) {
 			$p = new EE_Registration_Processor();
-			$registration->set_reg_url_link( $p->generate_reg_url_link() );
-			$registration->set_reg_code( $p->generate_reg_code($registration) );
-			// todo: REG_code is no longer generated via $registration->finalize() but through EE_Registration_Processor::generate_reg_code() as is REG_url_link, so this method may need to handle the creation of those items
-//			$registration->finalize();
+			$att_nmbr++;
+			$registration->set_reg_url_link( $p->generate_reg_url_link( $att_nmbr, md5( 'ticket' . $registrationID . time() )));
+			$registration->set_reg_code( $p->generate_reg_code( $registration ) );
 			$registration->save();
 		}
 		return $registrationID ? $registration : false;
