@@ -337,7 +337,7 @@ class EE_messages {
 		foreach ( $message_type->messages as $message ) {
 			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
 			// if messages send successfully then $success retains it's value, but a single fail will toggle it to FALSE
-			$success = $sending_messenger->send_message( $message, $message_type ) ? $success : FALSE;
+			$success = $sending_messenger->send_message( $message, $message_type ) === TRUE ? $success : FALSE;
 		}
 		unset( $message_type );
 		return $success;
