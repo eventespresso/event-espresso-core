@@ -333,8 +333,20 @@ class EEH_Activation {
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
 		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
-		if($drop_table_if_pre_existed){
-			$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+		if($drop_table_if_pre_existed && EEH_Activation::table_exists( $wp_table_name ) ){
+			if( defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
+				$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+			}else{
+				//so we should be more cautious rather than just dropping tables so easily
+				EE_Error::add_persistent_admin_notice(
+						'bad_table_' . $wp_table_name . '_detected',
+						sprintf( __( 'Database table %1$s existed when it shouldn\'t, and probably contained erroneous data. You probably restored to a backup that didn\'t remove old tables didn\'t you? We recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
+								$wp_table_name,
+								"<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
+								'<b>wp-config.php</b>',
+								'<br/>'),
+								TRUE );
+			}
 		}
 		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 		dbDelta( $SQL );
@@ -458,6 +470,7 @@ class EEH_Activation {
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
 			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
+			$current_data_migration_script->set_migrating( FALSE );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
