@@ -57,11 +57,10 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .ee-status-strip-td {
     padding: 0;
-    margin: 0;
-    min-height: 50px;
+	min-height: 50px;
     height: 100%;
     display: inline-block;
-    margin-bottom: -5px;
+	margin: 0 0 -5px;
 }
 
 .widefat td.column-STS_ID, .widefat th.column-STS_ID {
@@ -127,7 +126,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .payment-date-dv { width: 100px; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0 1px 0px #fff; }
+.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0 1px 0 #fff; }
 .admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
 .admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 30%; }
 
@@ -161,8 +160,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .admin-primary-mbox-taxes-tr { font-size:1.1em; }
 .admin-primary-mbox-total-tr { font-size:1.4em; }
-.admin-primary-mbox-tbl .txn-no-payments { float:right; color:red !important; font-weight:bold; }
-.red-text { color:red !important; }
+.admin-primary-mbox-total-tr td .important-notice { display: block; padding: 1em; font-size:.75em; }
 
 
 

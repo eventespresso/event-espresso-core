@@ -65,39 +65,41 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 	</table>
 <?php endif; */ ?>
 
-	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Promote Event Espresso', 'event_espresso'); ?> <span id="affiliate_info"><?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?></span>
-	</h4>
+	<?php if ( EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'display_admin_settings_options_promote_and_affiliate' ) ) : ?>
+		<h4 class="ee-admin-settings-hdr">
+			<?php _e('Promote Event Espresso', 'event_espresso'); ?> <span id="affiliate_info"><?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?></span>
+		</h4>
 
-	<table class="form-table">
-		<tbody>
+		<table class="form-table">
+			<tbody>
 
-			<tr>
-				<th>
-					<label>
-						<?php _e('Link to Event Espresso in your Registration Page?', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EEH_Form_Fields::select_input('show_reg_footer', $values, $show_reg_footer ); ?>
-				</td>
-			</tr>
+				<tr>
+					<th>
+						<label>
+							<?php _e('Link to Event Espresso in your Registration Page?', 'event_espresso'); ?>
+						</label>
+					</th>
+					<td>
+						<?php echo EEH_Form_Fields::select_input('show_reg_footer', $values, $show_reg_footer ); ?>
+					</td>
+				</tr>
 
-			<tr>
-				<th>
-					<?php printf( __('Event Espresso %sAffiliate%s ID', 'event_espresso'), '<a href="http://eventespresso.com/affiliates/" target="_blank">', '</a>' ); ?>
-				</th>
-				<td>
-					<input name="affiliate_id" class="regular-text" type="text" value="<?php echo $affiliate_id; ?>" />
-					<br />
-					<p class="description">
-						<?php _e('Earn cash for promoting Event Espresso.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
+				<tr>
+					<th>
+						<?php printf( __('Event Espresso %sAffiliate%s ID', 'event_espresso'), '<a href="http://eventespresso.com/affiliates/" target="_blank">', '</a>' ); ?>
+					</th>
+					<td>
+						<input name="affiliate_id" class="regular-text" type="text" value="<?php echo $affiliate_id; ?>" />
+						<br />
+						<p class="description">
+							<?php _e('Earn cash for promoting Event Espresso.', 'event_espresso'); ?>
+						</p>
+					</td>
+				</tr>
 
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	<?php endif; ?>
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Help Tour Global Activation', 'event_espresso'); ?> <span id="help_tour_activation"><?php echo EEH_Template::get_help_tab_link('help_tour_activation_info'); ?></span>

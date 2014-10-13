@@ -135,13 +135,13 @@
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
 					</td>
 					<td class=" jst-cntr">
-						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo strtoupper( $payment->method() );?></div>
+						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo $payment->source();?></div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">
-							<?php echo $payment->gateway();?>
+							<?php echo $payment->payment_method() ?  $payment->payment_method()->admin_name() : __("Unknown", 'event_espresso');?>
 						</div>
-						<div id="payment-gateway-id-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->gateway();?></div>
+						<div id="payment-gateway-id-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->payment_method() ? $payment->payment_method()->ID() : 0;?></div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-response-<?php echo $PAY_ID;?>"><?php echo $payment->gateway_response();?></div>
@@ -167,12 +167,12 @@
 			?>
 			<?php endforeach; // $payment?>
 			<?php
-				$pay_totals_class = $payment_total > $grand_raw_total ? ' red-text' : '';
+				$pay_totals_class = $payment_total > $grand_raw_total ? ' important-notice' : '';
 				$overpaid = $payment_total > $grand_raw_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
 			?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
@@ -182,7 +182,7 @@
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="important-notice"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
@@ -318,10 +318,10 @@
 					<div class="txn-admin-apply-payment-method-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-method-inp" class=""><?php _e( 'Method of Payment', 'event_espresso' );?></label>
-						<select name="txn_admin_payment[method]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
+						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
-						<?php foreach ( $payment_methods as $method_ID => $method ) : ?>
-							<option id="payment-method-opt-<?php echo $method_ID; ?>" value="<?php echo $method_ID; ?>"><?php echo $method; ?>&nbsp;&nbsp;</option>
+						<?php foreach ( $payment_methods as $method ) : ?>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>

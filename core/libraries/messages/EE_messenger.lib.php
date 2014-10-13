@@ -264,7 +264,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.
-	 * @return void
+	 * @return bool | WP_Error
 	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
 	abstract protected function _send_message();
@@ -277,6 +277,20 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string html body for message content.
 	 */
 	abstract protected function _preview();
+
+
+
+
+	/**
+	 * Used by messengers (or preview) for enqueueing any scripts or styles need in message generation.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_scripts_styles() {
+		do_action( 'AHEE__EE_messenger__enqueue_scripts_styles');
+	}
 
 
 
@@ -558,11 +572,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * Sets up the message for sending.
 	 * @param  stdClass $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
+	 * @return bool | WP_Error
 	 */
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
 		$this->_incoming_message_type = $message_type;
-		$this->_send_message();
+		return $this->_send_message();
 	}
 
 
@@ -589,7 +604,33 @@ abstract class EE_messenger extends EE_Messages_Base {
 			}
 		}
 
+		//enqueue preview js so that any links/buttons on the page are disabled.
+		if ( ! $send ) {
+			//the below may seem liks duplication.  However, typically if a messenger enqueues scripts/styles, it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
+			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
+		}
+
 		return $send ? $this->_send_message() : $this->_preview();
+	}
+
+
+
+
+	/**
+	 * Callback for enqueue_scripts so that we setup the preview script for all previews.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function add_preview_script() {
+		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, true );
+
+		//error message
+		EE_Registry::$i18n_js_strings['links_disabled'] = __('All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso');
+		wp_localize_script( 'ee-messages-preview-js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 
 

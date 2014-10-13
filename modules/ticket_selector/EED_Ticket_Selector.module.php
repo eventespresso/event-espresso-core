@@ -145,7 +145,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
-		
+
 		// is the event expired ?
 		$template_args['event_is_expired'] = self::$_event->is_expired();
 		if ( $template_args['event_is_expired'] ) {
@@ -171,12 +171,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+			'order_by' => array( 'TKT_required' => 'DESC', 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
 		));
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
-			
+
 		// redirecting to another site for registration ??
 		$external_url = self::$_event->external_url() !== NULL || self::$_event->external_url() !== '' ? self::$_event->external_url() : FALSE;
 		// set up the form (but not for the admin)
@@ -380,8 +380,9 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+						wp_safe_redirect( get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 						exit();
+
 					} else {
 						// nothing added to cart
 						$error_msg = __( 'No tickets were added for the event.', 'event_espresso' );
@@ -520,13 +521,13 @@ class EED_Ticket_Selector extends  EED_Module {
 							// ensure that $input_value is an array
 							$input_value = is_array( $input_value ) ? $input_value : array( $input_value );
 							// cycle thru values
-							foreach ( $input_value as $row=>$value ) {
+							foreach ( $input_value as $row =>$value ) {
 								// decode and unserialize the ticket object
 								$ticket_obj = unserialize( base64_decode( $value ));
 								// vat is dis? i ask for TICKET !!!
 								if ( ! $ticket_obj instanceof EE_Ticket ) {
 									// get ticket via the ticket id we put in the form
-									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid_data['ticket_id'][$key] );
+									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid_data['ticket_id'][$row] );
 								}
 								$valid_data[$what][] = $ticket_obj;
 							}
@@ -702,7 +703,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			// make it dance
 			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
-			// loco grande
 			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}

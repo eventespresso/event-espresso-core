@@ -57,7 +57,7 @@ final class EE_Config {
 	public $currency;
 
 	/**
-	 *
+	 * @deprecated since 4.5.0 in favour of instead using EEM_Payment_Method model and its corresponding esp_payment_method table
 	 * @var EE_Gateway_Config
 	 */
 	public $gateway;
@@ -964,6 +964,7 @@ final class EE_Config {
 
 
 
+
 	/**
 	 * 	register_module - makes core aware of this module
 	 *
@@ -1019,8 +1020,6 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
 		return TRUE;
 	}
-
-
 
 
 	/**
@@ -1088,9 +1087,10 @@ final class EE_Config {
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	string 		$module - module name (classname without EED_ prefix)
 	 *  @param 	string 		$method_name - the actual module method to be routed to
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	bool
 	 */
-	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
+	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
 		$module_class = 'EED_' . $module;
@@ -1109,7 +1109,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
+		EE_Config::$_module_route_map[ $key ][ $route ] = array( 'EED_' . $module, $method_name );
 		return TRUE;
 	}
 
@@ -1120,15 +1120,28 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
+	 *  @param 	string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_route( $route = NULL ) {
+	public static function get_route( $route = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
 		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
-		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
-			return EE_Config::$_module_route_map[ $route ];
+		if ( isset( EE_Config::$_module_route_map[ $key ][ $route ] )) {
+			return EE_Config::$_module_route_map[ $key ][ $route ];
 		}
 		return NULL;
+	}
+
+
+
+	/**
+	 *    get_routes - get ALL module method routes
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public static function get_routes() {
+		return EE_Config::$_module_route_map;
 	}
 
 
@@ -1139,13 +1152,13 @@ final class EE_Config {
 	 * @access    public
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 * @param null       $forward
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    array|string  $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
+	public static function register_forward( $route = NULL, $status = 0, $forward = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1171,7 +1184,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
+		EE_Config::$_module_forward_map[ $key ][ $route ][ absint( $status ) ] = $forward;
 		return TRUE;
 	}
 
@@ -1183,12 +1196,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_forward( $route = NULL, $status = 0 ) {
+	public static function get_forward( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
-		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_forward_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_forward', EE_Config::$_module_forward_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1202,12 +1216,12 @@ final class EE_Config {
 	 * @param    string  $route  - "pretty" public alias for module method
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
 	 * @param    string   $view
-	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @param    string 		$key - url param key indicating a route is being called
 	 * @return    bool
 	 */
-	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
+	public static function register_view( $route = NULL, $status = 0, $view = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
-		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
+		if ( ! isset( EE_Config::$_module_route_map[ $key ][ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1217,7 +1231,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		EE_Config::$_module_view_map[ $route ][ absint( $status ) ] = $view;
+		EE_Config::$_module_view_map[ $key ][ $route ][ absint( $status ) ] = $view;
 		return TRUE;
 	}
 
@@ -1231,12 +1245,13 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 *  @param    string 		$key - url param key indicating a route is being called
 	 *  @return 	string
 	 */
-	public static function get_view( $route = NULL, $status = 0 ) {
+	public static function get_view( $route = NULL, $status = 0, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
-		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
-			return apply_filters( 'FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status );
+		if ( isset( EE_Config::$_module_view_map[ $key ][ $route ][ $status ] )) {
+			return apply_filters( 'FHEE__EE_Config__get_view', EE_Config::$_module_view_map[ $key ][ $route ][ $status ], $route,$status );
 		}
 		return NULL;
 	}
@@ -1407,27 +1422,38 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 	/**
 	 *  gets/returns URL for EE txn_page
+	 * @param array $query_args like what gets passed to
+	 * add_query_arg() as the first argument
 	 *
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function txn_page_url() {
+	public function txn_page_url($query_args = array()) {
 		if ( ! $this->txn_page_url ) {
 			$this->txn_page_url = get_permalink( $this->txn_page_id );
 		}
-		return $this->txn_page_url;
+		if($query_args){
+			return add_query_arg($query_args,$this->txn_page_url);
+		}else{
+			return $this->txn_page_url;
+		}
 	}
 	/**
 	 *  gets/returns URL for EE thank_you_page
-	 *
+	 *  @param array $query_args like what gets passed to
+	 * add_query_arg() as the first argument
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function thank_you_page_url() {
+	public function thank_you_page_url($query_args = array()) {
 		if ( ! $this->thank_you_page_url ) {
 			$this->thank_you_page_url = get_permalink( $this->thank_you_page_id );
 		}
-		return $this->thank_you_page_url;
+		if($query_args){
+			return add_query_arg($query_args,$this->thank_you_page_url);
+		}else{
+			return $this->thank_you_page_url;
+		}
 	}
 	/**
 	 *  gets/returns URL for EE cancel_page
@@ -1441,6 +1467,7 @@ class EE_Core_Config extends EE_Config_Base {
 		}
 		return $this->cancel_page_url;
 	}
+
 
 
 
@@ -1737,6 +1764,17 @@ class EE_Registration_Config extends EE_Config_Base {
       public $skip_reg_confirmation;
 
 	/**
+	 * an array of SPCO reg steps where:
+	 * 		the keys denotes the reg step order
+	 * 		each element consists of an array with the following elements:
+	 * 			"file_path" => the file path to the EE_SPCO_Reg_Step class
+	 * 			"class_name" => the specific EE_SPCO_Reg_Step child class name
+	 * 			"slug" => the URL param used to trigger the reg step
+	 * @var array $reg_steps
+	 */
+      public $reg_steps;
+
+	/**
 	 * Whether registration confirmation should be the last page of SPCO
 	 * @var boolean $reg_confirmation_last
 	 */
@@ -1793,6 +1831,7 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
 		$this->show_pending_payment_options = FALSE;
 		$this->skip_reg_confirmation = FALSE;
+		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'clean';
@@ -1801,6 +1840,9 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 	}
+
+
+
 
 }
 
@@ -2100,19 +2142,23 @@ class EE_Map_Config extends EE_Config_Base {
 }
 
 /**
- * stores payment gateway info
+ * stores payment gateway info.
+ * @deprecated since version 4.5
+ * In favour of instead using the EEM_Payment_Method model and associated table
  */
 class EE_Gateway_Config extends EE_Config_Base{
 	/**
 	 * Array with keys that are payment gateways slugs, and values are arrays
 	 * with any config info the gateway wants to store
 	 * @var array
+	 * @deprecated since version 4.5
 	 */
 	public $payment_settings;
 	/**
 	 * Where keys are gateway slugs, and values are booleans indicating whether or not
 	 * the gateway is stored in the uploads directory
 	 * @var array
+	 * @deprecated sicne version 4.5
 	 */
 	public $active_gateways;
 
