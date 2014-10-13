@@ -201,11 +201,13 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			'DTT_EVT_end' => current_time( 'timestamp' ) + 5 * 60 * 60 ) );
 
 		$dtt->_add_relation_to( $ticket, 'Ticket' );
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		$transaction_processor->set_reg_step_completed( $transaction, 'attendee_information' );
-		$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
-		$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+		$transaction->set_reg_steps(
+			array(
+				'attendee_information' => TRUE,
+				'payment_options' => TRUE,
+				'finalize_registration' => current_time( 'timestamp' ),
+			)
+		);
 		return $transaction;
 	}
 }
