@@ -44,14 +44,18 @@ class EEG_Mock_Offsite extends EE_Offsite_Gateway{
 		return $payment;
 	}
 
+
+
 	/**
 	 *
 	 * @param EEI_Payment $payment
-	 * @param type $billing_info
-	 * @param type $return_url
-	 * @param type $cancel_url
+	 * @param array $billing_info
+	 * @param string        $return_url
+	 * @param string        $notify_url
+	 * @param string        $cancel_url
+	 * @return \EE_Payment|\EEI_Payment
 	 */
-	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $cancel_url = NULL) {
+	public function set_redirection_info( $payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL ) {
 		global $auto_made_thing_seed;
 		$payment->set_redirect_url('http://google.com');
 		$payment->set_txn_id_chq_nmbr( $auto_made_thing_seed++ );
