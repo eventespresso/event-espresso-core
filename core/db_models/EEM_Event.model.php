@@ -1,31 +1,17 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once( EE_MODELS . 'EEM_CPT_Base.model.php');
 /**
- * Event Espresso
  *
- * Event Registration and Management Plugin for WordPress
+ * EEM_Event Model
  *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Event Model
+ * extends EEM_CPT_Base which extends EEM_Base
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
  * @author				Michael Nelson, Brent Christensen
  *
- * ------------------------------------------------------------------------
  */
-
-
-require_once( EE_MODELS . 'EEM_CPT_Base.model.php');
 class EEM_Event  extends EEM_CPT_Base{
-	//extends EEM_Base
 
 	/**
 	 * constant used by status(), indicating that no more tickets can be purchased for any of the datetimes for the event
@@ -44,26 +30,30 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
-  	// private instance of the Event object
+	/**
+	 * private instance of the Event object
+	 * @var EEM_Event
+	 */
 	private static $_instance = NULL;
 
+
+
 	/**
-	 *		This function is a singleton method used to instantiate the EEM_Event object
+	 *        This function is a singleton method used to instantiate the EEM_Event object
 	 *
-	 *		@access public
-	 *		@return EEM_Event instance
+	 * @access public
+	 * @param string $timezone
+	 * @return EEM_Event
 	 */
 	public static function instance( $timezone = NULL ){
 
 		// check if instance of EEM_Event already exists
-		if ( self::$_instance === NULL ) {
+		if ( ! self::$_instance instanceof EEM_Event ) {
 			// instantiate Espresso_model
 			self::$_instance = new self( $timezone );
 		}
-
 		//we might have a timezone set, let set_timezone decide what to do with it
 		self::$_instance->set_timezone( $timezone );
-
 		// EEM_Event object
 		return self::$_instance;
 	}
@@ -79,6 +69,11 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
+	/**
+	 * Adds a relationship to Term_Taxonomy for each CPT_Base
+	 * @param string $timezone
+	 * @return EEM_Event
+	 */
 	protected function __construct($timezone = null){
 
 		EE_Registry::instance()->load_model( 'Registration' );
@@ -86,21 +81,30 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');
 
+		// to remove Cancelled events from the frontend, copy the following filter to your functions.php file
+		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__cancelled__Public', '__return_false' );
+		// to remove Postponed events from the frontend, copy the following filter to your functions.php file
+		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', '__return_false' );
+		// to remove Sold Out events from the frontend, copy the following filter to your functions.php file
+		//	add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
 
-		$this->_custom_stati = array(
-			EEM_Event::cancelled => array(
-				'label' => __('Cancelled', 'event_espresso'),
-				'public' => TRUE
+		$this->_custom_stati = apply_filters(
+			'AFEE__EEM_Event__construct___custom_stati',
+			array(
+				EEM_Event::cancelled => array(
+					'label' => __('Cancelled', 'event_espresso'),
+					'public' => apply_filters( 'AFEE__EEM_Event__construct___custom_stati__cancelled__Public', TRUE )
 				),
-			EEM_Event::postponed => array(
-				'label' => __('Postponed', 'event_espresso'),
-				'public' => TRUE
+				EEM_Event::postponed => array(
+					'label' => __('Postponed', 'event_espresso'),
+					'public' => apply_filters( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', TRUE )
 				),
-			EEM_Event::sold_out => array(
-				'label' => __('Sold Out', 'event_espresso'),
-				'public' => TRUE
+				EEM_Event::sold_out => array(
+					'label' => __('Sold Out', 'event_espresso'),
+					'public' => apply_filters( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', TRUE )
 				)
-			);
+			)
+		);
 
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table( 'posts','ID' ),
@@ -182,10 +186,10 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		get_question_groups
 	*
 	* 		@access		public
-	* 		@param		int			$EVT_ID
+	* 		@param		int $EVT_ID
 	*		@return 		array
 	*/
-	public function get_all_event_question_groups( $EVT_ID = FALSE ) {
+	public function get_all_event_question_groups( $EVT_ID = 0 ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -203,11 +207,11 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		get_question_groups
 	*
 	* 		@access		public
-	* 		@param		int			$EVT_ID
+	* 		@param		int $EVT_ID
 	* 		@param		boolean	$for_primary_attendee
 	*		@return 		array
 	*/
-	public function get_event_question_groups( $EVT_ID = FALSE, $for_primary_attendee = TRUE ) {
+	public function get_event_question_groups( $EVT_ID = 0, $for_primary_attendee = TRUE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -226,11 +230,11 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		get_question_groups
 	*
 	* 		@access		public
-	* 		@param		int					$EVT_ID
+	* 		@param		int $EVT_ID
 	* 		@param		EE_Registration 	$registration
 	*		@return 		array
 	*/
-	public function get_question_groups_for_event( $EVT_ID = FALSE, EE_Registration $registration ) {
+	public function get_question_groups_for_event( $EVT_ID = 0, EE_Registration $registration ) {
 
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -314,24 +318,23 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 	/**
-	*		_get_question_target_db_column
-	*
-	* 		@access		public
-	* 		@param      EE_Registration         $registration  (so existing answers for registration are included)
-	* 		@param      int                 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
-	*		@return 	array
-	*/
-	public function assemble_array_of_groups_questions_and_options( EE_Registration $registration, $EVT_ID = NULL ) {
+	 *        _get_question_target_db_column
+	 *
+	 * @access 	public
+	 * @param 	EE_Registration $registration (so existing answers for registration are included)
+	 * @param 	int 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
+	 * @throws EE_Error
+	 * @return 	array
+	 */
+	public function assemble_array_of_groups_questions_and_options( EE_Registration $registration, $EVT_ID = 0 ) {
 
 		if ( empty( $EVT_ID ) ) {
-			throw EE_Error( __( 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.', 'event_espresso' ) );
-		}/**/
+			throw new EE_Error( __( 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.', 'event_espresso' ) );
+		}
 
-		$QSTs = $questions = $QSGs = array();
-
+		$questions = array();
 
 		// get all question groups for event
-
 		$qgs = $this->get_question_groups_for_event( $EVT_ID, $registration );
 		if ( !empty( $qgs ) ) {
 			foreach ( $qgs as $qg ) {

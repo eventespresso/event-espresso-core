@@ -2070,7 +2070,7 @@ abstract class EEM_Base extends EE_Base{
 		$model_class = 'EEM_'.$model_name;
 		$model_filepath = $model_class.".model.php";
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( EEH_File::exists($model_filepath)){
+		if ( is_readable($model_filepath)){
 			require_once($model_filepath);
 			$model_instance=call_user_func($model_name."::instance");
 			/* @var $model_instance EEM_Base */

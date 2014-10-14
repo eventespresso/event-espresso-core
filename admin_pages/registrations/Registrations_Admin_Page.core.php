@@ -627,20 +627,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		/** setup reg status bulk actions **/
 		$def_reg_status_actions['approve_registration'] = __('Approve Registrations', 'event_espresso');
-		if ( in_array( $match_array['approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['approve_and_notify_registration'] = __('Approve and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['decline_registration'] = __('Decline Registrations', 'event_espresso');
-		if ( in_array( $match_array['decline_registration'], $active_mts ) )
+		if ( in_array( $match_array['decline_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['decline_and_notify_registration'] = __('Decline and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['pending_registration'] = __('Set Registrations to Pending Payment', 'event_espresso');
-		if ( in_array( $match_array['pending_registration'], $active_mts ) )
+		if ( in_array( $match_array['pending_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to Pending Payment and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['no_approve_registration'] = __('Set Registrations to Not Approved', 'event_espresso');
-		if ( in_array( $match_array['no_approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['no_approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to Not Approved and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['cancel_registration'] = __('Cancel Registrations', 'event_espresso');
-		if ( in_array( $match_array['cancel_registration'], $active_mts ) )
+		if ( in_array( $match_array['cancel_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['cancel_and_notify_registration'] = __('Cancel Registrations and Notify', 'event_espresso');
+		}
 
 		$this->_views = array(
 			'all' => array(
@@ -714,7 +719,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _registration_legend_items() {
-		$items = array(
+		$fc_items = array(
 			'star-icon' => array(
 				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
@@ -727,14 +732,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
-			'resend_registration' => array(
-				'class' => 'dashicons dashicons-email-alt',
-				'desc' => __('Resend Registration Details', 'event_espresso')
-				),
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				),
+				)
+ 			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
+			$fc_items['resend_registration'] = array(
+				'class' => 'dashicons dashicons-email-alt',
+				'desc' => __('Resend Registration Details', 'event_espresso')
+				);
+		} else {
+			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
+		}
+
+		$sc_items = array(
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
@@ -755,8 +767,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
 				)
- 			);
-		return $items;
+			);
+		return array_merge( $fc_items, $sc_items );
 	}
 
 
@@ -1064,7 +1076,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_details_metaboxes() {
 		$this->_set_registration_object();
 		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
-		add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		if ( EE_Registry::instance()->CAP->current_user_can('ee_edit_registration', 'edit-reg-questions-mbox' ) ) {
+			add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		}
 		add_meta_box( 'edit-reg-registrant-mbox', __( 'Contact Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 		if ( $this->_registration->group_size() > 1 ) {
 			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Registrations in this Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
@@ -1990,10 +2004,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
 		// gotta start with a clean slate if we're not coming here via ajax
-		if ( !defined('DOING_AJAX' ) && ( !isset($this->_req_data['processing_registration']) || isset( $this->_req_data['step_error'] ) ) )
+		if ( ! defined('DOING_AJAX' ) && ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ))) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		}
 
 		$this->_template_args['event_name'] = '' ;
 		// event name
@@ -2052,11 +2068,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
 		$cart = EE_Registry::instance()->SSN->get_session_data('cart');
 		$step = empty( $cart ) ? 'ticket' : 'questions';
-
 		switch ( $step ) {
 			case 'ticket' :
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
-				$template_args['content'] = EED_Ticket_Selector::display_ticket_selector( $this->_reg_event );
+				$template_args['content'] = EED_Ticket_Selector::instance()->display_ticket_selector( $this->_reg_event );
 				$template_args['step_button_text'] = __('Add Tickets and Continue to Registrant Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = FALSE;
 				break;
@@ -2176,7 +2191,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function _process_registration_step() {
+
 		$this->_set_reg_event();
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
+
 		//what step are we on?
 		$cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
 		$step = empty( $cart ) ? 'ticket' : 'questions';
@@ -2190,7 +2208,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		switch ( $step ) {
 			case 'ticket' :
 				//process ticket selection
-				$success = EED_Ticket_Selector::process_tickets_selection_from_admin();
+				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
 				if ( $success ) {
 					EE_Error::add_success( __('Tickets Selected. Now complete the registration.'), 'event_espresso');
 				} else {
@@ -2369,7 +2387,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		if ( EEH_File::exists(EE_CLASSES . 'EE_Export.class.php')) {
+		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export();
@@ -2380,7 +2398,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _contact_list_export(){
 		EE_Registry::instance()->load_helper( 'File' );
-		if ( EEH_File::exists(EE_CLASSES . 'EE_Export.class.php')) {
+		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export_attendees();
@@ -2485,8 +2503,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		remove_meta_box('commentstatusdiv', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
-		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal' );
-		add_meta_box('commentsdiv', __('Notes on the Contact', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+
+		if ( post_type_supports( 'espresso_attendees', 'excerpt') ) {
+			add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal' );
+		}
+
+		if ( post_type_supports( 'espresso_attendees', 'comments') ) {
+			add_meta_box('commentsdiv', __('Notes on the Contact', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		}
+
 		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
 		add_meta_box('attendee_registrations', __('Registrations for this Contact', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
