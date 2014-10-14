@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - New Addon (EE4.x+)
   Plugin URI: http://www.eventespresso.com
   Description: The Event Espresso New Addon adds NEW stuff to Event Espresso. Compatible with Event Espresso 4.x or higher
-  Version: 0.0.1.dev.002
+  Version: 1.0.0.dev.000
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2014 Event Espresso (email : support@eventespresso.com)
@@ -36,7 +36,7 @@
  *
  * ------------------------------------------------------------------------
  */
-define( 'EE_NEW_ADDON_VERSION', '0.0.1.dev.002' );
+define( 'EE_NEW_ADDON_VERSION', '1.0.0.dev.000' );
 define( 'EE_NEW_ADDON_PLUGIN_FILE',  __FILE__ );
 function load_espresso_new_addon() {
 if ( class_exists( 'EE_Addon' )) {

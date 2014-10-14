@@ -73,8 +73,12 @@ final class EE_Admin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_action( 'network_admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+
+		//reset Environment config (we only do this on admin page loads);
+		EE_Registry::instance()->CFG->environment->recheck_values();
 
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
@@ -179,6 +183,7 @@ final class EE_Admin {
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
+			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 			//filter for get_edit_post_link used on comments for custom post types
