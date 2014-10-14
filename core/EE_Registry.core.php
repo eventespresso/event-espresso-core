@@ -708,11 +708,16 @@ final class EE_Registry {
 	 * Resets the registry and everything in it (eventually, getting it to properly
 	 * reset absolutely everything will probably be tricky. right now it just resets
 	 * the config, data migration manager, and the models)
+	 * @param boolean $hard whether to reset data in the database too, or just refresh
+	 * the Registry to its state at the bginning of the request
+	 * @param boolean $reinstantiate whether to create new instances of EE_REgistry's singletons too,
+	 * or just reset without reinstantiating (handy to set to FALSE if you're not sure if you CAN
+	 * currently reinstantiate the singletons at the moment)
 	 * @return EE_Registry
 	 */
-	public static function reset(){
+	public static function reset( $hard = FALSE, $reinstantiate = TRUE ){
 		$instance = self::instance();
-		$instance->CFG = EE_Config::reset();
+		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
 		$instance->LIB = new stdClass();
 		foreach( array_keys( $instance->non_abstract_db_models ) as $model_name ){
