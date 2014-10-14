@@ -288,11 +288,7 @@ abstract class EEM_Base extends EE_Base{
 				/** @var $field_obj EE_Model_Field_Base | EE_Primary_Key_Field_Base */
 				//primary key field base has a slightly different _construct_finalize
 				/** @var $field_obj EE_Model_Field_Base */
-				$field_obj->_construct_finalize( $table_alias, $field_name );
-				if($field_obj instanceof EE_Primary_Key_Field_Base){
-					/** @var $field_obj EE_Primary_Key_Field_Base */
-					$field_obj->_construct_finalize_set_model_name($this->get_this_model_name());
-				}
+				$field_obj->_construct_finalize( $table_alias, $field_name, $this->get_this_model_name() );
 			}
 		}
 
@@ -518,7 +514,7 @@ abstract class EEM_Base extends EE_Base{
 	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
-	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
 	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
@@ -608,6 +604,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class | NULL
 	 */
 	function get_one($query_params = array()){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::get_one', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		$query_params['limit'] = 1;
 		$items = $this->get_all($query_params);
 		if(empty($items)){
@@ -670,6 +670,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
 	function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::update', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		/**
 		 * Action called before a model update call has been made.
 		 *
@@ -806,8 +810,11 @@ abstract class EEM_Base extends EE_Base{
 		$cols_n_values = array();
 		foreach($fields_n_values as $field_name => $value){
 			$field_obj = $this->field_settings_for($field_name);
-			$cols_n_values[] = $field_obj->get_qualified_column()."=".$wpdb->prepare($field_obj->get_wpdb_data_type(),
+			//if the value is NULL, we want to assign the value to that.
+			//wpdb->prepare doesn't really handle that properly
+			$value_sql = $value===NULL ? 'NULL' : $wpdb->prepare($field_obj->get_wpdb_data_type(),
 							$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$cols_n_values[] = $field_obj->get_qualified_column()."=".$value_sql;
 		}
 		return implode(",",$cols_n_values);
 
@@ -1081,10 +1088,10 @@ abstract class EEM_Base extends EE_Base{
 		$wpdb->show_errors( FALSE );
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		$wpdb->show_errors( $old_show_errors_value );
+		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		if( ! empty( $wpdb->last_error ) ){
 			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
 		}
-		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		return $result;
 	}
 
@@ -1267,6 +1274,10 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::sum_related', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		//we're just going to use the query params on the related model's normal get_all query,
 		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
@@ -1701,6 +1712,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
 		if(array_key_exists(0,$query_params)){
 			$where_query_params = $query_params[0];
@@ -1859,7 +1874,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
-			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
+			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
 
@@ -1930,9 +1945,9 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
 		$selects = $this->_get_columns_to_select_for_this_model();
-		foreach($model_query_info->get_model_names_included() as $name_of_other_model_included=>$model_relation_chain){
+		foreach($model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included){
 			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
-			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model());
+			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model($model_relation_chain));
 		}
 		return implode(", ",$selects);
 	}
@@ -1940,19 +1955,21 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets an array of columns to select for this model, which are necessary for it to create its objects.
 	 * So that's going to be the columns for all the fields on the model
+	 * @param string $model_relation_chain like 'Question.Question_Group.Event'
 	 * @return array numerically indexed, values are columns to select and rename, eg "Event.ID AS 'Event.ID'"
 	 */
-	public function _get_columns_to_select_for_this_model(){
+	public function _get_columns_to_select_for_this_model($model_relation_chain = ''){
 		$fields = $this->field_settings();
 		$selects = array();
+		$table_alias_with_model_relation_chain_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model_name());
 		foreach($fields as $field_obj){
-			$selects[] = $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
+			$selects[] = $table_alias_with_model_relation_chain_prefix . $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$table_alias_with_model_relation_chain_prefix.$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
 		}
 		//make sure we are also getting the PKs of each table
 		$tables = $this->get_tables();
 		if(count($tables) > 1){
 			foreach($tables as $table_obj){
-				$qualified_pk_column = $table_obj->get_fully_qualified_pk_column();
+				$qualified_pk_column = $table_alias_with_model_relation_chain_prefix . $table_obj->get_fully_qualified_pk_column();
 				if( ! in_array($qualified_pk_column,$selects)){
 					$selects[] = "$qualified_pk_column AS '$qualified_pk_column'";
 				}
@@ -1996,11 +2013,20 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		//check if this is a special logic query param
-		elseif(in_array($query_param, $this->_logic_query_param_keys)){
+		elseif(in_array($query_param, $this->_logic_query_param_keys, TRUE)){
 			if($allow_logic_query_params){
 				return;
 			}else{
-				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong query params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
+				throw new EE_Error(
+					sprintf(
+						__( 'Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s', 'event_espresso' ),
+						implode( '", "', $this->_logic_query_param_keys ),
+						$query_param ,
+						get_class( $this ),
+						'<br />',
+						"\t" . ' $passed_in_query_info = <pre>' . print_r( $passed_in_query_info, TRUE ) . '</pre>' . "\n\t" . ' $query_param_type = ' . $query_param_type . "\n\t" . ' $original_query_param = ' . $original_query_param
+					)
+				);
 			}
 		}
 		//check if it's a custom selection
@@ -2049,45 +2075,30 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
 	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
 	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original query param key 'Registration.Transaction.Payment.PAY_amount',
-	 * we want to extract 'Registration.Transaction', in case Payment wants to add default query params so that it will know
-	 * what models to prepend onto its default query params
+	 * we want to extract 'Registration.Transaction.Payment', in case Payment wants to add default query params so that it will know
+	 * what models to prepend onto its default query params or in case it wants to rename tables (in case there are multiple joins to the same table)
 	 * @return void
 	 */
 	private function _add_join_to_model($model_name, EE_Model_Query_Info_Carrier $passed_in_query_info,$original_query_param){
 		$relation_obj = $this->related_settings_for($model_name);
 
-		$model_relation_chain = $this->_extract_model_relation_chain($model_name, $original_query_param);
+		$model_relation_chain = EE_Model_Parser::extract_model_relation_chain($model_name, $original_query_param);
 		//check if the relation is HABTM, because then we're essentially doing two joins
 		//If so, join first to the JOIN table, and add its data types, and then continue as normal
 		if($relation_obj instanceof EE_HABTM_Relation){
 			$join_model_obj = $relation_obj->get_join_model();
+			//replace the model specified with the join model for this relation chain, whi
+			$relation_chain_to_join_model = EE_Model_Parser::replace_model_name_with_join_model_name_in_model_relation_chain($model_name, $join_model_obj->get_this_model_name(), $model_relation_chain);
 			$new_query_info = new EE_Model_Query_Info_Carrier(
-					array($join_model_obj->get_this_model_name()=>''),
-					$relation_obj->get_join_to_intermediate_model_statement());
+					array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()),
+					$relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model));
 			$passed_in_query_info->merge( $new_query_info  );
 		}
 		//now just join to the other table pointed to by the relation object, and add its data types
 		$new_query_info = new EE_Model_Query_Info_Carrier(
-				array($model_name=>$model_relation_chain),
-				$relation_obj->get_join_statement());
+				array($model_relation_chain=>$model_name),
+				$relation_obj->get_join_statement($model_relation_chain));
 		$passed_in_query_info->merge( $new_query_info  );
-	}
-
-	/**
-	 * Gets the model relation chain to $model_name from the $original_query_param.
-	 * Eg, if $model_name were 'Payment', and $originL-query_param were 'Registration.Transaction.Payment.PAY_ID',
-	 * this would return 'Registration.Transaction.Payment'
-	 * @param string $model_name
-	 * @param string $original_query_param
-	 * @return string
-	 */
-	private function _extract_model_relation_chain($model_name,$original_query_param){
-		$pos_of_model_string = strpos($original_query_param, $model_name);
-		//eg, if we're looking for the model relation chain from Event to Payment, the original query param is probably something like
-		//"Registration.Transaction.Payment.PAY_ID", $pos_of_model_string points to the 'P' or Payment. We want the string
-		//"Registration.Transaction.Payment"
-		$model_relation_chain = substr($original_query_param, 0,$pos_of_model_string+strlen($model_name));
-		return $model_relation_chain;
 	}
 
 
@@ -2173,6 +2184,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}else{
 				$field_obj = $this->_deduce_field_from_query_param($query_param);
+
 				//if it's not a normal field, maybe it's a custom selection?
 				if( ! $field_obj){
 					if(isset( $this->_custom_selections[$query_param][1])){
@@ -2204,8 +2216,10 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
 		$field = $this->_deduce_field_from_query_param($query_param);
+
 		if( $field ){
-			return $field->get_qualified_column();
+			$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param( $field->get_model_name(), $query_param );
+			return $table_alias_prefix . $field->get_qualified_column();
 		}elseif(array_key_exists($query_param,$this->_custom_selections)){
 			//maybe it's custom selection item?
 			//if so, just use it as the "column name"
@@ -2434,7 +2448,7 @@ abstract class EEM_Base extends EE_Base{
 			if ( $table_obj instanceof EE_Primary_Table ) {
 				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit( $limit ) : SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
 			} elseif ( $table_obj instanceof EE_Secondary_Table ) {
-				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit_join($limit) : SP . $table_obj->get_join_sql().SP;
+				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit_join($limit) : SP . $table_obj->get_join_sql( $table_alias ).SP;
 			}
 		}
 		return $SQL;
@@ -2465,21 +2479,22 @@ abstract class EEM_Base extends EE_Base{
 	 * With $alias being a secondary table's alias, this will construct SQL like:
 	 * " INNER JOIN wp_esp_primary_table AS Primary_Table ON Primary_Table.pk = Secondary_Table.fk".
 	 *
-	 * @param string $alias table alias to join to (this table should already be in the FROM SQL clause)
+	 * @param string $alias_prefixed table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
-	function _construct_internal_join_to_table_with_alias($alias){
+	function _construct_internal_join_to_table_with_alias($alias_prefixed){
 		$SQL = '';
+		$alias_sans_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($alias_prefixed);
 		foreach($this->_tables as $table_obj){
 			if($table_obj instanceof EE_Secondary_Table){//table is secondary table
-				if($alias == $table_obj->get_table_alias()){
+				if($alias_sans_prefix == $table_obj->get_table_alias()){
 					//so we're joining to this table, meaning the table is already in
 					//the FROM statement, BUT the primary table isn't. So we want
 					//to add the inverse join sql
-					$SQL .= $table_obj->get_inverse_join_sql();
+					$SQL .= $table_obj->get_inverse_join_sql($alias_prefixed);
 				}else{
 					//just add a regular JOIN to this table from the primary table
-					$SQL .= $table_obj->get_join_sql();
+					$SQL .= $table_obj->get_join_sql($alias_prefixed);
 				}
 			}//if it's a primary table, dont add any SQL. it should already be in the FROM statement
 		}
@@ -2710,11 +2725,13 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets the actual table for the table alias
-	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction
+	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction, but maybe
+	 * a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'. Either one works
 	 * @return EE_Table_Base
 	 */
 	function get_table_for_alias($table_alias){
-		return $this->_tables[$table_alias]->get_table_name();
+		$table_alias_sans_model_relation_chain_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($table_alias);
+		return $this->_tables[$table_alias_sans_model_relation_chain_prefix]->get_table_name();
 	}
 
 
@@ -2855,6 +2872,11 @@ abstract class EEM_Base extends EE_Base{
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
 		foreach( $this->field_settings() as $field_name => $field_obj ){
+			//if there is a model relation chain prefix, remove it
+			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
+			//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+			//does the field on the model relate to this column retrieved from the db?
+			//or is it a db-only field? (not relating to the model)
 			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
 				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
 			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
@@ -2868,8 +2890,15 @@ abstract class EEM_Base extends EE_Base{
 
 		//check we actually found results that we can use to build our model object
 		//if not, return null
-		if( empty( $this_model_fields_n_values )) {
-			return NULL;
+		if( $this->has_primary_key_field()){
+			if(empty( $this_model_fields_n_values[$this->primary_key_name()] )){
+				return NULL;
+			}
+		}else if($this->unique_indexes()){
+			$first_column = reset($this_model_fields_n_values);
+			if(empty($first_column)){
+				return NULL;
+			}
 		}
 
 		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
@@ -3151,6 +3180,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::get_one_copy', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		$query_params['limit'] = 1;
 		$copies = $this->get_all_copies($model_object_or_attributes_array,$query_params);
 		if(is_array($copies)){
@@ -3190,5 +3223,20 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s", "event_espresso"),$operator_supplied,implode(",",array_keys($this->_valid_operators))));
 		}
+	}
+
+	/**
+	 * Gets an array where keys are the primary keys and values are their 'names'
+	 * (as determined by the model object's name() function, which is often overridden)
+	 * @param array $query_params like get_all's
+	 * @return string[]
+	 */
+	public function get_all_names($query_params = array()){
+		$objs = $this->get_all($query_params);
+		$names = array();
+		foreach($objs as $obj){
+			$names[$obj->ID()] = $obj->name();
+		}
+		return $names;
 	}
 }

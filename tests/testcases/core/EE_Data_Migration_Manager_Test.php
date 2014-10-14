@@ -86,7 +86,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_most_up_to_date_dms(){
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_5_0',$dms_classname);
+		$this->assertEquals('EE_DMS_Core_4_6_0',$dms_classname);
 	}
 
 	public function test_get_last_ran_script(){

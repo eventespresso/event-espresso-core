@@ -18,6 +18,7 @@ abstract class EE_Model_Field_Base{
 	var $_nullable;
 	var $_default_value;
 	var $_other_config;
+	protected $_model_name;
 
 	/**
 	 * @param      $table_column
@@ -36,15 +37,23 @@ abstract class EE_Model_Field_Base{
 	 * @param $table_alias
 	 * @param $name
 	 */
-	function _construct_finalize($table_alias, $name){
+	function _construct_finalize($table_alias, $name, $model_name){
 		$this->_table_alias = $table_alias;
 		$this->_name = $name;
+		$this->_model_name = $model_name;
 	}
 	function get_table_alias(){
 		return $this->_table_alias;
 	}
 	function get_table_column(){
 		return $this->_table_column;
+	}
+	/**
+	 * Returns the name of the model this field is on. Eg 'Event' or 'Ticket_Datetime'
+	 * @return string
+	 */
+	function get_model_name(){
+		return $this->_model_name;
 	}
 
 	/**

@@ -1,7 +1,10 @@
 <?php
 /**
- * meant to convert DBs between 4.3.x to 4.5.0.
- *
+ * meant to convert DBs between 4.3 and 4.5
+ * mostly just
+ * -adds QGQ_order to teh question-group_question table;
+ * -adds DTT_name and DTT_description to the datetime table;
+ * -adds users onto prices, price types, question groups, and tickets
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
@@ -100,8 +103,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-
-
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
@@ -190,6 +191,17 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (LIN_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB' );
 
+		$table_name = 'esp_log';
+		$sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
+				LOG_time datetime DEFAULT NULL,
+				OBJ_ID varchar(45) DEFAULT NULL,
+				OBJ_type varchar(45) DEFAULT NULL,
+				LOG_type varchar(45) DEFAULT NULL,
+				LOG_message text,
+				LOG_wp_user_id int(11) DEFAULT NULL,
+				PRIMARY KEY  (LOG_ID)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					GRP_ID int(10) unsigned NOT NULL,
@@ -232,19 +244,21 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					TXN_ID int(10) unsigned DEFAULT NULL,
 					STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
 					PAY_timestamp datetime NOT NULL default '0000-00-00 00:00:00',
-					PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_source varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount decimal(10,3) DEFAULT NULL,
-					PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
+					PMD_ID int(11) DEFAULT NULL,
 					PAY_gateway_response text COLLATE utf8_bin,
 					PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_po_number varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
-					PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
 					PAY_details text COLLATE utf8_bin,
+					PAY_redirect_url varchar(300),
+					PAY_redirect_args text,
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+
 
 
 		$table_name = "esp_ticket_price";
@@ -263,7 +277,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRIMARY KEY  (DTK_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-
 
 
 		$table_name = "esp_ticket_template";
@@ -383,6 +396,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
 					  TXN_session_data text COLLATE utf8_bin,
 					  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
+					  PMD_ID int(11) DEFAULT NULL,
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
@@ -518,7 +532,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	public function get_default_creator_id(){
 		return apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
 	}
-
 
 	/**
 	 * insert_default_price_types
