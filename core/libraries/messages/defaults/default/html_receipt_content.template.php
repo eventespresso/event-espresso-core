@@ -63,7 +63,6 @@
 
 	<div class="payment-dv">
 		<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
-		<p><?php echo $payment_instructions; ?></p>
 		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
