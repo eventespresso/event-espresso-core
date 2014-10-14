@@ -99,7 +99,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	* 		@access		public
 	*		@param		string		$PAY_source
 	*/
-	public function set_source( $PAY_source = FALSE ) {
+	public function set_source( $PAY_source = '' ) {
 		$this->set('PAY_source',$PAY_source);
 	}
 
@@ -114,10 +114,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	public function set_amount( $amount = 0.00 ) {
 		$this->set( 'PAY_amount', $amount );
 	}
-
-
-
-
 
 
 
@@ -201,6 +197,22 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		$this->set( 'PAY_details', $details );
 	}
 
+	/**
+	 * Sets redirect_url
+	 * @param string $redirect_url
+	 */
+	function set_redirect_url($redirect_url) {
+		$this->set('PAY_redirect_url', $redirect_url);
+	}
+
+	/**
+	 * Sets redirect_args
+	 * @param array $redirect_args
+	 */
+	function set_redirect_args($redirect_args) {
+		$this->set('PAY_redirect_args', $redirect_args);
+	}
+
 
 
 	/**
@@ -231,10 +243,15 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	*		get Payment Timestamp
-	* 		@access		public
-	*/
-	public function timestamp( $dt_frmt = FALSE, $tm_frmt = FALSE, $date_or_time = NULL ) {
+	 *        get Payment Timestamp
+	 *
+	 * @access        public
+	 * @param string $dt_frmt
+	 * @param string $tm_frmt
+	 * @param null $date_or_time
+	 * @return string
+	 */
+	public function timestamp( $dt_frmt = '', $tm_frmt = '', $date_or_time = NULL ) {
 		return $this->get_datetime('PAY_timestamp', $dt_frmt, $tm_frmt, $date_or_time );
 	}
 
@@ -325,6 +342,25 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 */
 	public function details() {
 		return $this->get( 'PAY_details' );
+	}
+
+
+	/**
+	 * Gets redirect_url
+	 * @return string
+	 */
+	function redirect_url() {
+		return $this->get('PAY_redirect_url');
+	}
+
+
+
+	/**
+	 * Gets redirect_args
+	 * @return array
+	 */
+	function redirect_args() {
+		return $this->get('PAY_redirect_args');
 	}
 
 
@@ -435,27 +471,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 
-
-
-
-
-	/**
-	 *        Apply a Payment to a Transaction, update all totals, and save payment info to db
-	 * @internal param bool $via_admin
-	 * @return \EE_Transaction
-	 */
-	public function apply_payment_to_transaction() {
-		if ( ! $this->ID() ) {
-			$this->save();
-		}
-		/** @type EEM_Payment $PAY */
-		$PAY = EE_Registry::instance()->load_model( 'Payment', $this->_timezone );
-		// recalculate and set  total paid
-		return $PAY->update_payment_transaction( $this, 'processed' );
-	}
-
-
-
 	/**
 	 * Get the status object of this object
 	 * @return EE_Status
@@ -488,38 +503,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	}
 
 
-	/**
-	 * Gets redirect_url
-	 * @return string
-	 */
-	function redirect_url() {
-		return $this->get('PAY_redirect_url');
-	}
-
-	/**
-	 * Sets redirect_url
-	 * @param string $redirect_url
-	 * @return boolean
-	 */
-	function set_redirect_url($redirect_url) {
-		return $this->set('PAY_redirect_url', $redirect_url);
-	}
-	/**
-	 * Gets redirect_args
-	 * @return array
-	 */
-	function redirect_args() {
-		return $this->get('PAY_redirect_args');
-	}
-
-	/**
-	 * Sets redirect_args
-	 * @param array $redirect_args
-	 * @return boolean
-	 */
-	function set_redirect_args($redirect_args) {
-		return $this->set('PAY_redirect_args', $redirect_args);
-	}
 
 	/**
 	 * Gets the HTML for redirecting the user to an offsite gateway
@@ -592,9 +575,8 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 *
 	 * @access        private
 	 * @param        mixed $item
-	 * @param        mixed $key
 	 */
-	private function _strip_all_tags_within_array( &$item, $key ) {
+	private function _strip_all_tags_within_array( &$item ) {
 		$item = wp_strip_all_tags( $item );
 	}
 
@@ -607,8 +589,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		EE_Registry::instance()->load_helper( 'Array' );
 		$original_status =EEH_Array::is_set( $this->_props_n_values_provided_in_constructor, 'STS_ID', $this->get_model()->field_settings_for( 'STS_ID' )->get_default_value() );
 		$current_status = $this->status();
-		if( $original_status !== EEM_Payment::status_id_approved &&
-				$current_status === EEM_Payment::status_id_approved ){
+		if( $original_status !== EEM_Payment::status_id_approved && $current_status === EEM_Payment::status_id_approved ){
 			return TRUE;
 		}else{
 			return FALSE;
