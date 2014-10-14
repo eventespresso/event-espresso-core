@@ -819,6 +819,24 @@ abstract class EEM_Base extends EE_Base{
 		return implode(",",$cols_n_values);
 
 	}
+
+
+
+	/**
+	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
+	 * Wrapper for EEM_Base::delete()
+	 * @param mixed $id
+	 * @return boolean whether the row got deleted or not
+	 */
+	public function delete_by_ID( $id ){
+		return $this->delete( array(
+			array( $this->get_primary_key_field()->get_name() => $id ),
+			'limit' 	=> 1
+		) );
+	}
+
+
+
 	/**
 	 * Deletes the model objects that meet the query params. Note: this method is overridden
 	 * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
@@ -997,18 +1015,8 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
-	/**
-	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
-	 * Wrapper for EEM_Base::delete()
-	 * @param mixed $id
-	 * @return boolean whether the row got deleted or not
-	 */
-	public function delete_by_ID($id){
-		$query_params = array();
-		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
-		$query_params['limit'] = 1;
-		return $this->delete($query_params);
-	}
+
+
 	/**
 	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEM_Base::get_all).
 	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
