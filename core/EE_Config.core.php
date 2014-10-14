@@ -57,12 +57,6 @@ final class EE_Config {
 	public $currency;
 
 	/**
-	 * @deprecated since 4.5.0 in favour of instead using EEM_Payment_Method model and its corresponding esp_payment_method table
-	 * @var EE_Gateway_Config
-	 */
-	public $gateway;
-
-	/**
 	 *
 	 * @var EE_Organization_Config
 	 */
@@ -80,8 +74,6 @@ final class EE_Config {
 	 */
 	public $template_settings;
 
-
-
 	/**
 	 * Holds EE environment values.
 	 *
@@ -89,6 +81,12 @@ final class EE_Config {
 	 */
 	public $environment;
 
+	/**
+	 * settings pertaining to Google maps
+	 *
+	 * @var EE_Map_Config
+	 */
+	public $map_settings;
 
 	/**
 	 *	@var 	array	$_config_option_names
@@ -210,7 +208,6 @@ final class EE_Config {
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
-		$this->gateway = new EE_Gateway_Config();
 		$this->environment = new EE_Environment_Config();
 		$this->addons = new stdClass();
 		// set _module_route_map
@@ -329,10 +326,14 @@ final class EE_Config {
 	}
 
 
+
 	/**
-	 * 	double_check_config_comparison
+	 *    double_check_config_comparison
 	 *
-	 *  @access 	public
+	 * @access    public
+	 * @param string $option
+	 * @param        $old_value
+	 * @param        $value
 	 */
 	public function double_check_config_comparison( $option = '', $old_value, $value ) {
 		// make sure we're checking the ee config
@@ -719,7 +720,7 @@ final class EE_Config {
 			return 'posts';
 		}
 		global $wpdb;
-		$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+		$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
 		return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
 	}
 
@@ -1283,11 +1284,18 @@ class EE_Config_Base{
 //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
 //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
 	/**
-	 * 		__isset
+	 *        __isset
+	 *
+	 * @param $a
+	 * @return bool
 	 */
 	public function __isset($a) { return FALSE; }
+
 	/**
-	 * 		__unset
+	 *        __unset
+	 *
+	 * @param $a
+	 * @return bool
 	 */
 	public function __unset($a) { return FALSE; }
 	/**
@@ -2139,38 +2147,6 @@ class EE_Map_Config extends EE_Config_Base {
 		$this->event_list_map_align = 'center'; 			// ee_map_align
 	}
 
-}
-
-/**
- * stores payment gateway info.
- * @deprecated since version 4.5
- * In favour of instead using the EEM_Payment_Method model and associated table
- */
-class EE_Gateway_Config extends EE_Config_Base{
-	/**
-	 * Array with keys that are payment gateways slugs, and values are arrays
-	 * with any config info the gateway wants to store
-	 * @var array
-	 * @deprecated since version 4.5
-	 */
-	public $payment_settings;
-	/**
-	 * Where keys are gateway slugs, and values are booleans indicating whether or not
-	 * the gateway is stored in the uploads directory
-	 * @var array
-	 * @deprecated sicne version 4.5
-	 */
-	public $active_gateways;
-
-
-
-	/**
-	 *	class constructor
-	 */
-	public function __construct(){
-		$this->payment_settings = array();
-		$this->active_gateways = array('Invoice'=>false);
-	}
 }
 
 
