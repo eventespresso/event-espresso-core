@@ -402,7 +402,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			if(in_array( $field_name, array(
 				'EVT_timezone_string',
 				'PAY_redirect_url',
-				'PAY_redirect_args') ) ){
+				'PAY_redirect_args',
+				'parent') ) ){
 				$value = NULL;
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
