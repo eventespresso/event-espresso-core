@@ -195,7 +195,6 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			'EVT_ID' => $e->ID(),
 			'REG_final_price'=>10.00,
 			'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT));
-		$e = $r->event();
 		/** @type EE_Datetime $dtt */
 		$dtt = $this->new_model_obj_with_dependencies( 'Datetime', array(
 			'EVT_ID'=>$e->ID(),
