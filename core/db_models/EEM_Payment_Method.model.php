@@ -236,14 +236,12 @@ class EEM_Payment_Method extends EEM_Base {
 
 
 	/**
-	 * Verifies the button urls on all the payment methods that meet the criteria
-	 * of $query_params have a valid button url. If not, resets them to their default.
-	 * @param array $query_params payment methods you want to check
+	 * Verifies the button urls on all the passed payment methods have a valid button url. If not, resets them to their default.
+	 * @param EE_Payment_Method[] $payment_methods
 	 */
-	function verify_button_urls( $query_params = array() ) {
+	function verify_button_urls( $payment_methods ) {
 		EE_Registry::instance()->load_helper( 'URL' );
-		$payment_methods = $this->get_all( $query_params );
-		/* @var $payment_methods EE_Payment_Method[] */
+		$payment_methods = is_array( $payment_methods ) && ! empty( $payment_methods ) ? $payment_methods : $this->get_all_active();
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				//send an HTTP HEAD request to quickly verify the file exists
