@@ -328,20 +328,6 @@
 						<p class="description"><?php _e( 'Whether the payment was made via PayPal, Credit Card, Cheque, or Cash', 'event_espresso' );?></p>
 					</div>
 
-					<div class="mop-CC mop" style="display:none">
-						<div class="txn-admin-apply-payment-gateway admin-modal-dialog-row">
-							<label for="txn-admin-payment-gateway-inp" class=""><?php _e( 'Gateway', 'event_espresso' );?></label>
-							<select name="txn_admin_payment[gateway]" id="txn-admin-payment-gateway-slct" class="txn-admin-apply-payment-slct" type="text" >
-								<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
-							<?php foreach ( $active_gateways as $gateway_ID => $gateway_name ) : ?>
-								<option id="payment-gateway-opt-<?php echo $gateway_ID; ?>" value="<?php echo $gateway_ID; ?>"><?php echo $gateway_name; ?>&nbsp;&nbsp;</option>
-							<?php endforeach; ?>
-							</select>
-							<br/>
-							<p class="description"><?php _e( 'The gateway used to process the payment', 'event_espresso' );?></p>
-						</div>
-					</div>
-
 					<div class="mop-PP mop-CC mop-CHQ mop" style="display:none">
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
