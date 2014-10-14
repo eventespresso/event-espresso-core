@@ -146,119 +146,31 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	*
 	* 		@access		public
 	* 		@param		$TXN_ID
-	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc. If none is provided, gets
-	 *		payments with any status
+	 *		@param	string	$status_of_payment one of EEM_Payment::status_id_*, like 'PAP','PCN',etc. If none is provided, gets payments with any status
 	*		@return		EE_Payment[]
 	*/
 	public function get_payments_for_transaction( $TXN_ID = FALSE, $status_of_payment = null ) {
-		$query_params = array(array('TXN_ID'=>$TXN_ID),'order_by'=>array('PAY_timestamp'=>'ASC'));
-
-		//if provided with a status, search specifically for that status. Otherwise get them all
-		if($status_of_payment){
+		// all payments for a TXN ordered chronologically
+		$query_params = array( array( 'TXN_ID' => $TXN_ID ), 'order_by' => array( 'PAY_timestamp' => 'ASC' ));
+		// if provided with a status, search specifically for that status. Otherwise get them all
+		if ( $status_of_payment ){
 			$query_params[0]['STS_ID'] = $status_of_payment;
 		}
 		// retrieve payments
 		return $this->get_all ( $query_params );
 	}
 
+
+
 	/**
 	 * Only gets payments which have been approved
 	 * @param int $TXN_ID
 	 * @return EE_Payment[]
 	 */
-	public function get_approved_payments_for_transaction( $TXN_ID = 0){
-		return $this->get_payments_for_transaction($TXN_ID, EEM_Payment::status_id_approved);
+	public function get_approved_payments_for_transaction( $TXN_ID = 0 ) {
+		return $this->get_payments_for_transaction( $TXN_ID, EEM_Payment::status_id_approved );
 
 	}
-
-
-
-	/**
-	*		Applies $payment to its associated EE_Transaction. This should update
-	 *		its EE_Transaction's status and TXN_paid.
-	* 		@access		public
-	* 		@param		EE_Payment/id $payment
-	*		@return		EE_Transaction that gets updated.
-	*/
-	public function update_payment_transaction( $payment ) {
-		/** @type EE_Payment $payment */
-		$payment = $this->ensure_is_obj( $payment );
-		$transaction = $payment->transaction();
-		if( $transaction instanceof EE_Transaction ){
-			// recalculate and set total paid, and how much is pending
-			$transaction->update_based_on_payments();
-			return $transaction;
-		} else {
-			return false;
-		}
-
-
-	}
-
-
-
-
-
-	/**
-	*		recalculate_total_payments_for_transaction
-	* 		@access		public
-	* 		@param		$TXN_ID
-	 *		@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved). By default, searches for approved payments
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = EEM_Payment::status_id_approved) {
-		return $this->sum(array(array('TXN_ID'=>$TXN_ID,'STS_ID'=>$status_of_payments)), 'PAY_amount');
-	}
-
-
-
-
-	/**
-	 * Before deleting the selected payments, we fetch their transactions,
-	 * then delete the payments, and update the transactions' amount paid.
-	 * This may be a somewhat expensive operation which could be optimized, but we'll deal with that
-	 * if it's a noticeable problem.
-	 * @param array $query_params lik eEEM_Base::get_all
-	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
-	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
-	 * @return int number of payment deleted
-	 */
-	public function delete($query_params, $allow_blocking = true) {
-		$payments_to_be_deleted = $this->get_all($query_params);
-		$transactions = array();
-		foreach($payments_to_be_deleted as $payment){
-			if ( $payment instanceof EE_Payment ) {
-				$transactions[$payment->transaction()->ID()] = $payment->transaction();
-			}
-		}
-		$success = parent::delete($query_params);
-		foreach($transactions as $transaction){
-			/* @var $transaction EE_Transaction */
-			$transaction->update_based_on_payments();
-		}
-		return $success;
-	}
-
-	/**
-	 * Deleted the payment indicated by the payment object or id, and returns
-	 * the EE_transaction which gets affected and updated in the process
-	 * @param EE_Payment | int $payment_obj_or_id
-	 * @return EE_Transaction
-	 */
-	public function delete_by_ID($payment_obj_or_id) {
-		/** @type EE_Payment $payment_before_deleted */
-		$payment_before_deleted = $this->ensure_is_obj($payment_obj_or_id);
-		$query_params = array();
-		$query_params[0] = array($this->get_primary_key_field()->get_name() => $payment_obj_or_id);
-		$query_params['limit'] = 1;
-		parent::delete($query_params);
-		$transaction = $payment_before_deleted->transaction();
-		$transaction->update_based_on_payments();
-		return $transaction;
-	}
-
-
 
 
 
