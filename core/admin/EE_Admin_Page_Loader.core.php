@@ -340,6 +340,9 @@ class EE_Admin_Page_Loader {
 				$this->_installed_pages[$page]->do_initial_loads();
 			}
 		}
+
+		do_action( 'AHEE__EE_Admin_Page_Loader___get_installed_pages_loaded', $this->_installed_pages );
+
 	}
 
 
