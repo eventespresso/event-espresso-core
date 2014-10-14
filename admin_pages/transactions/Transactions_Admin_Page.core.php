@@ -604,7 +604,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 		$this->_get_payment_methods();
-		$this->_get_active_gateways();
 		$this->_get_payment_status_array();
 		$this->_get_reg_status_selection(); //sets up the template args for the reg status array for the transaction.
 
@@ -644,43 +643,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	/**
-	 * 		_get_active_gateways
-	*		@access private
-	*		@return void
-	*/
-	private function _get_active_gateways() {
-		$this->_template_args['active_gateways'] = array();
-		$payment_options = EE_Registry::instance()->CFG->gateway->payment_settings;
-		//echo printr( $payment_options, '$payment_options' );
-		$gateways = EE_Registry::instance()->CFG->gateway->active_gateways;
-		if ( ! empty( $gateways )){
-			//echo printr( $gateways, '$gateways' );
-			foreach ( $gateways as $gw_key => $gateway ) {
-				if ( isset( $payment_options[ $gw_key ]['type'] ) && $payment_options[ $gw_key ]['type'] != 'off-line' && $gw_key != 'paypal' ) {
-					$this->_template_args['active_gateways'][ $gw_key ] = $payment_options[ $gw_key ]['display_name'];
-				}
-			}
-		}
-	}
-
-
-
-
-
 	/**
 	 * 		_get_payment_methods
 	*		@access private
 	*		@return void
 	*/
 	private function _get_payment_methods() {
-//		$this->_template_args['payment_methods'] = array(
-//			'PP' => __( 'PayPal', 'event_espresso' ),
-//			'CC' => __( 'Credit Card', 'event_espresso' ),
-//			'CHQ' => __( 'Cheque', 'event_espresso' ),
-//			'CSH' => __( 'Cash', 'event_espresso' )
-//		);
 		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all_active(EEM_Payment_Method::scope_admin);
 	}
 
@@ -801,85 +769,81 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function apply_payments_or_refunds() {
 
-		$return_data = FALSE;
+		$json_response_data = array( 'return_data' => FALSE );
 
-		if ( isset( $this->_req_data['txn_admin_payment'] )) {
-
-			$payment = $this->_req_data['txn_admin_payment'];
-
-			// payments have a type value of 1 and refunds have a type value of -1
-			$type = $payment['type'] < 0 ? -1 : 1;
-			// if this is a refund
-			if ( $type == -1 ){
-				// remove negative sign from amount if it exists
-				$payment['amount'] = abs( $payment['amount'] );
-			}
-			// so multiplying amount by type will give a positive value for payments, and negative values for refunds
-			$amount = $payment['amount'] * $type;
+		if ( isset( $this->_req_data['txn_admin_payment'] ) && isset( $this->_req_data['txn_admin_payment']['TXN_ID'] )) {
 			//save  the new payment
 			$payment = EE_Payment::new_instance(
 				array(
-					'TXN_ID' => $payment['TXN_ID'],
-					'STS_ID' => $payment['status'],
-					'PAY_timestamp' => $payment['date'],
+					'TXN_ID' => $this->_req_data['txn_admin_payment']['TXN_ID'],
+					'STS_ID' => $this->_req_data['txn_admin_payment']['status'],
+					'PAY_timestamp' => $this->_req_data['txn_admin_payment']['date'],
 					'PAY_source'=>  EEM_Payment_Method::scope_admin,
-					'PMD_ID' => $payment['PMD_ID'],
-					'PAY_amount' => $amount,
+					'PMD_ID' => $this->_req_data['txn_admin_payment']['PMD_ID'],
+					// payments have a type value of 1 and refunds have a type value of -1
+					// so multiplying amount by type will give a positive value for payments, and negative values for refunds
+					'PAY_amount' => $this->_req_data['txn_admin_payment']['type'] < 0 ? abs( $this->_req_data['txn_admin_payment']['amount'] ) * -1 : abs( $this->_req_data['txn_admin_payment']['amount'] ),
 					'PAY_gateway_response' => '',
-					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
-					'PAY_po_number' => $payment['po_number'],
-					'PAY_extra_accntng' => $payment['accounting'],
-					'PAY_details' => $payment,
-					'PAY_ID' => $payment['PAY_ID']
+					'PAY_txn_id_chq_nmbr' => $this->_req_data['txn_admin_payment']['txn_id_chq_nmbr'],
+					'PAY_po_number' => $this->_req_data['txn_admin_payment']['po_number'],
+					'PAY_extra_accntng' => $this->_req_data['txn_admin_payment']['accounting'],
+					'PAY_details' => $this->_req_data['txn_admin_payment'],
+					'PAY_ID' => $this->_req_data['txn_admin_payment']['PAY_ID']
 				)
 			);
-			if( ! $payment->save() ){
+			if ( ! $payment->save() ){
 				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
-			//update the transaction with this payment
-			if( $payment->apply_payment_to_transaction() ){
-				$msg =__('The payment has been processed successfully.', 'event_espresso');
-				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}else{
-				$msg = __( 'An error occurred. The payment was processed successfully but the amount paid for the transaction was not updated.', 'event_espresso');
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			// get the TXN for this payment
+			$transaction = $payment->transaction();
+			// verify transaction
+			if ( $transaction instanceof EE_Transaction ) {
+				/** @type EE_Transaction_Payments $transaction_payments */
+				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+				//update the transaction with this payment
+				if ( $transaction_payments->calculate_total_payments_and_update_status( $transaction )) {
+					$msg =__('The payment has been processed successfully.', 'event_espresso');
+					EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				} else {
+					$msg = __( 'The payment was processed successfully but the amount paid for the transaction was not updated.', 'event_espresso');
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				}
+
+				//prepare to render page
+				$this->_get_payment_status_array();
+				$json_response_data['return_data']['amount'] = $payment->amount();
+				$json_response_data['return_data']['total_paid'] = $transaction->paid();
+				$json_response_data['return_data']['txn_status'] = $transaction->status_ID();
+				$json_response_data['return_data']['pay_status'] = $payment->STS_ID();
+				$json_response_data['return_data']['PAY_ID'] = $payment->ID();
+				$json_response_data['return_data']['STS_ID'] = $payment->STS_ID();
+				$json_response_data['return_data']['status'] = self::$_pay_status[ $payment->STS_ID() ];
+				$json_response_data['return_data']['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
+				$json_response_data['return_data']['method'] = strtoupper( $payment->source() ) ;
+				$json_response_data['return_data']['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
+				$json_response_data['return_data']['gateway_response'] = $payment->gateway_response();
+				$json_response_data['return_data']['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
+				$json_response_data['return_data']['po_number'] = $payment->po_number();
+				$json_response_data['return_data']['extra_accntng'] = $payment->extra_accntng();
+
+				$this->_process_payment_notification( $payment );
+
+				if ( isset($this->_req_data['txn_reg_status_change'] )) {
+					$this->_process_registration_status_change( $transaction );
+				}
+
+			} else {
+				EE_Error::add_error( __( 'A valid Transaction for this payment could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 
-			//prepare to render page
-			$transaction = $payment->transaction();
-			$this->_get_payment_status_array();
-			$return_data['amount'] = $payment->amount();
-			$return_data['total_paid'] = $transaction->paid();
-			$return_data['txn_status'] = $transaction->status_ID();
-			$return_data['pay_status'] = $payment->STS_ID();
-			$return_data['PAY_ID'] = $payment->ID();
-			$return_data['STS_ID'] = $payment->STS_ID();
-			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];
-			$return_data['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
-			$return_data['method'] = strtoupper( $payment->source() ) ;
-			$this->_get_active_gateways();
-			$return_data['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
-			$return_data['gateway_response'] = $payment->gateway_response();
-			$return_data['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
-			$return_data['po_number'] = $payment->po_number();
-			$return_data['extra_accntng'] = $payment->extra_accntng();
-
-			$this->_process_payment_notification( $payment );
-
-			if ( isset($this->_req_data['txn_reg_status_change'] ) )
-				$this->_process_registration_status_change( $transaction );
-
-
-
 		} else {
-			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-
-		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
+		echo json_encode( array_merge( $json_response_data, $notices ));
 		die();
 
 	}
@@ -918,37 +882,41 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function delete_payment() {
 
-		$return_data = array();
-		$PAY_ID = isset( $this->_req_data['delete_txn_admin_payment'] ) ? absint( $this->_req_data['delete_txn_admin_payment'] ) : 0;
+		$json_response_data = array( 'return_data' => FALSE );
+		$PAY_ID = isset( $this->_req_data['delete_txn_admin_payment'] ) && isset( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) ? absint( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) : 0;
 		$delete_txn_reg_status_change = isset( $this->_req_data['delete_txn_reg_status_change'] ) ? sanitize_text_field( $this->_req_data['delete_txn_reg_status_change'] ) : FALSE;
 
 		if ( $PAY_ID ) {
 			$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 			if ( $payment instanceof EE_Payment ) {
-				$transaction = EEM_Payment::instance()->delete_by_ID( $payment->ID() );
-				if ( $transaction instanceof EE_Transaction ) {
-					$return_data = array(
+				/** @type EE_Transaction_Payments $transaction_payments */
+				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+				if ( $transaction_payments->delete_payment_and_update_transaction( $payment )) {
+					$json_response_data['return_data'] = array(
 						'PAY_ID' => $PAY_ID,
 						'amount' => $payment->amount(),
-						'total_paid' => $transaction->paid(),
-						'txn_status' => $transaction->status_ID(),
+						'total_paid' => $payment->transaction()->paid(),
+						'txn_status' => $payment->transaction()->status_ID(),
 						'pay_status' => $payment->STS_ID(),
 						'delete_txn_reg_status_change' => $delete_txn_reg_status_change
 					);
-					if( $delete_txn_reg_status_change ) {
+					if ( $delete_txn_reg_status_change ) {
 						$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
-						$this->_process_registration_status_change( $transaction );
+						$this->_process_registration_status_change( $payment->transaction() );
 					}
 				}
-			}
-		} else {
-			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			$return_data = FALSE;
-		}
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 
-		echo json_encode( array( 'return_data' => $return_data, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
+			} else {
+				EE_Error::add_error( __( 'Valid Payment data could not be retrieved from the database.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			}
+
+		} else {
+			$msg = __( 'A valid Payment ID was not received, therefore payment form data could not be loaded.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
+		echo json_encode( array_merge( $json_response_data, $notices ));
 		die();
 	}
 

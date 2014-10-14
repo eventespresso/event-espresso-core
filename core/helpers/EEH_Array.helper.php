@@ -1,20 +1,9 @@
 <?php
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
 
+require_once( EE_HELPERS . 'EEH_Base.helper.php' );
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Array
  *
  * This is a helper utility class that provides different helpers related to array manipulation (that might extend or modify existing PHP core array function).
@@ -22,13 +11,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  * @package		Event Espresso
  * @subpackage	/helpers/EE_Array.helper.php
  * @author		Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
-
-
-
-require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_Array extends EEH_Base {
 
 
@@ -47,14 +30,6 @@ class EEH_Array extends EEH_Base {
 		return array_udiff( $array1, $array2, array('self', '_compare_objects' ));
 	}
 
-
-
-
-
-	private static function _compare_objects( EE_Base_Class $obj_a, EE_Base_Class $obj_b ) {
-		return $obj_a->ID() - $obj_b->ID();
-	}
-
 	/**
 	 * Given that $arr is an array, determines if it's associative or numerically-indexed
 	 * @param array $arr
@@ -68,7 +43,7 @@ class EEH_Array extends EEH_Base {
 	 * Gets an item from the array and leave the array intact. Use in place of end()
 	 * when you don't want to change the array
 	 * @param array $arr
-	 * @return mixed whatever's in the array
+	 * @return mixed what ever is in the array
 	 */
 	public static function get_one_item_from_array($arr){
 		$item = end($arr);
@@ -76,7 +51,7 @@ class EEH_Array extends EEH_Base {
 		return $item;
 	}
 	/**
-	 * Detects if this is a multi-dimensional array (meaning that the top-leve
+	 * Detects if this is a multi-dimensional array (meaning that the top-level
 	 * values are themselves array. Eg array(array(...),...)
 	 * @param mixed $arr
 	 * @return boolean
@@ -96,9 +71,9 @@ class EEH_Array extends EEH_Base {
 
 	/**
 	 * Shorthand for isset( $arr[ $index ] ) ? $arr[ $index ] : $default
-	 * @param type $arr
-	 * @param type $index
-	 * @param type $default
+	 * @param array $arr
+	 * @param mixed $index
+	 * @param mixed $default
 	 * @return mixed
 	 */
 	public static function is_set( $arr, $index, $default ) {

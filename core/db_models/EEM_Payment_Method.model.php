@@ -111,7 +111,13 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return array
 	 */
 	public function scopes() {
-		return apply_filters( 'FHEE__EEM_Payment_Method__scopes', array( self::scope_cart => __( "Front-end Registration Page", 'event_espresso' ), self::scope_admin => __( "Admin Registration Page", 'event_espresso' ) ) );
+		return apply_filters(
+			'FHEE__EEM_Payment_Method__scopes',
+			array(
+				self::scope_cart 		=> __( "Front-end Registration Page", 'event_espresso' ),
+				self::scope_admin 	=> __( "Admin Registration Page", 'event_espresso' )
+			)
+		);
 	}
 
 
@@ -133,7 +139,7 @@ class EEM_Payment_Method extends EEM_Base {
 
 
 	/**
-	 * Gets all active gateways
+	 * Gets all active payment methods
 	 * @param string $scope one of
 	 * @param array  $query_params
 	 * @throws EE_Error
@@ -148,8 +154,10 @@ class EEM_Payment_Method extends EEM_Base {
 			}
 		} else {
 			$acceptable_scopes = array();
+			$count = 0;
 			foreach ( $this->scopes() as $scope_name => $desc ) {
-				$acceptable_scopes[ 'PMD_scope' ] = array( 'LIKE', '%' . $scope_name . '%s' );
+				$count++;
+				$acceptable_scopes[ 'PMD_scope*' . $count ] = array( 'LIKE', '%' . $scope_name . '%' );
 			}
 			$query_params = array_replace_recursive( array( array( 'OR*active_scope' => $acceptable_scopes ) ), $query_params );
 			return $this->get_all( $query_params );

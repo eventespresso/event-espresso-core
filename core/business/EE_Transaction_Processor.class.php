@@ -2,7 +2,8 @@
 /**
  * Class EE_Transaction_Processor
  *
- * Provides method for manipulating and processing changes with regards to an EE_Transaction
+ * This class contains business logic pertaining specifically to the interaction of EE_Transaction and EE_Registration model objects
+ * Provides methods for manipulating and processing changes to an EE_Transaction and it's related EE_Registrations with regards to the checkout/registration process
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -53,8 +54,12 @@ class EE_Transaction_Processor {
 	 * @return boolean
 	 */
 	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
-		// loop thru reg steps array
-		foreach ( $transaction->reg_steps() as $slug => $reg_step_completed ) {
+		$reg_steps = $transaction->reg_steps();
+		if ( ! is_array( $reg_steps ) || empty( $reg_steps )) {
+			return FALSE;
+		}
+		// loop thru reg steps array)
+		foreach ( $reg_steps as $slug => $reg_step_completed ) {
 			// if NOT checking ALL steps (only checking one step)
 			if ( ! $check_all ) {
 				// and this is the one
@@ -320,8 +325,6 @@ class EE_Transaction_Processor {
 			'last_payment'	=> $payment,
 			'finalized' 			=> $finalized
 		);
-		// possibly make adjustments due to new payments
-		$update_params['payment_updates'] = $this->calculate_total_payments_and_update_status( $transaction );
 		// now update the registrations and add the results to our $update_params
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
 			'update_registration_after_checkout_or_payment',
@@ -335,57 +338,6 @@ class EE_Transaction_Processor {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 		}
 		return $update_params;
-	}
-
-
-
-
-	/**
-	 * Updates the provided EE_Transaction with all the applicable payments
-	 * (or fetch the EE_Transaction from its ID)
-	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
-	 * @return boolean
-	 */
-	public function calculate_total_payments_and_update_status( EE_Transaction $transaction ){
-		/** @type EEM_Payment $PAY */
-		$PAY = EE_Registry::instance()->load_model( 'Payment' );
-		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(), EEM_Payment::status_id_approved );
-		// if total paid has changed
-		if ( $total_paid != $transaction->paid() ) {
-			$transaction->set_paid( $total_paid );
-			// maybe update status, and make sure to save transaction if not done already
-			if ( ! $this->update_transaction_status( $transaction )) {
-				$transaction->save();
-			}
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-
-
-	/**
-	 * possibly toggles TXN status
-	 *
-	 * @param EE_Transaction $transaction
-	 * @return boolean
-	 */
-	public function update_transaction_status( EE_Transaction $transaction ) {
-		// set transaction status based on comparison of TXN_paid vs TXN_total
-		if ( $transaction->paid() > $transaction->total() ){
-			$new_txn_status = EEM_Transaction::overpaid_status_code;
-		} else if ( $transaction->paid() == $transaction->total() ) {
-			$new_txn_status = EEM_Transaction::complete_status_code;
-		} else if ( $transaction->paid() < $transaction->total() ) {
-			$new_txn_status = EEM_Transaction::incomplete_status_code;
-		} else {
-			return FALSE;
-		}
-		if ( $new_txn_status !== $transaction->status_ID() ) {
-			$transaction->set_status( $new_txn_status );
-			return $transaction->save() ? TRUE : FALSE;
-		}
-		return FALSE;
 	}
 
 
