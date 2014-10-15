@@ -267,46 +267,49 @@ class EE_Payment_Processor{
 	 * directly into EE_Transaction upon save, but we want this logic to be separate
 	 * from 'normal' plain-jane saving and updating of transactions and payments, and to be
 	 * tied to payment processing
-	 * @param EE_Transaction $txn
+	 * @param EE_Transaction $transaction
 	 * @param EE_Payment $payment
 	 * @param boolean $save_txn whether or not to save the transaction in this function
 	 * (you can save 1 DB query if you know you're going to save it later instead)
 	 */
-	public function update_txn_based_on_payment( $txn,$payment, $save_txn = TRUE ){
-//		$txn = EEM_Transaction::instance()->ensure_is_obj( $txn );
-		if($payment === NULL){
+	public function update_txn_based_on_payment( $transaction, $payment, $save_txn = TRUE ){
+		/** @type EE_Transaction $transaction */
+		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
+		if ( $payment === NULL ) {
 			//there is no payment. Must be an offline gateway
 			//but have we already triggered pending payment notification?
-			if( $txn->status_ID() !== EEM_Transaction::incomplete_status_code ){
+			if ( $transaction->status_ID() !== EEM_Transaction::incomplete_status_code ) {
 				//create a hacky payment object, but dont save it
 				$payment = EE_Payment::new_instance( array(
-					'TXN_ID' => $txn->ID(),
+					'TXN_ID' => $transaction->ID(),
 					'STS_ID' => EEM_Payment::status_id_pending,
 					'PAY_timestamp' => current_time('timestamp'),
-					'PAY_amount' => $txn->total(),
-					'PMD_ID' => $txn->payment_method_ID() ) );
-				$txn->set_status( EEM_Transaction::incomplete_status_code );
+					'PAY_amount' => $transaction->total(),
+					'PMD_ID' => $transaction->payment_method_ID() ) );
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				if( $save_txn ){
-					$txn->save();
+					$transaction->save();
 				}
-				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $txn, $payment );
-			}else{
+				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $transaction, $payment );
+			} else {
 				//we should have already done that action
 			}
-		}else{
-			if ( $payment instanceof EE_Payment ) {
-				//we need to save this payment in order for transaction to be updated correctly
-				//(because it queries teh DB to find the total amount paid, and saving puts
-				//the payment into the DB)
-				$payment->save();
-				if( $payment->just_approved() ){
-					do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $txn, $payment );
-				}
+
+		} else if ( $payment instanceof EE_Payment ) {
+			//we need to save this payment in order for transaction to be updated correctly
+			//(because it queries teh DB to find the total amount paid, and saving puts
+			//the payment into the DB)
+			$payment->save();
+			if( $payment->just_approved() ){
+				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $transaction, $payment );
 			}
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-			//ok, now process the transaction according to the payment
-			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $txn, $payment );
 		}
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		$transaction_payments->calculate_total_payments_and_update_status( $transaction );
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		//ok, now process the transaction according to the payment
+		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}
-}
+ }

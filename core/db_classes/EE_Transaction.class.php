@@ -445,9 +445,15 @@ class EE_Transaction extends EE_Base_Class {
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
 	 * that apply to it
-	 * @return boolean success of the application
+	 * @deprecated
+	 * @return boolean
 	 */
 	public function update_based_on_payments(){
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf( __( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ), 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()' ),
+			'4.6.0'
+		);
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
