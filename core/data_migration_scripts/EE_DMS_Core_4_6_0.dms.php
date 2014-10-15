@@ -588,8 +588,9 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	public function add_default_admin_only_payments(){
-		global $wpdb, $current_user;
+		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
+		$user_id = EEH_Activation::get_default_creator_id();
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
 
 			$SQL = "SELECT COUNT( * ) FROM " . $table_name;
@@ -619,7 +620,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 									'PMD_admin_name'=>$nicename,
 									'PMD_admin_desc'=>$description,
 									'PMD_slug'=>$slug,
-									'PMD_wp_user_id'=>$current_user->ID,
+									'PMD_wp_user_id'=>$user_id,
 									'PMD_scope'=>serialize(array('ADMIN')),
 								);
 						$success = $wpdb->insert(
