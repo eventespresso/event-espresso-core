@@ -96,7 +96,13 @@ final class EE_System {
 	 * @return EE_System
 	 */
 	public static function reset(){
-		self::$_instance = NULL;
+		self::$_instance->_req_type = NULL;
+		//we need to reset the migration manager in order for it to detect DMSs properly
+		EE_Data_Migration_Manager::reset();
+		//make sure none of the old hooks are left hanging around
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
+		self::instance()->detect_activations_or_upgrades();
+		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
 	}
 
@@ -671,11 +677,17 @@ final class EE_System {
 	 */
 	public function redirect_to_about_ee() {
 		//if current user is an admin and it's not an ajax request
-		if(
-				EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) &&
-				! ( defined('DOING_AJAX') && DOING_AJAX  )
-				){
-			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  )){
+			$query_params =  array( 'page' => 'espresso_about' );
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {
+			    $query_params['new_activation'] = TRUE;
+			}
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_reactivation ) {
+			    $query_params['reactivation'] = TRUE;
+			}
+			$url = add_query_arg( $query_params, admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
 		}
@@ -907,7 +919,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		EE_Registry::instance()->load_core( 'Session' );
+//		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -947,7 +959,9 @@ final class EE_System {
 	*/
 	public function core_loaded_and_ready() {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
-		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		EE_Registry::instance()->load_core( 'Session' );
 	}
 
 
@@ -961,7 +975,33 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
+//		EEM_Change_Log::instance()->show_next_x_db_queries();
+//		$logs = EEM_Change_Log::instance()->get_all(array(array(
+//			'OR'=>array(
+//				'Payment.Payment_Method.PMD_ID'=>2,
+//				'Payment_Method.PMD_ID'=>2),
+//			'LOG_ID'=>15
+//		),'limit'=>10));
+//		d($logs);
+//		EEM_Change_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
+
+
+//		EEM_Answer::instance()->show_next_x_db_queries();
+//		EEM_Answer::instance()->get_all(array(array(
+//			'Question.Question_Group.QSG_ID'=>1
+//		)));
+
+
+//		EEM_Event::instance()->show_next_x_db_queries();
+//		EEM_Event::instance()->get_all();
+		//should produce no errors
+
+//		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
+		//should produce no error
+//		die;
+//		EEM_Price::instance()->get_all(array('order_by'=>array('PRC_ID'=>'asc','Price_Type.PRT_ID'=>'asc')));die;
 		do_action( 'AHEE__EE_System__initialize' );
+
 	}
 
 
@@ -991,7 +1031,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function set_hooks_for_shortcodes_modules_and_addons() {
-		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
 	}
 
 

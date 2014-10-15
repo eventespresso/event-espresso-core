@@ -61,7 +61,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
 			'[TXN_SUBTOTAL]' => __('The subtotal for all txn line items.', 'event_espresso'),
 			'[TXN_TAX_SUBTOTAL]' => __('The subtotal for all tax line items.', 'event_espresso'),
-			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
+			'[OWING_STATUS_MESSAGE_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
@@ -193,7 +193,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		}
 
-		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
+		if ( strpos( $shortcode, '[OWING_STATU_MESSAGE_*' ) !== FALSE ) {
 			return $this->_get_custom_total_oweing( $shortcode );
 		}
 
@@ -207,7 +207,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * parser for the [TOTAL_OWING_*] attribute type shortcode
+	 * parser for the [OWING_STATUS_MESSAGE_*] attribute type shortcode
 	 *
 	 * @since 4.5.0
 	 *
@@ -221,10 +221,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//ensure default is set.
 		$addressee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-		$total_owing = ! empty( $addressee ) ? $addressee->txn->remaining() : 0;
+		$total_owing = $addressee instanceof EE_Messages_Addressee && $addressee->txn instanceof EE_Transaction ? $addressee->txn->remaining() : 0;
 
 		if ( $total_owing > 0 ) {
-			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
+			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();
@@ -239,9 +239,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_payment_gateway() {
-		if ( !is_object( $this->_data->txn ) )
-			return '';
-		return $this->_data->txn->selected_gateway();
+		$pm = $this->_get_payment_method();
+		return $pm instanceof EE_Payment_Method ? $pm->name() : '';
 	}
 
 
@@ -256,12 +255,14 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string url or html
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = ! empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-
-		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
-			$invoice_logo_url = $invoice_settings['invoice_logo_url'];
-		} else {
+		//try to get the invoice payment method's logo for this transaction image first
+		$pm = $this->_get_payment_method();
+		if ( $pm instanceof EE_Payment_Method ){
+			$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
+		}else{
+			$invoice_logo_url = NULL;
+		}
+		if( empty( $invoice_logo_url ) ){
 			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
 		}
 
@@ -274,7 +275,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		//image tags have been requested.
-		$image_size = getimagesize( $image_size );
+		$image_size = getimagesize( $invoice_logo_url );
 		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
 	}
 
@@ -290,11 +291,25 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_name() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_name = ! empty( $invoice_settings['template_invoice_payee_name'] ) ? $invoice_settings['template_invoice_payee_name'] : '';
+		$payee_name = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_name = $pm->get_extra_meta( 'pdf_payee_name', TRUE );
+		}
 		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
 		return $payee_name;
+	}
+
+	/**
+	 * gets the payment method for this transaction. Otherwise gets a default one.
+	 */
+	private function _get_payment_method(){
+		if( $this->_data->txn instanceof EE_Transaction ) {
+			return $this->_data->txn->payment_method();
+		}else{
+			//get the first payment method we can find
+			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment::instance()->get_one_of_type('Invoice'));
+		}
 	}
 
 
@@ -308,9 +323,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_email() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
+		$payee_email = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_email = $pm->get_extra_meta( 'pdf_payee_email', TRUE );
+		}
 		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
 		return $payee_email;
 	}
@@ -328,9 +345,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_tax_number( $shortcode ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
+		$payee_tax_number = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_tax_number = $pm->get_extra_meta( 'pdf_payee_tax_number', TRUE );
+		}
 		$payee_tax_number = empty( $payee_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $payee_tax_number;
 
 		if ( empty( $payee_tax_number ) ) {
@@ -357,9 +376,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_address() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
+		$payee_address = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_address = $pm->get_extra_meta( 'pdf_payee_address', TRUE );
+		}
 		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
 			$payee_address = $organization->address_1 . '<br>';
@@ -388,9 +409,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payment_instructions() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
+		$instructions = NULL;
+		$pm = $this->_get_payment_method();
+		return ( $pm instanceof EE_Payment_Method ) ? $pm->get_extra_meta( 'pdf_instructions', TRUE) : '';
 	}
 
 

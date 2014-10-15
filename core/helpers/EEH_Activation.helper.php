@@ -60,8 +60,6 @@ class EEH_Activation {
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
 		//also initialize payment settings, which is a side-effect of calling
-		EEM_Gateways::instance(true)->load_all_gateways();
-
 		EE_Registry::instance()->CAP->init_caps();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
@@ -306,6 +304,38 @@ class EEH_Activation {
 
 
 
+	/**
+	 * Tries to find the oldest admin for this site.  If there are no admins for this site then return NULL.
+	 * The role being used to check is filterable.
+	 *
+	 * @since  4.6.0
+	 * @global WPDB $wpdb
+	 *
+	 * @return mixed null|int WP_user ID or NULL
+	 */
+	public static function get_default_creator_id() {
+		global $wpdb;
+		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
+
+		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
+		$pre_filtered_id = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false, $role_to_check );
+		if ( $pre_filtered_id !== false ) {
+			return (int) $pre_filtered_id;
+		}
+
+		$capabilities_key = $wpdb->prefix . 'capabilities';
+		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id DESC LIMIT 1, 1", '%' . $role_to_check . '%' );
+		$user_id = $wpdb->get_var( $query );
+		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
+		 if ( $user_id && intval( $user_id ) ) {
+		 	return intval( $user_id );
+		 } else {
+		 	return NULL;
+		 }
+	}
+
+
+
 
 
 	/**
@@ -467,6 +497,7 @@ class EEH_Activation {
 	 * @return void
 	 */
 	public static function create_database_tables() {
+		EE_Registry::instance()->load_core( 'Data_Migration_Manager' );
 		//find the migration script that sets the database to be compatible with the code
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
@@ -780,7 +811,7 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'MSN', 'MFL', 'MID', 'MRT' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -812,7 +843,11 @@ class EEH_Activation {
 					('PFL', 'FAILED', 'payment', 0, NULL, 0),
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
-					('ESN', 'SENT', 'email', 0, NULL, 1);";
+					('ESN', 'SENT', 'email', 0, NULL, 1),
+					('MSN', 'SENT', 'message', 0, NULL, 0),
+					('MFL', 'FAIL', 'message', 0, NULL, 1),
+					('MID', 'IDLE', 'message', 0, NULL, 1),
+					('MRT', 'RETRY', 'message', 0, NULL, 0);";
 			$wpdb->query($SQL);
 
 		}

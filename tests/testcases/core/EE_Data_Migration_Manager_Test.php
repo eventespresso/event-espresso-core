@@ -86,7 +86,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_most_up_to_date_dms(){
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_5_0',$dms_classname);
+		$this->assertEquals('EE_DMS_Core_4_6_0',$dms_classname);
 	}
 
 	public function test_get_last_ran_script(){
@@ -155,6 +155,22 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version('EE_DMS_Core_6_4_3');
 		$this->assertEquals( 'Core', $migrates_to[ 'slug' ] );
 		$this->assertEquals( '6.4.3', $migrates_to[ 'version' ] );
+	}
+
+	public function test_get_migration_ran(){
+		$dms41 = new EE_DMS_Core_4_1_0();
+		$this->_pretend_ran_dms( $dms41 );
+		$dms_found = EE_Data_Migration_Manager::reset()->get_migration_ran( '4.1.0', 'Core' );
+		$this->assertEquals( $dms41->migrates_to_version(), $dms_found->migrates_to_version() );
+		$dms_not_found = EE_Data_Migration_Manager::instance()->get_migration_ran( '4.2.0', 'Core' );
+		$this->assertNull( $dms_not_found );
+	}
+
+	public function test_migration_has_run(){
+		$dms41 = new EE_DMS_Core_4_1_0();
+		$this->_pretend_ran_dms( $dms41 );
+		$this->assertTrue( EE_Data_Migration_Manager::reset()->migration_has_ran( '4.1.0', 'Core' ) );
+		$this->assertFalse( EE_Data_Migration_Manager::instance()->migration_has_ran( '4.2.0', 'Core' ) );
 	}
 }
 

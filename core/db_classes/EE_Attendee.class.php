@@ -24,7 +24,7 @@
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
+class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address, EEI_Attendee {
 
 	/**
 	 * Sets some dynamic defaults
@@ -471,33 +471,55 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		return $this->get_many_related( 'Event' );
 	}
 
-
-
 	/**
 	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
-	 * and keys are their cleaned values
-	 * @param string $gateway_name the _gateway_name property on the gateway class
-	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
-	 *                             where keys are names of fields, and values are an array of settings (the most important keys being
-	 *                             'label' and 'value)
+	 * and keys are their cleaned values. @see EE_Attendee::save_and_clean_billing_info_for_payment_method() which was used to save the billing info
+	 * @param EE_Payment_Method $payment_method the _gateway_name property on the gateway class
+	 * @return EE_Form_Section_Proper
 	 */
-	public function billing_info_for_gateway( $gateway_name ) {
-		$billing_info = $this->get_post_meta( 'billing_info_' . $gateway_name, TRUE );
-		if ( !$billing_info ) {
+	public function billing_info_for_payment_method($payment_method){
+		$pm_type = $payment_method->type_obj();
+		if( ! $pm_type instanceof EE_PMT_Base ){
 			return NULL;
 		}
-		$gateway = EE_Registry::instance()->load_model( 'Gateways' )->get_gateway( $gateway_name );
-		if ( !$gateway instanceof EE_Onsite_Gateway ) {
+		$billing_info =  $this->get_post_meta( $this->get_billing_info_postmeta_name( $payment_method ), true );
+		if ( ! $billing_info){
 			return NULL;
 		}
-		else {
-			$billing_inputs = $gateway->espresso_reg_page_billing_inputs();
-			foreach ( $billing_inputs as $input_name => $billing_input_settings ) {
-				$billing_inputs[ $input_name ][ 'value' ] = isset( $billing_info[ $input_name ] ) ? $billing_info[ $input_name ] : NULL;
-			}
-		}
-		return $billing_inputs;
+		$billing_form = $pm_type->billing_form();
+		$billing_form->receive_form_submission( $billing_info, FALSE );
+		return $billing_form;
 	}
+
+	/**
+	 * Gets the postmeta key that holds this attendee's billing info for the
+	 * specified payment method
+	 * @param EE_Payment_Method $payment_method
+	 * @return string
+	 */
+	public function get_billing_info_postmeta_name($payment_method){
+		if( $payment_method->type_obj() instanceof EE_PMT_Base ){
+			return 'billing_info_' . $payment_method->type_obj()->system_name();
+		}else{
+			return NULL;
+		}
+	}
+
+	/**
+	 * Saves the billing info to the attendee. @see EE_Attendee::billing_info_for_payment_method() which is used to retrieve it
+	 * @param EE_Billing_Attendee_Info_Form $billing_form
+	 * @param EE_Payment_Method $payment_method
+	 * @return boolean
+	 */
+	public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method){
+		if( ! $billing_form instanceof EE_Billing_Attendee_Info_Form ){
+			EE_Error::add_error( __( 'Cannot save billing info because there is none.', 'event_espresso' ) );
+			return false;
+		}
+		$billing_form->clean_sensitive_data();
+		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values() );
+	}
+
 }
 
 /* End of file EE_Attendee.class.php */

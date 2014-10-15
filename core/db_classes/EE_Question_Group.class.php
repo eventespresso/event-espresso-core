@@ -52,11 +52,13 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * gets the question group's name
 	 * @access public
+	 * @param bool $pretty
 	 * @return string
 	 */
-	public function name() {
-		return $this->get( 'QSG_name' );
+	public function name( $pretty = FALSE ) {
+		return $pretty ? $this->get_pretty( 'QSG_name' ) : $this->get( 'QSG_name' );
 	}
+
 
 
 
@@ -74,10 +76,11 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * Gets the question group's description
 	 * @access public
+	 * @param bool $pretty
 	 * @return string
 	 */
-	public function desc() {
-		return $this->get( 'QSG_desc' );
+	public function desc( $pretty = FALSE ) {
+		return $pretty ? $this->get_pretty( 'QSG_desc' ) : $this->get( 'QSG_desc' );
 	}
 
 
