@@ -39,19 +39,17 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->_pretend_espresso_db_update_is(array(
 			espresso_version() => array(current_time('mysql'))
 		));
-		$request_type = EE_System::instance()->detect_req_type();
+		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_normal,$request_type);
 		//check that it detects an upgrade
-		EE_System::reset();
 		$this->_pretend_espresso_db_update_is(array(
 			$this->_add_to_version(espresso_version(), '0.0.-1.0.0') => array(current_time('mysql'))
 		));
-		$request_type = EE_System::instance()->detect_req_type();
+		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_upgrade,$request_type);
 		//check that it detects activation
-		EE_System::reset();
 		$this->_pretend_espresso_db_update_is(NULL);
-		$request_type = EE_System::instance()->detect_req_type();
+		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_new_activation,$request_type);
 		//check that it detects downgrade, even though we don't really care atm
 //		EE_System::reset();
@@ -61,12 +59,11 @@ class EE_System_Test extends EE_UnitTestCase{
 //		$request_type = EE_System::instance()->detect_req_type();
 //		$this->assertEquals(EE_System::req_type_downgrade,$request_type);
 		//lastly, check that we detect reactivations
-		EE_System::reset();
 		update_option('ee_espresso_activation',true);
 		$this->_pretend_espresso_db_update_is(array(
 				espresso_version() => array(current_time('mysql'))
 				));
-		$request_type = EE_System::instance()->detect_req_type();
+		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_reactivation,$request_type);
 	}
 	/**
@@ -74,10 +71,10 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * (because other tests depend on it)
 	 */
 	function test_add_to_version(){
-		$version = '4.3.2.alpha.1';
+		$version = '4.3.2.alpha.001';
 		$version_to_add = '1.0.-1.1.1';
 		$new_version = $this->_add_to_version($version, $version_to_add);
-		$this->assertEquals('5.3.1.alpha.2',$new_version);
+		$this->assertEquals('5.3.1.alpha.002',$new_version);
 	}
 	/**
 	 * check things turn out as expected for NORMAL REQUEST
@@ -108,7 +105,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		update_option('ee_espresso_activation',TRUE);
 		remove_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array(EE_System::instance(),'initialize_db_if_no_migrations_required'));
 		$this->assertWPOptionDoesNotExist('espresso_db_update');
-		EE_System::instance()->detect_if_activation_or_upgrade();
+		EE_System::reset()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
 		//check we've added this to the version history
 		//and that the hook for adding tables n stuff was added
@@ -167,7 +164,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		//for a plugin to be activated without having WP call its activation hook)
 		update_option('ee_espresso_activation',TRUE);
 
-		EE_System::instance()->detect_if_activation_or_upgrade();
+		EE_System::reset()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
 		$this->assertEquals(EE_System::req_type_upgrade,EE_System::instance()->detect_req_type());
 		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
@@ -186,9 +183,10 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
 				));
-		EE_System::instance()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
-		$this->assertEquals(EE_System::req_type_upgrade,EE_System::instance()->detect_req_type());
+//		echo "Crreutn activation history";var_dump($current_activation_history);
+		$this->assertEquals(EE_System::req_type_upgrade,EE_System::reset()->detect_req_type());
+//		echo "Crreutn activation history";var_dump($current_activation_history);
 		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
 		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
@@ -200,9 +198,8 @@ class EE_System_Test extends EE_UnitTestCase{
 				espresso_version() => array(current_time('mysql'))
 				));
 		update_option('ee_espresso_activation',true);
-		EE_System::instance()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
-		$this->assertEquals(EE_System::req_type_reactivation,EE_System::instance()->detect_req_type());
+		$this->assertEquals(EE_System::req_type_reactivation,EE_System::reset()->detect_req_type());
 //		$this->assertEquals(array(espresso_version() =>array(current_time('mysql'),current_time('mysql'))),$current_activation_history);
 		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
@@ -235,7 +232,8 @@ class EE_System_Test extends EE_UnitTestCase{
 		$version_amount_to_add_parts = explode(".",$version_amount_to_add);
 		foreach($version_parts as $key => $version_part){
 			if(is_numeric($version_part)){
-				$version_parts[$key] = $version_parts[$key] + $version_amount_to_add_parts[$key];
+				$characters_in_version_part = strlen( $version_part );
+				$version_parts[$key] = str_pad( $version_parts[$key] + $version_amount_to_add_parts[$key], $characters_in_version_part, '0', STR_PAD_LEFT );
 			}
 		}
 		return implode(".",$version_parts);
