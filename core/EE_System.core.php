@@ -580,26 +580,29 @@ final class EE_System {
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
 	 *                            but still know if this is a new install or not
-	 * @return int one of the consts on EE_System::req_type_
+	 * @return int one of the constants on EE_System::req_type_
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
 
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-			$this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,'ee_espresso_activation',espresso_version());
+			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
 		}
 		return $this->_req_type;
 	}
+
+
+
 	/**
 	 * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin
-	 * was just activated to (for core that will alwasy be espreso_version())
+	 * was just activated to (for core that will always be espresso_version())
 	 * @param array $activation_history_for_addon the option's value which stores the activation history for this ee plugin.
 	 * for core that's 'espresso_db_update'
 	 * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
 	 * @param string $version_to_upgrade_to the version that was just upgraded to (for core that will be espresso_version())
-	 * @return int one of the consts on EE_System::req_type_*
+	 * @return int one of the constants on EE_System::req_type_*
 	 */
-	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+	public static function detect_req_type_given_activation_history( $activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to ){
 		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
@@ -657,6 +660,9 @@ final class EE_System {
 		}
 		return $req_type;
 	}
+
+
+
 	/**
 	 * Detects if the $version_to_upgrade_to is higher than the most recent version in
 	 * the $activation_history_for_addon
