@@ -221,10 +221,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//ensure default is set.
 		$addressee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-		$total_owing = ! empty( $addressee ) ? $addressee->txn->remaining() : 0;
+		$total_owing = $addressee instanceof EE_Messages_Addressee && $addressee->txn instanceof EE_Transaction ? $addressee->txn->remaining() : 0;
 
 		if ( $total_owing > 0 ) {
-			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
+			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();
