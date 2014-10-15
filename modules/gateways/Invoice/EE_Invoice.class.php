@@ -47,21 +47,42 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$org_config = EE_Registry::instance()->CFG->organization;
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+
 		$this->_payment_settings['active'] = '';
-		$this->_payment_settings['page_instructions'] = __('Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.', 'event_espresso');
-		$this->_payment_settings['payment_address'] = '';
+
+		//dynamic info for templates
 		$this->_payment_settings['invoice_logo_url'] = '';
+		$this->_payment_settings['template_payment_instructions'] = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
+		$this->_payment_settings['template_invoice_payee_name'] = '';
+		$this->_payment_settings['template_invoice_address'] = '';
+		$this->_payment_settings['template_invoice_tax_number'] = '';
+		$this->_payment_settings['template_invoice_email'] = '';
+
+
+		//show on thank you page
 		$this->_payment_settings['show'] = true;
 		$this->_payment_settings['type'] = 'off-line';
 		$this->_payment_settings['display_name'] = __('Invoice','event_espresso');
 		$this->_payment_settings['current_path'] = '';
+		$this->_payment_settings['page_instructions'] = __('Payment must be received within 48 hours of event date.  Details about where to send payment is included on the invoice.', 'event_espresso');
+		$this->_payment_settings['payment_address'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
 
 	protected function _update_settings() {
+		//dynamic info for templates
+		$this->_payment_settings['invoice_logo_url'] = isset( $_POST['invoice_logo_url'] ) ? trim(strip_tags($_POST['invoice_logo_url'])) : '';
+		$this->_payment_settings['template_payment_instructions'] = isset( $_POST['template_payment_instructions'] ) ? trim(strip_tags($_POST['template_payment_instructions'] ) ) : '';
+		$this->_payment_settings['template_invoice_payee_name'] = isset( $_POST['template_invoice_payee_name'] ) ? trim(strip_tags($_POST['template_invoice_payee_name'] ) ) : '';
+		$this->_payment_settings['template_invoice_address'] = isset( $_POST['template_invoice_address'] ) ? trim(strip_tags($_POST['template_invoice_address'] ) ) : '';
+		$this->_payment_settings['template_invoice_email'] = isset( $_POST['template_invoice_email'] ) ? trim(strip_tags($_POST['template_invoice_email'] ) ) : '';
+		$this->_payment_settings['template_invoice_tax_number'] = isset( $_POST['template_invoice_tax_number'] ) ? trim(strip_tags($_POST['template_invoice_tax_number'] ) ) : '';
+
+		//info shown on thankyou page
 		$this->_payment_settings['page_instructions'] = trim(strip_tags($_POST['page_instructions']));
 		$this->_payment_settings['payment_address'] = trim(strip_tags($_POST['payment_address']));
-		$this->_payment_settings['invoice_logo_url'] = trim(strip_tags($_POST['invoice_logo_url']));
 		$this->_payment_settings['show'] = $_POST['show'];
 		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
@@ -74,7 +95,56 @@ Class EE_Invoice extends EE_Offline_Gateway {
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Display Settings', 'event_espresso'); ?></h4></th>
 					<td>
-						<span class="description"><?php _e('Invoice layout and style is controlled by the corresponding message type via the messages templates admin.  The settings here are shared among all Invoice and Receipt templates.', 'event_espresso'); ?></span>
+						<span class="description"><?php _e('Invoice layout and style is controlled by the corresponding message type via the messages templates admin.  The settings here are shared among all Invoice and Receipt message templates.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<label for="template_invoice_payee_name"><?php _e('Payee Name:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="template_invoice_payee_name" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_payee_name'])); ?>"><br>
+						<span class="description"><?php _e('The <code>[INVOICE_PAYEE_NAME]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the payee name set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_invoice_email"><?php _e('Payee Email:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="template_invoice_email" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_email'])); ?>"><br>
+						<span class="description"><?php _e('The <code>[INVOICE_PAYEE_EMAIL]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the payee email set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_invoice_tax_number"><?php _e('Payee Tax Number:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="template_invoice_tax_number" cols="50" rows="5" value="<?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_tax_number'])); ?>"><br>
+						<span class="description"><?php _e('The <code>[INVOICE_PAYEE_TAX_NUMBER_*]</code> shortcode is parsed to the value of this field if present, if this field is blank then it\'s parsed to the payee tax number set in the organization settings page, if that page is blank then it parses to an empty string.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_invoice_address"><?php _e('Payee Address:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<textarea name="template_invoice_address" cols="50" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['template_invoice_address'])); ?></textarea>
+						<span class="description"><?php _e('The shortcode <code>[INVOICE_PAYEE_ADDRESS]</code> is parsed to the value of this field if present. If this field is empty, then the shortcode will use the value of the payee address set in the organization settings page.  If that value is empty, then an empty string is used.', 'event_espresso'); ?></span>
+					</td>
+				</tr>
+
+				<tr>
+					<th>
+						<label for="template_payment_instructions"><?php _e('Payment Instructions:', 'event_espresso'); ?></label>
+					</th>
+					<td>
+						<textarea name="template_payment_instructions" cols="50" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['template_payment_instructions'])); ?></textarea>
+						<span class="description"><?php _e('The shortcode <code>[INVOICE_PAYMENT_INSTRUCTIONS]</code> is parsed to the value of this field.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 
@@ -94,11 +164,13 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						</p>
 					</td>
 				</tr>
+			</table>
+			<table class="form-table">
 
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Gateway Settings', 'event_espresso'); ?></h4></th>
 					<td>
-						<span class="description"><?php _e('The following settings affect the functioning of the Invoice gateway.', 'event_espresso'); ?></span>
+						<span class="description"><?php _e('The following settings affect the functioning of the Invoice gateway and the display on the thank you page.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 
@@ -115,10 +187,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 				<tr>
 					<th>
 						<label for="page_instructions"><?php _e('Confirmation Text:', 'event_espresso'); ?></label>
-						<p class="description"><?php _e('This text appears on the thank you page after a registration using Invoice as the payment method.', 'event_espresso'); ?></p>
+
 					</th>
 					<td>
 						<textarea name="page_instructions" cols="50" rows="5"><?php echo trim(stripslashes_deep($this->_payment_settings['page_instructions'])); ?></textarea>
+						<span class="description"><?php _e('This text appears on the thank you page after a registration using Invoice as the payment method.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 

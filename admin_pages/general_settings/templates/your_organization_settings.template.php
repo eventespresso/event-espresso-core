@@ -18,7 +18,7 @@
 						<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
 						<p class="description">
 							<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons. If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key.'); ?>
-						</p>			
+						</p>
 					</td>
 				</tr>
 			</tbody>
@@ -26,9 +26,9 @@
 
 	<?php } //end is_main_site() condition ?>
 
-	
 
-	
+
+
 	<h4 id="contact_info_h4" class="ee-admin-settings-hdr">
 		<?php _e('Contact Information', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('contact_info_info');?>
 	</h4>
@@ -126,7 +126,7 @@
 					<input class="regular-text" type="text" name="organization_vat" value="<?php echo $organization_vat; ?>" />
 					<p class="description">
 						<?php _e('The VAT/Tax Number may be displayed on invoices and receipts.', 'event_espresso'); ?>
-					</p>	
+					</p>
 				</td>
 			</tr>
 		</tbody>
@@ -256,31 +256,33 @@
 	<br/><br/>
 
 
-	<p>
-		<?php echo  EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
-	</p>
+	<?php if ( is_main_site() ) : ?>
+		<p>
+			<?php echo  EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
+		</p>
 
-	<table class="form-table">
-		<tbody>
+		<table class="form-table">
+			<tbody>
 
-			<tr>
-				<th>
-					<label for="ueip_optin">
-						<?php _e('UXIP Opt In?', 'event_espresso'); ?> 
-					</label>
-				</th>
-				<td>
-					<?php 
-						$values=array(					
-							array('id'=>'yes','text'=> __('Yes! I want to help improve Event Espresso!','event_espresso')),
-							array('id'=>'no','text'=> __('Not at this time. Maybe later.','event_espresso'))
-						);
-						echo EEH_Form_Fields::select_input('ueip_optin', $values, !empty($ee_ueip_optin) ? $ee_ueip_optin : 'yes'); 
-					?>
-				</td>
-			</tr>
+				<tr>
+					<th>
+						<label for="ueip_optin">
+							<?php _e('UXIP Opt In?', 'event_espresso'); ?>
+						</label>
+					</th>
+					<td>
+						<?php
+							$values=array(
+								array('id'=>'yes','text'=> __('Yes! I want to help improve Event Espresso!','event_espresso')),
+								array('id'=>'no','text'=> __('Not at this time. Maybe later.','event_espresso'))
+							);
+							echo EEH_Form_Fields::select_input('ueip_optin', $values, !empty($ee_ueip_optin) ? $ee_ueip_optin : 'yes');
+						?>
+					</td>
+				</tr>
 
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	<?php endif; //end is_main_site() check ?>
 
 </div>

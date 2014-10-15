@@ -46,6 +46,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
 			'[INVOICE_LOGO]' => __('This returns the logo uploaded via the invoice settings page wrapped in img_tags and with a "logo screen" classes. The image size is also set in the img tags automatically to match the uploaded logo.', 'event_espresso'),
+			'[INVOICE_PAYEE_NAME]' => __('This will parse to either: the value of the "Company Name" field in the invoice payment method settings; if that is blank, then the value of the Company Name in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso'),
+			'[INVOICE_PAYEE_ADDRESS]' => __('This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_PAYMENT_INSTRUCTIONS]' => __('This will parse to the value of the "Payment Instructions" field found on the Invoice payment methods settings page', 'event_espresso' ),
+			'[INVOICE_PAYEE_EMAIL]' => __('This will parse to either: the value of the "Company Email" field in the invoice payment method settings; if that is blank, then the value of the Company Email in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
+			'[INVOICE_PAYEE_TAX_NUMBER_*]' => __('This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: <code>[INVOICE_PAYEE_TAX_NUMBER_* prefix="GST:"]</code> and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
 			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
@@ -56,7 +61,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
 			'[TXN_SUBTOTAL]' => __('The subtotal for all txn line items.', 'event_espresso'),
 			'[TXN_TAX_SUBTOTAL]' => __('The subtotal for all tax line items.', 'event_espresso'),
-			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
+			'[OWING_STATUS_MESSAGE_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
@@ -100,6 +105,22 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			case '[INVOICE_LOGO]' :
 				return $this->_get_invoice_logo( TRUE );
+				break;
+
+			case '[INVOICE_PAYEE_NAME]' :
+				return $this->_get_invoice_payee_name();
+				break;
+
+			case '[INVOICE_PAYEE_ADDRESS]' :
+				return $this->_get_invoice_payee_address();
+				break;
+
+			case '[INVOICE_PAYMENT_INSTRUCTIONS]' :
+				return $this->_get_invoice_payment_instructions();
+				break;
+
+			case '[INVOICE_PAYEE_EMAIL]' :
+				return $this->_get_invoice_payee_email();
 				break;
 
 
@@ -172,8 +193,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		}
 
-		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
+		if ( strpos( $shortcode, '[OWING_STATU_MESSAGE_*' ) !== FALSE ) {
 			return $this->_get_custom_total_oweing( $shortcode );
+		}
+
+		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== FALSE ) {
+			return $this->_get_invoice_payee_tax_number( $shortcode );
 		}
 
 		return '';
@@ -182,7 +207,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * parser for the [TOTAL_OWING_*] attribute type shortcode
+	 * parser for the [OWING_STATUS_MESSAGE_*] attribute type shortcode
 	 *
 	 * @since 4.5.0
 	 *
@@ -196,10 +221,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//ensure default is set.
 		$addressee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-		$total_owing = ! empty( $addressee ) ? $addressee->txn->remaining() : 0;
+		$total_owing = $addressee instanceof EE_Messages_Addressee && $addressee->txn instanceof EE_Transaction ? $addressee->txn->remaining() : 0;
 
 		if ( $total_owing > 0 ) {
-			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
+			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();
@@ -251,6 +276,121 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		//image tags have been requested.
 		$image_size = getimagesize( $image_size );
 		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+	}
+
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payee name shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payee_name() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$payee_name = ! empty( $invoice_settings['template_invoice_payee_name'] ) ? $invoice_settings['template_invoice_payee_name'] : '';
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		return $payee_name;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payee email shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payee_email() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$payee_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		return $payee_email;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payee tax number shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $shortcode
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payee_tax_number( $shortcode ) {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$payee_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
+		$payee_tax_number = empty( $payee_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $payee_tax_number;
+
+		if ( empty( $payee_tax_number ) ) {
+			return '';
+		}
+
+		//any attributes?
+		$attrs = $this->_get_shortcode_attrs( $shortcode );
+
+		//prefix?
+		$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __( 'VAT/Tax Number: ', 'event_espresso' );
+		return $prefix . $payee_tax_number;
+	}
+
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payee address shortcode.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payee_address() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		$payee_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
+		if ( empty( $payee_address ) ) {
+			$organization = EE_Registry::instance()->CFG->organization;
+			$payee_address = $organization->address_1 . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
+			$payee_address .= $organization->city . '<br>';
+
+			//state
+			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
+			$payee_address .= $state instanceof EE_State ? $state->name()  : '';
+
+			//Country
+			$payee_address .= ! empty( $organization->CNT_ISO ) ? ', ' . $organization->CNT_ISO . '<br>' : '';
+			$payee_address .= ! empty( $organization->zip ) ? $organization->zip : '';
+		}
+		return $payee_address;
+	}
+
+
+
+
+	/**
+	 * Used to retrieve the appropriate content for the invoice payment instructions shortcode.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	private function _get_invoice_payment_instructions() {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
+		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
 	}
 
 
