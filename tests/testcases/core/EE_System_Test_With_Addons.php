@@ -64,6 +64,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * tests that we're correctly detecting activation or upgrades in registered
 	 * addons.
 	 * @group agg
+	 * @group current
 	 */
 	function test_detect_activations_or_upgrades__new_install(){
 		global $wp_actions;
@@ -81,7 +82,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 //		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
 
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_new_activation,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
@@ -112,7 +113,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
 
 		//now check for activations/upgrades in addons
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_upgrade,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]);
 		//the fact that there's an applicable DMS means the site should be placed in maintenance mode
@@ -144,7 +145,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//the site shouldn't be in MM before
 		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
 		//now check for activations/upgrades in addons
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_upgrade,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]);
 		//the fact that there's an applicable DMS means the site should be placed in maintenance mode
@@ -171,7 +172,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__reactivation"]) ? $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] : 0;
 		//now check for activations/upgrades in addons
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_reactivation,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__reactivation"]);
 		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
@@ -206,7 +207,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
 //		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_activation_but_not_installed,$this->_addon->detect_req_type());
 		$this->assertEquals($times_reactivation_hook_fired_before, isset( $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] ) ? $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] : 0);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name() );
@@ -215,7 +216,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 
 		//check for activations/upgrades again. This time activation should be detected
-		EE_System::reset()->detect_activations_or_upgrades();
+		EE_System::reset();
 		$this->assertEquals(EE_System::req_type_reactivation,$this->_addon->detect_req_type());
 		$this->assertEquals($times_reactivation_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__reactivation"]);
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());

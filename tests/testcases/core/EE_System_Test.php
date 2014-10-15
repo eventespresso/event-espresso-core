@@ -183,10 +183,9 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
 				));
-		$current_activation_history = get_option('espresso_db_update');
-//		echo "Crreutn activation history";var_dump($current_activation_history);
+
 		$this->assertEquals(EE_System::req_type_upgrade,EE_System::reset()->detect_req_type());
-//		echo "Crreutn activation history";var_dump($current_activation_history);
+		$current_activation_history = get_option('espresso_db_update');
 		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
 		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
@@ -198,8 +197,9 @@ class EE_System_Test extends EE_UnitTestCase{
 				espresso_version() => array(current_time('mysql'))
 				));
 		update_option('ee_espresso_activation',true);
-		$current_activation_history = get_option('espresso_db_update');
+
 		$this->assertEquals(EE_System::req_type_reactivation,EE_System::reset()->detect_req_type());
+		$current_activation_history = get_option('espresso_db_update');
 //		$this->assertEquals(array(espresso_version() =>array(current_time('mysql'),current_time('mysql'))),$current_activation_history);
 		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
