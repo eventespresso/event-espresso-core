@@ -211,9 +211,9 @@ class EEM_Transaction extends EEM_Base {
 	 * (or fetch the EE_Transaction from its ID)
 	 *
 	 * @deprecated
-	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @param EE_Transaction | int $transaction_obj_or_id
 	 * @param boolean $save_txn whether or not to save the transaction during this function call
-	 * @return boolean success
+	 * @return boolean
 	 */
 	public function update_based_on_payments( $transaction_obj_or_id, $save_txn = TRUE ){
 		EE_Error::doing_it_wrong(
