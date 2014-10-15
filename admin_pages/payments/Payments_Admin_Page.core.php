@@ -75,10 +75,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
+		/**
+		 * note that with payment method capabilities, although we've implemented
+		 * capability mapping which will be used for accessing payment methods owned by
+		 * other users.  This is not fully implemented yet in the payment method ui.
+		 * Currently only the "plural" caps are in active use.
+		 *
+		 * When cap mapping is implemented, some routes will need to use the singular form of
+		 * capability method and also include the $id of the payment method for the route.
+		**/
 		$this->_page_routes = array(
 			'default' => array(
 				'func'=>'_payment_methods_list',
-				'capability' => 'ee_read_payment_methods'
+				'capability' => 'ee_edit_payment_methods'
 			),
 			'payment_settings' => array(
 				'func' => '_payment_settings',
@@ -87,18 +96,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
 				'noheader'=>TRUE,
-				'capability' => 'ee_edit_payment_method'
+				'capability' => 'ee_edit_payment_methods'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
 				'noheader'=>TRUE,
-				'capability' => 'ee_delete_payment_method'
+				'capability' => 'ee_delete_payment_methods'
 				),
 			'update_payment_method'=>array(
 				'func'=>'_update_payment_method',
 				'noheader'=>TRUE,
 				'headers_sent_route'=>'default',
-				'capability' => 'ee_edit_payment_method'
+				'capability' => 'ee_edit_payment_methods'
 			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
@@ -111,9 +120,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			),
 			'payment_log_details'=> array(
 				'func'=>'_payment_log_details',
-				'capability' => 'ee_read_payment_method'
+				'capability' => 'ee_read_payment_methods'
 			)
-			);
+		);
 	}
 
 
