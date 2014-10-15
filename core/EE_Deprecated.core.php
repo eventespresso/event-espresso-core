@@ -59,24 +59,29 @@ add_filter( 'FHEE__EE_Template_Pack___get_templates__templates', 'ee_deprecated_
 function ee_deprecated_hooks(){
 	/**
 	 * @var $hooks array where keys are hook names, and their values are array{
-	 *			@type $version string when deprecated
-	 *			@type $alternative string saying what to use instead
-	 *			@type $still_works boolean whether or not the hook still works
+	 *			@type string $version  when deprecated
+	 *			@type string $alternative  saying what to use instead
+	 *			@type boolean $still_works  whether or not the hook still works
 	 *		}
 	 */
 	$hooks = array(
-		'AHEE__EE_System___do_setup_validations' => array( 'version' => '4.6.0', 'alternative' => __( 'Instead use "AHEE__EEH_Activation__validate_messages_system" which is called after validating messages (done on every new install, upgrade, reactivation, and downgrade)', 'event_espresso' ), 'still_works' => FALSE )
+		'AHEE__EE_System___do_setup_validations' => array(
+			'version' => '4.6.0',
+			'alternative' => __( 'Instead use "AHEE__EEH_Activation__validate_messages_system" which is called after validating messages (done on every new install, upgrade, reactivation, and downgrade)', 'event_espresso' ),
+			'still_works' => FALSE
+		)
 	);
-	foreach($hooks as $name => $deprecation_info ){
+	foreach( $hooks as $name => $deprecation_info ){
 		if( has_action( $name ) ){
 			EE_Error::doing_it_wrong(
-					$name,
-					sprintf( __('This filter is deprecated. %1$s%2$s','event_espresso'),
-						$deprecation_info[ 'still_works' ] ?  __('It *may* work as an attempt to build in backwards compatibility.', 'event_espresso') : __( 'It has been completely removed.', 'event_espresso' ),
-						isset( $deprecation_info[ 'alternative' ] ) ? $deprecation_info[ 'alternative' ] : __( 'Please read the current EE4 documentation further or contact Support.', 'event_espresso' )
-					),
-					isset( $deprecation_info[ 'version' ] ) ? $deprecation_info[ 'version' ] : __( 'recently', 'event_espresso' )
-					);
+				$name,
+				sprintf(
+					__('This filter is deprecated. %1$s%2$s','event_espresso'),
+					$deprecation_info[ 'still_works' ] ?  __('It *may* work as an attempt to build in backwards compatibility.', 'event_espresso') : __( 'It has been completely removed.', 'event_espresso' ),
+					isset( $deprecation_info[ 'alternative' ] ) ? $deprecation_info[ 'alternative' ] : __( 'Please read the current EE4 documentation further or contact Support.', 'event_espresso' )
+				),
+				isset( $deprecation_info[ 'version' ] ) ? $deprecation_info[ 'version' ] : __( 'recently', 'event_espresso' )
+			);
 		}
 	}
 }
