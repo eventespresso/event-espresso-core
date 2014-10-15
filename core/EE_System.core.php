@@ -600,6 +600,7 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			//ok check if this is a new install while in MM...
@@ -616,17 +617,35 @@ final class EE_System {
 				//it exists, so this isn't a completely new install
 				//check if this version already in that list of previously installed versions
 				if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
-					//its a new version!
-					$req_type = EE_System::req_type_upgrade;
+					//it a version we haven't seen before
+					if( $version_is_higher === 1 ){
+						$req_type = EE_System::req_type_upgrade;
+					}else{
+						$req_type = EE_System::req_type_downgrade;
+					}
 					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
 					if( get_option( $activation_indicator_option_name, FALSE ) ){
-						$req_type = EE_System::req_type_reactivation;
+						if ( $version_is_higher === -1 ){
+							$req_type = EE_System::req_type_downgrade;
+						}elseif( $version_is_higher === 0 ){
+							//we've seen this version before, but it's an activation. must be a reactivation
+							$req_type = EE_System::req_type_reactivation;
+						}else{//$version_is_higher === 1
+							$req_type = EE_System::req_type_upgrade;
+						}
 						delete_option( $activation_indicator_option_name );
 					} else {
-						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
-						$req_type = EE_System::req_type_normal;
+						//we've seen this version before and the activation indicate doesn't show it was just activated
+						if ( $version_is_higher === -1 ){
+							$req_type = EE_System::req_type_downgrade;
+						}elseif( $version_is_higher === 0 ){
+							//we've seen this version before and it's not an activation. its normal request
+							$req_type = EE_System::req_type_normal;
+						}else{//$version_is_higher === 1
+							$req_type = EE_System::req_type_upgrade;
+						}
 					}
 				}
 			} else {
@@ -636,8 +655,39 @@ final class EE_System {
 
 			}
 		}
-//		echo "req type for ".$activation_indicator_option_name." was $req_type";
 		return $req_type;
+	}
+	/**
+	 * Detects if the $version_to_upgrade_to is higher than the most recent version in
+	 * the $activation_history_for_addon
+	 * @param array $activation_history_for_addon (keys are versions, values are arrays of times activated,
+	 * sometimes containing 'unknown-date'
+	 * @param string $version_to_upgrade_to (current version)
+	 * @return int results of version_compare( $version_to_upgrade_to, $most_recently_active_version ).
+	 *	ie, -1 if $version_to_upgrade_to is LOWER (downgrade);
+	 *		0 if $version_to_upgrade_to MATCHES (reactivation or normal request);
+	 *		1 if $version_to_upgrade_to is HIGHER (upgrade) ;
+	 */
+	protected static function _new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to ){
+		//find the most recently-activated version
+		$most_recently_active_version_activation = '1970-01-01 00:00:00';
+		$most_recently_active_version = '0.0.0.dev.000';
+		if( is_array( $activation_history_for_addon ) ){
+			foreach( $activation_history_for_addon as $version => $times_activated ){
+				//check there is a record of when this version was activated. Otherwise,
+				//mark it as unknown
+				if( ! $times_activated ){
+					$times_activated = array( 'unknown-date');
+				}
+				foreach( $times_activated as $an_activation ){
+					if( $an_activation > $most_recently_active_version_activation  ){
+						$most_recently_active_version = $version;
+						$most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
+					}
+				}
+			}
+		}
+		return version_compare( $version_to_upgrade_to, $most_recently_active_version );
 	}
 
 
