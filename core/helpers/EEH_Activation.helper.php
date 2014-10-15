@@ -304,6 +304,38 @@ class EEH_Activation {
 
 
 
+	/**
+	 * Tries to find the oldest admin for this site.  If there are no admins for this site then return NULL.
+	 * The role being used to check is filterable.
+	 *
+	 * @since  4.6.0
+	 * @global WPDB $wpdb
+	 *
+	 * @return mixed null|int WP_user ID or NULL
+	 */
+	public static function get_default_creator_id() {
+		global $wpdb;
+		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
+
+		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
+		$pre_filtered_id = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false, $role_to_check );
+		if ( $pre_filtered_id !== false ) {
+			return (int) $pre_filtered_id;
+		}
+
+		$capabilities_key = $wpdb->prefix . 'capabilities';
+		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id DESC LIMIT 1, 1", '%' . $role_to_check . '%' );
+		$user_id = $wpdb->get_var( $query );
+		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
+		 if ( $user_id && intval( $user_id ) ) {
+		 	return intval( $user_id );
+		 } else {
+		 	return NULL;
+		 }
+	}
+
+
+
 
 
 	/**
