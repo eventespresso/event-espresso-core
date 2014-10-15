@@ -259,6 +259,28 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertEquals( EE_System::req_type_upgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.1.0.dev.000' ) );
 		$activation_history[ '1.1.0.dev.000' ][] =  date( 'Y-m-d H:i:s', time() + 4 ) ;
 	}
+
+	/**
+	 * tests that we are detecting activations correctly even when the same version has
+	 * been activated multiple times
+	 * @group current
+	 */
+	function test_detect_req_type_given_activation_history__multiple_activations(){
+		$activation_history = array(
+			'3.1.36.5.P' => array( 'unknown-date' ),
+			'4.3.0.alpha.019' => array( '2014-06-09 18:10:35', ),
+			'4.6.0.dev.016' => array(
+				'2014-10-15 15:43:08',
+				'2014-10-15 18:16:41',
+				'2014-10-15 20:09:07'
+			),
+			'4.5.0.beta.020' => array(
+				'2014-10-15 16:52:35',
+			)
+
+		);
+		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '4.5.0.beta.020' ) );
+	}
 	/**
 	 *
 	 */
