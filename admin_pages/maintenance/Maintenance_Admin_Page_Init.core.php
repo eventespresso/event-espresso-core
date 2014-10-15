@@ -80,6 +80,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 	 */
 	public function check_maintenance_mode(){
 		$notice = '';
+		$maintenance_page_url = '';
 		if(EE_Maintenance_Mode::instance()->level()){
 			$maintenance_page_url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_MAINTENANCE_ADMIN_URL);
 			switch(EE_Maintenance_Mode::instance()->level()){
