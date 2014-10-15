@@ -324,7 +324,7 @@ class EEH_Activation {
 		}
 
 		$capabilities_key = $wpdb->prefix . 'capabilities';
-		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = $capabilities_key AND meta_value LIKE %s ORDER BY user_id ASC LIMIT %d, 1", '%' . $capabilities_key . '%', $offset++ );
+		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 1, 1", '%' . $role_to_check . '%' );
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
 		 if ( $user_id && intval( $user_id ) ) {
