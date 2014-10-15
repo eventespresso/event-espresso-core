@@ -760,7 +760,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set it\'s value to the appropriate method.', 'event_espresso' ), $this->_req_action );
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set its value to the appropriate method.', 'event_espresso' ), $this->_req_action );
 			throw new EE_Error( $error_msg );
 		}
 
@@ -769,7 +769,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg = sprintf( __( 'A default page route has not been set for the % admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
+			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set its value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
 
@@ -1030,10 +1030,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 				//first priority goes to content.
 				if ( !empty($cfg['content'] ) ) {
-					$content = !empty($cfg['content']);
+					$content = !empty($cfg['content']) ? $cfg['content'] : NULL;
 
 				//second priority goes to filename
 				} else if ( !empty($cfg['filename'] ) ) {
@@ -3182,16 +3181,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
-		$this->_template_args['success'] = $success;
-		return $success;
+		$this->_template_args['success'] = EED_Messages::process_resend( $this->_req_data );
+		do_action( 'AHEE__EE_Admin_Page___process_resend_registration', $this->_template_args['success'], $this->_req_data );
+		return $this->_template_args['success'];
 	}
+
 
 
 	/**
 	 * This automatically processes any payment message notifications when manual payment has been applied.
 	 *
 	 * @access protected
+	 * @param \EE_Payment $payment
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {

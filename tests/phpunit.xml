@@ -14,6 +14,7 @@
 	<groups>
         <exclude>
             <group>ignore</group>
+			<group>live</group>
         </exclude>
     </groups>
 	<php>

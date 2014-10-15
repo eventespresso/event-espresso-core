@@ -79,22 +79,25 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * Checks if we're in maintenance mode, and if so we notify the admin adn tell them how to take the site OUT of maintenance mode
 	 */
 	public function check_maintenance_mode(){
+		$notice = '';
+		$maintenance_page_url = '';
 		if(EE_Maintenance_Mode::instance()->level()){
 			$maintenance_page_url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_MAINTENANCE_ADMIN_URL);
 			switch(EE_Maintenance_Mode::instance()->level()){
 				case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-					echo '<div class="updated">
+					$notice = '<div class="updated">
 						<p>'. sprintf(__("Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
 					'</div>';
 					break;
 				case EE_Maintenance_Mode::level_2_complete_maintenance:
-						echo '<div class="error">
+						$notice =  '<div class="error">
 						<p>'. sprintf(__("As part of the process for updating Event Espresso, your database also
 needs to be updated. Event Espresso is in COMPLETE MAINTENANCE MODE (both WordPress admin pages and front-end event registration pages are disabled) until you run the database update script. %s Visit the Maintenance Page to get started,%s it only takes a moment.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
 					'</div>';
 					break;
 			}
 		}
+		echo  apply_filters( 'FHEE__Maintenance_Admin_Page_Init__check_maintenance_mode__notice', $notice, $maintenance_page_url );
 	}
 
 } //end class Payments_Admin_Page_Init
