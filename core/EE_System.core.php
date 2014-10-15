@@ -978,6 +978,7 @@ final class EE_System {
 		$maintenance_mode = EE_Maintenance_Mode::instance()->level();
 		switch ( $maintenance_mode ) {
 			case EE_Maintenance_Mode::level_0_not_in_maintenance :
+			case is_admin() && EE_Maintenance_Mode::level_1_frontend_only_maintenance :
 				do_action( 'AHEE__EE_System__core_loaded_and_ready' );
 				break;
 			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
@@ -1002,7 +1003,6 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
-
 	}
 
 
