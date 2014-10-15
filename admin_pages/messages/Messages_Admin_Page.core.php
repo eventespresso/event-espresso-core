@@ -195,6 +195,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _set_page_routes() {
 		$grp_id = ! empty( $this->_req_data['GRP_ID'] ) && ! is_array( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
+		$grp_id = empty( $grp_id ) && !empty( $this->_req_data['id'] ) ? $this->_req_data['id'] : $grp_id;
 
 		$this->_page_routes = array(
 				'default'=> array(

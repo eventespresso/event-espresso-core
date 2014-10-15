@@ -63,7 +63,6 @@
 
 	<div class="payment-dv">
 		<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
-		<p><?php echo $payment_instructions; ?></p>
 		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
@@ -77,7 +76,7 @@
 			</thead>
 			<tbody>
 				<tr><td colspan="6">[PAYMENT_LIST_*]</td></tr>
-				<tr class="item"><td class='aln-cntr' colspan="6">[TOTAL_OWING_*]</td></tr>
+				<tr class="item"><td class='aln-cntr' colspan="6">[OWING_STATUS_MESSAGE_*]</td></tr>
 			</tbody>
 			<tfoot>
 				<tr class='total_tr'><td colspan="4">&nbsp;</td>

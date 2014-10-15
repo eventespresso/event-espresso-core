@@ -470,6 +470,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @param null   $show_expired
 	 * @param bool   $format
 	 * @param bool   $add_breaks
+	 * @param null   $limit
 	 * @return string
 	 */
 	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = '', $time_format = '', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE, $limit = NULL ) {
@@ -479,28 +480,26 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
+		if ( ! $format ) {
+			return apply_filters( 'FHEE__espresso_list_of_event_dates__datetimes', $datetimes );
+		}
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
 			$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					if ( $format ) {
-						$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
-						$datetime_name = $datetime->name();
-						$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
-						$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-						$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
-						$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
-						$datetime_description = $datetime->description();
-						$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
-						$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
-						$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
-						$html .= '</li>';
-					} else {
-						$html .= $datetime;
-						$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
-					}
+					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
+					$datetime_name = $datetime->name();
+					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
+					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+					$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
+					$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
+					$datetime_description = $datetime->description();
+					$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
+					$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
+					$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
+					$html .= '</li>';
 				}
 			}
 			$html .= $format ? '</ul>' : '';
@@ -549,12 +548,12 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @return string
 	 */
 	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE ) {
-		// formats when there is an actual date range
+		// set and filter date and time formats when a range is returned
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
-		// format if there is only one date to display ie: no date range
+		// set and filter date and time formats when only a single datetime is returned
 		$single_date_format = ! empty( $single_date_format ) ? $single_date_format : get_option( 'date_format' );
 		$single_time_format = ! empty( $single_time_format ) ? $single_time_format : get_option( 'time_format' );
 		$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );

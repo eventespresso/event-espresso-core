@@ -38,6 +38,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
+
+		//capability check
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_default_prices', 'advanced_ticket_datetime_metabox' ) ) {
+			return;
+		}
+
 		//if we were going to add our own metaboxes we'd use the below.
 		$this->_metaboxes = array(
 			0 => array(
@@ -928,10 +934,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'tax_added_display' => EEH_Template::format_currency($tax_added, FALSE, FALSE ),
 				'tax_amount' => $tax->get('PRC_amount')
 				);
+			$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
 
-		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 
 		return $tax_rows;
 	}

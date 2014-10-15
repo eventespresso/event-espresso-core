@@ -760,7 +760,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg =  sprintf( __( 'The requested page route does not exist for the %s admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set it\'s value to the appropriate method.', 'event_espresso' ), $this->_req_action );
+			$error_msg .=  '||' . $error_msg . sprintf( __( ' Create a key in the "_page_routes" array named "%s" and set its value to the appropriate method.', 'event_espresso' ), $this->_req_action );
 			throw new EE_Error( $error_msg );
 		}
 
@@ -769,7 +769,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg = sprintf( __( 'A default page route has not been set for the % admin page.', 'event_espresso' ), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set it\'s value to your default page method.', 'event_espresso' );
+			$error_msg .=  '||' . $error_msg . __( ' Create a key in the "_page_routes" array named "default" and set its value to your default page method.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
 
@@ -1030,10 +1030,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 				//first priority goes to content.
 				if ( !empty($cfg['content'] ) ) {
-					$content = !empty($cfg['content']);
+					$content = !empty($cfg['content']) ? $cfg['content'] : NULL;
 
 				//second priority goes to filename
 				} else if ( !empty($cfg['filename'] ) ) {
@@ -1247,6 +1246,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
 		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
 		if ( empty( $capability ) && empty( $route_to_check )  ) {
@@ -1256,7 +1256,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
-		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $route_to_check, $id ) ) && ! defined( 'DOING_AJAX')) {
 			if ( $verify_only ) {
 				return FALSE;
 			} else {
@@ -1958,8 +1958,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('New @ Event Espresso', 'event_espresso') );
+		add_meta_box('espresso_news_post_box', $news_box_title, array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
 	}
 
 
@@ -1995,7 +1995,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  	<div id="espresso_news_post_box_content" class="infolinks">
 	  		<?php
 	  		// Get RSS Feed(s)
-	  		$url = urlencode('http://eventespresso.com/feed/');
+	  		$feed_url = apply_filters( 'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url', 'http://eventespresso.com/feed/' );
+	  		$url = urlencode($feed_url);
 	  		self::cached_rss_display( 'espresso_news_post_box_content', $url );
 
 	  		?>
@@ -3180,16 +3181,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
-		$this->_template_args['success'] = $success;
-		return $success;
+		$this->_template_args['success'] = EED_Messages::process_resend( $this->_req_data );
+		do_action( 'AHEE__EE_Admin_Page___process_resend_registration', $this->_template_args['success'], $this->_req_data );
+		return $this->_template_args['success'];
 	}
+
 
 
 	/**
 	 * This automatically processes any payment message notifications when manual payment has been applied.
 	 *
 	 * @access protected
+	 * @param \EE_Payment $payment
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
