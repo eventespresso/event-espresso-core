@@ -1059,6 +1059,7 @@ class EEH_Activation {
 
 		//all done! let's update the active_messengers.
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
 
