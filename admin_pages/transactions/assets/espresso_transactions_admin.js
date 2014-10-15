@@ -335,7 +335,7 @@ jQuery(document).ready(function($) {
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 
-		if ( response.edit_or_apply == 'apply' ) {
+		if ( response.edit_or_apply === 'apply' ) {
 			// grab empty paymnet table row
 			var newRow = '\n				<tr id="txn-admin-payment-tr-PAY_ID">' + $('#txn-admin-payment-empty-row-tr').html() + '\n				</tr>\n';
 			// insert new PAY_ID
@@ -407,7 +407,7 @@ jQuery(document).ready(function($) {
 		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
 		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
 
-		if ( totalPaid == txnTotal ) {
+		if ( totalPaid === txnTotal ) {
 			//alert( 'paid in full' );
 			$('#txn-amount-due-h2').hide();
 			$('#txn-amount-due-h2 > span').removeClass();
@@ -451,9 +451,11 @@ jQuery(document).ready(function($) {
 	function process_delete_payment( response ) {
 		toggleaAjaxActivity( true );
 		overlay.trigger('click');
-		// grab PAY ID from return data
-		var PAY_ID = response.return_data.PAY_ID;
-		update_payment_totals( response );
+		if ( typeof(response.return_data.PAY_ID) !== 'undefined' && response.return_data.PAY_ID !== false && response.return_data.PAY_ID !== null ) {
+			// grab PAY ID from return data
+			var PAY_ID = response.return_data.PAY_ID;
+			update_payment_totals( response );
+		}
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
 	}
 

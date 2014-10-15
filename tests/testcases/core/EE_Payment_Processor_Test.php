@@ -63,7 +63,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->assertEquals( $payment, $txn->last_payment() );
 		$this->assertEquals( 10, $payment->amount() );
 		$this->assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
-		$this->assertEquals( 10, EEM_Payment::instance()->recalculate_total_payments_for_transaction( $txn->ID(), EEM_Payment::status_id_approved ) );
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		$this->assertEquals( 10, $transaction_payments->recalculate_total_payments_for_transaction( $txn, EEM_Payment::status_id_approved ) );
 		$this->assertEquals( 10, $txn->paid() );
 		$this->assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
 	}

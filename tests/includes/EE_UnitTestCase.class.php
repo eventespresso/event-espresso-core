@@ -52,7 +52,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		);
 		$this->_orig_current_user = clone $current_user;
 		parent::setUp();
-		EE_Registry::reset();
+		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
