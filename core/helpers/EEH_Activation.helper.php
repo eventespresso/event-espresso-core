@@ -631,7 +631,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 1,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -646,7 +646,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 2,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -661,7 +661,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 3,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -676,7 +676,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 4,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -691,7 +691,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 5,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -706,7 +706,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 6,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -721,7 +721,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 7,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -736,7 +736,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 8,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -751,7 +751,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 9,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -766,7 +766,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 10,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
