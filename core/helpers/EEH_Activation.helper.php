@@ -24,6 +24,9 @@
 class EEH_Activation {
 
 
+	private static $_default_creator_id = null;
+
+
 	/**
 	 * 	system_initialization
 	 * 	ensures the EE configuration settings are loaded with at least default options set
@@ -315,6 +318,11 @@ class EEH_Activation {
 	 */
 	public static function get_default_creator_id() {
 		global $wpdb;
+
+		if ( ! empty( self::$_default_creator_id ) ) {
+			return self::$_default_creator_id;
+		}
+
 		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
 
 		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
@@ -328,7 +336,8 @@ class EEH_Activation {
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
 		 if ( $user_id && intval( $user_id ) ) {
-		 	return intval( $user_id );
+		 	self::$_default_creator_id =  intval( $user_id );
+		 	return self::$_default_creator_id;
 		 } else {
 		 	return NULL;
 		 }
