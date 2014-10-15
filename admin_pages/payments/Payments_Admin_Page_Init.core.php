@@ -65,6 +65,12 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * Checks that there is at least one active gateway. If not, add a notice
 	 */
 	public function check_payment_gateway_setup(){
+		//ONLY do this check if models can query
+		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
+			return;
+		}
+
+
 		// ensure Payment_Method model is loaded
 		EE_Registry::instance()->load_model( 'Payment_Method' );
 		$actives = EEM_Payment_Method::instance()->get_all_active();
