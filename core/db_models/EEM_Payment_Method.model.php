@@ -80,7 +80,7 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
 				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
-				'PMD_wp_user_id' => new EE_Integer_Field( 'PMD_wp_user_Id', __( "User ID", 'event_espresso' ), FALSE, 1 ),
+				'PMD_wp_user_id' => new EE_Integer_Field( 'PMD_wp_user_id', __( "User ID", 'event_espresso' ), FALSE, 1 ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
 				'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
 		) );
@@ -236,14 +236,12 @@ class EEM_Payment_Method extends EEM_Base {
 
 
 	/**
-	 * Verifies the button urls on all the payment methods that meet the criteria
-	 * of $query_params have a valid button url. If not, resets them to their default.
-	 * @param array $query_params payment methods you want to check
+	 * Verifies the button urls on all the passed payment methods have a valid button url. If not, resets them to their default.
+	 * @param EE_Payment_Method[] $payment_methods
 	 */
-	function verify_button_urls( $query_params = array() ) {
+	function verify_button_urls( $payment_methods ) {
 		EE_Registry::instance()->load_helper( 'URL' );
-		$payment_methods = $this->get_all( $query_params );
-		/* @var $payment_methods EE_Payment_Method[] */
+		$payment_methods = is_array( $payment_methods ) && ! empty( $payment_methods ) ? $payment_methods : $this->get_all_active();
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				//send an HTTP HEAD request to quickly verify the file exists

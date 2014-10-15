@@ -274,9 +274,10 @@ class EE_Payment_Method extends EE_Base_Class{
 	 * Gets wp_user_id
 	 * @return int
 	 */
-	function wp_user_id() {
+	function wp_user() {
 		return $this->get('PMD_wp_user_id');
 	}
+
 
 
 
@@ -284,7 +285,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	 * Sets wp_user_id
 	 * @param int $wp_user_id
 	 */
-	function set_wp_user_id($wp_user_id) {
+	function set_wp_user($wp_user_id) {
 		$this->set('PMD_wp_user_id', $wp_user_id);
 	}
 
