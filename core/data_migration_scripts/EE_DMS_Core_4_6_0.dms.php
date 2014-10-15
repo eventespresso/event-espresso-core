@@ -820,14 +820,6 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		}
 
 	}
-	/**
-	 * Determines which user id as the default creator for EE model objects which
-	 * are getting migrated. Filterable
-	 * @return int
-	 */
-	public function get_default_creator_id(){
-		return apply_filters('FHEE__EE_DMS_Core_4_6_0__get_default_creator_id',get_current_user_id());
-	}
 
 }
 
