@@ -131,10 +131,14 @@ final class EE_Config {
 
 	/**
 	 * Resets the config
-	 * @param bool $hard_reset
+	 * @param bool $hard_reset if TRUE, sets EE_CONFig back to its original settings in the database. If FALSE
+	 * (default) leaves the database alone, and merely resets the EE_COnfig object to reflect its state in the database
+	 * @param boolean $reinstantiate if TRUE (default) call instance() and return it. Otherwise, just leave
+	 * $_instance as NULL. Useful in case you want to forget about the old instance on EE_Config, but might
+	 * not be ready to instantiate EE_Config currently (eg if the site was put into maintenance mode)
 	 * @return EE_Config
 	 */
-	public static function reset( $hard_reset = FALSE ){
+	public static function reset( $hard_reset = FALSE, $reinstantiate = TRUE ){
 		if ( $hard_reset ) {
 			self::$_instance->_config_option_names = array();
 			self::$_instance->_initialize_config();
@@ -147,7 +151,11 @@ final class EE_Config {
 		//we don't need to reset the static properties imo because those should
 		//only change when a module is added or removed. Currently we don't
 		//support removing a module during a request when it previously existed
-		return self::instance();
+		if( $reinstantiate ){
+			return self::instance();
+		}else{
+			return NULL;
+		}
 	}
 
 
