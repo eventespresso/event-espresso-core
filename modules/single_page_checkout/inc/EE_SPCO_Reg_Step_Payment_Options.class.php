@@ -973,6 +973,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * _post_payment_processing
 	 *
+	 *  sets up any additional notices or redirect info required based on the payment
+	 *
 	 * @access private
 	 * @param EE_Payment $payment
 	 * @return bool
@@ -980,10 +982,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _post_payment_processing( $payment = NULL ) {
 		// On-Site payment?
 		if ( $this->checkout->payment_method->is_on_site() ) {
+			// generate notices based on the payment status
 			$this->_onsite_payment_success( $payment );
-			// Off-Site payment?
+		// Off-Site payment?
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
-			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
+			// if a valid payment object was created and it specifies a redirect url, then we'll setup that redirect info
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
@@ -991,8 +994,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// set JSON response
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
 			}
-			// Off-Line payment?
+		// Off-Line payment?
 		} else {
+			// setup redirect to the next step
 			$this->checkout->redirect = TRUE;
 			$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 			// set JSON response
@@ -1006,6 +1010,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * 	_onsite_payment_success
+	 *
+	 *  generate notices based on the payment status
 	 *
 	 * 	@access private
 	 * 	@type 	EE_Payment $payment
