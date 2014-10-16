@@ -64,6 +64,8 @@ class EEH_Activation {
 		EEH_Activation::create_no_ticket_prices_array();
 		//also initialize payment settings, which is a side-effect of calling
 		EE_Registry::instance()->CAP->init_caps();
+
+		EEH_Activation::validate_messages_system();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -1101,6 +1103,7 @@ class EEH_Activation {
 
 		//all done! let's update the active_messengers.
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
 
