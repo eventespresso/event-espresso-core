@@ -334,7 +334,8 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.
+	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.)
+	 * Should only be called once per request
 	 * @return void
 	 */
 	function detect_activation_or_upgrade(){

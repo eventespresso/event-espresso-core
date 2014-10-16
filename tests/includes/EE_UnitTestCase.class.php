@@ -52,7 +52,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		);
 		$this->_orig_current_user = clone $current_user;
 		parent::setUp();
-		EE_Registry::reset();
+		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
@@ -69,7 +69,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
-
+		EE_Registry::reset();
 	}
 
 
@@ -371,6 +371,21 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		foreach($model->relation_settings() as $related_model_name => $relation){
 			if($relation instanceof EE_Belongs_To_Any_Relation){
 				continue;
+			}elseif( $related_model_name == 'Country' ){
+				//we already have lots of countries. lets not make any more
+				//what's more making them is tricky: the primary key needs to be a unique
+				//2-character string but not an integer (else it confuses the country
+				//form input validation)
+				if( ! isset( $args['CNT_ISO' ] )){
+					$args[ 'CNT_ISO' ] = 'US';
+				}
+			}
+			elseif( $related_model_name == 'Status' ){
+				$fk = $model->get_foreign_key_to($related_model_name);
+				if( ! isset( $args[ $fk->get_name() ] ) ){
+					//only set the default if they haven't specified anything
+					$args[ $fk->get_name() ] = $fk->get_default_value();
+				}
 			}elseif($relation instanceof EE_Belongs_To_Relation) {
 				$obj = $this->new_model_obj_with_dependencies($related_model_name);
 				$fk = $model->get_foreign_key_to($related_model_name);
@@ -384,17 +399,23 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		//set any other fields which haven't yet been set
 		foreach($model->field_settings() as $field_name => $field){
 			$value = NULL;
-			if($field_name == 'EVT_timezone_string'){
+			if(in_array( $field_name, array(
+				'EVT_timezone_string',
+				'PAY_redirect_url',
+				'PAY_redirect_args',
+				'parent') ) ){
 				$value = NULL;
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
-					$field instanceof EE_Boolean_Field){
+					$field instanceof EE_Boolean_Field ||
+					$field_name == 'PMD_type'){
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||
-					$field instanceof EE_Foreign_Key_Field_Base ||
-					$field instanceof EE_Primary_Key_String_Field){
+					$field instanceof EE_Foreign_Key_Field_Base ){
 				$value = $auto_made_thing_seed;
+			}elseif( $field instanceof EE_Primary_Key_String_Field ){
+				$value = "$auto_made_thing_seed";
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}
@@ -473,6 +494,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		unset($wp_actions['FHEE__EE_System__parse_model_names']);
 		unset($wp_actions['FHEE__EE_System__parse_implemented_model_names']);
 		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+		unset($wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
 	}
 	/**
 	 * Restores the $wp_actions global to how ti should have been before we

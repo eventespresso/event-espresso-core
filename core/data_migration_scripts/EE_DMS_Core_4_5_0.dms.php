@@ -1,7 +1,10 @@
 <?php
 /**
- * meant to convert DBs between 4.3.x to 4.5.0.
- *
+ * meant to convert DBs between 4.3 and 4.5
+ * mostly just
+ * -adds QGQ_order to teh question-group_question table;
+ * -adds DTT_name and DTT_description to the datetime table;
+ * -adds users onto prices, price types, question groups, and tickets
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
@@ -100,8 +103,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-
-
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
@@ -190,6 +191,17 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (LIN_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB' );
 
+		$table_name = 'esp_log';
+		$sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
+				LOG_time datetime DEFAULT NULL,
+				OBJ_ID varchar(45) DEFAULT NULL,
+				OBJ_type varchar(45) DEFAULT NULL,
+				LOG_type varchar(45) DEFAULT NULL,
+				LOG_message text,
+				LOG_wp_user_id int(11) DEFAULT NULL,
+				PRIMARY KEY  (LOG_ID)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					GRP_ID int(10) unsigned NOT NULL,
@@ -232,19 +244,21 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					TXN_ID int(10) unsigned DEFAULT NULL,
 					STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
 					PAY_timestamp datetime NOT NULL default '0000-00-00 00:00:00',
-					PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_source varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount decimal(10,3) DEFAULT NULL,
-					PAY_gateway varchar(32) COLLATE utf8_bin DEFAULT NULL,
+					PMD_ID int(11) DEFAULT NULL,
 					PAY_gateway_response text COLLATE utf8_bin,
 					PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_po_number varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
-					PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
 					PAY_details text COLLATE utf8_bin,
+					PAY_redirect_url varchar(300),
+					PAY_redirect_args text,
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+
 
 
 		$table_name = "esp_ticket_price";
@@ -263,7 +277,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRIMARY KEY  (DTK_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-
 
 
 		$table_name = "esp_ticket_template";
@@ -383,6 +396,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
 					  TXN_session_data text COLLATE utf8_bin,
 					  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
+					  PMD_ID int(11) DEFAULT NULL,
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
@@ -511,16 +525,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	/**
-	 * Determines which user id as the default creator for EE model objects which
-	 * are getting migrated. Filterable
-	 * @return int
-	 */
-	public function get_default_creator_id(){
-		return apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
-	}
-
-
-	/**
 	 * insert_default_price_types
 	 *
 	 * @since 4.5.0
@@ -536,7 +540,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$price_types_exist = $wpdb->get_var( $SQL );
 
 			if ( ! $price_types_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_wp_user, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
 							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, $user_id, 0),
@@ -570,7 +574,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$prices_exist = $wpdb->get_var( $SQL );
 
 			if ( ! $prices_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_wp_user, PRC_order, PRC_deleted, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', '', 1, NULL, $user_id, 0, 0, 0);";
@@ -598,7 +602,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$tickets_exist = $wpdb->get_var($SQL);
 
 			if ( ! $tickets_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_wp_user, TKT_deleted ) VALUES
 					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, $user_id, 0);";
