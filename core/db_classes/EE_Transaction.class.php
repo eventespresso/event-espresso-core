@@ -700,6 +700,32 @@ class EE_Transaction extends EE_Base_Class {
 
 
 
+	/**
+ 	* cycles thru related registrations and calls finalize_registration() on each
+ 	*
+ 	* @deprecated
+ 	* @param  bool $from_admin      used to indicate the request is initiated by admin
+ 	* @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
+ 	* @return void
+ 	*/
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
+		EE_Error::doing_it_wrong(
+			__FILE__,
+			sprintf( __('This method is deprecated.  The new method that replaces this functionality is "%1$s" found in "%2$s".', 'event_espresso'),
+				'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()',
+				'/core/business/EE_Transaction_Processor.class.php'
+			),
+			'4.6.0'
+		);
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		//ok, now process the transaction according to the payment
+		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
+	}
 
-}/* End of file EE_Transaction.class.php */
+
+
+
+}
+/* End of file EE_Transaction.class.php */
 /* Location: includes/classes/EE_Transaction.class.php */
