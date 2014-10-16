@@ -981,6 +981,42 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$registrations = $this->get_model()->get_all( $query );
 		return $registrations;
 	}
+
+
+
+	/**
+	 * cycles thru related registrations and calls finalize_registration() on each
+	 *
+ 	 * generates reg code if that has yet to been done,
+	 * sets reg status based on transaction status and event pre-approval setting
+	 *
+	 * @deprecated
+	 * @param  bool $from_admin      used to indicate the request is initiated by admin
+	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
+	 * @return array    an array with two boolean values, first indicates if new reg, second indicates if reg status was updated.
+	 */
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
+		EE_Error::doing_it_wrong(
+			__FILE__,
+			sprintf( __('This method is deprecated.  The new method that replaces this functionality is "%1$s" found in "%2$s".%3$sAs well, %4$s are now created by the method "%4$s"', 'event_espresso'),
+				'EE_Registration_Processor::update_registration_after_checkout_or_payment()',
+				'/core/business/EE_Registration_Processor.class.php',
+				'<br />',
+				'REG_codes',
+				'EE_Registration_Processor::generate_reg_code()'
+			),
+			'4.6.0'
+		);
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		//ok, now process the transaction according to the payment
+		$registration_processor->update_registration_after_checkout_or_payment( $this );
+	}
+
+
+
+
+
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */
