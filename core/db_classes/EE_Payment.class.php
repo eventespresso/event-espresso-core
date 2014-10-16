@@ -595,7 +595,34 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 			return FALSE;
 		}
 	}
-}
 
+
+
+	/**
+	 *  Apply a Payment to a Transaction, update all totals, and save payment info to db
+	 *
+	 * @deprecated
+	 * @return \EE_Transaction
+	 */
+	public function apply_payment_to_transaction() {
+		EE_Error::doing_it_wrong(
+			__FILE__,
+			sprintf( __('This method is deprecated.  The new method that replaces this functionality is "%1$s" found in "%2$s".', 'event_espresso'),
+				'EE_Transaction_Payments::calculate_total_payments_and_update_status()',
+				'/core/business/EE_Transaction_Payments.class.php'
+			),
+			'4.6.0'
+		);
+		$transaction = $this->transaction();
+		if ( $transaction instanceof EE_Transaction ) {
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+			$transaction_payments->calculate_total_payments_and_update_status( $transaction );
+		}
+		return $transaction;
+	}
+
+
+}
 /* End of file EE_Payment.class.php */
 /* Location: /includes/classes/EE_Payment.class.php */
