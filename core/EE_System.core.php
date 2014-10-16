@@ -589,7 +589,6 @@ final class EE_System {
 	 * @return int one of the constants on EE_System::req_type_
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
-
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
 			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
@@ -690,6 +689,9 @@ final class EE_System {
 				//mark it as unknown
 				if( ! $times_activated ){
 					$times_activated = array( 'unknown-date');
+				}
+				if( is_string( $times_activated ) ){
+					$times_activated = array( $times_activated );
 				}
 				foreach( $times_activated as $an_activation ){
 					if( $an_activation > $most_recently_active_version_activation  ){

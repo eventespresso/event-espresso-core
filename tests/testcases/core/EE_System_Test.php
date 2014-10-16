@@ -43,7 +43,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertEquals(EE_System::req_type_normal,$request_type);
 		//check that it detects an upgrade
 		$this->_pretend_espresso_db_update_is(array(
-			$this->_add_to_version(espresso_version(), '0.0.-1.0.0') => array(current_time('mysql'))
+			$this->_add_to_version(espresso_version(), '0.-1.0.0.0') => array(current_time('mysql'))
 		));
 		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_upgrade,$request_type);
@@ -211,9 +211,8 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->_pretend_espresso_db_update_is(array(
 				 $pretend_previous_version => array(current_time('mysql'))
 				));
-		EE_System::instance()->detect_if_activation_or_upgrade();
+		$this->assertEquals(EE_System::req_type_downgrade,EE_System::reset()->detect_req_type());
 		$current_activation_history = get_option('espresso_db_update');
-		$this->assertEquals(EE_System::req_type_downgrade,EE_System::instance()->detect_req_type());
 		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
 		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
@@ -260,7 +259,6 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * tests that we are detecting activations correctly even when the same version has
 	 * been activated multiple times
-	 * @group current
 	 */
 	function test_detect_req_type_given_activation_history__multiple_activations(){
 		$activation_history = array(
@@ -334,7 +332,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * @param string $version_amount_to_add eg "0.0.0.0.1"
 	 * @return string eg if given the mentioned inputs, would be "4.3.2.alpha.4";
 	 */
-	private function _add_to_version($version_string,$version_amount_to_add = '0.0.1'){
+	private function _add_to_version($version_string,$version_amount_to_add = '0.1.0.0.0'){
 		$version_parts = explode(".",$version_string);
 		$version_amount_to_add_parts = explode(".",$version_amount_to_add);
 		foreach($version_parts as $key => $version_part){
