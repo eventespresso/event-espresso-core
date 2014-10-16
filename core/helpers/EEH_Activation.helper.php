@@ -1311,6 +1311,12 @@ class EEH_Activation {
 		}
 	}
 
+	/**
+	 * Resets the cache on EEH_Activation
+	 */
+	public static function reset(){
+		self::$_default_creator_id = NULL;
+	}
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php

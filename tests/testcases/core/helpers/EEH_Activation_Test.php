@@ -71,7 +71,12 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @since 4.6.0
 	 */
 	public function test_get_default_creator_id() {
-		//set some users
+		//clear out any previous users that may be lurking in teh system
+		foreach( get_users() as $wp_user ){
+			wp_delete_user( $wp_user->ID );
+		}
+		//set some users; and just make it interesting by having the first user NOT be an admin
+		$non_admin_users = $this->factory->user->create_many( 2 );
 		$users = $this->factory->user->create_many( 2 );
 		//make users administrators.
 		foreach ( $users as $user_id ) {
@@ -83,10 +88,33 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		}
 
 		//get all users so we know who is the first one that we should be expecting.
-		$users = get_users();
-		$expected_user = reset( $users );
-		$expected_id = $expected_user->ID;
+		$expected_id = reset( $users );
+		$this->assertEquals( EEH_Activation::get_default_creator_id(), $expected_id );
+	}
 
+	/**
+	 * Ensure getting default creator works as expected the 2nd time
+	 * @since 4.6.0
+	 */
+	public function test_get_default_creator_id__again() {
+		//clear out any previous users that may be lurking in teh system
+		foreach( get_users() as $wp_user ){
+			wp_delete_user( $wp_user->ID );
+		}
+		//set some users; and just make it interesting by having the first user NOT be an admin
+		$non_admin_users = $this->factory->user->create_many( 2 );
+		$users = $this->factory->user->create_many( 2 );
+		//make users administrators.
+		foreach ( $users as $user_id ) {
+			$user = $this->factory->user->get_object_by_id( $user_id );
+			//verify
+			$this->assertInstanceOf( 'WP_User', $user );
+			//add role
+			$user->add_role( 'administrator' );
+		}
+
+		//get all users so we know who is the first one that we should be expecting.
+		$expected_id = reset( $users );
 		$this->assertEquals( EEH_Activation::get_default_creator_id(), $expected_id );
 	}
 } //end class EEH_Activation_Test
