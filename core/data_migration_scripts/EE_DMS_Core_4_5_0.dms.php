@@ -525,15 +525,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	/**
-	 * Determines which user id as the default creator for EE model objects which
-	 * are getting migrated. Filterable
-	 * @return int
-	 */
-	public function get_default_creator_id(){
-		return apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
-	}
-
-	/**
 	 * insert_default_price_types
 	 *
 	 * @since 4.5.0
@@ -549,7 +540,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$price_types_exist = $wpdb->get_var( $SQL );
 
 			if ( ! $price_types_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_wp_user, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
 							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, $user_id, 0),
@@ -583,7 +574,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$prices_exist = $wpdb->get_var( $SQL );
 
 			if ( ! $prices_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_wp_user, PRC_order, PRC_deleted, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', '', 1, NULL, $user_id, 0, 0, 0);";
@@ -611,7 +602,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			$tickets_exist = $wpdb->get_var($SQL);
 
 			if ( ! $tickets_exist ) {
-				$user_id = $this->get_default_creator_id();
+				$user_id = EEH_Activation::get_default_creator_id();
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_wp_user, TKT_deleted ) VALUES
 					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, $user_id, 0);";
