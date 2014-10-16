@@ -61,6 +61,8 @@ class EE_Registration_Processor {
 	/**
 	 * 	manually_update_registration_status
 	 *
+	 * 	if the reg status has actually changed, this will update the value for the registration and trigger any notifications
+	 *
 	 * 	@access public
 	 * @param EE_Registration $registration
 	 * @param string 	$new_reg_status
@@ -149,7 +151,8 @@ class EE_Registration_Processor {
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param array 	$additional_details
+	 * @param array 	$additional_details - and array of details that can be utilized by other methods that hook into the filter here.
+	 * 			the existing values for this array are an attempt to describe the conditions that lead to the hookpoint being triggered
 	 * @return void
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
@@ -161,16 +164,14 @@ class EE_Registration_Processor {
 				array_merge(
 					// defaults
 					array(
-						'checkout_or_payment' => FALSE,
-						'manually_updated' 		=> FALSE,
-						'payment_updates' 		=> FALSE,
-						'status_updates' 			=> FALSE,
-						'finalized' 						=> FALSE,
-						'reg_steps' 						=> array(),
-						'old_txn_status' 				=> NULL,
-						'last_payment'				=> NULL,
-						'old_reg_status' 				=> NULL,
-						'new_reg_status' 			=> NULL
+						'checkout_or_payment' => FALSE, 	// whether this is being triggered as a result of the checkout or payment process
+						'manually_updated' 		=> FALSE, 	// whether this is being triggered as a result of updates made via the admin
+						'finalized' 						=> FALSE, 	// whether the finalize_registration step has been completed at this point
+						'reg_steps' 						=> array(), 	// the TXN->reg_steps array
+						'old_txn_status' 				=> NULL, 	// the TXN status at this point
+						'last_payment'				=> NULL,	// EE_Payment object if just made
+						'old_reg_status' 				=> NULL, 	// reg status prior to TXN update
+						'new_reg_status' 			=> NULL 	// reg status after TXN update
 					),
 					$additional_details
 				)
@@ -184,7 +185,7 @@ class EE_Registration_Processor {
 	 * sets reg status based either on passed param or on transaction status and event pre-approval setting
 	 *
 	 * @param \EE_Registration $registration
-	 * @param array 	$additional_details
+	 * @param array 	$additional_details - and array of details that can be passed along to trigger_registration_update_notifications()
 	 * @return bool
 	 */
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
