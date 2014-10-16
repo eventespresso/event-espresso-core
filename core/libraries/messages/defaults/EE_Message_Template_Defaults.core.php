@@ -268,7 +268,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 				'MTP_is_override' => 0,
 				'MTP_deleted' => 0,
 				'MTP_is_global' => 1,
-				'MTP_user_id' => get_current_user_id(),
+				'MTP_user_id' => EEH_Activation::get_default_creator_id(),
 				'MTP_is_active' => 1,
 				);
 
