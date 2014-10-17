@@ -39,6 +39,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment', 'event_espresso' );
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
+		define( 'PMT_INVOICE_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 	}
 
 
@@ -99,11 +100,11 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					$confirmation_text_input_name, 'page_extra_info'),
 			));
 		$form->add_subsections(
-			array( 'header1' => new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_display.template.php' )),
+			array( 'header2'=>new EE_Form_Section_HTML_From_Template( PMT_INVOICE_BASE_PATH . 'templates' . DS . 'invoice_settings_header_gateway.template.php' )),
 			$pdf_payee_input_name
 		);
 		$form->add_subsections(
-			array( 'header2'=>new EE_Form_Section_HTML_From_Template( 'payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php' )),
+			array( 'header1' => new EE_Form_Section_HTML_From_Template( PMT_INVOICE_BASE_PATH . 'templates' . DS . 'invoice_settings_header_display.template.php' )),
 			$confirmation_text_input_name
 		);
 		return $form;
