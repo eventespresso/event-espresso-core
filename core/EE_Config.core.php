@@ -2060,7 +2060,7 @@ class EE_Payment_Config extends EE_Config_Base {
 	/**
 	 * @var EE_Payment_Method[] $active_payment_methods
 	 */
-	public $active_payment_methods = NULL;
+	public $active_payment_methods = array();
 
 
 
