@@ -55,8 +55,6 @@ abstract class EED_Module extends EE_Configurable {
 	 */
 	public static function set_hooks() {}
 
-
-
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
 	 *
@@ -64,26 +62,6 @@ abstract class EED_Module extends EE_Configurable {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {}
-
-
-
-	/**
-	 * 	set_hooks - for hooking into EE Core, modules, etc, during Maintenance Mode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_M_mode() {}
-
-
-
-	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc, during Maintenance Mode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_admin_M_mode() {}
 
 
 
