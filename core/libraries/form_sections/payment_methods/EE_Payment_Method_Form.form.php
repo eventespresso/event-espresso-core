@@ -66,7 +66,9 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 				'required'=>TRUE
 			)
 		);
+		$options_array['exclude'][] = 'PMD_open_by_default';
 		$this->_layout_strategy = new EE_Admin_Two_Column_Layout();
+		$this->set_html_class( sanitize_key( __CLASS__ ) . ' form-table' );
 		parent::__construct($options_array);
 	}
 
