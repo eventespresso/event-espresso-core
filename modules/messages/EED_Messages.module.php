@@ -389,13 +389,9 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @param EE_Registration $registration
 	 * @param array $extra_details
-	 * @deprecated bool $from_admin - since 4.6.0
 	 * @return void
 	 */
-	public static function maybe_registration( EE_Registration $registration, $extra_details = array(), $from_admin = NULL ) {
-		if ( $from_admin !== NULL ) {
-			EE_Error::doing_it_wrong( __FILE__, sprintf(  __('The "%1$s" method param for "%1$s" is deprecated.', 'event_espresso'), '$from_admin', 'EED_Messages::maybe_registration()' ), '4.6.0' );
-		}
+	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 		self::_load_controller();
 		// make sure appropriate admin params are set for sending messages
 		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
