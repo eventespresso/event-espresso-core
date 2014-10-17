@@ -30,7 +30,7 @@ abstract class EE_PMT_Base{
 	 **
 	 * @var boolean
 	 */
-	protected $_requires_https = NULL;
+	protected $_requires_https = FALSE;
 
 	/**
 	 * @var EE_Gateway
@@ -87,7 +87,6 @@ abstract class EE_PMT_Base{
 	 * @return EE_PMT_Base
 	 */
 	function __construct($pm_instance = NULL) {
-
 		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
@@ -100,8 +99,6 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
-			// unless explicitly stated otherwise, ON-Site gateways require HTTPS
-			$this->_requires_https = $this->_requires_https === NULL && $this->_gateway instanceof EE_Onsite_Gateway ? TRUE : FALSE;
 		}
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
@@ -184,14 +181,14 @@ abstract class EE_PMT_Base{
 
 
 	/**
-	 * Gets the form for displaying to admins where they setup the payment method
+	 * Gets teh form for displaying to admins where they setup the payment method
 	 * @return EE_Payment_Method_Form
 	 */
-	function settings_form() {
-		if ( ! $this->_settings_form ) {
+	function settings_form(){
+		if( ! $this->_settings_form){
 			$this->_settings_form = $this->generate_new_settings_form();
 			$this->_settings_form->set_payment_method_type( $this );
-			$this->_settings_form->_construct_finalize( NULL, NULL );
+			$this->_settings_form->_construct_finalize(NULL, NULL );
 			//if we have already assigned a model object to this pmt, make
 			//sure its reflected in teh form we just generated
 			if($this->_pm_instance){
