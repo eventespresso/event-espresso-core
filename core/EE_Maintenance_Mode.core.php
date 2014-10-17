@@ -47,19 +47,20 @@ class EE_Maintenance_Mode {
 	 * the name of the option which stores the current level of maintenance mode
 	 */
 	const option_name_maintenance_mode = 'ee_maintenance_mode';
-   /**
+
+
+	/**
+	 *	@var 	int	$_real_level
+	 * 	@access 	private
+	 */
+	private $_real_level = 0;
+
+	/**
      * 	EE_Maintenance_Mode Object
      * 	@var EE_Maintenance_Mode $_instance
 	 * 	@access 	private
      */
 	private static $_instance = NULL;
-
-	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
 
 
 
@@ -112,8 +113,11 @@ class EE_Maintenance_Mode {
 	 * retrieves the maintenance mode option value from the db
 	 * @return int
 	 */
-	public function real_level(){
-		return get_option( self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance );
+	public function real_level() {
+		if ( empty( $this->_real_level )) {
+			$this->_real_level = get_option( self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance );
+		}
+		return $this->_real_level;
 	}
 
 	/**
@@ -135,16 +139,19 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		$real_maintenance_mode_level = $this->real_level();
 		//if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
-		if( ( ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) && //only on frontend or ajax requests
-			current_user_can('administrator') && //when the user is an admin
-			$real_maintenance_mode_level == EE_Maintenance_Mode::level_1_frontend_only_maintenance){//and we're in level 1
-			$maintenance_mode_level = EE_Maintenance_Mode::level_0_not_in_maintenance;
-		}else{
-			$maintenance_mode_level = $real_maintenance_mode_level;
+		if (
+			// M Mode is at level 1
+			$this->real_level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance
+			// and the request is from the frontend
+			&& ( ! is_admin() || EE_FRONT_AJAX )
+			// and the user is an admin
+			&& current_user_can( 'administrator' )
+		) {
+			// pretend maintenance mode is off
+			return EE_Maintenance_Mode::level_0_not_in_maintenance;
 		}
-		return $maintenance_mode_level;
+		return $this->real_level();
 	}
 
 	/**
@@ -178,15 +185,53 @@ class EE_Maintenance_Mode {
 
 
 	/**
-	 *    disable_frontend_for_maintenance
+	 *    admin_disabled_for_maintenance
 	 *
-	 *   returns TRUE if M-Mode is engaged and the current request is not for the admin
+	 *   returns TRUE if M-Mode is engaged and the current request is for the admin
 	 *
 	 * @access    public
 	 * @return    string
 	 */
-	public static function disable_frontend_for_maintenance() {
-		return ! is_admin() && EE_Maintenance_Mode::instance()->level() ? TRUE : FALSE;
+	public static function admin_disabled_for_maintenance() {
+		return ! EE_FRONT_AJAX && is_admin() && EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 *    frontend_disabled_for_maintenance
+	 *
+	 *   returns TRUE if M-Mode is engaged and the current request is NOT for the admin
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public static function frontend_disabled_for_maintenance() {
+		return EE_Maintenance_Mode::instance()->level() ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 *    access_denied
+	 *
+	 *   returns TRUE if current M-Mode level does NOT allow access for current request
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public static function access_denied() {
+		$real_level = EE_Maintenance_Mode::instance()->real_level();
+		if (
+			// totally blocked
+			$real_level === EE_Maintenance_Mode::level_2_complete_maintenance
+			// blocked on frontend for non-admins
+			|| $real_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance &&  ! ( is_admin() || EE_FRONT_AJAX )
+		) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
 	}
 
 
@@ -236,7 +281,7 @@ class EE_Maintenance_Mode {
 	 */
 	public function the_content( $the_content ) {
 		// check if M-mode is engaged and for EE shortcode
-		if ( $this->level() && strpos( $the_content, '[ESPRESSO_' )) {
+		if ( $this->level() && strpos( $the_content, '[ESPRESSO_' ) !== FALSE ) {
 			// this can eventually be moved to a template, or edited via admin. But for now...
 			$the_content = sprintf(
 				__( '%sMaintenance Mode%sEvent Registration has been temporarily closed while system maintenance is being performed. We\'re sorry for any inconveniences this may have caused. Please try back again later.%s', 'event_espresso' ),
