@@ -43,7 +43,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertEquals(EE_System::req_type_normal,$request_type);
 		//check that it detects an upgrade
 		$this->_pretend_espresso_db_update_is(array(
-			$this->_add_to_version(espresso_version(), '0.-1.0.0.0') => array(current_time('mysql'))
+			$this->_add_to_version(espresso_version(), '0.0.-1.0.0') => array(current_time('mysql'))
 		));
 		$request_type = EE_System::reset()->detect_req_type();
 		$this->assertEquals(EE_System::req_type_upgrade,$request_type);
@@ -206,111 +206,6 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 1 ] );
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
-	function test_detect_activation_or_upgrade__downgrade_upon_normal_request(){
-		$pretend_previous_version = $this->_add_to_version(espresso_version(),'0.1.0.0.0');
-		$this->_pretend_espresso_db_update_is(array(
-				 $pretend_previous_version => array(current_time('mysql'))
-				));
-		$this->assertEquals(EE_System::req_type_downgrade,EE_System::reset()->detect_req_type());
-		$current_activation_history = get_option('espresso_db_update');
-		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
-		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
-		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
-		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
-		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
-	}
-	/**
-	 * tests that we're detecting request types correctly on normal requests (ie, NOT an activation request)
-	 * A new install would only occur on a non-activation request because the site was previously in maintenance mode
-	 *
-	 */
-	function test_detect_req_type_given_activation_history__on_normal_requests(){
-		$activation_history = array();
-
-		//detect brand new activation BUT we're in maintenance mode, so it will be basically ignored
-		EE_Maintenance_Mode::instance()->set_maintenance_level( EE_Maintenance_Mode::level_2_complete_maintenance );
-		$this->assertEquals( EE_System::req_type_activation_but_not_installed, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.0.0.dev.000' ) );
-		EE_Maintenance_Mode::instance()->set_maintenance_level( EE_Maintenance_Mode::level_0_not_in_maintenance );
-
-		//detect brand new activation
-		$this->assertEquals( EE_System::req_type_new_activation, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.0.0.dev.000' ) );
-		$activation_history[ '1.0.0.dev.000'] = array( date( 'Y-m-d H:i:s' ) );
-
-		//detect upgrade to NEW version
-		$this->assertEquals( EE_System::req_type_upgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.2.0.dev.000' ) );
-		$activation_history[ '1.2.0.dev.000' ] = array( date( 'Y-m-d H:i:s', time() + 1 ) );
-
-		//detect normal request
-		$this->assertEquals( EE_System::req_type_normal, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.2.0.dev.000' ) );
-
-		//detect downgrade to NEW version
-		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.1.0.dev.000' ) );
-		$activation_history[ '1.1.0.dev.000' ] = array( date( 'Y-m-d H:i:s', time() + 2 ) );
-
-		//detect downgrade to KNOWN version
-		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.0.0.dev.000' ) );
-		$activation_history[ '1.0.0.dev.000' ][] =  date( 'Y-m-d H:i:s', time() + 3 ) ;
-
-		//detect upgrade to KNOWN version
-		$this->assertEquals( EE_System::req_type_upgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.1.0.dev.000' ) );
-		$activation_history[ '1.1.0.dev.000' ][] =  date( 'Y-m-d H:i:s', time() + 4 ) ;
-	}
-
-	/**
-	 * tests that we are detecting activations correctly even when the same version has
-	 * been activated multiple times
-	 */
-	function test_detect_req_type_given_activation_history__multiple_activations(){
-		$activation_history = array(
-			'3.1.36.5.P' => array( 'unknown-date' ),
-			'4.3.0.alpha.019' => array( '2014-06-09 18:10:35', ),
-			'4.6.0.dev.016' => array(
-				'2014-10-15 15:43:08',
-				'2014-10-15 18:16:41',
-				'2014-10-15 20:09:07'
-			),
-			'4.5.0.beta.020' => array(
-				'2014-10-15 16:52:35',
-			)
-
-		);
-		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, '', '4.5.0.beta.020' ) );
-	}
-	/**
-	 *
-	 */
-	function test_detect_req_type_given_activation_history__on_activation(){
-		$activation_history = array();
-		update_option( 'test_activation_indicator_option', TRUE );
-
-		//detect brand new activation
-		$this->assertEquals( EE_System::req_type_new_activation, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.0.0.dev.000' ) );
-		$activation_history[ '1.0.0.dev.000'] = array( date( 'Y-m-d H:i:s' ) );
-		update_option( 'test_activation_indicator_option', TRUE );
-
-		//detect upgrade to NEW version
-		$this->assertEquals( EE_System::req_type_upgrade, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.2.0.dev.000' ) );
-		$activation_history[ '1.2.0.dev.000' ] = array( date( 'Y-m-d H:i:s', time() + 1 ) );
-		update_option( 'test_activation_indicator_option', TRUE );
-
-		//detect reactivation request; WOULD be a normal request if the activation indicator weren't set
-		$this->assertEquals( EE_System::req_type_reactivation, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.2.0.dev.000' ) );
-
-		//detect downgrade to NEW version
-		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.1.0.dev.000' ) );
-		$activation_history[ '1.1.0.dev.000' ] = array( date( 'Y-m-d H:i:s', time() + 2 ) );
-		update_option( 'test_activation_indicator_option', TRUE );
-
-		//detect downgrade to KNOWN version
-		$this->assertEquals( EE_System::req_type_downgrade, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.0.0.dev.000' ) );
-		$activation_history[ '1.0.0.dev.000' ][] =  date( 'Y-m-d H:i:s', time() + 3 ) ;
-		update_option( 'test_activation_indicator_option', TRUE );
-
-		//detect upgrade to KNOWN version
-		$this->assertEquals( EE_System::req_type_upgrade, EE_System::detect_req_type_given_activation_history($activation_history, 'test_activation_indicator_option', '1.1.0.dev.000' ) );
-		$activation_history[ '1.1.0.dev.000' ][] =  date( 'Y-m-d H:i:s', time() + 4 ) ;
-		update_option( 'test_activation_indicator_option', TRUE );
-	}
 
 
 	/**
@@ -332,7 +227,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * @param string $version_amount_to_add eg "0.0.0.0.1"
 	 * @return string eg if given the mentioned inputs, would be "4.3.2.alpha.4";
 	 */
-	private function _add_to_version($version_string,$version_amount_to_add = '0.1.0.0.0'){
+	private function _add_to_version($version_string,$version_amount_to_add = '0.0.1'){
 		$version_parts = explode(".",$version_string);
 		$version_amount_to_add_parts = explode(".",$version_amount_to_add);
 		foreach($version_parts as $key => $version_part){
