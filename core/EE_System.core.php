@@ -950,10 +950,10 @@ final class EE_System {
 	public function load_controllers() {
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
-		if ( is_admin() && ! EE_FRONT_AJAX && EE_Maintenance_Mode::instance()->models_can_query() ) {
+		if ( ! EE_Maintenance_Mode::admin_disabled_for_maintenance() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( ! EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+		} else if ( ! EE_Maintenance_Mode::frontend_disabled_for_maintenance() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		} else {
