@@ -56,50 +56,27 @@ final class EE_Request_Handler {
 	 */
 	public $front_ajax = FALSE;
 
-	/**
-	 * 	whether current request is via AJAX from the admin of the site
-	 *	@var 	boolean
-	 * 	@access public
-	 */
-	public $admin_ajax = FALSE;
-
 
 
 	/**
 	 *    class constructor
 	 *
 	 * @access    public
+	 * @param WP_Query $wp
 	 * @return \EE_Request_Handler
 	 */
-	public function __construct() {
+	public function __construct( $wp = NULL ) {
+		//if somebody forgot to provide us with WP, that's ok because its global
+		if( ! $wp){
+			global $wp;
+		}
 		// grab request vars
 		$this->_params = $_REQUEST;
 		// AJAX ???
-		$this->ajax = EE_FRONT_AJAX || EE_ADMIN_AJAX ? TRUE : FALSE;
-		$this->front_ajax = EE_FRONT_AJAX;
-		$this->admin_ajax = EE_ADMIN_AJAX;
-		// analyse the incoming WP request
-		add_action( 'parse_request', array( $this, 'get_request' ), 1, 1 );
+		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
+		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
+		$this->set_request_vars( $wp );
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
-	}
-
-
-
-	/**
-	 *    _get_request
-	 *
-	 * @access public
-	 * @param WP $WP
-	 * @return void
-	 */
-	public function get_request( WP $WP ) {
-		//if somebody forgot to provide us with WP, that's ok because its global
-		if( ! $WP){
-			global $WP;
-		}
-		do_action( 'AHEE__EE_Request_Handler__get_request__start', $WP );
-		$this->set_request_vars( $WP );
-		do_action( 'AHEE__EE_Request_Handler__get_request__complete', $WP );
 	}
 
 
@@ -108,7 +85,7 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return void
 	 */
 	public function set_request_vars( $wp = NULL ) {
@@ -130,7 +107,7 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = NULL ) {
@@ -158,7 +135,7 @@ final class EE_Request_Handler {
 	 *    get_post_name_from_request
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return string
 	 */
 	public function get_post_name_from_request( $wp = NULL ) {
@@ -176,7 +153,7 @@ final class EE_Request_Handler {
 			$possible_post_name = basename( $wp->request );
 			if ( ! is_numeric( $possible_post_name )) {
 				global $wpdb;
-				$SQL = "SELECT ID from $wpdb->posts WHERE post_status='publish' AND post_name=%d";
+				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
 				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
@@ -185,7 +162,7 @@ final class EE_Request_Handler {
 		}
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			global $wpdb;
-			$SQL = "SELECT post_name from $wpdb->posts WHERE post_status='publish' AND ID=%d";
+			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
 			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
@@ -200,7 +177,7 @@ final class EE_Request_Handler {
 	 *    get_post_type_from_request
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return mixed
 	 */
 	public function get_post_type_from_request( $wp = NULL ) {
@@ -390,8 +367,9 @@ final class EE_Request_Handler {
 
 	/**
 	 * @param $item
+	 * @param $key
 	 */
-	function sanitize_text_field_for_array_walk( &$item ) {
+	function sanitize_text_field_for_array_walk( &$item, &$key ) {
 		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
