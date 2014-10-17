@@ -203,9 +203,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	get_reg_steps
-	 *
-	 * 		returns an array of basic reg step information needed for finding and loading that reg step
+	 *    get_reg_steps
 	 *
 	 * @access 	public
 	 * @return 	array
@@ -213,13 +211,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function get_reg_steps() {
 		$reg_steps = EE_Registry::instance()->CFG->registration->reg_steps;
 		if ( empty( $reg_steps )) {
-			/**
-			 * @type array $reg_steps list of reg steps to be loaded
-			 * @type string $reg_steps['file_path'] dir path to the folder that contains the reg step to be loaded
-			 * @type string $reg_steps['class_name'] class name of the reg step to be loaded
-			 * @type string $reg_steps['slug'] url and array key friendly version of the reg step name
-			 * @type string $reg_steps['has_hooks'] class has a "set_hooks" method for adding AJAX or other hooks
-			 */
 			$reg_steps = array(
 				10 => array(
 					'file_path' => SPCO_INC_PATH,
@@ -460,13 +451,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	private function _load_and_instantiate_reg_step( $reg_step= array(), $order = 0 ) {
-		/**
-		 * @type array $reg_step list of reg step params ( see: EED_Single_Page_Checkout::get_reg_steps() )
-		 * @type string $reg_step['file_path'] dir path to the folder that contains the reg step to be loaded
-		 * @type string $reg_step['class_name'] class name of the reg step to be loaded
-		 * @type string $reg_step['slug'] url and array key friendly version of the reg step name
-		 * @type string $reg_step['has_hooks'] class has a "set_hooks" method for adding AJAX or other hooks
-		 */
 		// we need a file_path, class_name, and slug to add a reg step
 		if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
 			// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
