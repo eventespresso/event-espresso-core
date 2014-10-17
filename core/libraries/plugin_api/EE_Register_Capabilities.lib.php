@@ -79,9 +79,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 */
 	public static function register_capabilities( $incoming_caps ) {
 		foreach ( self::$_registry as $ref => $caps_and_cap_map ) {
-			foreach($caps_and_cap_map['caps'] as $role => $caps ){
-				$incoming_caps[ $role ] = array_merge( $incoming_caps[ $role ], $caps );
-			}
+			$incoming_caps = array_merge_recursive( $incoming_caps, $caps_and_cap_map[ 'caps' ] );
 		}
 		return $incoming_caps;
 	}
