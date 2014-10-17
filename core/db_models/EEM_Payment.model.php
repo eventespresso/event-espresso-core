@@ -239,65 +239,6 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 
 
 
-
-	/**
-	 *	Applies $payment to its associated EE_Transaction. This should update
-	 *	its EE_Transaction's status and TXN_paid.
-	 *
-	 * @deprecated
-	 * 	@access		public
-	 * 	@param		EE_Payment $payment
-	 *	@return		EE_Transaction that gets updated.
-	 */
-	public function update_payment_transaction( $payment ) {
-		EE_Error::doing_it_wrong(
-			__FILE__,
-			sprintf( __('This method is deprecated.  The new method that replaces this functionality is "%1$s" found in "%2$s".', 'event_espresso'),
-				'EE_Transaction_Payments::calculate_total_payments_and_update_status()',
-				'/core/business/EE_Transaction_Payments.class.php'
-			),
-			'4.6.0'
-		);
-		/** @type EE_Payment $payment */
-		$payment = $this->ensure_is_obj( $payment );
-		$transaction = $payment->transaction();
-		if ( $transaction instanceof EE_Transaction ) {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			$transaction_payments->calculate_total_payments_and_update_status( $transaction );
-		}
-		return $transaction;
-	}
-	/**
-	 *	recalculate_total_payments_for_transaction
-	 *
-	 * @deprecated
-	 * 	@access		public
-	 * 	@param		$TXN_ID
-	 *	@param	string	$status_of_payments, one of EEM_Payment's statuses, like 'PAP' (Approved). By default, searches for approved payments
-	 *	@return 		mixed		array on success, FALSE on fail
-	 */
-	public function recalculate_total_payments_for_transaction( $TXN_ID = FALSE , $status_of_payments = EEM_Payment::status_id_approved) {
-		EE_Error::doing_it_wrong(
-			__FILE__,
-			sprintf( __('This method is deprecated.  The new method that replaces this functionality is "%1$s" found in "%2$s".', 'event_espresso'),
-				'EE_Transaction_Payments::recalculate_total_payments_for_transaction()',
-				'/core/business/EE_Transaction_Payments.class.php'
-			),
-			'4.6.0'
-		);
-		/** @type EE_Transaction $transaction */
-		$transaction = EEM_Transaction::instance()->ensure_is_obj( $TXN_ID );
-		/** @type EE_Payment $payment */
-		if ( $transaction instanceof EE_Transaction ) {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			return $transaction_payments->recalculate_total_payments_for_transaction( $transaction, $status_of_payments );
-		}
-		return FALSE;
-	}
-
-
 }
 // End of file EEM_Payment.model.php
 // Location: /includes/models/EEM_Payment.model.php
