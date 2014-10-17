@@ -26,16 +26,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Form_Section_HTML_From_Template extends EE_Form_Section_HTML{
-
-	/**
-	 * @param string $template_file
-	 * @param array  $args
-	 * @param array  $options_array
-	 */
 	public function __construct($template_file,$args = array(), $options_array = array()) {
 		EE_Registry::instance()->load_helper('Template');
 		$html = EEH_Template::locate_template( $template_file, $args );
-		parent::__construct( $html, $options_array );
+
+//		echo " filepath:$template_file html $html";
+		parent::__construct($html, $options_array);
 	}
 }
 
