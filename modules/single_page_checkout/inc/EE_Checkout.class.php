@@ -251,10 +251,8 @@ class EE_Checkout {
 	/**
 	 *    set_current_step
 	 *
-	 * 	if given a valid reg step slug, will find that reg step within the reg_steps array and set that as the current step
-	 *
 	 * @access    public
-	 * @param string $current_step - the reg step slug
+	 * @param string $current_step
 	 * @return    void
 	 */
 	public function set_current_step( $current_step ) {
