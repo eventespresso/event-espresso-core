@@ -1021,6 +1021,7 @@ final class EE_System {
 					do_action( 'AHEE__EE_System__core_loaded_maintenance_mode_active', $maintenance_mode );
 				}
 				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
 			case EE_Maintenance_Mode::level_2_complete_maintenance :
 				do_action( 'AHEE__EE_System__core_loaded_maintenance_mode_active', $maintenance_mode );
 				break;
