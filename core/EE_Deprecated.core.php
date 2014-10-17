@@ -71,38 +71,6 @@ add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifi
 
 
 
-/**
- * ee_deprecated_get_request
- *
- * @param WP $WP
- */
-function ee_deprecated_get_request( WP $WP ) {
-
-	$deprecated_actions = array(
-		'AHEE__EE_Front_Controller__get_request__start' => 'AHEE__EE_Request_Handler__get_request__start',
-		'AHEE__EE_Front_Controller__get_request__complete' => 'AHEE__EE_Request_Handler__get_request__complete'
-	);
-	foreach ( $deprecated_actions as $deprecated_action => $new_hook ) {
-		if ( has_action( $deprecated_action )) {
-			EE_Error::doing_it_wrong(
-				$deprecated_action,
-				sprintf(
-					__( 'This action is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new action: %1$s"%3$s" found in "%2$s"', 'event_espresso' ),
-					'<br />',
-					'/core/EE_Request_Handler.core.php',
-					$new_hook
-				),
-				'4.6.0'
-			);
-			do_action( $deprecated_action, $WP );
-		}
-	}
-}
-add_action( 'parse_request', 'ee_deprecated_get_request', 1, 1 );
-
-
-
-
 /** Messages System deprecated things **/
 
 
