@@ -132,7 +132,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( 'Registration', '', '', 'ee_read_others_checkins' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( 'Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
 			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( 'Ticket', '', '', 'ee_read_others_default_tickets' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_payment_methods', array( 'Payment_Method', '', '', 'ee_edit_others_payment_methods' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_payment_method', array( 'Payment_Method', '', '', 'ee_read_others_payment_methods' ) ),
 
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( 'Event', 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
@@ -143,7 +143,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( 'Ticket', '', 'ee_delete_others_default_tickets', '' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( 'Question', '', '', 'delete_system_questions' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( 'Question_Group', '', '', 'delete_system_question_groups' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_payment_methods', array( 'Payment_Method', '', 'ee_delete_others_payment_methods', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_payment_method', array( 'Payment_Method', '', 'ee_delete_others_payment_methods', '' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -165,6 +165,12 @@ final class EE_Capabilities extends EE_Base {
 			//basic access
 				'ee_read_ee',
 			//gateways
+			/**
+			 * note that with payment method capabilities, although we've implemented
+			 * capability mapping which will be used for accessing payment methods owned by
+			 * other users.  This is not fully implemented yet in the payment method ui.
+			 * Currently only the "plural" caps are in active use.
+			**/
 				'ee_manage_gateways',
 				'ee_read_payment_method',
 				'ee_read_payment_methods',
