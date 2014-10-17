@@ -54,7 +54,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 		}
 
 		//some preliminary sanitization and setting to the $_registry property
-
 		self::$_registry[$cap_reference] = array(
 			'caps' => isset( $setup_args['capabilities'] ) && is_array( $setup_args['capabilities'] ) ? $setup_args['capabilities'] : array(),
 			'cap_maps' => isset( $setup_args['capability_maps'] ) ? $setup_args['capability_maps'] : array()
@@ -74,13 +73,15 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter.
 	 * Takes care of registering additional capabilities to the caps map.   Note, that this also on the initial registration ensures that new capabilities are added to existing roles.
 	 *
-	 * @param array $caps The original caps map.
+	 * @param array $caps_and_cap_map The original caps map.
 	 *
 	 * @return array merged in new caps.
 	 */
 	public static function register_capabilities( $incoming_caps ) {
-		foreach ( self::$_registry as $ref => $caps ) {
-			$incoming_caps = array_merge( $caps, $caps['caps'] );
+		foreach ( self::$_registry as $ref => $caps_and_cap_map ) {
+			foreach($caps_and_cap_map['caps'] as $role => $caps ){
+				$incoming_caps[ $role ] = array_merge( $incoming_caps[ $role ], $caps );
+			}
 		}
 		return $incoming_caps;
 	}

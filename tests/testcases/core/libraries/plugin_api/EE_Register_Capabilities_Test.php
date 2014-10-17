@@ -72,6 +72,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		//register capabilities
 		EE_Register_Capabilities::register( 'Test_Capabilities', $this->_valid_capabilities );
 
+		//use filters to access some of the data normally private to EE_Capabilities because we want to verify it
 		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_remember_what_caps_were_beforehand' ), 1 );
 		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok' ), 100 );
 
@@ -101,9 +102,10 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		foreach( $this->_caps_before_registering_new_ones as $role => $caps ){
 			$this->assertArrayHasKey( $role, $incoming_cap_map );
 			foreach( $caps as $cap ){
-				$this->assertArrayHasKey( $cap, $incoming_cap_map[ $role ] );
+				$this->assertArrayContains( $cap, $incoming_cap_map[ $role ] );
 			}
 		}
+		return $incoming_cap_map;
 	}
 
 
@@ -114,6 +116,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 	 */
 	public function _remember_what_caps_were_beforehand( $incoming_cap_map ){
 		$this->_caps_before_registering_new_ones = $incoming_cap_map;
+		return $incoming_cap_map;
 	}
 
 	function test_registering_capabilities_too_early() {
@@ -164,5 +167,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_write', 'testing_edit', $event->ID() ) );
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_read', 'testing_read', $other_event->ID() ) );
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_write', 'testing_edit', $other_event->ID() ) );
+	}
+
+	public function tearDown(){
+		EE_Register_Capabilities::deregister('Test_Capabilities');
 	}
 }
