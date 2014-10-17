@@ -79,6 +79,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * @return array merged in new caps.
 	 */
 	public static function register_capabilities( $incoming_caps ) {
+
 		foreach ( self::$_registry as $ref => $caps ) {
 			$incoming_caps = array_merge( $caps, $caps['caps'] );
 		}

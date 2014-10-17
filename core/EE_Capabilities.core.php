@@ -180,14 +180,6 @@ final class EE_Capabilities extends EE_Base {
 				'ee_edit_others_payment_methods',
 				'ee_delete_payment_method',
 				'ee_delete_payment_methods',
-				//specific payment methods
-				'ee_payment_method_aim',
-				'ee_payment_method_invoice',
-				'ee_payment_method_bank',
-				'ee_payment_method_check',
-				'ee_payment_method_mijireh',
-				'ee_payment_method_paypal_pro',
-				'ee_payment_method_paypal_standard',
 			//events
 				'ee_publish_events',
 				'ee_read_private_events',
@@ -316,8 +308,12 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_event_type',
 				)
 			);
-
-		return apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $payment_method_type_obj ){
+			$caps['administrator'][] = $payment_method_type_obj->cap_name();
+		}
+		$caps =  apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
+		return $caps;
 	}
 
 
@@ -336,7 +332,6 @@ final class EE_Capabilities extends EE_Base {
 	public function init_role_caps( $reset = FALSE, $custom_map = array() ) {
 
 		$caps_map = empty( $custom_map ) ? $this->_caps_map : $custom_map;
-
 
 		//first let's determine if these caps have already been set.
 		$caps_set_before = get_option( self::option_name, array() );
