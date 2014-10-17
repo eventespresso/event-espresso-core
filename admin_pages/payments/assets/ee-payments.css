@@ -41,14 +41,22 @@ img.ee_media_image{
 	width: 100%;
 }
 
-.form-table input {
-	/*width: 100%;*/
-}
-
 #espresso_Invoice_payment_settings table.form-table {
 	border: 1px #f1f1f1 solid;
 }
 
 #espresso_Invoice_payment_settings table.form-table td, #espresso_Invoice_payment_settings table.form-table th {
 	padding-left: 20px
+}
+
+.ee_payment_method_form .ee-checkbox-label-after + .ee-checkbox-label-after  {
+	margin-left:2em;
+}
+.ee_payment_method_form .ee_media_url  {
+	max-width : 90%;
+	margin-right: 1em;
+}
+
+.ee_payment_method_form .ee-checkbox-html-label  {
+	display: none;
 }
