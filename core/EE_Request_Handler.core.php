@@ -97,9 +97,9 @@ final class EE_Request_Handler {
 		if( ! $WP){
 			global $WP;
 		}
-		do_action( 'AHEE__EE_Request_Handler__get_request__start', $WP, $this );
+		do_action( 'AHEE__EE_Request_Handler__get_request__start', $WP );
 		$this->set_request_vars( $WP );
-		do_action( 'AHEE__EE_Request_Handler__get_request__complete', $WP, $this );
+		do_action( 'AHEE__EE_Request_Handler__get_request__complete', $WP );
 	}
 
 
