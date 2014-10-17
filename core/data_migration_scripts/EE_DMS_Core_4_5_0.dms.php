@@ -516,7 +516,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	 * @return int
 	 */
 	public function get_default_creator_id(){
-		return apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
+		return get_current_user_id();
 	}
 
 
