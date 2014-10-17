@@ -278,31 +278,44 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
-		EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all_active());
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
 		$tabs = array();
-		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ){
 			//we don't want to show admin-only PMTs for now
-			if($pmt_obj instanceof EE_PMT_Admin_Only){
+			if ( $pmt_obj instanceof EE_PMT_Admin_Only ) {
 				continue;
 			}
 			//check for any active pms of that type
-			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
-			if( ! $payment_method ){
-				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_obj->system_name(),'PMD_name'=>$pmt_obj->pretty_name(),'PMD_admin_name'=>$pmt_obj->pretty_name(), 'PMD_slug'=>sanitize_key($pmt_obj->system_name())));
+			$payment_method = EEM_Payment_Method::instance()->get_one_of_type( $pmt_obj->system_name() );
+			if ( ! $payment_method instanceof EE_Payment_Method ) {
+				$payment_method = EE_Payment_Method::new_instance(
+					array(
+						'PMD_type'					=> $pmt_obj->system_name(),
+						'PMD_name'				=> $pmt_obj->pretty_name(),
+						'PMD_admin_name' 	=> $pmt_obj->pretty_name(),
+						'PMD_slug'					=> sanitize_key( $pmt_obj->system_name() )
+					)
+				);
 			}
+			$this->verify_button_url( $payment_method );
 			add_meta_box(
-						'espresso_' . $payment_method->slug() . '_payment_settings', //html id
-					sprintf(__('%s Settings', 'event_espresso'),$payment_method->admin_name()), //title
-					array($this, 'payment_method_settings_meta_box'), //callback
-					NULL, //post type
-					'normal',//context
-					'default',//priority
-					array(//callback args
-						'payment_method'=>$payment_method,
-					));
+				// html id
+				'espresso_' . $payment_method->slug() . '_payment_settings',
+				//title
+				sprintf( __('%s Settings', 'event_espresso'), $payment_method->admin_name() ),
+				//callback
+				array( $this, 'payment_method_settings_meta_box' ),
+				//post type
+				NULL,
+				//context
+				'normal',
+				//priority
+				'default',
+				//callback args
+				array( 'payment_method'=>$payment_method )
+			);
 			//setup for tabbed content
 			$tabs[$payment_method->slug()] = array(
 				'label' => $payment_method->admin_name(),
@@ -315,7 +328,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//decide which payment method tab to open first, as dictated by the request's 'payment_method'
 		if( isset($this->_req_data['payment_method']) ){
 			//if they provided the current payment method, use it
-			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
+			$payment_method_slug = sanitize_key( $this->_req_data['payment_method'] );
 			//double-check it exists
 			if( ! EEM_Payment_Method::instance()->get_one(array(array('PMD_slug'=>$payment_method_slug)))){
 				$payment_method_slug = FALSE;
@@ -323,7 +336,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}else{
 			$payment_method_slug = FALSE;
 		}
-		//if that didn't work or wasn't provided, find another way to select the currrent pm
+		//if that didn't work or wasn't provided, find another way to select the current pm
 		if( ! $payment_method_slug){
 			//otherwise, look for an active one
 			$an_active_pm = EEM_Payment_Method::instance()->get_one_active('CART');
@@ -343,6 +356,26 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 * Verifies the button url of the passed payment method has a valid button url. If not, it reset it to the default.
+	 * @param EE_Payment_Method $payment_method
+	 */
+	function verify_button_url( EE_Payment_Method $payment_method ) {
+		EE_Registry::instance()->load_helper( 'URL' );
+		try {
+			//send an HTTP HEAD request to quickly verify the file exists
+			if ( ! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
+				EE_Error::add_attention( sprintf( __( "Payment Method '%s' had a broken button url, so it was reset", "event_espresso" ), $payment_method->name() ) );
+				$payment_method->save( array( 'PMD_button_url' => $payment_method->type_obj()->default_button_url() ) );
+			}
+		}
+		catch ( EE_Error $e ) {
+			$payment_method->set_active( FALSE );
+		}
+	}
+
+
+
+	/**
 	 * 	payment_method_settings_meta_box
 	 *
 	 * @param NULL  $post_obj_which_is_null is an object containing the current post (as a $post object)
@@ -350,7 +383,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 *                                      the value at 'args' has key 'payment_method', as set within _payment_methods_list
 	 * @throws EE_Error
 	 */
-	public function payment_method_settings_meta_box( $post_obj_which_is_null, $metabox){
+	public function payment_method_settings_meta_box( $post_obj_which_is_null, $metabox ) {
 		$payment_method = isset($metabox['args']) && isset($metabox['args']['payment_method']) ? $metabox['args']['payment_method'] : NULL;
 		if ( ! $payment_method instanceof EE_Payment_Method ){
 			throw new EE_Error(sprintf(__("Payment method metabox setup incorrectly. No Payment method object was supplied", "event_espresso")));
@@ -364,6 +397,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if($form->form_data_present_in($this->_req_data)){
 			$form->receive_form_submission($this->_req_data);
 		}
+		$template_args['form'] = $form;
 		//if the payment method really exists show its form, otherwise the activation template
 		if( $payment_method->ID() && $payment_method->active()){
 			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'update_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
