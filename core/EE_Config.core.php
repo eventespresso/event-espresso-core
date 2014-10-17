@@ -39,51 +39,54 @@ final class EE_Config {
 	public $addons;
 
 	/**
-	 *
 	 * @var EE_Admin_Config
 	 */
 	public $admin;
 
 	/**
-	 *
 	 * @var EE_Core_Config
 	 */
 	public $core;
 
 	/**
-	 *
 	 * @var EE_Currency_Config
 	 */
 	public $currency;
 
 	/**
-	 *
+	 * @deprecated
+	 * @var EE_Gateway_Config
+	 */
+	public $gateway;
+
+	/**
 	 * @var EE_Organization_Config
 	 */
 	public $organization;
 
 	/**
-	 *
 	 * @var EE_Registration_Config
 	 */
 	public $registration;
 
 	/**
-	 *
+	 * @var EE_Payment_Config
+	 */
+	public $payment_settings;
+
+	/**
 	 * @var EE_Template_Config
 	 */
 	public $template_settings;
 
 	/**
 	 * Holds EE environment values.
-	 *
 	 * @var EE_Environment_Config
 	 */
 	public $environment;
 
 	/**
 	 * settings pertaining to Google maps
-	 *
 	 * @var EE_Map_Config
 	 */
 	public $map_settings;
@@ -176,7 +179,8 @@ final class EE_Config {
 		//  register shortcodes and modules
 		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ));
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ), 10 );
+		add_action( 'AHEE__EE_System__core_loaded_maintenance_mode_active', array( $this, 'initialize_shortcodes_and_modules' ), 10 , 1 );
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// shutdown
@@ -214,8 +218,10 @@ final class EE_Config {
 		$this->currency = new EE_Currency_Config();
 		$this->registration = new EE_Registration_Config();
 		$this->admin = new EE_Admin_Config();
+		$this->payment_settings = new EE_Payment_Config();
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
 		$this->environment = new EE_Environment_Config();
 		$this->addons = new stdClass();
 		// set _module_route_map
@@ -745,9 +751,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -755,23 +758,21 @@ final class EE_Config {
 	}
 
 
-	/**
-	 * 	initialize_shortcodes_and_modules
-	 * 	meaning they can start adding their hooks to get stuff done
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function initialize_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
-		// allow shortcodes to set hooks for the rest of the system
-		$this->_initialize_shortcodes();
-		// allow modules to set hooks for the rest of the system
-		$this->_initialize_modules();
-	}
 
+	/**
+	 *    initialize_shortcodes_and_modules
+	 *    meaning they can start adding their hooks to get stuff done
+	 *
+	 * @access    public
+	 * @param int $maintenance_mode
+	 * @return    void
+	 */
+	public function initialize_shortcodes_and_modules( $maintenance_mode = 0 ) {
+		// allow shortcodes to set hooks for the rest of the system
+		$this->_initialize_shortcodes( $maintenance_mode );
+		// allow modules to set hooks for the rest of the system
+		$this->_initialize_modules( $maintenance_mode );
+	}
 
 
 
@@ -782,12 +783,8 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
-		//only init widgets on admin pages when not in complete maintenance, and
-		//on frontend when not in any maintenance mode
-		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
+		// only init widgets on admin pages when not in complete maintenance, and on frontend when not in any maintenance mode
+		if ( ! EE_Maintenance_Mode::access_denied() ) {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
@@ -1031,14 +1028,29 @@ final class EE_Config {
 	}
 
 
+
 	/**
-	 * 	_initialize_shortcodes
-	 * 	allow shortcodes to set hooks for the rest of the system
+	 *    _initialize_shortcodes
+	 *    allow shortcodes to set hooks for the rest of the system
 	 *
-	 * 	@access private
-	 * 	@return void
+	 * @access private
+	 * @param int $maintenance_mode
+	 * @return void
 	 */
-	private function _initialize_shortcodes() {
+	private function _initialize_shortcodes( $maintenance_mode = 0 ) {
+		// set callbacks
+		switch ( $maintenance_mode ) {
+			case EE_Maintenance_Mode::level_0_not_in_maintenance :
+				$admin_callback = 'set_hooks_admin';
+				$frontend_callback = 'set_hooks';
+				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
+				$admin_callback = 'set_hooks_admin_M_mode';
+				$frontend_callback = 'set_hooks_M_mode';
+				break;
+			default :
+				return;
+		}
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
 			// add class prefix
@@ -1047,14 +1059,14 @@ final class EE_Config {
 			// which set hooks ?
 			if ( is_admin() ) {
 				// fire immediately
-				call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
+				call_user_func( array( $shortcode_class, $admin_callback ));
 			} else {
 				// delay until other systems are online
-				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
+				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class, $frontend_callback ));
 				// convert classname to UPPERCASE and create WP shortcode.
 				$shortcode_tag = strtoupper( $shortcode );
 				// but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
-				if ( ! shortcode_exists( $shortcode_tag )) {
+				if ( ! $maintenance_mode && ! shortcode_exists( $shortcode_tag )) {
 					// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
 					add_shortcode( $shortcode_tag, array( $shortcode_class, 'fallback_shortcode_processor' ));
 				}
@@ -1069,19 +1081,33 @@ final class EE_Config {
 	 * 	allow modules to set hooks for the rest of the system
 	 *
 	 * 	@access private
+	 * @param int $maintenance_mode
 	 * 	@return void
 	 */
-	private function _initialize_modules() {
+	private function _initialize_modules( $maintenance_mode = 0 ) {
+		// set callbacks
+		switch ( $maintenance_mode ) {
+			case EE_Maintenance_Mode::level_0_not_in_maintenance :
+				$admin_callback = 'set_hooks_admin';
+				$frontend_callback = 'set_hooks';
+				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
+				$admin_callback = 'set_hooks_admin_M_mode';
+				$frontend_callback = 'set_hooks_M_mode';
+				break;
+			default :
+				return;
+		}
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->modules as $module_class => $module_path ) {
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
 				// fire immediately
-				call_user_func( array( $module_class, 'set_hooks_admin' ));
+				call_user_func( array( $module_class, $admin_callback ));
 			} else {
 				// delay until other systems are online
-				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $module_class,'set_hooks' ));
+				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $module_class, $frontend_callback ));
 			}
 		}
 	}
@@ -1717,27 +1743,8 @@ class EE_Currency_Config extends EE_Config_Base {
 	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
-
-		// get country code from organization settings or use default
-		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
-		// but override if requested
-		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		EE_Registry::instance()->load_helper( 'Activation' );
-		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
-			// retrieve the country settings from the db, just in case they have been customized
-			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
-			if ( $country instanceof EE_Country ) {
-				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
-				$this->name = $country->currency_name_single();	// Dollar
-				$this->plural = $country->currency_name_plural(); 	// Dollars
-				$this->sign =  $country->currency_sign(); 			// currency sign: $
-				$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
-				$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
-				$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-				$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-			}
-		}
+		// when core is ready, we'll allow the currency to be changed
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'setup_currency' ));
 		// fallback to hardcoded defaults, in case the above failed
 		if ( empty( $this->code )) {
 			// set default currency settings
@@ -1751,6 +1758,56 @@ class EE_Currency_Config extends EE_Config_Base {
 			$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 		}
 	}
+
+
+	/**
+	 * 	setup_currency
+	 *
+	 * @access    public
+	 * @param string $CNT_ISO
+	 */
+	public function setup_currency( $CNT_ISO = '' ) {
+		// check that db is accessible
+		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
+			return NULL;
+		}
+		// if a currency is not already setup OR we have a new incoming country code
+		if ( empty( $this->code ) || ! empty( $CNT_ISO )) {
+			if ( empty( $CNT_ISO )) {
+				// get country code from organization settings or use default
+				$CNT_ISO = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'USD';
+			}
+			// retrieve the country settings from the db, just in case they have been customized
+			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
+			if ( $country instanceof EE_Country ) {
+				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
+				$this->name = $country->currency_name_single();	// Dollar
+				$this->plural = $country->currency_name_plural(); 	// Dollars
+				$this->sign =  $country->currency_sign(); 			// currency sign: $
+				$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
+				$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
+				$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+				$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+			} else {
+				// set default currency settings
+				$this->code = 'USD'; 	// currency code: USD, CAD, EUR
+				$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+				$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+				$this->sign =  '$'; 	// currency sign: $
+				$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+				$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+				$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+				$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+			}
+		}
+
+	}
+
+
+
+
+
+
 }
 
 
@@ -1984,6 +2041,61 @@ class EE_Admin_Config extends EE_Config_Base {
 	}
 
 
+
+
+}
+
+
+
+/**
+ * Class for defining what's in the EE_Config relating to payment methods and payment settings
+ */
+class EE_Payment_Config extends EE_Config_Base {
+
+	/**
+	 * @var string $default_payment_method
+	 */
+	public $default_payment_method = NULL;
+
+	/**
+	 * @var EE_Payment_Method[] $active_payment_methods
+	 */
+	public $active_payment_methods = NULL;
+
+
+
+	/**
+	 *    class constructor
+	 *
+	 * @access    public
+	 * @return \EE_Payment_Config
+	 */
+	public function __construct() {
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'set_active_payment_methods' ));
+	}
+
+
+
+	/**
+	 * @param string $default_payment_method
+	 */
+	public function set_default_payment_method( $default_payment_method ) {
+		$this->default_payment_method = $default_payment_method;
+	}
+
+
+
+	/**
+	 * @param EE_Payment_Method[] $active_payment_methods
+	 */
+	public function set_active_payment_methods( $active_payment_methods = array() ) {
+		// if nothing is set OR we have a new incoming set of PMs
+		if ( empty( $this->active_payment_methods ) || ! empty( $active_payment_methods )) {
+			EE_Registry::instance()->load_model( 'Payment_Method' );
+			$active_payment_methods = EEM_Payment_Method::instance()->get_all_active();
+		}
+		$this->active_payment_methods = $active_payment_methods;
+	}
 
 
 }
@@ -2282,6 +2394,39 @@ class EE_Environment_Config extends EE_Config_Base {
 	 */
 	public function recheck_values() {
 		$this->_set_php_values();
+	}
+}
+
+
+
+
+/**
+ * stores payment gateway info
+ * @deprecated
+ */
+class EE_Gateway_Config extends EE_Config_Base{
+	/**
+	 * Array with keys that are payment gateways slugs, and values are arrays
+	 * with any config info the gateway wants to store
+	 * @var array
+	 */
+	public $payment_settings;
+	/**
+	 * Where keys are gateway slugs, and values are booleans indicating whether or not
+	 * the gateway is stored in the uploads directory
+	 * @var array
+	 */
+	public $active_gateways;
+
+
+
+	/**
+	 *	class constructor
+	 * @deprecated
+	 */
+	public function __construct(){
+		$this->payment_settings = array();
+		$this->active_gateways = array('Invoice'=>false);
 	}
 }
 
