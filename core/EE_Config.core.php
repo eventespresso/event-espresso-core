@@ -1846,7 +1846,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
-		$this->show_pending_payment_options = FALSE;
+		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
