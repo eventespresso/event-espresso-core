@@ -15,13 +15,11 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 		}else{
 			$image_src = '';
 		}
-		$html = '<div class="ee_media_uploader_area">';
-		$html .= '<input class="ee_media_url ' . $input->html_class() . '" type="text" name="' . $input->html_name() . '" size="34" value="' . $input->raw_value_in_form() . '">';
-		$html .= '<a href="#" class="ee_media_upload" title="' .  __( 'Click to Choose a New Image', 'event_espresso' ) . '"><img src="' . admin_url('images/media-button-image.gif') . '" alt="' .  __( 'Add Image Button', 'event_espresso' ) . '"></a>';
-		$html .= '<h4>' .  __( 'Existing Image', 'event_espresso' ) . '</h4>';
-		$html .= '<img class="ee_media_image" src="' . $image_src . '" />';
-		$html .= '</div>';
-		return $html;
+		return "<span class='ee_media_uploader_area'>".
+					"<input class='ee_media_url {$input->html_class()}' type='text' name='{$input->html_name()}' size='34' value='{$input->raw_value_in_form()}'>".
+					"<a href='#' class='ee_media_upload'><img src='".admin_url('images/media-button-image.gif')."' alt='Add an Image'></a>".
+					"<img class='ee_media_image' src='$image_src' />".
+				"</span>";
 	}
 	/**
 	 * Its important this media only get enqueued AFTER init, but before the footer... where the
