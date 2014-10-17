@@ -141,6 +141,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 
 	/**
 	 *
+	 * @group current
 	 */
 	public function test_update__keeps_model_objs_in_sync(){
 		$att1 = EE_Attendee::new_instance( array( 'ATT_fname' => 'one' ) );

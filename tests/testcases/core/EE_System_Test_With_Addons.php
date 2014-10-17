@@ -64,6 +64,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * tests that we're correctly detecting activation or upgrades in registered
 	 * addons.
 	 * @group agg
+	 * @group current
 	 */
 	function test_detect_activations_or_upgrades__new_install(){
 		global $wp_actions;
