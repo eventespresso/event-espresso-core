@@ -29,48 +29,6 @@ abstract class EES_Shortcode extends EE_Base {
 	 */
 	protected $_attributes = array();
 
-
-
-	/**
-	 * 	set_hooks - for hooking into EE Core, modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks() {}
-
-
-
-	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_admin() {}
-
-
-
-	/**
-	 * 	set_hooks - for hooking into EE Core, modules, etc, during Maintenance Mode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_M_mode() {}
-
-
-
-	/**
-	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc, during Maintenance Mode
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function set_hooks_admin_M_mode() {}
-
-
-
 	/**
 	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
 	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
