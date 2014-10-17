@@ -86,20 +86,17 @@ final class EE_System {
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( ! self::$_instance instanceof  EE_System ) {
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_System )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
-
-
-
 	/**
 	 * resets the instance and returns it
 	 * @return EE_System
 	 */
 	public static function reset(){
-		self::instance()->reset_req_type();
+		self::$_instance->_req_type = NULL;
 		//we need to reset the migration manager in order for it to detect DMSs properly
 		EE_Data_Migration_Manager::reset();
 		//make sure none of the old hooks are left hanging around
@@ -107,16 +104,6 @@ final class EE_System {
 		self::instance()->detect_activations_or_upgrades();
 		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
-	}
-
-
-
-	/**
-	 * resets req_type to NULL
-	 * @return void
-	 */
-	public function reset_req_type(){
-		$this->_req_type = NULL;
 	}
 
 
@@ -163,6 +150,7 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		require_once EE_CORE . 'EE_Deprecated.core.php';
+
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// when an ee addon is activated, we want to call the core hook(s) again
@@ -176,6 +164,7 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
@@ -723,8 +712,6 @@ final class EE_System {
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			EE_Registry::instance()->load_core( 'Log' );
 		}
-		// load EE_Request_Handler
-		EE_Registry::instance()->load_core( 'Request_Handler' );
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
@@ -950,15 +937,12 @@ final class EE_System {
 	public function load_controllers() {
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
-		if ( is_admin() && ! EE_FRONT_AJAX && EE_Maintenance_Mode::instance()->models_can_query() ) {
-			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( ! EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
 			EE_Registry::instance()->load_core( 'Front_Controller' );
-		} else {
-			// todo:  ???
-			// M-mode == 2 || AJAX ?
+		} else if ( ! EE_FRONT_AJAX ) {
+			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
+			EE_Registry::instance()->load_core( 'Admin' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );
 	}
@@ -974,19 +958,9 @@ final class EE_System {
 	* @return void
 	*/
 	public function core_loaded_and_ready() {
-		do_action( 'AHEE__EE_System__core_loaded_always' );
-		$maintenance_mode = EE_Maintenance_Mode::instance()->level();
-		switch ( $maintenance_mode ) {
-			case EE_Maintenance_Mode::level_0_not_in_maintenance :
-				do_action( 'AHEE__EE_System__core_loaded_and_ready' );
-				break;
-			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
-			case EE_Maintenance_Mode::level_2_complete_maintenance :
-				do_action( 'AHEE__EE_System__core_loaded_maintenance_mode_active', $maintenance_mode );
-				break;
-			default :
-		}
+		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
 		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
 		EE_Registry::instance()->load_core( 'Session' );
 	}
 
@@ -1001,6 +975,31 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
+//		EEM_Change_Log::instance()->show_next_x_db_queries();
+//		$logs = EEM_Change_Log::instance()->get_all(array(array(
+//			'OR'=>array(
+//				'Payment.Payment_Method.PMD_ID'=>2,
+//				'Payment_Method.PMD_ID'=>2),
+//			'LOG_ID'=>15
+//		),'limit'=>10));
+//		d($logs);
+//		EEM_Change_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
+
+
+//		EEM_Answer::instance()->show_next_x_db_queries();
+//		EEM_Answer::instance()->get_all(array(array(
+//			'Question.Question_Group.QSG_ID'=>1
+//		)));
+
+
+//		EEM_Event::instance()->show_next_x_db_queries();
+//		EEM_Event::instance()->get_all();
+		//should produce no errors
+
+//		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
+		//should produce no error
+//		die;
+//		EEM_Price::instance()->get_all(array('order_by'=>array('PRC_ID'=>'asc','Price_Type.PRT_ID'=>'asc')));die;
 		do_action( 'AHEE__EE_System__initialize' );
 
 	}
@@ -1017,6 +1016,22 @@ final class EE_System {
 	*/
 	public function initialize_last() {
 		do_action( 'AHEE__EE_System__initialize_last' );
+	}
+
+
+
+
+	/**
+	* set_hooks_for_shortcodes_modules_and_addons
+	*
+	* this is the best place for other systems to set callbacks for hooking into other parts of EE
+	* this happens at the very beginning of the wp_loaded hookpoint
+	*
+	* @access public
+	* @return void
+	*/
+	public function set_hooks_for_shortcodes_modules_and_addons() {
+//		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
 	}
 
 
