@@ -401,8 +401,7 @@ class EED_Messages  extends EED_Module {
 		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 			return; //no messages sent please.
 		}
-		// next let's only send out notifications if a registration was just created OR if the registration status was actually updated
-		// if $extra_details['finalized'] is_numeric() it indicates that finalization has started but is not yet complete, because the value is a timestamp, and nto a boolean
+		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
 		if ( ! is_numeric( $extra_details['finalized'] ) || $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
 			return;
 		}
