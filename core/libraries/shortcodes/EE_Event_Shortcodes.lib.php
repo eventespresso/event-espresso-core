@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Event_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Event_Shortcodes lists all shortcodes related to event specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Event_Shortcodes lists all shortcodes related to event specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Event_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -53,8 +53,8 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
-			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event.', 'event_espresso'),
-			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso')
+			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event if you have it set via custom field in your event, otherwise it will use the Facebook URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_facebook</code> and the value as your facebook url.', 'event_espresso'),
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso')
 			);
 	}
 
@@ -68,7 +68,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			return '';
 
 		switch ( $shortcode ) {
-			
+
 			case '[EVENT_ID]' :
 				return $event->ID();
 				break;
@@ -118,11 +118,13 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_FACEBOOK_URL]' :
-				return $this->_data->get_post_meta('event_facebook', true );
+				$facebook_url = $this->_data->get_post_meta('event_facebook', true );
+				return empty( $facebook_url ) ? EE_Registry::instance()->CFG->organization->facebook : $facebook_url;
 				break;
 
 			case '[EVENT_TWITTER_URL]' :
-				return $this->_data->get_post_meta('event_twitter', true);
+				$twitter_url = $this->_data->get_post_meta('event_twitter', true);
+				return empty( $twitter_url ) ? EE_Registry::instance()->CFG->organization->twitter : $twitter_url;
 				break;
 
 			case '[EVENT_AUTHOR_EMAIL]' :
@@ -140,7 +142,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	/**
 	 * returns the link to the event
 	 * @param  boolean $full_link if TRUE (default) we return the html for the name of the event linked to the event.  Otherwise we just return the url of the event.
-	 * @return string             
+	 * @return string
 	 */
 	private function _get_event_link( $event, $full_link = TRUE ) {
 		$url = get_permalink($event->ID());
