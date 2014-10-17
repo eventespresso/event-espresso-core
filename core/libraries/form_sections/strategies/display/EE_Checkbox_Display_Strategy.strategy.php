@@ -52,7 +52,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	public function display_label(){
-		return '<div id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . '" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</div>';
+		return '<div id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . ' ee-checkbox-html-label" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</div>';
 	}
 
 }
