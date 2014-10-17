@@ -24,6 +24,9 @@
 class EEH_Activation {
 
 
+	private static $_default_creator_id = null;
+
+
 	/**
 	 * 	system_initialization
 	 * 	ensures the EE configuration settings are loaded with at least default options set
@@ -61,6 +64,8 @@ class EEH_Activation {
 		EEH_Activation::create_no_ticket_prices_array();
 		//also initialize payment settings, which is a side-effect of calling
 		EE_Registry::instance()->CAP->init_caps();
+
+		EEH_Activation::validate_messages_system();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -315,6 +320,11 @@ class EEH_Activation {
 	 */
 	public static function get_default_creator_id() {
 		global $wpdb;
+
+		if ( ! empty( self::$_default_creator_id ) ) {
+			return self::$_default_creator_id;
+		}/**/
+
 		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
 
 		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
@@ -324,11 +334,12 @@ class EEH_Activation {
 		}
 
 		$capabilities_key = $wpdb->prefix . 'capabilities';
-		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id DESC LIMIT 1, 1", '%' . $role_to_check . '%' );
+		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1", '%' . $role_to_check . '%' );
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
 		 if ( $user_id && intval( $user_id ) ) {
-		 	return intval( $user_id );
+		 	self::$_default_creator_id =  intval( $user_id );
+		 	return self::$_default_creator_id;
 		 } else {
 		 	return NULL;
 		 }
@@ -622,7 +633,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 1,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -637,7 +648,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 2,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -652,7 +663,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 3,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -667,7 +678,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 4,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -682,7 +693,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 5,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -697,7 +708,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 6,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -712,7 +723,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 7,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -727,7 +738,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 8,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -742,7 +753,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 9,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -757,7 +768,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 10,
 									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
+									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
 						break;
@@ -1092,6 +1103,7 @@ class EEH_Activation {
 
 		//all done! let's update the active_messengers.
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
 
