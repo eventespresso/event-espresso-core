@@ -165,7 +165,6 @@ final class EE_System {
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 
-
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
@@ -433,17 +432,20 @@ final class EE_System {
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
 				//just record that it was activated, but don't install anything
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
@@ -455,12 +457,13 @@ final class EE_System {
 					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
 				}
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_do_setup_validations( $request_type );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
+				$this->_do_setup_validations( $request_type );
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -576,6 +579,26 @@ final class EE_System {
 
 
 	/**
+	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
+	 *
+	 * @since  4.3.1
+	 *
+	 * @param int $request_type What request type this is.  The paramater is included so that any future validations added to here can be restricted to only certain request types.
+	 *
+	 * @return void
+	 */
+	private function _do_setup_validations( $request_type ) {
+		if ( $request_type !== EE_System::req_type_new_activation ) {
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
+		}
+		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
+	}
+
+
+
+
+
+	/**
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
@@ -586,29 +609,26 @@ final class EE_System {
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
 	 *                            but still know if this is a new install or not
-	 * @return int one of the constants on EE_System::req_type_
+	 * @return int one of the consts on EE_System::req_type_
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
+
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
+			$this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,'ee_espresso_activation',espresso_version());
 		}
 		return $this->_req_type;
 	}
-
-
-
 	/**
 	 * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin
-	 * was just activated to (for core that will always be espresso_version())
+	 * was just activated to (for core that will alwasy be espreso_version())
 	 * @param array $activation_history_for_addon the option's value which stores the activation history for this ee plugin.
 	 * for core that's 'espresso_db_update'
 	 * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
 	 * @param string $version_to_upgrade_to the version that was just upgraded to (for core that will be espresso_version())
-	 * @return int one of the constants on EE_System::req_type_*
+	 * @return int one of the consts on EE_System::req_type_*
 	 */
-	public static function detect_req_type_given_activation_history( $activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to ){
-		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
+	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			//ok check if this is a new install while in MM...
@@ -625,35 +645,17 @@ final class EE_System {
 				//it exists, so this isn't a completely new install
 				//check if this version already in that list of previously installed versions
 				if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
-					//it a version we haven't seen before
-					if( $version_is_higher === 1 ){
-						$req_type = EE_System::req_type_upgrade;
-					}else{
-						$req_type = EE_System::req_type_downgrade;
-					}
+					//its a new version!
+					$req_type = EE_System::req_type_upgrade;
 					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
 					if( get_option( $activation_indicator_option_name, FALSE ) ){
-						if ( $version_is_higher === -1 ){
-							$req_type = EE_System::req_type_downgrade;
-						}elseif( $version_is_higher === 0 ){
-							//we've seen this version before, but it's an activation. must be a reactivation
-							$req_type = EE_System::req_type_reactivation;
-						}else{//$version_is_higher === 1
-							$req_type = EE_System::req_type_upgrade;
-						}
+						$req_type = EE_System::req_type_reactivation;
 						delete_option( $activation_indicator_option_name );
 					} else {
-						//we've seen this version before and the activation indicate doesn't show it was just activated
-						if ( $version_is_higher === -1 ){
-							$req_type = EE_System::req_type_downgrade;
-						}elseif( $version_is_higher === 0 ){
-							//we've seen this version before and it's not an activation. its normal request
-							$req_type = EE_System::req_type_normal;
-						}else{//$version_is_higher === 1
-							$req_type = EE_System::req_type_upgrade;
-						}
+						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
+						$req_type = EE_System::req_type_normal;
 					}
 				}
 			} else {
@@ -663,45 +665,8 @@ final class EE_System {
 
 			}
 		}
+//		echo "req type for ".$activation_indicator_option_name." was $req_type";
 		return $req_type;
-	}
-
-
-
-	/**
-	 * Detects if the $version_to_upgrade_to is higher than the most recent version in
-	 * the $activation_history_for_addon
-	 * @param array $activation_history_for_addon (keys are versions, values are arrays of times activated,
-	 * sometimes containing 'unknown-date'
-	 * @param string $version_to_upgrade_to (current version)
-	 * @return int results of version_compare( $version_to_upgrade_to, $most_recently_active_version ).
-	 *	ie, -1 if $version_to_upgrade_to is LOWER (downgrade);
-	 *		0 if $version_to_upgrade_to MATCHES (reactivation or normal request);
-	 *		1 if $version_to_upgrade_to is HIGHER (upgrade) ;
-	 */
-	protected static function _new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to ){
-		//find the most recently-activated version
-		$most_recently_active_version_activation = '1970-01-01 00:00:00';
-		$most_recently_active_version = '0.0.0.dev.000';
-		if( is_array( $activation_history_for_addon ) ){
-			foreach( $activation_history_for_addon as $version => $times_activated ){
-				//check there is a record of when this version was activated. Otherwise,
-				//mark it as unknown
-				if( ! $times_activated ){
-					$times_activated = array( 'unknown-date');
-				}
-				if( is_string( $times_activated ) ){
-					$times_activated = array( $times_activated );
-				}
-				foreach( $times_activated as $an_activation ){
-					if( $an_activation > $most_recently_active_version_activation  ){
-						$most_recently_active_version = $version;
-						$most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
-					}
-				}
-			}
-		}
-		return version_compare( $version_to_upgrade_to, $most_recently_active_version );
 	}
 
 
