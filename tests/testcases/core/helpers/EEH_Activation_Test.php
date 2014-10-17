@@ -62,4 +62,31 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$this->assertTrue( isset( $active_messengers['html'] ) );
 	}
+
+
+
+
+	/**
+	 * Ensure getting default creator works as expected
+	 * @since 4.6.0
+	 */
+	public function test_get_default_creator_id() {
+		//set some users
+		$users = $this->factory->user->create_many( 2 );
+		//make users administrators.
+		foreach ( $users as $user_id ) {
+			$user = $this->factory->user->get_object_by_id( $user_id );
+			//verify
+			$this->assertInstanceOf( 'WP_User', $user );
+			//add role
+			$user->add_role( 'administrator' );
+		}
+
+		//get all users so we know who is the first one that we should be expecting.
+		$users = get_users();
+		$expected_user = reset( $users );
+		$expected_id = $expected_user->ID;
+
+		$this->assertEquals( EEH_Activation::get_default_creator_id(), $expected_id );
+	}
 } //end class EEH_Activation_Test
