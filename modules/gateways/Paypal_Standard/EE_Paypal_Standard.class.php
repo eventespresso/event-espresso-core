@@ -365,12 +365,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			foreach($total_line_item->get_items() as $line_item){
 				$this->addField('item_name_' . $item_num,
 						substr(
-								sprintf(
+								rawurlencode(
+										sprintf(
 										__( '%s for %s', 'event_espresso' ),
 										$line_item->name() ,
 										$line_item->ticket_event_name() ),
 								0,
-								127 ) );
+								127 ) ) );
 				$this->addField('amount_' . $item_num, $line_item->unit_price());
 				$this->addField('quantity_' . $item_num, $line_item->quantity());
 				$item_num++;
