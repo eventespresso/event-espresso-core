@@ -308,6 +308,20 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_event_type',
 				)
 			);
+		/* add dynamic caps from payment methods
+		 * at the time of writing, october 20 2014, these are the caps added:
+		 * ee_payment_method_admin_only
+		 * ee_payment_method_aim
+		 * ee_payment_method_bank
+		 * ee_payment_method_check
+		 * ee_payment_method_invoice
+		 * ee_payment_method_mijireh
+		 * ee_payment_method_paypal_pro
+		 * ee_payment_method_paypal_standard
+		 * Any other payment methods added to core or via addons will also get
+		 * their related capability automatically added too, so long as they are
+		 * registered properly using EE_Register_Payment_Method::register()
+		 */
 		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $payment_method_type_obj ){
 			$caps['administrator'][] = $payment_method_type_obj->cap_name();
