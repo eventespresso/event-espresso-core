@@ -180,6 +180,14 @@ abstract class EE_Addon extends EE_Configurable {
 			$this->initialize_default_data();
 			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array('slug' => $this->name(), 'version' => $this->version()));
+			/* make sure core's data is a-ok
+			 * (at the time of writing, we especially want to verify all the caps are present
+			 * because payment method type capabilities are added dynamically, and it's
+			 * possible this addon added a payment method. But it's also possible
+			 * other data needs to be verified)
+			 */
+			EE_Registry::instance()->load_helper('Activation');
+			EEH_Activation::initialize_db_content();
 		}
 	}
 
