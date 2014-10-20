@@ -145,7 +145,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
-		
+
 		// is the event expired ?
 		$template_args['event_is_expired'] = self::$_event->is_expired();
 		if ( $template_args['event_is_expired'] ) {
@@ -171,12 +171,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+			'order_by' => array( 'TKT_required' => 'DESC', 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
 		));
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
-			
+
 		// redirecting to another site for registration ??
 		$external_url = self::$_event->external_url() !== NULL || self::$_event->external_url() !== '' ? self::$_event->external_url() : FALSE;
 		// set up the form (but not for the admin)

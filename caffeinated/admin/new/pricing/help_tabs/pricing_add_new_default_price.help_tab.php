@@ -5,7 +5,7 @@
 <p>
 <ul>
 <li>
-<strong><?php _e('Type', 'event_espresso'); ?><br />
+<strong><?php _e('Type', 'event_espresso'); ?></strong><br />
 <?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax.', 'event_espresso'); ?>
 </li>
 <li>

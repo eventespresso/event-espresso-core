@@ -2,11 +2,6 @@
 /**
  * This is the template for the html messenger and receipt message type main content field.
  */
-
-//figure out what to use for payment instructions that is dependent on whether the corresponding value is existent in invoice settings from an old install.
-$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
-$invoice_settings = isset( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-$payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 ?>
 <div class="print_button_div">
 	<form method="post" action="[DISPLAY_PDF_URL]" >
@@ -21,17 +16,13 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 			<td id="logo-dv">
 				[INVOICE_LOGO]
 				<div class="vcard" id="company-address">
-					<div class="fn org"><strong>[COMPANY]</strong></div>
+					<div class="fn org"><strong>[INVOICE_PAYEE_NAME]</strong></div>
 					<div class="adr">
-						<div class="street-address">[CO_ADD1][CO_ADD2]
-						</div>
-						<!-- street-address -->
-						<div class="locality">[CO_CITY], [CO_STATE]</div>
-						<div id="company-postcode"><span class="postal-code">[CO_ZIP]</span></div>
+						[INVOICE_PAYEE_ADDRESS]
 					</div>
 					<!-- adr -->
-					<div class="email">[CO_EMAIL]</div>
-					<div class="vat">[CO_TAX_NUMBER_*]</div>
+					<div class="email">[INVOICE_PAYEE_EMAIL]</div>
+					<div class="vat">[INVOICE_PAYEE_TAX_NUMBER_*]</div>
 				</div>
 			</td>
 			<td>
@@ -72,7 +63,6 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 
 	<div class="payment-dv">
 		<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
-		<p><?php echo $payment_instructions; ?></p>
 		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
@@ -86,7 +76,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 			</thead>
 			<tbody>
 				<tr><td colspan="6">[PAYMENT_LIST_*]</td></tr>
-				<tr class="item"><td class='aln-cntr' colspan="6">[TOTAL_OWING_*]</td></tr>
+				<tr class="item"><td class='aln-cntr' colspan="6">[OWING_STATUS_MESSAGE_*]</td></tr>
 			</tbody>
 			<tfoot>
 				<tr class='total_tr'><td colspan="4">&nbsp;</td>

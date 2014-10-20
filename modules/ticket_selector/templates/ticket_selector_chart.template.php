@@ -14,10 +14,11 @@
 
 $row = 1;
 $ticket_count = count( $tickets );
+$required_ticket_sold_out = FALSE;
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
 		//	d( $ticket );
-		$max = $ticket->max();
+		$max =$ticket->max();
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
@@ -30,6 +31,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 			// and if the ticket is required, then make sure that min qty is at least 1
 			$min = $ticket->required() ? max( $min, 1 ) : $min;
+		} else {
+			// set flag if ticket is required
+			$required_ticket_sold_out = $ticket->required() ? TRUE : $required_ticket_sold_out;
 		}
 
 		$ticket_price = $ticket->get_ticket_total_with_taxes();
@@ -41,7 +45,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		}
 		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
 
-		$tkt_status = $ticket->ticket_status();
+		$tkt_status = $required_ticket_sold_out ? EE_Ticket::sold_out : $ticket->ticket_status();
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
