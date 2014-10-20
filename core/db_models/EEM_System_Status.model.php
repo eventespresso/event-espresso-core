@@ -6,7 +6,7 @@
 class EEM_System_Status{
 
 	// private instance of the EEM_System_Status object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 
 

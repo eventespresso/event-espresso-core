@@ -26,7 +26,7 @@ class EEM_Answer extends EEM_Base {
 	 * private instance of the EEM_Answer object
 	 * @type EEM_Answer
 	 */
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 * Mapping from system question ids to attendee field names
@@ -46,38 +46,10 @@ class EEM_Answer extends EEM_Base {
 
 
 
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Answer object
-	 *
-	 *		@access public
-	 *		@return \EEM_Answer
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Answer already exists
-		if ( ! self::$_instance instanceof EEM_Answer ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Answer
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-
-
 	/**
 	 * 	constructor
 	 */
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('Answer','event_espresso');
 		$this->plural_item = __('Answers','event_espresso');
 		$this->_tables = array(
@@ -95,7 +67,7 @@ class EEM_Answer extends EEM_Base {
 			'Question'=>new EE_Belongs_To_Relation()
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

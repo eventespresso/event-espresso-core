@@ -34,7 +34,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * private instance of the Event object
 	 * @var EEM_Event
 	 */
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 
 
@@ -57,16 +57,6 @@ class EEM_Event  extends EEM_CPT_Base{
 		// EEM_Event object
 		return self::$_instance;
 	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Event
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
 
 
 	/**

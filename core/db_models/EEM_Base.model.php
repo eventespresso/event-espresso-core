@@ -350,6 +350,37 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+	/**
+	 *		This function is a singleton method used to instantiate the Espresso_model object
+	 *
+	 *		@access public
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 *		@return static (as in the concrete child class)
+	 */
+	public static function instance( $timezone = NULL ){
+
+		// check if instance of Espresso_model already exists
+		if ( ! static::$_instance instanceof static) {
+			// instantiate Espresso_model
+			static::$_instance = new static( $timezone );
+		}
+
+		//we might have a timezone set, let set_timezone decide what to do with it
+		static::$_instance->set_timezone( $timezone );
+
+		// Espresso_model object
+		return static::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return static
+	 */
+	public static function reset(  $timezone = NULL ){
+		static::$_instance = NULL;
+		return self::instance( $timezone );
+	}
+
 
 
 	/**

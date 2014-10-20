@@ -26,7 +26,7 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
@@ -51,7 +51,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 *		@access protected
 	 *		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		$this->_tables = array(
@@ -95,40 +95,13 @@ class EEM_Attendee extends EEM_CPT_Base {
 		);
 		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
-		parent::__construct();
+		parent::__construct( $timezone );
 
 	}
 	public function get_all_wpdb_results($query_params){
 		return $this->_get_all_wpdb_results($query_params);
 	}
 
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Attendee
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 
 	/**
 	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)

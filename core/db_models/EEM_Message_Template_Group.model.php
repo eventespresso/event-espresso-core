@@ -28,37 +28,11 @@ require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Message_Template_Group object
-	private static $_instance = NULL;
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Message_Template_Group object
-	 *
-	 *		@access public
-	 *		@return EEM_Question instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Message_Template_Group already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Message_Template_Group object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_MEssage_Template_Group
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
+	protected static $_instance = NULL;
 
 
 
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Message Template Group', 'event_espresso');
 		$this->plural_item = __('Message Template Groups', 'event_espresso');
 		$this->_tables = array(
@@ -83,7 +57,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'Event' => new EE_HABTM_Relation('Event_Message_Template')
 			);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
