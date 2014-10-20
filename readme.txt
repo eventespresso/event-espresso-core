@@ -70,8 +70,6 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 6. Contact List
 7. In-app Documentation
 8. Customizable Country Settings
-9. Multiple Attendee Registration
-10. Accurate Attendee Manager
 
 == Installation ==
 
