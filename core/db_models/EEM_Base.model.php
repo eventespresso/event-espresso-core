@@ -34,7 +34,27 @@ abstract class EEM_Base extends EE_Base{
 	 * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
 	 * @var boolean
 	 */
-	private $_values_already_prepared_by_model_object = false;
+	private $_values_already_prepared_by_model_object = 0;
+
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we assume
+	 * the data is just like form input that needs to have the model fields'
+	 * prepare_for_set and prepare_for_use_in_db called on it
+	 */
+	const not_prepared_by_model_object = 0;
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we
+	 * assume this value is coming from a model object and doesn't need to have
+	 * prepare_for_set called on it, just prepare_for_use_in_db is used
+	 */
+	const prepared_by_model_object = 1;
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we assume
+	 * the values are already to be used in the database (ie no processing is done
+	 * on them by the model's fields)
+	 */
+	const prepared_for_use_in_db = 2;
+
 
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
@@ -1459,8 +1479,16 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _prepare_value_for_use_in_db($value, $field){
 		if($field && $field instanceof EE_Model_Field_Base){
-			$value = $this->_values_already_prepared_by_model_object ? $value : $field->prepare_for_set($value);
-			return $field->prepare_for_use_in_db($value);
+			switch( $this->_values_already_prepared_by_model_object ){
+				case self::not_prepared_by_model_object:
+					$value = $field->prepare_for_set($value);
+					//purposefully left out "return"
+				case self::prepared_by_model_object:
+					$value = $field->prepare_for_use_in_db($value);
+				case self::prepared_for_use_in_db:
+					//leave the value alone
+			}
+			return $value;
 		}else{
 			return $value;
 		}
@@ -2968,15 +2996,15 @@ abstract class EEM_Base extends EE_Base{
 	 * $EVT->assume_values_already_prepared_by_model_object(true);
 	 * $EVT->update(array('foo'=>'bar'),array(array('foo'=>'monkey')));
 	 * $EVT->assume_values_already_prepared_by_model_object($old_setting);
-	 * @param boolean $values_already_prepared
+	 * @param int $values_already_prepared like one of the constants on EEM_Base
 	 * @return void
 	 */
-	public function assume_values_already_prepared_by_model_object($values_already_prepared = false){
+	public function assume_values_already_prepared_by_model_object($values_already_prepared = self::not_prepared_by_model_object){
 		$this->_values_already_prepared_by_model_object = $values_already_prepared;
 	}
 	/**
 	 * Read comments for assume_values_already_prepared_by_model_object()
-	 * @return boolean
+	 * @return int
 	 */
 	public function get_assumption_concerning_values_already_prepared_by_model_object(){
 		return $this->_values_already_prepared_by_model_object;
