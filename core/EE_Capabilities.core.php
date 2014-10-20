@@ -169,7 +169,7 @@ final class EE_Capabilities extends EE_Base {
 			 * note that with payment method capabilities, although we've implemented
 			 * capability mapping which will be used for accessing payment methods owned by
 			 * other users.  This is not fully implemented yet in the payment method ui.
-			 * Currently only the "plural" caps are in active use.
+			 * Currently only the "plural" caps are in active use. (Specific payment method caps are in use as well).
 			**/
 				'ee_manage_gateways',
 				'ee_read_payment_method',
@@ -308,8 +308,26 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_event_type',
 				)
 			);
-
-		return apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
+		/* add dynamic caps from payment methods
+		 * at the time of writing, october 20 2014, these are the caps added:
+		 * ee_payment_method_admin_only
+		 * ee_payment_method_aim
+		 * ee_payment_method_bank
+		 * ee_payment_method_check
+		 * ee_payment_method_invoice
+		 * ee_payment_method_mijireh
+		 * ee_payment_method_paypal_pro
+		 * ee_payment_method_paypal_standard
+		 * Any other payment methods added to core or via addons will also get
+		 * their related capability automatically added too, so long as they are
+		 * registered properly using EE_Register_Payment_Method::register()
+		 */
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $payment_method_type_obj ){
+			$caps['administrator'][] = $payment_method_type_obj->cap_name();
+		}
+		$caps =  apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
+		return $caps;
 	}
 
 
@@ -328,7 +346,6 @@ final class EE_Capabilities extends EE_Base {
 	public function init_role_caps( $reset = FALSE, $custom_map = array() ) {
 
 		$caps_map = empty( $custom_map ) ? $this->_caps_map : $custom_map;
-
 
 		//first let's determine if these caps have already been set.
 		$caps_set_before = get_option( self::option_name, array() );
