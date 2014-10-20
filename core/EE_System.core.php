@@ -165,7 +165,6 @@ final class EE_System {
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 
-
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
