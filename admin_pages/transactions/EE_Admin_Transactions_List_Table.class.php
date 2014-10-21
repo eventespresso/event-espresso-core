@@ -287,7 +287,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				</a>
 			</li>';
 
-		if ( ! empty( $dl_invoice_lnk_url )) {
+		if ( $attendee instanceof EE_Attendee && ! empty( $dl_invoice_lnk_url )) {
 			$dl_invoice_lnk = '
 			<li>
 				<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
