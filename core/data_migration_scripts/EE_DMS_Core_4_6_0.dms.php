@@ -219,7 +219,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 				OBJ_type varchar(45) DEFAULT NULL,
 				LOG_type varchar(45) DEFAULT NULL,
 				LOG_message text,
-				LOG_wp_user_id int(11) DEFAULT NULL,
+				LOG_wp_user int(11) DEFAULT NULL,
 				PRIMARY KEY  (LOG_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
@@ -310,7 +310,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 				PMD_slug varchar(124) DEFAULT NULL,
 				PMD_order int(11) DEFAULT NULL,
 				PMD_debug_mode tinyint(1) NOT NULL DEFAULT '0',
-				PMD_wp_user_id int(11) NOT NULL DEFAULT '0',
+				PMD_wp_user int(11) NOT NULL DEFAULT '0',
 				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
 				PMD_button_url varchar(1012) DEFAULT NULL,
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
@@ -620,7 +620,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 									'PMD_admin_name'=>$nicename,
 									'PMD_admin_desc'=>$description,
 									'PMD_slug'=>$slug,
-									'PMD_wp_user_id'=>$user_id,
+									'PMD_wp_user'=>$user_id,
 									'PMD_scope'=>serialize(array('ADMIN')),
 								);
 						$success = $wpdb->insert(
@@ -632,7 +632,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 									'%s',//PMD_admin_name
 									'%s',//PMD_admin_desc
 									'%s',//PMD_slug
-									'%d',//PMD_wp_user_id
+									'%d',//PMD_wp_user
 									'%s',//PMD_scope
 								)
 								);

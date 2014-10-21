@@ -392,7 +392,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'PMD_type',//dont want them changing the type
 			'PMD_order',//or the order, for now
 			'PMD_slug',//or the slug (probably never)
-			'PMD_wp_user_id',//or the user's ID
+			'PMD_wp_user',//or the user's ID
 			'Currency'//or the currency, until the rest of EE supports simultaneous currencies
 		));
 
@@ -420,7 +420,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 							'PMD_name'=>$pm_type_obj->pretty_name(),
 							'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 							'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-							'PMD_wp_user_id'=>$current_user->ID
+							'PMD_wp_user'=>$current_user->ID
 						));
 					}
 					$payment_method->set_active();
