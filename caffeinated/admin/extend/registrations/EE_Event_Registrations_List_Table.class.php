@@ -164,8 +164,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column__Reg_Status( EE_Registration $item ) {
-    	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
-    }
+		return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
+	}
 
 
 
