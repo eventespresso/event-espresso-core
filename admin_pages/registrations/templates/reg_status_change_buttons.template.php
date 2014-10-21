@@ -4,7 +4,7 @@
 	<input type="hidden" name="return" value="view_registration">
 	<?php echo $nonce; ?>
 	<?php echo $status_buttons; ?>
-	<?php if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'registration_message_type' ) ) : ?>
+	<?php if ( $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'registration_message_type' ) ) : ?>
 		<div class="ee-attention">
 			<label for="txn_reg_status_change" class="last"><?php _e( 'Send Related Message?', 'event_espresso' );?></label>
 			<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
