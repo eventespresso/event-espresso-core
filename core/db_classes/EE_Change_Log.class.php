@@ -125,19 +125,19 @@ class EE_Change_Log extends EE_Base_Class{
 		$this->set('OBJ_ID', $OBJ_ID);
 	}
 	/**
-	 * Gets wp_user_id
+	 * Gets wp_user
 	 * @return int
 	 */
-	function wp_user_id() {
-		return $this->get('LOG_wp_user_id');
+	function wp_user() {
+		return $this->get('LOG_wp_user');
 	}
 
 	/**
-	 * Sets wp_user_id
+	 * Sets wp_user
 	 * @param int $wp_user_id
 	 */
-	function set_wp_user_id($wp_user_id) {
-		$this->set('LOG_wp_user_id', $wp_user_id);
+	function set_wp_user($wp_user_id) {
+		$this->set('LOG_wp_user', $wp_user_id);
 	}
 
 	/**
