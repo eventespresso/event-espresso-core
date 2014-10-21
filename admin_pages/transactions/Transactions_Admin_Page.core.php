@@ -718,7 +718,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$primary_att = $this->_transaction->primary_registration()->get_first_related('Attendee');
 
 		if ( ! $primary_att instanceof EE_Attendee ) {
-			throw new EE_Error(__("For some reason, the primary attendee cannot be retrieved for this transaction.  It is possible there is an error in the database", 'event_espresso') );
+			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this registration.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
 		}
 
 		$this->_template_args['ATT_ID'] = $primary_att->get('ATT_ID');
