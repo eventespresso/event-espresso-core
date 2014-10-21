@@ -466,7 +466,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 			</li>' : '';
 
-		 $resend_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration', $item->ID() ) ? '
+		 $resend_reg_lnk = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration', $item->ID() ) ? '
 			<li>
 			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<div class="dashicons dashicons-email-alt"></div>
