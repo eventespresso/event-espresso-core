@@ -457,6 +457,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_transaction_object();
 
+		$primary_registration = $this->_transaction->primary_registration();
+		$attendee = $primary_registration instanceof EE_Registration ? $primary_registration->attendee() : NULL;
+
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 
@@ -470,7 +473,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
+		if ( $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
 			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			$this->_template_args['send_payment_reminder_button'] = EEH_MSG_Template::is_mt_active( 'payment_reminder' )
 				 && $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code
@@ -513,7 +516,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;
-
 
 		// grab messages at the last second
 		$this->_template_args['notices'] = EE_Error::get_notices();
@@ -558,6 +560,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	function _txn_details_meta_box() {
 
 		$this->_set_transaction_object();
+		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
 
 		//get line items from transaction
 		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
@@ -697,7 +700,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		} else {
 			echo sprintf(
-				_( '%1$sFor some reason, there are no attendees registered for this transaction. It is possible there is an error in the database.%2$s', 'event_espresso' ),
+				__( '%1$sFor some reason, there are no attendees registered for this transaction. Likely the registration was abandoned in process.%2$s', 'event_espresso' ),
 				'<p class="important-notice">',
 				'</p>'
 			);
@@ -718,7 +721,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$primary_att = $this->_transaction->primary_registration()->get_first_related('Attendee');
 
 		if ( ! $primary_att instanceof EE_Attendee ) {
-			throw new EE_Error(__("For some reason, the primary attendee cannot be retrieved for this transaction.  It is possible there is an error in the database", 'event_espresso') );
+			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this registration.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
+			$primary_att = EEM_Attendee::instance()->create_default_object();
 		}
 
 		$this->_template_args['ATT_ID'] = $primary_att->get('ATT_ID');
