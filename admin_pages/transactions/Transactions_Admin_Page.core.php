@@ -517,7 +517,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;
 
-
 		// grab messages at the last second
 		$this->_template_args['notices'] = EE_Error::get_notices();
 		// path to template
@@ -561,6 +560,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	function _txn_details_meta_box() {
 
 		$this->_set_transaction_object();
+		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
 
 		//get line items from transaction
 		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
