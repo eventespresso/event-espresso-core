@@ -327,7 +327,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 	function column_ATT_email( EE_Registration $item ) {
 		$attendee = $item->get_first_related('Attendee');
-		return ! $attendee instanceof EE_Attendee ? __('Unable to get the email address, something is wrong with this data', 'event_espresso') : $attendee->email();
+		return ! $attendee instanceof EE_Attendee ? __('No attached contact record.', 'event_espresso') : $attendee->email();
 	}
 
 
@@ -440,7 +440,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
 	function column_actions(EE_Registration $item) {
 
-	        //Build row actions
+		$attendee = $item->attendee();
+
+		//Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
 
@@ -457,8 +459,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 			</li>' : '';
 
-	       $edit_lnk = EE_Registry::instance()->CAP->current_user_can('ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?'
-		<li>
+		$edit_lnk = EE_Registry::instance()->CAP->current_user_can('ee_edit_contacts', 'espresso_registrations_edit_attendee' ) &&  $attendee instanceof EE_Attendee ?'
+			<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '" class="tiny-text">
 				<div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>
 			</a>
