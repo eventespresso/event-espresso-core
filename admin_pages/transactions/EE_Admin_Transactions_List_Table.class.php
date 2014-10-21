@@ -220,7 +220,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
 			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
 		}
-		return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
+		return __('The transaction was abandoned or the registration process failed and so there is no contact record.', 'event_espresso');
 	}
 
 
@@ -234,7 +234,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		if ( !empty( $attendee ) )
 			return '<a href="mailto:' . $attendee->get('ATT_email') . '">' . $attendee->get('ATT_email') . '</a>';
 		else
-			return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
+			return __('The transaction was abandoned or the registration process failed and so there is no contact record.', 'event_espresso');
 	}
 
 
