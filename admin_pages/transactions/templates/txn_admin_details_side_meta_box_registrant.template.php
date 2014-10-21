@@ -3,6 +3,7 @@
 	<p class="clearfix">
 		<?php echo $no_attendee_message; ?>
 	</p>
+</div> <!-- end #admin-side-mbox-primary-registrant-dv -->
 <?php else : ?>
 	<p class="clearfix">
 		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Name', 'event_espresso' );?></span><?php echo $prime_reg_fname . ' ' . $prime_reg_lname;?>
@@ -23,7 +24,7 @@
 			<?php echo $prime_reg_zip;?>
 		</div>
 	</p>
-</div>
+</div> <!-- end #admin-side-mbox-primary-registrant-dv -->
 
 
 <p style="text-align:right;">
