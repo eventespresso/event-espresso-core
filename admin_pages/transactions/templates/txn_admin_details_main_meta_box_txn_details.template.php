@@ -81,7 +81,7 @@
 	<br class="clear"/>
 
 
-	<?php if ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) : ?>
+	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="ee-icon ee-icon-cash"></span><?php _e( 'Payment Details', 'event_espresso' );?>
