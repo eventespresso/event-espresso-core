@@ -271,6 +271,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
     function column_actions( EE_Transaction $item ){
 
     	$registration = $item->primary_registration();
+    	$attendee = $registration->attendee();
 
         //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
@@ -305,7 +306,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' )) {
 
-		$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ? '
+		$send_pay_lnk = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ? '
 			<li>
 				<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
 					<span class="dashicons dashicons-email-alt"></span>
