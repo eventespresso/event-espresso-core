@@ -2289,6 +2289,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes' );
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
+		// keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 
 		$template_path = $sidebar ?  EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
