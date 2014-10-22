@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -32,7 +32,7 @@ class EEM_Transaction extends EEM_Base {
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
 	 * but payment is pending. This is the state for transactions where payment is promised
-	 * from an offline gateway. 
+	 * from an offline gateway.
 	 */
 //	const open_status_code = 'TPN';
 
@@ -57,21 +57,21 @@ class EEM_Transaction extends EEM_Base {
 	 *  This is the same as complete, but site admins actually owe clients the moneys!
 	 */
 	const overpaid_status_code = 'TOP';
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
 	 *		@access protected
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return void
-	 */	
-	protected function __construct( $timezone ) {	
+	 */
+	protected function __construct( $timezone ) {
 		$this->singular_item = __('Transaction','event_espresso');
-		$this->plural_item = __('Transactions','event_espresso');		
+		$this->plural_item = __('Transactions','event_espresso');
 
 		$this->_tables = array(
 			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
@@ -106,18 +106,18 @@ class EEM_Transaction extends EEM_Base {
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 *		@return EEM_Transaction instance
-	 */	
+	 */
 	public static function instance( $timezone = NULL ){
-	
+
 		// check if instance of Espresso_model already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self( $timezone );
 		}
 
 		//we might have a timezone set, let set_timezone decide what to do with it
 		self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
 	}
@@ -125,20 +125,20 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-	
+
 
 
 
 
 	/**
 	*		retrieve  all transactions from db between two dates
-	* 
+	*
 	* 		@access		public
-	* 		@param		string		$start_date		
-	* 		@param		string		$end_date		
+	* 		@param		string		$start_date
+	* 		@param		string		$end_date
 	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) { 
+	*/
+	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) {
 
 		if ( ! $start_date ) {
 			$start_date = date('Y-m-d', strtotime(  '-10 year' ));
@@ -147,11 +147,11 @@ class EEM_Transaction extends EEM_Base {
 		if ( ! $end_date ) {
 			$end_date = date('Y-m-d');
 		}
-		
+
 		// make sure our timestamps start and end right at the boundries for each day
 		$start_date = date( 'Y-m-d', strtotime( $start_date )) . ' 00:00:00';
 		$end_date = date( 'Y-m-d', strtotime( $end_date )) . ' 23:59:59';
-		
+
 		// convert to timestamps
 		$start_date = strtotime( $start_date );
 		$end_date = strtotime( $end_date );
@@ -161,7 +161,7 @@ class EEM_Transaction extends EEM_Base {
 		$end_date = max( $start_date, $end_date );
 
 		global $wpdb;
-		
+
 		if ( $count ) {
 			$SQL =  'SELECT COUNT(txn.TXN_ID) ';
 		} else {
@@ -212,21 +212,21 @@ class EEM_Transaction extends EEM_Base {
 
 	/**
 	*		retrieve a single transaction from db via the TXN_ID
-	* 
+	*
 	* 		@access		public
-	* 		@param		string		$TXN_ID			
+	* 		@param		string		$TXN_ID
 	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) { 
+	*/
+	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) {
 
 		if ( ! $TXN_ID ) {
 			$msg = __( 'No Transaction ID was received.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		
+
 		global $wpdb;
-		
+
 		$SQL = 'SELECT reg.*, txn.*, att.*, evt.id, evt.event_name, evt.slug ';
 		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
@@ -285,23 +285,23 @@ class EEM_Transaction extends EEM_Base {
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
 
-
 		$SQL = 'SELECT post_name as event_name, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
 		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';
-		$SQL .= ' WHERE REG_date >= %d';
+		$SQL .= ' WHERE REG_count = 1';
+		$SQL .= ' AND REG_date >= %d';
 		$SQL .= ' GROUP BY event_name';
 		$SQL .= ' ORDER BY event_name';
 		$SQL .= ' LIMIT 0, 24';
-		
+
 		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
 
 	}
 
 
-	
-	
+
+
 
 
 	/**
@@ -318,15 +318,15 @@ class EEM_Transaction extends EEM_Base {
 		$transaction = $this->get_one(array(array('Registration.REG_url_link'=>$reg_url_link)));
 		return $transaction;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/**
-	 * Updates the provided EE_Transaction with all the applicable payments 
+	 * Updates the provided EE_Transaction with all the applicable payments
 	 * (or fetche the EE_Transaction from its ID)
 	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
 	 * @return boolean success
@@ -345,7 +345,7 @@ class EEM_Transaction extends EEM_Base {
 		} elseif( $total_paid < $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::incomplete_status_code);
 		}
-		
+
 		// update transaction and return results
 		return $transaction->save();
 	}
