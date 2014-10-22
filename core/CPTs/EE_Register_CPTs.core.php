@@ -67,7 +67,7 @@ class EE_Register_CPTs {
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 
 
-		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'maybe_flush_rewrite_rules' ), 10 );
+		add_action( 'AHEE__EE_System__initialize_last', array( __CLASS__,  'maybe_flush_rewrite_rules' ), 10 );
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
