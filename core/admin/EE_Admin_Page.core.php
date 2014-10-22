@@ -664,7 +664,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
 		add_action('admin_footer', array( $this, 'admin_footer'), 100 );
 		if ( method_exists( $this, 'admin_footer_' . $this->_current_view ) )
-			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
+			add_action('admin_footer', array( $this, 'admin_footer_' . $this->_current_view ), 101 );
 
 
 		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
