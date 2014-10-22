@@ -1075,8 +1075,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _registration_details_metaboxes() {
 		$this->_set_registration_object();
+		$attendee = $this->_registration instanceof EE_Registration ? $this->_registration->attendee() : null;
 		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
-		if ( EE_Registry::instance()->CAP->current_user_can('ee_edit_registration', 'edit-reg-questions-mbox' ) ) {
+		if ( $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can('ee_edit_registration', 'edit-reg-questions-mbox' ) ) {
 			add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		}
 		add_meta_box( 'edit-reg-registrant-mbox', __( 'Contact Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
@@ -1097,6 +1098,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function _set_approve_or_decline_reg_status_buttons() {
+
 		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
 		$is_complete = $this->_registration->transaction()->is_completed();
 
@@ -1104,6 +1106,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$status_buttons = $this->_get_reg_status_buttons();
 
 		$default_status = EE_Registry::instance()->CFG->registration->default_STS_ID;
+		$template_args['attendee'] = $this->_registration->attendee();
 		$template = REG_TEMPLATE_PATH . 'reg_status_change_buttons.template.php';
 		if ( $this->_set_registration_object() ) {
 			$current_status = $this->_registration->status_ID();
@@ -1339,7 +1342,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
 
 
-
+		$attendee = $this->_registration->attendee();
 
 		// process taxes
 		if ( $transaction ) {
@@ -1351,7 +1354,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
-		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
+		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
@@ -1673,14 +1676,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function _reg_registrant_side_meta_box() {
 
 		/*@var $attendee EE_Attendee */
-		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EEM_Attendee::instance()->create_default_object();
+		$att_check = $this->_registration->attendee();
+		$attendee = $att_check instanceof EE_Attendee ? $att_check : EEM_Attendee::instance()->create_default_object();
 
 		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show cereate button or not)
 		if ( ! $this->_registration->is_primary_registrant() ) {
 			$primary_registration = $this->_registration->get_primary_registration();
 			$primary_attendee = $primary_registration->attendee();
 
-			if ( $attendee->ID() !== $primary_attendee->ID() ) {
+			if ( ! $primary_attendee instanceof EE_Attendee || $attendee->ID() !== $primary_attendee->ID() ) {
 				//in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own custom attendee object so let's not worry about the primary reg.
 				$primary_registration = NULL;
 			}
@@ -1702,11 +1706,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//edit link
 		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
-		$this->_template_args['att_edit_label'] = $primary_registration instanceof EE_Registration ? __('View/Edit Contact', 'event_espresso') : __('View/Edit Contact' );
+		$this->_template_args['att_edit_label'] = __('View/Edit Contact' );
 
 		//create link
 		$this->_template_args['create_link'] = $primary_registration instanceof EE_Registration ? EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'duplicate_attendee',  '_REG_ID' => $this->_registration->ID() ), REG_ADMIN_URL ): '';
 		$this->_template_args['create_label'] = __('Create Contact', 'event_espresso');
+
+		$this->_template_args['att_check'] = $att_check;
 
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';

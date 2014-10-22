@@ -224,9 +224,38 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( apply_filters( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', FALSE ) ){
 			return TRUE;
 		}
-		$update_info_from_post_only = array_diff_key($update_info, $_GET);
-		$response_post_data=$update_info_from_post_only + array('cmd'=>'_notify-validate');
-		$result= wp_remote_post($this->_gateway_url, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
+		if( $update_info === $_REQUEST ){
+			//we're using the $_REQUEST info... except we can't use it because it has issues with quotes
+			// Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
+			// Instead, read raw POST data from the input stream.
+			// @see https://gist.github.com/xcommerce-gists/3440401
+			$raw_post_data = file_get_contents('php://input');
+			$raw_post_array = explode('&', $raw_post_data);
+			$update_info = array();
+			foreach ($raw_post_array as $keyval) {
+			  $keyval = explode ('=', $keyval);
+			  if (count($keyval) == 2)
+				 $update_info[$keyval[0]] = urldecode($keyval[1]);
+			}
+		}
+
+
+		// read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
+		$req = 'cmd=_notify-validate';
+		if(function_exists('get_magic_quotes_gpc')) {
+		   $get_magic_quotes_exists = true;
+		}
+		foreach ($update_info as $key => $value) {
+		   if($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+				$value = urlencode(stripslashes($value));
+		   } else {
+				$value = urlencode($value);
+		   }
+		   $req .= "&$key=$value";
+		}
+//		$update_info_from_post_only = array_diff_key($update_info, $_GET);
+//		$response_post_data=$update_info_from_post_only + array('cmd'=>'_notify-validate');
+		$result= wp_remote_post($this->_gateway_url, array('body' => $req, 'sslverify' => false, 'timeout' => 60));
 
 		if ( ! is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 			return true;

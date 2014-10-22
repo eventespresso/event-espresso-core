@@ -377,7 +377,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->txn = EE_Transaction::new_instance(
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
-				'TXN_total' => $grand_total, //txn_total
+				'TXN_total' => 0, //txn_total
 				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)

@@ -61,7 +61,7 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 	 * @param type $return_url
 	 * @param type $cancel_url
 	 */
-	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $cancel_url = NULL) {
+	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL) {
 		global $auto_made_thing_seed;
 		$payment->set_redirect_url('http://google.com');
 		$payment->set_txn_id_chq_nmbr( $auto_made_thing_seed++ );

@@ -610,6 +610,15 @@ abstract class EE_PMT_Base{
 		return 'ee_' . strtolower( $this->system_name() ) . '_help_tab';
 	}
 
+	/**
+	 * The name of the wp capability that should be associated with the usage of
+	 * this PMT by an admin
+	 * @return string
+	 */
+	public function cap_name(){
+		return 'ee_payment_method_' . strtolower( $this->system_name() );
+	}
+
 
 
 }
