@@ -20,7 +20,8 @@ class EE_Register_CPTs {
 
 
 	/**
-	 *  constructor
+	 * 	constructor
+	 * instantiated at init priority 5
 	 */
 	function __construct(){
 		// register taxonomies
