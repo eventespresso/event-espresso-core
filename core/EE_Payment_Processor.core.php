@@ -227,9 +227,7 @@ class EE_Payment_Processor{
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
 			$payment = $last_payment_method->type_obj()->finalize_payment_for( $transaction );
-			echo "apyemtn processor done finalize registration on ";var_dump($payment);
 			if ( $update_txn ) {
-				echo "updating transaction...";
 				$this->update_txn_based_on_payment( $transaction, $payment );
 			}
 			return $payment;
