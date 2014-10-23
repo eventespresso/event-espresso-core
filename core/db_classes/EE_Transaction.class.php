@@ -26,7 +26,7 @@
  * @subpackage 	includes/classes/EE_Transaction.class.php
  * @author 				Brent Christensen
  */
-class EE_Transaction extends EE_Base_Class {
+class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
