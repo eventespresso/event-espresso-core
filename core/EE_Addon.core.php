@@ -188,6 +188,10 @@ abstract class EE_Addon extends EE_Configurable {
 			 */
 			EE_Registry::instance()->load_helper('Activation');
 			EEH_Activation::initialize_db_content();
+		}else{
+			//ask the data migration manager to init this addon's data
+			//when migrations are finished because we can't do it now
+			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( $this->name() );
 		}
 	}
 
@@ -254,6 +258,8 @@ abstract class EE_Addon extends EE_Configurable {
 		do_action("AHEE__{$classname}__upgrade");
 		do_action("AHEE__EE_Addon__upgrade", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+		//also it's possible there is new default data that needs to be added
+		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
 
 
@@ -265,6 +271,8 @@ abstract class EE_Addon extends EE_Configurable {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__downgrade");
 		do_action("AHEE__EE_Addon__downgrade", $this);
+		//it's possible there's old default data that needs to be double-checked
+		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
 
 
@@ -357,11 +365,6 @@ abstract class EE_Addon extends EE_Configurable {
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation" );
 				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation", $this );
 				$this->new_install();
-				$this->update_list_of_installed_versions( $activation_history_for_addon );
-				break;
-			case EE_System::req_type_activation_but_not_installed:
-				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation_but_not_installed" );
-				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation_but_not_installed", $this );
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_reactivation:

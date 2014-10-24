@@ -67,6 +67,12 @@ class EE_Data_Migration_Manager{
 	 * during migration)
 	 */
 	const step_size = 50;
+
+	/**
+	 * option name that stores the queue of ee plugins needing to have
+	 * their data initialized (or re-initialized) once we are done migrations
+	 */
+	const db_init_queue_option_name = 'ee_db_init_queue';
 	/**
 	 * Array of information concerning data migrations that have ran in the history
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
@@ -483,12 +489,9 @@ class EE_Data_Migration_Manager{
 				if( ! $scripts ){
 					//huh, no more scripts to run... apparently we're done!
 					//but dont forget to make sure initial data is there
-					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-					EEH_Activation::system_initialization();
-					EEH_Activation::create_upload_directories();
-					EEH_Activation::initialize_db_content();
+					$this->initialize_db_for_enqueued_ee_plugins();
 					//make sure the datetime and ticket total sold are correct
 					$this->_save_migrations_ran();
 					return array(
@@ -556,10 +559,7 @@ class EE_Data_Migration_Manager{
 						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure initial data is there
-						EE_Registry::instance()->load_helper('Activation');
-						EEH_Activation::system_initialization();
-						EEH_Activation::create_upload_directories();
-						EEH_Activation::initialize_db_content();
+						$this->initialize_db_for_enqueued_ee_plugins();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
@@ -864,5 +864,50 @@ class EE_Data_Migration_Manager{
 	 */
 	public function migration_has_ran( $version, $plugin_slug = 'Core' ) {
 		return $this->get_migration_ran( $version, $plugin_slug ) !== NULL;
+	}
+	/**
+	 * Enqueues this ee plugin to have its data initialized
+	 * @param string $plugin_slug either 'Core' or EE_Addon::name()'s return value
+	 */
+	public function enqueue_db_initialization_for( $plugin_slug ) {
+		$queue = $this->get_db_initialization_queue();
+		if( ! in_array( $plugin_slug, $queue ) ) {
+			$queue[] = $plugin_slug;
+		}
+		update_option( self::db_init_queue_option_name, $queue );
+	}
+	/**
+	 * Calls EE_Addon::initialize_db_if_no_migrations_required() on each addon
+	 * specified in EE_Data_Migration_Manager::get_db_init_queue(), and if 'Core' is
+	 * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
+	 */
+	public function initialize_db_for_enqueued_ee_plugins() {
+		$queue = $this->get_db_initialization_queue();
+		foreach( $queue as $plugin_slug ){
+			if( $plugin_slug == 'Core' ){
+				EE_System::instance()->initialize_db_if_no_migrations_required();
+			}else{
+				//just loop through the addons to make sure
+				foreach( EE_Registry::instance()->addons as $addon ) {
+					if( $addon->name() == $plugin_slug ) {
+						$addon->initialize_db_if_no_migrations_required();
+						break;
+					}
+				}
+			}
+		}
+		//because we just initialized the DBs for the enqueued ee plugins
+		//we don't need to keep remembering which ones needed to be initialized
+		delete_option( self::db_init_queue_option_name );
+	}
+
+	/**
+	 * Gets a numerically-indexed array of plugin slugs that need to have their databases
+	 * (re-)initialized after migrations are complete. ie, each element should be either
+	 * 'Core', or the return value of EE_Addon::name() for an addon
+	 * @return array
+	 */
+	public function get_db_initialization_queue(){
+		return get_option ( self::db_init_queue_option_name, array() );
 	}
 }
