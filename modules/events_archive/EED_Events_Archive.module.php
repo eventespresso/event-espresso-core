@@ -105,7 +105,13 @@ class EED_Events_Archive  extends EED_Module {
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EEH_Event_Query::filter_query_parts();
-		EEH_Event_Query::set_query_params();
+		EEH_Event_Query::set_query_params(
+			'', 	// month
+			'', 	// category
+			$this->config()->display_expired_events, 	// show_expired
+			'start_date', 	// orderby
+			'ASC' 	// sort
+		);
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
