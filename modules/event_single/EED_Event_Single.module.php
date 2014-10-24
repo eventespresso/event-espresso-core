@@ -158,7 +158,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function event_details( $content ) {
 		global $post;
-		if ( $post->post_type == 'espresso_events' ) {
+		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
 			// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 			// it uses the_content() for displaying the $post->post_content
 			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
