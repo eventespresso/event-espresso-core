@@ -252,17 +252,20 @@ class EEM_Payment extends EEM_Base {
 	/**
 	 * Deleted the payment indicated by the payment object or id, and returns
 	 * the EE_transaction which gets affected and updated in the process
-	 * @param EE_Payment or id $payment_obj_or_id
+	 * @param EE_Payment | int $payment_obj_or_id
 	 * @return EE_Transaction
 	 */
-	public function delete_by_ID($payment_obj_or_id) {
+	public function delete_by_ID( $payment_obj_or_id ) {
+		/** @type EE_Payment $payment_before_deleted */
 		$payment_before_deleted = $this->ensure_is_obj($payment_obj_or_id);
 		$query_params = array();
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $payment_obj_or_id);
 		$query_params['limit'] = 1;
 		parent::delete($query_params);
 		$transaction = $payment_before_deleted->transaction();
-		$transaction->update_based_on_payments();
+		if ( $transaction instanceof EE_Transaction ) {
+			$transaction->update_based_on_payments();
+		}
 		return $transaction;
 	}
 
@@ -278,7 +281,7 @@ class EEM_Payment extends EEM_Base {
 	* 		@param		string		$end_date
 	*		@return 	EE_Payment[]
 	*/
-	public function get_payments_made_between_dates( $start_date = FALSE, $end_date = FALSE ) {
+	public function get_payments_made_between_dates( $start_date = '', $end_date = '' ) {
 		if ( ! $start_date ) {
 			$start_date = date('Y-m-d',current_time('timestamp'));
 		}
