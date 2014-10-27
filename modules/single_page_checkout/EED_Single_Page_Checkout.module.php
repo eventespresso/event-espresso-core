@@ -431,7 +431,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( EE_Registry::instance()->REQ ) ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-
+		$this->_current_step = 'attendee_information';
 		$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
 		// verify transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
