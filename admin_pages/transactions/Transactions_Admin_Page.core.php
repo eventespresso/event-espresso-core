@@ -471,7 +471,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_set_transaction_status_array();
 
 		$this->_template_args = array();
-		$this->_template_args['transactions_page'] = $this->wp_page_slug;
+		$this->_template_args['transactions_page'] = $this->_wp_page_slug;
 
 		$this->_set_transaction_object();
 
@@ -556,31 +556,31 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_transaction_object();
 
-		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, '_txn_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		add_meta_box( 'edit-txn-details-mbox', __( 'Transaction Details', 'event_espresso' ), array( $this, 'txn_details_meta_box' ), $this->_wp_page_slug, 'normal', 'high' );
 		add_meta_box(
 			'edit-txn-attendees-mbox',
 			__( 'Attendees Registered in this Transaction', 'event_espresso' ),
-			array( $this, '_txn_attendees_meta_box' ),
-			$this->wp_page_slug,
+			array( $this, 'txn_attendees_meta_box' ),
+			$this->_wp_page_slug,
 			'normal',
 			'high',
 			array( 'TXN_ID' => $this->_transaction->ID() )
 		);
-		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Contact', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
-		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
+		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Contact', 'event_espresso' ), array( $this, 'txn_registrant_side_meta_box' ), $this->_wp_page_slug, 'side', 'high' );
+		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, 'txn_billing_info_side_meta_box' ), $this->_wp_page_slug, 'side', 'high' );
 
 	}
 
 
 
 	/**
-	 * _txn_details_meta_box
+	 * txn_details_meta_box
 	 * generates HTML for the Transaction main meta box
 	*
-	 * @access private
+	 * @access public
 	*	@return void
 	*/
-	private function _txn_details_meta_box() {
+	public function txn_details_meta_box() {
 
 		$this->_set_transaction_object();
 
@@ -595,8 +595,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = EEH_Template::format_currency($this->_transaction->get('TXN_total'), FALSE, FALSE );
 		$this->_template_args['grand_raw_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['TXN_status'] = $this->_transaction->get('STS_ID');
-
-		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
+		$this->_template_args['txn_status_class'] = 'status-' . $this->_transaction->get('STS_ID');
 
 		// process payment details
 		$this->_template_args['payments'] = $this->_transaction->get_many_related('Payment');
@@ -708,92 +707,100 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * _txn_attendees_meta_box
-	 * 	generates HTML for the Attendees Transaction main meta box
-	*
-	 * @access private
-	*	@return void
-	*/
-	private function _txn_attendees_meta_box(  $post, $metabox = array( 'args' => array()) ) {
+	 * txn_attendees_meta_box
+	 *    generates HTML for the Attendees Transaction main meta box
+	 *
+	 * @access public
+	 * @param WP_Post $post
+	 * @param array $metabox
+	 * @return void
+	 */
+	public function txn_attendees_meta_box( $post, $metabox = array( 'args' => array() )) {
 
 		extract( $metabox['args'] );
-
+		$this->_template_args['post'] = $post;
+		$this->_template_args['event_attendees'] = array();
 		// process items in cart
 		$line_items = $this->_transaction->get_many_related('Line_Item', array( array( 'LIN_type' => 'line-item' ) ) );
-		$this->_template_args['event_attendees'] = array();
-
 		if ( ! empty( $line_items )) {
 			foreach ( $line_items as $item ) {
-				$ticket = $item->ticket();
-				if ( empty( $ticket ) )
-					continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
-				$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
-				$event = $ticket->get_first_related('Registration')->get_first_related('Event');
+				/** @type EE_Line_Item $item */
+				if ( $item instanceof EE_Line_Item ) {
+					$ticket = $item->ticket();
+					if ( empty( $ticket )) {
+						continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+					}
+					$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
+					$event = $ticket->get_first_related('Registration')->get_first_related('Event');
+					$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
 
-				foreach( $registrations as $registration ) {
-					$attendee = $registration->get_first_related('Attendee');
-					$this->_template_args['event_attendees'][$registration->ID()]['att_num'] = $registration->get('REG_count');
-					$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] = $event->get('EVT_name') . ' - ' . $item->get('LIN_name');
-					$this->_template_args['event_attendees'][$registration->ID()]['attendee'] = $attendee->full_name();
-					$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] = EEH_Template::format_currency($item->get('LIN_unit_price'));
-					$this->_template_args['event_attendees'][$registration->ID()]['email'] = $attendee->email();
-					$this->_template_args['event_attendees'][$registration->ID()]['address'] =  implode(',<br>', $attendee->full_address_as_array() );
-					$this->_template_args['event_attendees'][$registration->ID()]['att_id'] = $attendee->ID();
+					$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
+					foreach( $registrations as $registration ) {
+						$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
+						$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
+						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+						// attendee info
+						$attendee = $registration->get_first_related('Attendee');
+						if ( $attendee instanceof EE_Attendee ) {
+							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
+							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
+							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= $attendee->email();
+							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+						} else {
+							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
+							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
+							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
+							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
+						}
+					}
 				}
-		}
-		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );
-
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+			}
+			$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );
+			echo EEH_Template::display_template( TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php', $this->_template_args, TRUE );
 		}
 	}
 
 
 
 	/**
-	 * _txn_registrant_side_meta_box
+	 * txn_registrant_side_meta_box
 	 * generates HTML for the Edit Transaction side meta box
 	 *
-	 * @access private
+	 * @access public
 	 * @throws \EE_Error
 	 * @return void
 	 */
-	private function _txn_registrant_side_meta_box() {
-
+	public function txn_registrant_side_meta_box() {
 		$primary_att = $this->_transaction->primary_registration()->get_first_related('Attendee');
-
-		if ( empty( $primary_att ) )
+		if ( ! $primary_att instanceof EE_Attendee ) {
 			throw new EE_Error(__("For some reason, the primary attendee cannot be retrieved for this transaction.  It is possible there is an error in the database", 'event_espresso') );
-
-		$this->_template_args['ATT_ID'] = $primary_att->get('ATT_ID');
-		$this->_template_args['prime_reg_fname'] = $primary_att->get('ATT_fname');
-		$this->_template_args['prime_reg_lname'] = $primary_att->get('ATT_lname');
-		$this->_template_args['prime_reg_email'] = $primary_att->get('ATT_email');
-		$this->_template_args['prime_reg_address'] = $primary_att->get('ATT_address');
-		$this->_template_args['prime_reg_address2'] = $primary_att->get('ATT_address2');
-		$this->_template_args['prime_reg_city'] = $primary_att->get('ATT_city');
+		}
+		$this->_template_args['ATT_ID'] 							= $primary_att->get('ATT_ID');
+		$this->_template_args['prime_reg_fname'] 		= $primary_att->get('ATT_fname');
+		$this->_template_args['prime_reg_lname'] 		= $primary_att->get('ATT_lname');
+		$this->_template_args['prime_reg_email'] 			= $primary_att->get('ATT_email');
+		$this->_template_args['prime_reg_address'] 		= $primary_att->get('ATT_address');
+		$this->_template_args['prime_reg_address2'] 	= $primary_att->get('ATT_address2');
+		$this->_template_args['prime_reg_city'] 			= $primary_att->get('ATT_city');
+		$this->_template_args['prime_reg_zip'] 				= $primary_att->get('ATT_zip');
+		$this->_template_args['prime_reg_phone'] 		= $primary_att->get('ATT_phone');
 		$state = $primary_att->state_obj();
-		$this->_template_args['prime_reg_state'] = !empty( $state ) ? $state->get('STA_name' ) : '';
-		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
-		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
-		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
-
-		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );
-
-		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['prime_reg_state'] 			= $state instanceof EE_State ? $state->get('STA_name' ) : '';
+		$this->_template_args['prime_reg_country'] 		= $primary_att->get('CNT_ISO');
+		$this->_template_args['registrant_form_url'] 		= add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );
+		echo EEH_Template::display_template( TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php', $this->_template_args, TRUE );
 	}
 
 
 
 	/**
-	 * _txn_billing_info_side_meta_box
+	 * txn_billing_info_side_meta_box
 	 * 	generates HTML for the Edit Transaction side meta box
 	*
-	 * @access private
+	 * @access public
 	*	@return void
 	*/
-	private function _txn_billing_info_side_meta_box() {
+	public function txn_billing_info_side_meta_box() {
 
 		$this->_template_args['billing_info'] = $this->_transaction->billing_info();
 
@@ -819,8 +826,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( isset( $this->_req_data['txn_admin_payment'] )) {
 
 			$payment = $this->_req_data['txn_admin_payment'];
-
-			$payment['PAY_ID'] = $payment['PAY_ID'];
 
 			// payments have a type value of 1 and refunds have a type value of -1
 			$type = $payment['type'] < 0 ? -1 : 1;
@@ -884,15 +889,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			);
 			if( ! $payment->save() ){
-				$msg = __( 'An error occurred. The payment has not been processed succesfully.', 'event_espresso' );
+				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
 			if( $payment->apply_payment_to_transaction() ){
-				$msg =__('The payment has been processed succesfully.', 'event_espresso');
+				$msg =__('The payment has been processed successfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
-				$msg = __( 'An error occurred. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				$msg = __( 'An error occurred. The payment was processed successfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 
@@ -969,23 +974,25 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$return_data = array();
 
 		if ( isset( $this->_req_data['delete_txn_admin_payment'] )) {
-			$pymt = $this->_req_data['delete_txn_admin_payment'];
-			if ( $payment = EEM_Payment::instance()->get_one_by_ID( $pymt['PAY_ID'] )) {
-				if ( $transaction = EEM_Payment::instance()->delete_by_ID( $payment->ID() )) {
+			$payment_details = $this->_req_data['delete_txn_admin_payment'];
+			$payment = EEM_Payment::instance()->get_one_by_ID( $payment_details['PAY_ID'] );
+			if ( $payment instanceof EE_Payment ) {
+				$transaction = EEM_Payment::instance()->delete_by_ID( $payment->ID() );
+				if ( $transaction instanceof EE_Transaction ) {
 					$return_data = array(
 						'amount' => $payment->amount(),
 						'total_paid' => $transaction->paid(),
 						'txn_status' => $transaction->status_ID(),
 						'pay_status' => $payment->STS_ID(),
-						'PAY_ID' => $pymt['PAY_ID'],
+						'PAY_ID' => $payment_details['PAY_ID'],
 						'delete_txn_reg_status_change' => $this->_req_data['delete_txn_reg_status_change']
 					);
+					if( isset( $this->_req_data['delete_txn_reg_status_change'] ) ) {
+						$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+						$_REQUEST['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+						$this->_process_registration_status_change( $transaction );
+					}
 				}
-			}
-			if( isset( $this->_req_data['delete_txn_reg_status_change'] ) ) {
-				$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
-				$_REQUEST['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
-				$this->_process_registration_status_change( $transaction );
 			}
 		} else {
 			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
@@ -1073,34 +1080,34 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$_where = array(
 			'TXN_timestamp' => array('BETWEEN', array($start_date, $end_date) ),
 			'Registration.REG_count' => 1
-			);
+		);
 
 		if ( isset( $this->_req_data['EVT_ID'] ) ) {
 			$_where['Registration.EVT_ID'] = $this->_req_data['EVT_ID'];
 		}
 
 		if ( isset( $this->_req_data['s'] ) ) {
-			$sstr = '%' . $this->_req_data['s'] . '%';
+			$search_string = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
-				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
-				'Registration.Event.EVT_desc' => array( 'LIKE', $sstr ),
-				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
-				'Registration.Attendee.ATT_fname' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_lname' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_email' => array('LIKE', $sstr ),
-				'Registration.Attendee.ATT_address' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_address2' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
-				'Registration.REG_code' => array( 'LIKE', $sstr ),
-				'Registration.REG_count' => array( 'LIKE' , $sstr ),
-				'Registration.REG_group_size' => array( 'LIKE' , $sstr ),
-				'Registration.Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
-				'Payment.PAY_method' => array('LIKE', $sstr),
-				'Payment.PAY_gateway' => array('LIKE', $sstr),
-				'TXN_session_data' => array( 'LIKE', $sstr )
+				'Registration.Event.EVT_name' => array( 'LIKE', $search_string),
+				'Registration.Event.EVT_desc' => array( 'LIKE', $search_string ),
+				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $search_string ),
+				'Registration.Attendee.ATT_fname' => array( 'LIKE', $search_string ),
+				'Registration.Attendee.ATT_lname' => array( 'LIKE', $search_string ),
+				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $search_string ),
+				'Registration.Attendee.ATT_email' => array('LIKE', $search_string ),
+				'Registration.Attendee.ATT_address' => array( 'LIKE', $search_string ),
+				'Registration.Attendee.ATT_address2' => array( 'LIKE', $search_string ),
+				'Registration.Attendee.ATT_city' => array( 'LIKE', $search_string ),
+				'Registration.REG_final_price' => array( 'LIKE', $search_string ),
+				'Registration.REG_code' => array( 'LIKE', $search_string ),
+				'Registration.REG_count' => array( 'LIKE' , $search_string ),
+				'Registration.REG_group_size' => array( 'LIKE' , $search_string ),
+				'Registration.Ticket.TKT_name' => array( 'LIKE', $search_string ),
+				'Registration.Ticket.TKT_description' => array( 'LIKE', $search_string ),
+				'Payment.PAY_method' => array('LIKE', $search_string),
+				'Payment.PAY_gateway' => array('LIKE', $search_string),
+				'TXN_session_data' => array( 'LIKE', $search_string )
 				);
 		}
 
