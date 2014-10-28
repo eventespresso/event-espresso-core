@@ -1,9 +1,10 @@
 <?php
 /**
  * @package dompdf
- * @link    http://dompdf.github.com/
+ * @link    http://www.dompdf.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @version $Id: dompdf_image_exception.cls.php 449 2011-11-13 13:07:48Z fabien.menager $
  */
 
 /**
