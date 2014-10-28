@@ -61,7 +61,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
 			'[TXN_SUBTOTAL]' => __('The subtotal for all txn line items.', 'event_espresso'),
 			'[TXN_TAX_SUBTOTAL]' => __('The subtotal for all tax line items.', 'event_espresso'),
-			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
+			'[OWING_STATUS_MESSAGE_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
@@ -193,7 +193,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		}
 
-		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
+		if ( strpos( $shortcode, '[OWING_STATUS_MESSAGE_*' ) !== FALSE ) {
 			return $this->_get_custom_total_oweing( $shortcode );
 		}
 
@@ -207,7 +207,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * parser for the [TOTAL_OWING_*] attribute type shortcode
+	 * parser for the [OWING_STATUS_MESSAGE_*] attribute type shortcode
 	 *
 	 * @since 4.5.0
 	 *
@@ -221,10 +221,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//ensure default is set.
 		$addressee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-		$total_owing = ! empty( $addressee ) ? $addressee->txn->remaining() : 0;
+		$total_owing = $addressee instanceof EE_Messages_Addressee && $addressee->txn instanceof EE_Transaction ? $addressee->txn->remaining() : 0;
 
 		if ( $total_owing > 0 ) {
-			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
+			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();

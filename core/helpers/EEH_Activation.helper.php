@@ -63,6 +63,8 @@ class EEH_Activation {
 		EEM_Gateways::instance(true)->load_all_gateways();
 
 		EE_Registry::instance()->CAP->init_caps();
+
+		EEH_Activation::validate_messages_system();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages

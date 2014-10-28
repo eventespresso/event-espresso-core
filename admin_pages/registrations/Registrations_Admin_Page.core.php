@@ -627,20 +627,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		/** setup reg status bulk actions **/
 		$def_reg_status_actions['approve_registration'] = __('Approve Registrations', 'event_espresso');
-		if ( in_array( $match_array['approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['approve_and_notify_registration'] = __('Approve and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['decline_registration'] = __('Decline Registrations', 'event_espresso');
-		if ( in_array( $match_array['decline_registration'], $active_mts ) )
+		if ( in_array( $match_array['decline_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['decline_and_notify_registration'] = __('Decline and Notify Registrations', 'event_espresso');
+		}
 		$def_reg_status_actions['pending_registration'] = __('Set Registrations to Pending Payment', 'event_espresso');
-		if ( in_array( $match_array['pending_registration'], $active_mts ) )
+		if ( in_array( $match_array['pending_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to Pending Payment and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['no_approve_registration'] = __('Set Registrations to Not Approved', 'event_espresso');
-		if ( in_array( $match_array['no_approve_registration'], $active_mts ) )
+		if ( in_array( $match_array['no_approve_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to Not Approved and Notify', 'event_espresso');
+		}
 		$def_reg_status_actions['cancel_registration'] = __('Cancel Registrations', 'event_espresso');
-		if ( in_array( $match_array['cancel_registration'], $active_mts ) )
+		if ( in_array( $match_array['cancel_registration'], $active_mts ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'batch_send_messages' ) ) {
 			$def_reg_status_actions['cancel_and_notify_registration'] = __('Cancel Registrations and Notify', 'event_espresso');
+		}
 
 		$this->_views = array(
 			'all' => array(
@@ -714,7 +719,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _registration_legend_items() {
-		$items = array(
+		$fc_items = array(
 			'star-icon' => array(
 				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
@@ -727,14 +732,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
-			'resend_registration' => array(
-				'class' => 'dashicons dashicons-email-alt',
-				'desc' => __('Resend Registration Details', 'event_espresso')
-				),
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				),
+				)
+ 			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
+			$fc_items['resend_registration'] = array(
+				'class' => 'dashicons dashicons-email-alt',
+				'desc' => __('Resend Registration Details', 'event_espresso')
+				);
+		} else {
+			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
+		}
+
+		$sc_items = array(
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
@@ -755,8 +767,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
 				)
- 			);
-		return $items;
+			);
+		return array_merge( $fc_items, $sc_items );
 	}
 
 
@@ -1064,7 +1076,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_details_metaboxes() {
 		$this->_set_registration_object();
 		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
-		add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		if ( EE_Registry::instance()->CAP->current_user_can('ee_edit_registration', 'edit-reg-questions-mbox' ) ) {
+			add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
+		}
 		add_meta_box( 'edit-reg-registrant-mbox', __( 'Contact Details', 'event_espresso' ), array( $this, '_reg_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 		if ( $this->_registration->group_size() > 1 ) {
 			add_meta_box( 'edit-reg-attendees-mbox', __( 'Other Registrations in this Transaction', 'event_espresso' ), array( $this, '_reg_attendees_meta_box' ), $this->wp_page_slug, 'normal', 'high' );

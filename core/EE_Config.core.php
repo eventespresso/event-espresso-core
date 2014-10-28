@@ -133,10 +133,14 @@ final class EE_Config {
 
 	/**
 	 * Resets the config
-	 * @param bool $hard_reset
+	 * @param bool $hard_reset if TRUE, sets EE_CONFig back to its original settings in the database. If FALSE
+	 * (default) leaves the database alone, and merely resets the EE_COnfig object to reflect its state in the database
+	 * @param boolean $reinstantiate if TRUE (default) call instance() and return it. Otherwise, just leave
+	 * $_instance as NULL. Useful in case you want to forget about the old instance on EE_Config, but might
+	 * not be ready to instantiate EE_Config currently (eg if the site was put into maintenance mode)
 	 * @return EE_Config
 	 */
-	public static function reset( $hard_reset = FALSE ){
+	public static function reset( $hard_reset = FALSE, $reinstantiate = TRUE ){
 		if ( $hard_reset ) {
 			self::$_instance->_config_option_names = array();
 			self::$_instance->_initialize_config();
@@ -149,7 +153,11 @@ final class EE_Config {
 		//we don't need to reset the static properties imo because those should
 		//only change when a module is added or removed. Currently we don't
 		//support removing a module during a request when it previously existed
-		return self::instance();
+		if( $reinstantiate ){
+			return self::instance();
+		}else{
+			return NULL;
+		}
 	}
 
 
@@ -1679,8 +1687,9 @@ class EE_Currency_Config extends EE_Config_Base {
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
-		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
+		EE_Registry::instance()->load_helper( 'Activation' );
+		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
+		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
 			if ( $country instanceof EE_Country ) {
@@ -1791,7 +1800,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
-		$this->show_pending_payment_options = FALSE;
+		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
