@@ -45,7 +45,8 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 					'horizon' => __('Horizon', 'event_espresso'),
 					'lola' => __('Lola', 'event_espresso'),
 					'tranquility' => __('Tranquility', 'event_espresso'),
-					'union' => __('Union', 'event_espresso')
+					'union' => __('Union', 'event_espresso'),
+					'default_utf8' => __( 'Simple UTF8', 'event_espresso' ),
 					),
 				'invoice' =>
 					array(
@@ -54,7 +55,8 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 					'horizon' => __('Horizon', 'event_espresso'),
 					'lola' => __('Lola', 'event_espresso'),
 					'tranquility' => __('Tranquility', 'event_espresso'),
-					'union' => __('Union', 'event_espresso')
+					'union' => __('Union', 'event_espresso'),
+					'default_utf8' => __( 'Simple UTF8', 'event_espresso' ),
 					)
 				)
 			);
