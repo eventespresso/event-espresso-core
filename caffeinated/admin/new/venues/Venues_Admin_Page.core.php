@@ -953,8 +953,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//cap checks
-		if ( ! EE_Registry::instance()->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
-			$where['status**'] = array( '!=' , 'private' );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
+			if ( ! empty( $where['status'][0] ) && $where['status'][0] == 'IN' ) {
+				$where['status'][1][] = 'private';
+			}
 		}
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
