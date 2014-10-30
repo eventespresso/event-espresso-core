@@ -1,0 +1,159 @@
+/**
+ * base css overwrite for wpeditor-css
+ */
+.mceContentBody body { margin: 0!important;padding: 0!important;font:82.5%/1.5 DejaVu Sans, Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
+.mceContentBody ul, .mceContentBody ul li, .mceContentBody p, .mceContentBody div, .mceContentBody ol {margin:0;padding:0;list-style:none;}
+
+.mceContentBody  #invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
+.mceContentBody #invoice + #invoice { margin-top:5em;}
+
+.mceContentBody .print_button_div{
+	margin: 0 12pt;
+	width:660px;
+	padding: 10px;
+	margin:1em auto;
+}
+
+.mceContentBody .print_button_div form{
+	font-size:14px;
+	float:right;
+	margin:0 0 0 1em;
+}
+
+.mceContentBody table { border-collapse:collapse!important; width:100%!important; }
+.mceContentBody td { vertical-align:top!important; }
+.mceContentBody .not-really-a-table  { border:none!important; }
+
+.mceContentBody #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+.mceContentBody #logo-dv img { max-width:200px!important; border: none; }
+
+.mceContentBody #comments{padding-top:1cm; line-height:1.2em; }
+
+.mceContentBody .aln-left { text-align:left; }
+.mceContentBody .aln-cntr { text-align:center; }
+.mceContentBody .aln-rght { text-align:right; }
+
+.mceContentBody  .small-text { font-size:.8em; }
+.mceContentBody  .small-text.link { font-weight:normal; }
+.mceContentBody .plain-text { font-weight:normal; }
+.mceContentBody .float-left { float:left; }
+.mceContentBody .float-right { float:right; }
+.mceContentBody .clear { clear:both; }
+.mceContentBody #invoice>div{
+	margin-bottom:5em;
+	/*border:1px dotted gray;*/
+}
+.mceContentBody .tickets-per-event>li{
+	margin-bottom:3em;
+	/*margin-left:1em;
+	margin-right:1em;*/
+	/*border:1px dotted gray;*/
+}
+.mceContentBody th.number-column{
+	width:5em;
+}
+.mceContentBody th.name-column{
+	width:15em;
+}
+.mceContentBody td{
+	/*text-align:center;*//*Seth*/
+}
+.mceContentBody .ticket-time-details{
+	width:70%;
+	display:inline-block;
+}
+.mceContentBody .ticket-place-details{
+	width:29%;
+	display:inline-block;
+}
+.mceContentBody .no-bottom-margin{
+	margin-bottom:0px;
+}
+.mceContentBody .ticket-registrations-list>li{
+	margin-top:1em;
+	margin-bottom:1em;
+}
+/* classes from registration and transaction stati */
+.mceContentBody .RNA, .mceContentBody .RCN, .mceContentBody .RPP, .mceContentBody .TPN, .mceContentBody .TIN{
+	color:red;
+}
+.mceContentBody .TCM {
+	color: green;
+}
+
+.mceContentBody .reg-details-for-ticket{
+	/*margin-left:4em;*//*Seth*/
+}
+.mceContentBody .grand-total{
+	text-align:right;
+}
+
+.mceContentBody h3{
+	font-size:12pt;
+}
+.mceContentBody .subitem{
+	padding-left:1.8em;
+	text-align:left;
+}
+.mceContentBody .ticket-note {
+	font-style:italic;
+}
+/*=========================== TABLES =========================*/
+
+.mceContentBody table th {text-align:left;padding: 6px 5px 6px 5px;}
+.mceContentBody .ticket-details table th, .mceContentBody .taxes table th, .mceContentBody .invoice-amount th {border-bottom:1px solid #666;}
+.mceContentBody td.action{border-bottom:0}
+.mceContentBody tr.odd td, .mceContentBody tr.odd th, .mceContentBody tr.header_row{background-color:#F4F4F4}
+.mceContentBody .total_tr td{border-bottom:0}
+.mceContentBody #vat_tr td{border-bottom:1px solid #000}
+.mceContentBody td, .mceContentBody .registration-details tr th {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
+.mceContentBody td {margin: 0;padding: 8px 5px 8px 5px; vertical-align: top; }
+.mceContentBody .item_r{text-align: right;}
+.mceContentBody .item_c{text-align: center;}
+.mceContentBody .item_l{text-align: left;white-space: normal; }
+.mceContentBody .total {text-align: right;font-weight: bold; }
+.mceContentBody tr.tax-total td {border-top:1px solid #000;}
+.mceContentBody .subitem-row {
+	color: #666;
+}
+
+.mceContentBody img.icon{
+	margin-left:1em;
+	margin-right:1em;
+}
+
+
+/*
+Invoice Simple Template
+Created by Ed Molyneux
+*/
+/*=========================== TYPOGRAPHY =========================*/
+
+.mceContentBody #invoice{font-family: Helvetica, Arial, Verdana, sans-serif !important }
+.mceContentBody #Main  #invoice h1 {margin: 0;color: #555;font-size: 24px;text-transform: uppercase;}
+.mceContentBody #Main #invoice h2, .mceContentBody #Main #invoice h3 {color:#000; text-transform: none;font-family: Helvetica, Arial, Verdana, sans-serif !important}
+.mceContentBody #invoice h2 {margin: 10px 0;font-size: 14pt;}
+.mceContentBody .invoice-amount td, .mceContentBody th {font-size: 9pt;}
+.mceContentBody #invoice-header #company-address {text-align: left; font-size: 11pt; line-height: 13pt;}
+.mceContentBody #bill-to-ship-to, .mceContentBody #invoice-info  p, .mceContentBody #invoice #invoice-other, .mceContentBody #invoice #payment-details {font-size: 9pt; line-height: 12pt;}
+.mceContentBody #invoice-info h2{ margin:18px 0; text-transform:uppercase}
+.mceContentBody #invoice-info h3 {margin: 0;font-weight: normal;font-size:12pt;}
+.mceContentBody #invoice #invoice-info p {text-align:right;margin-top:0}
+.mceContentBody #comments {font-weight:bold;margin-top:15px; font-size:10pt}
+
+/*=========================== LAYOUT =========================*/
+
+.mceContentBody #invoice{padding:.5cm 1cm 1cm 1cm; }
+/*#invoice-header { border-bottom:4px solid #000; overflow:hidden}*/
+.mceContentBody #invoice-header td {padding-bottom:10px;}
+/** html #invoice-header {height:1%}*/
+.mceContentBody #company-address {padding:20px;}
+.mceContentBody #invoice-info{ text-align:right; line-height:1.5em;}
+.mceContentBody #invoice-info span { margin-left:20px;}
+
+.mceContentBody #bill-to-ship-to, .mceContentBody .invoice-amount { margin:20px 0; }
+
+.mceContentBody #invoice-other {text-align: right; }
+.mceContentBody #invoice #payment-details{}
+
+.mceContentBody #comments{margin-top:0.5cm}
