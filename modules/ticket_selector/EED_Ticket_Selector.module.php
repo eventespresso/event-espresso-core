@@ -123,11 +123,14 @@ class EED_Ticket_Selector extends  EED_Module {
 		//		d( $event );
 		if ( $event instanceof EE_Event ) {
 			self::$_event = $event;
+			$event_post = $event->ID();
 		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
 			self::$_event = $event->EE_Event;
+			$event_post = $event;
 		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event )) {
 			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
 			self::$_event = $event->EE_Event;
+			$event_post = $event;
 		} else {
 			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
 			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
@@ -135,7 +138,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		if (( ! self::$_event->display_ticket_selector() || $view_details ) && ! is_admin() ) {
+		if (( ! self::$_event->display_ticket_selector() || $view_details || post_password_required( $event_post )) && ! is_admin() ) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 

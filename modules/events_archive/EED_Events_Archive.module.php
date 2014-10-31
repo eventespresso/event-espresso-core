@@ -150,7 +150,7 @@ class EED_Events_Archive  extends EED_Module {
 		// ensure valid EE_Events_Archive_Config() object exists
 //		EED_Events_Archive::_set_config();
 		// don't add content filter for dedicated EE child themes or private posts
-		if ( ! EEH_Template::is_espresso_theme() && ! post_password_required() ) {
+		if ( ! EEH_Template::is_espresso_theme() ) {
 			// add status banner ?
 			if ( $this->config()->display_status_banner ) {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
@@ -183,6 +183,9 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@return 		string
 	 */
 	public static function get_the_excerpt( $excerpt = '' ) {
+		if ( post_password_required() ) {
+			return $excerpt;
+		}
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 		return EED_Events_Archive::event_details( $excerpt );
@@ -218,7 +221,8 @@ class EED_Events_Archive  extends EED_Module {
 	public static function event_details( $content ) {
 
 		global $post;
-		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
+		$template = '';
+		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE && ! post_password_required() )) {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
@@ -277,6 +281,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_datetimes( $content ) {
+		if ( post_password_required() ) {
+			return $content;
+		}
 		return EEH_Template::locate_template( 'content-espresso_events-datetimes.php' ) . $content;
 	}
 
@@ -288,6 +295,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_tickets( $content ) {
+		if ( post_password_required() ) {
+			return $content;
+		}
 		return EEH_Template::locate_template( 'content-espresso_events-tickets.php' ) . $content;
 	}
 
@@ -299,6 +309,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_venues( $content ) {
+		if ( post_password_required() ) {
+			return $content;
+		}
 	return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
 }
 
