@@ -149,7 +149,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// is the event expired ?
 		$template_args['event_is_expired'] = self::$_event->is_expired();
 		if ( $template_args['event_is_expired'] ) {
-			return '<p><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></p>';
+			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></div>';
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
