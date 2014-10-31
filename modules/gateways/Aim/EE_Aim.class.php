@@ -208,8 +208,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
 			}
 
-			
-			
+
+
 
 			//start transaction
 			$this->setField('amount', $total_to_charge);
@@ -222,7 +222,15 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('email', $billing_info['_reg-page-billing-email-' . $this->_gateway_name]['value']);
 			$this->setField('address', $billing_info['_reg-page-billing-address-' . $this->_gateway_name]['value']);
 			$this->setField('city', $billing_info['_reg-page-billing-city-' . $this->_gateway_name]['value']);
-			$this->setField('state', $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value']);
+			//try to get the state name
+			$state_obj = EEM_State::instance()->get_one_by_ID( $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value'] );
+			if( $state_obj instanceof EE_State ){
+				$state_name = $state_obj->name();
+			}else{
+				$state_name = '';
+			}
+
+			$this->setField('state', substr( $state_name, 0, 40 ) );
 			$this->setField('zip', $billing_info['_reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_registrant->ID());
 			//invoice_num would be nice to have itbe unique per SPCO page-load, that way if users
