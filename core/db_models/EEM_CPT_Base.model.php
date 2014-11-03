@@ -45,15 +45,6 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone = NULL ){
-		// check that the model has not been loaded too soon
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
-			throw new EE_Error (
-				sprintf(
-					__( 'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.', 'event_espresso' ),
-					get_class( $this )
-				)
-			);
-		}
 
 		//adds a relationship to Term_Taxonomy for all these models. For this to work
 		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
