@@ -38,7 +38,7 @@ class EEH_Autoloader {
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EEH_Autoloader )) {
+		if ( ! self::$_instance instanceof  EEH_Autoloader ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -81,30 +81,26 @@ class EEH_Autoloader {
 	 *    register_autoloader
 	 *
 	 * @access    public
-	 * @param array|string $class_paths - array of key => value pairings between class names and paths
+	 * @param array | string $class_paths - array of key => value pairings between class names and paths
+	 * @throws \EE_Error
 	 * @return        void
 	 */
-	public static function register_autoloader( $class_paths = array() ) {
+	public static function register_autoloader( $class_paths ) {
 		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
 		foreach ( $class_paths as $class => $path ) {
 			// don't give up! you gotta...
-			try {
-				// get some class
-				if ( empty( $class )) {
-					throw new EE_Error ( sprintf( __( 'An error occurred. No Class name was specified while registering an autoloader for the following path: %s.','event_espresso' ), $path ));
-				}
-				// one day you will find the path young grasshopper
-				if ( empty( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occurred. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));
-				}
-				// is file readable ?
-				if ( ! is_readable( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occurred. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
-				}
-			} catch ( EE_Error $e ) {
-				$e->get_error();
+			// get some class
+			if ( empty( $class )) {
+				throw new EE_Error ( sprintf( __( 'No Class name was specified while registering an autoloader for the following path: %s.','event_espresso' ), $path ));
 			}
-			// add autoloader
+			// one day you will find the path young grasshopper
+			if ( empty( $path )) {
+				throw new EE_Error ( sprintf( __( 'No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));
+			}
+			// is file readable ?
+			if ( ! is_readable( $path )) {
+				throw new EE_Error ( sprintf( __( 'The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
+			}
 			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
 		}
 	}
@@ -134,22 +130,8 @@ class EEH_Autoloader {
 	private function _register_custom_autoloaders() {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, TRUE );
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
 		EEH_Autoloader::register_form_sections_autoloaders();
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS);
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'base');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'helpers');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'inputs');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/display');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/normalization');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/validation');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/layout');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/sensitive_data_removal');
 	}
 
 
@@ -163,15 +145,6 @@ class EEH_Autoloader {
 	 */
 	public static function register_form_sections_autoloaders() {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, TRUE );
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'base');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'helpers');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'inputs');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/display');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/normalization');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/validation');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/layout');
-//		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/sensitive_data_removal');
 	}
 
 
