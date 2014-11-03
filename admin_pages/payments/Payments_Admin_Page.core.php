@@ -260,8 +260,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$EEM_Gateways->set_active($gateway);
 				if( $gateway == 'Invoice' ){
 					$messages = EE_Registry::instance()->load_lib( 'messages' );
-					$activated_html_messenger = $messages->ensure_messenger_is_active( 'html' );
-					$acitvated_pdf_messenger = $messages->ensure_messenger_is_active( 'pdf' );
+					$messages->ensure_messenger_is_active( 'html' );
+					$messages->ensure_messenger_is_active( 'pdf' );
 				}
 			}
 			if ( isset( $this->_req_data['deactivate_' . $gateway] )) {

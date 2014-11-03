@@ -84,12 +84,11 @@ class EE_messages {
 	public function ensure_messenger_is_active( $messenger_name ){
 		//note: active messengers indexed by their names
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		//isntalled messengers indexed numerically
 		if( ! isset( $active_messengers[ $messenger_name ] ) ) {
 			$this->activate_messenger( $messenger_name );
-			return TRUE;
-		}else{
 			return FALSE;
+		}else{
+			return TRUE;
 		}
 	}
 
@@ -101,7 +100,7 @@ class EE_messages {
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$installed_message_objects = $this->get_installed();
 		$installed_messengers = $installed_message_objects[ 'messengers' ];
-		//setup the $installed_mts in an array
+		//setup the $installed_mts in an array indexed by message type name
 		foreach ( $installed_message_objects['message_types'] as $imt ) {
 			if ( $imt instanceof EE_message_type ) {
 				$message_types[$imt->name] = $imt;
