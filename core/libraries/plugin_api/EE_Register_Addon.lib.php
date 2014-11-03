@@ -151,7 +151,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'payment_method_paths'		=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
 		);
 		//check whether this addon version is compatible with EE core
-		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
+		if( version_compare( EVENT_ESPRESSO_VERSION, $setup_args[ 'min_core_version'], '>=' ) ){
 			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
 			//plugin activated fine when it didn't
 			if( isset( $_GET[ 'activate' ]) ) {
@@ -176,7 +176,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			}
 			return;
 		}
-
 		//this is an activation request
 		if( did_action( 'activate_plugin' ) ){
 			//to find if THIS is the addon that was activated,
@@ -207,6 +206,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
+		}
+		// register new models
+		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
+			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
+		}
+		// register model extensions
+		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
+			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
 		}
 		// setup DMS
 		if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] )) {
@@ -259,12 +266,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				'use_wp_update'		=> isset( $setup_args['pue_options']['use_wp_update'] ) ? (string)$setup_args['pue_options']['use_wp_update'] : FALSE
 			);
 			add_action( 'AHEE__EE_System__brew_espresso__after_pue_init', array( 'EE_Register_Addon', 'load_pue_update' ));
-		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
-			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
-		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
-			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
 		}
 		if( ! empty( self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) ){
 			EE_Register_Payment_Method::register($addon_name, array( 'payment_method_paths' => self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) );
