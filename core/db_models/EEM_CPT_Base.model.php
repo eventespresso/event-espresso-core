@@ -38,13 +38,23 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 
 
-
-
 	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
+	 *
 	 * @param string $timezone
+	 * @throws \EE_Error
 	 */
-	protected function __construct($timezone = null){
+	protected function __construct( $timezone = NULL ){
+		// check that the model has not been loaded too soon
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
+			throw new EE_Error (
+				sprintf(
+					__( 'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
+		}
+
 		//adds a relationship to Term_Taxonomy for all these models. For this to work
 		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
 		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
@@ -379,7 +389,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well that's not too hard to query for
 				$table_to_query = reset($tables_needing_to_be_queried);
-				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . '=' . $post['ID'], ARRAY_A ));
+				$missing_data = $this->_do_wpdb_query( 'get_row', array( "SELECT * FROM $table_to_query->get_table_name() WHERE $table_to_query->get_fk_on_table() = " . $post['ID'], ARRAY_A ));
 				if ( ! empty( $missing_data )) {
 					$post = array_merge( $post, $missing_data );
 				}
