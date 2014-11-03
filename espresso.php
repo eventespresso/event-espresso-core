@@ -122,9 +122,8 @@ define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS
 define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS );
 define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 //check for dompdf fonts in uploads
-define( 'EE_DOMPDF_FONT_DIR',  EVENT_ESPRESSO_UPLOAD_DIR .  'fonts' . DS );
-if( file_exists( EE_DOMPDF_FONT_DIR ) ){
-	define( 'DOMPDF_FONT_DIR', EE_DOMPDF_FONT_DIR );
+if( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS ) ){
+	define( 'DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS  );
 }
 
 //ajax constants
