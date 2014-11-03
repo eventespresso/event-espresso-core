@@ -79,6 +79,7 @@ class EE_messages {
 	 * Ensures that the specified messenger is currently active.
 	 * If not, activates it and its default message types.
 	 * @param string $messenger_name
+	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
 	 */
 	public function ensure_messenger_is_active( $messenger_name ){
 		//note: active messengers indexed by their names
@@ -86,6 +87,9 @@ class EE_messages {
 		//isntalled messengers indexed numerically
 		if( ! isset( $active_messengers[ $messenger_name ] ) ) {
 			$this->activate_messenger( $messenger_name );
+			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 
@@ -134,7 +138,6 @@ class EE_messages {
 				}
 			}
 		}
-		echo "active messengers";d($active_messengers);
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 	}
 
