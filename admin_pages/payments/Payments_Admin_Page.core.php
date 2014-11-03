@@ -442,6 +442,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method->set_active();
 				$payment_method->save();
 			}
+			$messages = EE_Registry::instance()->load_lib( 'messages' );
+			$messages->ensure_messenger_is_active( 'html' );
+			$messages->ensure_messenger_is_active( 'pdf' );
 			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$payment_method->slug()));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
