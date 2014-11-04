@@ -1474,7 +1474,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 
-		$EEME = $this->_event_model;
+		$EEME = $this->_event_model();
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? NULL : $offset . ',' . $per_page;
