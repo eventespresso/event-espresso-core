@@ -280,7 +280,15 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
-		/**
+		// check that the model has not been loaded too soon
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
+			throw new EE_Error (
+				sprintf(
+					__( 'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
+		}		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
