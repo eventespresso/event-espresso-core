@@ -196,13 +196,15 @@ class EEH_Template {
 					// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 					EE_PLUGIN_DIR_PATH
 					);
-				$template_folder_paths = array_merge($core_paths, $template_folder_paths );
+				$template_folder_paths = array_merge( $template_folder_paths, $core_paths );
 			}
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
+
 			// array to hold all possible template paths
 			$full_template_paths = array();
+
 			// loop through $templates
 			foreach ( (array)$templates as $template ) {
 				// while looping through all template folder paths
@@ -215,6 +217,8 @@ class EEH_Template {
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+
+
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
