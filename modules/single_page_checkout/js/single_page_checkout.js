@@ -1066,8 +1066,28 @@ jQuery(document).ready( function($) {
 		 * @function submit_reg_form_server_error
 		 */
 		submit_reg_form_server_error : function() {
+			return SPCO.server_error( 'submit_reg_form_server_error', eei18n.reg_step_error );
+		},
+
+
+
+		/**
+		 * @function ajax_request_server_error
+		 */
+		ajax_request_server_error : function() {
+			return SPCO.server_error( 'submit_reg_form_server_error', eei18n.server_error );
+		},
+
+
+
+		/**
+		 * @function server_error
+		 * @param  {string} error_source
+		 * @param  {string} error_msg
+		 */
+		server_error : function( error_source, error_msg ) {
 			SPCO.hide_notices();
-			var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ), '' );
+			var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( error_source, error_msg ), '' );
 			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			return false;
 		},
