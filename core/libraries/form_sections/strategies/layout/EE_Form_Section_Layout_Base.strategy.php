@@ -168,7 +168,8 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function display_help_text($input){
-		return '<span id="' . $input->html_id() . '-help" class="' . $input->html_help_class() . '" style="' . $input->html_help_style() . '">' . $input->html_help_text() . '</span>';
+		$help_text = $input->html_help_text();
+		return ! empty( $help_text ) ? '<span id="' . $input->html_id() . '-help" class="' . $input->html_help_class() . '" style="' . $input->html_help_style() . '">' . $input->html_help_text() . '</span>' : '';
 	}
 
 
