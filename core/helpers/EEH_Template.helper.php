@@ -157,7 +157,7 @@ class EEH_Template {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
 
-		if ( $check_if_custom and !empty( $template_path ) )
+		if ( $check_if_custom && !empty( $template_path ) )
 			return TRUE;
 
 		// not in the theme
