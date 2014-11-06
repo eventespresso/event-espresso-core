@@ -900,7 +900,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	}
 
 
 
