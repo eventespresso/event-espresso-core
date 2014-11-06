@@ -67,7 +67,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ) {
 		parent::__construct( $fieldValues, $bydb, $timezone );
-		if ( !$this->get( 'LIN_code' ) ) {
+		if ( ! $this->get( 'LIN_code' ) ) {
 			$this->set_code( $this->generate_code() );
 		}
 	}
@@ -281,6 +281,16 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
+	}
+
+
+
+	/**
+	 * Sets order
+	 * @param int $order
+	 */
+	function set_order( $order ) {
+		$this->set( 'LIN_order', $order );
 	}
 
 
@@ -755,6 +765,16 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 		}
 		return $total;
+	}
+
+
+
+	/**
+	 * Gets the first subtotal under the grand total
+	 * @return EE_Line_Item[]
+	 */
+	function get_pre_tax_total() {
+		return $this->_get_descendants_of_type( EEM_Line_Item::type_sub_total );
 	}
 
 
