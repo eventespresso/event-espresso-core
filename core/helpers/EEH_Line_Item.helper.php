@@ -24,27 +24,56 @@ class EEH_Line_Item {
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
 	 * in the correct spot in the line item tree.
+	 *
 	 * @param EE_Line_Item $total_line_item
-	 * @param string $name
-	 * @param float $unit_price
-	 * @param string $description
-	 * @param int $quantity
-	 * @param boolean $taxable
+	 * @param string       $name
+	 * @param float        $unit_price
+	 * @param string       $description
+	 * @param int          $quantity
+	 * @param boolean      $taxable
 	 * @return boolean success
 	 */
 	public static function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE ){
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
+		//		$items_subtotal = self::get_items_subtotal( $total_line_item );
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
 			'LIN_unit_price' => $unit_price,
 			'LIN_quantity' => $quantity,
 			'LIN_is_taxable' => $taxable,
-			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
+//			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
 			'LIN_total' => floatval( $unit_price ) * intval( $quantity ),
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 		));
 		return self::add_item($total_line_item, $line_item );
+	}
+
+
+
+	/**
+	 * Adds a simple item ( unrelated to any other model object) to the total line item,
+	 * in the correct spot in the line item tree.
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @param string       $name
+	 * @param float        $percentage_amount
+	 * @param string       $description
+	 * @param boolean      $taxable
+	 * @return boolean success
+	 */
+	public static function add_percentage_based_item( EE_Line_Item $line_item, $name, $percentage_amount, $description = '', $taxable = FALSE ){
+		$sub_line_item = EE_Line_Item::new_instance(array(
+			'LIN_name' => $name,
+			'LIN_desc' => $description,
+			'LIN_unit_price' => 0,
+			'LIN_percent' => $percentage_amount,
+			'LIN_quantity' => NULL,
+			'LIN_is_taxable' => $taxable,
+			'LIN_total' => floatval( $percentage_amount * ( $line_item->total() / 100 )),
+			'LIN_type'=>  EEM_Line_Item::type_line_item,
+			'LIN_parent' => $line_item->ID()
+		));
+		return self::add_item( $line_item, $sub_line_item );
 	}
 
 
@@ -65,7 +94,7 @@ class EEH_Line_Item {
 		}
 		$description_addition = " (For ".implode(", ",$event_names).")";
 		$full_description = $ticket->description().$description_addition;
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
+//		$items_subtotal = self::get_items_subtotal( $total_line_item );
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name'=>$ticket->name(),
@@ -73,7 +102,7 @@ class EEH_Line_Item {
 			'LIN_unit_price'=>$ticket->price(),
 			'LIN_quantity'=>$qty,
 			'LIN_is_taxable'=>$ticket->taxable(),
-			'LIN_order'=> $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
+//			'LIN_order'=> $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
 			'LIN_total'=>$ticket->price() * $qty,
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 			'OBJ_ID'=>$ticket->ID(),
@@ -88,7 +117,7 @@ class EEH_Line_Item {
 			$sub_line_item = EE_Line_Item::new_instance(array(
 				'LIN_name'=>$price->name(),
 				'LIN_desc'=>$price->desc(),
-				'LIN_quantity'=>$price->is_percent() ? null : $qty,
+				'LIN_quantity'=>$price->is_percent() ? NULL : $qty,
 				'LIN_is_taxable'=> false,
 				'LIN_order'=>$price->order(),
 				'LIN_total'=>$sign * $price_total,
@@ -118,6 +147,9 @@ class EEH_Line_Item {
 	 * @return boolean
 	 */
 	public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item ){
+		$items_subtotal = self::get_items_subtotal( $total_line_item );
+		$order = $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 1;
+		$item->set_order( $order );
 		// add item to cart
 		$ticket_items = self::get_items_subtotal( $total_line_item );
 		if($ticket_items){
