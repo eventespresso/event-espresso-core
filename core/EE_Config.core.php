@@ -543,8 +543,9 @@ final class EE_Config {
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), FALSE )) {
 			$config_obj = new $config_class();
 		}
+		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// create a wp-option for this config
-		if ( add_option( $this->_generate_config_option_name( $section, $name ), $config_obj, '', 'no' )) {
+		if ( get_option( $config_option_name ) || add_option( $config_option_name, $config_obj, '', 'no' )) {
 			$this->{$section}->{$name} = $config_obj;
 			return $this->{$section}->{$name};
 		} else {
