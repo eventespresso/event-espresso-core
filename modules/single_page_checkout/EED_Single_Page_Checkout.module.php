@@ -38,6 +38,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EED_Single_Page_Checkout
 	 */
 	public static function instance() {
+		add_filter( 'EED_Single_Page_Checkout__SPCO_active', '__return_true' );
 		return parent::get_instance( __CLASS__ );
 	}
 
@@ -120,6 +121,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function update_reg_step() {
 		EED_Single_Page_Checkout::process_ajax_request( 'update_reg_step' );
+	}
+
+
+
+	/**
+	 *   update_checkout
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public static function update_checkout() {
+		EED_Single_Page_Checkout::process_ajax_request( 'update_checkout' );
 	}
 
 
