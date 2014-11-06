@@ -20,11 +20,18 @@
 			</tbody>
 		</table>
 	</div>
+	<div class="clear-float"> </div>
 
-	<?php  echo $default_hidden_inputs;  ?>
+	<?php  echo $before_payment_options;  ?>
 
 	<div id="methods-of-payment">
 		<?php echo $payment_options; ?>
 		<a id="reg-page-select-other-method-of-payment-lnk" class="hidden smaller-text right" rel=""><?php echo apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment_lnk', __( 'select a different method of payment:', 'event_espresso' )); ?></a>
 	</div>
 	<!-- end #methods-of-payment -->
+
+	<?php  echo $after_payment_options;  ?>
+
+	<?php  echo $default_hidden_inputs;  ?>
+	<?php  echo $extra_hidden_inputs;  ?>
+
