@@ -453,6 +453,8 @@ class EE_Checkout {
 		if ( ! $this->revisit ) {
 			$this->update_txn_reg_steps_array();
 		}
+		// save TXN data to the cart
+		$this->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->transaction->ID() );
 		EE_Registry::instance()->SSN->set_checkout( $this );
 		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
 	}
