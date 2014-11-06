@@ -827,14 +827,33 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function get_nearest_descendant_of_type( $type ) {
+		return $this->_get_nearest_descendant( 'LIN_type' , $type );
+	}
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant having the specified LIN_code and returns it, else NULL
+	 * @param string $code any value used for LIN_code
+	 * @return EE_Line_Item
+	 */
+	public function get_nearest_descendant_having_code( $code ) {
+		return $this->_get_nearest_descendant( 'LIN_code' , $code );
+	}
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant having the specified LIN_code and returns it, else NULL
+	 * @param string $search_field  name of EE_Line_Item property
+	 * @param string $value any value stored in $search_field
+	 * @return EE_Line_Item
+	 */
+	protected function _get_nearest_descendant( $search_field, $value ) {
 		foreach( $this->children() as $child ){
-			if( $child->type() == $type ){
+			if ( $child->get( $search_field ) == $value ){
 				return $child;
 			}
 		}
-		foreach($this->children() as $child ){
-			$descendant_found = $child->get_nearest_descendant_of_type( $type );
-			if( $descendant_found ){
+		foreach( $this->children() as $child ){
+			$descendant_found = $child->_get_nearest_descendant( $search_field, $value );
+			if ( $descendant_found ){
 				return $descendant_found;
 			}
 		}
