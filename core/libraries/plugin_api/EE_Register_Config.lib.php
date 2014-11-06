@@ -96,7 +96,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 					)
 				 );
 			}
-			$EE_Config->get_config( $settings['section'], $settings['name'], $config_class );
+			$EE_Config->set_config( $settings['section'], $settings['name'], $config_class );
 		}
 	}
 
