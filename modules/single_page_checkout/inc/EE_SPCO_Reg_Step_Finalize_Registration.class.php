@@ -77,7 +77,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$this->checkout->transaction->save();
 			}
 			// save TXN data to the cart
-			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+//			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+			$this->checkout->stash_transaction_and_checkout();
 			// payment required ?
 			if ( $this->checkout->payment_required() ) {
 				/** @type EE_Payment_Processor $payment_processor */
