@@ -160,7 +160,7 @@ class Invoice {
 
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
-		$templates_relative_path = '/modules/gateways/Invoice/lib/templates/';
+		$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php', $template_args, TRUE, TRUE );
 		if(isset($_GET['receipt'])){
 			$template_body = EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', $template_args, TRUE, TRUE );

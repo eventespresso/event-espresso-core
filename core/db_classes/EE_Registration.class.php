@@ -463,7 +463,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/receipt_body.template.php';
+		$template_relative_path = 'modules/gateways/Invoice/lib/templates/receipt_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
 		if ( $has_custom ) {
@@ -516,7 +516,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
-		$template_relative_path = '/modules/gateways/Invoice/lib/templates/invoice_body.template.php';
+		$template_relative_path = 'modules/gateways/Invoice/lib/templates/invoice_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
 		if ( $has_custom ) {
