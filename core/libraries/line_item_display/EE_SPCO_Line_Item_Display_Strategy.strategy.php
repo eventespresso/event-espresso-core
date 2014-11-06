@@ -108,8 +108,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
 		// quantity td
 		$html .= EEH_HTML::td( $line_item->quantity(), '',  'item_l jst-rght' );
-		// price td
-		$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
+		if ( $line_item->percent() ) {
+			// percent td
+			$html .= EEH_HTML::td( $line_item->percent() . ' %', '',  'item_c jst-rght' );
+		} else {
+			// price td
+			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
+		}
 		// total td
 		$total = $line_item->is_taxable() ? $line_item->total_no_code() . '*' : $line_item->total_no_code();
 		$this->_show_taxes = $line_item->is_taxable() ? TRUE : $this->_show_taxes;
