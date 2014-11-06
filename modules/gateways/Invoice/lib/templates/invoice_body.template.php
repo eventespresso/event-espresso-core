@@ -4,7 +4,6 @@
 		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
-					CUSTOM TEMPLATE
 					[invoice_logo_image]
 					<div class="vcard" id="company-address">
 						<div class="fn org"><strong>[organization]</strong></div>
