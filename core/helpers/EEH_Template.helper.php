@@ -246,6 +246,19 @@ class EEH_Template {
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		/**
+		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
+		 * modifications.  NOTE... modifying these things can cause breakage as most templates running through
+		 * the display_template method are templates we DON'T want modified (usually because of js
+		 * dependencies etc).  So unless you know what you are doing, do NOT filter templates or template args
+		 * using this.
+		 *
+		 * @since 4.6.0
+		 */
+		$template_path = apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
+		$template_args = apply_filters( 'FHEE__EEH_Template__display_template__template_args', $template_args );
+
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
 			return '';
