@@ -523,7 +523,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->generate_reg_form ) {
 			// ever heard that song by Blue Rodeo ?
 			try {
-				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
+				$this->checkout->current_step->reg_form = apply_filters(
+					'FHEE__EED_Single_Page_Checkout___check_form_submission__checkout_current_step_reg_form',
+					$this->checkout->current_step->generate_reg_form(),
+					$this->checkout
+				);
 				// if not displaying a form, then check for form submission
 				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
 					// capture form data
