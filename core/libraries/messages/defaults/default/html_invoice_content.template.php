@@ -3,12 +3,7 @@
  * This is the template for the html messenger and invoice message type main content field.
  */
 ?>
-<div class="print_button_div">
-	<form method="post" action="[DISPLAY_PDF_URL]" >
-		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
-	</form>
-	<div class="clear"></div>
-</div>
+[DISPLAY_PDF_BUTTON]
 
 <div id="invoice">
 
