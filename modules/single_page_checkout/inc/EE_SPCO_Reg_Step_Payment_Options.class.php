@@ -138,14 +138,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
-			return $this->_sold_out_events( $sold_out_events );
+			$form = $this->_sold_out_events( $sold_out_events );
 		} else if ( ! empty( $events_requiring_pre_approval )) {
-			return $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
+			$form = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		} else if ( $payment_required ) {
-			return $this->_display_payment_options( $reg_count );
+			$form = $this->_display_payment_options( $reg_count );
 		} else {
-			return $this->_no_payment_required();
+			$form = $this->_no_payment_required();
 		}
+//		d( $form );
+		return $form;
 
 	}
 
@@ -239,7 +241,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _no_payment_required() {
 
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'no_payment_required';
 
@@ -285,27 +286,42 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EEH_Autoloader::register_line_item_display_autoloaders();
 		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
 		// build payment options form
-		return new EE_Form_Section_Proper(
-			array(
-				'name' 			=> $this->reg_form_name(),
-				'html_id' 			=> $this->reg_form_name(),
-				'subsections' 	=> array(
-					'payment_options' => $this->_setup_payment_options(),
-					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
-					'extra_hidden_inputs' 		=> $this->_extra_hidden_inputs( FALSE )
-				),
-				'layout_strategy'		=> new EE_Template_Layout( array(
-						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
-						'template_args'  				=> apply_filters(
-							'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_options__template_args',
-							array(
-								'reg_count' 					=> $reg_count,
-								'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
-								'available_payment_methods' => array()
+		return apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__payment_options_form',
+			new EE_Form_Section_Proper(
+				array(
+					'name' 			=> $this->reg_form_name(),
+					'html_id' 			=> $this->reg_form_name(),
+					'subsections' 	=> array(
+						'before_payment_options' => apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__before_payment_options',
+							new EE_Form_Section_Proper(
+								array( 'layout_strategy'	=> new EE_Div_Per_Section_Layout() )
 							)
 						),
+						'payment_options' => $this->_setup_payment_options(),
+						'after_payment_options' => apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__after_payment_options',
+							new EE_Form_Section_Proper(
+								array( 'layout_strategy'	=> new EE_Div_Per_Section_Layout() )
+							)
+						),
+						'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
+						'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs( FALSE )
+					),
+					'layout_strategy'	=> new EE_Template_Layout( array(
+							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
+							'template_args'  				=> apply_filters(
+								'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__template_args',
+								array(
+									'reg_count' 					=> $reg_count,
+									'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
+									'available_payment_methods' => array()
+								)
+							)
+						)
 					)
-				),
+				)
 			)
 		);
 	}
@@ -321,25 +337,33 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 		return new EE_Form_Section_Proper(
 			array(
-				'html_id' 				=> 'ee-' . $this->slug() . '-hidden-inputs',
+				'html_id' 				=> 'ee-' . $this->slug() . '-extra-hidden-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
 					'selected_method_of_payment_input' => new EE_Hidden_Input(
-							array(
-								'normalization_strategy' 	=> NULL,
-								'html_name' 						=> 'selected_method_of_payment',
-								'html_id' 								=> 'reg-page-selected-method-of-payment',
-								'default'								=> $this->checkout->selected_method_of_payment
-							)
-						),
-					'spco_no_payment_required' => new EE_Hidden_Input(
-							array(
-								'normalization_strategy' 	=> new EE_Boolean_Normalization(),
-								'html_name' 						=> 'spco_no_payment_required',
-								'html_id' 								=> 'spco-no-payment-required-payment_options',
-								'default'								=> $no_payment_required
-							)
+						array(
+							'normalization_strategy' 	=> NULL,
+							'html_name' 						=> 'selected_method_of_payment',
+							'html_id' 								=> 'reg-page-selected-method-of-payment',
+							'default'								=> $this->checkout->selected_method_of_payment
 						)
+					),
+					'spco_no_payment_required' => new EE_Hidden_Input(
+						array(
+							'normalization_strategy' 	=> new EE_Boolean_Normalization(),
+							'html_name' 						=> 'spco_no_payment_required',
+							'html_id' 								=> 'spco-no-payment-required-payment_options',
+							'default'								=> $no_payment_required
+						)
+					),
+					'spco_transaction_id' => new EE_Fixed_Hidden_Input(
+						array(
+							'normalization_strategy' 	=> new EE_Int_Normalization(),
+							'html_name' 						=> 'spco_transaction_id',
+							'html_id' 								=> 'spco-transaction-id',
+							'default'								=> $this->checkout->transaction->ID()
+						)
+					)
 				)
 			)
 		);
