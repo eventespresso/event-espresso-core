@@ -62,7 +62,6 @@ class EEH_Activation {
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
-		//also initialize payment settings, which is a side-effect of calling
 		EE_Registry::instance()->CAP->init_caps();
 
 		EEH_Activation::validate_messages_system();
@@ -718,7 +717,7 @@ class EEH_Activation {
 									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
 									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
-									'QST_type' => 'TEXT',
+									'QST_type' => 'STATE',
 									'QST_required' => 0,
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 7,
@@ -733,7 +732,7 @@ class EEH_Activation {
 									'QST_display_text' => __( 'Country', 'event_espresso' ),
 									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
 									'QST_system' => 'country',
-									'QST_type' => 'TEXT',
+									'QST_type' => 'COUNTRY',
 									'QST_required' => 0,
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 8,

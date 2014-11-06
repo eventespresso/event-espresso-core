@@ -70,8 +70,30 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 				'require_nonce' => FALSE
 				);
 
-		add_filter( 'FHEE_manage_event-espresso_page_espresso_messages_columns', array( $this, 'add_custom_mtps_columns' ), 10, 2 );
-		add_action( 'AHEE__EE_Admin_List_Table__column_actions__event-espresso_page_espresso_messages', array( $this, 'custom_mtp_create_button_column'), 10, 2 );
+		add_action( 'current_screen', array( $this, 'dynamic_screen_hooks' ), 10 );
+	}
+
+
+
+
+	/**
+	 * Callback for current_screen action
+	 * This is used for any filters and/or actions that require the dynamic screen hook_prefix to be correct.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function dynamic_screen_hooks() {
+		global $admin_page_hooks;
+
+		if ( !empty( $admin_page_hooks['espresso_events'] ) ) {
+			//we're on a EE specific page... good stuff!
+			$hook_prefix = $admin_page_hooks['espresso_events'];
+			$filter_ref = $hook_prefix . '_page_' . $this->page_slug;
+			add_filter( 'FHEE_manage_' . $filter_ref . '_columns', array( $this, 'add_custom_mtps_columns' ), 10, 2 );
+			add_action( 'AHEE__EE_Admin_List_Table__column_actions__' . $filter_ref, array( $this, 'custom_mtp_create_button_column'), 10, 2 );
+		}
 	}
 
 

@@ -165,7 +165,6 @@ final class EE_System {
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 
-
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
@@ -430,37 +429,29 @@ final class EE_System {
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-//				echo "done activation";die;
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
 				//just record that it was activated, but don't install anything
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-//				echo "done reactivation";die;
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
-				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
-					// so the database doesnt look old (ie, there are no migration scripts that say they need to upgrade it)
-					// THEN, we just want to still give the system a chance to setup new default data
-					add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-				} else {
-					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
-				}
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				//migraitons may be required now that we've upgraded
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				$this->_handle_core_version_change( $espresso_db_update );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
-				$this->update_list_of_installed_versions( $espresso_db_update );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
+				//its possible migrations are no longer required
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -468,6 +459,23 @@ final class EE_System {
 				break;
 		}
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
+	}
+
+	/**
+	 * Updates the list of installed versions and sets hooks for
+	 * initializing the database later during the request
+	 * @param array $espresso_db_update
+	 */
+	protected function _handle_core_version_change( $espresso_db_update ){
+		$this->update_list_of_installed_versions( $espresso_db_update );
+		//get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
+		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
+
+		foreach( EE_Registry::instance()->addons as $addon ){
+			if( ! has_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $addon, 'initialize_db_if_no_migrations_required' ) ) ){
+				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $addon, 'initialize_db_if_no_migrations_required' ));
+			}
+		}
 	}
 
 
@@ -531,9 +539,11 @@ final class EE_System {
 	 * If migration script/process did not exist, this is what would happen on every activation/reactivation/upgrade.
 	 * NOTE: does nothing if we're in maintenance mode (which would be the case if we detect there are data
 	 * migration scripts that need to be run)
+	 * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
+	 *		however,
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required(){
+	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE ){
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
@@ -542,9 +552,11 @@ final class EE_System {
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
-			//foreach registered addon, make sure its db is up-to-date too
-			foreach(EE_Registry::instance()->addons as $addon){
-				$addon->initialize_db_if_no_migrations_required();
+			if( $initialize_addons_too ) {
+				//foreach registered addon, make sure its db is up-to-date too
+				foreach(EE_Registry::instance()->addons as $addon){
+					$addon->initialize_db_if_no_migrations_required();
+				}
 			}
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {

@@ -19,6 +19,11 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 
 	private $_valid_capabilities = array();
 	private $_user;
+	/**
+	 * The results of EE_Capabilities::_init_caps_map() before any filters applied to it
+	 * @var array
+	 */
+	protected $_caps_before_registering_new_ones = array();
 
 	function __construct() {
 		$this->_valid_capabilities = array(
@@ -67,6 +72,10 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		//register capabilities
 		EE_Register_Capabilities::register( 'Test_Capabilities', $this->_valid_capabilities );
 
+		//use filters to access some of the data normally private to EE_Capabilities because we want to verify it
+		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_remember_what_caps_were_beforehand' ), 1 );
+		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok' ), 100 );
+
 		EE_Registry::instance()->load_core( 'Capabilities' );
 		EE_Capabilities::instance()->init_caps();
 
@@ -85,7 +94,30 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		$this->setupUser();
 	}
 
+	/**
+	 * Verify that the $incoming_cap_map looks normal after EE_REgister_Capabilities has played with it
+	 * @param array $incoming_caps
+	 */
+	public function _verify_new_cap_map_ok( $incoming_cap_map ){
+		foreach( $this->_caps_before_registering_new_ones as $role => $caps ){
+			$this->assertArrayHasKey( $role, $incoming_cap_map );
+			foreach( $caps as $cap ){
+				$this->assertArrayContains( $cap, $incoming_cap_map[ $role ] );
+			}
+		}
+		return $incoming_cap_map;
+	}
 
+
+	/**
+	 * Gets all the caps BEFORE the registered caps get added to make sure none get
+	 * removed.
+	 * @param type $incoming_cap_map
+	 */
+	public function _remember_what_caps_were_beforehand( $incoming_cap_map ){
+		$this->_caps_before_registering_new_ones = $incoming_cap_map;
+		return $incoming_cap_map;
+	}
 
 	function test_registering_capabilities_too_early() {
 
@@ -135,5 +167,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_write', 'testing_edit', $event->ID() ) );
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_read', 'testing_read', $other_event->ID() ) );
 		$this->assertTrue( EE_Capabilities::instance()->user_can( $this->_user, 'test_write', 'testing_edit', $other_event->ID() ) );
+	}
+
+	public function tearDown(){
+		EE_Register_Capabilities::deregister('Test_Capabilities');
 	}
 }

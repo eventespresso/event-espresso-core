@@ -6,7 +6,6 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 #invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
 #invoice + #invoice { margin-top:5em;}
 
-
 .print_button_div{
 	margin: 0 12pt;
 	width:660px;

@@ -179,7 +179,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
  * @throws EE_Error
  */
 	public function handle_payment_update($update_info, $transaction) {
-		$payment = $transaction->last_payment();
+		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
 			$request_args = array('headers' => array(
@@ -199,10 +199,13 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 					default:
 						$payment->set_status($this->_pay_model->declined_status());
 				}
-				return $payment;
+
 			}else{
-				throw new EE_Error(sprintf(__("Response from Mijireh could not be understood", "event_espresso")));
+				$payment->set_gateway_response( __( 'Response from Mijireh could not be understood.', 'event_espresso' ) );
+				$payment->set_details( $response );
+				$payment->set_status( $this->_pay_model->failed_status() );
 			}
+			return $payment;
 		}else{
 			throw new EE_Error(sprintf(__("Could not find Mijireh payment for transaction %s",'event_espresso'),$transaction->ID()));
 		}
