@@ -198,6 +198,7 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
+	 * get_line_item_via_transaction_object
 	 * Gets the line item for a specific transaction object
 	 *
 	 * @param EE_Transaction $transaction
@@ -205,7 +206,7 @@ class EEM_Line_Item extends EEM_Base {
 	 * @throws \EE_Error
 	 * @return EE_Line_Item[]
 	 */
-	public function get_line_item_for_transaction_object( EE_Transaction $transaction, EE_Base_Class $object ){
+	public function get_line_item_via_transaction_object( EE_Transaction $transaction, EE_Base_Class $object ){
 		return $this->get_all( array( array(
 			'TXN_ID' 		=> $transaction->ID(),
 			'OBJ_type' 	=> str_replace( 'EE_', '', get_class( $object )),
