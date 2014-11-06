@@ -47,7 +47,7 @@ class EEH_DTT_Helper {
 		}
 		return $timezone;
 	}
-	
+
 
 
 
@@ -78,7 +78,7 @@ class EEH_DTT_Helper {
 
 
 	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
-		
+
 		$timezone = self::get_timezone();
 
 		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
@@ -195,7 +195,7 @@ class EEH_DTT_Helper {
 	 * helper for doing simple datetime calculations on a given datetime from EE_Base_Class and modifying it IN the EE_Base_Class so you don't have to do anything else.
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
 	 * @param  string        $dttfield What field in the class has the date to manipulate
-	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years	
+	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
 	 * @param  integer       $value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
@@ -219,16 +219,17 @@ class EEH_DTT_Helper {
 
 
 
-
 	/**
 	 * Simply takes an incoming UTC timestamp and does calcs on it based on the incoming parameters and returns the new timestamp.
+	 *
 	 * @param  string  $utcdtt UTC timestamp
-	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
-	 * @param  integer $value  What you want to increment the date by
+	 * @param  string  $what a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer $value What you want to increment the date by
 	 * @param  string  $operand What operand you wish to use for the calculation
-	 * @return string          new UTC timestamp
+	 * @param string   $format  'timestamp' or 'mysql' just like current_time()
+	 * @return string  	new UTC timestamp
 	 */
-	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+' ) {
+	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+', $format = 'timestamp' ) {
 		$newdtt = '';
 
 		switch ( $what ) {
@@ -253,12 +254,17 @@ class EEH_DTT_Helper {
 		}
 
 		switch ( $operand ) {
-			case '+':
-				$newdtt = $utcdtt + $value;
-				break;
 			case '-':
 				$newdtt = $utcdtt - $value;
 				break;
+			case '+':
+			default :
+				$newdtt = $utcdtt + $value;
+				break;
+		}
+
+		if ( $format == 'mysql' ) {
+			$newdtt = gmdate( 'Y-m-d H:i:s', $newdtt );
 		}
 
 		return $newdtt;
