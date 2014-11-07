@@ -801,27 +801,6 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
-	 * Gets all descendants that are event subtotals
-	 * @return EE_Line_Item[]
-	 */
-	public function get_event_subtotals() {
-		$events = array();
-		foreach ( $this->children() as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
-				if ( $child_line_item->type() == EEM_Line_Item::type_sub_total && $child_line_item->OBJ_type() == 'Event' ) {
-					$events[ ] = $child_line_item;
-				} else {
-					//go-through-all-its children looking for events
-					$events = array_merge( $events, $child_line_item->get_event_subtotals() );
-				}
-			}
-		}
-		return $events;
-	}
-
-
-
-	/**
 	 * Gets all descendants of the specified type
 	 * @param string $type one of the constants on EEM_Line_Item
 	 * @return EE_Line_Item[]
