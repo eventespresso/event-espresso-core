@@ -21,11 +21,11 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 //		$transaction = $this->new_typical_transaction();
 //		$items_subtotals = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_sub_total, $transaction );
 //		$items_subtotal = array_shift( $items_subtotals );
-//		$eeh_found_items_subtotal = EEH_Line_Item::get_items_subtotal( $transaction->total_line_item() );
+//		$eeh_found_items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $transaction->total_line_item() );
 //		$this->assertEquals( $items_subtotal, $eeh_found_items_subtotal );
 //	}
 //	public function test_create_default_total_line_item(){
-//		$line_item = EEH_Line_Item::create_default_total_line_item();
+//		$line_item = EEH_Line_Item::create_total_line_item();
 //		$this->assertEquals( EEM_Line_Item::type_total, $line_item->type() );
 //		$items = $line_item->get_child_line_item( 'tickets' );
 //		$this->assertEquals( EEM_Line_Item::type_sub_total, $items->type() );
@@ -39,7 +39,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 //		$this->assertEquals( 15, $tax->percent() );
 //	}
 	public function test_add_ticket_purchase(){
-		$line_item = EEH_Line_Item::create_default_total_line_item();
+		$line_item = EEH_Line_Item::create_total_line_item();
 		$this->assertEquals( 0, $line_item->total() );
 
 		$ticket_line_item = EEH_Line_Item::add_ticket_purchase($line_item, $this->new_ticket( array(
@@ -50,7 +50,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 		$this->assertEquals( 33, $ticket_line_item->total() );
 		$this->assertEquals( 4.95, EEH_Line_Item::get_taxes_subtotal( $line_item )->total() );
-		$this->assertEquals( 33, EEH_Line_Item::get_items_subtotal( $line_item )->total() );
+		$this->assertEquals( 33, EEH_Line_Item::get_pre_tax_subtotal( $line_item )->total() );
 		$this->assertEquals( 37.95, $line_item->total());
 		$this->assertNotEquals( 0, $line_item->total() );
 
@@ -59,14 +59,14 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		//first create a line item
 		$txn = $this->new_typical_transaction();
 		$line_item = $txn->total_line_item();
-		$old_tax_subtotal = $line_item->get_nearest_descendant_of_type( EEM_Line_Item::type_tax_sub_total );
+		$old_tax_subtotal = EEH_Line_Item::get_nearest_descendant_of_type( $line_item, EEM_Line_Item::type_tax_sub_total );
 		$this->assertInstanceOf( 'EE_Line_Item', $old_tax_subtotal );
-		$old_tax = $old_tax_subtotal->get_nearest_descendant_of_type( EEM_Line_Item::type_tax );
+		$old_tax = EEH_Line_Item::get_nearest_descendant_of_type( $old_tax_subtotal, EEM_Line_Item::type_tax );
 
 		$new_tax = EEH_Line_Item::set_total_tax_to( $line_item, 1.5, 'Monkey Tax', 'Only monkey must pay' );
 		$this->assertEquals( 1.5, $new_tax->total());
 		$this->assertEquals( $new_tax->total(), $old_tax_subtotal->total() );
-		$child_of_tax_subtotal = $old_tax_subtotal->get_nearest_descendant_of_type( EEM_Line_Item::type_tax );
+		$child_of_tax_subtotal = EEH_Line_Item::get_nearest_descendant_of_type( $old_tax_subtotal, EEM_Line_Item::type_tax );
 		$this->assertEquals( $new_tax, $child_of_tax_subtotal );
 
 		$tax_total_before_recalculation = $old_tax_subtotal->total();
