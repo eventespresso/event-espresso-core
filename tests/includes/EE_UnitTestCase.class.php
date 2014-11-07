@@ -529,7 +529,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected function new_typical_transaction($options = array()){
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
-		$total_line_item = EEH_Line_Item::create_default_total_line_item( $txn->ID() );
+		$total_line_item = EEH_Line_Item::create_total_line_item( $txn->ID() );
 		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
 		if( isset( $options[ 'ticket_types' ] ) ){
 			$ticket_types = $options[ 'ticket_types' ];
