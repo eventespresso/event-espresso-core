@@ -165,7 +165,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		));
 		$t = $this->new_typical_transaction();
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
-		$old_pretax_total = EEH_Line_Item::get_items_subtotal( $t->total_line_item() )->total();
+		$old_pretax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() )->total();
 		$old_taxable_total = $t->total_line_item()->taxable_total();
 		$this->assertNotEmpty( $old_taxable_total );
 		$old_tax_total = $t->tax_total();
@@ -245,7 +245,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Payment::status_id_approved, $p->status() );
 		$this->assertEquals( $t->total(), $p->amount() );
 		//check that the shipping surcharge is correct
-		$items_subtotal = EEH_Line_Item::get_items_subtotal( $t->total_line_item() );
+		$items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
 		$items = $items_subtotal->children();
 		$first_item = array_shift( $items );
 		$this->assertEquals( 10, $first_item->total() );
