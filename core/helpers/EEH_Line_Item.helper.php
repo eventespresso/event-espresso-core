@@ -153,9 +153,9 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 *	@return \EE_Line_Item
 	 */
-	public static function get_items_subtotal( EE_Line_Item $total_line_item ){
-		$tickets = $total_line_item->get_child_line_item( 'tickets' );
-		return $tickets ? $tickets : self::create_default_tickets_subtotal( $total_line_item );
+	public static function get_pre_tax_subtotal( EE_Line_Item $total_line_item ){
+		$pre_tax_subtotal = $total_line_item->get_child_line_item( 'pre-tax-subtotal' );
+		return $pre_tax_subtotal instanceof EE_Line_Item ? $pre_tax_subtotal : self::create_pre_tax_subtotal( $total_line_item );
 	}
 
 
@@ -167,7 +167,7 @@ class EEH_Line_Item {
 	 */
 	public static function get_taxes_subtotal( EE_Line_Item $total_line_item ){
 		$taxes = $total_line_item->get_child_line_item( 'taxes' );
-		return $taxes ? $taxes : self::create_default_taxes_subtotal( $total_line_item );
+		return $taxes ? $taxes : self::create_taxes_subtotal( $total_line_item );
 	}
 
 
@@ -196,7 +196,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return \EE_Line_Item of type total
 	 */
-	public static function create_default_total_line_item( $transaction = NULL){
+	public static function create_total_line_item( $transaction = NULL){
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_code'	=> 'total',
 			'LIN_name'	=> __('Grand Total', 'event_espresso'),
@@ -204,8 +204,8 @@ class EEH_Line_Item {
 			'OBJ_type'	=>'Transaction'
 		));
 		self::set_TXN_ID( $line_item, $transaction );
-		self::create_default_tickets_subtotal( $line_item, $transaction );
-		self::create_default_taxes_subtotal( $line_item, $transaction );
+		self::create_pre_tax_subtotal( $line_item, $transaction );
+		self::create_taxes_subtotal( $line_item, $transaction );
 		return $line_item;
 	}
 
@@ -217,15 +217,15 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	protected static function create_default_tickets_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
+	protected static function create_pre_tax_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
 		$tickets_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'	=> 'tickets',
-			'LIN_name' 	=> __('Tickets', 'event_espresso'),
+			'LIN_code'	=> 'pre-tax-subtotal',
+			'LIN_name' 	=> __('Pre-Tax Subtotal', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total
 		));
 		self::set_TXN_ID( $tickets_line_item, $transaction );
 		$total_line_item->add_child_line_item( $tickets_line_item );
-		self::create_default_event_subtotal( $tickets_line_item, $transaction );
+		self::create_event_subtotal( $tickets_line_item, $transaction );
 		return $tickets_line_item;
 	}
 
@@ -238,7 +238,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	protected static function create_default_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
+	protected static function create_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'taxes',
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
@@ -259,7 +259,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	public static function create_default_event_subtotal( EE_Line_Item $tickets_line_item, $transaction = NULL ){
+	public static function create_event_subtotal( EE_Line_Item $tickets_line_item, $transaction = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'event',
 			'LIN_name' 	=> __('Event', 'event_espresso'),
@@ -364,7 +364,7 @@ class EEH_Line_Item {
 			$line_item_codes = array ( $line_item_codes );
 		}
 
-		$items_line_item = self::get_items_subtotal( $total_line_item );
+		$items_line_item = self::get_pre_tax_subtotal( $total_line_item );
 		if( ! $items_line_item){
 			return 0;
 		}
@@ -413,6 +413,180 @@ class EEH_Line_Item {
 		return $new_tax;
 	}
 
+
+
+	/**
+	 * Gets all descendants that are event subtotals
+	 *
+	 * @uses  EEH_Line_Item::get_subtotals_of_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_event_subtotals( EE_Line_Item $parent_line_item ) {
+		return self::get_subtotals_of_object_type( $parent_line_item, 'Event' );
+	}
+
+
+
+	/**
+	 * Gets all descendants subtotals that match the supplied object type
+	 *
+	 * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $obj_type
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_subtotals_of_object_type( EE_Line_Item $parent_line_item, $obj_type = '' ) {
+		return self::_get_descendants_by_type_and_object_type( $parent_line_item, EEM_Line_Item::type_sub_total, $obj_type );
+	}
+
+
+
+	/**
+	 * Gets all descendants that are event subtotals
+	 *
+	 * @uses  EEH_Line_Item::get_line_items_of_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_ticket_line_items( EE_Line_Item $parent_line_item ) {
+		return self::get_line_items_of_object_type( $parent_line_item, 'Ticket' );
+	}
+
+
+
+	/**
+	 * Gets all descendants subtotals that match the supplied object type
+	 *
+	 * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $obj_type
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_line_items_of_object_type( EE_Line_Item $parent_line_item, $obj_type = '' ) {
+		return self::_get_descendants_by_type_and_object_type( $parent_line_item, EEM_Line_Item::type_line_item, $obj_type );
+	}
+
+
+
+	/**
+	 * Gets all the descendants (ie, children or children of children etc) that are of the type 'tax'
+	 * @uses  EEH_Line_Item::get_descendants_of_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_tax_descendants( EE_Line_Item $parent_line_item ) {
+		return EEH_Line_Item::get_descendants_of_type( $parent_line_item, EEM_Line_Item::type_tax );
+	}
+
+
+
+	/**
+	 * Gets all the real items purchased which are children of this item
+	 * @uses  EEH_Line_Item::get_descendants_of_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_line_item_descendants( EE_Line_Item $parent_line_item ) {
+		return EEH_Line_Item::get_descendants_of_type( $parent_line_item, EEM_Line_Item::type_line_item );
+	}
+
+
+
+	/**
+	 * Gets all descendants of supplied line item that match the supplied line item type
+	 *
+	 * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $line_item_type one of the EEM_Line_Item constants
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_descendants_of_type( EE_Line_Item $parent_line_item, $line_item_type ) {
+		return self::_get_descendants_by_type_and_object_type( $parent_line_item, $line_item_type, NULL );
+	}
+
+
+
+	/**
+	 * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type as well
+	 *
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $line_item_type one of the EEM_Line_Item constants
+	 * @param string | NULL $obj_type object model class name (minus prefix) or NULL to ignore object type when searching
+	 * @return EE_Line_Item[]
+	 */
+	protected static function _get_descendants_by_type_and_object_type( EE_Line_Item $parent_line_item, $line_item_type, $obj_type = NULL ) {
+		$events = array();
+		foreach ( $parent_line_item->children() as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				if ( $child_line_item->type() == $line_item_type && ( $child_line_item->OBJ_type() == $obj_type || $obj_type === NULL )) {
+					$events[] = $child_line_item;
+				} else {
+					//go-through-all-its children looking for more matches
+					$events = array_merge( $events, self::_get_descendants_by_type_and_object_type( $child_line_item, $line_item_type, $obj_type ));
+				}
+			}
+		}
+		return $events;
+	}
+
+
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant of
+	 * the specified type and returns it, else NULL
+	 *
+	 * @uses  EEH_Line_Item::_get_nearest_descendant()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $type like one of the EEM_Line_Item::type_*
+	 * @return EE_Line_Item
+	 */
+	public static function get_nearest_descendant_of_type( EE_Line_Item $parent_line_item, $type ) {
+		return self::_get_nearest_descendant( $parent_line_item, 'LIN_type' , $type );
+	}
+
+
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant having the specified LIN_code and returns it, else NULL
+	 *
+	 * @uses  EEH_Line_Item::_get_nearest_descendant()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $code any value used for LIN_code
+	 * @return EE_Line_Item
+	 */
+	public static function get_nearest_descendant_having_code( EE_Line_Item $parent_line_item, $code ) {
+		return self::_get_nearest_descendant( $parent_line_item, 'LIN_code' , $code );
+	}
+
+
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant having the specified LIN_code and returns it, else NULL
+	 *
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $search_field  name of EE_Line_Item property
+	 * @param string $value any value stored in $search_field
+	 * @return EE_Line_Item
+	 */
+	protected static function _get_nearest_descendant( EE_Line_Item $parent_line_item, $search_field, $value ) {
+		foreach( $parent_line_item->children() as $child ){
+			if ( $child->get( $search_field ) == $value ){
+				return $child;
+			}
+		}
+		foreach( $parent_line_item->children() as $child ){
+			$descendant_found = self::_get_nearest_descendant( $child, $search_field, $value );
+			if ( $descendant_found ){
+				return $descendant_found;
+			}
+		}
+		return NULL;
+	}
+
+
+
+
 	/**
 	 * Prints out a representation of the line item tree
 	 * @param EE_Line_Item $line_item
@@ -434,5 +608,65 @@ class EEH_Line_Item {
 			}
 		}
 	}
+
+
+
+
+	/**************************************** @DEPRECATED METHODS ****************************************/
+
+
+
+	/**
+	 * @deprecated
+	 * @param EE_Line_Item $total_line_item
+	 *	@return \EE_Line_Item
+	 */
+	public static function get_items_subtotal( EE_Line_Item $total_line_item ){
+		EE_Error::doing_it_wrong( 'EEH_Line_Item::get_items_subtotal()', __('Method replaced with EEH_Line_Item::get_pre_tax_subtotal()', 'event_espresso'), '4.6.0' );
+		return self::get_pre_tax_subtotal( $total_line_item );
+	}
+	/**
+	 * @deprecated
+	 * @param EE_Transaction $transaction
+	 *	@return \EE_Line_Item
+	 */
+	public static function create_default_total_line_item( $transaction = NULL) {
+		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_total_line_item()', __('Method replaced with EEH_Line_Item::create_total_line_item()', 'event_espresso'), '4.6.0' );
+		return self::create_total_line_item( $transaction );
+	}
+	/**
+	 * @deprecated
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Transaction $transaction
+	 *	@return \EE_Line_Item
+	 */
+	public static function create_default_tickets_subtotal( EE_Line_Item $total_line_item, $transaction = NULL) {
+		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_tickets_subtotal()', __('Method replaced with EEH_Line_Item::create_pre_tax_subtotal()', 'event_espresso'), '4.6.0' );
+		return self::create_pre_tax_subtotal( $total_line_item, $transaction );
+	}
+	/**
+	 * @deprecated
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Transaction $transaction
+	 *	@return \EE_Line_Item
+	 */
+	public static function create_default_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL) {
+		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_taxes_subtotal()', __('Method replaced with EEH_Line_Item::create_taxes_subtotal()', 'event_espresso'), '4.6.0' );
+		return self::create_taxes_subtotal( $total_line_item, $transaction );
+	}
+	/**
+	 * @deprecated
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Transaction $transaction
+	 *	@return \EE_Line_Item
+	 */
+	public static function create_default_event_subtotal( EE_Line_Item $total_line_item, $transaction = NULL) {
+		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_event_subtotal()', __('Method replaced with EEH_Line_Item::create_event_subtotal()', 'event_espresso'), '4.6.0' );
+		return self::create_event_subtotal( $total_line_item, $transaction );
+	}
+
+
+
+
 }
 // End of file EEH_Line_Item.helper.php
