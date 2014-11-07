@@ -570,7 +570,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
 		if( ! $item ){
 			EE_Registry::instance()->load_helper( 'Line_Item' );
-			$item = EEH_Line_Item::create_default_total_line_item( $this );
+			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;
 	}
@@ -601,7 +601,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
 		if( ! $item ){
 			EE_Registry::instance()->load_helper( 'Line_Item' );
-			$item = EEH_Line_Item::create_default_total_line_item( $this );
+			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;
 	}
