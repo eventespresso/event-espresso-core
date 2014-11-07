@@ -430,7 +430,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup line items!
 		EE_Registry::instance()->load_helper('Line_Item');
-		$line_item_total = EEH_Line_Item::create_default_total_line_item( $this->txn );
+		$line_item_total = EEH_Line_Item::create_total_line_item( $this->txn );
 
 		//add tickets
 		foreach ( $this->tickets as $tktid => $item ) {
@@ -443,7 +443,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		EEH_Line_Item::apply_taxes( $line_item_total );
 
 		//now we should be able to get the items we need from this object
-		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
+		$ticket_line_items = EEH_Line_Item::get_pre_tax_subtotal( $line_item_total )->children();
 
 		foreach ( $ticket_line_items as $line_id => $line_item ) {
 			$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
