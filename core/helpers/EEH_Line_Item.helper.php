@@ -84,18 +84,11 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $event_line_item, EE_Ticket $ticket, $qty = 1 ){
-		$datetimes = $ticket->datetimes();
-		$event_names = array();
-		foreach( $datetimes as $datetime ) {
-			$event = $datetime->event();
-			$event_names[ $event->ID() ] = $event->name();
-		}
-		$description = $ticket->description() . " (For ".implode(", ",$event_names).")";
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(
 			array(
 				'LIN_name'			=> $ticket->name(),
-				'LIN_desc'			=> $description,
+				'LIN_desc'			=> $ticket->description() . sprintf( __( 'ticket for %1$s', 'event_espresso' ), $ticket->first_datetime()->event()->name() ),
 				'LIN_unit_price'	=> $ticket->price(),
 				'LIN_quantity'		=> $qty,
 				'LIN_is_taxable'	=> $ticket->taxable(),
@@ -180,6 +173,23 @@ class EEH_Line_Item {
 
 
 	/**
+	 * sets the TXN ID on an EE_Line_Item if passed a valid EE_Transaction object
+	 * @param EE_Line_Item $line_item
+	 * @param EE_Transaction $transaction
+	 * @return void
+	 */
+	public static function set_TXN_ID( EE_Line_Item $line_item, $transaction = NULL ){
+		if( $transaction ){
+			/** @type EEM_Transaction $EEM_Transaction */
+			$EEM_Transaction = EE_Registry::instance()->load_model( 'Transaction' );
+			$transaction = $EEM_Transaction->ensure_is_ID( $transaction );
+			$line_item->set_TXN_ID( $transaction );
+		}
+	}
+
+
+
+	/**
 	 * Creates a new default total line item for the transaction,
 	 * and its tickets subtotal and taxes subtotal line items (and adds the
 	 * existing taxes as children of the taxes subtotal line item)
@@ -193,10 +203,7 @@ class EEH_Line_Item {
 			'LIN_type'	=> EEM_Line_Item::type_total,
 			'OBJ_type'	=>'Transaction'
 		));
-		if( $transaction ){
-			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
-			$line_item->set_TXN_ID( $transaction );
-		}
+		self::set_TXN_ID( $line_item, $transaction );
 		self::create_default_tickets_subtotal( $line_item, $transaction );
 		self::create_default_taxes_subtotal( $line_item, $transaction );
 		return $line_item;
@@ -216,10 +223,7 @@ class EEH_Line_Item {
 			'LIN_name' 	=> __('Tickets', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total
 		));
-		if( $transaction ){
-			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
-			$total_line_item->set_TXN_ID( $transaction );
-		}
+		self::set_TXN_ID( $tickets_line_item, $transaction );
 		$total_line_item->add_child_line_item( $tickets_line_item );
 		self::create_default_event_subtotal( $tickets_line_item, $transaction );
 		return $tickets_line_item;
@@ -240,10 +244,7 @@ class EEH_Line_Item {
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total
 		));
-		if( $transaction ){
-			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
-			$total_line_item->set_TXN_ID( $transaction );
-		}
+		self::set_TXN_ID( $tax_line_item, $transaction );
 		$total_line_item->add_child_line_item( $tax_line_item );
 		//and lastly, add the actual taxes
 		self::apply_taxes( $total_line_item );
@@ -258,19 +259,33 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	protected static function create_default_event_subtotal( EE_Line_Item $tickets_line_item, $transaction = NULL ){
+	public static function create_default_event_subtotal( EE_Line_Item $tickets_line_item, $transaction = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'event',
 			'LIN_name' 	=> __('Event', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total,
 			'OBJ_type' 	=> 'Event',
 		));
-		if( $transaction ){
-			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
-			$tickets_line_item->set_TXN_ID( $transaction );
-		}
+		self::set_TXN_ID( $event_line_item, $transaction );
 		$tickets_line_item->add_child_line_item( $event_line_item );
 		return $event_line_item;
+	}
+
+
+
+	/**
+	 * Creates a default items subtotal line item
+	 * @param EE_Line_Item $event_line_item
+	 * @param EE_Event $event
+	 * @param EE_Transaction $transaction
+	 * @return EE_Line_Item
+	 */
+	public static function set_event_subtotal_details( EE_Line_Item $event_line_item, EE_Event $event, $transaction = NULL ){
+		if ( $event instanceof EE_Event ) {
+			$event_line_item->set_desc( $event->name() );
+			$event_line_item->set_OBJ_ID( $event->ID() );
+		}
+		self::set_TXN_ID( $event_line_item, $transaction );
 	}
 
 
