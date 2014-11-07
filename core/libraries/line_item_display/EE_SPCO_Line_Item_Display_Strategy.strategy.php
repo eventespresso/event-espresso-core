@@ -49,12 +49,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_sub_total:
+				$child_line_items = $line_item->children();
 				// loop thru children
-				foreach( $line_item->children() as $child_line_item ) {
+				foreach( $child_line_items as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
-				$html .= $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
+				// only display subtotal if there are multiple child line items
+				$html .= count( $child_line_items ) > 1 ? $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options ) : '';
 				break;
 
 			case EEM_Line_Item::type_tax:
@@ -103,7 +105,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', '', $row_class );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? '<span class="line-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>'  : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
 		// quantity td
@@ -138,7 +140,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item-row' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
@@ -213,7 +215,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 			// empty td
-			$html .= EEH_HTML::td( EEH_HTML::nbsp(), '',  '',  '',  ' colspan="2"' );
+			$html .= EEH_HTML::td( $line_item->desc(), '',  'jst-rght',  '',  ' colspan="2"' );
 			// total td
 			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght' );
 			// total td
