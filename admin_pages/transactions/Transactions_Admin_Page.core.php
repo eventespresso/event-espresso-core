@@ -901,9 +901,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-	/**
+		/**
 	 * delete_payment
 	 * 	delete a payment or refund made towards a transaction
 	*
