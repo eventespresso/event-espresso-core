@@ -630,8 +630,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ee_collapsible_status' => ' ee-collapsible-open'//$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
 			);
 
-		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
-		$timezone = is_object( $evtobj ) ? $evtobj->timezone_string() : NULL;
+		$timezone = $evtobj instanceof EE_Event ? $evtobj->timezone_string() : NULL;
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -642,7 +641,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 */
 
 		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
-		$times = $DTM->get_all_event_dates( $event_id );
+		$times = $DTM->get_all_event_dates( $evtID );
 
 
 
@@ -655,8 +654,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
-			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
-			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
+			//if there are no related tickets this is likely a new event OR autodraft event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
+			if ( empty ( $related_tickets ) ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
