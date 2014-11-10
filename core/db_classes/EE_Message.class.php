@@ -2,17 +2,36 @@
 	exit( 'No direct script access allowed' );
 }
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package        Event Espresso
+ * @ author        Event Espresso
+ * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license        {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ link                {@link http://www.eventespresso.com}
+ * @ since            4.0
+ *
+ */
+
+
+
+
+
+/**
  * EE_Message class
  *
  * @package 			Event Espresso
- * @subpackage 	/core/db_classes/EE_Message.class.php
+ * @subpackage 	includes/classes/EE_Message.class.php
  * @author 				Mike Nelson
  */
 class EE_Message extends EE_Base_Class {
 
+
 	/**
 	 *
-	 * @param array  $props_n_values
+	 * @param array $props_n_values
 	 * @param string $timezone
 	 * @return EE_Message
 	 */
@@ -25,7 +44,7 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 *
-	 * @param array  $props_n_values
+	 * @param array $props_n_values
 	 * @param string $timezone
 	 * @return EE_Message
 	 */
@@ -37,7 +56,6 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Gets messenger
-	 *
 	 * @return string
 	 */
 	function messenger() {
@@ -48,18 +66,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets messenger
-	 *
 	 * @param string $messenger
+	 * @return boolean
 	 */
-	function set_messenger( $messenger ) {
-		$this->set( 'MSG_messenger', $messenger );
+	function set_messenger( $messenger) {
+		return $this->set( 'MSG_messenger', $messenger);
 	}
-
-
-
 	/**
 	 * Gets message_type
-	 *
 	 * @return string
 	 */
 	function message_type() {
@@ -70,18 +84,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets message_type
-	 *
 	 * @param string $message_type
+	 * @return boolean
 	 */
-	function set_message_type( $message_type ) {
-		$this->set( 'MSG_message_type', $message_type );
+	function set_message_type( $message_type) {
+		return $this->set( 'MSG_message_type', $message_type);
 	}
-
-
-
 	/**
 	 * Gets context
-	 *
 	 * @return string
 	 */
 	function context() {
@@ -92,18 +102,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets context
-	 *
 	 * @param string $context
+	 * @return boolean
 	 */
-	function set_context( $context ) {
-		$this->set( 'MSG_context', $context );
+	function set_context( $context) {
+		return $this->set( 'MSG_context', $context);
 	}
-
-
-
 	/**
 	 * Gets recipient_ID
-	 *
 	 * @return string
 	 */
 	function recipient_ID() {
@@ -114,18 +120,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets recipient_ID
-	 *
 	 * @param string $recipient_ID
+	 * @return boolean
 	 */
-	function set_recipient_ID( $recipient_ID ) {
-		$this->set( 'MSG_recipient_ID', $recipient_ID );
+	function set_recipient_ID( $recipient_ID) {
+		return $this->set( 'MSG_recipient_ID', $recipient_ID);
 	}
-
-
-
 	/**
 	 * Gets recipient_type
-	 *
 	 * @return string
 	 */
 	function recipient_type() {
@@ -136,18 +138,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets recipient_type
-	 *
 	 * @param string $recipient_type
+	 * @return boolean
 	 */
-	function set_recipient_type( $recipient_type ) {
-		$this->set( 'MSG_recipient_type', $recipient_type );
+	function set_recipient_type( $recipient_type) {
+		return $this->set( 'MSG_recipient_type', $recipient_type);
 	}
-
-
-
 	/**
 	 * Gets content
-	 *
 	 * @return string
 	 */
 	function content() {
@@ -158,18 +156,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets content
-	 *
 	 * @param string $content
+	 * @return boolean
 	 */
-	function set_content( $content ) {
-		$this->set( 'MSG_content', $content );
+	function set_content( $content) {
+		return $this->set( 'MSG_content', $content);
 	}
-
-
-
 	/**
 	 * Gets address_to
-	 *
 	 * @return string
 	 */
 	function address_to() {
@@ -180,18 +174,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets address_to
-	 *
 	 * @param string $address_to
+	 * @return boolean
 	 */
-	function set_address_to( $address_to ) {
-		$this->set( 'MSG_address_to', $address_to );
+	function set_address_to( $address_to) {
+		return $this->set( 'MSG_address_to', $address_to);
 	}
-
-
-
 	/**
 	 * Gets address_from
-	 *
 	 * @return string
 	 */
 	function address_from() {
@@ -202,18 +192,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets address_from
-	 *
 	 * @param string $address_from
+	 * @return boolean
 	 */
-	function set_address_from( $address_from ) {
-		$this->set( 'MSG_address_from', $address_from );
+	function set_address_from( $address_from) {
+		return $this->set( 'MSG_address_from', $address_from);
 	}
-
-
-
 	/**
 	 * Gets priority
-	 *
 	 * @return int
 	 */
 	function priority() {
@@ -224,18 +210,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets priority
-	 *
 	 * @param int $priority
+	 * @return boolean
 	 */
-	function set_priority( $priority ) {
-		$this->set( 'MSG_priority', $priority );
+	function set_priority( $priority) {
+		return $this->set( 'MSG_priority', $priority);
 	}
-
-
-
 	/**
 	 * Gets STS_ID
-	 *
 	 * @return string
 	 */
 	function STS_ID() {
@@ -246,18 +228,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets STS_ID
-	 *
 	 * @param string $STS_ID
+	 * @return boolean
 	 */
-	function set_STS_ID( $STS_ID ) {
-		$this->set( 'STS_ID', $STS_ID );
+	function set_STS_ID( $STS_ID) {
+		return $this->set( 'STS_ID', $STS_ID);
 	}
-
-
-
 	/**
 	 * Gets created
-	 *
 	 * @return string
 	 */
 	function created() {
@@ -268,18 +246,14 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets created
-	 *
 	 * @param string $created
+	 * @return boolean
 	 */
-	function set_created( $created ) {
-		$this->set( 'MSG_created', $created );
+	function set_created( $created) {
+		return $this->set( 'MSG_created', $created);
 	}
-
-
-
 	/**
 	 * Gets modified
-	 *
 	 * @return string
 	 */
 	function modified() {
@@ -290,15 +264,15 @@ class EE_Message extends EE_Base_Class {
 
 	/**
 	 * Sets modified
-	 *
 	 * @param string $modified
+	 * @return boolean
 	 */
-	function set_modified( $modified ) {
-		$this->set( 'MSG_modified', $modified );
+	function set_modified( $modified) {
+		return $this->set( 'MSG_modified', $modified);
 	}
 
 
 
-}
-/* End of file EE_Message.class.php */
-/* Location: /core/db_classes/EE_Message.class.php */
+
+}/* End of file EE_Message.class.php */
+/* Location: includes/classes/EE_Message.class.php */
