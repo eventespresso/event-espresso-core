@@ -20,20 +20,20 @@
 
 
 /**
- * EE_Message class
+ * EE_Message_Queue class
  *
  * @package 			Event Espresso
- * @subpackage 	includes/classes/EE_Message.class.php
+ * @subpackage 	includes/classes/EE_Message_Queue.class.php
  * @author 				Mike Nelson
  */
-class EE_Message extends EE_Base_Class {
+class EE_Message_Queue extends EE_Base_Class {
 
 
 	/**
 	 *
 	 * @param array $props_n_values
 	 * @param string $timezone
-	 * @return EE_Message
+	 * @return EE_Message_Queue
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -46,7 +46,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param array $props_n_values
 	 * @param string $timezone
-	 * @return EE_Message
+	 * @return EE_Message_Queue
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
 		return new self( $props_n_values, TRUE, $timezone );
@@ -59,7 +59,7 @@ class EE_Message extends EE_Base_Class {
 	 * @return string
 	 */
 	function messenger() {
-		return $this->get( 'MSG_messenger' );
+		return $this->get( 'MSQ_messenger' );
 	}
 
 
@@ -70,14 +70,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_messenger( $messenger) {
-		return $this->set( 'MSG_messenger', $messenger);
+		return $this->set( 'MSQ_messenger', $messenger);
 	}
 	/**
 	 * Gets message_type
 	 * @return string
 	 */
 	function message_type() {
-		return $this->get( 'MSG_message_type' );
+		return $this->get( 'MSQ_message_type' );
 	}
 
 
@@ -88,14 +88,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_message_type( $message_type) {
-		return $this->set( 'MSG_message_type', $message_type);
+		return $this->set( 'MSQ_message_type', $message_type);
 	}
 	/**
 	 * Gets context
 	 * @return string
 	 */
 	function context() {
-		return $this->get( 'MSG_context' );
+		return $this->get( 'MSQ_context' );
 	}
 
 
@@ -106,14 +106,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_context( $context) {
-		return $this->set( 'MSG_context', $context);
+		return $this->set( 'MSQ_context', $context);
 	}
 	/**
 	 * Gets recipient_ID
 	 * @return string
 	 */
 	function recipient_ID() {
-		return $this->get( 'MSG_recipient_ID' );
+		return $this->get( 'MSQ_recipient_ID' );
 	}
 
 
@@ -124,14 +124,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_recipient_ID( $recipient_ID) {
-		return $this->set( 'MSG_recipient_ID', $recipient_ID);
+		return $this->set( 'MSQ_recipient_ID', $recipient_ID);
 	}
 	/**
 	 * Gets recipient_type
 	 * @return string
 	 */
 	function recipient_type() {
-		return $this->get( 'MSG_recipient_type' );
+		return $this->get( 'MSQ_recipient_type' );
 	}
 
 
@@ -142,14 +142,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_recipient_type( $recipient_type) {
-		return $this->set( 'MSG_recipient_type', $recipient_type);
+		return $this->set( 'MSQ_recipient_type', $recipient_type);
 	}
 	/**
 	 * Gets content
 	 * @return string
 	 */
 	function content() {
-		return $this->get( 'MSG_content' );
+		return $this->get( 'MSQ_content' );
 	}
 
 
@@ -160,14 +160,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_content( $content) {
-		return $this->set( 'MSG_content', $content);
+		return $this->set( 'MSQ_content', $content);
 	}
 	/**
 	 * Gets address_to
 	 * @return string
 	 */
 	function address_to() {
-		return $this->get( 'MSG_address_to' );
+		return $this->get( 'MSQ_address_to' );
 	}
 
 
@@ -178,14 +178,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_address_to( $address_to) {
-		return $this->set( 'MSG_address_to', $address_to);
+		return $this->set( 'MSQ_address_to', $address_to);
 	}
 	/**
 	 * Gets address_from
 	 * @return string
 	 */
 	function address_from() {
-		return $this->get( 'MSG_address_from' );
+		return $this->get( 'MSQ_address_from' );
 	}
 
 
@@ -196,14 +196,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_address_from( $address_from) {
-		return $this->set( 'MSG_address_from', $address_from);
+		return $this->set( 'MSQ_address_from', $address_from);
 	}
 	/**
 	 * Gets priority
 	 * @return int
 	 */
 	function priority() {
-		return $this->get( 'MSG_priority' );
+		return $this->get( 'MSQ_priority' );
 	}
 
 
@@ -214,7 +214,7 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_priority( $priority) {
-		return $this->set( 'MSG_priority', $priority);
+		return $this->set( 'MSQ_priority', $priority);
 	}
 	/**
 	 * Gets STS_ID
@@ -239,7 +239,7 @@ class EE_Message extends EE_Base_Class {
 	 * @return string
 	 */
 	function created() {
-		return $this->get( 'MSG_created' );
+		return $this->get( 'MSQ_created' );
 	}
 
 
@@ -250,14 +250,14 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_created( $created) {
-		return $this->set( 'MSG_created', $created);
+		return $this->set( 'MSQ_created', $created);
 	}
 	/**
 	 * Gets modified
 	 * @return string
 	 */
 	function modified() {
-		return $this->get( 'MSG_modified' );
+		return $this->get( 'MSQ_modified' );
 	}
 
 
@@ -268,11 +268,11 @@ class EE_Message extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_modified( $modified) {
-		return $this->set( 'MSG_modified', $modified);
+		return $this->set( 'MSQ_modified', $modified);
 	}
 
 
 
 
-}/* End of file EE_Message.class.php */
-/* Location: includes/classes/EE_Message.class.php */
+}/* End of file EE_Message_Queue.class.php */
+/* Location: includes/classes/EE_Message_Queue.class.php */

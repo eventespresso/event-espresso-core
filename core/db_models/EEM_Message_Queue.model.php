@@ -1,14 +1,32 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Message Model
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ * ------------------------------------------------------------------------
+ *
+ * Message_Queue Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Mike Nelson
+ * @author				Brent Christensen
+ *
+ * ------------------------------------------------------------------------
  */
-class EEM_Message extends EEM_Base {
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
-  	// private instance of the Message object
+
+class EEM_Message_Queue extends EEM_Base {
+
+  	// private instance of the Message_Queue object
 	private static $_instance = NULL;
 
 	const priority_high = 0;
@@ -45,11 +63,11 @@ class EEM_Message extends EEM_Base {
 	 *		@return EEM_Message
 	 */
 	protected function __construct( $timezone ) {
-		$this->singular_item = __('Message','event_espresso');
-		$this->plural_item = __('Messages','event_espresso');
+		$this->singular_item = __('Message Queue','event_espresso');
+		$this->plural_item = __('Message Queues','event_espresso');
 
 		$this->_tables = array(
-			'Message'=>new EE_Primary_Table('esp_message','TXN_ID')
+			'Message_Queue'=>new EE_Primary_Table('esp_message_queue','TXN_ID')
 		);
 
 		$allowed_stati = array(
@@ -59,20 +77,20 @@ class EEM_Message extends EEM_Base {
 		);
 
 		$this->_fields = array(
-			'Message'=>array(
-				'MSG_ID'=>new EE_Primary_Key_Int_Field('MSG_ID', __('Message ID','event_espresso')),
-				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Messenger', 'event_espresso' ), FALSE ),
-				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Message Type', 'event_espresso' ), FALSE ),
-				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), FALSE ),
-				'MSG_recipient_ID' => new EE_Foreign_Key_String_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), TRUE, NULL, array( 'Attendee' ) ),
-				'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSG_recipient_type', __( 'Recipient Type', 'event_espresso' ), TRUE, NULL, array('Attendee' ) ),
-				'MSG_content' => new EE_Full_HTML_Field( 'MSG_content', __( 'Content', 'event_espresso' ), FALSE, '' ),
-				'MSG_address_to' => new EE_Plain_Text_Field( 'MSG_address_to', __( 'Address To', 'event_espresso' ), TRUE ),
-				'MSG_address_from' => new EE_Plain_Text_Field( 'MSG_address_from', __( 'Address From', 'event_espresso' ), TRUE ),
-				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), FALSE, self::priority_medium, $allowed_stati ),
+			'Message_Queue'=>array(
+				'MSQ_ID'=>new EE_Primary_Key_Int_Field('MSQ_ID', __('Message_Queue ID','event_espresso')),
+				'MSQ_messenger' => new EE_Plain_Text_Field('MSQ_messenger', __( 'Messenger', 'event_espresso' ), FALSE ),
+				'MSQ_message_type' => new EE_Plain_Text_Field( 'MSQ_message_type', __( 'Message Type', 'event_espresso' ), FALSE ),
+				'MSQ_context' => new EE_Plain_Text_Field( 'MSQ_context', __( 'Context', 'event_espresso' ), FALSE ),
+				'MSQ_recipient_ID' => new EE_Foreign_Key_String_Field( 'MSQ_recipient_ID', __( 'Recipient ID', 'event_espresso' ), TRUE, NULL, array( 'Attendee' ) ),
+				'MSQ_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSQ_recipient_type', __( 'Recipient Type', 'event_espresso' ), TRUE, NULL, array('Attendee' ) ),
+				'MSQ_content' => new EE_Full_HTML_Field( 'MSQ_content', __( 'Content', 'event_espresso' ), FALSE, '' ),
+				'MSQ_address_to' => new EE_Plain_Text_Field( 'MSQ_address_to', __( 'Address To', 'event_espresso' ), TRUE ),
+				'MSQ_address_from' => new EE_Plain_Text_Field( 'MSQ_address_from', __( 'Address From', 'event_espresso' ), TRUE ),
+				'MSQ_priority' => new EE_Enum_Integer_Field( 'MSQ_priority', __( 'Priority', 'event_espresso' ), FALSE, self::priority_medium, $allowed_stati ),
 				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), FALSE, self::status_idle, 'Status' ),
-				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), FALSE, current_time('timestamp' ) ),
-				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), TRUE, current_time('timestamp') )
+				'MSQ_created' => new EE_Datetime_Field( 'MSQ_created', __( 'Created', 'event_espresso' ), FALSE, current_time('timestamp' ) ),
+				'MSQ_modified' => new EE_Datetime_Field( 'MSQ_modified', __( 'Modifieid', 'event_espresso' ), TRUE, current_time('timestamp') )
 			)
 		);
 		$this->_model_relations = array(
@@ -90,7 +108,7 @@ class EEM_Message extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Message instance
+	 *		@return EEM_Message_Queue instance
 	 */
 	public static function instance( $timezone = NULL ){
 
@@ -111,9 +129,7 @@ class EEM_Message extends EEM_Base {
 
 	/**
 	 * resets the model and returns it
-	 *
-	 * @param null $timezone
-	 * @return EEM_Message
+	 * @return EEM_Message_Queue
 	 */
 	public static function reset( $timezone = NULL ){
 		self::$_instance = NULL;
@@ -130,7 +146,7 @@ class EEM_Message extends EEM_Base {
 		$attendee_ID = EEM_Attendee::instance()->ensure_is_ID( $attendee );
 		return $this->exists( array( array(
 			'Attendee.ATT_ID' => $attendee_ID,
-			'MSG_message_type' => $message_type,
+			'MSQ_message_type' => $message_type,
 			'STS_ID' => array( 'IN', $this->stati_indicating_sent() ) ) ) );
 	}
 
@@ -143,5 +159,5 @@ class EEM_Message extends EEM_Base {
 	}
 
 }
-// End of file EEM_Message.model.php
-// Location: /includes/models/EEM_Message.model.php
+// End of file EEM_Message_Queue.model.php
+// Location: /includes/models/EEM_Message_Queue.model.php

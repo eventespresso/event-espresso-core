@@ -253,21 +253,21 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = 'esp_message';
-		$sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-					MSG_messenger varchar(20) NOT NULL DEFAULT '',
-					MSG_message_type varchar(50) NOT NULL DEFAULT '',
-					MSG_context varchar(50) NOT NULL DEFAULT '',
-					MSG_recipient_ID varchar(45),
-					MSG_recipient_type varchar(45),
-					MSG_content  text NOT NULL DEFAULT '',
-					MSG_address_to varchar(100) NOT NULL DEFAULT '',
-					MSG_address_from varchar(100) NOT NULL DEFAULT '',
-					MSG_priority tinyint NOT NULL DEFAULT '0',
+		$table_name = 'esp_message_queue';
+		$sql = "MSQ_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					MSQ_messenger varchar(20) NOT NULL DEFAULT '',
+					MSQ_message_type varchar(50) NOT NULL DEFAULT '',
+					MSQ_context varchar(50) NOT NULL DEFAULT '',
+					MSQ_recipient_ID varchar(45),
+					MSQ_recipient_type varchar(45),
+					MSQ_content  text NOT NULL DEFAULT '',
+					MSQ_address_to varchar(100) NOT NULL DEFAULT '',
+					MSQ_address_from varchar(100) NOT NULL DEFAULT '',
+					MSQ_priority tinyint NOT NULL DEFAULT '0',
 					STS_ID tinyint(1) NOT NULL DEFAULT '1',
-					MSG_created datetime DEFAULT '0000-00-00 00:00:00',
-					MSG_modified datetime DEFAULT '0000-00-00 00:00:00',
-					PRIMARY KEY  (MSG_ID)";
+					MSQ_created datetime DEFAULT '0000-00-00 00:00:00',
+					MSQ_modified datetime DEFAULT '0000-00-00 00:00:00',
+					PRIMARY KEY  (MSQ_ID)";
 		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_event_message_template';
@@ -436,7 +436,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_status';
 		$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
 					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
-					  STS_type set('event','registration','transaction','payment','email', 'message') COLLATE utf8_bin NOT NULL,
+					  STS_type set('event','registration','transaction','payment','email', 'message_queue') COLLATE utf8_bin NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
 					  STS_desc tinytext COLLATE utf8_bin,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,

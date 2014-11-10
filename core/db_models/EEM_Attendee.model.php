@@ -91,7 +91,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event'=>new EE_HABTM_Relation('Registration'),
-			'Message' => new EE_Has_Many_Any_Relation( FALSE ),//allow deletion of attendees even if they have messages in the queue for them
+			'Message_Queue' => new EE_Has_Many_Any_Relation( FALSE ),//allow deletion of attendees even if they have messages in the queue for them
 		);
 		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
