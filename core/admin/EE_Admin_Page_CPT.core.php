@@ -174,13 +174,29 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//let's see if the current route has a value for cpt_object_slug if it does we use that instead of the page
 		$this->_cpt_object = isset($this->_req_data['action']) && isset( $this->_cpt_routes[$this->_req_data['action']] ) ? get_post_type_object($this->_cpt_routes[$this->_req_data['action']]) : get_post_type_object( $page );
+
+		//corresponding pagenow maps for our custom routes.
+		$pagenow_map = array(
+			'create_new' => 'post-new.php',
+			'edit' => 'post.php',
+			'trash' => 'post.php'
+			);
+
+		//possibly reset pagenow.
+		if ( ! empty( $this->_req_data['page'] ) && $this->_req_data['page'] == $this->page_slug && !empty( $this->_req_data['action'] ) && isset( $pagenow_map[$this->_req_data['action'] ] ) ) {
+			global $pagenow;
+			$pagenow = $pagenow_map[$this->_req_data['action']];
+		}
+
 		//TODO the below will need to be reworked to account for the cpt routes that are NOT based off of page but action param.
 		//get current page from autosave
 		$current_page = isset( $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] ) ? $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] : NULL;
 		$this->_current_page = isset( $this->_req_data['current_page'] ) ? $this->_req_data['current_page'] : $current_page;
 
+
 		//autosave... make sure its only for the correct page
 		if ( !empty($this->_current_page ) && $this->_current_page == $this->page_slug ) {
+			global $pagenow;
 			//setup autosave ajax hook
 			//add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 ); //TODO reactivate when 4.2 autosave is implemented
 		}
@@ -332,6 +348,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 		parent::_load_page_dependencies();
+
+		//notice we are ALSO going to load the pagenow hook set for this route (see _before_page_setup for the reset of the pagenow global ). This is for any plugins that are doing things properly and hooking into the load page hook for core wp cpt routes.
+		global $pagenow;
+		do_action( 'load-' . $pagenow );
+
 		$this->modify_current_screen();
 		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
@@ -772,7 +793,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function modify_current_screen() {
-		global $pagenow;
 		//ONLY do this if the current page_route IS a cpt route
 		if ( !$this->_cpt_route ) return;
 		//routeing things REALLY early b/c this is a cpt admin page
@@ -785,9 +805,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}/**/
-
-		//we tweak the $pagenow global so anyone checking if a page is 'post.php' or 'post-new.php' for their metaboxes (which they *should* be doing) will still work with our cpt routes
-		$pagenow = 'post.php';
 	}
 
 
