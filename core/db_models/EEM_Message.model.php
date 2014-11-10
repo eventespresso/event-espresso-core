@@ -66,7 +66,7 @@ class EEM_Message extends EEM_Base {
 				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), FALSE ),
 				'MSG_recipient_ID' => new EE_Foreign_Key_String_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), TRUE, NULL, array( 'Attendee' ) ),
 				'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSG_recipient_type', __( 'Recipient Type', 'event_espresso' ), TRUE, NULL, array('Attendee' ) ),
-				'MSG_content' => new EE_Full_HTML_Field( 'MSG_content', __( 'Content', 'event_espresso' ), FALSE, '' ),
+				'MSG_content' => new EE_Maybe_Serialized_Text_Field( 'MSG_content', __( 'Content', 'event_espresso' ), FALSE, '' ),
 				'MSG_address_to' => new EE_Plain_Text_Field( 'MSG_address_to', __( 'Address To', 'event_espresso' ), TRUE ),
 				'MSG_address_from' => new EE_Plain_Text_Field( 'MSG_address_from', __( 'Address From', 'event_espresso' ), TRUE ),
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), FALSE, self::priority_medium, $allowed_stati ),
