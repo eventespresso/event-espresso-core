@@ -855,7 +855,7 @@ class EEH_Activation {
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
 					('ESN', 'SENT', 'email', 0, NULL, 1),
 					('MSN', 'SENT', 'message_queue', 0, NULL, 0),
-					('MFL', 'FAIL', 'message_queue', 0, NULL, 1),
+					('MFL', 'FAIL', 'message_queue', 0, NULL, 0),
 					('MID', 'IDLE', 'message_queue', 0, NULL, 1),
 					('MRT', 'RETRY', 'message_queue', 0, NULL, 0);";
 			$wpdb->query($SQL);
