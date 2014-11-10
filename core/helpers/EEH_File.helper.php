@@ -43,7 +43,18 @@ class EEH_File extends EEH_Base {
 		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			// if some eager beaver's just trying to get in there too early...
-			if ( ! did_action( 'wp_loaded' )) {
+			// let them do it, because we are one of those eager beavers! :P
+			/**
+			 * more explanations are probably merited. http://codex.wordpress.org/Filesystem_API#Initializing_WP_Filesystem_Base
+			 * says WP_Filesystem should be used after 'wp_loaded', but currently EE's activation process
+			 * is setup to mostly happen on 'init', and refactoring to have it happen on
+			 * 'wp_loaded' is too much work on a BETA milestone.
+			 * So this fix is expected to work if the WP files are owned by the server user,
+			 * but probably not if the user needs to enter their FTP credentials to modify files
+			 * and there may be troubles if the WP files are owned by a different user
+			 * than the server user. But both of these issues should exist in 4.4 and earlier too
+			 */
+			if ( FALSE && ! did_action( 'wp_loaded' )) {
 				$msg = __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso');
 				if ( WP_DEBUG ) {
 					$msg .= '<br />' .  __('The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.', 'event_espresso');
