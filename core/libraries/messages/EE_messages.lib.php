@@ -75,6 +75,71 @@ class EE_messages {
 		}
 	}
 
+	/**
+	 * Ensures that the specified messenger is currently active.
+	 * If not, activates it and its default message types.
+	 * @param string $messenger_name
+	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
+	 */
+	public function ensure_messenger_is_active( $messenger_name ){
+		//note: active messengers indexed by their names
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		if( ! isset( $active_messengers[ $messenger_name ] ) ) {
+			$this->activate_messenger( $messenger_name );
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+	}
+
+	/**
+	 * Activates the specified messenger
+	 * @param string $messenger_name
+	 */
+	public function activate_messenger( $messenger_name ){
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$installed_message_objects = $this->get_installed();
+		$installed_messengers = $installed_message_objects[ 'messengers' ];
+		//setup the $installed_mts in an array indexed by message type name
+		foreach ( $installed_message_objects['message_types'] as $imt ) {
+			if ( $imt instanceof EE_message_type ) {
+				$message_types[$imt->name] = $imt;
+			}
+		}
+		//it's inactive. Activate it.
+		foreach( $installed_messengers as $messenger ) {
+			if( $messenger_name == $messenger->name ) {
+				$active_messengers[ $messenger->name ][ 'obj' ] = $messenger;
+				/** @var EE_messenger[] $installed_messengers  */
+				$default_message_types = $messenger->get_default_message_types();
+				foreach ( $default_message_types as $message_type ) {
+					//we need to setup any initial settings for message types
+					/** @var EE_message_type[] $installed_mts */
+					$settings_fields = $message_types[ $message_type ]->get_admin_settings_fields();
+					if ( !empty( $settings_fields ) ) {
+						foreach ( $settings_fields as $field => $values ) {
+							$settings[$field] = $values[ 'default' ];
+						}
+					} else {
+						$settings = array();
+					}
+
+					$active_messengers[ $messenger->name ][ 'settings' ][ $messenger->name . '-message_types' ][ $message_type ][ 'settings' ] = $settings;
+				}
+
+				//setup any initial settings for the messenger
+				$msgr_settings = $messenger->get_admin_settings_fields();
+
+				if ( !empty( $msgr_settings ) ) {
+					foreach ( $msgr_settings as $field => $value ) {
+						$active_messengers[ $messenger->name ][ 'settings' ][ $field ] = $value;
+					}
+				}
+			}
+		}
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+	}
+
 
 
 

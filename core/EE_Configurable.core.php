@@ -25,7 +25,7 @@ abstract class EE_Configurable extends EE_Base {
 
 	/**
 	 * @var $_config
-	 * @type EE_Base_Config
+	 * @type EE_Config_Base
 	 */
 	protected $_config = NULL;
 

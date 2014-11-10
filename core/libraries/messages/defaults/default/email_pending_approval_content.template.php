@@ -38,7 +38,7 @@
     [EVENT_LIST]
 </div>
 <!-- Callout Panel -->
-<p class="callout"><?php printf( __('You can %make a payment here »%s', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>' ); ?>.</p>
+<p class="callout"><?php printf( __('You can %smake a payment here »%s', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>' ); ?>.</p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>

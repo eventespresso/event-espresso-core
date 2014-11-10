@@ -157,7 +157,7 @@ class EEH_Template {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
 
-		if ( $check_if_custom and !empty( $template_path ) )
+		if ( $check_if_custom && !empty( $template_path ) )
 			return TRUE;
 
 		// not in the theme
@@ -196,13 +196,15 @@ class EEH_Template {
 					// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 					EE_PLUGIN_DIR_PATH
 					);
-				$template_folder_paths = array_merge($core_paths, $template_folder_paths );
+				$template_folder_paths = array_merge( $template_folder_paths, $core_paths );
 			}
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
+
 			// array to hold all possible template paths
 			$full_template_paths = array();
+
 			// loop through $templates
 			foreach ( (array)$templates as $template ) {
 				// while looping through all template folder paths
@@ -215,6 +217,8 @@ class EEH_Template {
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+
+
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
@@ -246,6 +250,19 @@ class EEH_Template {
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		/**
+		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
+		 * modifications.  NOTE... modifying these things can cause breakage as most templates running through
+		 * the display_template method are templates we DON'T want modified (usually because of js
+		 * dependencies etc).  So unless you know what you are doing, do NOT filter templates or template args
+		 * using this.
+		 *
+		 * @since 4.6.0
+		 */
+		$template_path = apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
+		$template_args = apply_filters( 'FHEE__EEH_Template__display_template__template_args', $template_args );
+
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
 			return '';

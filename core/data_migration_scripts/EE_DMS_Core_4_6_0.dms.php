@@ -219,7 +219,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 				OBJ_type varchar(45) DEFAULT NULL,
 				LOG_type varchar(45) DEFAULT NULL,
 				LOG_message text,
-				LOG_wp_user_id int(11) DEFAULT NULL,
+				LOG_wp_user int(11) DEFAULT NULL,
 				PRIMARY KEY  (LOG_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
@@ -249,26 +249,6 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (GRP_ID),
 					KEY MTP_user_id (MTP_user_id)";
 		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
-
-
-
-
-		$table_name = 'esp_message';
-		$sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-					MSG_messenger varchar(20) NOT NULL DEFAULT '',
-					MSG_message_type varchar(50) NOT NULL DEFAULT '',
-					MSG_context varchar(50) NOT NULL DEFAULT '',
-					MSG_recipient_ID varchar(45),
-					MSG_recipient_type varchar(45),
-					MSG_content  text NOT NULL DEFAULT '',
-					MSG_address_to varchar(100) NOT NULL DEFAULT '',
-					MSG_address_from varchar(100) NOT NULL DEFAULT '',
-					MSG_priority tinyint NOT NULL DEFAULT '0',
-					STS_ID varchar(3) NOT NULL DEFAULT '1',
-					MSG_created datetime DEFAULT '0000-00-00 00:00:00',
-					MSG_modified datetime DEFAULT '0000-00-00 00:00:00',
-					PRIMARY KEY  (MSG_ID)";
-		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_event_message_template';
 		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -310,7 +290,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 				PMD_slug varchar(124) DEFAULT NULL,
 				PMD_order int(11) DEFAULT NULL,
 				PMD_debug_mode tinyint(1) NOT NULL DEFAULT '0',
-				PMD_wp_user_id int(11) NOT NULL DEFAULT '0',
+				PMD_wp_user int(11) NOT NULL DEFAULT '0',
 				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
 				PMD_button_url varchar(1012) DEFAULT NULL,
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
@@ -436,7 +416,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_status';
 		$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
 					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
-					  STS_type set('event','registration','transaction','payment','email', 'message') COLLATE utf8_bin NOT NULL,
+					  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
 					  STS_desc tinytext COLLATE utf8_bin,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
@@ -620,7 +600,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 									'PMD_admin_name'=>$nicename,
 									'PMD_admin_desc'=>$description,
 									'PMD_slug'=>$slug,
-									'PMD_wp_user_id'=>$user_id,
+									'PMD_wp_user'=>$user_id,
 									'PMD_scope'=>serialize(array('ADMIN')),
 								);
 						$success = $wpdb->insert(
@@ -632,7 +612,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 									'%s',//PMD_admin_name
 									'%s',//PMD_admin_desc
 									'%s',//PMD_slug
-									'%d',//PMD_wp_user_id
+									'%d',//PMD_wp_user
 									'%s',//PMD_scope
 								)
 								);

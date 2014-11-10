@@ -51,7 +51,7 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
 				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
-				'PMD_wp_user_id' => new EE_Integer_Field( 'PMD_wp_user_id', __( "User ID", 'event_espresso' ), FALSE, 1 ),
+				'PMD_wp_user' => new EE_Integer_Field( 'PMD_wp_user', __( "User ID", 'event_espresso' ), FALSE, 1 ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
 				'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
 		) );

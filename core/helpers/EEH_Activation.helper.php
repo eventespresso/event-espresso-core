@@ -62,7 +62,6 @@ class EEH_Activation {
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
-		//also initialize payment settings, which is a side-effect of calling
 		EE_Registry::instance()->CAP->init_caps();
 
 		EEH_Activation::validate_messages_system();
@@ -718,7 +717,7 @@ class EEH_Activation {
 									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
 									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
-									'QST_type' => 'TEXT',
+									'QST_type' => 'STATE',
 									'QST_required' => 0,
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 7,
@@ -733,7 +732,7 @@ class EEH_Activation {
 									'QST_display_text' => __( 'Country', 'event_espresso' ),
 									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
 									'QST_system' => 'country',
-									'QST_type' => 'TEXT',
+									'QST_type' => 'COUNTRY',
 									'QST_required' => 0,
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 8,
@@ -822,7 +821,7 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'MSN', 'MFL', 'MID', 'MRT' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -854,11 +853,7 @@ class EEH_Activation {
 					('PFL', 'FAILED', 'payment', 0, NULL, 0),
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
-					('ESN', 'SENT', 'email', 0, NULL, 1),
-					('MSN', 'SENT', 'message', 0, NULL, 0),
-					('MFL', 'FAIL', 'message', 0, NULL, 1),
-					('MID', 'IDLE', 'message', 0, NULL, 1),
-					('MRT', 'RETRY', 'message', 0, NULL, 0);";
+					('ESN', 'SENT', 'email', 0, NULL, 1);";
 			$wpdb->query($SQL);
 
 		}
@@ -1311,6 +1306,12 @@ class EEH_Activation {
 		}
 	}
 
+	/**
+	 * Resets the cache on EEH_Activation
+	 */
+	public static function reset(){
+		self::$_default_creator_id = NULL;
+	}
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php

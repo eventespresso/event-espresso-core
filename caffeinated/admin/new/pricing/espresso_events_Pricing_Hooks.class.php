@@ -254,7 +254,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
+			$ticket_price = isset( $tkt['TKT_base_price'] ) ? (float) $tkt['TKT_base_price'] : 0;
 			$base_price = isset( $tkt['TKT_base_price'] ) ? $tkt['TKT_base_price'] : 0;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;
 
@@ -297,7 +297,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+				$orig_base_price = $TKT->base_price();
+				$orig_base_price = $orig_base_price instanceof EE_Price ? $orig_base_price->amount() : 0;
+				$create_new_TKT = $ticket_sold && $base_price != $orig_base_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -628,8 +630,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ee_collapsible_status' => ' ee-collapsible-open'//$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
 			);
 
-		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
-		$timezone = is_object( $evtobj ) ? $evtobj->timezone_string() : NULL;
+		$timezone = $evtobj instanceof EE_Event ? $evtobj->timezone_string() : NULL;
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -640,7 +641,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 */
 
 		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
-		$times = $DTM->get_all_event_dates( $event_id );
+		$times = $DTM->get_all_event_dates( $evtID );
 
 
 
@@ -653,8 +654,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
-			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
-			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
+			//if there are no related tickets this is likely a new event OR autodraft event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
+			if ( empty ( $related_tickets ) ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
