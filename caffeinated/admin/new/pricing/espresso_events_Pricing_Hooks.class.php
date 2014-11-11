@@ -293,9 +293,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$orig_base_price = $TKT->base_price();
-				$orig_base_price = $orig_base_price instanceof EE_Price ? $orig_base_price->amount() : 0;
-				$create_new_TKT = $ticket_sold && $base_price != $orig_base_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+				$orig_price = $TKT->price();
+				$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -359,9 +358,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//let's make sure the base price is handled
 			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( array(), $TKT, $update_prices, $base_price, $base_price_id ) : $TKT;
 
-			//add price modifiers to ticket if any
-			if ( !empty( $price_rows ) )
-				$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
+			//add/update price_modifiers
+			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
 
 
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
@@ -504,18 +502,19 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param array  	$prices  	Array of prices from the form.
 	 * @param EE_Ticket $ticket  	EE_Ticket object that prices are being attached to.
 	 * @param bool 		$new_prices Whether attach existing incoming prices or create new ones.
-	 * @param int  		$base_price when empty($prices) assume we're doing a base price add.
+	 * @param int|bool 		$base_price if FALSE then NOT doing a base price add.
+	 * @param int|bool 		$base_price_id  if present then this is the base_price_id being updated.
 	 * @return  void
 	 */
-	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = 0, $base_price_id = 0 ) {
+	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = FALSE, $base_price_id = FALSE ) {
 
 		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
-		$current_prices_on_ticket = empty($prices) ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
+		$current_prices_on_ticket = $base_price !== FALSE ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
 
 		$updated_prices = array();
 
-		// if empty prices then we're dealing with a base price
-		if ( empty( $prices ) ) {
+		// if $base_price ! FALSE then updating a base price.
+		if ( $base_price !== FALSE ) {
 			$prices[1] = array(
 				'PRC_ID' => $new_prices || $base_price_id === 1 ? NULL : $base_price_id,
 				'PRT_ID' => 1,
