@@ -54,8 +54,8 @@ if ( $event_queue['total_items'] > 0 ) {
 					<tr>
 						<td>
 						<?php
-							echo $item['ticket']->name();
-							echo $item['ticket']->description() ? '<br/>' . $item['ticket']->description() : '';
+							echo '<span class="spco-ticket-info-name">' . $item['ticket']->name() . '</span>';
+							echo $item['ticket']->description() ? '<br/><span class="spco-ticket-info-description">' . $item['ticket']->description() . '</span>' : '';
 						?>
 						</td>
 						<td class="jst-cntr"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
