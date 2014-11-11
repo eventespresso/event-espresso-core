@@ -72,7 +72,7 @@ class EE_CPT_Event_Strategy {
 	protected function _add_filters(){
 		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 1, 2 );
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
-//		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
@@ -164,6 +164,20 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
 //		global $wpdb;
+		if (
+			$wp_query instanceof WP_Query
+			&&
+			(
+				isset( $wp_query->query_vars['post_type'] )
+				&& $wp_query->query_vars['post_type'] == 'espresso_events'
+			)
+			|| $wp_query->is_espresso_event_archive
+			|| $wp_query->is_espresso_event_taxonomy
+		) {
+			if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) {
+				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql' ) . '" ';
+			}
+		}
 		return $SQL;
 	}
 
