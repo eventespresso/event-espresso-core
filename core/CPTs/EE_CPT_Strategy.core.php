@@ -265,7 +265,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return void
 	 */
 	public function _set_paging( $WP_Query ) {
-		if ( $WP_Query->is_main_query() ) {
+		if ( $WP_Query->is_main_query() && apply_filters( 'FHEE__EE_CPT_Strategy___set_paging', TRUE )) {
 			$paged = $WP_Query->get( 'paged' );
 			if ( ! $paged ) {
 				$page = $WP_Query->get( 'page' );
