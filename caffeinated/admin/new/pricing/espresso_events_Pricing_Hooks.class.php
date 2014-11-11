@@ -248,8 +248,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_base_price'] ) ? (float) $tkt['TKT_base_price'] : 0;
-			$base_price = isset( $tkt['TKT_base_price'] ) ? $tkt['TKT_base_price'] : 0;
+			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
+			$base_price = isset( $tkt['TKT_base_price'] ) ? (float) $tkt['TKT_base_price'] : 0;
+			//if ticket price == 0 and $base_price != 0 then ticket price == base_price
+			$ticket_price = $ticket_price === 0 && $base_price !== 0 ? $base_price : $ticket_price;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;
 
 			$price_rows = is_array($data['edit_prices']) && isset($data['edit_prices'][$row]) ? $data['edit_prices'][$row] : array();
@@ -268,7 +270,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
-				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0
+				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0,
+				'TKT_price' => $ticket_price
 				);
 
 
@@ -277,7 +280,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
 				$TKT_values['TKT_ID'] = 0;
 				$TKT_values['TKT_is_default'] = 0;
-				$TKT_values['TKT_price'] = $ticket_price;
 				$update_prices = TRUE;
 			}
 
