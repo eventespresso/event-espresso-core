@@ -64,6 +64,7 @@ class EEH_File extends EEH_Base {
 				// should be loaded if we are past the wp_loaded hook...
 				if ( ! function_exists( 'WP_Filesystem' )) {
 					require_once( ABSPATH . 'wp-admin/includes/file.php' );
+					require_once( ABSPATH . 'wp-admin/includes/template.php' );
 				}
 				// basically check for direct or previously configured access
 				if ( ! WP_Filesystem() ) {
