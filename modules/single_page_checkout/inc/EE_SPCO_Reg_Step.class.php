@@ -404,6 +404,19 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * generate_reg_form_for_actions
+	 *
+	 * @param array $actions
+	 * @return void
+	 */
+	public function generate_reg_form_for_actions( $actions = array() ) {
+		$actions = array_merge( array( 'generate_reg_form', 'display_spco_reg_step', 'process_reg_step', 'update_reg_step' ), $actions );
+		$this->checkout->generate_reg_form = in_array( $this->checkout->action, $actions ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * @return string
 	 */
 	public function display_reg_form() {
@@ -492,18 +505,6 @@ abstract class EE_SPCO_Reg_Step {
 	 */
 	public function edit_link_class() {
 		return $this->is_current_step() ? ' hidden' : '';
-	}
-
-
-
-	/**
-	 *   update_cart
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function update_checkout() {
-		$this->checkout->stash_transaction_and_checkout();
 	}
 
 
