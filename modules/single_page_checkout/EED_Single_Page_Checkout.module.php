@@ -409,7 +409,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// or some other kind of revisit ?
 		$this->checkout->revisit = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 		// and whether or not to generate a reg form for this request
-		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
+		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', FALSE ); 		// TRUE 	FALSE
 	}
 
 
@@ -559,14 +559,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _process_form_action() {
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
-			// AJAX next step reg form
+
 			case 'display_spco_reg_step' :
 				$this->checkout->redirect = FALSE;
+				// AJAX next step reg form
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				// advance to the next step! If you pass GO, collect $200
-				$this->go_to_next_step();
+				break;
+
+			case 'update_checkout' :
+				// this is primarily intended for use by systems outside of SPCO
+				// prevent any redirects from happening when this request is completed
+				$this->checkout->continue_reg = FALSE;
+				// let's assume that another system has made changes to the cart, so we should update our data from the db
+				$this->checkout->cart = $this->get_cart_for_transaction( $this->checkout->transaction );
+				// let's also update the TXN total
+				$this->checkout->transaction->set_total( $this->checkout->cart->get_cart_grand_total() );
+				// store our progress so far
+				$this->checkout->stash_transaction_and_checkout();
 				break;
 
 			default :
@@ -592,8 +603,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
 
 				} else {
 					EE_Error::add_error(
@@ -607,6 +616,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			// end default
 		}
+		// advance to the next step! If you pass GO, collect $200
+		$this->go_to_next_step();
 	}
 
 
@@ -644,12 +655,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_Cart
 	 */
 	private function _get_cart_for_transaction( EE_Transaction $transaction, $from_session = FALSE ) {
-		$cart = $from_session ? $transaction->get_cart_session() : EE_Cart::get_cart_from_txn( $transaction );
+		$cart = $from_session ? $transaction->get_cart_session() : $this->get_cart_for_transaction( $transaction );
 		// verify cart
 		if ( ! $cart instanceof EE_Cart ) {
 			$cart = EE_Registry::instance()->load_core( 'Cart' );
 		}
 		return $cart;
+	}
+
+
+
+	/**
+	 * _get_transaction_and_cart_for_current_session
+	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
+	 *
+	 * 	@access public
+	 * @param EE_Transaction $transaction
+	 * 	@return EE_Cart
+	 */
+	public function get_cart_for_transaction( EE_Transaction $transaction ) {
+		return EE_Cart::get_cart_from_txn( $transaction );
 	}
 
 
@@ -990,8 +1015,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step() {
-
-		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' ) {
+		// just return for these conditions
+		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' || $this->checkout->action == 'update_checkout' ) {
 			return;
 		}
 		// if this is an ajax request AND a callback function exists
