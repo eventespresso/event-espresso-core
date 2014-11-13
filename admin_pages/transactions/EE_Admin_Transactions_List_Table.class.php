@@ -169,11 +169,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 */
 	function column_TXN_total( EE_Transaction $item ){
 		if ( $item->get('TXN_total') > 0 ) {
-			return '<span class="txn-pad-rght">' . $item->get_pretty('TXN_total') . '</span>';
+			return '<span class="txn-pad-rght">' . apply_filters( 'FHEE__EE_Admin_Transactions_List_Table__column_TXN_total__TXN_total', $item->get_pretty('TXN_total'), $item ) . '</span>';
 		} else {
 			return '<span class="txn-overview-free-event-spn">' . __( 'free', 'event_espresso' ) . '</span>';
 		}
-
 	}
 
 
