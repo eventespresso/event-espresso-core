@@ -18,6 +18,7 @@
  *
  */
 class EEH_Line_Item {
+
 	//other functions: cancel ticket purchase
 	//delete ticket purchase
 	//add promotion
@@ -196,7 +197,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return \EE_Line_Item of type total
 	 */
-	public static function create_total_line_item( $transaction = NULL){
+	public static function create_total_line_item( $transaction = NULL ){
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_code'	=> 'total',
 			'LIN_name'	=> __('Grand Total', 'event_espresso'),
@@ -218,15 +219,15 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item
 	 */
 	protected static function create_pre_tax_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
-		$tickets_line_item = EE_Line_Item::new_instance(array(
+		$pre_tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'pre-tax-subtotal',
 			'LIN_name' 	=> __('Pre-Tax Subtotal', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total
 		));
-		self::set_TXN_ID( $tickets_line_item, $transaction );
-		$total_line_item->add_child_line_item( $tickets_line_item );
-		self::create_event_subtotal( $tickets_line_item, $transaction );
-		return $tickets_line_item;
+		self::set_TXN_ID( $pre_tax_line_item, $transaction );
+		$total_line_item->add_child_line_item( $pre_tax_line_item );
+		self::create_event_subtotal( $pre_tax_line_item, $transaction );
+		return $pre_tax_line_item;
 	}
 
 
@@ -255,19 +256,21 @@ class EEH_Line_Item {
 
 	/**
 	 * Creates a default items subtotal line item
-	 * @param EE_Line_Item $tickets_line_item
+	 * @param EE_Line_Item $pre_tax_line_item
 	 * @param EE_Transaction $transaction
+	 * @param EE_Event $event
 	 * @return EE_Line_Item
 	 */
-	public static function create_event_subtotal( EE_Line_Item $tickets_line_item, $transaction = NULL ){
+	public static function create_event_subtotal( EE_Line_Item $pre_tax_line_item, $transaction = NULL, $event = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'event',
 			'LIN_name' 	=> __('Event', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total,
 			'OBJ_type' 	=> 'Event',
+			'OBJ_ID' 		=>  $event instanceof EE_Event ? $event->ID() : 0
 		));
 		self::set_TXN_ID( $event_line_item, $transaction );
-		$tickets_line_item->add_child_line_item( $event_line_item );
+		$pre_tax_line_item->add_child_line_item( $event_line_item );
 		return $event_line_item;
 	}
 
