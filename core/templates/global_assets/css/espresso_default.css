@@ -41,8 +41,8 @@
 	font-variant: normal;
 	line-height: 1;
 	speak: none;
-    	text-align: center;
-    	text-decoration: inherit;
+    text-align: center;
+    text-decoration: inherit;
 	text-transform: none;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -657,6 +657,12 @@ input.ee-register-button {
 	font-size: 2em;
 	line-height: 2.4em;
 	letter-spacing: -.5px;
+}
+
+.ee-infinity-sign {
+	font-size: 1.5em;
+	line-height: 1em;
+	letter-spacing: -.25px;
 }
 
 .indented-text {

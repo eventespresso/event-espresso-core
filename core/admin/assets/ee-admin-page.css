@@ -154,6 +154,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .big-text { font-size : 1.2em; line-height : 1.6em; letter-spacing : -.5px; }
 .bigger-text { font-size : 1.5em; line-height : 2em; letter-spacing : -.75px; }
 .huge-text { font-size : 2em; line-height : 2.4em; letter-spacing : -1px; }
+.ee-infinity-sign { font-size: 1.5em; line-height: 1em; letter-spacing: -.25px; vertical-align: bottom; }
 
 .float-right { float : right; }
 .left { float : left; }
