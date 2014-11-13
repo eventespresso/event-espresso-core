@@ -112,15 +112,21 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$evt_venues = !empty( $evt_id ) ? $evt_obj->venues() : array();
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
 		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
-		//all venues!
-		$vnu_where['status'] = 'publish';
+
+		//possibly private venues.
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+			$vnu_where['status']= array( 'IN' , array( 'publish', 'private' ) );
+		} else {
+			$vnu_where['status'] = 'publish';
+		}
 
 		//cap checks
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$vnu_where['VNU_wp_user'] = get_current_user_id();
 		}
 
-		$venues = EE_Registry::instance()->load_model( 'Venue' )->get_all( array( $vnu_where ) );
+		$vnumdl = EE_Registry::instance()->load_model( 'Venue' );
+		$venues = $vnumdl->get_all( array( $vnu_where ) );
 
 		$ven_select = array();
 		$ven_select[0] = __('Select a Venue', 'event_espresso');
