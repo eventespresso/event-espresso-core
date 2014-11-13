@@ -378,19 +378,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *	@return array
 	 */
 	protected function _transaction_legend_items() {
-		$items = array(
-			'view_details' => array(
-				'class' => 'dashicons dashicons-cart',
-				'desc' => __('View Transaction Details', 'event_espresso')
+		$items = apply_filters(
+			'FHEE__Transactions_Admin_Page___transaction_legend_items__items',
+			array(
+				'view_details' => array(
+					'class' => 'dashicons dashicons-cart',
+					'desc' => __('View Transaction Details', 'event_espresso')
 				),
-			'download_invoice' => array(
-				'class' => 'ee-icon ee-icon-PDF-file-type',
-				'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
+				'download_invoice' => array(
+					'class' => 'ee-icon ee-icon-PDF-file-type',
+					'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
 				),
-			'view_registration' => array(
-				'class' => 'dashicons dashicons-clipboard',
-				'desc' => __('View Registration Details', 'event_espresso')
+				'view_registration' => array(
+					'class' => 'dashicons dashicons-clipboard',
+					'desc' => __('View Registration Details', 'event_espresso')
 				)
+			)
 		);
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
@@ -414,27 +417,30 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
-		$more_items = array(
-			'blank' => array(
-			 	'class' => '',
-			 	'desc' => ''
-			 	),
-			 'overpaid' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+		$more_items = apply_filters(
+			'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
+			array(
+				'blank' => array(
+					'class' => '',
+					'desc' => ''
 				),
-			 'complete' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
+				'overpaid' => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+					'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
 				),
-			 'incomplete' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
+				'complete' => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
+					'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
 				),
-			 'failed' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				'incomplete' => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
+					'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
+				'failed' => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+					'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				)
+			)
 		);
 
 		return array_merge( $items, $more_items);
@@ -696,32 +702,41 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( ! empty( $line_items )) {
 			foreach ( $line_items as $item ) {
 				if ( $item instanceof EE_Line_Item ) {
-					$ticket = $item->ticket();
-					if ( empty( $ticket )) {
-						continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
-					}
-					$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-					$event = $ticket->get_first_related('Registration')->get_first_related('Event');
-					$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
+					switch( $item->OBJ_type() ) {
 
-					$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
-					foreach( $registrations as $registration ) {
-						$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
-						$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
-						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
-						// attendee info
-						$attendee = $registration->get_first_related('Attendee');
-						if ( $attendee instanceof EE_Attendee ) {
-							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
-							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= $attendee->email();
-							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
-						} else {
-							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
-						}
+						case 'Event' :
+							break;
+
+						case 'Ticket' :
+							$ticket = $item->ticket();
+							if ( empty( $ticket )) {
+								continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							}
+							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
+							$event = $ticket->get_first_related('Registration')->get_first_related('Event');
+							$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
+
+							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
+							foreach( $registrations as $registration ) {
+								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
+								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
+								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+								// attendee info
+								$attendee = $registration->get_first_related('Attendee');
+								if ( $attendee instanceof EE_Attendee ) {
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
+									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . __(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+								} else {
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
+								}
+							}
+							break;
+
 					}
 				}
 			}
