@@ -101,6 +101,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EE_Registry::instance()->load_model( 'Payment_Method' );
 		// get all active payment methods
 		$this->checkout->available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
+
+		$this->generate_reg_form_for_actions( array( 'get_billing_form_html_for_payment_method' ));
+
 	}
 
 
