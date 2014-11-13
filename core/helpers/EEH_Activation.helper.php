@@ -65,6 +65,7 @@ class EEH_Activation {
 		EE_Registry::instance()->CAP->init_caps();
 
 		EEH_Activation::validate_messages_system();
+		EEH_Activation::insert_default_payment_methods();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -796,17 +797,16 @@ class EEH_Activation {
 
 	}
 
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * Makes sure the default payment method (Invoice) is active.
+	 * This used to be done automatically as part of constructing the old gateways config
+	 */
+	public static function insert_default_payment_methods(){
+		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
+			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+		}
+	}
 
 	/**
 	 * insert_default_status_codes
