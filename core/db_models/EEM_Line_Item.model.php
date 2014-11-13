@@ -198,20 +198,67 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
-	 * get_line_item_via_transaction_object
-	 * Gets the line item for a specific transaction object
+	 * get_line_item_for_transaction_object
+	 * Gets a transaction's line item record for a specific object such as a EE_Event or EE_Ticket
 	 *
-	 * @param EE_Transaction $transaction
+	 * @param int $TXN_ID
 	 * @param \EE_Base_Class $object
-	 * @throws \EE_Error
 	 * @return EE_Line_Item[]
 	 */
-	public function get_line_item_via_transaction_object( EE_Transaction $transaction, EE_Base_Class $object ){
+	public function get_line_item_for_transaction_object( $TXN_ID, EE_Base_Class $object ){
 		return $this->get_all( array( array(
-			'TXN_ID' 		=> $transaction->ID(),
+			'TXN_ID' 		=> $TXN_ID,
 			'OBJ_type' 	=> str_replace( 'EE_', '', get_class( $object )),
 			'OBJ_ID' 		=> $object->ID()
 		)));
+	}
+
+
+
+	/**
+	 * get_object_line_items_for_transaction
+	 * Gets all of the the object line items for a transaction, based on an object type plus an array of object IDs
+	 *
+	 * @param int $TXN_ID
+	 * @param string $OBJ_type
+	 * @param array $OBJ_IDs
+	 * @return EE_Line_Item[]
+	 */
+	public function get_object_line_items_for_transaction( $TXN_ID, $OBJ_type = 'Event', $OBJ_IDs = array() ){
+		// if incoming $OBJ_IDs is an array, then make sure it is formatted correctly for the query
+		if ( is_array( $OBJ_IDs ) && ! isset( $OBJ_IDs['IN'] )) {
+			$OBJ_IDs =  array( 'IN', $OBJ_IDs );
+		}
+		return $this->get_all( array(
+			array(
+				'TXN_ID' 		=> $TXN_ID,
+				'OBJ_type' 	=> $OBJ_type,
+				'OBJ_ID' 		=> $OBJ_IDs
+			)
+		));
+	}
+
+
+
+	/**
+	 * find_applicable_items_in_cart
+	 * searches the cart for any items that this promotion applies to
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param EE_Line_Item $parent_line_item
+	 * @param EE_Promotion $promotion
+	 * @return EE_Line_Item
+	 */
+	public function get_existing_promotion_line_item( EE_Line_Item $parent_line_item, EE_Promotion $promotion ) {
+		return $this->get_one( array(
+			array(
+				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
+				'LIN_parent' 	=> $parent_line_item->ID(),
+				'OBJ_type' 		=> 'Promotion',
+				'OBJ_ID' 			=> $promotion->ID()
+			)
+		));
 	}
 
 
