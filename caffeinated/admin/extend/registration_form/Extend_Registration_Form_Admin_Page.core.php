@@ -817,7 +817,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	protected function _update_reg_form_settings() {
 
 		//userproofing recaptcha settings in here as well.  If Use reCAPTCHA is set to yes but we dont' have public or private keys then set Use reCAPTCHA to no and give error message.
-		if ( isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
+		if ( apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', true ) && isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
 			if ( empty($this->_req_data['recaptcha_publickey']) || empty($this->_req_data['recaptcha_privatekey']) ) {
 				$this->_req_data['use_captcha'] = 0;
 				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
