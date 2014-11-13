@@ -580,7 +580,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
 		$this->_incoming_message_type = $message_type;
-		return $this->_send_message();
+		$this->_send_message();
 	}
 
 
