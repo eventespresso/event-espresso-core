@@ -457,6 +457,7 @@ class EE_Checkout {
 		$this->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->transaction->ID() );
 		EE_Registry::instance()->SSN->set_checkout( $this );
 		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
+		return TRUE;
 	}
 
 
