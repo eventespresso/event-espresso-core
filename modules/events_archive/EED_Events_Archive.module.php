@@ -150,6 +150,7 @@ class EED_Events_Archive  extends EED_Module {
 		// ensure valid EE_Events_Archive_Config() object exists
 //		EED_Events_Archive::_set_config();
 		// don't add content filter for dedicated EE child themes or private posts
+		EE_Registry::instance()->load_helper( 'Template' );
 		if ( ! EEH_Template::is_espresso_theme() ) {
 			// add status banner ?
 			if ( $this->config()->display_status_banner ) {
