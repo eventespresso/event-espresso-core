@@ -133,11 +133,12 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//that the warning gets sent out
 		global $track_it;
 		$track_it = TRUE;
-		$old_wpdb_se = $wpdb->show_errors( FALSE );
-		EEH_Activation::create_table( 'esp_new_addon_thing', 'BORKED SQL', 'ENGINE=MyISAM ', TRUE );
-		$wpdb->show_errors( $old_wpdb_se );
-		$notices = get_option( 'ee_pers_admin_notices', array() );
-		$this->assertArrayHasKey( 'bad_table_' . $wpdb->prefix . 'esp_new_addon_thing_detected', $notices );
+		try{
+			EEH_Activation::create_table( 'esp_new_addon_thing', 'BORKED SQL', 'ENGINE=MyISAM ', TRUE );
+			$this->fail( 'Borked SQL didnt\'t cause EEH_Activation::create_table to throw an EE_Error. It should have' );
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
 	}
 
 

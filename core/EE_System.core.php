@@ -723,8 +723,9 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
+		$notices = EE_Error::get_notices( FALSE );
 		//if current user is an admin and it's not an ajax request
-		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  )){
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  ) && ! isset( $notices[ 'errors' ] ) ){
 			$query_params =  array( 'page' => 'espresso_about' );
 
 			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {

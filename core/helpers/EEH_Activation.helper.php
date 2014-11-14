@@ -45,10 +45,12 @@ class EEH_Activation {
 	/**
 	 * Sets the database schema and creates folders. This should
 	 * be called on plugin activation and reactivation
+	 * @return boolean success, whether the database and folders are setup properly
 	 */
 	public static function initialize_db_and_folders(){
-		EEH_Activation::create_upload_directories();
-		EEH_Activation::create_database_tables();
+		$good_filesystem = EEH_Activation::create_upload_directories();
+		$good_db = EEH_Activation::create_database_tables();
+		return $good_filesystem && $good_db;
 	}
 
 	/**
@@ -363,6 +365,7 @@ class EEH_Activation {
 	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it
 	 * HAS data in it you want to leave it be)
 	 * 	@return void
+	 * @throws EE_Error if there are database errors
 	 */
 	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
 //		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exists') . "<br>";//die;
@@ -392,10 +395,19 @@ class EEH_Activation {
 			}
 		}
 		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+		//get $wpdb to echo errors, but buffer them. This way at least WE know an error
+		//happened. And then we can choose to tell the end user
+		$old_show_errors_policy = $wpdb->show_errors( TRUE );
+		$old_error_supression_policy = $wpdb->suppress_errors( FALSE );
+		ob_start();
 		dbDelta( $SQL );
-		// clear any of these out
-		delete_option( $table_name . '_tbl_version' );
-		delete_option( $table_name . '_tbl' );
+		$output = ob_get_contents();
+		ob_end_clean();
+		$wpdb->show_errors( $old_show_errors_policy );
+		$wpdb->suppress_errors( $old_error_supression_policy );
+		if( ! empty( $output ) ){
+			throw new EE_Error( $output	);
+		}
 	}
 
 
@@ -505,7 +517,7 @@ class EEH_Activation {
 	 * @access public
 	 * @static
 	 * @throws EE_Error
-	 * @return void
+	 * @return boolean success (whether database is setup properly or not)
 	 */
 	public static function create_database_tables() {
 		EE_Registry::instance()->load_core( 'Data_Migration_Manager' );
@@ -516,9 +528,20 @@ class EEH_Activation {
 			$current_data_migration_script->set_migrating( FALSE );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
+			if( $current_data_migration_script->get_errors() ){
+				if( WP_DEBUG ){
+					foreach( $current_data_migration_script->get_errors() as $error ){
+						EE_Error::add_error($error, __FILE__, __FUNCTION__, __LINE__ );
+					}
+				}else{
+					EE_Error::add_error( __( 'There were errors creating the Event Espresso database tables and Event Espresso has been deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.', 'event_espresso' ) );
+				}
+				return FALSE;
+			}
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 		}else{
-			throw new EE_Error( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ));
+			EE_Error::add_error( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
 		}
 	}
 
@@ -878,7 +901,7 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
-	 * 	@return void
+	 * 	@return boolean success of verifying upload directories exist
 	 */
 	public static function create_upload_directories() {
 		EE_Registry::instance()->load_helper( 'File' );
@@ -904,9 +927,10 @@ class EEH_Activation {
 					),
 					__FILE__, __FUNCTION__, __LINE__
 				);
-				return;
+				return FALSE;
 			}
 		}
+		return TRUE;
 	}
 
 
