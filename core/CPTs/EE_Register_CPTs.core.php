@@ -62,7 +62,7 @@ class EE_Register_CPTs {
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-
+		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
 	}
 
 
