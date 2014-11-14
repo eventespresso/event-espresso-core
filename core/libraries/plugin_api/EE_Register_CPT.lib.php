@@ -171,4 +171,13 @@ class EE_Register_CPT implements EEI_Plugin_API {
 			}
 		}
 	}
+
+
+
+
+	public static function deregister( $cpt_ref = null ) {
+		if ( !empty( self::$_registry[$cpt_ref] ) ) {
+			unset( self::$_registry[$cpt_ref] );
+		}
+	}
 } //end class EE_Register_CPT
