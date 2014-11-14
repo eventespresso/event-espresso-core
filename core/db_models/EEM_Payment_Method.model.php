@@ -194,7 +194,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method
 	 */
 	public function get_one_active( $scope = NULL, $query_params = array() ) {
-		$this->get_one( $this->_get_query_params_for_all_active( $scope, $query_params ) );
+		return $this->get_one( $this->_get_query_params_for_all_active( $scope, $query_params ) );
 	}
 
 
