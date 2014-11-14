@@ -377,35 +377,42 @@ class EE_messages {
 	 * @return mixed(bool|std_Class[])
 	 */
 	private function _send_message( EE_messenger $generating_messenger, EE_message_type $message_type, $data, EE_messenger $sending_messenger, $context = FALSE, $send = TRUE ) {
-		//can't even get started yo!
-		if ( $message_type === FALSE || is_wp_error( $message_type ) || $message_type->set_messages( $data, $generating_messenger, $context ) === FALSE ) {
+		$messages = $message_type;
+		$success = FALSE;
+		$error = FALSE;
+		$exit = $messages->set_messages( $data, $generating_messenger, $context );
+
+
+		if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
+			//can't even get started yo!
 			return FALSE;
 		}
-		// if the generating messenger and the sending messengers are different...
-		// then are there any hooks that the generating messenger sets for the sending messenger (i.e. css file swap outs etc.)
+
+		//if the generating messenger and the sending messengers are different, are there any hooks that the generating messenger sets for the sending messenger (i.e. css file swap outs etc.)
 		if ( $sending_messenger != $generating_messenger ) {
 			$generating_messenger->do_secondary_messenger_hooks( $sending_messenger->name );
 		}
-		//it is possible that the user has the messenger turned off for this type.
-		if ( $message_type->count === 0 ) {
-			return FALSE;
-		}
+
+		if ( $messages->count === 0 ) return FALSE; //it is possible that the user has the messenger turned off for this type.
+
 		//are we just sending the EE_Messages stdClass objects back?
 		if ( ! $send ) {
-			return $message_type->messages;
+			return $messages->messages;
 		}
+
 		//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.
-		//if ( $message_type->count > 1000 ) ... do something
+		//if ( $messages->count > 1000 ) ... do something
 		//else...
-		$success = TRUE;
-		// $success is a flag for the loop.  If there is NO error then everything is a success (true) otherwise it wasn't a success (false)
-		foreach ( $message_type->messages as $message ) {
+		foreach ( $messages->messages as $message ) {
 			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
-			// if messages send successfully then $success retains it's value, but a single fail will toggle it to FALSE
-			$success = $sending_messenger->send_message( $message, $message_type ) === TRUE ? $success : FALSE;
+			$success = $sending_messenger->send_message( $message, $message_type );
+			if ( $success === FALSE  ) {
+				$error = TRUE;
+			}
 		}
-		unset( $message_type );
-		return $success;
+		unset($messages);
+		//error is a global flag for the loop.  If there is NO error then everything is a success (true) otherwise it wasn't a success (false)
+		return $error ? FALSE : TRUE;
 	}
 
 

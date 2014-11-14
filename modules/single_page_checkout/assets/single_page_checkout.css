@@ -1,0 +1,634 @@
+span.ui-icon {
+	float:none !important;
+}
+.icon-right span.ui-icon {
+	margin: 0.7em 0.3em 0 0;
+}
+
+.mini-btn {
+	display: inline-block;
+	position: relative;
+	padding: 0.4em .75em .45em;
+	border:1px solid #ccc;
+	font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
+	text-align: center;
+	font-weight: bold;
+	line-height: 1;
+	cursor: pointer;
+	vertical-align:middle;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+}
+.event-queue-update-btns {
+	position:relative;
+	min-width:165px;
+}
+.event-queue-update-btns .ui-icon {
+	position:relative;
+	top:0px;
+}
+.button-blokka {
+	display:block;
+	position:absolute;
+	top:1px;
+	left:66px;
+	width:94px;
+	height:30px;
+}
+.float-right {
+	float:right;
+}
+.left {
+	float:left;
+}
+.clear, .clear-float {
+	clear:both;
+}
+.hidden {
+	display:none;
+}
+.hide-if-no-js {
+	display:none;
+}
+.striked {
+	text-decoration:line-through;
+}
+.spco-whats-next-buttons {
+	clear:both;
+	padding:2em 0 1em;
+	margin:0;
+	text-align:right;
+}
+.spco-whats-next-buttons .event-queue-register-btn, .spco-whats-next-buttons .spco-register-btn {
+	margin-left: 1em!important;
+}
+.act-like-link {
+	cursor:pointer;
+}
+.important-notice {
+	font-weight:bold;
+	color:#f59200;
+}
+.tiny-link {
+	display:block;
+	text-align:right;
+	font-size:.6em;
+	cursor:pointer;
+}
+.underline-hdr {
+	padding:0 0 .05em;
+	margin:2em 0 1em;
+	border-bottom: 2px solid #eee;
+}
+.overline-hdr {
+	padding:.5em 0 0;
+	margin:1em 0 1em;
+	/*border-top: 2px solid #eee;*/
+}
+
+
+/*
+ * REG PAGE
+*/
+#spco-sold-out-events-ul,
+#spco-pre-approval-events-ul {
+	list-style: none;
+}
+#single-page-checkout {
+	position: relative;
+}
+#spco-steps-big-hdr {
+	font-size:1.4em;
+	margin:0!important;
+	line-height:1.5em;
+	color:#ccc;
+}
+.spco-steps-big-hdr {
+}
+#spco-steps-display-dv {
+	width:99%;
+	height:80px;
+	padding:0 .5%;
+	margin:0 0 1em;
+	border-top:1px solid #eee;
+	border-bottom:1px solid #eee;
+}
+.spco-step-display-dv {
+	float:left;
+	display:inline-block;
+	margin:0;
+	text-align:center;
+}
+.steps-1 {
+	width:87%;
+}
+.steps-2 {
+	width:43.5%;
+}
+.steps-3 {
+	width:29%;
+}
+.steps-4 {
+	width:21.75%;
+}
+#single-page-checkout .spco-steps-display-hdr {
+	display:inline-block;
+	margin:2px 0 0!important;
+	vertical-align:middle;
+	font-size:15px!important;
+	line-height:16px;
+	color:#e8e8e8;
+	text-align:left;
+}
+#single-page-checkout .spco-step-big-nmbr {
+	display:inline-block;
+	padding:20px 0!important;
+	margin:0!important;
+	vertical-align:middle;
+	font-size:40px;
+	font-weight:bold;
+	line-height:1em;
+	color: #00B1CA;
+}
+#single-page-checkout .spco-step-big-nmbr:hover {
+	text-decoration:none;
+}
+#single-page-checkout .spco-step-arrow-dv {
+	float:left;
+	display:inline-block;
+	width:6%;
+	padding:20px 0!important;
+	margin:-4px 0 0!important;
+	vertical-align:middle;
+	text-align:center;
+	font-size:40px;
+	line-height:1em;
+	color:#e8e8e8;
+}
+#single-page-checkout .active-step .spco-steps-display-hdr {
+	color:inherit!important;
+}
+#single-page-checkout .inactive-step .spco-step-big-nmbr {
+	color:#e8e8e8;
+}
+.spco-edit-step-lnk {
+	float:right;
+	font-weight:normal;
+	font-size:11px;
+	line-height:30px;
+	letter-spacing:1px;
+	cursor:pointer;
+	text-decoration: none !important;
+}
+.spco-step-title-hdr {
+	margin:3em 0 1em !important;
+	border-bottom: 2px solid #eee;
+}
+.spco-step-dv {
+	padding:0;
+	margin:0 0 2em;
+	border:none;
+}
+.spco-attendee-wrap-fs {
+	padding:1em 2.5%;
+	margin:1em 0 2em;
+	border: 2px solid #eee;
+	border-radius: 2px;
+}
+
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg {
+	display: block;
+	clear:both;
+	margin:0 0 1em;
+}
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg + .reg-page-form-field-wrap-pg {
+	padding-top:.5em;
+}
+#single-page-checkout .espresso-question-group-wrap {
+	padding:1em;
+}
+#single-page-checkout .espresso-question-group-wrap + .espresso-question-group-wrap {
+	margin:.5em 0 0;
+}
+#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h5 {
+	margin:.25em 0 1em;
+}
+#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-desc-pg {
+	padding: 0 1em;
+	margin:-1em 0 0;
+	font-size: .9em;
+	color: #999;
+}
+.event-list-display-dv .big-event-title-hdr, #single-page-checkout .big-event-title-hdr {
+	margin:1em 0 0;
+}
+#single-page-checkout .spco-ticket-info-dv {
+	margin:4em 1em .25em;
+	font-size: .9em;
+	color: #999;
+}
+.big-event-title-hdr + .spco-ticket-info-dv {
+	margin-top: 2em!important;
+}
+#single-page-checkout .spco-payment-info-dv {
+	margin:2em 1em .25em;
+	font-size: .9em;
+}
+
+.spco-steps-pg {
+	margin:0 0 2em;
+}
+.spco-attendee-panel-dv {
+	width:100%!important;
+}
+.spco-event-title-hdr .ui-icon {
+	position:relative;
+	top:-2px;
+	margin-right:1em;
+}
+.spco-attendee-wrap-fs, .reg-page-confirmation-wrap-fs {
+	padding:1em 2.5%;
+	margin:1em 0 2em;
+	border: 2px solid #eee;
+	border-radius: 2px;
+}
+.spco-attendee-lgnd {
+	width: auto;
+	padding:0 1em;
+	margin:0;
+	border: none;
+	-moz-border:none;
+	letter-spacing:1px;
+	font-weight: bold;
+}
+.event_questions + .spco-attendee-lgnd {
+	margin-top:2em;
+}
+.spco-copy-attendee-chk-pg {
+	display:inline-block;
+	float:left;
+	clear:none!important;
+	width:32%;
+	margin: 0!important;
+}
+.spco-copy-attendee-hr {
+	clear:both;
+	margin:1em 0 0;
+	background:none;
+	border:none;
+	border-top:1px solid rgba( 0, 0, 0, .05);
+	border-bottom:1px solid rgba( 255, 255, 255, .9);
+}
+.reg-page-form-field-wrap-pg .espresso-form-input-lbl {
+	display:inline-block;
+	padding: 0 0 .25em;
+	font-size: .8em;
+	letter-spacing: 1px;
+	word-spacing: 1px;
+	line-height: 1em;
+	text-align: left;
+	vertical-align: middle;
+	color: #666;
+}
+.reg-page-confirmation-billing-info-spn {
+	display: inline-block;
+	width: 150px;
+	padding: 0.5em 10px 1em 0;
+	font-size: .9em;
+	line-height: 1em;
+	text-align: right;
+	vertical-align: middle;
+}
+#single-page-checkout .espresso-radio-btn-options-ul, 
+#single-page-checkout .espresso-checkbox-options-ul {
+	display: block;
+	width: 95%;
+	padding: 0 0 0 5%;
+	margin: 0;
+	list-style: none inside none;
+}
+#single-page-checkout .espresso-radio-btn-options-ul.requires-value, 
+#single-page-checkout .espresso-checkbox-options-ul.requires-value {
+	width: 90%;
+	padding: 2.5% 5%;
+
+}
+#single-page-checkout .espresso-checkbox-options-ul {
+	margin-top: .5em;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li, 
+#single-page-checkout .espresso-checkbox-options-ul li {
+	display: inline-block;
+	width:100%;
+	padding: 0;
+	margin: .5em 0 0;
+	vertical-align: middle;
+}
+
+#single-page-checkout .espresso-checkbox-options-ul li .espresso-checkbox-option-desc,
+#single-page-checkout .espresso-radio-btn-options-ul li .espresso-radio-btn-option-desc{
+	line-height: 1.25em;
+	padding-left: 2em;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li + li, 
+#single-page-checkout .espresso-checkbox-options-ul li + li {
+	margin-top:1em;
+}
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-radio-btn-options-ul,
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-checkbox-options-ul {
+	position: relative; top: -1em; 
+}
+/*#single-page-checkout .espresso-radio-btn-options-ul li.nano-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.nano-lbl,
+#single-page-checkout .espresso-radio-btn-options-ul li.micro-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.micro-lbl {
+	width: 30%; min-width:100px; max-width:100%;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li.tiny-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.tiny-lbl {
+	width: 12%; min-width:100px; max-width:100%;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li.small-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.small-lbl {
+	width: 24.4%; min-width:200px;  max-width:100%;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li.medium-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.medium-lbl {
+	width: 49%; min-width:300px;  max-width:100%;
+}
+#single-page-checkout .espresso-radio-btn-options-ul li.big-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.big-lbl {
+	width:99%; min-width:300px;  max-width:100%;
+}*/
+
+#single-page-checkout .espresso-radio-btn-options-ul .espresso-radio-btn-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul .espresso-checkbox-lbl {
+	cursor: pointer;
+	display: inline-block;
+	padding: 0;
+	/*margin: 0 2em 0 0;*/
+	text-align: left;
+	vertical-align: middle;
+	font-size: 1.25em;
+    	letter-spacing:0;
+ 	word-spacing: 0;
+}
+#single-page-checkout .espresso-radio-btn-options-ul .espresso-radio-btn-lbl input, 
+#single-page-checkout .espresso-checkbox-options-ul .espresso-checkbox-lbl input {
+	margin:0 .25em 2px 0;
+	vertical-align: middle;
+}
+#spco-copy-attendee-dv .wide {
+	width:auto !important;
+}
+#more-attendee-copy-options-dv {
+	position:relative;
+	display:none;
+	padding:0;
+	margin:3em 0 0;
+}
+.hide-the-displayed,
+.display-the-hidden {
+	margin:.5em 0 0;
+	cursor:pointer;
+}
+#recaptcha_response_field {
+	padding: 8px 10px 7px;
+}
+.reg-page-form-field-wrap-pg input[type="text"] {
+	display:block;
+	width: 100%;
+	padding: 8px 10px 7px;
+	margin:0 0 1em;
+}
+.reg-page-form-field-wrap-pg select {
+	display:block;
+	padding: 7px 10px 7px;
+	margin:0 0 1em;
+}
+.reg-page-form-field-wrap-pg .display-inline {
+	display:inline-block;
+}
+.reg-page-form-field-wrap-pg input.medium-txt {
+	width:35%;
+}
+.reg-page-form-field-wrap-pg input.small-txt {
+	width:20%;
+}
+.required-text,
+.asterisk, .espresso-form-input-lbl em {
+	font-weight:bold;
+	color:#E34064 !important;
+}
+.requires-value {
+	border-style:solid !important;
+	border-color:#E34064 !important;
+	border-width:2px !important;
+}
+.needs-value {
+	-webkit-box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+	-moz-box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+	box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+}
+.has-value {
+	-webkit-box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+	-moz-box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+	box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+}
+
+#spco-copy-attendee-dv {
+	position:relative;
+	padding:1.5em;
+	margin:1em 0 0;
+	background:rgba( 128, 128, 128, .05 );
+	border-radius: 2px;
+	line-height:1.1em;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-pg {
+	margin:0;
+	font-size:.8em;
+	letter-spacing:.4px;
+}
+#spco-copy-attendee-dv .spco-copy-all-attendee-pg {
+	margin:0 0 .75em;
+}
+#spco-copy-attendee-dv label {
+	display: block;
+	padding: 0.5em 10px 0.5em 0;
+	cursor: pointer;
+	font-size: .9em;
+	line-height: 1em;
+	vertical-align: middle;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-pg span {
+	margin:0 0 1em;
+	font-size:.9em;
+	letter-spacing:1px;
+	color:#777;
+	line-height:.9em;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-event-hdr {
+	clear:both;
+	margin:1.5em 0 .5em;
+	font-size:.8em;
+	font-weight:bold;
+	color:#444;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-chk, #spco-copy-all-attendee-chk {
+	position:relative;
+	top:2px;
+	left:5px;
+	margin:0 5px;
+}
+#single-page-checkout .spco-attendee-wrap-fs #spco-auto-copy-attendee-pg {
+	margin: 1em 0 1em;
+}
+#events-requiring-pre-approval-pg {
+	margin:.5em 0 0;
+}
+#reg-page-totals-hdr {
+	margin:2em 0 0;
+}
+.reg-page-totals-spn {
+	text-align:right;
+}
+#reg-page-grand-total-dv {
+	padding:0;
+	margin:0 0 1em;
+	border-top: 2px solid #eee;
+}
+#spco-apply-coupon-btn {
+	position:relative;
+	top:-1px;
+	font-size:.8em;
+}
+#spco-coupon-codes-pg {
+	padding:0 0 2em 155px;
+}
+#spco-payment_options-dv #methods-of-payment {
+	margin:2em 0;
+}
+#spco-payment_options-dv #methods-of-payment h3 {
+	margin:.5em 0;
+}
+#spco-payment_options-dv .reg-page-payment-option-dv {
+	display: inline-block;
+	position: relative;
+	max-width:180px;
+	padding:20px;
+	margin:0 1em 1em 0;
+	border:1px solid #ddd;
+	border-radius: 2px;
+	background:#fff;
+	text-align: center;
+	line-height:1em;
+	vertical-align: middle;
+	cursor:pointer;
+}
+#spco-payment_options-dv .reg-page-payment-option-dv.hidden {
+	display:none;
+}
+#spco-payment_options-dv .reg-page-payment-option-dv img {
+	vertical-align:middle;
+	max-width:140px !important;
+	padding:0;
+	margin:auto;
+	box-shadow: none !important;
+	box-radius: 0 !important;
+}
+#spco-payment_options-dv .reg-page-payment-option-dv:hover {
+	top:-1px;
+	border-color:#d5d5d5;
+	text-decoration:none;
+	-webkit-box-shadow: 4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+	-moz-box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+	box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+}
+#spco-payment_options-dv .reg-page-payment-option-dv .algn-vrt {
+	display: table !important;
+	height:30px;
+}
+#spco-payment_options-dv .reg-page-payment-option-dv .vrt-cell {
+	display: table-cell !important;
+	vertical-align: middle;
+}
+#reg-page-select-other-gateway-lnk {
+	float:right;
+	margin:2em 0 0;
+	cursor:pointer;
+}
+#event_espresso_checkout_form {
+	margin: 5px 0;
+	padding: 5px;
+}
+.choose-diff-pay-option-pg {
+	margin:0 0 6em;
+	font-size:.8em;
+}
+.off-site-payment-gateway-img {
+	position: absolute;
+	top:-4px;
+	right:-5px;
+}
+#external-link-msg-pg {
+	margin:0 0 4em;
+	color:#ccc;
+	font-size:.8em;
+	text-align: center;
+	;
+}
+#external-link-msg-pg img {
+	position: relative;
+	top:2px;
+}
+.reg-page-billing-info-dv p,
+.reg-page-billing-info-dv .sandbox-panel {
+	padding: 1em;
+	margin:0 0 2em;
+	background-color: #FFFFE0;
+	border:1px solid #E6DB55;
+	border-radius: 2px;
+}
+.sandbox-panel .tbl-wrap {
+	padding: 3px;
+	margin:0;
+	background-color: #fff;
+	border:1px solid #dfdfdf;
+	border-radius: 2px;
+}
+.sandbox-panel .test-credit-card-data-tbl {
+	width:100%;
+	padding: 0;
+	margin:0;
+	background-color: #fff;
+	border:1px solid #dfdfdf;
+	border-collapse:collapse;
+	font-size:.9em;
+}
+.sandbox-panel .test-credit-card-data-tbl thead td {
+	font-weight:bold;
+}
+.sandbox-panel .test-credit-card-data-tbl td {
+	padding: .5% 2.5%;
+	margin:0;
+	border:1px solid #dfdfdf;
+}
+.sandbox-panel ul {
+	margin:0 0 0 2em;
+	line-height:1em;
+}
+.sandbox-panel ul li {
+	margin:0 0 1em;
+}
+.test-credit-cards-info-pg {
+	margin:1em;
+	line-height:1.25em;
+	font-size:1em;
+}
+
+.ee-credit-card-year,
+.ee-credit-card-month {
+	width:auto !important;
+	min-width:60px;
+}

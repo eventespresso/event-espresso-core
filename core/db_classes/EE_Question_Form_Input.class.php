@@ -294,7 +294,7 @@ class EE_Question_Form_Input {
 						)
 					);
 					// does question type have options ?
-					if ( in_array( $type, array( 'DROPDOWN', 'RADIO_BTN', 'CHECKBOX' ) ) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ][ 'options' ] ) ) {
+					if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' ) ) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ][ 'options' ] ) ) {
 						foreach ( $input_types[ $field_ID ][ 'options' ] as $option ) {
 							$option = stripslashes_deep( $option );
 							$option_id = ! empty( $option[ 'id' ] ) ? $option[ 'id' ] : 0;

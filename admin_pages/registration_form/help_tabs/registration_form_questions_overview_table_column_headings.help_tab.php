@@ -15,7 +15,7 @@
 </li>
 <li>
 <strong><?php _e('Type', 'event_espresso'); ?></strong><br />
-<?php _e('This shows the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.', 'event_espresso'); ?>
+<?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
 <strong><?php _e('Text', 'event_espresso'); ?></strong><br />

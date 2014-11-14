@@ -116,7 +116,7 @@ class EE_Data_Migration_Manager{
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EE_Data_Migration_Manager ) {
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -155,14 +155,8 @@ class EE_Data_Migration_Manager{
 		);
 		//make sure we've included the base migration script, because we may need the EE_Data_Migration_Script_Error class
 		//to be defined, because right now it doesn't get autoloaded on its own
-		EE_Registry::instance()->load_core( 'Data_Migration_Class_Base', array(), TRUE );
-		EE_Registry::instance()->load_core( 'Data_Migration_Script_Base', array(), TRUE );
-		EE_Registry::instance()->load_core( 'Data_Migration_Script_Error', array(), TRUE );
-		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
-		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
+		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
-
-
 
 	/**
 	 * Deciphers, from an option's name, what plugin and version it relates to (see _save_migrations_ran to see what the option names are like, but generally they're like
@@ -707,7 +701,7 @@ class EE_Data_Migration_Manager{
 	public function add_error_to_migrations_ran($error_message){
 		//get last-ran migration script
 		global $wpdb;
-		$last_migration_script_option = $wpdb->get_row("SELECT * FROM $wpdb->options WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
+		$last_migration_script_option = $wpdb->get_row("SELECT * FROM ".$wpdb->options." WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
 
 		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
@@ -854,15 +848,5 @@ class EE_Data_Migration_Manager{
 		}else{
 			return NULL;
 		}
-	}
-
-	/**
-	 * Gets whether or not this particular migration has run or not
-	 * @param string $version the version the DMS searched for migrates to. Usually just the content before the 3rd period. Eg '4.1.0'
-	 * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
-	 * @return boolean
-	 */
-	public function migration_has_ran( $version, $plugin_slug = 'Core' ) {
-		return $this->get_migration_ran( $version, $plugin_slug ) !== NULL;
 	}
 }

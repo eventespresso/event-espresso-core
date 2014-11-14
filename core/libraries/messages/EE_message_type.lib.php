@@ -450,7 +450,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//if empty then something went wrong!
 		if ( empty( $data ) ) {
-			throw new EE_Error( sprintf(  __('There is no data retrieved, it is possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
+			throw new EE_Error( sprintf(  __('There is no data retrieved, it\'s possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
 		}
 
 		return $data;

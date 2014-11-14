@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
 
 	$('#post-body').on('keydown', '.question-options-table input', function(e) {
 		var keyPressed = e.which;
-		if ( keyPressed === 13 ) { //enter key
+		if ( keyPressed == 13 ) { //enter key
 			e.preventDefault();
 			e.stopPropagation();
 			espresso_reg_forms_add_option();
@@ -42,6 +42,7 @@ jQuery(document).ready(function($) {
 
 
 function espresso_update_option_order() {
+	var curid,
 	allOptions = jQuery( '.question-options-table tr.ee-options-sortable' );
 	allOptions.each( function(i) {
 		jQuery('.QSO_order', this).val(i);
@@ -53,10 +54,10 @@ function espresso_update_option_order() {
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if ( val === 'RADIO_BTN' || val === 'CHECKBOX'){
+	if ( val=='SINGLE' || val=='MULTIPLE'){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc(true);
-	}else if(val === 'DROPDOWN'){
+	}else if(val=='DROPDOWN'){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc(false);
 	}else{

@@ -8,69 +8,6 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 
-
-/**
- * ee_deprecated_finalize_transaction
- *
- * @param \EE_Checkout $checkout
- * @param boolean $status_updates
- */
-function ee_deprecated_finalize_transaction( EE_Checkout $checkout, $status_updates ) {
-	$action_ref = NULL;
-	$action_ref = has_action( 'AHEE__EE_Transaction__finalize__new_transaction' ) ? 'AHEE__EE_Transaction__finalize__new_transaction' : $action_ref;
-	$action_ref = has_action( 'AHEE__EE_Transaction__finalize__all_transaction' ) ? 'AHEE__EE_Transaction__finalize__all_transaction' : $action_ref;
-	if ( $action_ref ) {
-
-		EE_Error::doing_it_wrong(
-			$action_ref,
-			sprintf(
-				__( 'This action is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use one of the following new actions: %1$s"%3$s" found in "%2$s" %1$s"%4$s" found in "%2$s" %1$s"%5$s" found in "%2$s" %1$s"%6$s" found in "%2$s"', 'event_espresso' ),
-				'<br />',
-				'/core/business/EE_Transaction_Processor.class.php',
-				'AHEE__EE_Transaction_Processor__finalize',
-				'AHEE__EE_Transaction_Processor__manually_update_registration_statuses',
-				'AHEE__EE_Transaction_Processor__toggle_registration_statuses_for_default_approved_events',
-				'AHEE__EE_Transaction_Processor__toggle_registration_statuses_if_no_monies_owing'
-			),
-			'4.6.0'
-		);
-		switch ( $action_ref ) {
-			case 'AHEE__EE_Transaction__finalize__new_transaction' :
-				do_action( 'AHEE__EE_Transaction__finalize__new_transaction', $checkout->transaction, $checkout->admin_request );
-				break;
-			case 'AHEE__EE_Transaction__finalize__all_transaction' :
-				do_action( 'AHEE__EE_Transaction__finalize__new_transaction', $checkout->transaction, array( 'new_reg' => ! $checkout->revisit, 'to_approved' => $status_updates ), $checkout->admin_request );
-				break;
-		}
-	}
-}
-add_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', 'ee_deprecated_finalize_transaction', 10, 2 );
-/**
- * ee_deprecated_finalize_registration
- *
- * @param EE_Registration $registration
- */
-function ee_deprecated_finalize_registration( EE_Registration $registration ) {
-	$action_ref = has_action( 'AHEE__EE_Registration__finalize__update_and_new_reg' ) ? 'AHEE__EE_Registration__finalize__update_and_new_reg' : NULL;
-	if ( $action_ref ) {
-		EE_Error::doing_it_wrong(
-			$action_ref,
-			sprintf(
-				__( 'This action is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new action: %1$s"%3$s" found in "%2$s"', 'event_espresso' ),
-				'<br />',
-				'/core/business/EE_Registration_Processor.class.php',
-				'AHEE__EE_Registration_Processor__trigger_registration_status_changed_hook'
-			),
-			'4.6.0'
-		);
-		do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $registration, ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )));
-	}
-}
-add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', 'ee_deprecated_finalize_registration', 10, 1 );
-
-
-
-
 /** Messages System deprecated things **/
 
 
@@ -114,42 +51,6 @@ function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_me
 	return $templates;
 }
 add_filter( 'FHEE__EE_Template_Pack___get_templates__templates', 'ee_deprecated_get_templates', 10, 4 );
-
-/**
- * Called after EED_Module::set_hooks() and EED_Module::set_admin_hooks() was called.
- * Checks if any deprecated hooks were hooked-into and provide doing_it_wrong messages appropriately.
- */
-function ee_deprecated_hooks(){
-	/**
-	 * @var $hooks array where keys are hook names, and their values are array{
-	 *			@type string $version  when deprecated
-	 *			@type string $alternative  saying what to use instead
-	 *			@type boolean $still_works  whether or not the hook still works
-	 *		}
-	 */
-	$hooks = array(
-		'AHEE__EE_System___do_setup_validations' => array(
-			'version' => '4.6.0',
-			'alternative' => __( 'Instead use "AHEE__EEH_Activation__validate_messages_system" which is called after validating messages (done on every new install, upgrade, reactivation, and downgrade)', 'event_espresso' ),
-			'still_works' => FALSE
-		)
-	);
-	foreach( $hooks as $name => $deprecation_info ){
-		if( has_action( $name ) ){
-			EE_Error::doing_it_wrong(
-				$name,
-				sprintf(
-					__('This filter is deprecated. %1$s%2$s','event_espresso'),
-					$deprecation_info[ 'still_works' ] ?  __('It *may* work as an attempt to build in backwards compatibility.', 'event_espresso') : __( 'It has been completely removed.', 'event_espresso' ),
-					isset( $deprecation_info[ 'alternative' ] ) ? $deprecation_info[ 'alternative' ] : __( 'Please read the current EE4 documentation further or contact Support.', 'event_espresso' )
-				),
-				isset( $deprecation_info[ 'version' ] ) ? $deprecation_info[ 'version' ] : __( 'recently', 'event_espresso' )
-			);
-		}
-	}
-}
-add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', 'ee_deprecated_hooks' );
-
 
 
 
@@ -304,7 +205,7 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	public function process_resend( $success, $req_data ) {
 		self::doing_it_wrong_call( __METHOD__ );
-		EED_Messages::process_resend( $req_data );
+		EED_Messages::process_resend( $success, $req_data );
 	}
 
 	/**
@@ -322,6 +223,5 @@ class EE_Messages_Init extends EE_Base {
 		self::doing_it_wrong_call( __METHOD__ );
 		EED_Messages::send_newsletter_message( $contacts, $grp_id );
 	}
-
 
 } //end deprecated EE_Messages_Init

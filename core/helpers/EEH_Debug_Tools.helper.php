@@ -1,14 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-/**
- *
- * Class EEH_Debug_Tools
- *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Brent Christensen, Michael Nelson
- * @since 				4.0
- *
- */
+
+
+
 class EEH_Debug_Tools{
 	/**
 	 * 	instance of the EEH_Autoloader object
@@ -18,9 +11,9 @@ class EEH_Debug_Tools{
 	private static $_instance = NULL;
 
 	/**
-	 * array containing the start time for the timers
+	 * float containing the start time for the timer
 	 */
-	private $_start_times;
+	private $_starttime;
 	/**
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
@@ -37,14 +30,11 @@ class EEH_Debug_Tools{
 		}
 		return self::$_instance;
 	}
-
-
-
 	/**
-	 *    class constructor
+	 * 	class constructor
 	 *
-	 * @access    private
-	 * @return \EEH_Debug_Tools
+	 *  	@access 	private
+	 *  	@return 	void
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
@@ -77,12 +67,11 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 *    List All Hooked Functions
-	 *    to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
-	 *    http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
+	 * 	List All Hooked Functions
+	 * 	to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
 	 *
-	 * @param bool $tag
-	 * @return void
+	 * 	@return void
 	 */
 	public function espresso_list_hooked_functions( $tag=FALSE ){
 		global $wp_filter;
@@ -99,10 +88,10 @@ class EEH_Debug_Tools{
 			$hook=$wp_filter;
 			ksort( $hook );
 		}
-		foreach( $hook as $tag => $priorities ) {
+		foreach( $hook as $tag => $priority ) {
 			echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
-			ksort( $priorities );
-			foreach( $priorities as $priority => $function ){
+			ksort( $priority );
+			foreach( $priority as $priority => $function ){
 				echo $priority;
 				foreach( $function as $name => $properties ) echo "\t$name<br />";
 			}
@@ -111,68 +100,30 @@ class EEH_Debug_Tools{
 	}
 
 
-
 	/**
-	 * @param null $timer_name
+	 *
 	 */
-	public function start_timer( $timer_name = NULL ){
-		$this->_start_times[$timer_name] = microtime( TRUE );
+	public function start_timer(){
+		$mtime = microtime();
+		$mtime = explode(" ",$mtime);
+		$mtime = $mtime[1] + $mtime[0];
+		$this->_starttime = $mtime;
 	}
 
-
-
-	/**
-	 * @param string $timer_name
-	 */
-	public function stop_timer($timer_name = 'default'){
-		if( isset( $this->_start_times[ $timer_name ] ) ){
-			$start_time = $this->_start_times[ $timer_name ];
-			unset( $this->_start_times[ $timer_name ] );
-		}else{
-			$start_time = array_pop( $this->_start_times );
-		}
-		$total_time = microtime( TRUE ) - $start_time;
-		switch ( $total_time ) {
-			case $total_time < 0.00001 :
-				$color = '#8A549A';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.0001 :
-				$color = '#00B1CA';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.001 :
-				$color = '#70CC50';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.01 :
-				$color = '#FCC600';
-				$bold = 'bold';
-				break;
-			case $total_time < 0.1 :
-				$color = '#E76700';
-				$bold = 'bold';
-				break;
-			default :
-				$color = '#E44064';
-				$bold = 'bold';
-				break;
-		}
-		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
+	public function stop_timer($string_to_display){
+		$mtime = microtime();
+		$mtime = explode(" ",$mtime);
+		$mtime = $mtime[1] + $mtime[0];
+		$endtime = $mtime;
+		$totaltime = ($endtime - $this->_starttime);
+		$this->_times[] = $string_to_display.": $totaltime<br>";
 	 }
-
-
-
-	/**
-	 * @param bool $output_now
-	 * @return string
-	 */
-	public function show_times($output_now=true){
+	 public function show_times($output_now=true){
 		 if($output_now){
 			 echo implode("<br>",$this->_times);
-			 return '';
+		 }else{
+			 return implode("<br>",$this->_times);
 		 }
-		return implode("<br>",$this->_times);
 	 }
 
 
@@ -215,7 +166,7 @@ class EEH_Debug_Tools{
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
 	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @uses trigger_error()
+	 * @return trigger_error()
 	 */
 	public function doing_it_wrong( $function, $message, $version ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);

@@ -21,33 +21,6 @@ class EEH_Line_Item {
 	//other functions: cancel ticket purchase
 	//delete ticket purchase
 	//add promotion
-	/**
-	 * Adds a simple item ( unrelated to any other model object) to the total line item,
-	 * in the correct spot in the line item tree.
-	 * @param EE_Line_Item $total_line_item
-	 * @param string $name
-	 * @param float $unit_price
-	 * @param string $description
-	 * @param int $quantity
-	 * @param boolean $taxable
-	 * @return boolean success
-	 */
-	public static function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE ){
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
-		$line_item = EE_Line_Item::new_instance(array(
-			'LIN_name' => $name,
-			'LIN_desc' => $description,
-			'LIN_unit_price' => $unit_price,
-			'LIN_quantity' => $quantity,
-			'LIN_is_taxable' => $taxable,
-			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
-			'LIN_total' => floatval( $unit_price ) * intval( $quantity ),
-			'LIN_type'=>  EEM_Line_Item::type_line_item,
-		));
-		return self::add_item($total_line_item, $line_item );
-	}
-
-
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
@@ -56,7 +29,7 @@ class EEH_Line_Item {
 	 * @param int $qty
 	 * @return EE_Line_Item
 	 */
-	public static function add_ticket_purchase(EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+	public static function add_ticket_purchase($total_line_item, $ticket, $qty = 1 ){
 		$datetimes = $ticket->datetimes();
 		$event_names = array();
 		foreach($datetimes as $datetime){
@@ -65,7 +38,6 @@ class EEH_Line_Item {
 		}
 		$description_addition = " (For ".implode(", ",$event_names).")";
 		$full_description = $ticket->description().$description_addition;
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name'=>$ticket->name(),
@@ -73,7 +45,7 @@ class EEH_Line_Item {
 			'LIN_unit_price'=>$ticket->price(),
 			'LIN_quantity'=>$qty,
 			'LIN_is_taxable'=>$ticket->taxable(),
-			'LIN_order'=> $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
+			'LIN_order'=>count( $total_line_item->children() ),
 			'LIN_total'=>$ticket->price() * $qty,
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 			'OBJ_ID'=>$ticket->ID(),
@@ -117,7 +89,7 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
 	 */
-	public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item ){
+	public static function add_item($total_line_item, $item ){
 		// add item to cart
 		$ticket_items = self::get_items_subtotal( $total_line_item );
 		if($ticket_items){
@@ -138,7 +110,7 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 *	@return \EE_Line_Item
 	 */
-	public static function get_items_subtotal( EE_Line_Item $total_line_item ){
+	public static function get_items_subtotal( $total_line_item ){
 		$tickets = $total_line_item->get_child_line_item('tickets');
 		return $tickets ? $tickets : self::create_default_items_subtotal( $total_line_item );
 	}
@@ -150,7 +122,7 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 * @return \EE_Line_Item
 	 */
-	public static function get_taxes_subtotal( EE_Line_Item $total_line_item ){
+	public static function get_taxes_subtotal( $total_line_item ){
 		$taxes = $total_line_item->get_child_line_item('taxes');
 		return $taxes ? $taxes : self::create_default_taxes_subtotal( $total_line_item );
 	}
@@ -188,7 +160,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	protected static function create_default_items_subtotal(EE_Line_Item  $total_line_item, $transaction = NULL ){
+	protected static function create_default_items_subtotal( $total_line_item, $transaction = NULL ){
 		$items_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'tickets',
 			'LIN_name'=>  __('Tickets', 'event_espresso'),
@@ -211,7 +183,7 @@ class EEH_Line_Item {
 	 * @param EE_Transaction $transaction
 	 * @return EE_Line_Item
 	 */
-	protected static function create_default_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
+	protected static function create_default_taxes_subtotal( $total_line_item, $transaction = NULL ){
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'taxes',
 			'LIN_name'=> __('Taxes', 'event_espresso'),
@@ -235,7 +207,7 @@ class EEH_Line_Item {
 	 * any old taxes are removed
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 */
-	public static function apply_taxes( EE_Line_Item $total_line_item ){
+	public static function apply_taxes( $total_line_item ){
 		// get array of taxes via Price Model
 		$ordered_taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();
 		ksort( $ordered_taxes );
@@ -260,7 +232,7 @@ class EEH_Line_Item {
 				}
 			}
 		}
-		$total_line_item->recalculate_taxes_and_tax_total();
+		$total_line_item->recalculate_taxes_and_total();
 	}
 
 
@@ -287,7 +259,7 @@ class EEH_Line_Item {
 	 * @param array|bool|string $line_item_codes
 	 * @return int number of items successfully removed
 	 */
-	public static function delete_items( EE_Line_Item $total_line_item, $line_item_codes = FALSE ) {
+	public static function delete_items( $total_line_item, $line_item_codes = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -308,64 +280,14 @@ class EEH_Line_Item {
 		}
 
 		if ( $removals > 0 ) {
-			$total_line_item->recalculate_taxes_and_tax_total();
+			$total_line_item->recalculate_taxes_and_total();
 			return $removals;
 		} else {
 			return FALSE;
 		}
 	}
 
-	/**
-	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
-	 * tax and updates the total line item accordingly
-	 * @param EE_Line_Item $total_line_item
-	 * @param float $amount
-	 * @param string $name
-	 * @param string $description
-	 * @return EE_Line_Item the new tax line item created
-	 */
-	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL ){
-		//first: remove all tax descendants
-		//add this as a new tax descendant
-		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
-		$tax_subtotal->delete_children_line_items();
 
-		$new_tax = EE_Line_Item::new_instance(array(
-			'TXN_ID' => $total_line_item->TXN_ID(),
-			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
-			'LIN_desc' => $description ? $description : '',
-			'LIN_percent' => $amount /  $total_line_item->taxable_total() * 100,
-			'LIN_total' => $amount,
-			'LIN_parent' => $tax_subtotal->ID(),
-			'LIN_type' => EEM_Line_Item::type_tax
-		));
-		$new_tax->save();
-		$tax_subtotal->set_total( $amount );
-		$tax_subtotal->save();
-		$total_line_item->recalculate_total_including_taxes();
-		return $new_tax;
-	}
 
-	/**
-	 * Prints out a representation of the line item tree
-	 * @param EE_Line_Item $line_item
-	 * @param int $indentation
-	 * @return void
-	 */
-	public static function visualize( EE_Line_Item $line_item, $indentation = 0 ){
-		echo "\r\n";
-		for( $i = 0; $i < $indentation; $i++ ){
-			echo "-";
-		}
-		echo $line_item->name() . ": " . $line_item->type() . " $" . $line_item->total();
-		if( $line_item->is_taxable() ){
-			echo " taxable";
-		}
-		if( $line_item->children() ){
-			foreach($line_item->children() as $child){
-				self::visualize($child, $indentation + 1);
-			}
-		}
-	}
 }
 // End of file EEH_Line_Item.helper.php

@@ -38,14 +38,13 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 
 
+
+
 	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
-	 *
 	 * @param string $timezone
-	 * @throws \EE_Error
 	 */
-	protected function __construct( $timezone = NULL ){
-
+	protected function __construct($timezone = null){
 		//adds a relationship to Term_Taxonomy for all these models. For this to work
 		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
 		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
@@ -380,7 +379,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well that's not too hard to query for
 				$table_to_query = reset($tables_needing_to_be_queried);
-				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . ' = ' . $post['ID'], ARRAY_A ));
+				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . '=' . $post['ID'], ARRAY_A ));
 				if ( ! empty( $missing_data )) {
 					$post = array_merge( $post, $missing_data );
 				}

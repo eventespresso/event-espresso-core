@@ -105,7 +105,7 @@ class EEM_State extends EEM_Base {
 	*		_get_states
 	*
 	* 		@access		private
-	*		@return 		array
+	*		@return 		void
 	*/
 	public function get_all_states() {
 		if ( ! self::$_all_states ) {
@@ -114,25 +114,15 @@ class EEM_State extends EEM_Base {
 		return self::$_all_states;
 	}
 
-
-
 	/**
-	 *        _get_states
-	 *
-	 * @access        public
-	 * @param array $countries
-	 * @param bool  $flush_cache
-	 * @return        array
-	 */
-	public function get_all_active_states( $countries = array(), $flush_cache = FALSE ) {
-		$countries = is_array( $countries ) && ! empty( $countries ) ? $countries : EEM_Country::instance()->get_all_active_countries();
-		if ( ! self::$_active_states || $flush_cache ) {
-			self::$_active_states =  $this->get_all( array(
-				array( 'STA_active' => TRUE, 'CNT_ISO' => array( 'IN', array_keys( $countries ))),
-				'order_by' => array( 'STA_name'=>'ASC' ),
-				'limit' => array( 0, 99999 ),
-				'force_join' => array( 'Country' )
-			));
+	*		_get_states
+	*
+	* 		@access		private
+	*		@return 		void
+	*/
+	public function get_all_active_states() {
+		if ( ! self::$_active_states ) {
+			self::$_active_states =  $this->get_all( array( array( 'STA_active' => TRUE ), 'order_by'=>array( 'STA_name'=>'ASC' ), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_states;
 	}
@@ -207,23 +197,6 @@ class EEM_State extends EEM_Base {
 
 	}
 
-	/**
-	 * Gets the state's name by its ID
-	 * @param string $state_ID
-	 * @return string
-	 */
-	public function get_state_name_by_ID( $state_ID ){
-		if( isset( self::$_all_states[ $state_ID ] ) &&
-				self::$_all_states[ $state_ID ] instanceof EE_State ){
-			return self::$_all_states[ $state_ID ]->name();
-		}
-		$names = $this->get_col( array( array( 'STA_ID' => $state_ID ), 'limit' => 1), 'STA_name' );
-		if( is_array( $names ) && ! empty( $names ) ){
-			return reset( $names );
-		}else{
-			return '';
-		}
-	}
 
 
 }

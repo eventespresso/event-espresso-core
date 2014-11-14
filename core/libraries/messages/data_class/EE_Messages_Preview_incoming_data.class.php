@@ -371,13 +371,35 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
 
+		$grand_total = $cart->get_cart_grand_total() * count($this->_attendees);
+
+
+		//EEH_Template::format_currency($cart->get_grand_total(), true);
+
+		//setup billing property
+		//todo:  I'm only using this format for the array because its how the gateways currently setup this data.  I HATE IT and it needs fixed but I have no idea how many places in the code this data structure currently touches.  Once its fixed we'll have to fix it here and in the shortcode parsing where this particular property is accessed.  (See https://events.codebasehq.com/projects/event-espresso/tickets/2271) for related ticket.
+		$this->billing = array(
+			'first name' => 'Luke',
+			'last name' => 'Skywalker',
+			'email address' => 'farfaraway@galaxy.com',
+			'address' => '804 Bantha Dr.',
+			'city' => 'Mos Eisley',
+			'state' => 'Section 7',
+			'country' => 'Tatooine',
+			'zip' => 'f0r3e',
+			'ccv code' => 'xxx',
+			'credit card #' => '999999xxxxxxxx',
+			'expiry date' => '12 / 3000',
+			'total_due' => $grand_total
+			);
+
 
 
 		//setup txn property
 		$this->txn = EE_Transaction::new_instance(
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
-				'TXN_total' => 0, //txn_total
+				'TXN_total' => $grand_total, //txn_total
 				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)

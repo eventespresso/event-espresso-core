@@ -38,10 +38,10 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 
 
 	/**
-	 * For the constructor of this special preview class.
+	 * For the constructor of this special preview class. 
 	 *
 	 * The data is expected to be an array that came from the $_POST and $_GET and should have at least one property from the list looked for.
-	 *
+	 * 
 	 * @param EE_Registration $data
 	 */
 	public function __construct( EE_Registration $data ) {
@@ -67,9 +67,13 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 		//get txn
 		$this->txn = $this->reg_obj->transaction();
 
+		$this->taxes = $this->txn->tax_total();
+
+		$this->grand_total_price_object = '';
+
 		//possible session stuff?
 		$session = $this->txn->session_data();
-		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();
+		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();		
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session_data['user_id'] ) ? $session_data['user_id'] : '';
@@ -81,11 +85,14 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
 			'STS_ID' => EEM_Payment::status_id_pending,
 			'PAY_timestamp' => (int) current_time('timestamp'),
-			'PMD_ID' => $this->txn->payment_method_ID(),
+			'PAY_gateway' => $this->txn->selected_gateway(),
 			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
 			)
 		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
 
+		$this->billing = $this->payment->details();
+		EE_Registry::instance()->load_helper('Template');
+		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
 
 		//get reg_objs for txn
 		$this->reg_objs = $this->txn->registrations();

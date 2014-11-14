@@ -33,7 +33,7 @@ abstract class EE_Base_Class{
 	 * which values to override and which to not override.
 	 * @var array
 	 */
-	protected $_props_n_values_provided_in_constructor = null;
+	private $_props_n_values_provided_in_constructor = null;
 
 	/**
 	 * Timezone
@@ -109,7 +109,6 @@ abstract class EE_Base_Class{
 	 * @param boolean 	$bydb 			a flag for setting if the class is instantiated by the corresponding db model or not.
 	 * @param string 		$timezone 	indicate what timezone you want any datetime fields to be in when instantiating a EE_Base_Class object.
 	 * @throws EE_Error
-	 * @return \EE_Base_Class
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ){
 
@@ -127,7 +126,7 @@ abstract class EE_Base_Class{
 		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
-			if( ! isset( $model_fields[ $field_name] ) ){
+			if( ! array_key_exists($field_name,$model_fields)){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
@@ -178,16 +177,6 @@ abstract class EE_Base_Class{
 			return NULL;
 		}
 	}
-
-
-	/**
-	 * @param EE_Base_Class $obj
-	 * @return string
-	 */
-	public function get_class($obj){
-		return get_class($obj);
-	}
-
 
 
 	/**
@@ -536,6 +525,7 @@ abstract class EE_Base_Class{
 			/* @type EE_Base_Class $newly_saved_object*/
 			// now get the type of relation
 			$relationship_to_model = $this->get_model()->related_settings_for( $relationName );
+//			printr( $relationship_to_model, '$relationship_to_model  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// if this is a 1:1 relationship
 			if( $relationship_to_model instanceof EE_Belongs_To_Relation ) {
 				// then just replace the cached object with the newly saved object
@@ -870,12 +860,12 @@ abstract class EE_Base_Class{
 	/**
 	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
 	 *
-	 * @access protected
+	 * @access private
 	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
 	 * @param string $datetime_value A valid Date or Time string
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
-	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
+	private function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$field->set_timezone( $this->_timezone );
 
@@ -1029,9 +1019,9 @@ abstract class EE_Base_Class{
 						$pk_field_name =self::_get_primary_key_name( get_class($this));
 						$this->_fields[$pk_field_name] = $results;
 						$this->_clear_cached_property($pk_field_name);
-						$this->get_model()->add_to_entity_map( $this );
 						$this->_update_cached_related_model_objs_fks();
 					}
+					$this->get_model()->add_to_entity_map($this);
 				}
 			}else{//PK is NOT auto-increment
 				//so check if one like it already exists in the db
@@ -1044,17 +1034,17 @@ abstract class EE_Base_Class{
 			}
 		}else{//there is NO primary key
 			$already_in_db = false;
-			foreach($this->get_model()->unique_indexes() as $index){
+			foreach($this->get_model()->unique_indexes() as $index_name => $index){
 				$uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
 				if($this->get_model()->exists(array($uniqueness_where_params))){
 					$already_in_db = true;
 				}
 			}
 			if( $already_in_db ){
-				$combined_pk_fields_n_values = array_intersect_key( $save_cols_n_values, $this->get_model()->get_combined_primary_key_fields() );
-				$results = $this->get_model()->update( $save_cols_n_values,$combined_pk_fields_n_values );
+				$combined_pk_fields_n_values = array_intersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
+				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
 			}else{
-				$results = $this->get_model()->insert( $save_cols_n_values );
+				$results = $this->get_model()->insert($save_cols_n_values);
 			}
 		}
 		//restore the old assumption about values being prepared by the model object
@@ -1697,54 +1687,12 @@ abstract class EE_Base_Class{
 		}
 
 	}
-	/**
-	 * Returns a simple array of all the extra meta associated with this model object.
-	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, key sbeing the
-	 * extra meta's key, and teh value being its value. However, if there are duplicate extra meta rows with
-	 * the same key, only one will be used. (eg array('foo'=>'bar','monkey'=>123))
-	 * If $one_of_each_key is false, it will return an array with the top-level keys being
-	 * the extra meta keys, but their values are also arrays, which have the extra-meta's ID as their sub-key, and
-	 * finally the extra meta's value as each sub-value. (eg arrya('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
-	 * @param boolean $one_of_each_key
-	 * @return array
-	 */
-	public function all_extra_meta_array($one_of_each_key = true){
-		$return_array = array();
-		if($one_of_each_key){
-			$extra_meta_objs = $this->get_many_related('Extra_Meta', array('group_by'=>'EXM_key'));
-			foreach($extra_meta_objs as $extra_meta_obj){
-				$return_array[$extra_meta_obj->key()] = $extra_meta_obj->value();
-			}
-		}else{
-			$extra_meta_objs = $this->get_many_related('Extra_Meta');
-			foreach($extra_meta_objs as $extra_meta_obj){
-				if( ! isset($return_array[$extra_meta_obj->key()])){
-					$return_array[$extra_meta_obj->key()] = array();
-				}
-				$return_array[$extra_meta_obj->key()][$extra_meta_obj->ID()] = $extra_meta_obj->value();
-			}
-		}
-		return $return_array;
-	}
-	/**
-	 * Gets a pretty nice displayable nice for this model object. Often overriden
-	 * @return string
-	 */
-	public function name(){
-		//find a field that's not a text field
-		$field_we_can_use = $this->get_model()->get_a_field_of_type('EE_Text_Field_Base');
-		if($field_we_can_use){
-			return $this->get($field_we_can_use->get_name());
-		}else{
-			$first_few_properties = $this->model_field_array();
-			$first_few_properties = array_slice($first_few_properties,0,3);
-			$name_parts = array();
-			foreach( $first_few_properties as $name=> $value ){
-				$name_parts[] = "$name:$value";
-			}
-			return implode(",",$name_parts);
-		}
-	}
+
+
+
+
+
+
 }
 
 /**

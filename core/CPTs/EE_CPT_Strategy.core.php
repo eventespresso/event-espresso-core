@@ -373,8 +373,6 @@ class EE_CPT_Strategy extends EE_BASE {
 					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 					add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
 					add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 2 );
-
-					$this->_do_template_filters( $WP_Query );
 				}
 			}
 		}
@@ -462,49 +460,6 @@ class EE_CPT_Strategy extends EE_BASE {
 		$url = get_admin_url( EE_Config::instance()->core->current_blog_id, 'admin.php', $scheme );
 		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'], 'post' =>$ID, 'action' =>'edit' ), $url ), 'edit', 'edit_nonce' );
-	}
-
-
-
-
-	/**
-	 * Execute any template filters.
-	 * This method is only called if in main query.
-	 *
-	 * @since %VER%
-	 * @param WP_Query $WP_Query
-	 * @return void
-	 */
-	protected function _do_template_filters( WP_Query $WP_Query ) {
-		// if it's the main query  and requested cpt supports page_templates,
-		if ( $WP_Query->is_main_query() && ! empty( $this->CPT['args']['page_templates'] ) ) {
-			// then let's hook into the appropriate query_template hook
-			add_filter( 'single_template', array( $this, 'single_cpt_template' ) );
-		}
-	}
-
-
-
-	/**
-	 * Callback for single_template wp filter.
-	 * This is used to load the set page_template for a single ee cpt if its set.  If "default" then we load the normal hierarchy.
-	 *
-	 * @since %VER%
-	 * @param string $current_template Existing default template path derived for this page call.
-	 * @return string the path to the full template file.
-	 */
-	public function single_cpt_template( $current_template ) {
-		$object = get_queried_object();
-		//does this called object HAVE a page template set that is something other than the default.
-		$template = get_post_meta( $object->ID, '_wp_page_template', true );
-		//exit early if default or not set or invalid path (accounts for theme changes)
-		if ( $template == 'default' || empty( $template ) || validate_file( $template ) != 0 ) {
-			return $current_template;
-		}
-		//made it here so we SHOULD be able to just locate the template and then return it.
-		$template = locate_template( array($template)  );
-
-		return $template;
 	}
 
 
