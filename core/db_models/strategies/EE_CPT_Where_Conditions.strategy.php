@@ -4,7 +4,7 @@
  * Strategy specifically for adding where conditions specific to CPT models.
  */
 class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
-	
+
 	protected $_post_type;
 	protected $_meta_field;
 	function __construct($post_type, $meta_field_to_chk){
@@ -35,7 +35,7 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 		if($model_relation_chain != '' && $model_relation_chain[strlen($model_relation_chain)-1] !='.'){
 			$model_relation_chain=$model_relation_chain.".";
 		}
-		
+
 		//find post_type field
 		$post_type_field = $this->_get_field_on_column('post_type');
 		$status_field = $this->_get_field_on_column('post_status');
@@ -45,14 +45,14 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 //		$and_param_name = 'AND';
 //		$default_where_conditions = array(
 //			$or_param_name=>array(
-//				$and_param_name=>array( 
+//				$and_param_name=>array(
 //					$model_relation_chain.$this->_meta_field => array( 'IS NOT NULL')
 //				),
 //				$model_relation_chain.$this->_model->primary_key_name()=>array('IS NULL')
 //			)
 //		);
 //		if( ! isset($provided_where_query_params[$post_type_field_name])){
-//			$default_where_conditions[$or_param_name][$and_param_name][$post_type_field_name] =$this->_post_type;	
+//			$default_where_conditions[$or_param_name][$and_param_name][$post_type_field_name] =$this->_post_type;
 //		}
 //		if( ! isset($provided_where_query_params[$status_field_name])){
 //			$default_where_conditions[$or_param_name][$and_param_name][$status_field_name] = array('NOT IN',array('auto-draft','trash'));

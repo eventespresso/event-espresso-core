@@ -343,13 +343,15 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * We just deliver the messages don't kill us!!
-	 * @return void
-	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
+	 * @return bool | WP_Error  true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
-		$success = wp_mail(html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
-		return $success;
-
+		return wp_mail(
+			html_entity_decode( $this->_to, ENT_QUOTES, "UTF-8" ),
+			stripslashes( html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8" )),
+			$this->_body(),
+			$this->_headers()
+		);
 	}
 
 

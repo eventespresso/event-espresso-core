@@ -27,7 +27,7 @@
 </li>
 <li>
 <strong><?php _e('Question Type', 'event_espresso'); ?></strong><br />
-<?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
+<?php _e('This shows the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php _e('Answer Options (for applicable question types)</strong>', 'event_espresso');?></strong>

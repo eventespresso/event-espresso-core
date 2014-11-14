@@ -67,8 +67,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'espresso_events' => 'edit'
 			);
 
-		$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
-
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -710,6 +708,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
+	 * _event_model
+	 * @return EEM_Event
+	 */
+	private function _event_model() {
+		if ( ! $this->_event_model instanceof EEM_Event ) {
+			$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
+		}
+		return $this->_event_model;
+	}
+
+
+
+
+
+	/**
 	 * Adds extra buttons to the WP CPT permalink field row.
 	 *
 	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
@@ -774,12 +787,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
+		$success = $this->_event_model()->update_by_ID( $event_values, $post_id );
 
 
-		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'status' => $post->post_status );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
@@ -808,7 +821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _restore_cpt_item( $post_id, $revision_id ) {
 		//copy existing event meta to new post
-		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		$post_evt = $this->_event_model()->get_one_by_ID($post_id);
 
 		//meta revision restore
 		$post_evt->restore_revision($revision_id);
@@ -1125,8 +1138,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//handle datetime saves
 		$items = array();
 
-		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
@@ -1461,33 +1474,58 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 
-		$EEME = $this->_event_model;
+		$EEME = $this->_event_model();
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
-		$where = array(
-				//todo add event categories
-		);
+		if (isset($this->_req_data['month_range'])) {
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
+		}
+
+		$where = array();
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
 		//determine what post_status our condition will have for the query.
 		switch ( $status ) {
+			case 'month' :
+			case 'today' :
 			case NULL :
 			case 'all' :
-				$status = array();
 				break;
 
 			case 'draft' :
-				$status = array( 'draft', 'auto-draft' );
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
 				break;
 
 			default :
-				$status = array( $status );
 				$where['status'] = $status;
+		}
+
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
+
+		//date where conditions
+		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
+			$this_year_r = date('Y');
+			$this_month_r = date('m');
+			$days_this_month = date('t');
+			$start = ' 00:00:00';
+			$end = ' 23:59:59';
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
 
 		//possible conditions for capability checks
@@ -1497,6 +1535,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
+		}
+
+		if ( isset( $this->_req_data['EVT_wp_user'] ) ) {
+			if ( $this->_req_data['EVT_wp_user'] != get_current_user_id() && EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
+				$where['EVT_wp_user'] = $this->_req_data['EVT_wp_user'];
+			}
 		}
 
 
@@ -1513,6 +1557,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
 		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
+
+
+		//let's first check if we have special requests coming in.
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'upcoming' :
+					return $EEME->get_upcoming_events( $query_params, $count );
+					break;
+
+				case 'expired' :
+					return $EEME->get_expired_events( $query_params, $count );
+					break;
+
+				case 'active' :
+					return $EEME->get_active_events( $query_params, $count );
+					break;
+
+				case 'inactive' :
+					return $EEME->get_inactive_events( $query_params, $count );
+					break;
+			}
+		}
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 
