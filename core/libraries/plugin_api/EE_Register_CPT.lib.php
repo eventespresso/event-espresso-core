@@ -174,7 +174,15 @@ class EE_Register_CPT implements EEI_Plugin_API {
 
 
 
-
+	/**
+	 * This deregisters whats been registered on this class (for the given slug).
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $cpt_ref The reference for the item registered to be removed.
+	 *
+	 * @return void
+	 */
 	public static function deregister( $cpt_ref = null ) {
 		if ( !empty( self::$_registry[$cpt_ref] ) ) {
 			unset( self::$_registry[$cpt_ref] );
