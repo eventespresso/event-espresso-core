@@ -102,7 +102,7 @@ class EE_Register_CPT implements EEI_Plugin_API {
 		$validated = array(
 			'cpts' => isset( $setup_args['cpts'] ) ? (array) $setup_args['cpts'] : array(),
 			'cts' => isset( $setup_args['cts'] ) ? (array) $setup_args['cts'] : array(),
-			'defatul_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
+			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
 			);
 
 		self::$_registry[$cpt_ref] = $validated;
