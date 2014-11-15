@@ -66,7 +66,7 @@ class EE_Register_CPT implements EEI_Plugin_API {
 	 * @throws  EE_Error
 	 * @return void
 	 */
-	public static function register( $cpt_ref, $setup_args = array() ) {
+	public static function register( $cpt_ref = NULL, $setup_args = array() ) {
 
 		//check for requred params
 		if ( empty( $cpt_ref ) ) {
