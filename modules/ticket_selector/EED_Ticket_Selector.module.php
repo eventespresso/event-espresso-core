@@ -123,11 +123,14 @@ class EED_Ticket_Selector extends  EED_Module {
 		//		d( $event );
 		if ( $event instanceof EE_Event ) {
 			self::$_event = $event;
+			$event_post = $event->ID();
 		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
 			self::$_event = $event->EE_Event;
+			$event_post = $event;
 		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event )) {
 			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
 			self::$_event = $event->EE_Event;
+			$event_post = $event;
 		} else {
 			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
 			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
@@ -135,7 +138,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		if (( ! self::$_event->display_ticket_selector() || $view_details ) && ! is_admin() ) {
+		if (( ! self::$_event->display_ticket_selector() || $view_details || post_password_required( $event_post )) && ! is_admin() ) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 
@@ -149,7 +152,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// is the event expired ?
 		$template_args['event_is_expired'] = self::$_event->is_expired();
 		if ( $template_args['event_is_expired'] ) {
-			return '<p><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></p>';
+			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></div>';
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
@@ -171,7 +174,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_required' => 'DESC', 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
 		));
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';

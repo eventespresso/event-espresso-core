@@ -151,7 +151,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 				foreach( $variations as $slug => $label ) {
 					foreach ( self::$_registry as $registered_var => $reg_settings ) {
 						if ( isset( $reg_settings['variations'][$template_pack][$messenger][$message_type][$slug] ) ) {
-							unset( $validated_variations['variations'][$tempalte_pack][$messenger][$message_type][$slug] );
+							unset( $validated_variations['variations'][$template_pack][$messenger][$message_type][$slug] );
 							EE_Error::add_error( sprintf( __('Unable to register the %s variation for the %s template pack with the %s messenger and %s message_type because a variation with this slug was already registered for this template pack and messenger and message type by an addon using this key %s.', 'event_espresso' ), $label, $template_pack, $messenger, $message_type, $registered_var  ) );
 						}
 					}
@@ -227,7 +227,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 			} else if ( ! empty( $messenger ) && empty( $message_type ) && ! empty( $registry_settings['variations'][$template_pack->dbref][$messenger] ) ) {
 				$variations =  array_merge( $registry_settings['variations'][$template_pack->dbref][$messenger], $variations );
 			} else if ( ! empty( $messenger ) && ! empty( $message_type ) && ! empty( $registry_settings['variations'][$template_pack->dbref][$messenger][$message_type] ) ) {
-				$variations = array_merge( $registry_settings['variations'][$template_pack->dbref][$messenger][$message_type] );
+				$variations = array_merge( $registry_settings['variations'][$template_pack->dbref][$messenger][$message_type], $variations );
 			}
 		}
 		return $variations;

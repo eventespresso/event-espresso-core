@@ -1,10 +1,11 @@
 <?php
 /**
  * @package dompdf
- * @link    http://dompdf.github.com/
+ * @link    http://www.dompdf.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
- * @author  Fabien MÃ©nager <fabien.menager@gmail.com>
+ * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @version $Id: autoload.inc.php 448 2011-11-13 13:00:03Z fabien.menager $
  */
  
 /**
@@ -18,9 +19,8 @@
 function DOMPDF_autoload($class) {
   $filename = DOMPDF_INC_DIR . "/" . mb_strtolower($class) . ".cls.php";
   
-  if ( is_file($filename) ) {
-    include_once $filename;
-  }
+  if ( is_file($filename) )
+    require_once($filename);
 }
 
 // If SPL autoload functions are available (PHP >= 5.1.2)
