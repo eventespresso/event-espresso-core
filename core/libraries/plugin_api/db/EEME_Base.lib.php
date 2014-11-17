@@ -44,28 +44,45 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  */
 abstract class EEME_Base {
+
 	const extending_method_prefix = 'ext_';
 	const dynamic_callback_method_prefix = 'dynamic_callback_method_';
+
 	protected $_extra_tables = array();
 	protected $_extra_fields = array();
 	protected $_extra_relations = array();
+
 	/**
 	 * The model name that is extended (not classname)
 	 * @var string
 	 */
 	protected $_model_name_extended = NULL;
+
 	/**
 	 * The model this extends
 	 * @var EEM_Base
 	 */
 	protected $_ = NULL;
 
-	public function __construct(){if( ! $this->_model_name_extended){
+
+
+	/**
+	 * @throws \EE_Error
+	 */
+	public function __construct(){
+		if( ! $this->_model_name_extended){
 			throw new EE_Error(sprintf(__("When declaring a model extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'", "event_espresso")));
 		}
 		$construct_end_action = 'AHEE__EEM_'.$this->_model_name_extended.'__construct__end';
-		if(did_action($construct_end_action)){
-			throw new EE_Error(sprintf(__("Hooked in model extension '%s' too late! The model %s has already been used! We know because the action %s has been fired", "event_espresso"),get_class($this),$this->_model_name_extended, $construct_end_action));
+		if ( did_action( $construct_end_action )) {
+			throw new EE_Error(
+				sprintf(
+					__( "Hooked in model extension '%s' too late! The model %s has already been used! We know because the action %s has been fired", "event_espresso"),
+					get_class($this),
+					$this->_model_name_extended,
+					$construct_end_action
+				)
+			);
 		}
 		add_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__tables',array($this,'add_extra_tables_on_filter'));
 		add_filter('FHEE__EEM_'.$this->_model_name_extended.'__construct__fields',array($this,'add_extra_fields_on_filter'));

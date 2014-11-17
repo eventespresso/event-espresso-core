@@ -17,7 +17,7 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
 	protected function _migrate_old_row($old_row) {
 		//foreach ticket row we add the id for the current logged in user.
 		global $wpdb;
-		$user_id = $this->get_migration_script()->get_default_creator_id();
+		$user_id = EEH_Activation::get_default_creator_id();
 		$updated = $wpdb->update($this->_old_table,
 				array('PRT_wp_user'=>$user_id),
 				array('PRT_ID'=>$old_row['PRT_ID']),

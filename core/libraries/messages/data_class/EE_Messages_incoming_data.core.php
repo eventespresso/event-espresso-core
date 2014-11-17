@@ -54,13 +54,6 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
-	 * Holds billing info about the transaction
-	 * @var mixed (array|string)
-	 */
-	public $billing_info;
-
-
-	/**
 	 * The registrations details from the cart
 	 * @var array
 	 */
@@ -176,7 +169,7 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * Will hold the final transaction object (EE_Transaction)
-	 * @var EE_Transaction;
+	 * @var EE_Transaction
 	 */
 	public $txn;
 
