@@ -225,23 +225,21 @@ class EEM_Line_Item extends EEM_Base {
 	 * @return EE_Line_Item[]
 	 */
 	public function get_object_line_items_for_transaction( $TXN_ID, $OBJ_type = 'Event', $OBJ_IDs = array() ){
-		// if incoming $OBJ_IDs is an array, then make sure it is formatted correctly for the query
-		if ( is_array( $OBJ_IDs ) && ! isset( $OBJ_IDs['IN'] )) {
-			$OBJ_IDs =  array( 'IN', $OBJ_IDs );
+		$query_params = array(
+			'OBJ_type' 	=> $OBJ_type,
+			// if incoming $OBJ_IDs is an array, then make sure it is formatted correctly for the query
+			'OBJ_ID' 		=> is_array( $OBJ_IDs ) && ! isset( $OBJ_IDs['IN'] ) ? array( 'IN', $OBJ_IDs ) : $OBJ_IDs
+		);
+		if ( $TXN_ID ) {
+			$query_params['TXN_ID'] = $TXN_ID;
 		}
-		return $this->get_all( array(
-			array(
-				'TXN_ID' 		=> $TXN_ID,
-				'OBJ_type' 	=> $OBJ_type,
-				'OBJ_ID' 		=> $OBJ_IDs
-			)
-		));
+		return $this->get_all( array( $query_params ));
 	}
 
 
 
 	/**
-	 * find_applicable_items_in_cart
+	 * get_redeemable_scope_promos
 	 * searches the cart for any items that this promotion applies to
 	 *
 	 * @since   1.0.0
