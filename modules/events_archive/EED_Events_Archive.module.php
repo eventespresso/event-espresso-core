@@ -157,6 +157,8 @@ class EED_Events_Archive  extends EED_Module {
 			}
 			// if NOT a custom template
 			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+				// don't display entry meta because the existing theme will take care of that
+				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
 				// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
@@ -222,7 +224,7 @@ class EED_Events_Archive  extends EED_Module {
 
 		global $post;
 		$template = '';
-		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE && ! post_password_required() )) {
+		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE ) && ! post_password_required() ) {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
