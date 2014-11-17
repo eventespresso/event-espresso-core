@@ -120,13 +120,18 @@ abstract class EE_Configurable extends EE_Base {
 
 	/**
 	 *    _update_config
-	 * 	this method integrates directly with EE_Config to update an existing config object for this class
+	 *    this method integrates directly with EE_Config to update an existing config object for this class
 	 *
-	 * @access 	protected
-	 * @param 	EE_Config_Base 	$config_obj
-	 * @return 	mixed 	EE_Config_Base | NULL
+	 * @access    protected
+	 * @param    EE_Config_Base $config_obj
+	 * @throws \EE_Error
+	 * @return    mixed    EE_Config_Base | NULL
 	 */
-	protected function _update_config( EE_Config_Base $config_obj = NULL ) {
+	public function _update_config( EE_Config_Base $config_obj = NULL ) {
+		$config_class = $this->config_class();
+		if ( ! $config_obj instanceof $config_class ) {
+			throw new EE_Error( sprintf( __( 'The "%1$s" class is not an instance of %2$s.', 'event_espresso' ), print_r( $config_obj, TRUE ), $config_class ));
+		}
 		return EE_Config::instance()->update_config( $this->config_section(), $this->config_name(), $config_obj );
 	}
 
