@@ -588,6 +588,28 @@ final class EE_System {
 
 
 	/**
+	 * This method holds any setup validations that are done on all request types excluding the normal request type.
+	 * Note that this is similar to functionality that should be contained in EEH_Activation::system_initialization, initialize_db_and_folders, and initialize_db_content,
+	 * except this is called even upon downgrades
+	 *
+	 * @since  4.3.1
+	 *
+	 * @param int $request_type What request type this is.  The paramater is included so that any future validations added to here can be restricted to only certain request types.
+	 *
+	 * @return void
+	 */
+	private function _do_setup_validations( $request_type ) {
+		if ( $request_type !== EE_System::req_type_new_activation && EE_Maintenance_Mode::instance()->models_can_query() ) {
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
+		}
+		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
+	}
+
+
+
+
+
+	/**
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *

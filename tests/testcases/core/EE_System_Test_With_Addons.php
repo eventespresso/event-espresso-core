@@ -87,6 +87,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//now we also want to check that the addon will have created the necessary table
 		//that it needed upon new activation
+		//is normally called a little later in the request)
+		EE_System::instance()->perform_activations_upgrades_and_migrations();
 		$this->assertTableExists('esp_new_addon_thing');
 	}
 
