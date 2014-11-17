@@ -144,6 +144,8 @@ class EEH_Line_Item {
 		$success = $total_line_item->add_child_line_item( $item );
 		// recalculate cart totals based on new items
 		$total_line_item->recalculate_total_including_taxes();
+//		d( $total_line_item );
+//		d( $item );
 		return $success;
 	}
 
@@ -519,18 +521,58 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item[]
 	 */
 	protected static function _get_descendants_by_type_and_object_type( EE_Line_Item $parent_line_item, $line_item_type, $obj_type = NULL ) {
-		$events = array();
+		$objects = array();
 		foreach ( $parent_line_item->children() as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				if ( $child_line_item->type() == $line_item_type && ( $child_line_item->OBJ_type() == $obj_type || $obj_type === NULL )) {
-					$events[] = $child_line_item;
+					$objects[] = $child_line_item;
 				} else {
 					//go-through-all-its children looking for more matches
-					$events = array_merge( $events, self::_get_descendants_by_type_and_object_type( $child_line_item, $line_item_type, $obj_type ));
+					$objects = array_merge( $objects, self::_get_descendants_by_type_and_object_type( $child_line_item, $line_item_type, $obj_type ));
 				}
 			}
 		}
-		return $events;
+		return $objects;
+	}
+
+
+
+	/**
+	 * Gets all descendants subtotals that match the supplied object type
+	 *
+	 * @uses  EEH_Line_Item::_get_descendants_by_type_and_object_type()
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $OBJ_type object type (like Event)
+	 * @param array $OBJ_IDs array of OBJ_IDs
+	 * @return EE_Line_Item[]
+	 */
+	public static function get_line_items_by_object_type_and_IDs( EE_Line_Item $parent_line_item, $OBJ_type = '', $OBJ_IDs = array() ) {
+		return self::_get_descendants_by_object_type_and_object_ID( $parent_line_item, $OBJ_type, $OBJ_IDs );
+	}
+
+
+
+	/**
+	 * Gets all descendants of supplied line item that match the supplied line item type and possibly the object type as well
+	 *
+	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
+	 * @param string $OBJ_type object type (like Event)
+	 * @param array $OBJ_IDs array of OBJ_IDs
+	 * @return EE_Line_Item[]
+	 */
+	protected static function _get_descendants_by_object_type_and_object_ID( EE_Line_Item $parent_line_item, $OBJ_type, $OBJ_IDs ) {
+		$objects = array();
+		foreach ( $parent_line_item->children() as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				if ( $child_line_item->OBJ_type() == $OBJ_type && in_array( $child_line_item->OBJ_ID(), $OBJ_IDs )) {
+					$objects[] = $child_line_item;
+				} else {
+					//go-through-all-its children looking for more matches
+					$objects = array_merge( $objects, self::_get_descendants_by_object_type_and_object_ID( $child_line_item, $OBJ_type, $OBJ_IDs ));
+				}
+			}
+		}
+		return $objects;
 	}
 
 
