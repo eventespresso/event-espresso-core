@@ -47,6 +47,14 @@ class EE_Country extends EE_Base_Class {
 
 
 
+	/**
+	 * Gets the related EE_Region for this EE_Country
+	 * @return EE_Region
+	 */
+	public function region() {
+		return $this->get_first_related( 'Region' );
+	}
+
 
 
 	/**

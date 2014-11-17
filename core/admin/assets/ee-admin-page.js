@@ -151,9 +151,8 @@ jQuery(document).ready(function($) {
 			cancel = typeof(cancel) === 'undefined' ? false : true;
 			var selector = $('#post_status');
 			var chngval = cancel ? $('#cur_stat_id').text() : $(selector).val();
-			var chnglabel = typeof eeCPTstatuses[chngval] !== 'undefined'  ? eeCPTstatuses[chngval].label : eeCPTstatuses['draft'].label;
-			var save_label = typeof eeCPTstatuses[chngval] !== 'undefined'  ? eeCPTstatuses[chngval].save_label : eeCPTstatuses['draft'].save_label;
-			$('#save-post', '#save-action').val(save_label);
+			var chnglabel = eeCPTstatuses[chngval].label;
+			$('#save-post', '#save-action').val(eeCPTstatuses[chngval].save_label);
 			$('#cur_stat_id').text(chngval);
 			if ( cancel ) {
 				selector.val(chngval);

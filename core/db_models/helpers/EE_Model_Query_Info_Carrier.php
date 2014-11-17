@@ -17,8 +17,8 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    /**
     *
     * @var array stating all the models that have been included thus far,so we don't get duplicates.
-    * Keys are the model relation chains to them from the queried model
-    * (eg, "Registration.Transaction.Payment"), and valuesare model names (eg "Payment")
+    * Keys are model names (eg "Payment"), and values are the model relation chains to them from the queried model
+    * (eg, "Registration.Transaction.Payment")
     */
    private $_models_included;
    
@@ -85,8 +85,8 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
     */
    public function merge( $other_model_query_info_carrier ){
 	   if( $other_model_query_info_carrier && ! $this->_have_already_included_one_of_these_models($other_model_query_info_carrier->get_model_names_included())){
-			$model_included_on_other_join_sql_and_data_types_carrier =  $other_model_query_info_carrier->get_model_names_included();
-			$this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
+		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_model_query_info_carrier->get_model_names_included();
+		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
 			$this->_join_sql .= $other_model_query_info_carrier->_join_sql;
 	   }
 	   //otherwise don't merge our data.
@@ -97,12 +97,12 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    }
    /**
     * Checks whether or not we have already included all the models mentione din $model_names on the query info varrier
-    * @param array $model_names just like EE_MOdel_QUery_Info_Carrier::_models_included: keys are model chain paths, values are the model names only
+    * @param array $model_names just like EE_MOdel_QUery_Info_Carrier::_models_included
     * @return boolean
     */
    protected function  _have_already_included_one_of_these_models($model_names){
-	   foreach($this->_models_included as $model_relation_path=>$model_included){
-		   if(array_key_exists($model_relation_path, $model_names)){
+	   foreach($this->_models_included as $model_included=>$model_relation_path){
+		   if(array_key_exists($model_included, $model_names)){
 			   return true;
 		   }
 	   }

@@ -65,16 +65,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * Checks that there is at least one active gateway. If not, add a notice
 	 */
 	public function check_payment_gateway_setup(){
-		//ONLY do this check if models can query
-		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
-			return;
-		}
-
-
-		// ensure Payment_Method model is loaded
-		EE_Registry::instance()->load_model( 'Payment_Method' );
-		$actives = EEM_Payment_Method::instance()->get_all_active();
-		if( ! $actives || count( $actives ) < 1 ){
+		$actives = EE_Config::instance()->gateway->active_gateways;
+		if( ! $actives || count($actives) < 1){
 			$url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_PAYMENTS_ADMIN_URL);
 			echo '<div class="error">
 				 <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>

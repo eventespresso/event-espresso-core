@@ -22,15 +22,13 @@
 
 
 <p class="contact-details-buttons">
-	<?php if ( $att_check instanceof EE_Attendee ) : ?>
-		<a class="button button-small" href="<?php echo $att_edit_link; ?>" title="<?php echo $att_edit_label; ?>">
-			<span class="ee-icon ee-icon-user-edit"></span><?php echo $att_edit_label; ?>
-		</a>
-		<?php if ( !empty( $create_link ) ) : ?>
-			<a class="button button-small" href="<?php echo $create_link; ?>" title="<?php _e('This registration shares the contact details for the primary registration in this group.  If you\'d like this registration to have its own details, you can do so by clicking this button', 'event_espresso'); ?>">
-				<span class="ee-icon ee-icon-user-add-new"></span><?php echo $create_label; ?>
-		</a>
-		<?php endif; ?>
-		<div style="clear:both"></div>
+	<a class="button button-small" href="<?php echo $att_edit_link; ?>" title="<?php echo $att_edit_label; ?>">
+		<span class="ee-icon ee-icon-user-edit"></span><?php echo $att_edit_label; ?>
+	</a>
+	<?php if ( !empty( $create_link ) ) : ?>
+		<a class="button button-small" href="<?php echo $create_link; ?>" title="<?php _e('This registration shares the contact details for the primary registration in this group.  If you\'d like this registration to have its own details, you can do so by clicking this button', 'event_espresso'); ?>">
+			<span class="ee-icon ee-icon-user-add-new"></span><?php echo $create_label; ?>
+	</a>
 	<?php endif; ?>
+	<div style="clear:both"></div>
 </p>

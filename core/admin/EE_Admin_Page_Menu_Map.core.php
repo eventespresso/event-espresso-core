@@ -156,10 +156,6 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * @return void
 	 */
 	public function __construct( $menu_args, $required ) {
-		//filter all args before processing so plugins can manipulate various settings for menus.
-		$menu_args = apply_filters( 'FHEE__EE_Admin_Page_Menu_Map__construct__menu_args', $menu_args, $required, get_class( $this ) );
-
-
 		//verify that required keys are present in the incoming array.
 		$missing = array_diff( (array) $required, array_keys( (array) $menu_args ) );
 

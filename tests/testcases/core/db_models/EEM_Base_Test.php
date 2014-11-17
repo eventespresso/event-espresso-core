@@ -108,18 +108,6 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e3->ID() ), $e3 );
 	}
 
-	/**
-	 *
-	 * @throws EE_Error
-	 */
-	public function test_distanced_HABTM_join(){
-		try{
-			EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>1,'TXN_ID'=>1)));
-			$this->assertTrue( TRUE );
-		}catch( EE_Error $e){
-			throw $e;
-		}
-	}
 	public function test_get_col(){
 		$att1 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'one' ) );
 		$att2 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'two' ) );
@@ -141,6 +129,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 
 	/**
 	 *
+	 * @group current
 	 */
 	public function test_update__keeps_model_objs_in_sync(){
 		$att1 = EE_Attendee::new_instance( array( 'ATT_fname' => 'one' ) );
@@ -176,14 +165,6 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//and that there are no errors when nothing at all is updated
 		EEM_Attendee::instance()->update( array( 'ATT_fname' => 'lose_again'), array( array( 'ATT_fname' => 'nonexistent' ) ) );
 		$this->assertEmpty( $wpdb->last_error );
-	}
-
-	/**
-	 * @group 6767
-	 */
-	function test_two_joins(){
-		EEM_Attendee::instance()->get_all( array( array( 'Registration.Event.EVT_name' => 'bob' ) ) );
-		$this->assertTrue(TRUE, 'No exception thrown' );
 	}
 }
 

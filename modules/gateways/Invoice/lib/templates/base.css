@@ -1,0 +1,122 @@
+/* Base CSS styles DO NOT CHANGE OR REMOVE */
+
+body { margin: 0!important;padding: 0!important;font:82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
+ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
+
+#invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
+#invoice + #invoice { margin-top:5em;}
+
+
+.print_button_div{
+	margin: 0 12pt;
+	width:660px;
+	padding: 10px;
+	margin:1em auto;
+}
+
+.print_button_div form{
+	font-size:14px;
+	float:right;
+	margin:0 0 0 1em;
+}
+
+table { border-collapse:collapse!important; width:100%!important; }
+td { vertical-align:top!important; }
+.not-really-a-table  { border:none!important; }
+
+#invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+#logo-dv img { max-width:250px!important; height: auto; border: none; }
+
+#comments{padding-top:1cm; line-height:1.2em; }
+
+.aln-left { text-align:left; }
+.aln-cntr { text-align:center; }
+.aln-rght { text-align:right; }
+
+.small-text { font-size:.8em; }
+.small-text.link { font-weight:normal; }
+.plain-text { font-weight:normal; }
+.float-left { float:left; }
+.float-right { float:right; }
+.clear { clear:both; }
+#invoice>div{
+	margin-bottom:5em;
+	/*border:1px dotted gray;*/
+}
+.tickets-per-event>li{
+	margin-bottom:3em;
+	/*margin-left:1em;
+	margin-right:1em;*/
+	/*border:1px dotted gray;*/
+}
+th.number-column{
+	width:5em;
+}
+th.name-column{
+	width:15em;
+}
+td{
+	/*text-align:center;*//*Seth*/
+}
+.ticket-time-details{
+	width:70%;
+	display:inline-block;
+}
+.ticket-place-details{
+	width:29%;
+	display:inline-block;
+}
+.no-bottom-margin{
+	margin-bottom:0px;
+}
+.ticket-registrations-list>li{
+	margin-top:1em;
+	margin-bottom:1em;
+}
+/* classes from registration and transaction stati */
+.RNA,.RCN,.RPP, .TPN, .TIN{
+	color:red;
+}
+.TCM {
+	color: green;
+}
+
+.reg-details-for-ticket{
+	/*margin-left:4em;*//*Seth*/
+}
+.grand-total{
+	text-align:right;
+}
+h3{
+	font-size:12pt;
+}
+.subitem{
+	padding-left:1.8em;
+	text-align:left;
+}
+.ticket-note {
+	font-style:italic;
+}
+/*=========================== TABLES =========================*/
+
+table th {text-align:left;padding: 6px 5px 6px 5px;}
+.ticket-details table th, .taxes table th, #invoice-amount th {border-bottom:1px solid #666;}
+td.action{border-bottom:0}
+tr.odd td, tr.odd th, tr.header_row{background-color:#F4F4F4}
+.total_tr td{border-bottom:0}
+#vat_tr td{border-bottom:1px solid #000}
+td, .registration-details tr th {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
+td {margin: 0;padding: 8px 5px 8px 5px; vertical-align: top; }
+.item_r{text-align: right;}
+.item_c{text-align: center;}
+.item_l{text-align: left;white-space: normal; }
+.total {text-align: right;font-weight: bold; }
+tr.tax-total td {border-top:1px solid #000;}
+.subitem-row {
+	color: #666;
+}
+
+img.icon{
+	margin-left:1em;
+	margin-right:1em;
+}

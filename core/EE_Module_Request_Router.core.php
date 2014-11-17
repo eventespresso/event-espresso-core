@@ -91,23 +91,14 @@ final class EE_Module_Request_Router {
 			}
 		} else {
 			// first route called
-			$current_route = NULL;
-			// grab all routes
-			$routes = EE_Registry::instance()->CFG->get_routes();
-			//d( $routes );
-			foreach( $routes as $key => $route ) {
-				// check request for module route
-				if ( EE_Registry::instance()->REQ->is_set( $key )) {
-					//echo '<b style="color:#2EA2CC;">key : <span style="color:#E76700">' . $key . '</span></b><br />';
-					$current_route = EE_Registry::instance()->REQ->get( $key );
-					if ( $current_route ) {
-						$current_route = array( $key, $current_route );
-						//echo '<b style="color:#2EA2CC;">current_route : <span style="color:#E76700">' . $current_route . '</span></b><br />';
-						break;
-					}
-				}
+			// check request for module route
+			if ( ! EE_Registry::instance()->REQ->is_set( 'ee' )) {
+				return NULL;
 			}
+			// grab and sanitize module route
+			$current_route = EE_Registry::instance()->REQ->get( 'ee' );
 		}
+		//echo '<h4>$current_route : ' . $current_route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// sorry, but I can't read what you route !
 		if ( empty( $current_route )) {
 			return NULL;
@@ -125,14 +116,13 @@ final class EE_Module_Request_Router {
 	 * 	this method simply takes a valid route, and resolves what module class method the route points to
 	 *
 	 *  @access 	public
-	 *  @param 	string		$key
 	 *  @param 	string		$current_route
 	 *  @return 	mixed		EED_Module | boolean
 	 */
-	public function resolve_route( $key, $current_route ) {
+	public function resolve_route( $current_route ) {
 		// get module method that route has been mapped to
-		$module_method = EE_Config::get_route( $current_route, $key );
-		//printr( $module_method, '$module_method  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$module_method = EE_Config::get_route( $current_route );
+//		printr( $module_method, '$module_method  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify result was returned
 		if ( empty( $module_method )) {
 			$msg = sprintf( __( 'The requested route %s could not be mapped to any registered modules.', 'event_espresso' ), $current_route );

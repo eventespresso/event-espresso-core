@@ -64,6 +64,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * tests that we're correctly detecting activation or upgrades in registered
 	 * addons.
 	 * @group agg
+	 * @group current
 	 */
 	function test_detect_activations_or_upgrades__new_install(){
 		global $wp_actions;
@@ -78,7 +79,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//set the activator option
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
-		$this->assertTableDoesNotExist( 'esp_new_addon_thing' );
+//		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
 
 		EE_System::reset();
@@ -86,7 +87,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//now we also want to check that the addon will have created the necessary table
-		//that it needed upon new activation
+		//that it needed upon new activation (and so we call the function that does it, which
+		//is normally called a little later in the request)
+		EE_System::instance()->perform_activations_upgrades_and_migrations();
 		$this->assertTableExists('esp_new_addon_thing');
 	}
 
@@ -271,7 +274,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 
 		//now we also want to check that the addon will have created the necessary table
-		//that it needed upon new activation
+		//that it needed upon new activation (and so we call the function that does it, which
+		//is normally called a little later in the request)
+		EE_System::instance()->perform_activations_upgrades_and_migrations();
 		$this->assertEquals( array(), EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts() );
 		$this->assertEquals( EE_Maintenance_Mode::level_0_not_in_maintenance, EE_Maintenance_Mode::instance()->real_level() );
 		$this->assertTableExists('esp_new_addon_thing');
@@ -309,17 +314,11 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	/**
 	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
 	 * @global type $wpdb
-	 * @param boolean $short_circuit whether or not to short-circuit
-	 * @param string $table_name name we're about to create. Should NOT have the $wpdb->prefix on it
-	 * @param string $create_sql
+	 * @param array $whitelisted_tables
 	 * @return array
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		//allow creation of new_addon tables. Unfortunately, this also allows their modification, which causes
-		//implicit commits. But I like allowing re-defining the tables on test
-		//test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
-		//so we can confirm a notices are sent when attempting to redefine an addon table
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) ){
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! EEH_Activation::table_exists( $table_name) ){
 			//it's not altering. it's ok to allow this
 			return FALSE;
 		}else{

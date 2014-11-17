@@ -122,8 +122,6 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 	public function column_name(EE_Question_Group $item) {
-		$actions = array();
-
 		//return $item->name();
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);

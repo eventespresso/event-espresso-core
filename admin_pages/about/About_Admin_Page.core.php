@@ -135,20 +135,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 		//done?
 		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
-		$active_invoice_pm = EEM_Payment_Method::instance()->get_one_active( EEM_Payment_Method::scope_cart, array( array( 'PMD_type' => 'Invoice' ) ) );
-		$active_pms_count = EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart );
-		//done step two if a non-invoice paymetn method is active; or there is more than one PM active, or
-		//if only teh invoice is active but it's clearly been updated
-		$done_step_two = $active_pms_count > 1  ||
-						 ( $active_pms_count === 1 && ! $active_invoice_pm )	||
-						 ( $active_invoice_pm instanceof EE_Payment_Method && (
-								 $active_invoice_pm->get_extra_meta( 'pdf_payee_name', TRUE, '' ) ||
-								 $active_invoice_pm->get_extra_meta( 'pdf_payee_email', TRUE, '' ) ||
-								 $active_invoice_pm->get_extra_meta( 'pdf_payee_tax_number', TRUE, '' ) ||
-								 $active_invoice_pm->get_extra_meta( 'pdf_payee_address', TRUE, '' ) ||
-								 $active_invoice_pm->get_extra_meta( 'page_extra_info', TRUE, '' )
-								)
-				);
+		$done_step_two = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
 		$done_step_three = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
 
 		//if ALL steps are done, let's just return FALSE so we don't display anything

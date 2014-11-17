@@ -327,7 +327,7 @@ final class EE_Front_Controller {
 				// cycle thru module routes
 				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
-					$module = $Module_Request_Router->resolve_route( $route[0], $route[1] );
+					$module = $Module_Request_Router->resolve_route( $route );
 					if( $module instanceof EED_Module ) {
 						// get registered view for route
 						$this->_template_path = $Module_Request_Router->get_view( $route );

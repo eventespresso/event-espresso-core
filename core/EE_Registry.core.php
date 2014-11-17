@@ -207,7 +207,7 @@ final class EE_Registry {
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-		self::$i18n_js_strings['wp_debug'] = defined( 'WP_DEBUG' ) ? WP_DEBUG : FALSE;
+		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
 	}
 
 
@@ -238,27 +238,24 @@ final class EE_Registry {
 	}
 
 
+
 	/**
 	 *    loads core classes - must be singletons
 	 *
 	 * @access    public
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed  $arguments
-	 * @param bool   $load_only
 	 * @return mixed
 	 */
-	public function load_core ( $class_name, $arguments = array(), $load_only = FALSE ) {
-		$core_paths = apply_filters(
-			'FHEE__EE_Registry__load_core__core_paths',
-			array(
-				EE_CORE,
-				EE_ADMIN,
-				EE_CPTS,
-				EE_CORE . 'data_migration_scripts' . DS
-			)
+	public function load_core ( $class_name, $arguments = array() ) {
+		$core_paths = array(
+			EE_CORE,
+			EE_ADMIN,
+			EE_CPTS
 		);
+		$core_paths = apply_filters( 'FHEE__EE_Registry__load_core__core_paths', $core_paths );
 		// retrieve instantiated class
-		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
+		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments );
 	}
 
 
@@ -278,6 +275,8 @@ final class EE_Registry {
 
 
 
+
+
 	/**
 	 *	loads object creating classes - must be singletons
 	 *
@@ -290,9 +289,8 @@ final class EE_Registry {
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		$paths = apply_filters('FHEE__EE_Registry__load_class__paths',array(
-			EE_CORE,
 			EE_CLASSES,
-			EE_BUSINESS
+			EE_CORE
 		));
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
@@ -331,8 +329,7 @@ final class EE_Registry {
 			EE_LIBRARIES,
 			EE_LIBRARIES . 'messages' . DS,
 			EE_LIBRARIES . 'shortcodes' . DS,
-			EE_LIBRARIES . 'qtips' . DS,
-			EE_LIBRARIES . 'payment_methods' . DS,
+			EE_LIBRARIES . 'qtips' . DS
 		);
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'lib', $arguments, FALSE, TRUE, $load_only );
@@ -532,7 +529,6 @@ final class EE_Registry {
 			if ( $reflector->getConstructor() === NULL || $reflector->isAbstract() || $load_only ) {
 //				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
-				return TRUE;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 //				$instantiation_mode = 1;
 				$class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
@@ -698,8 +694,6 @@ final class EE_Registry {
 		//get that model reset it and make sure we nuke the old reference to it
 		if ( is_callable( array( $model_class_name, 'reset' ))) {
 			$this->LIB->$model_class_name = $model::reset();
-		}else{
-			throw new EE_Error( sprintf( __( 'Model %s does not have a method "reset"', 'event_espresso' ), $model_name ) );
 		}
 		return $this->LIB->$model_class_name;
 	}
@@ -717,11 +711,8 @@ final class EE_Registry {
 	 */
 	public static function reset( $hard = FALSE, $reinstantiate = TRUE ){
 		$instance = self::instance();
-		$instance->load_helper('Activation');
-		EEH_Activation::reset();
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
-		$instance->LIB = new stdClass();
 		foreach( array_keys( $instance->non_abstract_db_models ) as $model_name ){
 			$instance->reset_model( $model_name );
 		}

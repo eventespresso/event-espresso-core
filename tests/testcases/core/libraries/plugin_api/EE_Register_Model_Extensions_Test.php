@@ -177,6 +177,10 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		//ensure the models aren't stil registered. they should have either been
 		//deregistered during the test, or not been registered at all
 		$this->_stop_pretending_addon_hook_time();
+		$att_model_a = EE_Registry::instance()->load_model( 'Attendee' );
+		$att_model_a::reset();
+		EEM_Attendee::reset();
+
 		parent::tearDown();
 	}
 }

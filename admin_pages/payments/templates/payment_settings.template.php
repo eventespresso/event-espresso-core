@@ -10,7 +10,7 @@
 				</th>
 				<td>
 					<?php echo EEH_Form_Fields::select_input('show_pending_payment_options', $values, $show_pending_payment_options ); ?>
-
+					
 				</td>
 			</tr>
 		</tbody>

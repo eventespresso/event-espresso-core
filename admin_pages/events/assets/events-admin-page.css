@@ -32,36 +32,36 @@
 @media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-inp { width:125px; } }
 @media only screen and (max-width: 1125px) {
 	/* Force table to not be like tables anymore */
-	#event-dates-and-times,
-	#event-dates-and-times thead,
-	#event-dates-and-times tbody,
-	#event-dates-and-times th,
-	#event-dates-and-times td,
-	#event-dates-and-times tr {
-		display: block;
+	#event-dates-and-times, 
+	#event-dates-and-times thead, 
+	#event-dates-and-times tbody, 
+	#event-dates-and-times th, 
+	#event-dates-and-times td, 
+	#event-dates-and-times tr { 
+		display: block; 
 	}
-
+	
 	/* Hide table headers */
 	#event-dates-and-times thead tr {  display:none; }
 	/* Display replacements for table headers */
-	.small-screen-table-label { display:inline-block; float:left; width:30%; padding-right: 15px; text-align:right; }
-	#event-dates-and-times tr { padding-bottom:5px; margin-bottom:5px; border-bottom: 1px solid #eee;  }
+	.small-screen-table-label { display:inline-block; float:left; width:30%; padding-right: 15px; text-align:right; }	
+	#event-dates-and-times tr { padding-bottom:5px; margin-bottom:5px; border-bottom: 1px solid #eee;  }	
 	#event-dates-and-times td { padding-bottom:5px; }
 	#event-dates-and-times .dtm-inp { width:175px; }
 }
 @media only screen and (max-width: 850px) {
 	/* Force tables back into tables */
-	#event-dates-and-times { display:table; }
+	#event-dates-and-times { display:table; }	
 	#event-dates-and-times thead { display:table-header-group; }
 	#event-dates-and-times thead tr {  display: table-row; }
 	#event-dates-and-times tbody { display:table-row-group; }
 	#event-dates-and-times tr { display:table-row; }
 	#event-dates-and-times th { display:table-cell; }
 	#event-dates-and-times td { display:table-cell; }
-
+	
 	/* Display replacements for table headers */
-	.small-screen-table-label { display:none; }
-	#event-dates-and-times tr { padding:0; margin:0; border: none;  }
+	.small-screen-table-label { display:none; }	
+	#event-dates-and-times tr { padding:0; margin:0; border: none;  }	
 	#event-dates-and-times td { padding:1px; }
 	#event-dates-and-times .dtm-inp { width:150px; }
 }
@@ -82,12 +82,12 @@
 
 #add-new-ticket-price-dv,
 .event-price-settings-dv {
-	padding:5px 60px 10px 15px; margin:10px 0 20px;
+	padding:5px 60px 10px 15px; margin:10px 0 20px; 
 	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
 }
 
 .cancel-event-price-btn {
-	/*display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px;
+	/*display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px; 
 	background:#fff; border:1px solid #C8E1EC; border-radius:3px;
 	color:#666; cursor:pointer;*/
 }
@@ -182,13 +182,4 @@
 	width: 73%;
 	display: inline-block;
 	vertical-align: top;
-}
-
-
-.avatar {
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	-ms-border-radius: 50%;
-	-o-border-radius: 50%;
-	border-radius: 50%;
 }

@@ -623,7 +623,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			} catch( Exception $e ) {
 				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
 				if ( strtotime( $date_string ) == 0 ) {
-					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to its formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
 				} else {
 					//ok give up, but don't throw an error
 					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
