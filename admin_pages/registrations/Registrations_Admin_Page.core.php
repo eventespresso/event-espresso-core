@@ -129,7 +129,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_get_registration_status_array();
 
 		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
-		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) && ! is_array( $this->_req_data['ATT_ID'] ) ? $this->_req_data['PPL_ID'] : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) && ! is_array( $this->_req_data['ATT_ID'] ) ? $this->_req_data['ATT_ID'] : 0;
 		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
 
 		$this->_page_routes = array(
