@@ -88,7 +88,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 	public static function set_config( EE_Config $EE_Config ) {
 		foreach ( self::$_ee_config_registry as $config_class => $settings ) {
 			//first some validation of our incoming class_name.  We'll throw an error early if its' not registered correctly
-			if ( ! class_exists( $config_class ) ) {
+			if ( ! class_exists( $config_class )) {
 				throw new EE_Error(
 					sprintf(
 						__( 'The "%s" config class can not be registered with EE_Config because it does not exist.  Verify that an autoloader has been set for this class', 'event_espresso' ),
@@ -96,7 +96,10 @@ class EE_Register_Config implements EEI_Plugin_API {
 					)
 				 );
 			}
-			$EE_Config->set_config( $settings['section'], $settings['name'], $config_class );
+			$existing_config = $EE_Config->get_config( $settings['section'], $settings['name'], $config_class );
+			if ( $existing_config instanceof $config_class ) {
+				$EE_Config->set_config( $settings['section'], $settings['name'], $config_class, $existing_config );
+			}
 		}
 	}
 
