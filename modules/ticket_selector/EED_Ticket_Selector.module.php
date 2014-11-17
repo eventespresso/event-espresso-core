@@ -374,13 +374,16 @@ class EED_Ticket_Selector extends  EED_Module {
 					}
 				}
 //				d( EE_Registry::instance()->CART );
-//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE
+//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
 						EE_Registry::instance()->CART->get_cart_total_before_tax();
+						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__just_before_saving_cart_and_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
 						EE_Registry::instance()->CART->save_cart();
 						EE_Registry::instance()->SSN->update();
+//						d( EE_Registry::instance()->CART );
+//						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
@@ -390,7 +393,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 					} else {
 						// nothing added to cart
-						EE_Error::add_attention( __( 'No tickets were added for the event.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_attention( __( 'No tickets were added to the cart..', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
 
 				} else {
