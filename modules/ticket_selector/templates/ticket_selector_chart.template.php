@@ -1,4 +1,7 @@
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
+
+	<?php do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event ); ?>
+
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
@@ -373,6 +376,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
-	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID ); ?>
+	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>
 
 </div>
