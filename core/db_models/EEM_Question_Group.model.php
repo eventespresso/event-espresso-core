@@ -27,35 +27,10 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	const system_personal = 1;
 	const system_address = 2;
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Question_Group instance
-	 */
-	public static function instance(){
 
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Question_Group
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');
 
@@ -81,7 +56,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 			'Event'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Event_Question_Group'=>new EE_Has_Many_Relation()
 		);
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

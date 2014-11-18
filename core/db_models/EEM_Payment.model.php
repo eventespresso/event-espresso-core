@@ -12,7 +12,7 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Payment extends EEM_Base implements EEMI_Payment{
 
   	// private instance of the Payment object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 
 
@@ -91,39 +91,6 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		parent::__construct( $timezone );
 	}
 
-
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Payment object
-	 *
-	 *		@access public
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Payment instance
-	 */
-	public static function instance( $timezone = NULL ){
-
-		// check if instance of EEM_Payment already exists
-		if ( ! self::$_instance instanceof EEM_Payment ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//we might have a timezone set, let set_timezone decide what to do with it
-		self::$_instance->set_timezone( $timezone );
-
-		// EEM_Payment object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Payment
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 
 
 

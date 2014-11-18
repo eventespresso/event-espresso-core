@@ -24,7 +24,7 @@
 class EEM_Country extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
   	// array of all countries
 	private static $_all_countries = FALSE;
   	// array of all active countries
@@ -33,34 +33,16 @@ class EEM_Country extends EEM_Base {
 
 
 	/**
-	 *		This function is a singleton method used to instantiate the EEM_Country object
-	 *
-	 *		@access public
-	 *		@return EEM_Country instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Country already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Country object
-		return self::$_instance;
-	}
-
-	/**
 	 * Resets the country
 	 * @return EEM_Country
 	 */
-	public static function reset(){
-		self::$_instance = NULL;
+	public static function reset( $timezone = NULL ){
 		self::$_active_countries = NULL;
 		self::$_all_countries = NULL;
-		return self::instance();
+		return parent::reset( $timezone );
 	}
 
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
 
@@ -92,7 +74,7 @@ class EEM_Country extends EEM_Base {
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
