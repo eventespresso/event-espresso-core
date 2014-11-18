@@ -148,6 +148,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_paths' 						=> isset( $setup_args['class_paths'] ) ? (array) $setup_args['class_paths'] : array(),
 			'model_extension_paths' 	=> isset( $setup_args['model_extension_paths'] ) ? (array) $setup_args['model_extension_paths'] : array(),
 			'class_extension_paths' 		=> isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
+			'custom_post_types' => isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
+			'custom_taxonomies' => isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
+			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
 		);
 		//check whether this addon version is compatible with EE core
 		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
@@ -264,6 +267,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
 			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
+		}
+
+		//any custom post type/ custom capabilities or default terms to register
+		if ( !empty( self::$_settings[$addon_name]['custom_post_types'] ) || !empty( self::$_settings[$addon_name]['custom_taxonomies'] ) ) {
+			EE_Register_CPT::register( $addon_name, array( 'cpts' => self::$_settings[$addon_name]['custom_post_types'] , 'cts' => self::$_settings[$addon_name]['custom_taxonomies'], 'default_terms' => self::$_settings[$addon_name]['default_terms'] ) );
 		}
 		// load and instantiate main addon class
 		$addon = self::_load_and_init_addon_class($addon_name);
