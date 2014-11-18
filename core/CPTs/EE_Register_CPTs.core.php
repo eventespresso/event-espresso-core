@@ -25,12 +25,12 @@ class EE_Register_CPTs {
 	 */
 	function __construct(){
 		// register taxonomies
-		$taxonomies = apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', self::get_taxonomies() );
+		$taxonomies = self::get_taxonomies();
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
 		// register CPTs
-		$CPTs = apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', self::get_CPTs() );
+		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
@@ -49,7 +49,7 @@ class EE_Register_CPTs {
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-
+		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
 	}
 
 
@@ -80,7 +80,7 @@ class EE_Register_CPTs {
 	 */
 	public static function get_taxonomies(){
 		// define taxonomies
-		return array(
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array(
 			'espresso_event_categories' => array(
 				'singular_name' => __("Event Category", "event_espresso"),
 				'plural_name' => __("Event Categories", "event_espresso"),
@@ -124,7 +124,7 @@ class EE_Register_CPTs {
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
 				))
-			);
+			) );
 	}
 
 
@@ -140,7 +140,7 @@ class EE_Register_CPTs {
 	public static function get_CPTs(){
 		// define CPTs
 		// NOTE the ['args']['page_templates'] array index is something specific to our CPTs and not part of the WP custom post type api.
-		return array(
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
@@ -204,13 +204,6 @@ class EE_Register_CPTs {
 					),
 					'page_templates' => TRUE
 				)),
-			/*'espresso_persons' => array(
-				'singular_name' => __("Person", "event_espresso"),
-				'plural_name' => __("People", "event_espresso"),
-				'singular_slug' => __("person", "event_espresso"),
-				'plural_slug' => __("people", "event_espresso"),
-				'args' => array()
-				),/**/ //temporarily disable personsCPT because not in use.
 			'espresso_attendees' => array(
 				'singular_name' => __("Contact", "event_espresso"),
 				'plural_name' => __("Contacts", "event_espresso"),
@@ -241,7 +234,7 @@ class EE_Register_CPTs {
 						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
-			);
+			) );
 	}
 
 
