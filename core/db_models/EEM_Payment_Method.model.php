@@ -146,9 +146,31 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_active( $scope = NULL, $query_params = array() ) {
+		return $this->get_all( $this->_get_query_params_for_all_active( $scope, $query_params ) );
+	}
+
+	/**
+	 * Counts all active gateways in the specified scope
+	 * @param string $scope one of EEM_Payment_Method::scope_*
+	 * @param array $query_params
+	 * @return int
+	 */
+	public function count_active( $scope = NULL, $query_params = array() ){
+		return $this->count( $this->_get_query_params_for_all_active( $scope, $query_params ) );
+	}
+
+	/**
+	 * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
+	 * argument to get all active for a given scope
+	 * @param string $scope one of the constants EEM_Payment_Method::scope_*
+	 * @param array $query_params like EEM_Base::get_all.
+	 * @return array like param of EEM_Base::get_all()
+	 * @throws EE_Error
+	 */
+	protected function _get_query_params_for_all_active( $scope = NULL, $query_params = array() ){
 		if ( $scope ) {
 			if ( $this->is_valid_scope( $scope ) ) {
-				return $this->get_all( array_replace_recursive( array( array( 'PMD_scope' => array( 'LIKE', "%$scope%" ) ) ), $query_params ) );
+				return array_replace_recursive( array( array( 'PMD_scope' => array( 'LIKE', "%$scope%" ) ) ), $query_params );
 			} else {
 				throw new EE_Error( sprintf( __( "'%s' is not a valid scope for a payment method", "event_espresso" ), $scope ) );
 			}
@@ -159,8 +181,7 @@ class EEM_Payment_Method extends EEM_Base {
 				$count++;
 				$acceptable_scopes[ 'PMD_scope*' . $count ] = array( 'LIKE', '%' . $scope_name . '%' );
 			}
-			$query_params = array_replace_recursive( array( array( 'OR*active_scope' => $acceptable_scopes ) ), $query_params );
-			return $this->get_all( $query_params );
+			return array_replace_recursive( array( array( 'OR*active_scope' => $acceptable_scopes ) ), $query_params );
 		}
 	}
 
@@ -173,12 +194,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method
 	 */
 	public function get_one_active( $scope = NULL, $query_params = array() ) {
-		$results = $this->get_all_active( $scope, $query_params );
-		if ( $results ) {
-			return array_shift( $results );
-		} else {
-			return NULL;
-		}
+		return $this->get_one( $this->_get_query_params_for_all_active( $scope, $query_params ) );
 	}
 
 

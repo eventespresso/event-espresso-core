@@ -41,16 +41,24 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Messenger Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes that are messenger specific.', 'event_espresso');
 
-		//only show shortcodes when the messenger is active.
+		//add messages about what happens  when the messenger is active.
 		$this->_active_messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
 
-		if ( isset( $this->_active_messengers['html'] ) ) {
-			$this->_shortcodes['[DISPLAY_HTML_URL]'] =__('This will return a link to view the template in a browser.', 'event_espresso');
+		$this->_shortcodes['[DISPLAY_HTML_URL]'] =__('This will return a link to view the template in a browser if the html messenger is active.', 'event_espresso');
+		$this->_shortcodes['[DISPLAY_PDF_URL]'] = __('This will return a link to generate a pdf for the template if the pdf messenger is active.', 'event_espresso' );
+		$this->_shortcodes['[DISPLAY_PDF_BUTTON]'] = __('This will return html for a download pdf button trigger if the pdf messenger is active.', 'event_espresso');
+
+		//show error message about buttons/urls not working as expected if messenger deactivated.
+		if ( is_admin() && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'update_message_template' ) {
+			if ( ! isset( $this->_active_messengers['pdf'] ) ) {
+				EE_Error::add_attention( __('Be aware that the pdf messenger is inactive.  This means that any pdf related shortcodes will parse to an empty string.', 'event_espresso' ) );
+			}
+
+			if ( !isset( $this->_active_messengers['html'] ) ) {
+				EE_Error::add_attention( __('Be aware that the html messenger is inactive. This means that any html related shortcodes will parse to an empty string.', 'event_espresso' ) );
+			}
 		}
 
-		if ( isset( $this->_active_messengers['pdf'] ) ) {
-			$this->_shortcodes['[DISPLAY_PDF_URL]'] = __('This will return a link to generate a pdf for the template.', 'event_espresso' );
-		}
 	}
 
 
@@ -66,13 +74,41 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 
 		switch ( $shortcode ) {
 			case '[DISPLAY_HTML_URL]' :
-				return $this->_get_url( $recipient, 'html' );
+				return  isset( $this->_active_messengers['html'] ) ? $this->_get_url( $recipient, 'html' ) : '';
 				break;
 			case '[DISPLAY_PDF_URL]' :
-				return $this->_get_url( $recipient, 'pdf' );
+				return  isset( $this->_active_messengers['pdf'] ) ? $this->_get_url( $recipient, 'pdf' ) : '';
+				break;
+			case '[DISPLAY_PDF_BUTTON]' :
+				return  isset( $this->_active_messengers['pdf'] ) ? $this->_get_button( $recipient, 'pdf' ) : '';
 				break;
 		}
 		return '';
+	}
+
+
+
+	/**
+	 * This method takes the incomign data and figures out from it what the message type is and evt_id/grp_id and uses that to generate the html for a button in the template.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param EE_Messages_Addressee $recipient
+	 * @param string                $type      'html' or 'pdf'
+	 *
+	 * @return string                Generated html
+	 */
+	private function _get_button( EE_Messages_Addressee $recipient, $type ) {
+		$download_text = $type == 'pdf' ? __('Download PDF', 'event_espresso') : __('Show HTML', 'event_espresso' );
+		$content = '
+<div class="print_button_div">
+	<form method="post" action="' . $this->_get_url( $recipient, $type ) . '" >
+		<input class="print_button noPrint" type="submit" value="' . $download_text . '" />
+	</form>
+	<div class="clear"></div>
+</div>
+		';
+		return $content;
 	}
 
 

@@ -290,7 +290,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @throws Exception
 	 */
 	public function migration_step($num_records_to_migrate_limit){
-
+		//reset the feedback message
+		$this->_feedback_message = '';
 		//if we haven't yet done the 1st schema changes, do them now. buffer any output
 		$this->_maybe_do_schema_changes(true);
 
@@ -357,7 +358,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		foreach($records_migrated_per_stage as $migration_stage_name => $num_records_migrated){
 			$feedback_message_array[] = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$num_records_migrated,$migration_stage_name) ;
 		}
-		$this->_feedback_message = implode("<br>",$feedback_message_array);
+		$this->_feedback_message .= implode("<br>",$feedback_message_array);
 	}
 
 
@@ -426,8 +427,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}else{
 			$drop_pre_existing_tables = false;
 		}
-		EE_Registry::instance()->load_helper('Activation');
-		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $drop_pre_existing_tables );
 	}
 
 
@@ -450,8 +450,25 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}else{
 			$drop_pre_existing_tables = false;
 		}
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $drop_pre_existing_tables );
+	}
+
+	/**
+	 * Just wraps EEH_Activation::create_table, but catches any errors it may throw and adds them as errors on the DMS
+	 * @param string $table_name
+	 * @param string $table_definition_sql
+	 * @param string $engine_string
+	 * @param boolean $drop_pre_existing_tables
+	 */
+	private function _create_table_and_catch_errors( $table_name, $table_definition_sql, $engine_string = 'ENGINE=MyISAM', $drop_pre_existing_tables = FALSE ){
 		EE_Registry::instance()->load_helper('Activation');
-		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
+		try{
+			EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
+		}catch( EE_Error $e ) {
+			$message = $e->getMessage() . '<br>Stack Trace:' . $e->getTraceAsString();
+			$this->add_error( $message  );
+			$this->_feedback_message .= $message;
+		}
 	}
 
 

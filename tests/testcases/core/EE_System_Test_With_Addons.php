@@ -78,7 +78,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//set the activator option
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
-//		$this->assertTableDoesNotExist( 'new_addon' );
+		$this->assertTableDoesNotExist( 'esp_new_addon_thing' );
 		//now check for activations/upgrades in addons
 
 		EE_System::reset();
@@ -86,11 +86,62 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//now we also want to check that the addon will have created the necessary table
-		//that it needed upon new activation (and so we call the function that does it, which
+		//that it needed upon new activation
 		//is normally called a little later in the request)
-		EE_System::instance()->perform_activations_upgrades_and_migrations();
 		$this->assertTableExists('esp_new_addon_thing');
 	}
+
+	/**
+	 * tests that we're correctly detecting activation or upgrades in registered
+	 * addons.
+	 * @group agg
+	 * @group current
+	 */
+	function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously(){
+		global $wp_actions, $wpdb;
+		//pretend core was just activated
+		delete_option( 'espresso_db_update' );
+		update_option( 'ee_espresso_activation',TRUE);
+		delete_option( 'ee_pers_admin_notices' );
+
+		//its activation history wp option shouldn't exist
+		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_history_option_name());
+		//and it also shouldn't be in the current db state
+		$current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
+		//just for assurance, make sure New Addon is the only existing addon
+		$this->assertArrayNotHasKey($this->_addon_name, $current_db_state);
+		$times_addon_new_install_hook_fired = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"]) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0;
+		$times_core_new_install_hook_fired = isset( $wp_actions[ 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' ] ) ? $wp_actions[ 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' ] : 0;
+		//set the activator option
+		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
+		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
+		$this->assertTableDoesNotExist('esp_new_addon_thing');
+
+		EE_System::reset();
+		$this->assertEquals( EE_System::req_type_new_activation, EE_System::instance()->detect_req_type() );
+
+		$this->assertEquals(EE_System::req_type_new_activation,$this->_addon->detect_req_type());
+		$this->assertEquals($times_addon_new_install_hook_fired + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
+		$this->assertEquals( $times_core_new_install_hook_fired + 1, $wp_actions[ 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' ] );
+		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
+		$this->assertWPOptionDoesNotExist( 'ee_espresso_activation' );
+		$this->assertTableExists('esp_new_addon_thing');
+
+		//verify we haven't remarked that there we tried adding a duplicate table
+		$notices = get_option( 'ee_pers_admin_notices', array() );
+		$this->assertArrayNotHasKey( 'bad_table_' . $wpdb->prefix . 'esp_new_addon_thing_detected', $notices );
+		//double-check that when we intentionally try to add a table we just asserted exists
+		//that the warning gets sent out
+		global $track_it;
+		$track_it = TRUE;
+		try{
+			EEH_Activation::create_table( 'esp_new_addon_thing', 'BORKED SQL', 'ENGINE=MyISAM ', TRUE );
+			$this->fail( 'Borked SQL didnt\'t cause EEH_Activation::create_table to throw an EE_Error. It should have' );
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+	}
+
 
 	public function test_detect_activations_or_upgrades__upgrade_on_activation(){
 		global $wp_actions;
@@ -221,9 +272,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 
 		//now we also want to check that the addon will have created the necessary table
-		//that it needed upon new activation (and so we call the function that does it, which
-		//is normally called a little later in the request)
-		EE_System::instance()->perform_activations_upgrades_and_migrations();
+		//that it needed upon new activation
 		$this->assertEquals( array(), EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts() );
 		$this->assertEquals( EE_Maintenance_Mode::level_0_not_in_maintenance, EE_Maintenance_Mode::instance()->real_level() );
 		$this->assertTableExists('esp_new_addon_thing');
@@ -261,11 +310,17 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	/**
 	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
 	 * @global type $wpdb
-	 * @param array $whitelisted_tables
+	 * @param boolean $short_circuit whether or not to short-circuit
+	 * @param string $table_name name we're about to create. Should NOT have the $wpdb->prefix on it
+	 * @param string $create_sql
 	 * @return array
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! EEH_Activation::table_exists( $table_name) ){
+		//allow creation of new_addon tables. Unfortunately, this also allows their modification, which causes
+		//implicit commits. But I like allowing re-defining the tables on test
+		//test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously
+		//so we can confirm a notices are sent when attempting to redefine an addon table
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) ){
 			//it's not altering. it's ok to allow this
 			return FALSE;
 		}else{

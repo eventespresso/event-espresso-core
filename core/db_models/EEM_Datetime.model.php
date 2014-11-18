@@ -144,6 +144,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			return $this->create_new_blank_datetime();
 		}
 		$results =  $this->get_datetimes_for_event_ordered_by_DTT_order($EVT_ID);
+
+		if ( empty( $results ) ) {
+			return $this->create_new_blank_datetime();
+		}
+
 		return $results;
 	}
 
@@ -169,10 +174,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
 
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
+			$query_params[0]['DTT_EVT_end'] = array( '>=', current_time( 'mysql' ));
 		}
 		if( $include_deleted){
-			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+			$query_params[0]['DTT_deleted'] = array( 'IN', array( TRUE, FALSE ));
 		}
 
 		$result = $this->get_all( $query_params );

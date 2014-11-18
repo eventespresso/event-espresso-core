@@ -67,8 +67,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'espresso_events' => 'edit'
 			);
 
-		$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
-
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -710,6 +708,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
+	 * _event_model
+	 * @return EEM_Event
+	 */
+	private function _event_model() {
+		if ( ! $this->_event_model instanceof EEM_Event ) {
+			$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
+		}
+		return $this->_event_model;
+	}
+
+
+
+
+
+	/**
 	 * Adds extra buttons to the WP CPT permalink field row.
 	 *
 	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
@@ -774,12 +787,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
+		$success = $this->_event_model()->update_by_ID( $event_values, $post_id );
 
 
-		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'status' => $post->post_status );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
@@ -808,7 +821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _restore_cpt_item( $post_id, $revision_id ) {
 		//copy existing event meta to new post
-		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		$post_evt = $this->_event_model()->get_one_by_ID($post_id);
 
 		//meta revision restore
 		$post_evt->restore_revision($revision_id);
@@ -1125,8 +1138,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//handle datetime saves
 		$items = array();
 
-		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
@@ -1461,7 +1474,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 
-		$EEME = $this->_event_model;
+		$EEME = $this->_event_model();
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? NULL : $offset . ',' . $per_page;

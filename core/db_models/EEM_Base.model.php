@@ -280,7 +280,15 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
-		/**
+		// check that the model has not been loaded too soon
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
+			throw new EE_Error (
+				sprintf(
+					__( 'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
+		}		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
@@ -1111,14 +1119,19 @@ abstract class EEM_Base extends EE_Base{
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
 		}
-		$wpdb->last_error = NULL;
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->show_errors( FALSE );
+		if( WP_DEBUG ){
+			$wpdb->last_error = NULL;
+			$old_show_errors_value = $wpdb->show_errors;
+			$wpdb->show_errors( FALSE );
+		}
+
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
-		$wpdb->show_errors( $old_show_errors_value );
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
-		if( ! empty( $wpdb->last_error ) ){
-			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+		if( WP_DEBUG ){
+			$wpdb->show_errors( $old_show_errors_value );
+			if( ! empty( $wpdb->last_error ) ){
+				throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+			}
 		}
 		return $result;
 	}

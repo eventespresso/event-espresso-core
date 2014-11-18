@@ -71,7 +71,12 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @since 4.6.0
 	 */
 	public function test_get_default_creator_id() {
-		//set some users
+		//clear out any previous users that may be lurking in teh system
+		foreach( get_users() as $wp_user ){
+			wp_delete_user( $wp_user->ID );
+		}
+		//set some users; and just make it interesting by having the first user NOT be an admin
+		$non_admin_users = $this->factory->user->create_many( 2 );
 		$users = $this->factory->user->create_many( 2 );
 		//make users administrators.
 		foreach ( $users as $user_id ) {
@@ -83,10 +88,35 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		}
 
 		//get all users so we know who is the first one that we should be expecting.
-		$users = get_users();
-		$expected_user = reset( $users );
-		$expected_id = $expected_user->ID;
-
+		$expected_id = reset( $users );
 		$this->assertEquals( EEH_Activation::get_default_creator_id(), $expected_id );
+
+		/**
+		 * ok now let's verify EEH_Activation::reset() properly clears the cache
+		 * on EEH_Activation. This is important for subsequent unit tests (because
+		 * EEH_Activation::reset() is called beween unit tests), but also when an admin
+		 * resets their EE database, or when anyone wants to reset that cache)
+		 * clear out any previous users that may be lurking in teh system
+		 */
+		EEH_Activation::reset();
+		foreach( get_users() as $wp_user ){
+			wp_delete_user( $wp_user->ID );
+		}
+		//set some users; and just make it interesting by having the first user NOT be an admin
+		$this->factory->user->create_many( 2 );
+		$users_created_after_reset = $this->factory->user->create_many( 2 );
+		//make users administrators.
+		foreach ( $users_created_after_reset as $user_id ) {
+			$user = $this->factory->user->get_object_by_id( $user_id );
+			//verify
+			$this->assertInstanceOf( 'WP_User', $user );
+			//add role
+			$user->add_role( 'administrator' );
+		}
+
+		//get all users so we know who is the first one that we should be expecting.
+		$new_expected_id = reset( $users_created_after_reset );
+		$this->assertEquals( EEH_Activation::get_default_creator_id(), $new_expected_id );
+
 	}
 } //end class EEH_Activation_Test

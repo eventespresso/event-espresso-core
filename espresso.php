@@ -1,13 +1,13 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
-  Plugin Name:	Event Espresso
+  Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.6.0.alpha.005
+  Version: 			4.6.0.alpha.010
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
-  TextDomain: 	event_espresso
+  TextDomain: 		event_espresso
 
   Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.6.0.alpha.005';
+		return '4.6.0.alpha.010';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -127,6 +127,10 @@ define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS
 // languages folder/path
 define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS );
 define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
+//check for dompdf fonts in uploads
+if( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS ) ){
+	define( 'DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS  );
+}
 
 //ajax constants
 define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? TRUE : FALSE );

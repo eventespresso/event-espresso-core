@@ -406,42 +406,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if(isset($this->_req_data['payment_method_type'])){
 			$payment_method_type = sanitize_text_field($this->_req_data['payment_method_type']);
 			//see if one exists
-			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
-			if( ! $payment_method){
-				global $current_user;
-				$pm_type_class = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($payment_method_type);
-				if(class_exists($pm_type_class)){
-					/** @var $pm_type_obj EE_PMT_Base */
-					$pm_type_obj = new $pm_type_class;
-					$payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
-					if( ! $payment_method){
-						$payment_method = EE_Payment_Method::new_instance(array(
-							'PMD_type'=>$pm_type_obj->system_name(),
-							'PMD_name'=>$pm_type_obj->pretty_name(),
-							'PMD_admin_name'=>$pm_type_obj->pretty_name(),
-							'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-							'PMD_wp_user'=>$current_user->ID
-						));
-					}
-					$payment_method->set_active();
-					$payment_method->set_description( $pm_type_obj->default_description() );
-					//handles the goofy case where someone activates the invoice gateway which is also
-					$payment_method->set_type($pm_type_obj->system_name());
-					$payment_method->save();
-					foreach($payment_method->get_all_usable_currencies() as $currency_obj){
-						$payment_method->_add_relation_to($currency_obj, 'Currency');
-					}
-					//now add setup its default extra meta properties
-					$extra_metas = $payment_method->type_obj()->settings_form()->extra_meta_inputs();
-					foreach( $extra_metas as $meta_name => $input ){
-						$payment_method->update_extra_meta($meta_name, $input->raw_value() );
-					}
-				}
+			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+			$payment_method = EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( $payment_method_type );
 
-			}else{
-				$payment_method->set_active();
-				$payment_method->save();
-			}
 			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$payment_method->slug()));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
