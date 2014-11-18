@@ -389,7 +389,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_fields( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( isset( $this->CPT['meta_table'] )) {
+		if ( ! empty( $this->CPT['meta_table'] )) {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
@@ -408,7 +408,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_join( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( isset( $this->CPT['meta_table'] )) {
+		if ( ! empty( $this->CPT['meta_table'] )) {
 			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
