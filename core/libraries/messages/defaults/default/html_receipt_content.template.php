@@ -76,7 +76,7 @@
 			<tfoot>
 				<tr class='total_tr'><td colspan="4">&nbsp;</td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
-					<td class="item_r">[AMOUNT_PAID]</td>
+					<td class="item_r">[TOTAL_AMOUNT_PAID]</td>
 				</tr>
 				<tr class="total_tr odd">
 					<td colspan="4">&nbsp;</td>
