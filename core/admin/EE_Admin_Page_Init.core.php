@@ -244,7 +244,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$page_hook = 'load-' . $wp_page_slug;
 		//hook into page load hook so all page specific stuff get's loaded.
 		if ( !empty($wp_page_slug) )
-			add_action($page_hook, array($this->_loaded_page_object, 'load_page_dependencies'), 1 );
+			add_action($page_hook, array($this->_loaded_page_object, 'load_page_dependencies') );
 	}
 
 
