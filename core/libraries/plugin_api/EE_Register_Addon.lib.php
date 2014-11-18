@@ -304,12 +304,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			);
 			add_action( 'AHEE__EE_System__brew_espresso__after_pue_init', array( 'EE_Register_Addon', 'load_pue_update' ));
 		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
-			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
-		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
-			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
-		}
 
 		//any custom post type/ custom capabilities or default terms to register
 		if ( !empty( self::$_settings[$addon_name]['custom_post_types'] ) || !empty( self::$_settings[$addon_name]['custom_taxonomies'] ) ) {
