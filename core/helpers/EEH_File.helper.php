@@ -531,22 +531,6 @@ class EEH_File extends EEH_Base {
 		}
 		return TRUE;
 	}
-
-
-
-	/**
-	 *
-	 * @param string $file_or_folder 'file' or 'folder'
-	 * @return mixed|void
-	 */
-	public static function default_file_permission( $file_or_folder = 'file' ){
-		$default = $file_or_folder == 'file' ? '0644' : '0755';
-		// @param string $default the default file permissions: '0644' for files, '0755' for folders
-		return apply_filters( 'FHEE__EEH_File__default_file_permissions', $default, $file_or_folder );
-	}
-
-
-
 }
 // End of file EEH_File.helper.php
 // Location: /helpers/EEH_File.helper.php
