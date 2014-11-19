@@ -225,3 +225,46 @@ class EE_Messages_Init extends EE_Base {
 	}
 
 } //end deprecated EE_Messages_Init
+
+
+/**
+ * Deprecated EE_Register_CPTs filters
+ */
+
+/**
+ * wrapper for deprecated 'FHEE__EE_Register_CPTs__construct__CPTs' filter.
+ *
+ * @deprecated 4.5.0
+ * @deprecated Use FHEE__EE_Register_CPTs__get_CPTs__cpts filter instead
+ *
+ * @param array $cpts The cpts being filtered
+ *
+ * @return array additional cpts.
+ */
+function ee_deprecated_get_cpts( $cpts ) {
+	if ( has_filter( 'FHEE__EE_Register_CPTs__construct__CPTs' ) ) {
+		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__CPTs', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_CPTs__cpts" found in EE_Register_CPTs::get_CPTs()', 'event_espresso'), '4.5.0' );
+	}
+	return apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', $cpts );
+}
+add_filter( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', 'ee_deprecated_get_cpts', 10 );
+
+
+
+/**
+ * wrapper for deprecated 'FHEE__EE_Register_CPTs__construct__taxonomies' filter.
+ *
+ * @deprecated 4.5.0
+ * @deprecated Use FHEE__EE_Register_CPTs__get_taxonomies__taxonomies filter instead
+ *
+ * @param array $cts The custom taxonomies being filtered
+ *
+ * @return array additional custom taxonomies.
+ */
+function ee_deprecated_get_taxonomies( $cts ) {
+	if ( has_filter( 'FHEE__EE_Register_CPTs__construct__taxonomies' ) ) {
+		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__taxonomies', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_taxonomies__taxonomies" found in EE_Register_CPTs::get_taxonomies()', 'event_espresso'), '4.5.0' );
+	}
+	return apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', $cts );
+}
+add_filter( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', 'ee_deprecated_get_taxonomies', 10 );

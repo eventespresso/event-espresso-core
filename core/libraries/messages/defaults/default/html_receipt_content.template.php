@@ -3,12 +3,7 @@
  * This is the template for the html messenger and receipt message type main content field.
  */
 ?>
-<div class="print_button_div">
-	<form method="post" action="[DISPLAY_PDF_URL]" >
-		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
-	</form>
-	<div class="clear"></div>
-</div>
+[DISPLAY_PDF_BUTTON]
 <div id="invoice">
 
 	<table id="invoice-header" class="not-really-a-table">
@@ -81,7 +76,7 @@
 			<tfoot>
 				<tr class='total_tr'><td colspan="4">&nbsp;</td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
-					<td class="item_r">[AMOUNT_PAID]</td>
+					<td class="item_r">[TOTAL_AMOUNT_PAID]</td>
 				</tr>
 				<tr class="total_tr odd">
 					<td colspan="4">&nbsp;</td>
@@ -113,9 +108,4 @@
 			</div>
 	</div>
 </div> <!-- end #invoice -->
-<div class="print_button_div">
-	<form method="post" action="[DISPLAY_PDF_URL]" >
-		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
-	</form>
-	<div class="clear"></div>
-</div>
+[DISPLAY_PDF_BUTTON]

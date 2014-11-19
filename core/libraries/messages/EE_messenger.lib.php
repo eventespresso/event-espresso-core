@@ -289,6 +289,13 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
+		//enqueue espresso_default
+		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
+			wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		} else {
+			wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		}/**/
+		wp_enqueue_style('espresso_default');
 		do_action( 'AHEE__EE_messenger__enqueue_scripts_styles');
 	}
 
@@ -365,7 +372,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function get_variation( EE_Messages_Template_Pack $pack, $message_type_name, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
 		$this->_tmp_pack = $pack;
-		return $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters );
+		$variation_path = apply_filters( 'EE_messenger__get_variation__variation', false, $pack, $this->name, $message_type_name, $url, $type, $variation, $skip_filters );
+		$variation_path = empty( $variation_path ) ? $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters ) : $variation_path;
+		return $variation_path;
+
 	}
 
 

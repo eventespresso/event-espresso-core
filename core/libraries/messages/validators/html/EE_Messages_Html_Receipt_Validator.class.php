@@ -36,6 +36,7 @@ class EE_Messages_Html_Receipt_Validator extends EE_Messages_Validator {
 	 * Note nothing is currently done for this messenger and message type.
 	 */
 	protected function _modify_validator() {
+		$this->_specific_shortcode_excludes['content'] = array('[DISPLAY_HTML_URL]');
 		return;
 	}
 }

@@ -29,7 +29,7 @@
 <!-- Make sure the buttons don't print -->
 <style type="text/css">
 @media print{ .noPrint{display:none !important;height:0!important; width:0!important;} }
-@page { width:100%!important; margin:0!important; padding:0!important; }
+@page { width:100%; margin-left:0px; margin-right:0px}
 </style>
 </head>
 <body>
