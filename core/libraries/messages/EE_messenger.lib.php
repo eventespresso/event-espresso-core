@@ -289,6 +289,13 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
+		//enqueue espresso_default
+		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
+			wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		} else {
+			wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		}/**/
+		wp_enqueue_style('espresso_default');
 		do_action( 'AHEE__EE_messenger__enqueue_scripts_styles');
 	}
 
