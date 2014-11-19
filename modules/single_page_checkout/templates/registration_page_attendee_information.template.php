@@ -45,23 +45,27 @@ if ( $event_queue['total_items'] > 0 ) {
 			<div class="spco-ticket-info-dv">
 				<h4><?php _e('Ticket Details', 'event_espresso');?></h4>
 				<table>
-					<tr>
-						<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
-						<th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
-						<th scope="col" width="15%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
-						<th scope="col" width="15%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>
-					</tr>
-					<tr>
-						<td>
-						<?php
-							echo '<span class="spco-ticket-info-name">' . $item['ticket']->name() . '</span>';
-							echo $item['ticket']->description() ? '<br/><span class="spco-ticket-info-description">' . $item['ticket']->description() . '</span>' : '';
-						?>
-						</td>
-						<td class="jst-cntr"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
-						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() );?></td>
-						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] );?></td>
-					</tr>
+					<thead>
+						<tr>
+							<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+							<th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
+							<th scope="col" width="15%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
+							<th scope="col" width="15%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+							<?php
+								echo '<span class="spco-ticket-info-name">' . $item['ticket']->name() . '</span>';
+								echo $item['ticket']->description() ? '<br/><span class="spco-ticket-info-description">' . $item['ticket']->description() . '</span>' : '';
+							?>
+							</td>
+							<td class="jst-cntr"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
+							<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() );?></td>
+							<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] );?></td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 				<?php } ?>
