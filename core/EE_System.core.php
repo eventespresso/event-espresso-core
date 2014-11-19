@@ -442,7 +442,7 @@ final class EE_System {
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
-				//migraitons may be required now that we've upgraded
+				//migrations may be required now that we've upgraded
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 				$this->_handle_core_version_change( $espresso_db_update );
 //				echo "done upgrade";die;
