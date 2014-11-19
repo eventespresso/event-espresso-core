@@ -120,7 +120,7 @@ class EE_Admin_Page_Loader {
 		$this->_get_installed_pages();
 		//set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
 		add_action('admin_menu', array( $this, 'set_menus' ));
-
+		add_action( 'network_admin_menu', array( $this, 'set_network_menus' ) );
 	}
 
 
@@ -158,58 +158,58 @@ class EE_Admin_Page_Loader {
 		$groups = array(
 			'main' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Main', 'event_espresso'),
-				'show_on_menu' => FALSE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::NONE,
 				'menu_slug' => 'main',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 0,
-				'parent_slug' => 'espresso_events'
+				'parent_slug' => 'espresso_events',
 				)),
 			'management' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Management', 'event_espresso'),
-				'show_on_menu' => TRUE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'management',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 10,
 				'parent_slug' => 'espresso_events'
 				)),
 			'settings' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Settings', 'event_espresso'),
-				'show_on_menu' => TRUE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'settings',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 30,
 				'parent_slug' => 'espresso_events'
 				)),
 			'templates' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Templates', 'event_espresso'),
-				'show_on_menu' => TRUE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'templates',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 40,
 				'parent_slug' => 'espresso_events'
 				)),
 			'extras' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Extras', 'event_espresso'),
-				'show_on_menu' => TRUE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 				'menu_slug' => 'extras',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 50,
 				'parent_slug' => 'espresso_events',
 				'maintenance_mode_parent' => 'espresso_maintenance_settings'
 				)),
 			'tools' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __("Tools", "event_espresso"),
-				'show_on_menu' => TRUE,
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 				'menu_slug' => 'tools',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 60,
 				'parent_slug' => 'espresso_events'
 				)),
 			'addons' => new EE_Admin_Page_Menu_Group( array(
+				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 				'menu_label' => __('Add-ons', 'event_espresso'),
-				'show_on_menu' => TRUE,
 				'menu_slug' => 'addons',
-				'capability' => 'administrator',
+				'capability' => 'ee_read_ee',
 				'menu_order' => 20,
 				'parent_slug' => 'espresso_events'
 				))
@@ -277,6 +277,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
 		$installed_refs = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', $installed_refs );
+		$this->_caffeinated_extends = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__caffeinated_extends', $this->_caffeinated_extends );
 
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
@@ -339,6 +340,9 @@ class EE_Admin_Page_Loader {
 				$this->_installed_pages[$page]->do_initial_loads();
 			}
 		}
+
+		do_action( 'AHEE__EE_Admin_Page_Loader___get_installed_pages_loaded', $this->_installed_pages );
+
 	}
 
 
@@ -418,7 +422,26 @@ class EE_Admin_Page_Loader {
 		//prep the menu pages (sort, group.)
 		$this->_prep_pages();
 		foreach( $this->_prepped_menu_maps as $menu_map ) {
-			$menu_map->add_menu_page();
+			if ( EE_Registry::instance()->CAP->current_user_can( $menu_map->capability, $menu_map->menu_slug ) ) {
+				$menu_map->add_menu_page( FALSE );
+			}
+		}
+	}
+
+	/**
+	 * set_network_menus
+	 * This method sets up the menus for network EE Admin Pages.
+	 * Almost identical to EE_Admin_Page_Loader::set_menus() except pages
+	 * are only added to the menu map if they are intended for the admin menu
+	 *
+	 * @return void
+	 */
+	public function set_network_menus(){
+		$this->_prep_pages();
+		foreach( $this->_prepped_menu_maps as $menu_map ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( $menu_map->capability, $menu_map->menu_slug ) ) {
+				$menu_map->add_menu_page( TRUE );
+			}
 		}
 	}
 
@@ -571,12 +594,9 @@ class EE_Admin_Page_Loader {
 					}
 				}
 			}
-		}
+		}/**/
 
-		//if we've got _caf_autoloaders set then let's register the autoloader method
-//		if ( !empty( $this->_caf_autoloader ) ) {
-//			spl_autoload_register(array( $this, 'caffeinated_autoloaders') );
-//		}
+		$ee_admin_hooks = apply_filters( 'FHEE__EE_Admin_Page_Loader__set_caffeinated__ee_admin_hooks', $ee_admin_hooks );
 
 		return $installed_refs;
 

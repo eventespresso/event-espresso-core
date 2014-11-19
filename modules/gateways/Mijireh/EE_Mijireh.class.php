@@ -136,7 +136,8 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$primary_attendee = $primary_registrant->attendee();
 		$items = array();
 		//if we're are charging for the full amount, show the normal line items
-		if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+		if( $this->_sum_items_and_taxes($total_line_item) == $transaction->total() &&
+				$total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
 			$total_to_charge = $transaction->total();
 			$tax_total = $total_line_item->get_total_tax();
 			foreach($total_line_item->get_items() as $line_item){
@@ -154,7 +155,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			$tax_total = 0;
 			//partial payment, so just add 1 item
 			$items[] = array(
-				'name'=>  sprintf(__("Partial payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'name'=>  sprintf(__("Payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
 				'price'=> $this->_format_float($total_to_charge),
 				'sku'=>$primary_registrant->reg_code(),
 				'quantity'=>1

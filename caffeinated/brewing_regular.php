@@ -66,8 +66,8 @@ class EE_Brewing_Regular extends EE_Base {
 	/**
 	 * Upon brand-new activation, if this is a new activation of CAF, we want to add
 	 * some global prices that will show off EE4's capabilities. However, if they're upgrading
-	 * from 3.1, or simply 4.1 decaf, we assume they don't want us to suddenly introduce these extra prices.
-	 * This action should only be called when EE 4.1.0P is initially activated.
+	 * from 3.1, or simply EE4.x decaf, we assume they don't want us to suddenly introduce these extra prices.
+	 * This action should only be called when EE 4.x.0.P is initially activated.
 	 * Right now the only CAF content are these global prices. If there's more in the future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
 	 * Right now, we ASSUME the only price types in the system are default ones
@@ -76,6 +76,9 @@ class EE_Brewing_Regular extends EE_Base {
 	function initialize_caf_db_content(){
 //		echo "initialize caf db content!";
 		global $wpdb;
+
+		//use same method of getting creator id as the version introducing the change
+		$default_creator_id = apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
 
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
@@ -92,7 +95,8 @@ class EE_Brewing_Regular extends EE_Base {
 							'PBT_ID'=>4,
 							'PRT_is_percent'=>true,
 							'PRT_order'=>60,
-							'PRT_deleted'=>false
+							'PRT_deleted'=>false,
+							'PRT_wp_user' => $default_creator_id
 						),
 						array(
 							'%s',//PRT_name
@@ -100,6 +104,7 @@ class EE_Brewing_Regular extends EE_Base {
 							'%d',//PRT_is_percent
 							'%d',//PRT_order
 							'%d',//PRT_deleted
+							'%d', //PRT_wp_user
 						));
 				//federal tax
 				$result = $wpdb->insert($price_type_table,
@@ -108,7 +113,8 @@ class EE_Brewing_Regular extends EE_Base {
 							'PBT_ID'=>4,
 							'PRT_is_percent'=>true,
 							'PRT_order'=>70,
-							'PRT_deleted'=>false
+							'PRT_deleted'=>false,
+							'PRT_wp_user' => $default_creator_id,
 						),
 						array(
 							'%s',//PRT_name
@@ -116,6 +122,7 @@ class EE_Brewing_Regular extends EE_Base {
 							'%d',//PRT_is_percent
 							'%d',//PRT_order
 							'%d',//PRT_deleted
+							'%d' //PRT_wp_user
 						));
 				if( $result){
 					$wpdb->insert($price_table,
@@ -128,7 +135,8 @@ class EE_Brewing_Regular extends EE_Base {
 								'PRC_overrides'=>NULL,
 								'PRC_deleted'=>false,
 								'PRC_order'=>50,
-								'PRC_parent'=>null
+								'PRC_parent'=>null,
+								'PRC_wp_user' => $default_creator_id
 							),
 							array(
 								'%d',//PRT_id
@@ -140,6 +148,7 @@ class EE_Brewing_Regular extends EE_Base {
 								'%d',//PRC_deleted
 								'%d',//PRC_order
 								'%d',//PRC_parent
+								'%d' //PRC_wp_user
 							));
 				}
 
@@ -172,8 +181,8 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function caffeinated_init(){
 		// EE_Register_CPTs hooks
-		add_filter('FHEE__EE_Register_CPTs__construct__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
-		add_filter('FHEE__EE_Register_CPTs__construct__CPTs', array( $this, 'filter_cpts' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__get_CPTs__cpts', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
 		EE_Registry::instance()->load_file( EE_CAFF_PATH, 'EE_Caf_Messages', 'class', array(), FALSE );
 		// caffeinated_init__complete hook
@@ -212,6 +221,5 @@ class EE_Brewing_Regular extends EE_Base {
 			);
 		return $menuitems;
 	}
-
 }
 $brewing = new EE_Brewing_Regular();

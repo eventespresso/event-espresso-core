@@ -191,14 +191,19 @@ class EE_Transaction extends EE_Base_Class {
 	}
 
 
+
 	/**
 	 *    datetime
-	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
+	 *
+	 *    Returns the transaction datetime as:
+	 * 			- unix timestamp format including the UTC (timezone) offset (default)
+	 * 			- formatted date string including the UTC (timezone) offset ($format = TRUE ($gmt has no affect with this option))
+	 * 			- unix timestamp format in UTC+0 (GMT) ($gmt = TRUE)
 	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
 	 *
 	 * @access 	public
-	 * @param 	boolean $format - whether to return a formatted date string
-	 * @param 	bool       $gmt - whether to return raw timestamp with no UTC offset applied
+	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string
+	 * @param 	boolean 	$gmt - whether to return a unix timestamp with UTC offset applied (default) or no UTC offset applied
 	 * @return 	string | int
 	 */
 	public function datetime( $format = FALSE, $gmt = FALSE ) {
@@ -364,11 +369,11 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 * This returns the url for the invoice of this transaction
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * @param string $type 'html' or 'pdf' (default is pdf)
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url( $type = 'launch' ) {
+	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
@@ -389,11 +394,11 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * Gets the URL for viewing the reciept
+	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
-	public function receipt_url( $type = 'launch' ) {
+	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
@@ -541,7 +546,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 
@@ -567,7 +577,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function tax_total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 

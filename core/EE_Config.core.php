@@ -132,6 +132,37 @@ final class EE_Config {
 
 
 	/**
+	 * Resets the config
+	 * @param bool $hard_reset if TRUE, sets EE_CONFig back to its original settings in the database. If FALSE
+	 * (default) leaves the database alone, and merely resets the EE_COnfig object to reflect its state in the database
+	 * @param boolean $reinstantiate if TRUE (default) call instance() and return it. Otherwise, just leave
+	 * $_instance as NULL. Useful in case you want to forget about the old instance on EE_Config, but might
+	 * not be ready to instantiate EE_Config currently (eg if the site was put into maintenance mode)
+	 * @return EE_Config
+	 */
+	public static function reset( $hard_reset = FALSE, $reinstantiate = TRUE ){
+		if ( $hard_reset ) {
+			self::$_instance->_config_option_names = array();
+			self::$_instance->_initialize_config();
+			self::$_instance->update_espresso_config();
+		}
+		if( self::$_instance instanceof EE_Config ){
+			self::$_instance->shutdown();
+		}
+		self::$_instance = NULL;
+		//we don't need to reset the static properties imo because those should
+		//only change when a module is added or removed. Currently we don't
+		//support removing a module during a request when it previously existed
+		if( $reinstantiate ){
+			return self::instance();
+		}else{
+			return NULL;
+		}
+	}
+
+
+
+	/**
 	 *    class constructor
 	 *
 	 * @access    private
@@ -139,24 +170,9 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
-		//set defaults
 		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->gateway = new EE_Gateway_Config();
-		$this->environment = new EE_Environment_Config();
-		$this->addons = new stdClass();
-		// set _module_route_map
-		EE_Config::$_module_route_map = array();
-		// set _module_forward_map
-		EE_Config::$_module_forward_map = array();
-		// set _module_view_map
-		EE_Config::$_module_view_map = array();
+		// setup empty config classes
+		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
 		//  register shortcodes and modules
@@ -182,6 +198,35 @@ final class EE_Config {
 	 */
 	public static function get_current_theme() {
 		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+	}
+
+
+
+
+	/**
+	 * 		_initialize_config
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _initialize_config() {
+		//set defaults
+		$this->core = new EE_Core_Config();
+		$this->organization = new EE_Organization_Config();
+		$this->currency = new EE_Currency_Config();
+		$this->registration = new EE_Registration_Config();
+		$this->admin = new EE_Admin_Config();
+		$this->template_settings = new EE_Template_Config();
+		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
+		$this->addons = new stdClass();
+		// set _module_route_map
+		EE_Config::$_module_route_map = array();
+		// set _module_forward_map
+		EE_Config::$_module_forward_map = array();
+		// set _module_view_map
+		EE_Config::$_module_view_map = array();
 	}
 
 
@@ -1267,7 +1312,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
@@ -1499,7 +1544,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * twitter (twitter.com/twitterhandle)
+	 * twitter (twitter.com/twitter_handle)
 	 * @var string
 	 */
 	public $twitter;
@@ -1507,7 +1552,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * linkedin (linkedin.com/in/profilename)
+	 * linkedin (linkedin.com/in/profile_name)
 	 * @var string
 	 */
 	public $linkedin;
@@ -1515,7 +1560,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * pinterest (www.pinterest.com/profilename)
+	 * pinterest (www.pinterest.com/profile_name)
 	 * @var string
 	 */
 	public $pinterest;
@@ -1531,7 +1576,7 @@ class EE_Organization_Config extends EE_Config_Base {
 
 
 	/**
-	 * instragram (instagram.com/handle)
+	 * instagram (instagram.com/handle)
 	 * @var string
 	 */
 	public $instagram;
@@ -1602,7 +1647,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $sign;
 
 	/**
-	* Whether the currency sign shoudl come before the number or not
+	* Whether the currency sign should come before the number or not
 	* @var boolean $sign_b4
 	*/
 	public $sign_b4;
@@ -1642,8 +1687,9 @@ class EE_Currency_Config extends EE_Config_Base {
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
-		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
+		EE_Registry::instance()->load_helper( 'Activation' );
+		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
+		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
 			if ( $country instanceof EE_Country ) {
@@ -1754,7 +1800,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
-		$this->show_pending_payment_options = FALSE;
+		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;

@@ -42,10 +42,18 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			//'default' => '_whats_new',
-			'default' => '_overview',
+			'default' => array(
+				'func' => '_overview',
+				'capability' => 'manage_options'
+				),
 			//'overview' => '_overview',
-			'credits' => '_credits',
+				//'func' => '_overview',
+				//'capability' => 'ee_read_ee'
+				//),
+			'credits' => array(
+				'func' => '_credits',
+				'capability' => 'manage_options'
+				),
 			);
 	}
 
@@ -121,14 +129,14 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _get_started_steps() {
 		$steps = '<h3>'.__('Getting Started').'</h3>';
-		$step_one = '<p>'.sprintf( __('%sStep 1%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
-		$step_two = '<p>'.sprintf( __('%sStep 2%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
-		$step_three = '<p>'.sprintf( __('%sStep 3%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
+		$step_one = '<p>'.sprintf( __('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
+		$step_two = '<p>'.sprintf( __('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
+		$step_three = '<p>'.sprintf( __('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
 
 		//done?
-		$done_step_one = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
-		$done_step_two = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
-		$done_step_three = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
+		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
+		$done_step_two = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
+		$done_step_three = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
 
 		//if ALL steps are done, let's just return FALSE so we don't display anything
 		if ( $done_step_one && $done_step_two && $done_step_three )

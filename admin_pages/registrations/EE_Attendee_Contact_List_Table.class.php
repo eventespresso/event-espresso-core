@@ -65,7 +65,9 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['in_use']['count'] = EEM_Attendee::instance()->count();
-		$this->_views['trash']['count'] = EEM_Attendee::instance()->count_deleted();
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_delete_registration' ) ) {
+			$this->_views['trash']['count'] = EEM_Attendee::instance()->count_deleted();
+		}
 	}
 
 
@@ -106,7 +108,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->lname() . '</a>';
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->lname() . '</a>' : $item->lname();
 		return $name_link;
 
 	}
@@ -119,21 +121,27 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit attendee link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
-		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ) {
+			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
+			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+		}
 
 		if ( $this->_view == 'in_use' ) {
 			// trash attendee link
-			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
-			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Contact to Trash', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
+				$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+				$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Contact to Trash', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
+			}
 		} else {
-			// restore attendee link
-			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
-			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Contact', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_restore_attendees' ) ) {
+				// restore attendee link
+				$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Contact', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+			}
 		}
 
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->fname() . '</a>';
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->fname() . '</a>' : $item->fname();
 
 		//Return the name contents
 		return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions) );

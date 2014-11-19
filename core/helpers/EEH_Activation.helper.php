@@ -55,21 +55,16 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
-//		echo"init reg content";
 		EEH_Activation::initialize_system_questions();
-//		EEH_Activation::insert_default_prices();
-//		EEH_Activation::insert_defaulinsert_default_pricest_price_types();
-//		EEH_Activation::insert_default_tickets();
 		EEH_Activation::insert_default_status_codes();
-//		default countries and states actually takes place during data migration scripts
-//		because converting state and coutnry names to foreign keys must occur for venues, attendees, etc
-//		EEH_Activation::insert_default_countries();
-//		EEH_Activation::insert_default_states();
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
 		//also initialize payment settings, which is a side-effect of calling
-		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance(true)->load_all_gateways();
+
+		EE_Registry::instance()->CAP->init_caps();
+
+		EEH_Activation::validate_messages_system();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -206,7 +201,7 @@ class EEH_Activation {
 	}
 
 	/**
-	 * REturns the first post which uses the specified shortcode
+	 * Returns the first post which uses the specified shortcode
 	 * @param string $ee_shortcode usually one of the critical pages shortcodes, eg
 	 * ESPRESSO_THANK_YOU. So we will search fora post with the content "[ESPRESSO_THANK_YOU"
 	 * (we don't search for the closing shortcode bracket because they might have added
@@ -228,14 +223,13 @@ class EEH_Activation {
 
 
 
-
-
 	/**
-	 * 	This function generates a post for critical espresso pages
+	 *    This function generates a post for critical espresso pages
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
+	 * @access public
+	 * @static
+	 * @param array $critical_page
+	 * @return array
 	 */
 	public static function create_critical_page( $critical_page ) {
 
@@ -321,9 +315,9 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
-	 * @param string $table_name withou the $wpdb->prefix
+	 * @param string $table_name without the $wpdb->prefix
 	 * @param string $sql SQL for creating the table (contents between brackets in an SQL create table query)
-	 * @param string engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
+	 * @param string $engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
 	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
 	 * and new once this function is done (ie, you really do want to CREATE a table, and
 	 * expect it to be empty once you're done)
@@ -332,7 +326,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
-//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exstsi') . "<br>";//die;
+//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exists') . "<br>";//die;
+		if( apply_filters( 'FHEE__EEH_Activation__create_table__short_circuit', FALSE, $table_name, $sql ) ){
+			return;
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -340,8 +337,20 @@ class EEH_Activation {
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
 		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
-		if($drop_table_if_pre_existed){
-			$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+		if($drop_table_if_pre_existed && EEH_Activation::table_exists( $wp_table_name ) ){
+			if( defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
+				$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+			}else{
+				//so we should be more cautious rather than just dropping tables so easily
+				EE_Error::add_persistent_admin_notice(
+						'bad_table_' . $wp_table_name . '_detected',
+						sprintf( __( 'Database table %1$s existed when it shouldn\'t, and probably contained erroneous data. You probably restored to a backup that didn\'t remove old tables didn\'t you? We recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
+								$wp_table_name,
+								"<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
+								'<b>wp-config.php</b>',
+								'<br/>'),
+								TRUE );
+			}
 		}
 		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 		dbDelta( $SQL );
@@ -352,29 +361,30 @@ class EEH_Activation {
 
 
 
-
-
-
 	/**
-	 * 	add_column_if_it_doesnt_exist
-	 * 	Checks if this column already exists on the specified table. Handy for addons which want to add a column
+	 *    add_column_if_it_doesn't_exist
+	 *    Checks if this column already exists on the specified table. Handy for addons which want to add a column
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@param string $table_name (wihtout "wp_", eg "esp_attendee"
-	 * 	@param string $column_name
-	 * 	@param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+	 * @access public
+	 * @static
+	 * @param string $table_name  (without "wp_", eg "esp_attendee"
+	 * @param string $column_name
+	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+	 * @return bool|int
 	 */
 	public static function add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
+		if( apply_filters( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', FALSE ) ){
+			return FALSE;
+		}
 		global $wpdb;
 		$full_table_name=$wpdb->prefix.$table_name;
 		$fields = self::get_fields_on_table($table_name);
 		if (!in_array($column_name, $fields)){
 			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
 			//echo "alter query:$alter_query";
-			return mysql_query($alter_query);
+			return $wpdb->query($alter_query);
 		}
-		return true;
+		return TRUE;
 	}
 
 
@@ -386,19 +396,18 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
-	 * 	@param string $table_name, wihtout prefixed $wpdb->prefix
+	 * 	@param string $table_name, without prefixed $wpdb->prefix
 	 * 	@return array of database column names
 	 */
 	public static function get_fields_on_table( $table_name = NULL ) {
 		global $wpdb;
 		$table_name=$wpdb->prefix.$table_name;
 		if ( ! empty( $table_name )) {
-			if (($tablefields = mysql_list_fields(DB_NAME, $table_name, $wpdb -> dbh)) !== FALSE) {
-				$columns = mysql_num_fields($tablefields);
+			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
+			if ($columns !== FALSE) {
 				$field_array = array();
-				for ($i = 0; $i < $columns; $i++) {
-					$fieldname = mysql_field_name($tablefields, $i);
-					$field_array[] = $fieldname;
+				foreach($columns as $column ){
+					$field_array[] = $column->Field;;
 				}
 				return $field_array;
 			}
@@ -411,9 +420,10 @@ class EEH_Activation {
 	/**
 	 * delete_unused_db_table
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @return bool | int
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
@@ -422,46 +432,53 @@ class EEH_Activation {
 	}
 
 
+
 	/**
 	 * drop_index
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @param string $index_name
+	 * @return bool | int
 	 */
 	public static function drop_index( $table_name, $index_name ) {
+		if( apply_filters( 'FHEE__EEH_Activation__drop_index__short_circuit', FALSE ) ){
+			return FALSE;
+		}
 		global $wpdb;
 		$table_name_with_prefix = $wpdb->prefix . $table_name ;
 		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name &&
-				$wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
-				) {
+		if (
+			$wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name
+			&& $wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
+		) {
 			return $wpdb->query( "ALTER TABLE $table_name_with_prefix DROP INDEX $index_name" );
 		}
+		return TRUE;
 	}
-
-
-
 
 
 
 	/**
 	 * create_database_tables
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
+	 * @access public
+	 * @static
+	 * @throws EE_Error
+	 * @return void
 	 */
 	public static function create_database_tables() {
 		//find the migration script that sets the database to be compatible with the code
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
 			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
+			$current_data_migration_script->set_migrating( FALSE );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 		}else{
-			throw new EE_Error( sprintf( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ) ) );
+			throw new EE_Error( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ));
 		}
 	}
 
@@ -482,14 +499,15 @@ class EEH_Activation {
 		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
 		// what we have
 		$question_groups = $wpdb->get_col( $SQL );
-		// check the reponse
+		// check the response
 		$question_groups = is_array( $question_groups ) ? $question_groups : array();
 		// what we should have
 		$QSG_systems = array( 1, 2 );
 		// loop thru what we should have and compare to what we have
 		foreach ( $QSG_systems as $QSG_system ) {
-
-			// if we don't have what we should have (but use $QST_system as as string because thats what we got fromteh db)
+			// reset values array
+			$QSG_values = array();
+			// if we don't have what we should have (but use $QST_system as as string because that's what we got from the db)
 			if ( ! in_array( "$QSG_system", $question_groups )) {
 				// add it
 				switch ( $QSG_system ) {
@@ -521,13 +539,16 @@ class EEH_Activation {
 						break;
 
 				}
-				// insert system question
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group',
-					$QSG_values,
-					array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
-				);
-				$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;
+				// make sure we have some values before inserting them
+				if ( ! empty( $QSG_values )) {
+					// insert system question
+					$wpdb->insert(
+						$wpdb->prefix . 'esp_question_group',
+						$QSG_values,
+						array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
+					);
+					$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;
+				}
 			}
 		}
 
@@ -555,6 +576,8 @@ class EEH_Activation {
 		$order_for_group_2 = 1;
 		// loop thru what we should have and compare to what we have
 		foreach ( $QST_systems as $QST_system ) {
+			// reset values array
+			$QST_values = array();
 			// if we don't have what we should have
 			if ( ! in_array( $QST_system, $questions )) {
 				// add it
@@ -711,24 +734,24 @@ class EEH_Activation {
 						break;
 
 				}
-				// insert system question
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question',
-					$QST_values,
-					array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
-				);
-				$QST_ID = $wpdb->insert_id;
+				if ( ! empty( $QST_values )) {
+					// insert system question
+					$wpdb->insert(
+						$wpdb->prefix . 'esp_question',
+						$QST_values,
+						array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
+					);
+					$QST_ID = $wpdb->insert_id;
 
-				// QUESTION GROUP QUESTIONS
-
-				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
-				// add system questions to groups
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group_question',
-					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
-					array( '%d', '%d','%d' )
-				);
-
+					// QUESTION GROUP QUESTIONS
+					$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
+					// add system questions to groups
+					$wpdb->insert(
+						$wpdb->prefix . 'esp_question_group_question',
+						array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
+						array( '%d', '%d','%d' )
+					);
+				}
 			}
 		}
 
@@ -756,9 +779,8 @@ class EEH_Activation {
 	public static function insert_default_status_codes() {
 
 		global $wpdb;
-		$table = $wpdb->get_var("SHOW TABLES LIKE '" . EEM_Status::instance()->table() . "'");
 
-		if ( $table == EEM_Status::instance()->table()) {
+		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
 			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
@@ -856,18 +878,28 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
-	 * 	@return void
+	 * 	@return bool | array
 	 */
 	public static function generate_default_message_templates() {
 
-		$templates = FALSE;
-		$settings = $installed_messengers = array();
+		$success = FALSE;
+		$settings = $installed_messengers = $default_messengers = array();
 
 		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
-		//let's first setup an array of what we consider to be the default messengers.
-		$default_messengers = array( 'email' );
+		//get all installed messenger objects
+		$installed = EEH_MSG_Template::get_installed_message_objects();
+
+		//let's setup the $installed messengers in an array AND the messengers that are set to be activated on install.
+		foreach ( $installed['messengers'] as $msgr ) {
+			if ( $msgr instanceof EE_messenger ) {
+				$installed_messengers[$msgr->name] = $msgr;
+				if ( $msgr->activate_on_install ) {
+					$default_messengers[] = $msgr->name;
+				}
+			}
+		}
 
 		//let's determine if we've already got an active messengers option
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
@@ -879,67 +911,98 @@ class EEH_Activation {
 			$def_ms[] = $msgr;
 		}
 
-		//continue?
-		if ( empty( $def_ms ) ) return false;
-
-		//get all installed messenger objects
-		$installed = EEH_MSG_Template::get_installed_message_objects();
-
-		$inst_msgrs = $installed['messengers'];
-		$inst_mts = $installed['message_types'];
-
-		//let's setup the $installed messengers in an array
-		foreach ( $inst_msgrs as $msgr ) {
-			$installed_messengers[$msgr->name] = $msgr;
-		}
-
 		//setup the $installed_mts in an array
-		foreach ( $inst_mts as $imt ) {
-			$installed_mts[$imt->name] = $imt;
+		foreach ( $installed['message_types'] as $imt ) {
+			if ( $imt instanceof EE_message_type ) {
+				$installed_mts[$imt->name] = $imt;
+			}
 		}
 
-		//loop through default array
-		foreach ( $def_ms as $messenger ) {
-			//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
-			if ( !isset( $installed_messengers[$messenger] ) ) continue;
-
-			$default_mts = $installed_messengers[$messenger]->get_default_message_types();
-
-			$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-			foreach ( $default_mts as $mt ) {
-				//we need to setup any initial settings for message types
-				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-				if ( !empty( $settings_fields ) ) {
-					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
+		//loop through default array for default messengers (if present)
+		if ( ! empty( $def_ms ) ) {
+			foreach ( $def_ms as $messenger ) {
+				//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
+				if ( ! isset( $installed_messengers[$messenger] )) {
+					continue;
+				}
+				/** @var EE_messenger[] $installed_messengers  */
+				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
+				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
+				foreach ( $default_mts as $mt ) {
+					//we need to setup any initial settings for message types
+					/** @var EE_message_type[] $installed_mts */
+					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+					if ( !empty( $settings_fields ) ) {
+						foreach ( $settings_fields as $field => $values ) {
+							$settings[$field] = $values['default'];
+						}
+					} else {
+						$settings = array();
 					}
-				} else {
-					$settings = array();
+
+					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
 				}
 
-				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
-			}
+				//setup any initial settings for the messenger
+				$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
 
-			//setup any initial settings for the messenger
-			$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
+				if ( !empty( $msgr_settings ) ) {
+					foreach ( $msgr_settings as $field => $value ) {
+						$active_messengers[$messenger]['settings'][$field] = $value;
+					}
+				}
 
-			if ( !empty( $msgr_settings ) ) {
-				foreach ( $msgr_settings as $field => $value ) {
-					$active_messengers[$messenger]['settings'][$field] = $value;
+				//now let's save the settings for this messenger! Must do now because the validator checks the db for active messengers to validate.
+				EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+
+				//let's generate all the templates but only if the messenger has default_mts (otherwise its just activated).
+				if ( !empty( $default_mts ) ) {
+					$success = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
 				}
 			}
+		} //end check for empty( $def_ms )
+		else {
+			//still need to see if there are any message types to activate for active messengers
+			foreach ( $active_messengers as $messenger => $settings ) {
+				$msg_obj = $settings['obj'];
+				if ( ! $msg_obj instanceof EE_messenger ) {
+					continue;
+				}
 
-			//now let's save the settings for this messenger!
-			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+				$all_default_mts = $msg_obj->get_default_message_types();
+				$new_default_mts = array();
+
+				//loop through each default mt reported by the messenger and make sure its set in its active db entry.
+				foreach( $all_default_mts as $mt ) {
+					//already active? already has generated templates?
+					if ( isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
+						continue;
+					}
+					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+					if ( !empty( $settings_fields ) ) {
+						foreach ( $settings_fields as $field => $values ) {
+							$settings[$field] = $values['default'];
+						}
+					} else {
+						$settings = array();
+					}
+					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
+					$new_default_mts[] = $mt;
+				}
 
 
-			//let's generate all the templates
-			$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+				if ( ! empty( $new_default_mts ) ) {
+					$success = EEH_MSG_Template::generate_new_templates( $messenger, $new_default_mts, '', TRUE );
+				}
 
+			}
 		}
 
-		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
-		return $templates;
+		//now let's save the settings for this messenger!
+		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+
+		//that's it!
+		return $success;
 	}
 
 
@@ -961,16 +1024,17 @@ class EEH_Activation {
 		//get active and installed  messengers/message types.
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$installed = EEH_MSG_Template::get_installed_message_objects();
-		$ims = $installed['messengers'];
-		$imts = $installed['message_types'];
-
 		$installed_messengers = $installed_mts = array();
-		//set up the arrays so they can be handelled easier.
-		foreach( $ims as $im ) {
-			$installed_messengers[$im->name] = $im;
+		//set up the arrays so they can be handled easier.
+		foreach( $installed['messengers'] as $im ) {
+			if ( $im instanceof EE_messenger ) {
+				$installed_messengers[$im->name] = $im;
+			}
 		}
-		foreach( $imts as $imt ) {
-			$installed_mts[$imt->name] = $imt;
+		foreach( $installed['message_types'] as $imt ) {
+			if ( $imt instanceof EE_message_type ) {
+				$installed_mts[$imt->name] = $imt;
+			}
 		}
 
 		//now let's loop through the active array and validate
@@ -1032,8 +1096,8 @@ class EEH_Activation {
 
 
 	/**
-	 * Finds all our EE4 custom post types, and deletes them and their assocaited data (like post meta or term relations)/
-	 * @global type $wpdb
+	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term relations)/
+	 * @global wpdb $wpdb
 	 */
 	public static function delete_all_espresso_cpt_data(){
 		global $wpdb;
@@ -1050,17 +1114,21 @@ class EEH_Activation {
 		//get all our CPTs
 		$query = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (".implode(",",$ee_post_types).")";
 		$cpt_ids = $wpdb->get_col($query);
-		//delete each's post meta and term relations too
+		//delete each post meta and term relations too
 		foreach($cpt_ids as $post_id){
 			wp_delete_post($post_id,true);
 		}
 	}
+
+
+
 	/**
 	 * plugin_uninstall
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
+	 * @access public
+	 * @static
+	 * @param bool $remove_all
+	 * @return void
 	 */
 	public static function delete_all_espresso_tables_and_data( $remove_all = TRUE ) { // FALSE
 		global $wpdb;
@@ -1081,7 +1149,7 @@ class EEH_Activation {
 									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
 								break;
 								default:
-									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successfully <br /></h4>';
 							}
 						}
 					}
@@ -1123,18 +1191,16 @@ class EEH_Activation {
 		$undeleted_options = array();
 		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
 
-			$option_name = $no_wildcard ? "= '$option_name'" : "LIKE '%$option_name%'";
-
-			if ( $option_id = $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
-				switch ( $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name $option_name" )) {
-					case FALSE :
-						$undeleted_options[] = $option_name;
-					break;
-					case 0 :
-	//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
-					break;
-					default:
-	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+			if( $no_wildcard ){
+				if( ! delete_option( $option_name ) ){
+					$undeleted_options[] = $option_name;
+				}
+			}else{
+				$option_names_to_delete_from_wildcard = $wpdb->get_col( "SELECT option_name FROM $wpdb->options WHERE option_name LIKE '%$option_name%'" );
+				foreach($option_names_to_delete_from_wildcard as $option_name_from_wildcard ){
+					if( ! delete_option( $option_name_from_wildcard ) ){
+						$undeleted_options[] = $option_name_from_wildcard;
+					}
 				}
 			}
 		}
@@ -1167,7 +1233,7 @@ class EEH_Activation {
 
 		}
 		if ( $errors != '' ) {
-			echo $errors;
+			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 

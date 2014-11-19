@@ -206,6 +206,19 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
 	/**
+	 * Returns the value for the post_author id saved with the cpt
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get( 'ATT_author' );
+	}
+
+
+
+	/**
 	 *        get Attendee First Name
 	 * @access        public
 	 * @return string

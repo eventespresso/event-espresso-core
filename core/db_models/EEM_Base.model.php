@@ -34,7 +34,27 @@ abstract class EEM_Base extends EE_Base{
 	 * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
 	 * @var boolean
 	 */
-	private $_values_already_prepared_by_model_object = false;
+	private $_values_already_prepared_by_model_object = 0;
+
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we assume
+	 * the data is just like form input that needs to have the model fields'
+	 * prepare_for_set and prepare_for_use_in_db called on it
+	 */
+	const not_prepared_by_model_object = 0;
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we
+	 * assume this value is coming from a model object and doesn't need to have
+	 * prepare_for_set called on it, just prepare_for_use_in_db is used
+	 */
+	const prepared_by_model_object = 1;
+	/**
+	 * when $_values_already_prepared_by_model_object equals this, we assume
+	 * the values are already to be used in the database (ie no processing is done
+	 * on them by the model's fields)
+	 */
+	const prepared_for_use_in_db = 2;
+
 
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
@@ -212,13 +232,12 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
-		//if we're in maintenance mode level 2, DON'T run any queries
-		//because level 2 indicates the database needs updating and
-		//is probably out of sync with the code
-		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
-			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
-		}
-
+		/**
+		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
+		 * just use EE_Register_Model_Extension
+		 * @param EE_Table_Base[]
+		 */
+		$this->_tables = apply_filters( 'FHEE__'.get_class($this).'__construct__tables', $this->_tables );
 		foreach($this->_tables as $table_alias => $table_obj){
 			/** @var $table_obj EE_Table_Base */
 			$table_obj->_construct_finalize_with_alias($table_alias);
@@ -227,6 +246,11 @@ abstract class EEM_Base extends EE_Base{
 				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
 			}
 		}
+		/**
+		 * Filters the list of fields on a model. It is best to NOT use this directly and instead just use
+		 * EE_REigster_Model_Extension
+		 * @param EE_Model_Field_Base[]
+		 */
 		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
 		foreach($this->_fields as $table_alias => $fields_for_table){
 			if ( ! array_key_exists( $table_alias, $this->_tables )){
@@ -245,8 +269,16 @@ abstract class EEM_Base extends EE_Base{
 
 		// everything is related to Extra_Meta
 		if( get_class($this) != 'EEM_Extra_Meta'){
-			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
+			//make extra metas related to everything, but don't block deleting things just
+			//because they have related extra meta info. For now just orphan those extra metas
+			//in the future we should automatically delete them
+			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
+		/**
+		 * Filters the list of relations on a model. It is best to NOT use this directly and instead just use
+		 * EE_REigster_Model_Extension
+		 * @param EE_Model_Relation_Base[]
+		 */
 		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			/** @var $relation_obj EE_Model_Relation_Base */
@@ -455,7 +487,6 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but may want to
 	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
-	 * @global $wpdb
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
 	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
@@ -466,7 +497,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		global $wpdb;
 
 		//remember the custom selections, if any
 		if(is_array($columns_to_select)){
@@ -481,8 +511,8 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-		$results =  $wpdb->get_results($SQL, $output);
-		$this->show_db_query_if_previously_requested($SQL);
+
+		$results =  $this->_do_wpdb_query( 'get_results', array($SQL, $output ) );// $wpdb->get_results($SQL, $output);
 		return $results;
 	}
 
@@ -530,8 +560,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
-		$primary_key_name = $this->get_primary_key_field()->get_name();
-		return $this->get_one(array(array($primary_key_name => $id)));
+		if( $this->get_from_entity_map( $id ) ){
+			return $this->get_from_entity_map( $id );
+		}else{
+			$primary_key_name = $this->get_primary_key_field()->get_name();
+			return $this->get_one(array(array($primary_key_name => $id)));
+		}
 	}
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
@@ -620,16 +654,15 @@ abstract class EEM_Base extends EE_Base{
 		 * @param array $query_params see EEM_Base::get_all()
 		 */
 		$fields_n_values = apply_filters( 'FHEE__EEM_Base__update__fields_n_values', $fields_n_values, $this, $query_params );
-		global $wpdb;
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
-		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
+
 		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
 		//NOTE: we should make this code more efficient by NOT querying twice
 		//before the real update, but that needs to first go through ALPHA testing
 		//as it's dangerous. says Mike August 8 2014
-		if(count($tables) > 1){
+
 			//we want to make sure the default_where strategy is ignored
 			$this->_ignore_where_strategy = TRUE;
 			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
@@ -639,17 +672,21 @@ abstract class EEM_Base extends EE_Base{
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
 				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
 				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
-				//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
-				//in that table, and so we'll want to insert one
-				foreach($tables as $table_obj){
-					$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
-					//if there is no private key for this table on the results, it means there's no entry
-					//in this table, right? so insert a row in the current table, using any fields available
-					if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
-						$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
+				//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
+				if(count($tables) > 1){
+					//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
+					//in that table, and so we'll want to insert one
+					foreach($tables as $table_obj){
+						$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
+						//if there is no private key for this table on the results, it means there's no entry
+						//in this table, right? so insert a row in the current table, using any fields available
+						if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
+							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+						}
 					}
 				}
-			}
+
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
@@ -679,8 +716,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-		$rows_affected = $wpdb->query($SQL);
-		$this->show_db_query_if_previously_requested($SQL);
+		$rows_affected = $this->_do_wpdb_query('query', array( $SQL ) );
 		/**
 		 * Action called after a model update call has been made.
 		 *
@@ -703,7 +739,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array just like $wpdb->get_col()
 	 */
 	public function get_col( $query_params  = array(), $field_to_select = NULL ){
-		global $wpdb;
 
 		if( $field_to_select ){
 			$field = $this->field_settings_for( $field_to_select );
@@ -716,8 +751,7 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $field->get_qualified_column();
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-		$results =  $wpdb->get_col( $SQL );
-		$this->show_db_query_if_previously_requested($SQL);
+		$results =  $this->_do_wpdb_query('get_col', array( $SQL ) );
 		return $results;
 	}
 
@@ -752,7 +786,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got deleted
 	 */
 	function delete($query_params,$allow_blocking = true){
-		global $wpdb;
 		/**
 		 * Action called just before performing a real deletion query. You can use the
 		 * model and its $query_params to find exactly which items will be deleted
@@ -766,7 +799,8 @@ abstract class EEM_Base extends EE_Base{
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
-		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params), $allow_blocking);
+		$items_for_deletion = $this->_get_all_wpdb_results($query_params);
+		$deletion_where = $this->_setup_ids_for_delete( $items_for_deletion, $allow_blocking);
 		if($deletion_where){
 			//echo "objects for deletion:";var_dump($objects_for_deletion);
 			$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -777,11 +811,19 @@ abstract class EEM_Base extends EE_Base{
 			$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
 
 			//		/echo "delete sql:$SQL";
-			$rows_deleted = $wpdb->query($SQL);
-			$this->show_db_query_if_previously_requested($SQL);
-			//$wpdb->print_error();
+			$rows_deleted = $this->_do_wpdb_query( 'query', array( $SQL ) );
 		}else{
 			$rows_deleted = 0;
+		}
+
+		//and lastly make sure those items are removed from the entity map; if they could be put into it at all
+		if( $this->has_primary_key_field() ){
+			foreach($items_for_deletion as $item_for_deletion_row ){
+				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
+				if( isset( $this->_entity_map[ $pk_value ] ) ){
+					unset( $this->_entity_map[ $pk_value ] );
+				}
+			}
 		}
 
 		/**
@@ -792,7 +834,7 @@ abstract class EEM_Base extends EE_Base{
 		 * @param int $rows_deleted
 		 */
 		do_action( 'AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted );
-		return $rows_deleted;//how many supposedly got updated
+		return $rows_deleted;//how many supposedly got deleted
 	}
 
 
@@ -932,7 +974,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
@@ -946,8 +987,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
-		$this->show_db_query_if_previously_requested($SQL);
-		return (int)$wpdb->get_var($SQL);
+		return (int)$this->_do_wpdb_query( 'get_var', array( $SQL) );
 	}
 
 	/**
@@ -958,7 +998,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int
 	 */
 	function sum($query_params, $field_to_sum = NULL){
-		global $wpdb;
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 
 		if($field_to_sum){
@@ -970,13 +1009,43 @@ abstract class EEM_Base extends EE_Base{
 		$column_to_count = $field_obj->get_qualified_column();
 
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
-		$this->show_db_query_if_previously_requested($SQL);
-		$return_value = $wpdb->get_var($SQL);
+		$return_value = $this->_do_wpdb_query('get_var',array( $SQL ) );
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
 			return (int)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
 		}
+	}
+
+	/**
+	 * Just calls the specified method on $wpdb with the given arguments
+	 * Consolidates a little extra error handling code
+	 * @global $wpdb $wpdb
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
+	 * @return mixed
+	 */
+	protected function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
+		//if we're in maintenance mode level 2, DON'T run any queries
+		//because level 2 indicates the database needs updating and
+		//is probably out of sync with the code
+		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
+			throw new EE_Error(sprintf(__("Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.", "event_espresso")));
+		}
+		global $wpdb;
+		if( ! method_exists( $wpdb, $wpdb_method ) ){
+			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
+		}
+		$wpdb->last_error = NULL;
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->show_errors( FALSE );
+		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+		$wpdb->show_errors( $old_show_errors_value );
+		if( ! empty( $wpdb->last_error ) ){
+			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+		}
+		$this->show_db_query_if_previously_requested( $wpdb->last_query );
+		return $result;
 	}
 
 	/**
@@ -1079,7 +1148,6 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets all the related items of the specified $model_name, using $query_params.
 	 * Note: by default, we remove the "default query params"
 	 * because we want to get even deleted items etc.
-	 * @global $wpdb
 	 * @param mixed $id_or_obj EE_Base_Class child or its ID
 	 * @param string $model_name like 'Event', 'Registration', etc. always singular
 	 * @param array $query_params like EEM_Base::get_all
@@ -1220,8 +1288,14 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Inserts a new entry into the database, for each table
-	 * @global $wpdb
+	 * Inserts a new entry into the database, for each table.
+	 *
+	 * Note: does not add the item to the entity map because that is done by EE_Base_Class::save() right after this.
+	 * If client code uses EEM_Base::insert() directly, then although the item isn't in the entity map,
+	 * we also know there is no model object with the newly inserted item's ID at the moment (because
+	 * if there were, then they would already be in the DB and this would fail); and in the future if someone
+	 * creates a model object with this ID (or grabs it from the DB) then it will be added to the
+	 * entity map at that time anyways. SO, no need for EEM_Base::insert ot add to the entity map
 	 * @param array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
 	 * in the model object's domain if $values_already_prepared_by_model_object is true. See comment about this at the top of EEM_Base)
 	 * @return int new primary key on main table that got inserted
@@ -1335,6 +1409,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array         $fields_n_values each key should be in _field's keys, and value should be an int, string or float
 	 * @param bool|int     $new_id
 	 * @throws EE_Error
+	 * @global $wpdb only used to get the $wpdb->insert_id after performin an insert
 	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 */
@@ -1366,20 +1441,7 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->show_errors(false);
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
-		$wpdb->show_errors($old_show_errors_value);
-		$this->show_db_query_if_previously_requested($wpdb->last_query);
-		if(!$result){
-			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
-					implode(",",$insertion_col_n_values),
-					implode(",",array_keys($insertion_col_n_values)),
-					implode(",",$format_for_insertion),
-					$table->get_table_name(),
-					$wpdb->last_error
-					));
-		}
+		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){
@@ -1417,8 +1479,16 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _prepare_value_for_use_in_db($value, $field){
 		if($field && $field instanceof EE_Model_Field_Base){
-			$value = $this->_values_already_prepared_by_model_object ? $value : $field->prepare_for_set($value);
-			return $field->prepare_for_use_in_db($value);
+			switch( $this->_values_already_prepared_by_model_object ){
+				case self::not_prepared_by_model_object:
+					$value = $field->prepare_for_set($value);
+					//purposefully left out "return"
+				case self::prepared_by_model_object:
+					$value = $field->prepare_for_use_in_db($value);
+				case self::prepared_for_use_in_db:
+					//leave the value alone
+			}
+			return $value;
 		}else{
 			return $value;
 		}
@@ -1988,7 +2058,6 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Constructs SQL for where clause, like "WHERE Event.ID = 23 AND Transaction.amount > 100" etc.
-	 * @global $wpdb
 	 * @param array $where_params like EEM_Base::get_all
 	 * @return string of SQL
 	 */
@@ -2776,7 +2845,7 @@ abstract class EEM_Base extends EE_Base{
 		$className = $this->_get_class_name();
 
 		if( ! $object instanceof $className ){
-			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
+			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
 		}
 		/** @var $object EE_Base_Class */
 		if ( ! $object->ID() ){
@@ -2927,15 +2996,15 @@ abstract class EEM_Base extends EE_Base{
 	 * $EVT->assume_values_already_prepared_by_model_object(true);
 	 * $EVT->update(array('foo'=>'bar'),array(array('foo'=>'monkey')));
 	 * $EVT->assume_values_already_prepared_by_model_object($old_setting);
-	 * @param boolean $values_already_prepared
+	 * @param int $values_already_prepared like one of the constants on EEM_Base
 	 * @return void
 	 */
-	public function assume_values_already_prepared_by_model_object($values_already_prepared = false){
+	public function assume_values_already_prepared_by_model_object($values_already_prepared = self::not_prepared_by_model_object){
 		$this->_values_already_prepared_by_model_object = $values_already_prepared;
 	}
 	/**
 	 * Read comments for assume_values_already_prepared_by_model_object()
-	 * @return boolean
+	 * @return int
 	 */
 	public function get_assumption_concerning_values_already_prepared_by_model_object(){
 		return $this->_values_already_prepared_by_model_object;

@@ -15,6 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group core
+ * @group addons
  */
 class EE_Addon_Test extends EE_UnitTestCase{
 	/**
@@ -24,9 +25,11 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	protected $_addon = NULL;
 	protected $_main_file_path;
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';require_once $this->_main_file_path;
+		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';
+		require_once $this->_main_file_path;
 		//loading that file adds a hook, but we want to control when it hooks in
-		remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );		parent::__construct($name, $data, $dataName);
+		remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
+		parent::__construct($name, $data, $dataName);
 	}
 	public function setUp(){
 		parent::setUp();
@@ -39,7 +42,24 @@ class EE_Addon_Test extends EE_UnitTestCase{
 //		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 //		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 //		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
+		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
+	}
 
+	/**
+	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
+	 * @global type $wpdb
+	 * @param array $whitelisted_tables
+	 * @return array
+	 */
+	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
+		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && !EEH_Activation::table_exists( $table_name) ){
+//			echo "\r\n\r\nDONT shortcircuit $sql";
+			//it's not altering. it's ok to allow this
+			return FALSE;
+		}else{
+//			echo "3\r\n\r\nshort circuit:$sql";
+			return $short_circuit;
+		}
 	}
 
 	public function test_update_list_of_installed_versions(){

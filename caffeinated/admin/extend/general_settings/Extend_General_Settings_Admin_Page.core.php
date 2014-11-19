@@ -46,11 +46,16 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$new_page_routes = array(
 			'update_template_settings' => array(
 				'func' => '_update_template_settings',
-				'noheader' => TRUE,
+				'capability' => 'manage_options',
+				'noheader' => TRUE
 			),
-			'google_map_settings' => '_google_map_settings',
+			'google_map_settings' => array(
+				'func' => '_google_map_settings',
+				'capability' => 'manage_options'
+			),
 			'update_google_map_settings' => array(
 				'func' => '_update_google_map_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE
 			)
 		);

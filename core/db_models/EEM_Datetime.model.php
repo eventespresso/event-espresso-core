@@ -94,6 +94,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	}
 
 	/**
+	 * resets the model and returns it
+	 * @return EEM_Datetime
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
+	/**
 	*		create new blank datetime
 	*
 	* 		@access		public
@@ -158,10 +167,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $include_expired = TRUE, $include_deleted= TRUE, $limit = NULL  ) {
-
-		$original_vapbmo = $this->_values_already_prepared_by_model_object;
-		$this->_values_already_prepared_by_model_object = TRUE; //make sure we dont' do conversions on the time in the query because the time in the db IS in GMT.
-
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
 
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
@@ -174,10 +181,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		}
 
 		$result = $this->get_all( $query_params );
-
-		//reset _values_already_prepared_by_model_object prop to previous setting.
-		$this->_values_already_prepared_by_model_object = $original_vapbmo;
-
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
 		return $result;
 	}
 

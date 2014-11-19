@@ -47,6 +47,15 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_MEssage_Template_Group
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 
 	protected function __construct() {
@@ -60,7 +69,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
 				'MTP_name' => new EE_Plain_Text_Field( 'MTP_name', __('The name of the temlpate group', 'event_espresso'), FALSE, '' ),
 				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_espresso' ), FALSE, '' ),
-				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
+				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, get_current_user_id() ),
 				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
 				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
@@ -129,10 +138,14 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @access public
 	 * @return array  all active (non_trashed, active) message template objects
 	 */
-	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $global = TRUE ) {
+	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $global = TRUE, $user_check = FALSE ) {
 		$_where = $global ? array('MTP_is_global' => TRUE ) : array('MTP_is_global' => FALSE );
 		$_where['MTP_is_active'] = TRUE;
 		$_where = $this->_maybe_mtp_filters($_where);
+
+		if  ( $user_check && ! $global && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_messages', 'get_all_active_message_templates' )  ) {
+			$_where['MTP_user_id'] = get_current_user_id();
+		}
 
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 

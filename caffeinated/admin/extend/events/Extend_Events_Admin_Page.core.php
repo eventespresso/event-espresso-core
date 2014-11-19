@@ -43,58 +43,86 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
 		$default_espresso_boxes = $this->_default_espresso_metaboxes;
 
+		//is there a evt_id in the request?
+		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
+		$evt_id = ! empty( $this->_req_data['post'] ) ? $this->_req_data['post'] : $evt_id;
+
+		//tkt_id?
+		$tkt_id = !empty( $this->_req_data['TKT_ID'] ) && ! is_array( $this->_req_data['TKT_ID'] ) ? $this->_req_data['TKT_ID'] : 0;
 
 		$new_page_routes = array(
 			'duplicate_event' => array(
 				'func' => '_duplicate_event',
+				'capability' => 'ee_edit_event',
+				'obj_id' => $evt_id,
 				'noheader' => TRUE
 				),
-			'ticket_list_table' => '_tickets_overview_list_table',
+			'ticket_list_table' => array(
+				'func' => '_tickets_overview_list_table',
+				'capability' => 'ee_read_default_tickets'
+				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
+				'capability' => 'ee_delete_default_tickets',
 				'noheader' => TRUE
 				),
-			'import_page'=>'_import_page',
+			'import_page'=> array(
+				'func' => '_import_page',
+				'capability' => 'import'
+				),
 			'import' => array(
 				'func'=>'_import_events',
+				'capability' => 'import',
 				'noheader'=>TRUE,
 				),
 			'import_events' => array(
 				'func'=>'_import_events',
+				'capability' => 'import',
 				'noheader'=>TRUE,
 				),
 			'export_events' => array(
 				'func' => '_events_export',
+				'capability' => 'export',
 				'noheader' => true
 			),
 			'export_categories' => array(
 				'func' => '_categories_export',
+				'capability' => 'export',
 				'noheader' => TRUE
 				),
 			'sample_export_file'=>array(
 				'func'=>'_sample_export_file',
+				'capability' => 'export',
 				'noheader'=>TRUE
 				)
 			);
@@ -281,9 +309,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _set_list_table_views_default() {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
-		$this->_views['all']['bulk_action']['export_events'] = $export_label;
-		$this->_views['draft']['bulk_action']['export_events'] = $export_label;
-		$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
+			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
+				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+			}
+		}
 
 		$new_views = array(
 			'today' => array(
@@ -321,22 +354,26 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function extra_list_table_actions( $actionlinks, $event ) {
-		$reports_query_args = array(
-				'action' => 'reports',
-				'EVT_ID' => $event->ID()
-			);
-		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_reports', $event->ID() ) ) {
+			$reports_query_args = array(
+					'action' => 'reports',
+					'EVT_ID' => $event->ID()
+				);
+			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
+			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+		}
 		return $actionlinks;
 	}
 
 
 
 	public function additional_legend_items($items) {
-		$items['reports'] = array(
-				'class' => 'dashicons dashicons-chart-bar',
-				'desc' => __('Event Reports', 'event_espresso')
-			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_reports' ) ) {
+			$items['reports'] = array(
+					'class' => 'dashicons dashicons-chart-bar',
+					'desc' => __('Event Reports', 'event_espresso')
+				);
+		}
 		$items['empty'] = array('class'=>'empty', 'desc' => '');
 		return $items;
 	}

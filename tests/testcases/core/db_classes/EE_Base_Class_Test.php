@@ -311,16 +311,72 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t_null = $r->get_one_from_cache('Transaction');
 		$this->assertNull($t_null);
 	}
+
+	function test_set_and_get_extra_meta(){
+		$e = EE_Event::new_instance();
+		$e->save();
+		$e->update_extra_meta('monkey', 'baboon');
+		$this->assertEquals('baboon', $e->get_extra_meta('monkey', TRUE)  );
+		$e->update_extra_meta('monkey', 'chimp');
+		$this->assertEquals('chimp', $e->get_extra_meta('monkey', TRUE)  );
+	}
+
+
+
+
 	/**
-	 * @group current_bug
+	 * Created to attempt to reproduce a bug found when fixing https://events.codebasehq.com/projects/event-espresso/tickets/6373
+	 *
+	 * @since 4.5.0
+	 *
 	 */
-	function test_update_extra_meta(){
-		$t = EE_Transaction::new_instance( array( 'TXN_total' => 39 ) );
-		$t->save();
-		$t->update_extra_meta( 'work', 'maybe' );
-		$this->assertEquals( 'maybe', $t->get_extra_meta( 'work ', TRUE ) );
-		$t->update_extra_meta( 'work', 'yes' );
-		$this->assertEquals( 'yes', $t->get_extra_meta( 'work', TRUE ) );
+	function test_set_primary_key_clear_relations() {
+		$event = $this->factory->event->create();
+		$datetime = $this->factory->datetime->create();
+		$event->_add_relation_to( $datetime, 'Datetime' );
+		$event->save();
+
+		//now to reproduce we grab the event from the db.
+		$evt_from_db = EEM_Event::instance()->get_one_by_ID( $event->ID() );
+
+		//clone event
+		$new_event = clone $evt_from_db;
+		//set pk to zero so we save new event and save.
+		$new_event->set( 'EVT_ID', 0 );
+		$new_event->save();
+
+		//now let's set the a clone of the dtt relation manually to the new event by cloning the dtt (which should work)
+		$orig_dtts = $evt_from_db->get_many_related('Datetime');
+		$this->assertEquals( 1, count( $orig_dtts ) );
+		foreach ( $orig_dtts as $orig_dtt ) {
+			$new_datetime = clone $orig_dtt;
+			$new_datetime->set('DTT_ID', 0);
+			$new_datetime->set('EVT_ID', $new_event->ID() );
+			$new_datetime->save();
+		}
+
+		//k now for the tests. first $new_event should NOT have the original datetime as a relation by default.  When an object's id is set to 0 its relations should be cleared.
+		//get from db
+		$test_cloned_event_from_db = EEM_Event::instance()->get_one_by_ID( $new_event->ID() );
+		$dtt_relation_on_clone = $test_cloned_event_from_db->first_datetime();
+
+		$this->assertInstanceOf( 'EE_Datetime', $dtt_relation_on_clone );
+		$this->assertEquals( $new_datetime->ID(), $dtt_relation_on_clone->ID() );
+
+		//test that the original event still has its relation to original EE_Datetime
+		$orig_evt = EEM_Event::instance()->get_one_by_ID( $evt_from_db->ID() );
+		$dtt_relation_on_orig = $orig_evt->first_datetime();
+		$this->assertInstanceOf( 'EE_Datetime', $dtt_relation_on_orig );
+		$this->assertEquals( $dtt_relation_on_orig->ID(), $datetime->ID() );
+	}
+
+	public function test_delete_permanently_with_extra_meta(){
+		$attendee = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob', 'ATT_lname' => 'deleteme', 'ATT_email' => 'ef@ew.dw'));
+		$attendee->save();
+		$attendee->add_extra_meta('shouldnt_prevent_deletion', 'no_sirry' );
+		$this->assertEquals( 'no_sirry', $attendee->get_extra_meta('shouldnt_prevent_deletion', TRUE ) );
+		$attendee->delete_permanently();
+		//if that didn't throw an error, we're good
 	}
 }
 

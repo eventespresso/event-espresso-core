@@ -58,7 +58,7 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
-	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * Indicates a new activation, but we couldn't install everything properly because
 	 * EE was in maintenance mode. So when we exit maintenance mode, we will
 	 * consider the next request to be a reactivation and will verify default data
 	 * is in place and tables are setup
@@ -66,7 +66,7 @@ final class EE_System {
 	const req_type_activation_but_not_installed = 5;
 
 	/**
-	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 * option prefix for recording the activation history (like core's "espresso_db_update") of addons
 	 */
 	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -96,7 +96,13 @@ final class EE_System {
 	 * @return EE_System
 	 */
 	public static function reset(){
-		self::$_instance = NULL;
+		self::$_instance->_req_type = NULL;
+		//we need to reset the migration manager in order for it to detect DMSs properly
+		EE_Data_Migration_Manager::reset();
+		//make sure none of the old hooks are left hanging around
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
+		self::instance()->detect_activations_or_upgrades();
+		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
 	}
 
@@ -143,6 +149,8 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		require_once EE_CORE . 'EE_Deprecated.core.php';
+
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// when an ee addon is activated, we want to call the core hook(s) again
@@ -156,6 +164,11 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+
+		//other housekeeping
+		//exclude EE critical pages from wp_list_pages
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -372,6 +385,8 @@ final class EE_System {
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
+		//load and setup EE_Capabilities
+		EE_Registry::instance()->load_core( 'Capabilities' );
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
 	}
 
@@ -400,16 +415,6 @@ final class EE_System {
 	public function detect_if_activation_or_upgrade() {
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
-		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
-		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
-
-		if ( !$testsbypass &&
-				( ! is_admin() ||
-				( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) ||
-				( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) ) ) {
-
-			return;
-		}
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
@@ -574,7 +579,9 @@ final class EE_System {
 
 
 	/**
-	 * This method holds any setup validations that are done on all activation request types excluding the normal request type.
+	 * This method holds any setup validations that are done on all request types excluding the normal request type.
+	 * Note that this is similar to functionality that should be contained in EEH_Activation::system_initialization, initialize_db_and_folders, and initialize_db_content,
+	 * except this is called even upon downgrades
 	 *
 	 * @since  4.3.1
 	 *
@@ -583,7 +590,7 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _do_setup_validations( $request_type ) {
-		if ( $request_type !== EE_System::req_type_new_activation ) {
+		if ( $request_type !== EE_System::req_type_new_activation && EE_Maintenance_Mode::instance()->models_can_query() ) {
 			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EEH_Activation', 'validate_messages_system' ), 1 );
 		}
 		do_action( 'AHEE__EE_System___do_setup_validations', $request_type );
@@ -671,7 +678,11 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		if( is_admin() ){
+		//if current user is an admin and it's not an ajax request
+		if(
+				EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) &&
+				! ( defined('DOING_AJAX') && DOING_AJAX  )
+				){
 			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
@@ -705,8 +716,7 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
-		//load_messages controller
-		EE_Registry::instance()->load_lib( 'Messages_Init' );
+
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		do_action( 'AHEE__EE_System__load_core_configuration__complete', $this );
@@ -1254,6 +1264,21 @@ final class EE_System {
 
 
 
+	/**
+	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
+	 *
+	 *
+	 * @param  array  $exclude_array any existing pages being excluded are in this array.
+	 * @return array
+	 */
+	public function remove_pages_from_wp_list_pages( $exclude_array ) {
+		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
+	}
+
+
+
+
+
 
 	/*********************************************** 		WP_ENQUEUE_SCRIPTS HOOK		 ***********************************************/
 
@@ -1275,6 +1300,9 @@ final class EE_System {
 			}
 		}
 	}
+
+
+
 }
 //EE_System::instance();
 

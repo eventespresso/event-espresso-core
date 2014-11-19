@@ -8,14 +8,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Mock
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
 class EE_Mock extends EE_Base_Class{
-	protected $_MCK_ID;
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @return EE_Attendee
 	 */

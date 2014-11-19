@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Support_Admin_Page
  *
- * This contains the logic for setting up the Help and Support related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Help and Support related admin pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Support_Admin_Page
@@ -60,10 +60,16 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_shortcodes',
+			'default' => array(
+				'func' => '_shortcodes',
+				'capability' => 'ee_read_ee'
+				),
 			//'installation' => '_installation',
 			//'resources' => '_resources',
-			'contact_support' => '_contact_support'
+			'contact_support' => array(
+				'func' => '_contact_support',
+				'capability' => 'ee_read_ee'
+				)
 			);
 	}
 
@@ -155,7 +161,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	
+
 	protected function _shortcodes() {
 		$this->display_admin_page_with_sidebar();
 	}
@@ -163,7 +169,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _shortcodes_boxes() { 
+	protected function _shortcodes_boxes() {
 	$boxes = array(
 			'shortcodes_event_listings' => __('Event Listings', 'event_espresso'),
 			'shortcodes_ticket_selector' => __('Event Ticket Selector', 'event_espresso'),

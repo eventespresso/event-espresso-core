@@ -38,7 +38,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	*	@access	private
 	*	@var int
 	*/
-	public $base_types = null; 
+	public $base_types = null;
 
 	/**
 	 * return an array of Base types. Keys are INTs which are used in the database,
@@ -48,23 +48,23 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	public function get_base_types(){
 		return $this->base_types;
 	}
-	
+
 	/**
-	 * Gets the name of the base 
+	 * Gets the name of the base
 	 * @param type $base_type_int
 	 * @return type
 	 */
 	public function get_base_type_name($base_type_int){
 		return $this->base_types[$base_type_int];
 	}
-	
+
 	/**
 	 * constants for price base types. In the DB, we decided to store the price base type
-	 * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for 
+	 * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for
 	 * all price types with PBT_ID = 2), we define these constants, to make code more understandable.
 	 * So, as an example, to query for all price types that are a tax, we'd do
 	 * EEM_PRice_Type::instance()->get_all(array(array('PBT_ID'=>EEM_Price_Type::base_type_tax)))
-	 * instead of 
+	 * instead of
 	 * EEM_Price_Type::instance()->get_all(array(array('PBT_ID'=>2)))
 	 * Although the 2nd is shorter, it's much less obvious what it's doing. Also, should these magic IDs ever
 	 * change, we can continue to use the constant, by simply change its value.
@@ -80,17 +80,13 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-//		global $wpdb;
-		// set table name
-//		$this->table_name = $wpdb->prefix . 'esp_price_type';
-		// set item names
-		$this->base_types = array( 
-			EEM_Price_Type::base_type_base_price => __('Price','event_espresso'), 
-			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'), 
-			EEM_Price_Type::base_type_surcharge => __('Surcharge','event_espresso'), 
+		$this->base_types = array(
+			EEM_Price_Type::base_type_base_price => __('Price','event_espresso'),
+			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'),
+			EEM_Price_Type::base_type_surcharge => __('Surcharge','event_espresso'),
 			EEM_Price_Type::base_type_tax => __('Tax','event_espresso') );
 		$this->singular_item = __('Price Type','event_espresso');
-		$this->plural_item = __('Price Types','event_espresso');		
+		$this->plural_item = __('Price Types','event_espresso');
 
 		$this->_tables = array(
 			'Price_Type'=>new EE_Primary_Table('esp_price_type','PRT_ID')
@@ -102,13 +98,14 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 				'PBT_ID'=>new EE_Enum_Integer_Field('PBT_ID', __('Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax','event_espresso'), false, EEM_Price_Type::base_type_base_price, $this->base_types),
 				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage','event_espresso'), false, false),
 				'PRT_order'=>new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ','event_espresso'), false, 0),
-				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed','event_espresso'), false, false)
+				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed','event_espresso'), false, false),
+				'PRT_wp_user' => new EE_Integer_Field('PRT_wp_user', __('User who created this price type.', 'event_espresso'), FALSE, get_current_user_id() ),
 			)
 		);
 		$this->_model_relations = array(
 			'Price'=>new EE_Has_Many_Relation(),
 		);
-		
+
 		parent::__construct();
 
 	}
@@ -132,6 +129,15 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 		}
 		// EEM_Price_Type object
 		return self::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Price_Type
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
@@ -161,7 +167,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 
 /**
- * 
+ *
  * @param type $query_params
  * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
 	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
@@ -169,7 +175,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
  * @return boolean
  */
 	public function delete_permanently($query_params = array(), $allow_blocking = true) {
-		
+
 		$would_be_deleted_price_types = $this->get_all_deleted_and_undeleted($query_params);
 		$would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);
 
@@ -184,12 +190,12 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 				$prices_names_and_ids[] = $price->name()."(".$price->ID().")";
 			}
 			$msg = sprintf(__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'),implode(",",$prices_names_and_ids));
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ ); 
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
 
-		
+
 		return parent::delete_permanently($query_params);
 
 	}

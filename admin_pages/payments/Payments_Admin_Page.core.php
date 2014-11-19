@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Payments_Admin_Page
  *
- * This contains the logic for setting up the Event Payments related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Event Payments related admin pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Payments_Admin_Page
@@ -62,11 +62,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_gateway_settings',
-			'payment_settings' => '_payment_settings',
+			'default' => array(
+				'func' => '_gateway_settings',
+				'capability' => 'ee_manage_gateways'
+				),
+			'payment_settings' => array(
+				'func' => '_payment_settings',
+				'capability' => 'ee_manage_gateways'
+				),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
-				'noheader'=>TRUE)
+				'noheader'=>TRUE,
+				'capability' => 'ee_manage_gateways'
+				)
 			);
 	}
 
@@ -159,7 +167,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
-	
+
 
 
 
@@ -199,9 +207,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$gateway_instances = EEM_Gateways::instance()->get_gateway_instances();
 		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
-		
 
-	
+
+
 		foreach ( $payment_settings as $gateway => $settings ) {
 			$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
 			if ( $ht_content ) {
@@ -209,7 +217,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$help_tabs[$ht_ref] = array(
 					'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
 					'content' => $ht_content
-					);					
+					);
 			}
 		}
 
@@ -223,17 +231,17 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		require_once(EE_MODELS . 'EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
-		
+
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		
+
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
 		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
 		//lets add all the metaboxes
 		foreach( $gateway_instances as $gate_obj ) {
 			$gate_obj->add_settings_page_meta_box();
 		}
-		
-		
+
+
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$selected_gateway_name = null;
 		$gateways = array();
@@ -250,11 +258,16 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			if ( isset( $this->_req_data['activate_' . $gateway] )) {
 				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 				$EEM_Gateways->set_active($gateway);
+				if( $gateway == 'Invoice' ){
+					$messages = EE_Registry::instance()->load_lib( 'messages' );
+					$messages->ensure_messenger_is_active( 'html' );
+					$messages->ensure_messenger_is_active( 'pdf' );
+				}
 			}
 			if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
 				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 				$EEM_Gateways->unset_active($gateway);
-			}		
+			}
 
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
@@ -263,10 +276,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'title' => __('Modify this Gateway', 'event_espresso'),
 				'slug' => $gateway
 				);
-			
-			
+
+
 		}
-		
+
 		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
 			$selected_gateway_name = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
@@ -274,7 +287,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		//$gateways = isset( $gateways ) ? $gateways : array();
 		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
+
 		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
 		$this->display_admin_page_with_sidebar();
 
@@ -283,15 +296,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_settings() {
-		
-		$this->_template_args['values'] = $this->_yes_no_values;		
+
+		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['show_pending_payment_options'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) ? absint( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) : FALSE;
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();	
-		
+		$this->display_admin_page_with_sidebar();
+
 	}
 
 
@@ -302,15 +315,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return array
 	*/
-	protected function _update_payment_settings() {	
+	protected function _update_payment_settings() {
 		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
-		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );
 
-		
+
 		$what = __('Payment Settings','event_espresso');
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
-				
+
 	}
 
 

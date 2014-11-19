@@ -100,9 +100,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
-		$this->_get_registration_status_array();
-//		require_once(EE_CLASSES . 'EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters( 'FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 
 		$this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
@@ -164,6 +161,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Registration
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 
 
@@ -181,7 +187,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return array
 	 */
 	public static function reg_status_array( $exclude = array(), $translated = FALSE ) {
-		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
+		EEM_Registration::instance()->_get_registration_status_array( $exclude );
 		return $translated ? EEM_Status::instance()->localized_status( self::$_reg_status, FALSE, 'sentence') : self::$_reg_status;
 	}
 
@@ -207,8 +213,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 					self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
 				}
 			}
-		}else{
-			return array();
 		}
 
 	}
@@ -296,9 +300,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period));
+		$where = array('REG_date'=>array('>=',$sql_date) );
+
+		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+			$where['Event.EVT_wp_user'] = get_current_user_id();
+		}
+
 		$results = $this->_get_all_wpdb_results(
 				array(
-					array('REG_date'=>array('>=',$sql_date)),
+					$where,
 					'group_by'=>'regDate',
 					'order_by'=>array('REG_date'=>'DESC')
 				),
@@ -321,10 +331,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
 		$date_sql = date("Y-m-d H:i:s", strtotime($period));
+		$where = array( 'REG_date'=>array('>=',$date_sql ) );
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$where['Event.EVT_wp_user'] = get_current_user_id();
+		}
 		$results = $this->_get_all_wpdb_results(array(
-			array(
-				'REG_date'=>array('>=',$date_sql)
-			),
+			$where,
 			'group_by'=>'Event.EVT_name',
 			'order_by'=>'Event.EVT_name',
 			'limit'=>array(0,24)),

@@ -90,7 +90,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_search_btn_label;
 	protected $_search_box_callback;
 
-	//for holding current screen object provided by WP
+	/**
+	 * WP Current Screen object
+	 *
+	 * @var WP_Screen
+	 */
 	protected $_current_screen;
 
 	//for holding EE_Admin_Hooks object when needed (set via set_hook_object())
@@ -236,7 +240,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 			'func' => '_default_method_handling_route',
 	 * 			'args' => array('array','of','args'),
 	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
-	 *			'headers_sent_route'=>'headers_route_reference'//add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
+	 *			'headers_sent_route'=>'headers_route_reference', //add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
+	 *			'capability' => 'route_capability', //indicate a string for minimum capability required to access this route.
+	 *			'obj_id' => 10 // if this route has an object id, then this can include it (used for capability checks).
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -395,6 +401,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
 	/**
 	 * admin_footer_scripts
 	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply to all pages/views loaded by child class.
@@ -474,9 +481,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( ( !$this->_current_page || ! isset( $ee_menu_slugs[$this->_current_page] ) ) && !defined( 'DOING_AJAX') ) return FALSE;
 
-		//next let's just check user_access and kill if no access
-		$this->_check_user_access();
-
 
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
@@ -518,6 +522,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_page_routes = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
 		$this->_page_config = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
 
+
 		//if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present then we call it hooked into the AHEE__EE_Admin_Page__route_admin_request action
 		if ( method_exists( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ) ) {
 			add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ), 10, 2 );
@@ -529,6 +534,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			$this->_verify_routes();
 
+			//next let's just check user_access and kill if no access
+			$this->check_user_access();
+
 			if ( $this->_is_UI_request ) {
 				//admin_init stuff - global, all views for this page class, specific view
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
@@ -538,8 +546,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			} else {
 				//hijack regular WP loading and route admin request immediately
-				if ( current_user_can( 'manage_options' ) )
-					@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
+				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 				$this->route_admin_request();
 			}
 		}
@@ -602,8 +609,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//load admin_notices - global, page class, and view specific
 		add_action( 'admin_notices', array( $this, 'admin_notices_global'), 5 );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
-		if ( method_exists( $this, 'admin_notices_' . $this->_current_view ) )
+		if ( method_exists( $this, 'admin_notices_' . $this->_current_view ) ) {
 			add_action( 'admin_notices', array( $this, 'admin_notices_' . $this->_current_view ), 15 );
+		}
+
+		//load network admin_notices - global, page class, and view specific
+		add_action( 'network_admin_notices', array( $this, 'network_admin_notices_global'), 5 );
+		if ( method_exists( $this, 'network_admin_notices_' . $this->_current_view ) ) {
+			add_action( 'network_admin_notices', array( $this, 'network_admin_notices_' . $this->_current_view ) );
+		}
 
 		//this will save any per_page screen options if they are present
 		$this->_set_per_page_screen_options();
@@ -650,7 +664,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
 		add_action('admin_footer', array( $this, 'admin_footer'), 100 );
 		if ( method_exists( $this, 'admin_footer_' . $this->_current_view ) )
-			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
+			add_action('admin_footer', array( $this, 'admin_footer_' . $this->_current_view ), 101 );
 
 
 		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
@@ -706,6 +720,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function set_wp_page_slug($wp_page_slug) {
 		$this->_wp_page_slug = $wp_page_slug;
+
+		//if in network admin then we need to append "-network" to the page slug. Why? Because that's how WP rolls...
+		if ( is_network_admin() ) {
+			$this->_wp_page_slug .= '-network';
+		}
 	}
 
 	/**
@@ -1162,6 +1181,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( isset( $config['nav']['persistent']) && !$config['nav']['persistent'] && $slug !== $this->_req_action )
 				continue; //nav tab is only to appear when route requested.
 
+			if ( ! $this->check_user_access( $slug, TRUE ) )
+				continue; //no nav tab becasue current user does not have access.
+
 			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
 				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : self::add_query_args_and_nonce( array( 'action'=>$slug ), $this->_admin_base_url ),
@@ -1219,14 +1241,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		verifies user access for this admin page
-	*		@access 		private
-	*		@return 		void
+	 * 		@param string $route_to_check if present then the capability for the route matching this string is checked.
+	 * 		@param bool   $verify_only Default is FALSE which means if user check fails then wp_die().  Otherwise just return false if verify fail.
+	*		@return 		BOOL|wp_die()
 	*/
-	private function _check_user_access() {
+	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (( ! function_exists( 'is_admin' ) or ! current_user_can( 'manage_options' )) && ! defined( 'DOING_AJAX')) {
-			wp_redirect( home_url('/') . 'wp-admin/' );
+		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
+		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
+
+		if ( empty( $capability ) && empty( $route_to_check )  ) {
+			$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+		} else {
+			$capability = empty( $capability ) ? 'manage_options' : $capability;
 		}
+
+		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $route_to_check, $id ) ) && ! defined( 'DOING_AJAX')) {
+			if ( $verify_only ) {
+				return FALSE;
+			} else {
+				wp_die( __('You do not have access to this route.', 'event_espresso' ) );
+			}
+		}
+		return TRUE;
 	}
 
 
@@ -1273,6 +1311,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	public function admin_notices_global() {
+		$this->_display_no_javascript_warning();
+		$this->_display_espresso_notices();
+	}
+
+
+
+
+	public function network_admin_notices_global() {
 		$this->_display_no_javascript_warning();
 		$this->_display_espresso_notices();
 	}
@@ -1913,8 +1959,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-
-		add_meta_box('espresso_news_post_box', __('New @ Event Espresso', 'event_espresso'), array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('New @ Event Espresso', 'event_espresso') );
+		add_meta_box('espresso_news_post_box', $news_box_title, array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
 	}
 
 
@@ -1950,7 +1996,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  	<div id="espresso_news_post_box_content" class="infolinks">
 	  		<?php
 	  		// Get RSS Feed(s)
-	  		$url = urlencode('http://eventespresso.com/feed/');
+	  		$feed_url = apply_filters( 'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url', 'http://eventespresso.com/feed/' );
+	  		$url = urlencode($feed_url);
 	  		self::cached_rss_display( 'espresso_news_post_box_content', $url );
 
 	  		?>
@@ -1999,7 +2046,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$box_label = __('Publish', 'event_espresso');
 		}
 
-		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen_id, 'side', 'high' );
+		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high' );
 
 	}
 
@@ -2242,7 +2289,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes' );
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
+		// keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
+
 		$template_path = $sidebar ?  EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
 		if ( defined('DOING_AJAX' ) )
@@ -2392,6 +2441,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
 	 *
+	 * @param bool $sticky_notices Used to indicate whether you want to ensure notices are added to a transient instead of displayed.
+	 *
 	 * The returned json object is created from an array in the following format:
 	 * array(
 	 * 	'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
@@ -2405,10 +2456,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return json object
 	 */
-	protected function _return_json() {
+	protected function _return_json( $sticky_notices = FALSE ) {
 
 		//make sure any EE_Error notices have been handled.
-		$this->_process_notices();
+		$this->_process_notices( array(), TRUE, $sticky_notices );
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
@@ -2742,13 +2793,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
 	 * @param bool    $skip_route_verify This is typically used when we are processing notices REALLY early and page_routes haven't been defined yet.
+	 * @param bool    $sticky_notices      This is used to flag that regardless of whether this is doing_ajax or not, we still save a transient for the notice.
 	 * @return void
 	 */
-	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE ) {
+	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
 
 		$this->_template_args['notices'] = EE_Error::get_notices();
-		//IF this isn't ajax we need to create a transient for the notices using the route.
-		if ( ! defined( 'DOING_AJAX' ) ) {
+
+		//IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
+		if ( ! defined( 'DOING_AJAX' ) || $sticky_notices ) {
 			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
 			$this->_add_transient( $route, $this->_template_args['notices'], TRUE, $skip_route_verify );
 		}
@@ -2777,6 +2830,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( !isset( $this->_labels['buttons'][$type] ) )
 			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
+
+		//finally check user access for this button.
+		$has_access = $this->check_user_access( $action, TRUE );
+		if ( ! $has_access ) {
+			return '';
+		}
 
 		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
 
@@ -2811,7 +2870,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'default' => 10,
 			'option' => $this->_current_page . '_' . $this->_current_view . '_per_page'
 			);
-		add_screen_option( $option, $args );
+		//ONLY add the screen option if the user has access to it.
+		if ( $this->check_user_access( $this->_current_view, true ) ) {
+			add_screen_option( $option, $args );
+		}
 	}
 
 
@@ -2894,11 +2956,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = $notices ? array( 'notices' => $data ) : $data;
 		//is there already a transient for this route?  If there is then let's ADD to that transient
-		if ( $existing = get_transient( $transient ) ) {
+		$existing = is_multisite() && is_network_admin() ? get_site_transient( $transient ) : get_transient( $transient );
+		if ( $existing ) {
 			$data = array_merge( (array) $data, (array) $existing );
 		}
 
-		set_transient( $transient, $data, 8 );
+		if ( is_multisite() && is_network_admin() ) {
+			set_site_transient( $transient, $data, 8 );
+		} else {
+			set_transient( $transient, $data, 8 );
+		}
 	}
 
 
@@ -2913,9 +2980,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$user_id = get_current_user_id();
 		$route = !$route ? $this->_req_action : $route;
 		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
-		$data = get_transient( $transient );
+		$data = is_multisite() && is_network_admin() ? get_site_transient( $transient ) : get_transient( $transient );
 		//delete transient after retrieval (just in case it hasn't expired);
-		delete_transient( $transient );
+		if ( is_multisite() && is_network_admin() ) {
+			delete_site_transient( $transient );
+		} else {
+			delete_transient( $transient );
+		}
 		return $notices && isset( $data['notices'] ) ? $data['notices'] : $data;
 	}
 
@@ -2937,6 +3008,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			foreach ( $results as $result ) {
 				$transient = str_replace( '_transient_', '', $result->option_name );
 				get_transient( $transient );
+				if ( is_multisite() && is_network_admin() ) {
+					get_site_transient( $transient );
+				}
 			}
 		}
 	}
@@ -3090,7 +3164,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	protected function _get_dir() {
 		$reflector = new ReflectionClass(get_class($this));
-        return dirname($reflector->getFileName());
+		return dirname($reflector->getFileName());
 	}
 
 
@@ -3109,7 +3183,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', FALSE, $this->_req_data );
+		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', TRUE, $this->_req_data );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}

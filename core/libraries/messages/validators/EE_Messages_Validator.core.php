@@ -280,8 +280,9 @@ abstract class EE_Messages_Validator extends EE_Base {
 			}
 
 			//now let's just make sure that any excluded specific shortcodes are removed.
-			if ( isset( $this->_specific_shortcode_excludes[$field] ) ) {
-				foreach( $this->_specific_shortcode_excludes[$field] as $sex ) {
+			$specific_excludes = $this->get_specific_shortcode_excludes();
+			if ( isset( $specific_excludes[$field] ) ) {
+				foreach( $specific_excludes[$field] as $sex ) {
 					if ( isset( $this->_validators[$field]['shortcodes'][$sex] ) )
 						unset( $this->_validators[$field]['shortcodes'][$sex] );
 				}
@@ -301,6 +302,22 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 */
 	public function get_validators() {
 		return $this->_validators;
+	}
+
+
+
+	/**
+	 * This simply returns the specific shortcode_excludes property that is set.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return array
+	 */
+	public function get_specific_shortcode_excludes() {
+		//specific validator filter
+		$shortcode_excludes = apply_filters( 'FHEE__' . get_class( $this ) . '__get_specific_shortcode_excludes;', $this->_specific_shortcode_excludes, $this->_context );
+		//global filter
+		return apply_filters( 'FHEE__EE_Messages_Validator__get_specific_shortcode_excludes', $shortcode_excludes, $this->_context, $this );
 	}
 
 
@@ -437,7 +454,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
 		foreach ( $diff as $ind => $code ) {
-			if ( preg_match('/(\[[A-Za-z0-9]+_\*)/', $code ) )
+			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) )
 				unset( $diff[$ind] );
 		}
 

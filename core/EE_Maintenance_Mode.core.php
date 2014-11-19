@@ -79,6 +79,15 @@ class EE_Maintenance_Mode {
 		return self::$_instance;
 	}
 
+	/**
+	 * Resets maintenance mode (mostly just re-checks whether or not we should be in maintenance mode)
+	 * @return EE_Maintenance_Mode
+	 */
+	public static function reset(){
+		self::instance()->set_maintenance_mode_if_db_old();
+		return self::instance();
+	}
+
 
 
 	/**

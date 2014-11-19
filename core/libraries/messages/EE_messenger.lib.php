@@ -41,6 +41,17 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * This property holds the message types that are valid for use with this messenger.
+	 * It gets set by the _set_valid_message_types() method.
+	 *
+	 * @var array
+	 */
+	protected $_valid_message_types = array();
+
+
+
 	/**
 	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.
 	 *
@@ -104,6 +115,66 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This will hold the EE_Messages_Template_Pack object when set on the messenger.  This is set via the validate and setup method which grabs the template pack from the incoming messages object.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_tmp_pack;
+
+
+
+
+	/**
+	 * This will hold the variation to use when performing a send.  It is set via the validate and setup method which grabs the variation from the incoming messages object on the send method.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
+
+
+
+	/**
+	 * This property is a stdClass that holds labels for all the various supporting properties for this messenger.  These labels are set via the _set_supports_labels() method in children classes. Initially this will include the label for:
+	 *
+	 * 	- template pack
+	 * 	- template variation
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var stdClass
+	 */
+	protected $_supports_labels;
+
+
+
+
+
+	/**
+	 * This property is set when the send_message() method is called and holds the Message Type used to generate templates with this messenger for the messages.
+	 *
+	 * @var EE_message_type
+	 */
+	protected $_incoming_message_type;
+
+
+
+	/**
+	 * This flag sets whether a messenger is activated by default  on installation (or reactivation) of EE core or not.
+	 *
+	 * @var bool
+	 */
+	public $activate_on_install = FALSE;
+
+
+
+
 
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
@@ -114,7 +185,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$this->_set_test_settings_fields();
 		$this->_set_template_fields();
 		$this->_set_default_message_types();
+		$this->_set_valid_message_types();
 		$this->_set_validator_config();
+
+
+		$this->_supports_labels = new stdClass();
+		$this->_set_supports_labels();
 	}
 
 
@@ -154,6 +230,18 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * Sets the _valid_message_types property (see definition in cods attached to property)
+	 *
+	 * @since 4.5.0
+	 *
+	 * @abstract
+	 * @return void
+	 */
+	abstract protected function _set_valid_message_types();
+
+
+
 
 
 
@@ -168,20 +256,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	abstract protected function _set_validator_config();
-
-
-
-
-	/**
-	 * messengers must define the location of the inline css template to use in final assembled templates.
-	 *
-	 * This method is also used in the admin backend to set the css for the tinymce editor.
-	 *
-	 * @access public
-	 * @param bool $url if true we return the url to the css, if false, we return the path.
-	 * @return string the location of the css file to use for inline css.
-	 */
-	abstract public function get_inline_css_template( $url = FALSE );
 
 
 
@@ -207,6 +281,104 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * Used by messengers (or preview) for enqueueing any scripts or styles need in message generation.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_scripts_styles() {
+		//enqueue espresso_default
+		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
+			wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		} else {
+			wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
+		}/**/
+		wp_enqueue_style('espresso_default');
+		do_action( 'AHEE__EE_messenger__enqueue_scripts_styles');
+	}
+
+
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
+	 * @see property definition for info on how its formatted.
+	 *
+	 * @since 4.5.0;
+	 * @return void
+	 */
+	protected function _set_supports_labels() {
+		$this->_set_supports_labels_defaults();
+	}
+
+
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	private function _set_supports_labels_defaults() {
+		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
+		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+
+		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
+
+		$this->_supports_labels = apply_filters( 'FHEE__EE_messenger___set_supports_labels_defaults___supports_labels', $this->_supports_labels, $this );
+	}
+
+
+
+
+
+	/**
+	 * This returns the _supports_labels property.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return stdClass
+	 */
+	public function get_supports_labels() {
+		if ( empty( $this->_supports_labels->template_pack ) || empty( $this->_supports_labels->template_variation) ) {
+			$this->_set_supports_labels_defaults();
+		}
+		return apply_filters( 'FHEE__EE_messenger__get_supports_labels', $this->_supports_labels, $this );
+	}
+
+
+
+
+	/**
+	 * Used to retrieve a variation (typically the path/url to a css file)
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param EE_Messages_Template_Pack $pack   The template pack used for retrieving the variation.
+	 * @param string                    $message_type_name The name property of the message type that we need the variation for.
+	 * @param bool                      $url   Whether to return url (true) or path (false). Default is false.
+	 * @param string                    $type What variation type to return. Default is 'main'.
+	 * @param string 	           $variation What variation for the template pack
+	 * @param bool 	           $skip_filters This allows messengers to add a filter for another messengers get_variation but call skip filters on the callback so there is no recursion on apply_filters.
+	 *
+	 * @return string                    path or url for the requested variation.
+	 */
+	public function get_variation( EE_Messages_Template_Pack $pack, $message_type_name, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
+		$this->_tmp_pack = $pack;
+		$variation_path = apply_filters( 'EE_messenger__get_variation__variation', false, $pack, $this->name, $message_type_name, $url, $type, $variation, $skip_filters );
+		$variation_path = empty( $variation_path ) ? $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters ) : $variation_path;
+		return $variation_path;
+
+	}
+
+
 
 
 
@@ -227,6 +399,28 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//all messengers filter
 		$default_types = apply_filters( 'FHEE__EE_messenger__get_default_message_types__default_types', $default_types, $this );
 		return $default_types;
+	}
+
+
+
+
+	/**
+	 * Returns the valid message types associated with this messenger.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return array
+	 */
+	public function get_valid_message_types() {
+		$class = get_class( $this );
+
+		//messenger specific filter
+		//messenger specific filter
+		$valid_types = apply_filters( 'FHEE__' . $class . '__get_valid_message_types__valid_types', $this->_valid_message_types, $this );
+
+		//all messengers filter
+		$valid_types = apply_filters( 'FHEE__EE_messenger__get_valid_message_types__valid_types', $valid_types, $this );
+		return $valid_types;
 	}
 
 
@@ -338,8 +532,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 			//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
 			$st_args['create_button'] =  $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
-			$st_args['edit_button'] = '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>';
+			$st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messsages_add_new_message_template' ) ? $st_args['create_button'] : '';
+			$st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID ) ?  '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>' : '';
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
+		}
+
+		//if no selectors present then get out.
+		if ( empty( $selector_rows ) ) {
+			return '';
 		}
 
 		$template_args['selector_rows'] = $selector_rows;
@@ -380,10 +580,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * Sets up the message for sending.
-	 * @param  EE_message_type $message the message object that contains details about the message.
+	 * @param  stdClass $message the message object that contains details about the message.
+	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
 	 */
-	public function send_message( $message ) {
+	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
+		$this->_incoming_message_type = $message_type;
 		$this->_send_message();
 	}
 
@@ -392,11 +594,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * Sets up and returns message preview
 	 * @param  object $message incoming message object
+	 * @param EE_message_type $message_type This is whatever message type was used in combination with this messenger to generate the message.
 	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message, $send = FALSE ) {
+	public function get_preview( $message, EE_message_type $message_type, $send = FALSE ) {
 		$this->_validate_and_setup( $message );
+
+		$this->_incoming_message_type = $message_type;
 
 		if ( $send ) {
 			//are we overriding any existing template fields?
@@ -408,7 +613,33 @@ abstract class EE_messenger extends EE_Messages_Base {
 			}
 		}
 
+		//enqueue preview js so that any links/buttons on the page are disabled.
+		if ( ! $send ) {
+			//the below may seem liks duplication.  However, typically if a messenger enqueues scripts/styles, it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
+			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
+		}
+
 		return $send ? $this->_send_message() : $this->_preview();
+	}
+
+
+
+
+	/**
+	 * Callback for enqueue_scripts so that we setup the preview script for all previews.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function add_preview_script() {
+		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, true );
+
+		//error message
+		EE_Registry::$i18n_js_strings['links_disabled'] = __('All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso');
+		wp_localize_script( 'ee-messages-preview-js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 
 
@@ -422,6 +653,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 	protected function _validate_and_setup( $message ) {
 		if ( !is_object( $message ) )
 			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
+
+		//verify we have the required template pack value on the $message object.
+		if ( empty( $message->template_pack ) || ! $message->template_pack instanceof EE_Messages_Template_Pack ) {
+			throw new EE_Error( __('Incoming $message object must have a EE_Messages_Template_Pack object assigned to the template_pack property', 'event_espresso' ) );
+		}
+
+		$this->_tmp_pack = $message->template_pack;
+
+		$this->_variation = !empty ( $message->variation ) ? $message->variation : 'default';
 
 		$template_fields = $this->get_template_fields();
 
@@ -443,16 +683,16 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
+		$type = $preview ? 'preview' : 'main';
 
 		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template(FALSE, $preview), TRUE );
-		$base_path = EE_LIBRARIES . 'messages/messenger/assets/' . $this->name . '/';
+		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, $type, $this->_variation ), TRUE );
 
-		//figure out main template path
-		$wrapper_template = !$preview ? $base_path . $this->name . '-messenger-main-wrapper.template.php' : $base_path . $this->name . '-messenger-preview-wrapper.template.php';
+		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, $type );
+
 		//check file exists and is readable
 		if ( !is_readable( $wrapper_template ) )
-			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
+			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular']) , $wrapper_template ) );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
@@ -543,6 +783,20 @@ abstract class EE_messenger extends EE_Messages_Base {
 	}
 
 
+
+
+	/**
+	 * This is a method called from EE_messages when this messenger is a generating messenger and the sending messenger is a different messenger.  Child messengers can set hooks for the sending messenger to callback on if necessary (i.e. swap out css files or something else).
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $sending_messenger_name the name of the sending messenger so we only set the hooks needed.
+	 *
+	 * @return void
+	 */
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		return;
+	}
 
 
 }

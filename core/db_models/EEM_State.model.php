@@ -40,15 +40,24 @@ class EEM_State extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_State instance
-	 */	
-	public static function instance() {	
+	 */
+	public static function instance() {
 		// check if instance of EEM_State already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_State object
 		return self::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_State
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 	protected function __construct(){
@@ -58,7 +67,7 @@ class EEM_State extends EEM_Base {
 		$this->_tables = array(
 			'State'=> new EE_Primary_Table('esp_state', 'STA_ID')
 		);
-				
+
 		$this->_fields = array(
 			'State'=>array(
 				'STA_ID'=> new EE_Primary_Key_Int_Field('STA_ID', __('State ID','event_espresso')),
@@ -72,7 +81,7 @@ class EEM_State extends EEM_Base {
 			'Country' => new EE_Belongs_To_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
-		parent::__construct();		
+		parent::__construct();
 	}
 
 
@@ -80,11 +89,11 @@ class EEM_State extends EEM_Base {
 
 	/**
 	*	reset_cached_states
-	* 
+	*
 	* 	@access		private
 	*	@return 		void
-	*/	
-	public function reset_cached_states() {		
+	*/
+	public function reset_cached_states() {
 		EEM_State::$_active_states = array();
 		EEM_State::$_all_states = array();
 	}
@@ -94,10 +103,10 @@ class EEM_State extends EEM_Base {
 
 	/**
 	*		_get_states
-	* 
+	*
 	* 		@access		private
 	*		@return 		void
-	*/	
+	*/
 	public function get_all_states() {
 		if ( ! self::$_all_states ) {
 			self::$_all_states = $this->get_all( array( 'order_by'=>array( 'STA_name'=>'ASC' ), 'limit'=> array( 0, 99999 )));
@@ -107,10 +116,10 @@ class EEM_State extends EEM_Base {
 
 	/**
 	*		_get_states
-	* 
+	*
 	* 		@access		private
 	*		@return 		void
-	*/	
+	*/
 	public function get_all_active_states() {
 		if ( ! self::$_active_states ) {
 			self::$_active_states =  $this->get_all( array( array( 'STA_active' => TRUE ), 'order_by'=>array( 'STA_name'=>'ASC' ), 'limit'=>array( 0, 99999 )));
@@ -122,7 +131,7 @@ class EEM_State extends EEM_Base {
 
 	/**
 	 * 	get_all_states_of_active_countries
-	 * @return array 
+	 * @return array
 	 */
 	public function get_all_states_of_active_countries(){
 		if ( $states = $this->get_all( array( array( 'Country.CNT_active' => TRUE, 'STA_active' => TRUE ),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
@@ -135,7 +144,7 @@ class EEM_State extends EEM_Base {
 
 	/**
 	 * 	get_all_states_of_active_countries
-	 * @return array 
+	 * @return array
 	 */
 	public function get_all_active_states_for_these_countries( $countries ){
 		if ( ! $countries ) {
@@ -151,7 +160,7 @@ class EEM_State extends EEM_Base {
 
 	/**
 	 * 	get_all_states_of_active_countries
-	 * @return array 
+	 * @return array
 	 */
 	public function get_all_states_for_these_countries( $countries ){
 		if ( ! $countries ) {
@@ -167,17 +176,17 @@ class EEM_State extends EEM_Base {
 
 	/**
 	*		delete  a single state from db via their ID
-	* 
+	*
 	* 		@access		public
-	* 		@param		$STA_ID		
+	* 		@param		$STA_ID
 	*		@return 		mixed		array on success, FALSE on fail
-	*/	
+	*/
 	public function delete_by_ID( $STA_ID = FALSE ) {
 
 		if ( ! $STA_ID ) {
 			return FALSE;
 		}
-				
+
 		// retrieve a particular transaction
 		$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 		if ( $answer = $this->delete ( $where_cols_n_values )) {

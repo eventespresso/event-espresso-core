@@ -136,6 +136,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__new_install");
+		do_action("AHEE__EE_Addon__new_install", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
@@ -150,6 +151,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function reactivation() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__reactivation");
+		do_action("AHEE__EE_Addon__reactivation", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
@@ -158,6 +160,7 @@ abstract class EE_Addon extends EE_Configurable {
 		$classname = get_class($this);
 //		echo "Deactivating $classname";die;
 		do_action("AHEE__{$classname}__deactivation");
+		do_action("AHEE__EE_Addon__deactivation", $this);
 		//check if the site no longer needs to be in maintenance mode
 		EE_Register_Addon::deregister( $this->name() );
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
@@ -193,6 +196,7 @@ abstract class EE_Addon extends EE_Configurable {
 		$current_dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms( $this->name() );
 		if( $current_dms_name ){
 			$current_data_migration_script = EE_Registry::instance()->load_dms( $current_dms_name );
+			$current_data_migration_script->set_migrating( FALSE );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			if ( $current_data_migration_script->get_errors() ) {
@@ -208,11 +212,23 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * If you want to setup default data for the addon, and only add it when NOT migrating
-	 * data from a previous version, override this method. This is normally called
+	 * If you want to setup default data for the addon, override this method, and call
+	 * parent::initialize_default_data() from within it. This is normally called
 	 * from EE_Addon::initialize_db_if_no_migrations_required(), just after EE_Addon::initialize_db()
+	 * and should verify default data is present (but this is also called
+	 * on reactivations and just after migrations, so please verify you actually want
+	 * to ADD default data, because it may already be present).
+	 * However, please call this parent (currently it just fires a hook which other
+	 * addons may be depending on)
 	 */
 	public function initialize_default_data() {
+		/**
+		 * Called when an addon is ensuring its default data is set (possibly called
+		 * on a reactivation, so first check for the absense of other data before setting
+		 * default data)
+		 * @param EE_Addon $addon the addon that called this
+		 */
+		do_action( 'AHEE__EE_Addon__initialize_default_data__begin', $this );
 		//override to insert default data. It is safe to use the models here
 		//because the site should not be in maintenance mode
 	}
@@ -228,6 +244,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function upgrade() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__upgrade");
+		do_action("AHEE__EE_Addon__upgrade", $this);
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 	}
 
@@ -239,6 +256,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function downgrade() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__downgrade");
+		do_action("AHEE__EE_Addon__downgrade", $this);
 	}
 
 
@@ -316,7 +334,8 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.
+	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.)
+	 * Should only be called once per request
 	 * @return void
 	 */
 	function detect_activation_or_upgrade(){
@@ -328,25 +347,30 @@ abstract class EE_Addon extends EE_Configurable {
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation", $this );
 				$this->new_install();
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_activation_but_not_installed:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation_but_not_installed" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__new_activation_but_not_installed", $this );
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__reactivation" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__reactivation", $this );
 				$this->reactivation();
 				$this->update_list_of_installed_versions( $activation_history_for_addon );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__upgrade" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__upgrade", $this );
 				$this->upgrade();
 				$this->update_list_of_installed_versions($activation_history_for_addon );
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__downgrade" );
+				do_action( "AHEE__EE_Addon__detect_activations_or_upgrades__downgrade", $this );
 				$this->downgrade();
 				$this->update_list_of_installed_versions($activation_history_for_addon );
 				break;

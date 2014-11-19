@@ -123,7 +123,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _settings_page( $template ) {
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$this->_template_args['new_addon_config'] = EE_Config::instance()->get_config( 'addons', 'EED_Espresso_New_Addon', 'EE_New_Addon_Config' );
+		$this->_template_args['new_addon_config'] = EE_Config::instance()->get_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$this->_template_args['yes_no_values'] = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
@@ -150,7 +150,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 			$config = new EE_New_Addon_Config();
 			$count = 1;
 		}else{
-			$config = EE_Config::instance()->get_config( 'addons', 'EED_Espresso_New_Addon', 'EE_New_Addon_Config' );
+			$config = EE_Config::instance()->get_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
 			$count=0;
 			//otherwise we assume you want to allow full html
 			foreach($this->_req_data['new_addon'] as $top_level_key => $top_level_value){
@@ -169,7 +169,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		EE_Config::instance()->update_config( 'addons', 'EED_Espresso_New_Addon', $config );
+		EE_Config::instance()->update_config( 'addons', 'EED_New_Addon', $config );
 		$this->_redirect_after_action( $count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
 

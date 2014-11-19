@@ -122,130 +122,16 @@ class EEM_Transaction extends EEM_Base {
 		return self::$_instance;
 	}
 
-
-
-
-
-
-
-
-
 	/**
-	*		retrieve  all transactions from db between two dates
-	*
-	* 		@access		public
-	* 		@param		string		$start_date
-	* 		@param		string		$end_date
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_transactions_for_admin_page( $start_date = FALSE, $end_date = FALSE, $orderby = 'TXN_timestamp', $order = 'DESC', $limit = NULL, $count = FALSE ) {
-
-		if ( ! $start_date ) {
-			$start_date = date('Y-m-d', strtotime(  '-10 year' ));
-		}
-
-		if ( ! $end_date ) {
-			$end_date = date('Y-m-d');
-		}
-
-		// make sure our timestamps start and end right at the boundries for each day
-		$start_date = date( 'Y-m-d', strtotime( $start_date )) . ' 00:00:00';
-		$end_date = date( 'Y-m-d', strtotime( $end_date )) . ' 23:59:59';
-
-		// convert to timestamps
-		$start_date = strtotime( $start_date );
-		$end_date = strtotime( $end_date );
-
-		// make sure our start date is the lowest value and vice versa
-		$start_date = min( $start_date, $end_date );
-		$end_date = max( $start_date, $end_date );
-
-		global $wpdb;
-
-		if ( $count ) {
-			$SQL =  'SELECT COUNT(txn.TXN_ID) ';
-		} else {
-			$SQL =  "SELECT att.ATT_ID, CONCAT(att.ATT_fname, ' ', att.ATT_lname) as TXN_att_name, att.ATT_email, evt.id, evt.event_name, evt.slug, reg.REG_ID, reg.REG_url_link, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.TXN_paid, txn.STS_ID ";
-		}
-
-		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
-		$SQL .= 'LEFT JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
-		$SQL .= 'JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
-		$SQL .= 'RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' txn ON reg.TXN_ID = txn.TXN_ID ';
-		$SQL .= 'WHERE TXN_timestamp >= %d ';
-		$SQL .= 'AND TXN_timestamp <= %d ';
-		$SQL .= 'AND reg.REG_count = 1 ';
-
-		//setup orderby
-		switch ( $orderby ) {
-			case 'TXN_ID':
-				$orderby = 'txn.TXN_ID';
-				break;
-			case 'TXN_att_name':
-				$orderby = 'TXN_att_name';
-				break;
-			case 'event_name':
-				$orderby = 'evt.event_name';
-				break;
-			default: //'TXN_timestamp'
-				$orderby = 'txn.TXN_timestamp';
-		}
-
-
-		//let's set limit
-		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
-		$SQL .= $count ? '' : "ORDER BY $orderby $order $limit";
-
-		$transactions = $count ? $wpdb->get_var( $wpdb->prepare( $SQL, $start_date, $end_date ) ) : $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), ARRAY_A );
-
-		if ( $transactions ) {
-			return $transactions;
-		} else {
-			return FALSE;
-		}
-
+	 * resets the model and returns it
+	 * @return EEM_Transaction
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
-
-
-
-	/**
-	*		retrieve a single transaction from db via the TXN_ID
-	*
-	* 		@access		public
-	* 		@param		string		$TXN_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function get_transaction_for_admin_page( $TXN_ID = FALSE ) {
-
-		if ( ! $TXN_ID ) {
-			$msg = __( 'No Transaction ID was received.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		global $wpdb;
-
-		$SQL = 'SELECT reg.*, txn.*, att.*, evt.id, evt.event_name, evt.slug ';
-		$SQL .= 'FROM ' . $wpdb->prefix . 'esp_registration reg ';
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'events_detail evt ON reg.EVT_ID = evt.id ';
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_attendee att ON reg.ATT_ID = att.ATT_ID ';
-		$SQL .= 'INNER JOIN ' . $this->_get_main_table()->get_table_name() . ' txn ON reg.TXN_ID = txn.TXN_ID ';
-		$SQL .= 'WHERE txn.TXN_ID = %d ';
-		$SQL .= 'AND reg.REG_count = 1 ';
-		$SQL .= 'ORDER BY TXN_timestamp DESC';
-
-		if ( $transaction = $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ))) {
-//			echo $wpdb->last_query;
-//			echo printr( $payments );
-			return $transaction;
-		} else {
-//			EE_Error::add_error( $wpdb->print_error(), __FILE__, __FUNCTION__, __LINE__ ); print_error echos immediately  >:()
-			return FALSE;
-		}
-
-	}
 
 
 
@@ -295,7 +181,7 @@ class EEM_Transaction extends EEM_Base {
 		$SQL .= ' ORDER BY event_name';
 		$SQL .= ' LIMIT 0, 24';
 
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+		return $this->_do_wpdb_query( 'get_results', array(  $wpdb->prepare( $SQL, $date_mod ) ) );
 
 	}
 

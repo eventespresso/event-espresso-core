@@ -31,7 +31,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		constructor
 	*/
-   function __construct( $admin_page ){
+	function __construct( $admin_page ){
 
    		parent::__construct($admin_page);
    		$this->_status = $this->_admin_page->get_transaction_status_array();
@@ -64,24 +64,24 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 			'STS_ID' => '',
-            'TXN_ID' => __( 'ID', 'event_espresso' ),
+			'TXN_ID' => __( 'ID', 'event_espresso' ),
 			'TXN_timestamp'	=> __( 'Transaction Date', 'event_espresso' ),
-            'TXN_total' => __( 'Total', 'event_espresso' ),
-            'TXN_paid' => __( 'Paid', 'event_espresso' ),
+			'TXN_total' => __( 'Total', 'event_espresso' ),
+			'TXN_paid' => __( 'Paid', 'event_espresso' ),
 			'ATT_fname' => __( 'Primary Registrant', 'event_espresso' ),
 			'ATT_email' => __( 'Email Address', 'event_espresso' ),
 			'event_name' => __( 'Event', 'event_espresso' ),
-            'actions' => __( 'Actions', 'event_espresso' )
-        );
+			'actions' => __( 'Actions', 'event_espresso' )
+		);
 
-        $this->_sortable_columns = array(
-          	'TXN_ID' => array( 'TXN_ID' => FALSE ),
-            'event_name' => array( 'event_name'=> FALSE ),
-            'ATT_fname'	=> array( 'ATT_fname'=> FALSE ),
-           	'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
-        	);
+		$this->_sortable_columns = array(
+			'TXN_ID' => array( 'TXN_ID' => FALSE ),
+			'event_name' => array( 'event_name'=> FALSE ),
+			'ATT_fname'	=> array( 'ATT_fname'=> FALSE ),
+			'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
+		);
 
-        $this->_hidden_columns = array();
+		$this->_hidden_columns = array();
 	}
 
 
@@ -123,15 +123,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
    function column_TXN_ID($item){
     	$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 				return '<a href="' . $view_lnk_url . '" title="Go to Transaction Details">' . $item->ID() . '</a>';
-    }
+	}
 
 
 
 
-    /**
+	/**
 	 * 		column_STS_ID
 	*/
-    function column_STS_ID($item){
+	function column_STS_ID($item){
 		return '<span class="ee-status-strip ee-status-strip-td txn-status-' . $item->status_ID() . '"></span>';
 	}
 
@@ -142,9 +142,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_cb
 	*/
-    function column_cb($item){
-        return sprintf( '<input type="checkbox" name="%1$s[]" value="%2$s" />', $this->_args['singular'],  $item->ID());
-    }
+	function column_cb($item){
+		return sprintf( '<input type="checkbox" name="%1$s[]" value="%2$s" />', $this->_args['singular'],  $item->ID());
+	}
 
 
 
@@ -153,7 +153,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_TXN_timestamp
 	*/
-    function column_TXN_timestamp($item){
+	function column_TXN_timestamp($item){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_datetime('TXN_timestamp', 'D M j, Y', 'g:i:s a') .  '</a>';
 		return $txn_date;
@@ -166,7 +166,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_TXN_total
 	*/
-    function column_TXN_total($item){
+	function column_TXN_total($item){
 		if ( $item->get('TXN_total') > 0 ) {
 			return '<span class="txn-pad-rght">' . $item->get_pretty('TXN_total') . '</span>';
 		} else {
@@ -182,9 +182,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_TXN_paid
 	*/
-    function column_TXN_paid($item){
-    	$transaction_total = $item->get('TXN_total');
-    	$transaction_paid = $item->get('TXN_paid');
+	function column_TXN_paid($item){
+		$transaction_total = $item->get('TXN_total');
+		$transaction_paid = $item->get('TXN_paid');
 
 		if (( $transaction_total > 0 ) && ( $transaction_paid >= $transaction_total )) {
 			// paid in full
@@ -213,12 +213,12 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_ATT_fname
 	*/
-    function column_ATT_fname($item){
-    	$primary_reg = $item->primary_registration();
-    	$attendee = $primary_reg->get_first_related('Attendee');
-    	if ( !empty( $attendee ) ) {
+	function column_ATT_fname($item){
+		$primary_reg = $item->primary_registration();
+		$attendee = $primary_reg->get_first_related('Attendee');
+		if ( !empty( $attendee ) ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
-			return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>';
+			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
 		}
 		return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
 	}
@@ -229,9 +229,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_ATT_email
 	*/
-    function column_ATT_email($item){
-    	$attendee = $item->primary_registration()->get_first_related('Attendee');
-    	if ( !empty( $attendee ) )
+	function column_ATT_email($item){
+		$attendee = $item->primary_registration()->get_first_related('Attendee');
+		if ( !empty( $attendee ) )
 			return '<a href="mailto:' . $attendee->get('ATT_email') . '">' . $attendee->get('ATT_email') . '</a>';
 		else
 			return __('Could be something wrong with the primary registration a ssociated with this transaction in the db', 'event_espresso');
@@ -253,9 +253,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 			//filter this view by transactions for this event
 			$txn_by_event_lnk = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ) );
-			$actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '" title="' . __('Filter transactions by this event', 'event_espresso') . '">' . __('View Transactions for this event', 'event_espresso') . '</a>';
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $event->ID() ) ) {
+				$actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '" title="' . __('Filter transactions by this event', 'event_espresso') . '">' . __('View Transactions for this event', 'event_espresso') . '</a>';
+			}
 
-			return sprintf('%1$s %2$s', '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>', $this->row_actions($actions) );
+			return sprintf('%1$s %2$s', EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $event->ID() ) ? '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>' : wp_trim_words( $event_name, 30, '...' ), $this->row_actions($actions) );
 		} else {
 			return __('The event associated with this transaction via the primary registration cannot be retrieved.', 'event_espresso');
 		}
@@ -279,15 +281,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
 		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 
-        //Build row actions
-        $view_lnk = '
+	//Build row actions
+	$view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-cart"></span>
 			</a>
 		</li>';
 
-         $dl_invoice_lnk = '
+	$dl_invoice_lnk = '
 		<li>
 			<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
 				<span class="ee-icon ee-icon-PDF-file-type ee-icon-size-16"></span>
@@ -299,30 +301,30 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
       		$EEMSG = EE_Registry::instance()->load_lib('messages');
       		$active_mts = $EEMSG->get_active_message_types();
       		if ( in_array( 'payment_reminder', $active_mts ) ) {
-	       $send_pay_lnk = '
-		<li>
-			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
-				<span class="dashicons dashicons-email-alt"></span>
-			</a>
-		</li>';
-		$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
+			$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ? '
+				<li>
+					<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
+						<span class="dashicons dashicons-email-alt"></span>
+					</a>
+				</li>' : '';
+			$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
 		} else {
 			$send_pay_lnk = '';
 		}
 
-	        $view_reg_lnk = '
+	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-clipboard"></span>
 			</a>
-		</li>';
+		</li>' : '';
 
-			$actions = '
+	$actions = '
 		<ul class="txn-overview-actions-ul">' .
 		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
 		</ul>';
 
-			return $actions;
+	return $actions;
     }
 
 

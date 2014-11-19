@@ -66,13 +66,6 @@ abstract class EE_Messages_Base extends EE_Base {
 
 
 
-	/**
-	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added
-	 * @var array
-	 */
-	protected $_default_field_content = array();
-
-
 
 
 
@@ -123,8 +116,6 @@ abstract class EE_Messages_Base extends EE_Base {
 		$this->_set_existing_admin_settings();
 		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
-		$this->_set_default_field_content();
-
 		//load helper
 		EE_Registry::instance()->load_helper('MSG_Template');
 	}
@@ -181,19 +172,6 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_valid_shortcodes();
-
-
-
-
-
-	/**
-	 * This sets the _default_field_content property which needs to be defined by child classes.
-	 *
-	 * @abstract
-	 * @access  protected
-	 * @return void
-	 */
-	abstract protected function _set_default_field_content();
 
 
 
@@ -265,22 +243,6 @@ abstract class EE_Messages_Base extends EE_Base {
 	 */
 	public function get_admin_settings_fields() {
 		return $this->_admin_settings_fields;
-	}
-
-
-
-	/**
-	 * return the default_field_content property
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function get_default_field_content() {
-		$default = apply_filters( 'FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
-		//note the below filter will apply to all messengers AND message types.  Use with care.
-		$default = apply_filters( 'FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
-
-		return $default;
 	}
 
 

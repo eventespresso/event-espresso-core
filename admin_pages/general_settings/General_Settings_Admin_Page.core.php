@@ -80,51 +80,80 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 
-			'critical_pages' => '_espresso_page_settings',
+			'critical_pages' => array(
+				'func' => '_espresso_page_settings',
+				'capability' => 'manage_options'
+				),
 			'update_espresso_page_settings' => array(
 				'func' => '_update_espresso_page_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'template_settings' => '_template_settings',
+			'template_settings' => array(
+				'func' => '_template_settings',
+				'capability' => 'manage_options'
+				),
+
+			'update_template_settings' => array(
+				'func' => '_update_template_settings',
+				'capability' => 'manage_options',
+				'noheader' => TRUE,
+				),
 
 			'copy_templates' => array(
 				'func' => '_copy_templates',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
-			'default' => '_your_organization_settings',
+			'default' => array(
+				'func' => '_your_organization_settings',
+				'capability' => 'manage_options',
+				),
 
 			'update_your_organization_settings' => array(
 				'func' => '_update_your_organization_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'admin_option_settings' => '_admin_option_settings',
+			'admin_option_settings' => array(
+				'func' => '_admin_option_settings',
+				'capability' => 'manage_options',
+				),
 
 			'update_admin_option_settings' => array(
 				'func' => '_update_admin_option_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'country_settings' => '_country_settings',
+			'country_settings' => array(
+				'func' => '_country_settings',
+				'capability' => 'manage_options'
+				),
 
 			'update_country_settings' => array(
 				'func' => '_update_country_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'display_country_settings' => array(
 				'func' => 'display_country_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'add_new_state' => array(
 				'func' => 'add_new_state',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'delete_state' => array(
 				'func' => 'delete_state',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				)
 			);
@@ -159,7 +188,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 				),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'

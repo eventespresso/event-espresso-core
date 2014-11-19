@@ -94,6 +94,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
 				$tkts[$ticket->ID()]['att_objs'] = $attendees;
 				$tkts[$ticket->ID()]['count'] = count($attendees);
+				$tkts[$ticket->ID()]['EE_Event'] = $event;
 				foreach ( $reldatetime as $datetime ) {
 					if ( !isset( $dtts[$datetime->ID()] ) ) {
 						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
@@ -399,13 +400,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
 				'TXN_total' => $grand_total, //txn_total
-				'TXN_paid' => $grand_total, //txn_paid
+				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
 				'TXN_ID' => 999999
 			)
 		);
+
 
 		//setup reg_objects
 		//note we're setting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
@@ -427,22 +429,59 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_date' => current_time('mysql'),
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
-						'REG_code' => $regid . '-dummy_generated_reg_code',
-						'REG_url_link' => '#',
+						'REG_code' => $regid . '-dummy-generated-code',
+						'REG_url_link' => $regcnt . '-daafpapasdlfakasdfpqasdfasdf',
 						'REG_count' => $regcnt,
 						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
 						'REG_att_is_going' => TRUE,
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_obj'][$regid] = $REG_OBJ;
+					$this->_attendees[$key]['reg_objs'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
+					$this->tickets[$ticket->ID()]['reg_objs'][$regid] = $REG_OBJ;
+
 					$regcnt++;
 					$regid++;
 				}
 			}
 		}
+
+
+
+		//setup line items!
+		EE_Registry::instance()->load_helper('Line_Item');
+		$line_item_total = EEH_Line_Item::create_default_total_line_item( $this->txn );
+
+		//add tickets
+		foreach ( $this->tickets as $tktid => $item ) {
+			$qty = $item['count'];
+			$ticket = $item['ticket'];
+			EEH_Line_Item::add_ticket_purchase( $line_item_total, $ticket, $qty );
+		}
+
+		//now let's add taxes
+		EEH_Line_Item::apply_taxes( $line_item_total );
+
+		//now we should be able to get the items we need from this object
+		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
+
+		foreach ( $ticket_line_items as $line_id => $line_item ) {
+			$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
+			$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
+			$line_items[$line_item->ID()]['children'] = $line_item->children();
+			$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+		}
+
+		$this->line_items_with_children = $line_items;
+		$this->tax_line_items = $line_item_total->tax_descendants();
+
+		//add proper total to transaction object.
+		$grand_total = $line_item_total->recalculate_total_including_taxes();
+		$this->grand_total_line_item = $line_item_total;
+		$this->txn->set_total( $grand_total );
+
 
 		//add additional details for each registration
 		foreach ( $this->reg_objs as $reg ) {
@@ -460,18 +499,23 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->attendees = $this->_attendees;
 		$this->registrations = $this->_registrations;
 
+		$attendees_to_shift = $this->_attendees;
+
 		//setup primary attendee property
 		$this->primary_attendee_data = array(
 			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
 			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
 			'email' => $this->_attendees[999999991]['att_obj']->email(),
 			'att_obj' => $this->_attendees[999999991]['att_obj'],
-			'reg_obj' => $this->_attendees[999999991]['reg_obj']
+			'reg_obj' => array_shift($attendees_to_shift[999999991]['reg_objs'])
 			);
 
 		//reg_info property
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
 		$this->reg_info = array();
+
+		//let's set a reg_obj for messengers expecting one.
+		$this->reg_obj = array_pop( $this->_attendees[999999991]['reg_objs'] );
 
 
 		//the below are just dummy items.
@@ -480,7 +524,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_agent = '';
 		$this->init_access = current_time('mysql');
 		$this->last_access = current_time('mysql');
-
 	}
 
 } //end EE_Messages_Preview_incoming_data class

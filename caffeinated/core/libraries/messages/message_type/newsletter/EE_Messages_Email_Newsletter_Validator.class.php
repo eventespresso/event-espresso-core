@@ -39,5 +39,6 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator {
         }
         $add_excludes = array( '[RECIPIENT_FNAME]', '[RECIPIENT_LNAME]', '[RECIPIENT_EMAIL]', '[COMPANY]', '[CO_ADD1]','[CO_ADD2]', '[CO_CITY]', '[CO_STATE]','[CO_ZIP]','[CO_LOGO]','[CO_PHONE]','[CO_LOGO_URL]','[CO_FACEBOOK_URL]','[CO_TWITTER_URL]','[CO_PINTEREST_URL]','[CO_GOOGLE_URL]','[CO_LINKEDIN_URL]','[CO_INSTAGRAM_URL]');
         $this->_specific_shortcode_excludes['from'] = array_merge($this->_specific_shortcode_excludes['from'], $add_excludes);
+        $this->_specific_shortcode_excludes['content'] = array_merge( $this->_specific_shortcode_excludes['content'], array('[DISPLAY_PDF_URL]', '[DISPLAY_PDF_BUTTON]') );
     }
 }

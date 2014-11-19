@@ -336,6 +336,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden = $this->get_hidden_columns();
 		$_sortable = $this->get_sortable_columns();
+
+		/**
+		 * Dynamic hook allowing for adding sortable columns in this list table.
+		 * Note that $this->screen->id is in the format
+		 * {sanitize_title($top_level_menu_label)}_page_{$espresso_admin_page_slug}.  So for the messages list
+		 * table it is: event-espresso_page_espresso_messages.
+		 * However, take note that if the top level menu label has been translated (i.e. "Event Espresso"). then the
+		 * hook prefix ("event-espresso") will be different.
+		 *
+		 * @var array
+		 */
 		$_sortable = apply_filters( "FHEE_manage_{$this->screen->id}_sortable_columns", $_sortable, $this->_screen );
 
 		$sortable = array();
@@ -377,7 +388,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		//the _views property should have the bulk_actions, so let's go through and extract them into a properly formatted array for the wp_list_table();
 		foreach ( $this->_views as $view => $args) {
 			if ( isset( $args['bulk_action']) && is_array($args['bulk_action']) && $this->_view == $view )
-				$actions = array_merge($actions, $args['bulk_action']);
+				//each bulk action will correspond with a admin page route, so we can check whatever the capability is for that page route and skip adding the bulk action if no access for the current logged in user.
+				foreach ( $args['bulk_action'] as $route =>$label ) {
+					if ( $this->_admin_page->check_user_access( $route, true ) ) {
+						$actions[$route] = $label;
+					}
+				}
 		}
 		return $actions;
 	}
@@ -442,12 +458,31 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @return string html content for the column
 	 */
 	public function column_default( $item, $column_name ) {
+		/**
+		 * Dynamic hook allowing for adding additional column content in this list table.
+		 * Note that $this->screen->id is in the format
+		 * {sanitize_title($top_level_menu_label)}_page_{$espresso_admin_page_slug}.  So for the messages list
+		 * table it is: event-espresso_page_espresso_messages.
+		 * However, take note that if the top level menu label has been translated (i.e. "Event Espresso"). then the
+		 * hook prefix ("event-espresso") will be different.
+		 *
+		 */
 		do_action( 'AHEE__EE_Admin_List_Table__column_' . $column_name . '__' . $this->screen->id, $item, $this->_screen );
 	}
 
 
 
 	public function get_columns() {
+		/**
+		 * Dynamic hook allowing for adding additional columns in this list table.
+		 * Note that $this->screen->id is in the format
+		 * {sanitize_title($top_level_menu_label)}_page_{$espresso_admin_page_slug}.  So for the messages list
+		 * table it is: event-espresso_page_espresso_messages.
+		 * However, take note that if the top level menu label has been translated (i.e. "Event Espresso"). then the
+		 * hook prefix ("event-espresso") will be different.
+		 *
+		 * @var array
+		 */
 		$columns = apply_filters( 'FHEE_manage_'.$this->screen->id.'_columns', $this->_columns, $this->_screen );
 		return $columns;
 	}
@@ -462,7 +497,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		if ( empty( $views )) {
 			return;
 		}
-
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;

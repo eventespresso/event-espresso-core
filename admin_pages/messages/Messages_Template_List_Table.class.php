@@ -149,6 +149,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
+
+
 	function column_description( $item ) {
 		return '<p>' . $item->message_type_obj()->description . '</p>';
 	}
@@ -165,12 +167,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
 		// edit link but only if item isn't trashed.
-		if ( !$item->get('MTP_deleted') ) {
+		if ( !$item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $item->ID() ) ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID() ), EE_MSG_ADMIN_URL );
 			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		}
 
-		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
+		$name_link = ! $item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
 
 		//we want to display the contexts in here so we need to set them up
 		$c_label = $item->context_label();
@@ -178,14 +180,14 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$ctxt = array();
 		$context_templates = $item->context_templates();
 		foreach ( $context_templates as $context => $template_fields ) {
-			$mtp_to = $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : NULL;
-			$inactive = empty( $mtp_to ) ? ' class="mtp-inactive"' : '';
+			$mtp_to = !empty( $context_templates[$context]['to'] ) && $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : NULL;
+			$inactive = empty( $mtp_to ) && !empty( $context_templates[$context]['to'] ) ? ' class="mtp-inactive"' : '';
 			$context_title = ucwords($c_configs[$context]['label']);
 			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL );
-			$ctxt[] = '<a' . $inactive . ' href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
+			$ctxt[] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $item->ID() ) ? '<a' . $inactive . ' href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>' : $context_title;
 		}
 
-		$ctx_content = !$item->get('MTP_deleted') ? sprintf( __('<strong>%s:</strong> ', 'event_espresso'), ucwords($c_label['plural']) ) . implode(' | ', $ctxt) : '';
+		$ctx_content = !$item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $item->ID() ) ? sprintf( __('<strong>%s:</strong> ', 'event_espresso'), ucwords($c_label['plural']) ) . implode(' | ', $ctxt) : '';
 
 
 		//Return the name contents

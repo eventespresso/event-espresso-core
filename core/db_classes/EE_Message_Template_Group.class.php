@@ -115,6 +115,19 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * Wrapper for the user function() (preserve bacward compat)
+	 *
+	 * @since  4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->user();
+	}
+
+
+
+	/**
 	 * This simply returns a count of all related events to this message template group
 	 * @return int
 	 */
@@ -295,7 +308,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _get_shortcode_objects( $sc_refs ) {
 		$sc_objs = array();
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 		foreach ( $sc_refs as $shortcode_ref ) {
 			$ref = ucwords( str_replace( '_', ' ', $shortcode_ref ) );
 			$ref = str_replace( ' ', '_', $ref );
@@ -309,6 +322,76 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 			$sc_objs[ ] = $a->newInstance();
 		}
 		return $sc_objs;
+	}
+
+
+
+	/**
+	 * This just gets the template pack name assigned to this message template group.  If it's not set, then we just use the default template pack.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_template_pack_name() {
+		return $this->get_extra_meta( 'MTP_template_pack', TRUE, 'default' );
+	}
+
+
+
+
+	/**
+	 * This returns the specific template pack object referenced by the template pack name attached to this message template group.  If no template pack is assigned then the default template pack is retreived.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_Messages_Template_Pack
+	 */
+	public function get_template_pack() {
+		$pack_name = $this->get_template_pack_name();
+
+		return EED_Messages::get_template_pack( $pack_name );
+	}
+
+
+
+	/**
+	 * This retrieves the template variation assigned to this message template group.  If it's not set, then we just use the default template variation.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_template_pack_variation() {
+		return $this->get_extra_meta( 'MTP_variation', TRUE, 'default' );
+	}
+
+
+
+
+	/**
+	 * This just sets the template pack name attached to this message template group.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $template_pack_name What message template pack is assigned.
+	 */
+	public function set_template_pack_name( $template_pack_name ) {
+		return $this->update_extra_meta( 'MTP_template_pack', $template_pack_name );
+	}
+
+
+
+
+	/**
+	 * This just sets the template pack variation attached to this message template group.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $variation What variation is being set on the message template group.
+	 */
+	public function set_template_pack_variation( $variation ) {
+		return $this->update_extra_meta( 'MTP_variation', $variation );
 	}
 }
 //end EE_Message_Template_Group class

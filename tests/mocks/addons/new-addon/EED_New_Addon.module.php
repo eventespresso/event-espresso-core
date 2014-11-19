@@ -59,10 +59,14 @@ class EED_New_Addon extends EED_Module {
 	  */
 	 public static function set_hooks_admin() {
 		 // ajax hooks
-		 add_action( 'wp_ajax_get_new_addon', array( 'EED_New_Addon', '_get_new_addon' ));
-		 add_action( 'wp_ajax_nopriv_get_new_addon', array( 'EED_New_Addon', '_get_new_addon' ));
+		 add_action( 'wp_ajax_get_new_addon', array( 'EED_New_Addon', 'get_new_addon' ));
+		 add_action( 'wp_ajax_nopriv_get_new_addon', array( 'EED_New_Addon', 'get_new_addon' ));
 	 }
 
+	 public static function get_new_addon(){
+		 echo json_encode( array( 'response' => 'ok', 'details' => 'you have made an ajax request!') );
+		 die;
+	 }
 
 
 
