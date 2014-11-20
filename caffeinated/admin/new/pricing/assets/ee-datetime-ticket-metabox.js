@@ -1232,7 +1232,7 @@ jQuery(document).ready(function($) {
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text(accounting.formatMoney(price_amount));
 			newTKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount));
-			newTKTrow.find('.ticket-display-row-TKT_price').text(accounting.formatMoney(price_amount));
+			newTKTrow.find('.edit-ticket-TKT_price').val(price_amount);
 
 			/*newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
@@ -1988,7 +1988,9 @@ jQuery(document).ready(function($) {
 	$('.event-datetimes-container').on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
-		tktHelper.updateDTTrow(data.datetimeRow);
+		if ( typeof data.datetimeRow !== 'undefined' ) {
+			tktHelper.updateDTTrow(data.datetimeRow);
+		}
 	});/**/
 
 
@@ -2305,28 +2307,5 @@ jQuery(document).ready(function($) {
 		var id = e.dttinst.id.replace('edit-ticket-TKT_start_date-', '');
 		id = id.replace('edit-ticket-TKT_end_date-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
-	});
-
-
-	/**  HEARTBEAT HOOKS **/
-
-	//hooking into the heartbeat send.
-	$(document).on('heartbeat-send', function(e, data) {
-		//get a count of all inputs on the page.
-		var input_count = $('input').length + $('select').length + $('textarea').length;
-		data['input_count'] = input_count;
-		data['ee_admin_ajax'] = true;
-	});
-
-	//Listen for the custom event "heartbeat-tick" on $(document).
-	$(document).on( 'heartbeat-tick', function(e, data) {
-		if ( ! data['max_input_vars_check'] )
-				return;
-
-		//if no space left then let's show a dialog with the message.
-		if ( ! data['max_input_vars_check'] !== '' ) {
-			dialogHelper.displayModal().addContent( data['max_input_vars_check'] );
-		}
-		return;
 	});
 });

@@ -47,7 +47,7 @@ final class EE_Admin {
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Admin )) {
+		if (  ! self::$_instance instanceof EE_Admin ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -75,6 +75,9 @@ final class EE_Admin {
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+
+		//reset Environment config (we only do this on admin page loads);
+		EE_Registry::instance()->CFG->environment->recheck_values();
 
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}

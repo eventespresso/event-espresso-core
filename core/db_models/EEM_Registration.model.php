@@ -178,7 +178,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@access private
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
-	 *		@return void
+	 *		@return array
 	 */
 	public static function reg_status_array( $exclude = array(), $translated = FALSE ) {
 		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
@@ -187,16 +187,12 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 
-
-
-
-
-
 	/**
-	 * 		get list of registration statuses
-	*		@access private
-	*		@return void
-	*/
+	 * 	get list of registration statuses
+	 * @access private
+	 * @param array $exclude
+	 * @return array
+	 */
 	private function _get_registration_status_array( $exclude = array() ) {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error

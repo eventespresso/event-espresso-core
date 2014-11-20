@@ -78,7 +78,7 @@
 	</li>
 	<li class="wp-person" id="ee-person-sharrel">
 		<a href="<?php esp_gravatar_profile('sidney@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'sidney@eventespresso.com', 'Sidney Harrel' ); ?>
+			<?php echo esp_gravatar_image( 'sidney@eventespresso.com', 'Sidney Harrell' ); ?>
 		</a>
 		<a class="web" href="<?php esp_gravatar_profile('sidney@eventespresso.com'); ?>">
 			Sidney Harrel

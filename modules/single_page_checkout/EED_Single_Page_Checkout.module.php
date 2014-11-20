@@ -294,6 +294,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// make sure reg steps array is setup
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -316,7 +318,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			// let's get that transaction data
 			$this->_transaction = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-//			printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->_transaction, 'transaction_from_reg_url_link  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //			d( $this->_transaction );
 			// verify transaction
 			if ( $this->_transaction instanceof EE_Transaction ) {
@@ -327,7 +329,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					usort( $registrations, array( 'EED_Single_Page_Checkout', 'sort_registrations_by_REG_count' ));
 					foreach ( $registrations as $registration ) {
-//						d( $registration );
+						//d( $registration );
 						// verify registration
 						if ( $registration instanceof EE_Registration ) {
 							// we display all attendee info for the primary registrant
@@ -344,6 +346,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			} else {
 				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			}
+
 		} else {
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
 //			printr( $this->_transaction, '$this->_transaction <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -357,11 +360,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// verify transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
-			if ( ! $this->_revisit && $ID = $this->_transaction->ID() ) {
+			//printr( $this->_transaction->registrations(), '$transaction->registrations() <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$ID = $this->_transaction->ID();
+			if ( ! $this->_revisit && $ID ) {
 				// but if this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... then let's pull that
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
 					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-					return FALSE;
+					return;
 				}
 			}
 		} elseif ( ! $this->_revisit ) {
@@ -426,7 +431,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( EE_Registry::instance()->REQ ) ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-
+		$this->_current_step = 'attendee_information';
 		$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
 		// verify transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
@@ -434,7 +439,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$ID = $this->_transaction->ID();
 			if ( $ID ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return;
 				}
 			}
@@ -704,110 +709,111 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
 				}
 
+				$total_items ++;
+				$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
 				$line_item_ID = $registration->reg_url_link();
 				$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 				$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 				$event_queue['items'][ $line_item_ID ]['reg_count'] = $registration->count();
-				$total_items ++;
-				$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
 
-				$question_meta = array(
-					'EVT_ID' => $registration->event()->ID(),
-					'att_nmbr' => $registration->count(),
-					'ticket_id' => $registration->ticket()->ID(),
-					'input_name' =>  '[' . $line_item_ID . ']',
-					'input_id' => $line_item_ID,
-					'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
-				);
+				// do we need to generate data regarding attendees and reg form questions?
+				if ( strpos( $this->_current_step, 'attendee_information' ) !== FALSE ) {
 
-				$Question_Groups = EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
-					array(
-						'Event.EVT_ID' => $registration->event()->ID(),
-						'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-					),
-					'order_by'=>array( 'QSG_order'=>'ASC' )
-				));
+					$question_meta = array(
+						'EVT_ID' => $registration->event()->ID(),
+						'att_nmbr' => $registration->count(),
+						'ticket_id' => $registration->ticket()->ID(),
+						'input_name' =>  '[' . $line_item_ID . ']',
+						'input_id' => $line_item_ID,
+						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
+					);
 
-				foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-					$where = array( 'QST_deleted' => 0 );
-					if ( ! $from_admin ) {
-						$where['QST_admin_only'] = 0;
-					}
-					$Questions = $Question_Group->get_many_related( 'Question', array( $where, 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
-					foreach ( $Questions as $Question ) {
-						if( $Question instanceof EE_Question ){
-							// if this question was for an attendee detail, then check for that answer
-							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
-							$answer =  $this->_reg_url_link || ! $answer_value  ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
-							// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
-							if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
-								// create an EE_Answer object for storing everything in
-								$answer = EE_Answer::new_instance ( array(
-									'QST_ID'=> $Question->ID(),
-									'REG_ID'=> $registration->ID()
-								 ));
-							}
+					$Question_Groups = EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
+						array(
+							'Event.EVT_ID' => $registration->event()->ID(),
+							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
+						),
+						'order_by'=>array( 'QSG_order'=>'ASC' )
+					));
 
-							if( $answer instanceof EE_Answer ){
-								if ( ! empty( $answer_value )) {
-									$answer->set( 'ANS_value', $answer_value );
+					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
+						$where = array( 'QST_deleted' => 0 );
+						if ( ! $from_admin ) {
+							$where['QST_admin_only'] = 0;
+						}
+						$Questions = $Question_Group->get_many_related( 'Question', array( $where, 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
+						foreach ( $Questions as $Question ) {
+							if( $Question instanceof EE_Question ){
+								// if this question was for an attendee detail, then check for that answer
+								$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
+								$answer =  $this->_reg_url_link || ! $answer_value  ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
+								// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
+								if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
+									// create an EE_Answer object for storing everything in
+									$answer = EE_Answer::new_instance ( array(
+										'QST_ID'=> $Question->ID(),
+										'REG_ID'=> $registration->ID()
+									));
 								}
-								$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
-								$answer->cache( 'Question', $Question );
-								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-	//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-								$registration->cache( 'Answer', $answer, $answer_cache_id );
+
+								if( $answer instanceof EE_Answer ){
+									if ( ! empty( $answer_value )) {
+										$answer->set( 'ANS_value', $answer_value );
+									}
+									$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
+									$answer->cache( 'Question', $Question );
+									$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+									//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+									$registration->cache( 'Answer', $answer, $answer_cache_id );
+								}
+								$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 							}
-							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 						}
 					}
-				}
-//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-				add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-				add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
-				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, $from_admin, 'div' );
+					add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, $from_admin, 'div' );
 
-				// show this attendee form?
-				if ( empty( $attendee_questions )) {
-					$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
-	<input type="hidden" id="' . $line_item_ID . '-additional_attendee_reg_info" name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]" value="0" />' . "\n";
-				} else {
-					$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
-					$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';
-				}
-				$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
+					// show this attendee form?
+					if ( empty( $attendee_questions )) {
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = "\n" . '<input type="hidden" id="' . $line_item_ID . '-additional_attendee_reg_info" name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]" value="0" />' . "\n";
+					} else {
+						$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';
+					}
+					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
 
 
 
-				// is this the primary registrant ?
-				if ( $registration->count() == 1 ) {
-					// grab line item from primary attendee
-					$template_args['prmy_att_input_name'] =  $line_item_ID;
-				} else {
+					// is this the primary registrant ?
+					if ( $registration->count() == 1 ) {
+						// grab line item from primary attendee
+						$template_args['prmy_att_input_name'] =  $line_item_ID;
+					} else {
 
-					// for all  attendees other than the primary attendee
-					$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ] = array(
+						// for all  attendees other than the primary attendee
+						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ] = array(
 							'ticket' => $registration->ticket()->name(),
 							'att_nmbr' => $registration->count(),
 							'input_id' => $line_item_ID,
 							'input_name' =>  '[' . $line_item_ID . ']'
-					);
+						);
 
-					$item_name = $registration->ticket()->name();
-					$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
+						$item_name = $registration->ticket()->name();
+						$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
 
-					// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
-					if ( $registration->ticket()->ID() != $prev_event || $registration->count() == 2 ) {
-						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = $item_name;
-						$prev_event = $registration->ticket()->ID();
-					} else {
-						// no heading
-						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = FALSE;
+						// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
+						if ( $registration->ticket()->ID() != $prev_event || $registration->count() == 2 ) {
+							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = $item_name;
+							$prev_event = $registration->ticket()->ID();
+						} else {
+							// no heading
+							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = FALSE;
+						}
 					}
 				}
-
-
 
 			}
 
@@ -1216,10 +1222,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 															$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 													}
 
-		//echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 													$saved = FALSE;
 													// if this form input has a corresponding attendee property
 													if ( $attendee_property ) {
@@ -1253,7 +1259,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												EE_Error::add_error( sprintf( __( 'It appears that no form data, or invalid data, for attendee #%s was received while attempting to process the registration form.', 'event_espresso' ), $att_nmbr ), __FILE__, __FUNCTION__, __LINE__ );
 												$success = FALSE;
 											}*/
-		//									printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//											printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//											printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 											// this registration does not require additional attendee information ?
 											if ( $copy_primary && $att_nmbr > 1 ) {
@@ -1288,7 +1295,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 													unset( $attendee_data['ATT_fname'] );
 													unset( $attendee_data['ATT_lname'] );
 													unset( $attendee_data['ATT_email'] );
-													// now loop thru what' sleft and add to attendee CPT
+													// now loop thru what's left and add to attendee CPT
 													foreach ( $attendee_data as $property_name => $property_value ) {
 														if ( EEM_Attendee::instance()->has_field($property_name)) {
 															$existing_attendee->set( $property_name, $property_value );
@@ -1410,7 +1417,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
-
+//		printr( $registration->answers(), '$registration->answers()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		die();
 		$this->go_to_next_step( __FUNCTION__ );
 		return TRUE;
 	}
@@ -1434,7 +1442,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// verify object
 				if ( $registration instanceof EE_Registration ) {
-					// if event is sold out but this is NOT a revisit
+					// if the event's default_registration_status is set to "Approved", then make sure it's set as such
+					if( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
+						$registration->set_status( EEM_Registration::status_id_approved );
+					}
+					// if this is a revisit OR first visit and event is NOT sold out
 					if ( $this->_revisit  || ( ! $this->_revisit && ! ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )))) {
 						// EITHER a) first time thru SPCO so process ALL registrations
 						// OR b) primary registrant is editing info, so process ALL registrations
@@ -1450,6 +1462,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								if ( $attendee instanceof EE_Attendee ) {
 	//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									$attendee->save();
+//									echo '<h5 style="color:#2EA2CC;">$attendee->ID() : <span style="color:#E76700">' . $attendee->ID() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 									$registration->set_attendee_id( $attendee->ID() );
 									if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
 										EE_Error::add_error( __( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
@@ -1465,13 +1478,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							}
 							// save so that REG has ID
 							$registration->save();
+//							echo '<h5 style="color:#2EA2CC;">$registration->ID() : <span style="color:#E76700">' . $registration->ID() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 							// now save the answers
 							foreach ( $registration->answers() as $cache_key => $answer ) {
+//								echo '<h5 style="color:#2EA2CC;">$cache_key : <span style="color:#E76700">' . $cache_key . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//								echo '<h5 style="color:#2EA2CC;">$answer->question()->display_text() : <span style="color:#E76700">' . $answer->question()->display_text()  . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//								echo '<h5 style="color:#2EA2CC;">$answer->value() : <span style="color:#E76700">' . $answer->value()  . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 								// verify object
 								if ( $answer instanceof EE_Answer ) {
-	//								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									$answer->set_registration( $registration->ID() );
 									$answer->save();
+//									echo '<h5 style="color:#2EA2CC;">$answer->ID() : <span style="color:#E76700">' . $answer->ID()  . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 									if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
 										EE_Error::add_error( __( 'The newly saved Answer object could not be cached on the registration.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 										return FALSE;
@@ -1869,6 +1887,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		wp_safe_redirect( $redirect );
 		exit();
 	}

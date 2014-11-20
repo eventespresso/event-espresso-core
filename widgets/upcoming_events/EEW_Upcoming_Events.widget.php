@@ -253,7 +253,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				}
 				// if NOT expired then we want events that start today or in the future
 				if ( ! $show_expired ) {
-					$where['Datetime.DTT_EVT_start'] = array( '>=', current_time( 'mysql' ));
+					$where['Datetime.DTT_EVT_end'] = array( '>=', current_time( 'mysql' ));
 				}
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(

@@ -14,10 +14,11 @@
 
 $row = 1;
 $ticket_count = count( $tickets );
+$required_ticket_sold_out = FALSE;
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
 		//	d( $ticket );
-		$max = $ticket->max();
+		$max =$ticket->max();
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
@@ -30,6 +31,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 			// and if the ticket is required, then make sure that min qty is at least 1
 			$min = $ticket->required() ? max( $min, 1 ) : $min;
+		} else {
+			// set flag if ticket is required (flag is set to start date so that future tickets are not blocked)
+			$required_ticket_sold_out = $ticket->required() && ! $remaining ? $ticket->start_date() : $required_ticket_sold_out;
 		}
 
 		$ticket_price = $ticket->get_ticket_total_with_taxes();
@@ -40,8 +44,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$ticket_bundle = TRUE;
 		}
 		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
-
-		$tkt_status = $ticket->ticket_status();
+		// if a previous required ticket with the same sale start date is sold out, then mark this ticket as sold out as well.
+		// tickets that go on sale at a later date than the required ticket  will NOT be affected
+		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status();
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
@@ -85,15 +90,15 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<p class="ticket-required-pg"><?php _e( 'This ticket is required and must be purchased.', 'event_espresso' ); ?></p>
 					<?php } ?>
 					<?php
-	//echo '<br/><b>$max_atndz : ' . $max_atndz . '</b>';
-	//echo '<br/><b>$max : ' . $max . '</b>';
-	//echo '<br/><b>$min : ' . $min . '</b>';
-	//echo '<br/><b>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</b>';
-	//echo '<br/><b>$ticket->available() : ' . $ticket->available() . '</b>';
-	//echo '<br/><b>$remaining : ' . $remaining . '</b>';
-	//echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
-	//echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
-	//echo '<br/><b> $ticket->required() : ' .  $ticket->uses() . '</b>';
+//	echo '<br/><b>$max_atndz : ' . $max_atndz . '</b>';
+//	echo '<br/><b>$max : ' . $max . '</b>';
+//	echo '<br/><b>$min : ' . $min . '</b>';
+//	echo '<br/><b>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</b>';
+//	echo '<br/><b>$ticket->available() : ' . $ticket->available() . '</b>';
+//	echo '<br/><b>$remaining : ' . $remaining . '</b>';
+//	echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
+//	echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
+//	echo '<br/><b> $ticket->required() : ' .  $ticket->uses() . '</b>';
 					?>
 					</td>
 					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>

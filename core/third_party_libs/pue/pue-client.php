@@ -132,8 +132,17 @@ class PluginUpdateEngineChecker {
 	 * @return void
 	 */
 	private function _check_for_forced_upgrade() {
+
+		/**
+		 * We ONLY execute this check if the incoming plugin being checked has a free option.
+		 * If there is no free option, then no forced upgrade will be happening.
+		 */
+		if ( ! isset( $this->_incoming_slug['free'] ) ) {
+			return;
+		}
+
 		//is this premium?  let's delete any saved options for free
-		if ( $this->_is_premium && isset($this->_incoming_slug['free'] ) ) {
+		if ( $this->_is_premium  ) {
 			delete_site_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
 		} else {
 			$force_upgrade = get_site_option( 'pue_force_upgrade_' . $this->slug );
@@ -648,7 +657,7 @@ class PluginUpdateEngineChecker {
 		if ( !empty($this->api_secret_key) )
 			$queryArgs['pu_plugin_api'] = $this->api_secret_key;
 
-		if ( !empty($this->install_key) && $this->_is_premium )
+		if ( ! empty($this->install_key) && $this->_is_premium )
 			$queryArgs['pue_install_key'] = $this->install_key;
 
 		//todo: this can be removed in a later version of PUE when majority of EE users are using more recent versions.
@@ -681,6 +690,7 @@ class PluginUpdateEngineChecker {
 			$url,
 			$options
 		);
+
 
 		$this->_send_extra_stats(); //we'll trigger an extra stats update here.
 
@@ -1193,6 +1203,8 @@ class PU_PluginInfo {
 		} else {
 			$info->sections = array('description' => '');
 		}
+
+		$this->slug = ! empty( $this->slug ) ? $this->slug : '';
 
 		return $info;
 	}

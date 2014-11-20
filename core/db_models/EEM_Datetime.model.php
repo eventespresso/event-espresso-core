@@ -28,7 +28,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
   	// private instance of the EEM_Datetime object
 	private static $_instance = NULL;
-	
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -38,7 +38,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Datetime','event_espresso');
-		$this->plural_item = __('Datetimes','event_espresso');		
+		$this->plural_item = __('Datetimes','event_espresso');
 
 		$this->_tables = array(
 			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
@@ -88,7 +88,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 		//we might have a timezone set, let set_timezone decide what to do with it
 		self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
 	}
@@ -100,10 +100,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	*		@return 		EE_Datetime[]		array on success, FALSE on fail
 	*/
 	public function create_new_blank_datetime() {
-		$times = array( 
-				EE_Datetime::new_instance( 
+		$times = array(
+				EE_Datetime::new_instance(
 					array(
-						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
+						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30),
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30),
 //						'DTT_is_primary' => 1,
 						'DTT_order' => 1,
@@ -135,6 +135,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			return $this->create_new_blank_datetime();
 		}
 		$results =  $this->get_datetimes_for_event_ordered_by_DTT_order($EVT_ID);
+
+		if ( empty( $results ) ) {
+			return $this->create_new_blank_datetime();
+		}
+
 		return $results;
 	}
 
@@ -148,7 +153,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @param  int   			$EVT_ID event id
 	 * @param bolean 			$include_expired
 	 * @param boolean 			$inlude_deleted
-	 * @param  int 				$limit If included then limit the count of results by 
+	 * @param  int 				$limit If included then limit the count of results by
 	 *                        	the given number
 	 * @return EE_Datetime[]
 	 */
@@ -162,10 +167,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
 
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
+			$query_params[0]['DTT_EVT_end'] = array( '>=', current_time( 'mysql' ));
 		}
 		if( $include_deleted){
-			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+			$query_params[0]['DTT_deleted'] = array( 'IN', array( TRUE, FALSE ));
 		}
 
 		$result = $this->get_all( $query_params );
@@ -194,7 +199,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'default_where_conditions' => 'none'));
 	}
 	/**
-	 * 
+	 *
 	 * @param type $EVT_ID
 	 * @param type $include_expired
 	 * @param type $include_deleted
@@ -209,7 +214,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		}
 	}
 	/**
-	 * Gets the 'primary' datetime for an event. 
+	 * Gets the 'primary' datetime for an event.
 	 * @param int $EVT_ID
 	 * @return EE_Datetime
 	 */
@@ -253,7 +258,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$result = $this->get_all( $query_params );
 		return $result;
 	}
-	
+
 		/**
 	 * Gets ALL the datetimes for an ticket (including trashed ones, for now), ordered
 	 * only by start date
@@ -285,7 +290,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @param  int     $TKT_ID          ID of ticket to retrieve the datetimes for
 	 * @param  boolean $include_expired whether to include expired datetimes or not
 	 * @param  boolean $include_deleted whether to include trashed datetimes or not.
-	 * @param  int|null  $limit         if null, no limit, if int then limit results by 
+	 * @param  int|null  $limit         if null, no limit, if int then limit results by
 	 *                                  that number
 	 * @return EE_Datetime[]
 	 */
@@ -303,8 +308,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		}
 		return $this->get_all( $query_params );
 	}
-	
-	
+
+
 	/**
 	 * Gets the most important datetime for a particular event (ie, the primary event usually. But if for some WACK
 	 * reason it doesn't exist, we consider the earliest event the most important)

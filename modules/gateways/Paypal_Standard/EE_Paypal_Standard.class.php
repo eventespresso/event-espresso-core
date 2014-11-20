@@ -534,10 +534,33 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	public function validateIpn() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		$this->ipnData=$_POST;
-		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
-		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
 
+		// Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
+		// Instead, read raw POST data from the input stream.
+		// @see https://gist.github.com/xcommerce-gists/3440401
+		$raw_post_data = file_get_contents('php://input');
+		$raw_post_array = explode('&', $raw_post_data);
+		$myPost = array();
+		foreach ($raw_post_array as $keyval) {
+		  $keyval = explode ('=', $keyval);
+		  if (count($keyval) == 2)
+			 $myPost[$keyval[0]] = urldecode($keyval[1]);
+		}
+		// read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
+		$req = 'cmd=_notify-validate';
+		if(function_exists('get_magic_quotes_gpc')) {
+		   $get_magic_quotes_exists = true;
+		}
+		foreach ($myPost as $key => $value) {
+		   if($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+				$value = urlencode(stripslashes($value));
+		   } else {
+				$value = urlencode($value);
+		   }
+		   $req .= "&$key=$value";
+		}
+
+		$result= wp_remote_post($this->_gatewayUrl, array('body' => $req, 'sslverify' => false, 'timeout' => 60));
 		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 //			echo "eepaypalstandard success!";
 			$this->ipnResponse = $result['body'];
