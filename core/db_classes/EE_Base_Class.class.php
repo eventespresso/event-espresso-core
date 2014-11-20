@@ -234,6 +234,8 @@ abstract class EE_Base_Class{
 			}
 			//let's unset any cache for this field_name from the $_cached_properties property.
 			$this->_clear_cached_property( $field_name );
+		}else{
+			echo "\r\n\r\nSAAAY WHAT?? $field_name doesnt have a field???";
 		}
 
 	}
