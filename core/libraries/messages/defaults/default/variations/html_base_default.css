@@ -37,10 +37,6 @@ td { vertical-align:top!important; }
 .plain-text { font-weight:normal; }
 .float-left { float:left; }
 .float-right { float:right; }
-/** override what espresso-default.css includes**/
-.left { float:none;}
-.right { float: none;}
-/**/
 .clear { clear:both; }
 #invoice>div{
 	margin-bottom:5em;
