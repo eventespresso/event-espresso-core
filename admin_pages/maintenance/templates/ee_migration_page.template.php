@@ -16,12 +16,6 @@
  * @type string $reset_db_page_link
  */
 
-d( $current_db_state );
-d( $next_db_state );
-d( $ultimate_db_state );
-d( $most_recent_migration );
-
-
 if ( $show_backup_db_text ) { ?>
 <h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Migration Manager", "event_espresso");?></h1>
 <?php } ?>
