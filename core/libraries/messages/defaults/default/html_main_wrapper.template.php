@@ -4,6 +4,8 @@
  *
  * Template Tags:
  * @type string $page_title 	The title for the page.
+ * @type string $dashicons_css 	This is a base css url for a page (should not be changed).
+ * @type string $espresso_default_css 	This is a base css url for a page (should not be changed).
  * @type string $base_css 	This is the base css url for a page (should not be changed).
  * @type string $print_css 	This is the css url for print copy.
  * @type string $main_css	This is the main css file for the page.
@@ -20,12 +22,16 @@
 <title><?php echo $page_title; ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <?php wp_head(); ?>
+<!-- WP Dashicons Stylesheet do not change or remove -->
+<link rel="stylesheet" type="text/css" href="<?php echo $dashicons_css; ?>" media="screen" />
+<!-- EE Base Stylesheet do not change or remove -->
+<link rel="stylesheet" type="text/css" href="<?php echo $espresso_default_css; ?>" media="screen" />
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_css; ?>" media="screen" />
 <!-- Print Style Sheet -->
 <link rel="stylesheet" type="text/css" href="<?php echo $print_css; ?>" media="print" />
 <!-- Primary Style Sheet -->
-<link rel="stylesheet" type="text/css" href="<?php echo $main_css; ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo $main_css; ?>"/>
 <!-- Make sure the buttons don't print -->
 <style type="text/css">
 @media print{ .noPrint{display:none !important;height:0!important; width:0!important;} }
