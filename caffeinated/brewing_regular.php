@@ -181,8 +181,8 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function caffeinated_init(){
 		// EE_Register_CPTs hooks
-		add_filter('FHEE__EE_Register_CPTs__construct__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
-		add_filter('FHEE__EE_Register_CPTs__construct__CPTs', array( $this, 'filter_cpts' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__get_CPTs__cpts', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
 		EE_Registry::instance()->load_file( EE_CAFF_PATH, 'EE_Caf_Messages', 'class', array(), FALSE );
 		// caffeinated_init__complete hook
