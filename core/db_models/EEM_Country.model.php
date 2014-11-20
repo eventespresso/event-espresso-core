@@ -55,7 +55,7 @@ class EEM_Country extends EEM_Base {
 				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Dropdown Select Lists','event_espresso'), false, true),
 				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso')),
 				'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
-				'RGN_ID'=>new EE_All_Caps_Text_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
+				'RGN_ID'=>new EE_Integer_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
 				'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name','event_espresso'), false,''),
 				'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
 				'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular','event_espresso'), false),

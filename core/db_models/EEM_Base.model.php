@@ -871,8 +871,8 @@ abstract class EEM_Base extends EE_Base{
 			$field_obj = $this->field_settings_for($field_name);
 			//if the value is NULL, we want to assign the value to that.
 			//wpdb->prepare doesn't really handle that properly
-			$value_sql = $value===NULL ? 'NULL' : $wpdb->prepare($field_obj->get_wpdb_data_type(),
-							$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$prepared_value = $this->_prepare_value_or_use_default( $field_obj, $fields_n_values );
+			$value_sql = $prepared_value===NULL ? 'NULL' : $wpdb->prepare( $field_obj->get_wpdb_data_type(), $prepared_value );
 			$cols_n_values[] = $field_obj->get_qualified_column()."=".$value_sql;
 		}
 		return implode(",",$cols_n_values);
@@ -1546,15 +1546,12 @@ abstract class EEM_Base extends EE_Base{
 			if($field_obj->is_auto_increment()){
 				continue;
 			}
-			if( ! isset( $fields_n_values[$field_name]) ||  $fields_n_values[$field_name] === null){
-				//they didn't include this field. so just use default
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
-			}else{
-				//they have specified the value for this field, so use it values_already_prepared_by_model_object
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj); ;
-
+			$prepared_value = $this->_prepare_value_or_use_default($field_obj, $fields_n_values);
+			//if the value we want to assign it to is NULL, just don't mention it for the insertion
+			if( $prepared_value !== NULL ){
+				$insertion_col_n_values[ $field_obj->get_table_column() ] = $prepared_value;
+				$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 			}
-			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 		}
 
 		if($table instanceof EE_Secondary_Table && $new_id){
@@ -1579,6 +1576,25 @@ abstract class EEM_Base extends EE_Base{
 			//a unique string indicating this model
 			return $this->get_index_primary_key_string($fields_n_values);
 		}
+	}
+
+	/**
+	 * Prepare the $field_obj 's value in $fields_n_values for use in the database.
+	 * If the field doesn't allow NULL, try to use its default. (If it doesn't allow NULL,
+	 * and there is no default, we pass it along. WPDB will take care of it)
+	 * @param EE_Model_Field_Base $field_obj
+	 * @param array $fields_n_values
+	 * @return mixed string|int|float depending on what the table column will be expecting
+	 */
+	protected function _prepare_value_or_use_default( $field_obj, $fields_n_values ){
+		//if this field doesn't allow nullable, don't allow it
+		if( ! $field_obj->is_nullable() && (
+				! isset( $fields_n_values[ $field_obj->get_name() ] ) ||
+				$fields_n_values[ $field_obj->get_name() ] === NULL ) ){
+			$fields_n_values[ $field_obj->get_name() ] = $field_obj->get_default_value();
+		}
+		$unprepared_value = isset( $fields_n_values[ $field_obj->get_name() ] ) ? $fields_n_values[ $field_obj->get_name() ] : NULL;
+		return $this->_prepare_value_for_use_in_db( $unprepared_value, $field_obj);
 	}
 
 	/**
