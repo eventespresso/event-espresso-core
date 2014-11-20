@@ -12,6 +12,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage
  * @author				Mike Nelson
  *
+ * @group payment_methods
+ * @group live
+ *
  */
 class EE_PMT_Aim_Test extends EE_UnitTestCase{
 	/**

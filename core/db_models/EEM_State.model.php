@@ -27,40 +27,13 @@ require_once ( EE_CLASSES . 'EE_State.class.php' );
 class EEM_State extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
   	// array of all states
 	private static $_all_states = FALSE;
   	// array of all active states
 	private static $_active_states = FALSE;
 
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_State object
-	 *
-	 *		@access public
-	 *		@return EEM_State instance
-	 */
-	public static function instance() {
-		// check if instance of EEM_State already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_State object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_State
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('State/Province','event_espresso');
 		$this->plural_item = __('States/Provinces','event_espresso');
 
@@ -81,7 +54,7 @@ class EEM_State extends EEM_Base {
 			'Country' => new EE_Belongs_To_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

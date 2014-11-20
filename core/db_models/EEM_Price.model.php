@@ -28,40 +28,8 @@ require_once ( EE_CLASSES . 'EE_Price.class.php' );
 class EEM_Price extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Price object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-
-
-	/**
-	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 * 		@access public
-	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return EEM_Price instance
-	 */
-	public static function instance( $timezone = NULL ) {
-
-		// check if instance of EEM_Price already exists
-		if (self::$_instance === NULL) {
-			// instantiate Price_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//we might have a timezone set, let set_timezone decide what to do with it
-		self::$_instance->set_timezone( $timezone );
-
-		// EEM_Price object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Price
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 
 
 	/**

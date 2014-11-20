@@ -27,26 +27,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EEM_Currency extends EEM_Base{
 		// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Currency instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Currency','event_espresso');
 		$this->plural_item = __('Currencies','event_espresso');
 		$this->_tables = array(
@@ -65,17 +48,9 @@ class EEM_Currency extends EEM_Base{
 			'Payment_Method'=>new EE_HABTM_Relation('Currency_Payment_Method'),
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
-	/**
-	 * Resets the country
-	 * @return EEM_Currency
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 	/**
 	 * Gets all thea ctive currencies, and orders them by their singular name, and then their code
 	 * (may be overridden)

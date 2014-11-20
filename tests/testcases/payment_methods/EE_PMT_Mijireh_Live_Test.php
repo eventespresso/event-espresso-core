@@ -11,6 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group payment_methods
  * @group live
  *
  */

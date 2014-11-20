@@ -59,22 +59,7 @@ class EEM_Change_Log extends EEM_Base{
 	 * @access private
 	 * @var EEM_Change_Log $_instance
 	 */
-	private static $_instance = NULL;
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Change_Log
-	 */
-	public static function instance(){
-		// check if instance of EEM_Change_Log already exists
-		if ( ! self::$_instance instanceof EEM_Change_Log ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
+	protected static $_instance = NULL;
 
 
 
@@ -83,7 +68,7 @@ class EEM_Change_Log extends EEM_Base{
 	 *	@access protected
 	 *	@return EEM_Change_Log
 	 */
-	protected function __construct(){
+	protected function __construct( $timezone = null ){
 		global $current_user;
 		$this->singular_item = __('Log','event_espresso');
 		$this->plural_item = __('Logs','event_espresso');
@@ -115,19 +100,9 @@ class EEM_Change_Log extends EEM_Base{
 			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
-
-
-	/**
-	 * Resets the Log
-	 * @return EEM_Change_Log
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 	/**
 	 *
 	 * @param string $log_type !see the acceptable values of LOG_type in EEM__Change_Log::__construct

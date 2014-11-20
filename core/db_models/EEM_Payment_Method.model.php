@@ -27,36 +27,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 *
 	 * @type EEM_Payment_Method
 	 */
-	private static $_instance = NULL;
-
-
-
-	/**
-	 *        This function is a singleton method used to instantiate the EEM_Payment_Method object
-	 *
-	 * @access public
-	 * @return EEM_Payment_Method
-	 */
-	public static function instance() {
-		// check if instance of EEM_Checkin already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Price_model
-			self::$_instance = new self();
-		}
-		// EEM_Checkin object
-		return self::$_instance;
-	}
-
-
-
-	/**
-	 * Resets the instance
-	 * @return EEM_Payment_Method
-	 */
-	public static function reset() {
-		self::$_instance = NULL;
-		return self::instance();
-	}
+	protected static $_instance = NULL;
 
 
 
@@ -66,7 +37,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @access   protected
 	 * @return EEM_Payment_Method
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singlular_item = __( 'Payment Method', 'event_espresso' );
 		$this->plural_item = __( 'Payment Methods', 'event_espresso' );
 		$this->_tables = array( 'Payment_Method' => new EE_Primary_Table( 'esp_payment_method', 'PMD_ID' ) );
@@ -89,7 +60,7 @@ class EEM_Payment_Method extends EEM_Base {
 			'Payment' => new EE_Has_Many_Relation(),
 			'Currency' => new EE_HABTM_Relation( 'Currency_Payment_Method' ),
 			'Transaction' => new EE_Has_Many_Relation(),);
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
