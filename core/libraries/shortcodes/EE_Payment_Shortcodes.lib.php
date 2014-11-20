@@ -40,7 +40,7 @@ class EE_Payment_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_PO_NUMBER]' => __('Purchase Order number (if present)', 'event_espresso'),
 			'[PAYMENT_EXTRA_ACCOUNTING]' => __('Any extra accounting messages. Typically added with payments made via the admin.', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The status of the payment.', 'event_espresso'),
-			'[PAYMENT_STATUS_WITH_ICONS]' => __('The status of the payment including icons representing the status.', 'event_espresso')
+			//'[PAYMENT_STATUS_WITH_ICONS]' => __('The status of the payment including icons representing the status.', 'event_espresso')
 			);
 	}
 
