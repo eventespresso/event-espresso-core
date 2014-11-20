@@ -1918,17 +1918,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
-
-
-
-
 	/**
-	 * 		generates HTML for the Register New Attendee Admin page
-	*		@access private
-	*		@return void
-	*/
+	 * 	generates HTML for the Register New Attendee Admin page
+	 *
+	 * @access private
+	 * @throws \EE_Error
+	 * @return void
+	 */
 	public function new_registration() {
 
 		if ( ! $this->_set_reg_event() ) {
@@ -2027,7 +2023,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		set_reg_event
 	*		@access private
-	*		@return void
+	*		@return boolean
 	*/
 	private function _set_reg_event() {
 		if ( is_object( $this->_reg_event )) {
@@ -2087,24 +2083,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				break;
 			case 'questions' :
 				//process registration
-				$TXN_ID = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
-				if ( !$TXN_ID ) {
+				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
+				if ( ! $transaction instanceof EE_Transaction ) {
 					$query_args = array(
 						'action' => 'new_registration',
 						'processing_registration' => true,
 						'event_id' => $this->_reg_event->ID()
 						);
+
 					if ( defined('DOING_AJAX' ) ) {
-						$this->new_registration(); //display registration form again because there are errors (maybe validation?)
+						//display registration form again because there are errors (maybe validation?)
+						$this->new_registration();
 					} else {
 						$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 					}
 				}
+				/** @type EE_Transaction_Payments $transaction_payments */
+				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+				// maybe update status, and make sure to save transaction if not done already
+				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
+					$transaction->save();
+				}
 				$query_args = array(
 					'action' => 'view_transaction',
-					'TXN_ID' => $TXN_ID,
+					'TXN_ID' => $transaction->ID(),
 					'page' => 'espresso_transactions'
-					);
+				);
 				EE_Error::add_success( __('Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso') );
 				$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 				break;
