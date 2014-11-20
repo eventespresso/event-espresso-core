@@ -61,6 +61,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		//set default wp post statuses if child has not already set.
 		if ( ! isset( $this->_fields[$primary_table_name]['status'] )) {
 			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
+			$this->_fields[$primary_table_name]['to_ping'] = new EE_DB_Only_Text_Field('to_ping', __( 'To Ping', 'event_espresso' ), FALSE, '');
+			$this->_fields[$primary_table_name]['pinged'] = new EE_DB_Only_Text_Field('pinged', __( 'Pinged', 'event_espresso' ), FALSE, '');
 		}
 		parent::__construct($timezone);
 

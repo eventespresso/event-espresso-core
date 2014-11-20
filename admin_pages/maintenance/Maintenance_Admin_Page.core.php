@@ -414,7 +414,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
 		}
-		EE_System::instance()->initialize_db_if_no_migrations_required();
+		EE_System::instance()->initialize_db_if_no_migrations_required( TRUE );
 		EE_Registry::instance()->CFG->reset( TRUE );
 		EE_System::instance()->redirect_to_about_ee();
 	}
