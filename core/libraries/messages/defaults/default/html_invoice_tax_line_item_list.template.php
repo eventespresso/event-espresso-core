@@ -7,7 +7,8 @@
 <tr class="item sub-item tax-total">
 	<td class="item_I">[LINE_ITEM_NAME]</td>
 	<td class="item_I">[LINE_ITEM_DESCRIPTION]</td>
-	<td class="item_c" colspan="2">[LINE_ITEM_AMOUNT]</td>
+	<td class="item_I"></td>
+	<td class="item_r">[LINE_ITEM_AMOUNT]</td>
 	<td class="item_r">[LINE_ITEM_TOTAL]</td>
 </tr>
 <tr><td colspan="5">
