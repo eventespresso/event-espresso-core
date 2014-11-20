@@ -249,7 +249,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 	/**
-	 * Generates html version of the message content and then sends it to the pdf generator.
+	 * Generates html verison of the message content and then sends it to the pdf generator.
 	 *
 	 *
 	 * @since 4.5.0
@@ -257,20 +257,15 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 * @return string.
 	 */
 	protected function _send_message() {
-		// remove all styles and scripts... we'll add stuff manually
-		$this->_deregister_wp_hooks();
-		global $wp_version;
-		$espresso_default_css = is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css' . DS . 'espresso_default.css' ) ? EVENT_ESPRESSO_UPLOAD_DIR : EE_GLOBAL_ASSETS_URL;
-
 		$this->_template_args = array(
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
-			'dashicons_css' => includes_url( 'css/dashicons.min.css?ver=' . $wp_version ),
-			'espresso_default_css' => $espresso_default_css . 'css' . DS . 'espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
 			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Pdf_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
+		$this->_deregister_wp_hooks();
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		$content = $this->_get_main_template();
 		$this->_do_pdf( $content );
 		exit(0);
@@ -309,6 +304,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$wrapper_template = $this->_tmp_pack->get_wrapper( 'html', 'main' );
+
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
