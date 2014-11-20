@@ -98,8 +98,18 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
 		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
 		$current_user = $this->_orig_current_user;
+		$this->_detect_accidental_txn_commit();
 	}
 
+	/**
+	 * Detects whether or not a MYSQL query was issued which caused an implicit commit
+	 * (or an explicit one). Basically, we can't do a commit mid-test because it messes
+	 * up the test's state (which means the database state at the time of the commit will
+	 * become the new starting state for all future tests, which will likely cause hard-to-find
+	 * bugs, and makes test results dependent on order of execution)
+	 * @global WPDB $wpdb
+	 * @throws EE_Error
+	 */
 	protected function _detect_accidental_txn_commit(){
 		//for some reason WP waits until the start of the next test to do this. but
 		//we prefer to do it now so that we can check for implicit commits
@@ -108,7 +118,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if( ! self::$accidental_txn_commit_noted && get_option( 'accidental_txn_commit_indicator', FALSE ) ){
 			global $wpdb;
 			self::$accidental_txn_commit_noted = TRUE;
-			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s", 'event_espresso' ),print_r( $wpdb->queries, TRUE) ) );
+			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso' ),print_r( $wpdb->queries, TRUE), $this->getName() ) );
 		}
 	}
 
