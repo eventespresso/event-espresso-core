@@ -208,7 +208,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}catch(EE_Error $e){
 
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
-			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//now, just so we can display the page correctly, make a error migration script stage object
 			//and also put the error on it. It only persists for the duration of this request
 			$most_recent_migration = new EE_Data_Migration_Script_Error();
 			$most_recent_migration->add_error($e->getMessage());
@@ -250,17 +250,20 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			}
 
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
-			$this->_template_args = array_merge($this->_template_args,array(
-			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
-			'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
-			'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
-			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
-			'script_names'=>$script_names,//array of names of scripts that have run
-			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
-			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
-			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
-			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
-		));
+			$this->_template_args = array_merge(
+				$this->_template_args,
+				array(
+					'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
+					'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
+					'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
+					'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
+					'script_names'=>$script_names,//array of names of scripts that have run
+					'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
+					'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
+					'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
+					'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
+				)
+			);
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		//localize script stuff

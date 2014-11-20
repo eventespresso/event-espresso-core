@@ -1,16 +1,26 @@
 <?php
-
-/*
+/**
  * For displaying the migration page. Does not allow the user to migrate until all known EE
- * addons are updated from PUE. Using AJAX to run the migration and updat ethe progress bar
- * @var $script_names array of strings
- * @var $show_backup_db_text boolean
- * @var $most_recent_migration EE_Data_Migration_Script_Base
- * @var $show_continue_current_migration_script boolean
- * @var $show_maintenance_switch boolean
- * @var $show_migration_progress boolean
- * @var $update_migration_script_page_link string
+ * addons are updated from PUE. Using AJAX to run the migration and update the progress bar
+ * @type array $script_names array of strings
+ * @type EE_Data_Migration_Script_Base $most_recent_migration
+ * @type boolean $show_backup_db_text
+ * @type boolean $show_continue_current_migration_script
+ * @type boolean $show_most_recent_migration
+ * @type boolean $show_maintenance_switch
+ * @type boolean $show_migration_progress
+ * @type string $update_migration_script_page_link
+ * @type string $current_db_state
+ * @type string $next_db_state
+ * @type string $ultimate_db_state
+ * @type string $reset_db_page_link
  */
+
+d( $current_db_state );
+d( $next_db_state );
+d( $ultimate_db_state );
+d( $most_recent_migration );
+
 
 if ( $show_backup_db_text ) { ?>
 <h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Migration Manager", "event_espresso");?></h1>
@@ -21,7 +31,18 @@ if ( $show_backup_db_text ) { ?>
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
  				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
- 				<?php echo apply_filters('FHEE__ee_migration_page__header',  sprintf(__("Event Espresso has detected event data from version %s that can be migrated (updated) to work with version %s.", "event_espresso"),$current_db_state,$next_db_state),$current_db_state,$next_db_state);?>
+ 				<?php
+				echo apply_filters(
+					'FHEE__ee_migration_page__header',
+					sprintf(
+						__("Event Espresso has detected event data from version %s that can be migrated (updated) to work with version %s.", "event_espresso"),
+						$current_db_state,
+						$next_db_state
+					),
+					$current_db_state,
+					$next_db_state
+				);
+				?>
  			</h3>
  			<p>
  			<?php echo apply_filters('FHEE__ee_migration_page__p_after_header',sprintf(__("Since you have already been using Event Espresso and have previous event and registration data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with %s.", "event_espresso"),$next_db_state),$next_db_state);?>
@@ -54,15 +75,20 @@ if ( $show_backup_db_text ) { ?>
 							<td><h3><?php _e('1', 'event_espresso');?></h3></td>
 							<td>
 								<?php
-								echo apply_filters('FHEE__ee_migration_page__option_1_main',sprintf(
-									__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.', "event_espresso"),
-									'<strong>',
-									'</strong>',
-									'<a id="migration-risks" class="" title="' . __('click for more details', "event_espresso") . '">',
-									'</a>',
+								echo apply_filters(
+									'FHEE__ee_migration_page__option_1_main',
+									sprintf(
+										__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.', "event_espresso"),
+										'<strong>',
+										'</strong>',
+										'<a id="migration-risks" class="" title="' . __('click for more details', "event_espresso") . '">',
+										'</a>',
+										$current_db_state,
+										$next_db_state
+									),
 									$current_db_state,
 									$next_db_state
-								),$current_db_state,$next_db_state);
+								);
 								?>
 								<a id="display-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="migration-details" ><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
 								<a  id="hide-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
@@ -127,7 +153,7 @@ if ( $show_backup_db_text ) { ?>
 		if ( $show_most_recent_migration ) {
 			if( $most_recent_migration && $most_recent_migration instanceof EE_Data_Migration_Script_Base ) {
 				if( $most_recent_migration->can_continue() ) {
-					//tell the user they shoudl continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
+					//tell the user they should continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
 					<h3 class="espresso-header">
 						<span class="dashicons dashicons-star-half ee-icon-size-22"></span>
 						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
@@ -169,7 +195,7 @@ if ( $show_backup_db_text ) { ?>
 		<?php if( $show_backup_db_text){?>
 		<p>
 			<a class="toggle-migration-monitor small-text" style="cursor: pointer;">
-				<span class="dashicons dashicons-arrow-left-alt2" style="top:0px;"></span><?php _e("return to previous screen", "event_espresso");?>
+				<span class="dashicons dashicons-arrow-left-alt2" style="top:0;"></span><?php _e("return to previous screen", "event_espresso");?>
 			</a>
 			<br/>
 
