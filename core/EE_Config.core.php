@@ -653,7 +653,7 @@ final class EE_Config {
 	 */
 	public function get_config_option( $config_option_name = '' ) {
 		// retrieve the wp-option for this config class.
-		return get_option( $config_option_name );
+		return maybe_unserialize( get_option( $config_option_name ));
 	}
 
 
