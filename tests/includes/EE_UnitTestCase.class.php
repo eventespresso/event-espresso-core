@@ -418,11 +418,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
 					$field instanceof EE_Boolean_Field ||
-					$field_name == 'PMD_type'){
+					$field_name == 'PMD_type' ||
+					$field->get_name() == 'CNT_cur_dec_mrk' ||
+					$field->get_name() == 'CNT_cur_thsnds' ||
+					$field->get_name() == 'CNT_tel_code'
+					){
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||
-					$field instanceof EE_Foreign_Key_Field_Base ){
+					$field instanceof EE_Foreign_Key_Field_Base ||
+					$field instanceof EE_Primary_Key_String_Field ||
+					$field->get_name() == 'STA_abbrev' ||
+					$field->get_name() == 'CNT_ISO3' ||
+					$field->get_name() == 'CNT_cur_code'){
 				$value = $auto_made_thing_seed;
 			}elseif( $field instanceof EE_Primary_Key_String_Field ){
 				$value = "$auto_made_thing_seed";
