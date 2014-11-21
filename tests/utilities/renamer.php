@@ -12,7 +12,7 @@
 ?>
 <h1>EE4 Addon Renamer</h1>
 <p>And general renamer in file and folder names, and file content.</p>
-<p>The original usage of this script is to place the script in the ROOT of a copy of  "new-addon" (found in event-espresso-core/tests/mocks/addons), and then access the script directly using your browser to rename the addon and its files etc.</p
+<p>The original usage of this script is to place the script in the ROOT of a copy of  "eea-new-addon" (found in event-espresso-core/tests/mocks/addons), and then access the script directly using your browser to rename the addon and its files etc.</p
 <h4>GET parameters accepted:</h4>
 <ul>
 	<li>replace: REQUIRED string, the new name of the addon, or the string to be replaced</li>
@@ -41,7 +41,7 @@ if( $delete_script_when_finished ){
 	unlink( __FILE__ );
 }
 if( $rename_parent_directory ){
-	replace_in_path( 'New_Addon', 'eea-'.$_GET[ 'replace' ], $folder_path );
+	replace_in_path( 'New_Addon', $replace, $folder_path );
 }
 echo "<br><hr>ok folders renamed!";
 if( $delete_script_when_finished ){
