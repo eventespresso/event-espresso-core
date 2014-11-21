@@ -159,7 +159,7 @@ final class EE_System {
 
 		//ask that MySQL be forgiving of our mistakes, at least until we have time to iron them out properly
 		add_filter( 'required_sql_modes', array( $this, 'remove_strict_sql_requirement' ) );
-		//and because wpdb has alreayd set mode, we want to reset it
+		//and because wpdb has already set mode, we want to reset it
 		global $wpdb;
 		$wpdb->set_sql_mode();
 
@@ -175,7 +175,7 @@ final class EE_System {
 	 * unwelcome information for users (because STRICT_ALL_TABLES will make queries fail
 	 * where they would otherwise have been passable, when there were SQL problems).
 	 *
-	 * @param type $modes
+	 * @param array $modes
 	 * @return array
 	 */
 	public function remove_strict_sql_requirement( $modes ){
