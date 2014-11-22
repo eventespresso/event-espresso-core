@@ -156,11 +156,31 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+
+		//ask that MySQL be forgiving of our mistakes, at least until we have time to iron them out properly
+		add_filter( 'required_sql_modes', array( $this, 'remove_strict_sql_requirement' ) );
+		//and because wpdb has already set mode, we want to reset it
+		global $wpdb;
+		$wpdb->set_sql_mode();
+
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
 	}
 
+	/**
+	 * Removes the STRICT_ALL_TABLES mode from SQL so EE continues to work ok.
+	 * This was added in WP CORE in 4.1 on commit https://core.trac.wordpress.org/changeset/30400
+	 * Which exposed a flurry of database problems- which is handy for debugging, but VERY
+	 * unwelcome information for users (because STRICT_ALL_TABLES will make queries fail
+	 * where they would otherwise have been passable, when there were SQL problems).
+	 *
+	 * @param array $modes
+	 * @return array
+	 */
+	public function remove_strict_sql_requirement( $modes ){
+		return array();
+	}
 
 
 	/**
