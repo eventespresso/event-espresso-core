@@ -412,7 +412,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Simply returns an array of EE_Price objects that are taxes.
-	 * @return EE_Taxes[]
+	 * @return EE_Price[]
 	 */
 	public function get_ticket_taxes_for_admin() {
 		return EE_Taxes::get_taxes_for_admin( $this );
