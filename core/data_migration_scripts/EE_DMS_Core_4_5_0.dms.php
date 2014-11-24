@@ -106,7 +106,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
 				  DTT_name VARCHAR(255) NOT NULL default '',
-				  DTT_description TEXT NOT NULL default '',
+				  DTT_description TEXT NOT NULL,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) DEFAULT -1,

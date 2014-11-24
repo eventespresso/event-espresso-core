@@ -284,7 +284,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
-					  TKT_description TEXT NOT NULL DEFAULT '',
+					  TKT_description TEXT NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',
