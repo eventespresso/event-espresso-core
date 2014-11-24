@@ -643,8 +643,8 @@ class EE_Line_Item extends EE_Base_Class {
 	/**
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
-	 * unit price * quantity or the total of all its children.
-	 * @param bool $include_taxable_items_only
+	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
+	 * @param bool $include_taxable_items_only. If FALSE (default), updates the line items and sub-totals. If TRUE, just finds the amount taxable in this line item's price or its children's.
 	 * @throws EE_Error
 	 * @return float
 	 */
@@ -661,6 +661,7 @@ class EE_Line_Item extends EE_Base_Class {
 				return 0;
 			} else {
 				$total = $this->unit_price() * $this->quantity();
+				$this->set_total( $total );
 			}
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
@@ -674,8 +675,12 @@ class EE_Line_Item extends EE_Base_Class {
 					}
 				}
 			}
+			//we only want to update sub-totals if we're including non-taxable items
+			//and grand totals shouldn't be updated when calculating pre-tax totals
+			if( $this->is_sub_total() && ! $include_taxable_items_only ){
+				$this->set_total( $total );
+			}
 		}
-		$this->set_total( $total );
 		return $total;
 	}
 
