@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php';
+		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 		parent::__construct($name, $data, $dataName);
 	}
 	/**
@@ -283,11 +283,11 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		$this->_pretend_addon_hook_time();
-		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
+		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/eea-new-addon/';
 		EE_Register_Addon::register($this->_addon_name, array(
 			'version'=>'1.0.0.dev.000',
 			'min_core_version'=>'4.0.0',
-			'main_file_path'=>$mock_addon_path . 'espresso-new-addon.php',
+			'main_file_path'=>$mock_addon_path . 'eea-new-addon.php',
 			'dms_paths'=>$mock_addon_path . 'core/data_migration_scripts'
 			));
 		//double-check that worked fine
