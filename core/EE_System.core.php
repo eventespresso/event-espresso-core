@@ -158,6 +158,7 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 
 		//ask that MySQL be forgiving of our mistakes, at least until we have time to iron them out properly
+		add_filter( 'incompatible_sql_modes', array( $this, 'make_scrict_sql_incompatible' ) );
 		add_filter( 'required_sql_modes', array( $this, 'remove_strict_sql_requirement' ) );
 		//and because wpdb has already set mode, we want to reset it
 		global $wpdb;
@@ -175,11 +176,24 @@ final class EE_System {
 	 * unwelcome information for users (because STRICT_ALL_TABLES will make queries fail
 	 * where they would otherwise have been passable, when there were SQL problems).
 	 *
-	 * @param array $modes
+	 * @param array $required_modes
 	 * @return array
 	 */
-	public function remove_strict_sql_requirement( $modes ){
+	public function remove_strict_sql_requirement( $required_modes ){
+		if(($key = array_search('STRICT_ALL_TABLES', $required_modes)) !== false) {
+			unset($required_modes[$key]);
+		}
 		return array();
+	}
+	/**
+	 * In order to successfully do what remove_strict_sql_requirement is trying to do,
+	 * we also need to make 'STIRCT_ALL_TABLES' an incompatible mode too
+	 * @param array $incompatible_modes
+	 * @return array
+	 */
+	public function make_scrict_sql_incompatible( $incompatible_modes ){
+		$incompatible_modes[] = 'STRICT_ALL_TABLES';
+		return $incompatible_modes;
 	}
 
 
