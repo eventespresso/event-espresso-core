@@ -15,7 +15,7 @@
 <p>The original usage of this script is to place the script in the ROOT of a copy of  "eea-new-addon" (found in event-espresso-core/tests/mocks/addons), and then access the script directly using your browser to rename the addon and its files etc.</p
 <h4>GET parameters accepted:</h4>
 <ul>
-	<li>replace: REQUIRED string, the new name of the addon, or the string to be replaced</li>
+	<li>replace: REQUIRED string, the new name of the addon, with the first letter of each word capitalized and words separated by underscores (eg, "Calendar" or "Monkey_Wrench"). The addon's directory name and main file will be intelligently derived from what you provide here (eg "eea-calendar" or "eea-monkey-wrench").</li>
 	<li>search: OPTIONAL string, default is "New_Addon"</li>
 	<li>rename_parent_directory: OPTIONAL int, 1 (default) or 0. Whether to rename the parent directory (the directory that contains this script) in the normal eea-addon-fashion.</li>
 	<li>folder_path: OPTIONAL string, by default uses the current folder, but if you want you can provide the FULL path to a specific folder you want to rename. Do not provide a trailing slash.</li>
