@@ -18,7 +18,7 @@
  * EES_New_Addon
  *
  * @package			Event Espresso
- * @subpackage		espresso-new-addon
+ * @subpackage		eea-new-addon
  * @author 				Brent Christensen
  * @ version		 	$VID:$
  *
@@ -101,4 +101,4 @@ class EES_New_Addon  extends EES_Shortcode {
 
 }
 // End of file EES_New_Addon.shortcode.php
-// Location: /wp-content/plugins/espresso-new-addon/EES_New_Addon.shortcode.php
+// Location: /wp-content/plugins/eea-new-addon/EES_New_Addon.shortcode.php

@@ -1221,6 +1221,19 @@ class EEH_Activation {
 			}
 		}
 
+		//there are some tables whose models were removed.
+		//they should be removed when removing all EE core's data
+		$tables_without_models = array(
+			'wp_esp_promotion',
+			'wp_esp_promotion_applied',
+			'wp_esp_promotion_object',
+			'wp_esp_promotion_rule',
+			'wp_esp_rule'
+		);
+		foreach( $tables_without_models as $table ){
+			EEH_Activation::delete_unused_db_table( $table );
+		}
+
 
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,

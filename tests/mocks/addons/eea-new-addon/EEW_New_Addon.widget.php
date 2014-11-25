@@ -18,7 +18,7 @@
  * Displays a List of New_Addon in the Sidebar
  *
  * @package			Event Espresso
- * @subpackage 	espresso-new-addon
+ * @subpackage 	eea-new-addon
  * @author				Brent Christensen
  * @since 				4.3
  *
@@ -158,4 +158,4 @@ class EEW_New_Addon extends WP_Widget {
 }
 
 // End of file EEW_New_Addon.widget.php
-// Location: /wp-content/plugins/espresso-new-addon/EEW_New_Addon.widget.php
+// Location: /wp-content/plugins/eea-new-addon/EEW_New_Addon.widget.php

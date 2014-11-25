@@ -17,7 +17,7 @@
  * Class  EED_New_Addon
  *
  * @package			Event Espresso
- * @subpackage		espresso-new-addon
+ * @subpackage		eea-new-addon
  * @author 				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -146,4 +146,4 @@ class EED_New_Addon extends EED_Module {
 
  }
 // End of file EED_New_Addon.module.php
-// Location: /wp-content/plugins/espresso-new-addon/EED_New_Addon.module.php
+// Location: /wp-content/plugins/eea-new-addon/EED_New_Addon.module.php
