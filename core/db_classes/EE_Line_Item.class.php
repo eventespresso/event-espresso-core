@@ -648,7 +648,8 @@ class EE_Line_Item extends EE_Base_Class {
 	/**
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
-	 * unit price * quantity or the total of all its children.
+	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
+	 * @param bool $include_taxable_items_only. If FALSE (default), updates the line items and sub-totals. If TRUE, just finds the amount taxable in this line item's price or its children's.
 	 * @throws EE_Error
 	 * @return float
 	 */
@@ -661,7 +662,12 @@ class EE_Line_Item extends EE_Base_Class {
 			throw new EE_Error( sprintf( __( "Calculating the pretax-total on subline items doesn't make sense right now. You were trying to calculate it on %s", "event_espresso" ), d( $this ) ) );
 		} elseif ( $this->is_line_item() ) {
 			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
-			$total = $this->unit_price() * $this->quantity();
+			if ( $include_taxable_items_only && !$this->is_taxable() ) { //if the item isn't taxable and we care, then don't include it
+				return 0;
+			} else {
+				$total = $this->unit_price() * $this->quantity();
+				$this->set_total( $total );
+			}
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
@@ -674,8 +680,12 @@ class EE_Line_Item extends EE_Base_Class {
 					}
 				}
 			}
+			//we only want to update sub-totals if we're including non-taxable items
+			//and grand totals shouldn't be updated when calculating pre-tax totals
+			if( $this->is_sub_total() && ! $include_taxable_items_only ){
+				$this->set_total( $total );
+			}
 		}
-		$this->set_total( $total );
 		return $total;
 	}
 
