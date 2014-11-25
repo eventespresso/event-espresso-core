@@ -506,8 +506,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Makes a complete transaction record with all associated data (ie, its line items,
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
-	 * Resets EE_Cart in the process though, FYI
-	 * @param array $options
+	 *
+	 * @param array $options {
+	 *	@type int $ticket_types the number of different ticket types in this transaction. Deafult 1
+	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
@@ -520,9 +522,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$ticket_types = 1;
 		}
+		if( isset( $options[ 'taxable_tickets' ] ) ){
+			$taxable_tickets = $options[ 'taxable_tickets' ];
+		}else{
+			$taxable_tickets = INF;
+		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
-			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
 			foreach($taxes as $taxes_at_priority){
