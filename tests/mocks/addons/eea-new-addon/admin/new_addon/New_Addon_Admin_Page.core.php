@@ -228,4 +228,4 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 
 }
 // End of file New_Addon_Admin_Page.core.php
-// Location: /wp-content/plugins/espresso-new-addon/admin/new_addon/New_Addon_Admin_Page.core.php
+// Location: /wp-content/plugins/eea-new-addon/admin/new_addon/New_Addon_Admin_Page.core.php

@@ -14,9 +14,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EEM_New_Addon_Thing extends EEM_Base{
 	// private instance of the EEM_New_Addon_Thing object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	public function __construct($timezone = NULL) {
+	protected function __construct($timezone = NULL) {
 		$this->_tables = array(
 			'New_Addon_Thing'=>new EE_Primary_Table('esp_new_addon_thing', 'NEW_ID')
 		);
@@ -37,13 +37,15 @@ class EEM_New_Addon_Thing extends EEM_Base{
 	 *		@access public
 	 *		@return EEM_New_Addon_Thing instance
 	 */
-	public static function instance(){
+	public static function instance( $timezone = NULL ){
 
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
 			// instantiate Espresso_model
-			self::$_instance = new self();
+			self::$_instance = new self( $timezone );
 		}
+		//we might have a timezone set, let set_timezone decide what to do with it
+		self::$_instance->set_timezone( $timezone );
 		// EEM_Attendee object
 		return self::$_instance;
 	}
