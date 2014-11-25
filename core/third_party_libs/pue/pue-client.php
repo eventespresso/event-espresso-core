@@ -538,6 +538,7 @@ class PluginUpdateEngineChecker {
 	function hook_into_wp_update_api() {
 		$this->set_api();
 		$this->maybeCheckForUpdates();
+		$ver_option_key = 'puvererr_' . basename( $this->pluginFile );
 
 
 		//possible update checks on an option page save that is setting the license key. Note we're not actually using the response yet for this triggered update check but we might at some later date.
@@ -565,7 +566,7 @@ class PluginUpdateEngineChecker {
 				add_action('admin_notices', array($this, 'display_json_error'), 10, 3);
 			} else if ( empty( $this->json_error ) ) {
 				//no errors so let's get rid of any error option if present BUT ONLY if there are no json_errors!
-				delete_site_option( 'pue_verification_error_' . $this->pluginFile );
+				delete_site_option( $ver_option_key );
 			}
 		}
 	}
@@ -806,13 +807,15 @@ class PluginUpdateEngineChecker {
 	function display_json_error($echo = TRUE, $ignore_version_check = FALSE, $alt_content = '') {
 		$pluginInfo = $this->json_error;
 		$update_dismissed = get_site_option($this->dismiss_upgrade);
+		$ver_option_key = 'puvererr_' . basename( $this->pluginFile );
 		$msg = '';
 
 		$is_dismissed = !empty($update_dismissed) && in_array($pluginInfo->version, $update_dismissed) ? true : false;
 
 		//add in pue_verification_error option for when the api_key is blank
-		if ( empty( $this->api_secret_key ) )
-			update_site_option( 'pue_verification_error_' . $this->pluginFile, __('No API key is present', $this->lang_domain) );
+		if ( empty( $this->api_secret_key ) ) {
+			update_site_option( $ver_option_key, __('No API key is present', $this->lang_domain) );
+		}
 
 		if ( $pluginInfo->api_invalid ) {
 			$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
@@ -820,7 +823,7 @@ class PluginUpdateEngineChecker {
 		}
 
 		//let's add an option for plugin developers to display some sort of verification message on their options page.
-		update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+		update_site_option( $ver_option_key, $msg );
 
 		if ($is_dismissed)
 			return;
@@ -862,6 +865,7 @@ class PluginUpdateEngineChecker {
 	 */
 	public function show_premium_upgrade() {
 		global $current_screen;
+		$ver_option_key = 'puvererr_' . basename( $this->pluginFile );
 		if ( empty( $current_screen ) )
 			set_current_screen();
 
@@ -880,11 +884,11 @@ class PluginUpdateEngineChecker {
 				$msg = str_replace('%version%', $this->json_error->version, $msg);
 				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
 				//let's add an option for plugin developers to display some sort of verification message on their options page.
-				update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+				update_site_option( $ver_option_key, $msg );
 
 		} else {
 			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->lang_domain), $this->pluginName );
-			delete_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+			delete_site_option( $ver_option_key );
 		}
 
 		//todo add in upgrade button in here.
