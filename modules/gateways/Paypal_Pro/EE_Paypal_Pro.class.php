@@ -774,7 +774,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 			<?php
 			// check for sandbox mode
-			if ($this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions']) :
+			if ($this->_payment_settings['use_sandbox']) :
 				?>
 				<div class="sandbox-panel">
 					<h2 class="section-title"><?php _e('PayPal Sandbox Mode', 'event_espresso'); ?></h2>
