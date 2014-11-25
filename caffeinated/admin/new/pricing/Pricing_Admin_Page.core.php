@@ -24,10 +24,12 @@
 class Pricing_Admin_Page extends EE_Admin_Page {
 
 	/**
-	 * 	constructor
-	 * 	@Constructor
-	 * 	@access public
-	 * 	@return void
+	 *    constructor
+	 *
+	 * @Constructor
+	 * @access public
+	 * @param bool $routing
+	 * @return Pricing_Admin_Page
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
