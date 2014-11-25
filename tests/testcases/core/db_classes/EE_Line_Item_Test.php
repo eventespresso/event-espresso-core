@@ -75,7 +75,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$old_total = $total_line_item->total();
 		//when we calculate the pre-tax, including only taxable items (ie, we're wanting
 		//to know how much to apply taxes to) we don't change the grand or ticket totals
-		$pretax_total = $total_line_item->recalculate_pre_tax_total( TRUE );
+		$pretax_total = $total_line_item->taxable_total();
 		//because there is only one taxable line item, the taxable total should equals its total
 		$this->assertEquals( $taxable_line_item->total(), $pretax_total );
 		//check we didn't assign the taxable total to be the grand total
