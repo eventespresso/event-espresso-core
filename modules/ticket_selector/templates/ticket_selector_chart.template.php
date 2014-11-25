@@ -311,7 +311,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								if ( ! empty( $datetimes )) { ?>
 								<section class="tckt-slctr-tkt-datetimes-sctn">
 									<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_heading', __( 'Event Access', 'event_espresso' )); ?></h5>
-									<span class="drk-grey-text small-text no-bold"> - <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_message', __( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' )); ?></span>
+									<span class="drk-grey-text small-text no-bold"> - <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_message', __( 'This ticket allows access to the following event dates and times.', 'event_espresso' )); ?></span>
 									<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 										<table class="tckt-slctr-tkt-details-tbl">
 											<thead>
