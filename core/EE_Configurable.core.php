@@ -127,17 +127,20 @@ abstract class EE_Configurable extends EE_Base {
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
 	protected function _update_config( EE_Config_Base $config_obj = NULL ) {
-		return EE_Config::instance()->update_config( $this->config_section(), $this->config_name(), $config_obj );
+		$this->_config = EE_Config::instance()->update_config( $this->config_section(), $this->config_name(), $config_obj );
+		return $this->_config;
 	}
 
 
 
 	/**
 	 * gets the class's config object
+	 *
+	 * @param bool $flush
 	 * @return EE_Config_Base
 	 */
-	public function config() {
-		if ( empty( $this->_config )) {
+	public function config( $flush = FALSE ) {
+		if ( empty( $this->_config ) || $flush ) {
 			$this->_config = EE_Config::instance()->get_config( $this->config_section(), $this->config_name(), $this->config_class() );
 		}
 		return $this->_config;
