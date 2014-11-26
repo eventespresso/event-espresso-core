@@ -270,6 +270,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 		$this->_deregister_wp_hooks();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		$content = $this->_get_main_template();
+//		die( $content );
 		$this->_do_pdf( $content );
 		exit(0);
 	}
