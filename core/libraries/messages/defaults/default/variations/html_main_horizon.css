@@ -29,18 +29,18 @@ Created by Roan Lavery
 
 /*=========================== LAYOUT =========================*/
 
-#invoice{padding:0 1cm 1cm 1cm;background:#fff url(../images/horizon-greenbar.gif) left top repeat-x}
-#invoice-header{ padding-top:1cm; margin-top:10px; }
+#invoice{ background:#fff url(../images/horizon-greenbar.gif) left top repeat-x; }
+#invoice-header{  }
 #company-address { padding:40px 20px 20px; }
 #invoice-info { padding:20px; margin:20px; background-color:#F1FAE3; border:1px solid #BECEA5; z-index:10 }
 #invoice-info th{text-align:right}
 
-#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+/*#bill-to-ship-to, .invoice-amount { margin:20px 0; }*/
 
-.invoice-amount {margin: 2em 0 2em 0; clear: both;}
+/*.invoice-amount {margin: 2em 0 2em 0; clear: both;}*/
 
-#payment-details{margin-bottom:5mm   }
-#invoice-other{margin-bottom:5mm   }
-#invoice-other h2, #payment-details h2 {margin-bottom: 1mm;}
+/*#payment-details{margin-bottom:5mm   }*/
+/*#invoice-other{margin-bottom:5mm   }*/
+/*#invoice-other h2, #payment-details h2 {margin-bottom: 1mm;}*/
 
 #comments .wrapper{ padding:9px 0.4cm 9px 0.4cm; margin:0; background-color:#F2F2F2; border:1px solid #ccc; vertical-align:bottom; line-height:1.2;zoom:1}
