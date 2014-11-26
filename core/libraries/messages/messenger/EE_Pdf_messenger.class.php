@@ -44,7 +44,9 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 
-
+	/**
+	 * @return EE_Pdf_messenger
+	 */
 	public function __construct() {
 		//set properties
 		$this->name = 'pdf';
@@ -249,7 +251,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 	/**
-	 * Generates html verison of the message content and then sends it to the pdf generator.
+	 * Generates html version of the message content and then sends it to the pdf generator.
 	 *
 	 *
 	 * @since 4.5.0
@@ -262,6 +264,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
+			'extra_css' => EE_LIBRARIES_URL . 'messages/defaults/default/variations/pdf_base_default.css',
 			'main_body' => apply_filters( 'FHEE__EE_Pdf_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();
@@ -294,12 +297,12 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 
-
 	/**
 	 * Overwrite parent _get_main_template for pdf purposes.
 	 *
 	 * @since  4.5.0
 	 *
+	 * @param bool $preview
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
@@ -318,7 +321,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 *
 	 * @param string $content This is the generated html content being converted into a pdf.
 	 *
-	 * @return pdf
+	 * @return void
 	 */
 	protected function _do_pdf( $content = '' ) {
 		$invoice_name = html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8");
@@ -339,6 +342,9 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 
+	/**
+	 * @return string
+	 */
 	protected function _preview() { return $this->_send_message(); }
 
 
