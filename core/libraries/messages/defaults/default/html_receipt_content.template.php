@@ -5,7 +5,6 @@
 ?>
 [DISPLAY_PDF_BUTTON]
 <div id="invoice">
-
 	<table id="invoice-header" class="not-really-a-table">
 		<tr>
 			<td id="logo-dv">
@@ -15,7 +14,6 @@
 					<div class="adr">
 						[INVOICE_PAYEE_ADDRESS]
 					</div>
-					<!-- adr -->
 					<div class="email">[INVOICE_PAYEE_EMAIL]</div>
 					<div class="vat">[INVOICE_PAYEE_TAX_NUMBER_*]</div>
 				</div>
@@ -32,12 +30,10 @@
 	</table>
 	<div class="events">
 		[EVENT_LIST]
-	</div> <!-- end .events -->
-
+	</div>
 	<div class="taxes">
 		<h3 class="section-title"><?php _e("Taxes",'event_espresso')?></h3>
 		<table class="invoice-amount">
-
 			<thead>
 				<tr class="header_row">
 					<th class="left ticket_th"><?php _e("Tax Name", "event_espresso");?></th>
@@ -49,13 +45,11 @@
 			<tbody>
 				<tr><td colspan="4">[TAX_LINE_ITEM_LIST]</td></tr>
 			</tbody>
-		</table> <!-- end .invoice-amount table -->
-	</div> <!-- end .taxes -->
-
+		</table>
+	</div>
 	<div class="grand-total-dv">
 		<h2 class="grand-total"><?php printf( __("Grand Total: %s", "event_espresso"),'[TOTAL_COST]' );?></h2>
-	</div> <!-- end .grand-total-dv -->
-
+	</div>
 	<div class="payment-dv">
 		<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
 		<table class="invoice-amount">
@@ -84,10 +78,8 @@
 					<td class="total">[TOTAL_OWING]</td>
 				</tr>
 			</tfoot>
-		</table> <!-- end .invoice-amount table -->
-	</div> <!-- end. payment-dv -->
-
-	<!-- additional info -->
+		</table>
+	</div>
 	<div class="additional-info-dv">
 			<h3 class="section-title"><?php _e("Additional Information:", "event_espresso");?></h3>
 			<div class="additional-info">
@@ -102,10 +94,8 @@
 						<td class="venue-details-part venue-image-dv">[GOOGLE_MAP_IMAGE]</td>
 					</tr>
 				</table>
-				<div class='aln-cntr'><?php
-					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
-				?></div>
+				<div class='aln-cntr'><?php printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>"); ?></div>
 			</div>
 	</div>
-</div> <!-- end #invoice -->
+</div>
 [DISPLAY_PDF_BUTTON]
