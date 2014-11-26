@@ -101,9 +101,9 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	private function _get_button( EE_Messages_Addressee $recipient, $type ) {
 		$download_text = $type == 'pdf' ? __('Download PDF', 'event_espresso') : __('Show HTML', 'event_espresso' );
 		$content = '
-<div class="print_button_div">
+<div class="print_button_div noPrint">
 	<form method="post" action="' . $this->_get_url( $recipient, $type ) . '" >
-		<input class="print_button noPrint" type="submit" value="' . $download_text . '" />
+		<input class="print_button" type="submit" value="' . $download_text . '" />
 	</form>
 	<div class="clear"></div>
 </div>
