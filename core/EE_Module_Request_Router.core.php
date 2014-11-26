@@ -214,7 +214,12 @@ final class EE_Module_Request_Router {
 		$module = EE_Module_Request_Router::module_factory( $module_name );
 		if ( $module instanceof EED_Module ) {
 			// and call whatever action the route was for
-			call_user_func( array( $module, $method ), $this->WP_Query );
+			try {
+				call_user_func( array( $module, $method ), $this->WP_Query );
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+				return NULL;
+			}
 		}
 		return $module;
 	}
