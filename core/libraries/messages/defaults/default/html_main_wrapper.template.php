@@ -22,18 +22,17 @@
 <?php wp_head(); ?>
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_css; ?>" media="screen" />
-<?php if ( isset( $extra_css )) : ?>
-<!-- Additional Style Sheet -->
-<link rel="stylesheet" type="text/css" href="<?php echo $extra_css; ?>" />
-<?php endif; ?>
 <!-- Print Style Sheet -->
 <link rel="stylesheet" type="text/css" href="<?php echo $print_css; ?>" media="print" />
 <!-- Primary Style Sheet -->
 <link rel="stylesheet" type="text/css" href="<?php echo $main_css; ?>" />
 <!-- Make sure the buttons don't print -->
+<?php if ( isset( $extra_css )) : ?>
+<!-- Additional Style Sheet -->
+<link rel="stylesheet" type="text/css" href="<?php echo $extra_css; ?>" />
+<?php endif; ?>
 <style type="text/css">
 @media print{ .noPrint{ display:none !important;height:0!important; width:0!important; margin:0!important; padding:0!important; }}
-@page { width:100%!important; margin:0; padding: 0;}
 </style>
 </head>
 <body>
