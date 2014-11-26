@@ -5,7 +5,7 @@
 ?>
 <li class="event-ticket">
 	<div class="ticket-details">
-		<table id="invoice-amount">
+		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
 					<th class="name-column"><?php _e("Ticket", "event_espresso");?></th>
