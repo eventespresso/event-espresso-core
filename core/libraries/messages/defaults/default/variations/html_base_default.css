@@ -3,9 +3,6 @@
 body { margin: 0!important;padding: 0!important;font:82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
 ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
-#invoice { width:740px; height:auto; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
-#invoice + #invoice { margin-top:5em;}
-
 .print_button_div{
 	margin: 0 12pt;
 	width:660px;
@@ -19,12 +16,14 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 	margin:0 0 0 1em;
 }
 
-table { border-collapse:collapse!important; width:100%!important; }
+#invoice { width:740px; height:auto; padding:1cm; margin:0 auto; overflow:hidden; background-color:#fff; }
+#invoice-header tr { background-color: #ffffff !important; }
+
+#logo-dv img { max-width:200px!important; border: none; }
+
+table { border-collapse:collapse!important; width:100%; }
 td { vertical-align:top!important; }
 .not-really-a-table  { border:none!important; }
-
-#invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
-#logo-dv img { max-width:200px!important; border: none; }
 
 #comments{padding-top:1cm; line-height:1.2em; }
 
@@ -38,16 +37,15 @@ td { vertical-align:top!important; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
-#invoice>div{
-	margin-bottom:5em;
-	/*border:1px dotted gray;*/
+#invoice>div,
+#invoice>table {
+	margin-bottom:4em;
 }
-.tickets-per-event>li{
-	margin-bottom:3em;
-	/*margin-left:1em;
-	margin-right:1em;*/
-	/*border:1px dotted gray;*/
+#invoice>.taxes,
+.tickets-per-event>li {
+	margin-bottom:2em;
 }
+
 th.number-column{
 	width:5em;
 }
@@ -68,10 +66,7 @@ td{
 .no-bottom-margin{
 	margin-bottom:0px;
 }
-.ticket-registrations-list>li{
-	margin-top:1em;
-	margin-bottom:1em;
-}
+
 /* classes from registration and transaction stati */
 .RNA,.RCN,.RPP, .TPN, .TIN{
 	color:red;
@@ -81,8 +76,26 @@ td{
 }
 
 .reg-details-for-ticket{
-	/*margin-left:4em;*//*Seth*/
+	margin:0 0 4em 2em;
 }
+.sub-section-title {
+	margin:2em 0 1em;
+}
+.section-title .icon,
+.sub-section-title .icon {
+	margin:-.35em 1em 0 0;
+}
+.section-title,
+.section-title .icon,
+.sub-section-title,
+.sub-section-title .icon {
+	vertical-align: middle;
+}
+
+.ticket-time-and-place-details > div {
+	vertical-align: top;
+}
+
 .grand-total{
 	text-align:right;
 }
