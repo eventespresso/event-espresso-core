@@ -65,15 +65,15 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 
 		$this->_ticket = $this->_data instanceof EE_Ticket ? $this->_data : null;
 
+		$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
+		$aee = ! $aee instanceof EE_Messages_Addressee && $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
+
 
 		//possible EE_Line_Item may be incoming data
-		$this->_ticket = empty( $this->_ticket ) && $this->_data instanceof EE_Line_Item && $this->_extra_data['data'] instanceof EE_Messages_Addressee && ! empty( $this->_extra_data['data']->line_items_with_children[$this->_data->ID()]['EE_Ticket'] ) && $this->_extra_data['data']->line_items_with_children[$this->_data->ID()]['EE_Ticket'] instanceof EE_Ticket ? $this->_extra_data['data']->line_items_with_children[$this->_data->ID()]['EE_Ticket'] : $this->_ticket;
+		$this->_ticket = empty( $this->_ticket ) && $this->_data instanceof EE_Line_Item && $aee instanceof EE_Messages_Addressee && ! empty( $aee->line_items_with_children[$this->_data->ID()]['EE_Ticket'] ) && $aee->line_items_with_children[$this->_data->ID()]['EE_Ticket'] instanceof EE_Ticket ? $aee->line_items_with_children[$this->_data->ID()]['EE_Ticket'] : $this->_ticket;
 
 		//if still no ticket, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the ticket from the reg_obj instead.
 		if ( empty( $this->_ticket ) ) {
-			$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
-			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
-
 			$this->_ticket = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->ticket() : NULL;
 		}
 
@@ -101,7 +101,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[TKT_QTY_PURCHASED]' :
-				return $this->_extra_data['data']->tickets[$this->_ticket->ID()]['count'];
+				return $aee instanceof EE_Messages_Addressee ? $aee->tickets[$this->_ticket->ID()]['count'] : '';
 				break;
 		}
 
