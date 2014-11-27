@@ -50,7 +50,12 @@ class EEH_Debug_Tools{
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
-		if( ! class_exists('Kint')){
+		if ( ! class_exists('Kint')){
+			// despite EE4 having a check for an existing copy of the Kint debugging class,
+			// if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
+			// then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
+			// so we've moved it to our test folder so that it is not included with production releases
+			// plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
 			require_once( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' );
 		}
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
