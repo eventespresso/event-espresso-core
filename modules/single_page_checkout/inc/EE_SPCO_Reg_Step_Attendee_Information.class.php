@@ -363,8 +363,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
-						'html_id' 					=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
-						'html_class' 			=> 'spco-copy-attendee-chk ee-do-not-validate'
+						'html_id' 								=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
+						'html_class' 						=> 'spco-copy-attendee-chk ee-do-not-validate',
+						'display_html_label_text' 	=> FALSE
 					)
 				);
 			}
