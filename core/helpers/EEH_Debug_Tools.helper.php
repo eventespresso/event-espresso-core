@@ -1,8 +1,14 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-
-
-
+/**
+ * Class EEH_Debug_Tools
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Brent Christensen
+ *
+ */
 class EEH_Debug_Tools{
+
 	/**
 	 * 	instance of the EEH_Autoloader object
 	 *	@var 	$_instance
@@ -18,6 +24,9 @@ class EEH_Debug_Tools{
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
 	private $_times = array();
+
+
+
 	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
@@ -25,21 +34,24 @@ class EEH_Debug_Tools{
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EEH_Debug_Tools )) {
+		if ( ! self::$_instance instanceof EEH_Debug_Tools ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
+
+
+
 	/**
 	 * 	class constructor
 	 *
 	 *  	@access 	private
-	 *  	@return 	void
+	 *  	@return 	EEH_Debug_Tools
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
 		if( ! class_exists('Kint')){
-			require_once( EE_THIRD_PARTY . 'kint' . DS . 'Kint.class.php' );
+			require_once( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' );
 		}
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
@@ -55,7 +67,7 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public function espresso_session_footer_dump() {
-		if ( function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
+		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
 //			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
@@ -67,11 +79,12 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 	List All Hooked Functions
-	 * 	to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
-	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
+	 *    List All Hooked Functions
+	 *    to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+	 *    http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
 	 *
-	 * 	@return void
+	 * @param bool $tag
+	 * @return void
 	 */
 	public function espresso_list_hooked_functions( $tag=FALSE ){
 		global $wp_filter;
@@ -88,12 +101,14 @@ class EEH_Debug_Tools{
 			$hook=$wp_filter;
 			ksort( $hook );
 		}
-		foreach( $hook as $tag => $priority ) {
+		foreach( $hook as $tag => $priorities ) {
 			echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
-			ksort( $priority );
-			foreach( $priority as $priority => $function ){
+			ksort( $priorities );
+			foreach( $priorities as $priority => $function ){
 				echo $priority;
-				foreach( $function as $name => $properties ) echo "\t$name<br />";
+				foreach( $function as $name => $properties ) {
+					echo "\t$name<br />";
+				}
 			}
 		}
 		return;
@@ -101,7 +116,7 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 *
+	 * 	start_timer
 	 */
 	public function start_timer(){
 		$mtime = microtime();
@@ -110,6 +125,12 @@ class EEH_Debug_Tools{
 		$this->_starttime = $mtime;
 	}
 
+
+
+	/**
+	 * stop_timer
+	 * @param $string_to_display
+	 */
 	public function stop_timer($string_to_display){
 		$mtime = microtime();
 		$mtime = explode(" ",$mtime);
@@ -118,9 +139,18 @@ class EEH_Debug_Tools{
 		$totaltime = ($endtime - $this->_starttime);
 		$this->_times[] = $string_to_display.": $totaltime<br>";
 	 }
-	 public function show_times($output_now=true){
+
+
+
+	/**
+	 * show_times
+	 * @param bool $output_now
+	 * @return string
+	 */
+	public function show_times($output_now=true){
 		 if($output_now){
 			 echo implode("<br>",$this->_times);
+			 return '';
 		 }else{
 			 return implode("<br>",$this->_times);
 		 }
@@ -134,7 +164,7 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public function ee_plugin_activation_errors() {
-		if ( WP_DEBUG === TRUE ) {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			$errors = ob_get_contents();
 			if ( include_once( EE_HELPERS . 'EEH_File.helper.php' )) {
 				try {
@@ -161,7 +191,7 @@ class EEH_Debug_Tools{
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
 	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @return trigger_error()
+	 * @return void - trigger_error()
 	 */
 	public function doing_it_wrong( $function, $message, $version ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
@@ -179,7 +209,7 @@ class EEH_Debug_Tools{
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp_query' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp_query' ) ) {
 	function dump_wp_query(){
 		global $wp_query;
 		d($wp_query);
@@ -190,7 +220,7 @@ if ( !function_exists( 'dump_wp_query' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp' ) ) {
 	function dump_wp(){
 		global $wp;
 		d($wp);
@@ -201,21 +231,21 @@ if ( !function_exists( 'dump_wp' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_post' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
 	function dump_post(){
 		global $post;
 		d($post);
 	}
 }
-
-
-
-
-
 /**
- * 	@ print_r an array
- * 	@ access public
- * 	@ return void
+ *    @ print_r an array
+ *    @ access public
+ *    @ return void
+ *
+ * @param mixed $var
+ * @param bool   $var_name
+ * @param string $height
+ * @param bool   $die
  */
 function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 
