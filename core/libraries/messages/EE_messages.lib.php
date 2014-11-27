@@ -92,6 +92,33 @@ class EE_messages {
 		}
 	}
 
+
+
+	/**
+	 * Ensures that tthe specified message type for the given messenger is currently active, if not activates it.
+	 * This ALSO ensures that the given messenger is active as well!.
+	 *
+	 * @param string $message_type message type name
+	 *
+	 * @return boolean true if it got activated (or was active) and false if not.
+	 */
+	public function ensure_message_type_is_active( $message_type, $messenger ) {
+		//first validate that the incoming messenger allows this message type to be activated.
+		$messengers = $this->get_installed_messengers();
+		if ( ! isset( $messengers[$messenger] ) ) {
+			throw new EE_Error( sprintf( __('The messenger sent to %s is not installed', 'event_espresso'), __METHOD__ ) );
+		}
+
+		$msgr = $messengers[$messenger];
+		$valid_message_types = $msgr->get_valid_message_types();
+		if ( ! in_array( $message_type, $valid_message_types ) ) {
+			throw new EE_Error( sprint_f( __('The message type ($1%s) sent to $2%s is not valid for the $3%s messenger.  Doublecheck the spelling and verify that message type has been registered as a valid type with the messenger.', 'event_espresso' ), $message_type, __METHOD__, $messenger ) );
+		}
+
+		//all is good so let's just get it active
+		return $this->activate_messenger( $messenger, array( $message_type ) );
+	}
+
 	/**
 	 * Activates the specified messenger
 	 * @param string $messenger_name
