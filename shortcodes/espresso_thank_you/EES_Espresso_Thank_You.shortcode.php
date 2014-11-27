@@ -271,16 +271,18 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
+		$countries_that_require_invoice = array( 'UK' );
+		$show_try_pay_again_link_default =  in_array( EE_Registry::instance()->CFG->organization->CNT_ISO, $countries_that_require_invoice ) ? TRUE : FALSE;
 		// txn status ?
 		if( $this->_current_txn->is_completed() ){
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		} else if ( $this->_current_txn->is_incomplete() && ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() )){
 			$this->_show_try_pay_again_link = TRUE;
 		} else if ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() ) {
 			// its pending
-			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : $show_try_pay_again_link_default;
 		} else {
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
 		$this->_is_offline_payment_method = in_array( $this->_current_txn->selected_gateway( TRUE ), array( 'Bank', 'Check', 'Invoice' ));
 		if ( $this->_current_txn->last_payment() instanceof EE_Payment && $this->_current_txn->last_payment()->gateway() != NULL ) {
