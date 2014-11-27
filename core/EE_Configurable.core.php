@@ -138,7 +138,7 @@ abstract class EE_Configurable extends EE_Base {
 	 *
 	 * @return EE_Config_Base
 	 */
-	public function config( ) {
+	public function config() {
 		if ( empty( $this->_config )) {
 			$this->_config = EE_Config::instance()->get_config( $this->config_section(), $this->config_name(), $this->config_class() );
 		}
