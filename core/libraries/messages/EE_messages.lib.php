@@ -180,7 +180,7 @@ class EE_messages {
 
 			//make sure that the cached active_messengers is set on this object
 			$this->_active_messengers[$messenger->name] = $messenger;
-			$this->_active_message_types[$messenger->name] = $active_messengers[$messenger->name]['settings'][$messenger->name . '-message_types'];
+			$this->_active_message_types[$messenger->name] = $active_messengers[$messenger->name];
 
 			//might need to generate new templates
 			if ( ! empty( $mts_to_activate ) ) {
