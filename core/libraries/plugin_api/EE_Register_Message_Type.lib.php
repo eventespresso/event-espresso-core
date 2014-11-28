@@ -59,6 +59,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *        @type array $messengers_to_validate_with An array of messengers that this message type is valid for.  Each
      *                                                                          value in the array should match the name property of an
      *                                                                          EE_messenger. Optional.
+     *        @type bool $force_activation                   This simply is a way of indicating that this message type MUST be *
+     *                                                                          activated when the plugin is activated/reactivated (default false)
      *
      * }
      * @return void
@@ -88,7 +90,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 		'mtfilename' => (string) $setup_args['mtfilename'],
 		'autoloadpaths' => (array) $setup_args['autoloadpaths'],
 		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
-                        'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array()
+                        'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array(),
+                        'force_activation' => ! empty( $setup_args['force_activation'] ) ? (bool) $setup_args['force_activation'] : array()
 	);
 
 	//add filters
@@ -110,6 +113,16 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
     	//only set defaults if we're not in EE_Maintenance mode
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
+
+            //for any message types with force activation, let's ensure they are activated
+            foreach ( self::$_ee_message_type_registry as $mtname => $settings ) {
+                if ( $settings['force_activation'] ) {
+                    $MSG = new EE_Messages();
+                    foreach ( $settings['messengers_to_activate_with'] as $messenger ) {
+                        $MSG->ensure_message_type_is_active( $mtname, $messenger );
+                    }
+                }
+            }
     }
 
 
