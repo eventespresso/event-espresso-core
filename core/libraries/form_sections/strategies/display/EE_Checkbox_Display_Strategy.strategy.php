@@ -25,6 +25,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 		//d( $this->_input );
 		$html = $this->display_label();
 		$multi = count( $this->_input->options() ) > 1 ? TRUE : FALSE;
+		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		foreach( $this->_input->options() as $value => $display_text ){
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $value ) : $this->_input->html_id();
