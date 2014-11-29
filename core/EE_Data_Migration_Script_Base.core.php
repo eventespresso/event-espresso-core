@@ -578,6 +578,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function set_migrating( $migrating = TRUE ){
 		$this->_migrating = $migrating;
 	}
+
+	/**
+	 * Marks that we think this migration class can continue to migrate
+	 */
+	public function reattempt(){
+		parent::reattempt();
+		//also, we want to reattempt any stages that were marked as borked
+		foreach( $this->stages() as $stage ) {
+			if( $stage->is_borked() ) {
+				$stage->reattempt();
+			}
+		}
+	}
 }
 
 
@@ -793,10 +806,23 @@ abstract class EE_Data_Migration_Class_Base{
 	/**
 	 * Adds an error to the array of errors on this class.
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
+	 * @param boolean $force force the error to be added (because otherwise we have a limit). If forcing and errors are already at their limit, we will purposefully forget the first half
 	 */
-	public function add_error($error){
-		if(count($this->_errors) >= 50){
-			$this->_errors[50] = 'More, but limit reached...';
+	public function add_error($error, $force = FALSE ){
+		if( ! defined( 'EE_DMS_ERROR_LIMIT' ) ){
+			$limit = 50;
+		}else{
+			$limit = EE_DMS_ERROR_LIMIT;
+		}
+		if(count($this->_errors) >= $limit ){
+			if( $force ){
+				//get rid of the first half of the errors and any above the limit
+				$this->_errors = array_slice( $this->_errors, $limit / 2, $limit / 2 );
+				$this->_errors[] = "Limit reached; removed first half of errors to save space";
+				$this->_errors[] = $error;
+			}else{
+				$this->_errors[ $limit ] = 'More, but limit reached...';
+			}
 		}else{
 			$this->_errors[] = $error;
 		}
@@ -834,6 +860,14 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	public function set_completed(){
 		$this->_status = EE_Data_Migration_Manager::status_completed;
+	}
+
+	/**
+	 * Marks that we think this migration class can continue to migrate
+	 */
+	public function reattempt(){
+		$this->_status = EE_Data_Migration_Manager::status_continue;
+		$this->add_error( __( 'Reattempt migration', 'event_espresso' ), TRUE );
 	}
 
 	/**

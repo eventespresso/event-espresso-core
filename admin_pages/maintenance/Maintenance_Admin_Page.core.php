@@ -117,7 +117,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				'func' => '_reset_capabilities',
 				'capability' => 'manage_options',
 				'noheader' => true
-				)
+				),
+			'reattempt_migration' => array(
+				'func' => '_reattempt_migration',
+				'capability' => 'manage_options',
+				'noheader' => true
+			)
 		);
 	}
 	protected function _set_page_config() {
@@ -339,6 +344,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'data_reset' ), TRUE );
 	}
 
+	/**
+	 * resets the DMSs so we can attempt to continue migrating after a fatal error
+	 * (only a good idea when someone has somehow tried ot fix whatever caused
+	 * the fatal error in teh first place)
+	 */
+	protected function _reattempt_migration() {
+		EE_Data_Migration_Manager::instance()->reattempt();
+		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'default' ), TRUE );
+	}
 
 
 
@@ -392,6 +406,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args[ 'most_recent_migration' ] = $most_recent_migration;
 		$this->_template_args['reset_db_action_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_args[ 'reset_db_page_url' ] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'data_reset'), EE_MAINTENANCE_ADMIN_URL);
+		$this->_template_args[ 'reattempt_action_url' ] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'reattempt_migration'), EE_MAINTENANCE_ADMIN_URL );
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_confirm_migration_crash_report_sent.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,$this->_template_args,TRUE);
 		$this->display_admin_page_with_sidebar();

@@ -89,6 +89,25 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertEquals('EE_DMS_Core_4_5_0',$dms_classname);
 	}
 
+	/**
+	 * @group 7120
+	 */
+	public function test_reattempt(){
+		$dms41 = new EE_DMS_Core_4_1_0();
+		$dms41->set_completed();
+		$dms42 = new EE_DMS_Core_4_2_0();
+		$dms42->set_borked();
+		$this->_pretend_ran_dms($dms41);
+		$this->_pretend_ran_dms($dms42);
+		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
+		$this->assertEquals($dms42,$last_ran_script);
+		$this->assertTrue( $last_ran_script->is_borked() );
+		EE_Data_Migration_Manager::instance()->reattempt();
+		$this->assertFalse( $last_ran_script->is_borked() );
+
+
+	}
+
 	public function test_get_last_ran_script(){
 		$dms41 = new EE_DMS_Core_4_1_0();
 		$dms41->set_completed();
