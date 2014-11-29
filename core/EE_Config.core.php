@@ -1806,9 +1806,16 @@ class EE_Registration_Config extends EE_Config_Base {
 	  /**
 	   * ReCaptcha Theme
 	   * @var string $recaptcha_theme
-	   * eg 'clean', 'red'
+	   * 	options: 'dark	', 'light'
 	   */
       public $recaptcha_theme;
+
+	  /**
+	   * ReCaptcha Type
+	   * @var string $recaptcha_type
+	   * 	options: 'audio', 'image'
+	   */
+      public $recaptcha_type;
 
 	  /**
 	   * ReCaptcha language
@@ -1817,23 +1824,39 @@ class EE_Registration_Config extends EE_Config_Base {
 	   */
       public $recaptcha_language;
 
-	  /**
-	   * ReCaptcha width
-	   * @var int $recaptcha_width
-	   */
-      public $recaptcha_width;
+	/**
+	 * ReCaptcha site key
+	 * @var string $recaptcha_site_key
+	 */
+	public $recaptcha_site_key;
+
+	/**
+	 * ReCaptcha secret key
+	 * @var string $recaptcha_secret_key
+	 */
+	public $recaptcha_secret_key;
 
 	  /**
 	   * ReCaptcha public key
 	   * @var string $recaptcha_publickey
+	   * @deprecated
 	   */
       public $recaptcha_publickey;
 
 	  /**
 	   * ReCaptcha private key
 	   * @var string $recaptcha_privatekey
+	   * @deprecated
 	   */
       public $recaptcha_privatekey;
+
+	/**
+	 * ReCaptcha width
+	 * @var int $recaptcha_width
+	 * @deprecated
+	 */
+	public $recaptcha_width;
+
 
 
 
@@ -1851,8 +1874,11 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
-		$this->recaptcha_theme = 'clean';
+		$this->recaptcha_theme = 'light';
+		$this->recaptcha_type = 'image';
 		$this->recaptcha_language = 'en';
+		$this->recaptcha_site_key = NULL;
+		$this->recaptcha_secret_key = NULL;
 		$this->recaptcha_width = 500;
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
