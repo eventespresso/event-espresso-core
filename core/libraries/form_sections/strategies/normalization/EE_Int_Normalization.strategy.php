@@ -31,11 +31,11 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 		if( is_int( $value_to_normalize ) ){
 			return $value_to_normalize;
 		}
-		if( ! is_string( $value_to_normalize ) ){
+		if( ! is_string( $value_to_normalize )){
 			throw new EE_Validation_Error( sprintf( __( 'The value "%s" must be a string submitted for normalization, it was %s', 'event_espresso' ), print_r( $value_to_normalize, TRUE), gettype( $value_to_normalize ) ) );
 		}
-		$thousands_seperator = EE_Config::instance()->currency->thsnds;
-		$value_to_normalize = str_replace( $thousands_seperator, "", $value_to_normalize );
+		$thousands_separator = EE_Config::instance()->currency->thsnds;
+		$value_to_normalize = str_replace( $thousands_separator, "", $value_to_normalize );
 		$value_to_normalize = str_replace( array(" ","\t"), '', $value_to_normalize );
 		if ( preg_match( '/^\d+$/', $value_to_normalize )) {
 			return intval( $value_to_normalize );
@@ -45,7 +45,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	}
 
 	/**
-	 * Converst the int into a string for use in teh html form
+	 * Converts the int into a string for use in teh html form
 	 * @param int $normalized_value
 	 * @return string
 	 */
