@@ -90,9 +90,17 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		// grab key from first element of values
 		$first_key = reset( $select_option_keys );
 		// attempt to determine data type for values in order to set normalization type
-		if ( count( $this->_options ) == 2 && in_array( TRUE, $select_option_keys ) && in_array( FALSE, $select_option_keys )){
+		if (
+			count( $this->_options ) == 2
+			&&
+			(
+				( in_array( TRUE, $select_option_keys ) && in_array( FALSE, $select_option_keys ))
+				|| ( in_array( 1, $select_option_keys ) && in_array( 0, $select_option_keys ))
+			)
+		){
 			// values appear to be boolean, like TRUE, FALSE, 1, 0
 			$normalization = new EE_Boolean_Normalization();
+//			$normalization = new EE_Int_Normalization();
 		} elseif ( is_int( $first_key )){
 			$normalization = new EE_Int_Normalization();
 		} else {
@@ -163,8 +171,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			if ( $question_option instanceof EE_Question_Option ) {
 				$value = $this->_use_desc_in_label ? $question_option->value() . '<span class="ee-question-option-desc"> - ' . $question_option->desc() . '</span>' : $question_option->value();
 				$flat_array[ $question_option->value() ] = $value;
-				// calculate the strlen of the label, note that "123456" is just used as a spacer and does not appear in any output
-				$this->_use_desc_in_label ? $this->_set_label_size( $question_option->value() . '123456' . $question_option->desc() ) : $this->_set_label_size( $value );
 			} elseif ( is_array( $question_option )) {
 				$non_question_option = $this->_flatten_select_options( $question_option );
 				$flat_array = $flat_array + $non_question_option;
@@ -176,18 +182,31 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 
 
 	/**
+	 *    set_label_sizes
+	 * @return void
+	 */
+	public function set_label_sizes(){
+		// did the input settings specifically say to NOT set the label size dynamically ?
+		if ( ! $this->_enforce_label_size ) {
+			foreach( $this->_options as $option ) {
+				// calculate the strlen of the label
+				$this->_set_label_size( $option );
+			}
+		}
+	}
+
+
+
+	/**
 	 *    _set_label_size_class
 	 * @param int|string $value
 	 * @return void
 	 */
 	private function _set_label_size( $value = '' ){
-		// did the input settings specifically say to NOT set the label size dynamically ?
-		if ( ! $this->_enforce_label_size ) {
-			// determine length of option value
-			$val_size = is_int( $value ) ? $value : strlen( $value );
-			// use new value if bigger than existing
-			$this->_label_size = $val_size > $this->_label_size ? $val_size : $this->_label_size;
-		}
+		// determine length of option value
+		$val_size = is_int( $value ) ? $value : strlen( $value );
+		// use new value if bigger than existing
+		$this->_label_size = $val_size > $this->_label_size ? $val_size : $this->_label_size;
 	}
 
 
@@ -198,28 +217,20 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	function get_label_size_class(){
 		// use maximum option value length to determine label size
-		switch( $this->_label_size ){
-			case $this->_label_size < 3 :
-				$size =  ' nano-lbl';
-				break;
-			case $this->_label_size < 6 :
-				$size =  ' micro-lbl';
-				break;
-			case $this->_label_size < 12 :
-				$size =  ' tiny-lbl';
-				break;
-			case $this->_label_size < 25 :
-				$size =  ' small-lbl';
-				break;
-			case $this->_label_size < 50 :
-				$size =  ' medium-lbl';
-				break;
-			case $this->_label_size >= 100 :
-				$size =  ' big-lbl';
-				break;
-			default:
-				$size =  ' medium-lbl';
-				break;
+		if( $this->_label_size < 3 ) {
+			$size = ' nano-lbl';
+		} else if ( $this->_label_size < 6 ) {
+			$size =  ' micro-lbl';
+		} else if ( $this->_label_size < 12 ) {
+			$size =  ' tiny-lbl';
+		} else if ( $this->_label_size < 25 ) {
+			$size =  ' small-lbl';
+		} else if ( $this->_label_size < 50 ) {
+			$size =  ' medium-lbl';
+		} else if ( $this->_label_size >= 100 ) {
+			$size =  ' big-lbl';
+		} else {
+			$size =  ' medium-lbl';
 		}
 		return $size;
 	}
