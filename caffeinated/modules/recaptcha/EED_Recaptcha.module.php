@@ -136,27 +136,14 @@ class EED_Recaptcha  extends EED_Module {
 		// don't display if not using recaptcha or user is logged in
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			// verify library is loaded
-//			if ( ! function_exists( 'recaptcha_get_html' )) {
-//				// EE_Registry::instance()->load_file( EE_THIRD_PARTY . 'recaptchalib.php', '', '' );
-//				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-//			}
+			if ( ! class_exists( 'ReCaptcha' )) {
+				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
+			}
 			// only display if they have NOT passed the test yet
 			if ( ! EED_Recaptcha::recaptcha_passed() ) {
-				echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+//				echo '<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=' . $lang . '"></script>';
 				echo '<div class="g-recaptcha" data-sitekey="' . EE_Registry::instance()->CFG->registration->recaptcha_site_key . '"></div>';
 
-?>
-
-<script type="text/javascript">
-/* <! [CDATA [ */
-var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->registration->recaptcha_theme;?>", lang : "<?php echo EE_Registry::instance()->CFG->registration->recaptcha_language;?>" };
-/*  ] ]>  */
-</script>
-<p id="spco-captcha" class="reg-page-form-field-wrap-pg">
-	<span><?php echo __('Anti-Spam Measure: Please enter the following phrase:', 'event_espresso');?></span>
-	<?PHP echo recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_site_key, NULL, is_ssl() ? TRUE : FALSE );?>
-</p>
-<?php
 			}
 		}
 	}
@@ -223,40 +210,7 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 	 * @return array
 	 */
 	public static function admin_settings() {
-
-		EE_Registry::instance()->load_helper( 'HTML' );
-		EE_Registry::instance()->load_helper( 'Template' );
-
-		$use_captcha = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-		$show_captcha = $use_captcha ?  '': 'display:none;';
-
-		$admin_settings = new EE_Form_Section_Proper(
-			array(
-				'name' 					=> 'recaptcha_settings',
-				'html_id' 					=> 'recaptcha_settings',
-				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
-				'subsections' 			=> array(
-					'recaptcha_settings_hdr' 		=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
-					'recaptcha_settings' 				=> EED_Recaptcha::_recaptcha_main_settings( $use_captcha, $show_captcha ),
-					'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Appearance', 'event_espresso' ), '', '', $show_captcha )),
-					'appearance_settings' 			=> EED_Recaptcha::_recaptcha_appearance_settings( $use_captcha, $show_captcha ),
-				),
-			)
-		);
-		echo $admin_settings->get_html_and_js();
-
-//		$template_args['values'] = array(
-//			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
-//			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
-//		);
-//		$template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-
-//		$template_args['recaptcha_site_key'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) : '';
-//		$template_args['recaptcha_secret_key'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) : '';
-
-//		$template_args['recaptcha_example'] = ! empty( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? EED_Recaptcha::display_recaptcha() : '';
-//		EEH_Template::display_template( RECAPTCHA_BASE_PATH . 'templates' . DS . 'recaptcha_admin_settings.template.php', $template_args );
-
+		echo EED_Recaptcha::_recaptcha_settings_form()->get_html_and_js();
 	}
 
 
@@ -265,11 +219,39 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 	 * _recaptcha_main_settings
 	 *
 	 * @access protected
-	 * @param bool   $use_captcha
-	 * @param string $show_captcha
 	 * @return EE_Form_Section_Proper
 	 */
-	protected static function _recaptcha_main_settings( $use_captcha = FALSE, $show_captcha = '' ) {
+	protected static function _recaptcha_settings_form() {
+
+		EE_Registry::instance()->load_helper( 'HTML' );
+		EE_Registry::instance()->load_helper( 'Template' );
+
+		return new EE_Form_Section_Proper(
+			array(
+				'name' 					=> 'recaptcha_settings_form',
+				'html_id' 					=> 'recaptcha_settings_form',
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
+				'subsections' 			=> array(
+					'main_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
+					'main_settings' 						=> EED_Recaptcha::_recaptcha_main_settings(),
+					'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Appearance', 'event_espresso' ) )),
+					'appearance_settings' 			=> EED_Recaptcha::_recaptcha_appearance_settings(),
+					'recaptcha_example' 				=> EED_Recaptcha::_recaptcha_example(),
+					'required_fields_note' 			=> new EE_Form_Section_HTML( EEH_HTML::p( __( 'All fields marked with a * are required fields', 'event_espresso' ), '', 'grey-text' ))
+				),
+			)
+		);
+	}
+
+
+
+	/**
+	 * _recaptcha_main_settings
+	 *
+	 * @access protected
+	 * @return EE_Form_Section_Proper
+	 */
+	protected static function _recaptcha_main_settings() {
 		return new EE_Form_Section_Proper(
 			array(
 				'name' 					=> 'recaptcha_settings_tbl',
@@ -284,21 +266,29 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 						),
 						array(
 							'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
-							'default' 					=> $use_captcha,
-							'display_html_label_text' =>FALSE
+							'html_help_text' 		=> sprintf(
+								__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
+								'<a href="https://www.google.com/recaptcha/intro/index.html">',
+								'</a>'
+							),
+							'default' 								=> isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE,
+							'display_html_label_text' 	=> FALSE,
+//							'normalization_strategy' 	=> new EE_Int_Normalization()
 						)
 					),
 					'recaptcha_site_key' 		=> new EE_Text_Input(
 						array(
 							'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
-							'html_style' 			=> $show_captcha,
+							'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
+							'required' 				=> TRUE,
 							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) : ''
 						)
 					),
 					'recaptcha_secret_key' 		=> new EE_Text_Input(
 						array(
 							'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
-							'html_style' 			=> $show_captcha,
+							'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
+							'required' 				=> TRUE,
 							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) : ''
 						)
 					)
@@ -309,15 +299,16 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 
 
 
+
+
+
 	/**
 	 * _recaptcha_appearance_settings
 	 *
 	 * @access protected
-	 * @param bool   $use_captcha
-	 * @param string $show_captcha
 	 * @return EE_Form_Section_Proper
 	 */
-	protected static function _recaptcha_appearance_settings( $use_captcha = FALSE, $show_captcha = '' ) {
+	protected static function _recaptcha_appearance_settings() {
 		return new EE_Form_Section_Proper(
 			array(
 				'name' 					=> 'recaptcha_appearance_settings_tbl',
@@ -327,24 +318,24 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 				'subsections' 			=> array(
 					'recaptcha_theme' 		=> new EE_Radio_Button_Input(
 						array(
-							'dark' => __( 'Dark', 'event_espresso' ),
-							'light' => __( 'Light', 'event_espresso' )
+							'light' => __( 'Light', 'event_espresso' ),
+							'dark' => __( 'Dark', 'event_espresso' )
 						),
 						array(
 							'html_label_text'	 	=> __( 'Theme', 'event_espresso' ),
-							'html_style' 			=> $show_captcha,
+							'html_help_text' 		=> __( 'The color theme of the widget.', 'event_espresso' ),
 							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'light',
 							'display_html_label_text' => FALSE
 						)
 					),
 					'recaptcha_type' 		=> new EE_Radio_Button_Input(
 						array(
-							'audio' => __( 'Audio', 'event_espresso' ),
-							'image' => __( 'Image', 'event_espresso' )
+							'image' => __( 'Image', 'event_espresso' ),
+							'audio' => __( 'Audio', 'event_espresso' )
 						),
 						array(
 							'html_label_text'	 	=> __( 'Type', 'event_espresso' ),
-							'html_style' 			=> $show_captcha,
+							'html_help_text' 		=> __( 'The type of CAPTCHA to serve.', 'event_espresso' ),
 							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_type ) ? EE_Registry::instance()->CFG->registration->recaptcha_type : 'image',
 							'display_html_label_text' =>FALSE
 						)
@@ -400,74 +391,45 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 						),
 						array(
 							'html_label_text'	 	=> __( 'Language', 'event_espresso' ),
-							'html_style' 			=> $show_captcha,
+							'html_help_text' 		=> __( 'Forces the widget to render in a specific language.', 'event_espresso' ),
 							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en'
 						)
 					),
 				),
 			)
 		);
-//		$template_args['recaptcha_theme_options'] = array(
-//			array( 'id'  => 'dark', 'text'=> __( 'Dark', 'event_espresso' )),
-//			array( 'id'  => 'light', 'text'=> __( 'Light', 'event_espresso' ))
-//		);
-//		$template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'light';
-//		$template_args['recaptcha_type_options'] = array(
-//			array( 'id'  => 'audio', 'text'=> __( 'Audio', 'event_espresso' )),
-//			array( 'id'  => 'image', 'text'=> __( 'Image', 'event_espresso' ))
-//		);
-//		$template_args['recaptcha_type'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_type ) ? EE_Registry::instance()->CFG->registration->recaptcha_type : 'image';
-//		$template_args['recaptcha_language_options'] = array(
-//			array( 'id'  => 'ar', 'text'=> __('Arabic', 'event_espresso')),
-//			array( 'id'  => 'bg', 'text'=> __('Bulgarian', 'event_espresso')),
-//			array( 'id'  => 'ca', 'text'=> __('Catalan', 'event_espresso')),
-//			array( 'id'  => 'zh-CN', 'text'=> __('Chinese (Simplified)', 'event_espresso')),
-//			array( 'id'  => 'zh-TW', 'text'=> __('Chinese (Traditional)	', 'event_espresso')),
-//			array( 'id'  => 'hr', 'text'=> __('Croatian', 'event_espresso')),
-//			array( 'id'  => 'cs', 'text'=> __('Czech', 'event_espresso')),
-//			array( 'id'  => 'da', 'text'=> __('Danish', 'event_espresso')),
-//			array( 'id'  => 'nl', 'text'=> __('Dutch', 'event_espresso')),
-//			array( 'id'  => 'en-GB', 'text'=> __('English (UK)', 'event_espresso')),
-//			array( 'id'  => 'en', 'text'=> __('English (US)', 'event_espresso')),
-//			array( 'id'  => 'fil', 'text'=> __('Filipino', 'event_espresso')),
-//			array( 'id'  => 'fi', 'text'=> __('Finnish', 'event_espresso')),
-//			array( 'id'  => 'fr', 'text'=> __('French', 'event_espresso')),
-//			array( 'id'  => 'fr-CA', 'text'=> __('French (Canadian)', 'event_espresso')),
-//			array( 'id'  => 'de', 'text'=> __('German', 'event_espresso')),
-//			array( 'id'  => 'de-AT', 'text'=> __('German (Austria)', 'event_espresso')),
-//			array( 'id'  => 'de-CH', 'text'=> __('German (Switzerland)', 'event_espresso')),
-//			array( 'id'  => 'el', 'text'=> __('Greek', 'event_espresso')),
-//			array( 'id'  => 'iw', 'text'=> __('Hebrew', 'event_espresso')),
-//			array( 'id'  => 'hi', 'text'=> __('Hindi', 'event_espresso')),
-//			array( 'id'  => 'hu', 'text'=> __('Hungarian', 'event_espresso')),
-//			array( 'id'  => 'id', 'text'=> __('Indonesian', 'event_espresso')),
-//			array( 'id'  => 'it', 'text'=> __('Italian', 'event_espresso')),
-//			array( 'id'  => 'ja', 'text'=> __('Japanese', 'event_espresso')),
-//			array( 'id'  => 'ko', 'text'=> __('Korean', 'event_espresso')),
-//			array( 'id'  => 'lv', 'text'=> __('Latvian', 'event_espresso')),
-//			array( 'id'  => 'lt', 'text'=> __('Lithuanian', 'event_espresso')),
-//			array( 'id'  => 'no', 'text'=> __('Norwegian', 'event_espresso')),
-//			array( 'id'  => 'fa', 'text'=> __('Persian', 'event_espresso')),
-//			array( 'id'  => 'pl', 'text'=> __('Polish', 'event_espresso')),
-//			array( 'id'  => 'pt', 'text'=> __('Portuguese', 'event_espresso')),
-//			array( 'id'  => 'pt-BR', 'text'=> __('Portuguese (Brazil)', 'event_espresso')),
-//			array( 'id'  => 'pt-PT', 'text'=> __('Portuguese (Portugal)', 'event_espresso')),
-//			array( 'id'  => 'ro', 'text'=> __('Romanian', 'event_espresso')),
-//			array( 'id'  => 'ru', 'text'=> __('Russian', 'event_espresso')),
-//			array( 'id'  => 'sr', 'text'=> __('Serbian', 'event_espresso')),
-//			array( 'id'  => 'sk', 'text'=> __('Slovak', 'event_espresso')),
-//			array( 'id'  => 'sl', 'text'=> __('Slovenian', 'event_espresso')),
-//			array( 'id'  => 'es', 'text'=> __('Spanish', 'event_espresso')),
-//			array( 'id'  => 'es-419', 'text'=> __('Spanish (Latin America)', 'event_espresso')),
-//			array( 'id'  => 'sv', 'text'=> __('Swedish', 'event_espresso')),
-//			array( 'id'  => 'th', 'text'=> __('Thai', 'event_espresso')),
-//			array( 'id'  => 'tr', 'text'=> __('Turkish', 'event_espresso')),
-//			array( 'id'  => 'uk', 'text'=> __('Ukrainian', 'event_espresso')),
-//			array( 'id'  => 'vi', 'text'=> __('Vietnamese', 'event_espresso'))
-//		);
-//		$template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
 	}
 
+
+
+
+
+	/**
+	 * _recaptcha_example
+	 *
+	 * @access protected
+	 * @return EE_Form_Section_Proper
+	 */
+	protected static function _recaptcha_example() {
+		//		 if ( !empty( $recaptcha_example ) ) { ?>
+		<!--		-->
+		<!--			<h4 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">-->
+		<!--				--><?php //_e('reCAPTCHA Example', 'event_espresso'); ?>
+		<!--			</h4>-->
+		<!--			<p class="description">--><?php //_e('A reCAPTCHA displaying here means that you have a valid public key entered for the reCAPTCHA settings and this is how the reCAPTCHA will look with the currently set appearance settings.  If you do not see a reCAPTCHA then please doublecheck the key you entered for a public key.', 'event_espresso'); ?><!--</p>-->
+		<!--			<table class="form-table">-->
+		<!--				<tbody>-->
+		<!--		-->
+		<!--					<tr class="admin-recaptcha-settings-tr">-->
+		<!--						<td>-->
+		<!--							--><?php //echo $recaptcha_example; ?>
+		<!--						</td>-->
+		<!--					</tr>-->
+		<!--		-->
+		<!--				</tbody>-->
+		<!--			</table>-->
+		<!--		--><?php //}
+	}
 
 
 	/**
@@ -478,23 +440,43 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 	 * @return array
 	 */
 	public static function update_admin_settings( EE_Registration_Config $EE_Registration_Config ) {
-		// grab original setting
-		$use_captcha = isset( $_REQUEST['use_captcha'] ) ? absint( $_REQUEST['use_captcha'] ) : FALSE;
-		//user  proofing recaptcha settings in here as well.  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
-		if (
-			apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', $EE_Registration_Config->use_captcha )
-			&& $use_captcha
-			&& ( ! $EE_Registration_Config->use_captcha && ( empty( $_REQUEST['recaptcha_site_key'] ) || empty( $_REQUEST['recaptcha_secret_key'] )))
-		) {
-			$use_captcha = FALSE;
-			EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a Site Key and Secret Key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		try {
+			$recaptcha_settings_form = EED_Recaptcha::_recaptcha_settings_form();
+			// if not displaying a form, then check for form submission
+			if ( $recaptcha_settings_form->was_submitted() ) {
+				// capture form data
+				$recaptcha_settings_form->receive_form_submission();
+				// validate form data
+				if ( $recaptcha_settings_form->is_valid() ) {
+					// grab validated data from form
+					$valid_data = $recaptcha_settings_form->valid_data();
+					// user proofing recaptcha:  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
+					if (
+						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', $EE_Registration_Config->use_captcha )
+						&& $valid_data['main_settings']['use_captcha']
+						&& ( ! $EE_Registration_Config->use_captcha && ( empty( $valid_data['main_settings']['recaptcha_site_key'] ) || empty( $valid_data['main_settings']['recaptcha_secret_key'] )))
+					) {
+						$valid_data['main_settings']['use_captcha'] = FALSE;
+						EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a Site Key and Secret Key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+					}
+					$EE_Registration_Config->use_captcha = $valid_data['main_settings']['use_captcha'];
+					$EE_Registration_Config->recaptcha_site_key = $valid_data['main_settings']['recaptcha_site_key'];
+					$EE_Registration_Config->recaptcha_secret_key = $valid_data['main_settings']['recaptcha_secret_key'];
+					$EE_Registration_Config->recaptcha_type = $valid_data['appearance_settings']['recaptcha_type'];
+					$EE_Registration_Config->recaptcha_theme = $valid_data['appearance_settings']['recaptcha_theme'];
+					$EE_Registration_Config->recaptcha_language = $valid_data['appearance_settings']['recaptcha_language'];
+				} else {
+					if ( $recaptcha_settings_form->submission_error_message() != '' ) {
+						EE_Error::add_error( $recaptcha_settings_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+					}
+				}
+			}
+		} catch( EE_Error $e ) {
+			$e->get_error();
 		}
-		$EE_Registration_Config->use_captcha = $use_captcha;
-		$EE_Registration_Config->recaptcha_site_key = isset( $_REQUEST['recaptcha_site_key'] ) ? sanitize_text_field( $_REQUEST['recaptcha_site_key'] ) : NULL;
-		$EE_Registration_Config->recaptcha_secret_key = isset( $_REQUEST['recaptcha_secret_key'] ) ? sanitize_text_field( $_REQUEST['recaptcha_secret_key'] ) : NULL;
-		$EE_Registration_Config->recaptcha_type = isset( $_REQUEST['recaptcha_type'] ) ? absint( $_REQUEST['recaptcha_type'] ) : 500;
-		$EE_Registration_Config->recaptcha_theme = isset( $_REQUEST['recaptcha_theme'] ) ? sanitize_text_field( $_REQUEST['recaptcha_theme'] ) : 'clean';
-		$EE_Registration_Config->recaptcha_language = isset( $_REQUEST['recaptcha_language'] ) ? sanitize_text_field( $_REQUEST['recaptcha_language'] ) : 'en';
+
+//		d( $EE_Registration_Config );
+//		die();
 		return $EE_Registration_Config;
 	}
 
