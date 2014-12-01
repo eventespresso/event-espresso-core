@@ -4,8 +4,6 @@
 	position: relative;
 }
 
-
-
 /*** STEPS DISPLAY HEADER ***/
 #spco-steps-big-hdr {
 	font-size:1em;
@@ -438,4 +436,9 @@
 }
 .spco-payment-method-desc {
 	margin:1em 0;
+}
+
+
+.g-recaptcha {
+	float: right;
 }
