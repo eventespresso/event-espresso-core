@@ -84,6 +84,35 @@ class EED_Recaptcha  extends EED_Module {
 
 
 
+	/**
+	 * display_recaptcha
+	 *
+	 * @access public
+	 * @return string html
+	 */
+	public static function display_recaptcha() {
+		// don't display if not using recaptcha or user is logged in
+		if ( EE_Registry::instance()->CFG->registration->use_captcha /*&& ! is_user_logged_in()*/ ) {
+			// only display if they have NOT passed the test yet
+			if ( ! EED_Recaptcha::recaptcha_passed() ) {
+				EE_Registry::instance()->load_helper( 'Template' );
+				EEH_Template::display_template(
+					RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
+					array(
+						'recaptcha_language' 	=> EE_Registry::instance()->CFG->registration->recaptcha_language,
+						'recaptcha_site_key' 		=> EE_Registry::instance()->CFG->registration->recaptcha_site_key,
+						'recaptcha_theme' 		=> EE_Registry::instance()->CFG->registration->recaptcha_theme,
+						'recaptcha_type' 			=> EE_Registry::instance()->CFG->registration->recaptcha_type
+					)
+				);
+			}
+		}
+	}
+
+
+
+
+
 
 	/**
 	 * recaptcha_passed
@@ -99,7 +128,7 @@ class EED_Recaptcha  extends EED_Module {
 		// was test already passed?
 		$recaptcha_passed = EE_Registry::instance()->SSN->get_session_data( 'recaptcha_passed' );
 		// verify recaptcha
-		if ( ! $recaptcha_passed && EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
+		if ( ! $recaptcha_passed && EE_Registry::instance()->REQ->is_set( 'g-recaptcha-response' )) {
 			$recaptcha_passed = EED_Recaptcha::_process_recaptcha_response();
 			EE_Registry::instance()->SSN->set_session_data( array( 'recaptcha_passed' => $recaptcha_passed ));
 			EE_Registry::instance()->SSN->update();
@@ -125,32 +154,6 @@ class EED_Recaptcha  extends EED_Module {
 
 
 
-
-	/**
-	 * display_recaptcha
-	 *
-	 * @access public
-	 * @return string html
-	 */
-	public static function display_recaptcha() {
-		// don't display if not using recaptcha or user is logged in
-		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
-			// verify library is loaded
-			if ( ! class_exists( 'ReCaptcha' )) {
-				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-			}
-			// only display if they have NOT passed the test yet
-			if ( ! EED_Recaptcha::recaptcha_passed() ) {
-//				echo '<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=' . $lang . '"></script>';
-				echo '<div class="g-recaptcha" data-sitekey="' . EE_Registry::instance()->CFG->registration->recaptcha_site_key . '"></div>';
-
-			}
-		}
-	}
-
-
-
-
 	/**
 	 * 	process_recaptcha
 	 *
@@ -159,32 +162,39 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	private static function _process_recaptcha_response() {
 
-		// https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string&remoteip=user_ip_address
-
 		$response_data = array( 'error' => FALSE );
 		// check recaptcha
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
-			if ( ! function_exists( 'recaptcha_check_answer' )) {
+			// verify library is loaded
+			if ( ! class_exists( 'ReCaptcha' )) {
 				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
 			}
-			$response = recaptcha_check_answer(
-				EE_Registry::instance()->CFG->registration->recaptcha_secret_key,
-				$_SERVER["REMOTE_ADDR"],
-				EE_Registry::instance()->REQ->is_set( 'recaptcha_challenge_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_challenge_field' ) : '',
-				EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_response_field' ) : ''
-			);
+			// The response from reCAPTCHA
+			$response = null;
+			// The error code from reCAPTCHA, if any
+			$error = null;
+			$recaptcha_response = EE_Registry::instance()->REQ->get( 'g-recaptcha-response', FALSE );
+			// Was there a reCAPTCHA response?
+			if ( $recaptcha_response ) {
+				$reCaptcha = new ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_secret_key );
+				$response = $reCaptcha->verifyResponse(
+					$_SERVER['REMOTE_ADDR'],
+					EE_Registry::instance()->REQ->get( 'g-recaptcha-response' )
+				);
+			}
+			//printr( $response, '$response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// sorry... it appears you can't read gibberish chicken scratches !!!
-			if ( ! $response->is_valid ) {
+			if ( ! $response instanceof ReCaptchaResponse || ! $response->success ) {
 				$response_data['success'] = FALSE;
 				$response_data['recaptcha_reload'] = TRUE;
 				$response_data['error'] = sprintf(
 					__('Sorry, but you did not enter the correct anti-spam phrase.%sPlease try again with the new phrase that has been generated for you.', 'event_espresso'),
 					'<br/>'
 				);
-				if ( EE_Registry::instance()->REQ->front_ajax ) {
-					echo json_encode( $response_data );
-					die();
-				}
+//				if ( EE_Registry::instance()->REQ->front_ajax ) {
+//					echo json_encode( $response_data );
+//					die();
+//				}
 			}
 		}
 		if ( $response_data['error'] ) {
