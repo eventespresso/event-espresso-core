@@ -55,24 +55,24 @@
 
 		<thead>
 			<tr class="header_row">
-				<th class="left ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
-				<th class="left event_th"><?php _e('Description', 'event_espresso'); ?></th>
-				<th class="quantity_th"><?php _e('Qty', 'event_espresso'); ?></th>
-				<th class="left event_th"><?php _e('Price', 'event_espresso'); ?></th>
+				<th class="ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
+				<th class="event_th"><?php _e('Description', 'event_espresso'); ?></th>
+				<th class="quantity_th item_r"><?php _e('Qty', 'event_espresso'); ?></th>
+				<th class="event_th item_r"><?php _e('Price', 'event_espresso'); ?></th>
 				<th class="subtotal_th item_r"><?php _e('Total', 'event_espresso'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr><td colspan="5">[TICKET_LIST]</td></tr>
 			<tr class="total_tr odd">
-				<td colspan="2">&nbsp;</td>
-				<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
+				<td colspan="3">&nbsp;</td>
+				<td class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
 				<td class="total">[TXN_SUBTOTAL]</td>
 			</tr>
 			<tr><td colspan="5">[TAX_LINE_ITEM_LIST]</td></tr>
 			<tr class="total_tr odd">
-				<td colspan="2">&nbsp;</td>
-				<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
+				<td colspan="3">&nbsp;</td>
+				<td class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
 				<td class="total">[TXN_TAX_SUBTOTAL]</td>
 			</tr>
 		</tbody>
