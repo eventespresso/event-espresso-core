@@ -36,7 +36,7 @@
 </style>
 </head>
 <body>
-	<?php echo $main_body; ?>
+<?php echo $main_body; ?>
 </body>
 <?php wp_footer(); ?>
 </html>
