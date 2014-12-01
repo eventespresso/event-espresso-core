@@ -750,7 +750,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _get_installed_message_objects() {
 		//get all installed messengers and message_types
 		$EE_MSG = new EE_messages();
-		$installed_message_objects = $EE_MSG->get_installed();
+		$installed_message_objects = array(
+			'messengers' => $EE_MSG->get_installed_messengers(),
+			'message_types' => $EE_MSG->get_installed_message_types()
+			);
 		return $installed_message_objects;
 	}
 
