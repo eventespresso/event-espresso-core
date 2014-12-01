@@ -50,7 +50,7 @@ class EEH_Debug_Tools{
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
-		if ( ! class_exists('Kint')){
+		if ( ! class_exists( 'Kint' ) &&  file_exists( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' )){
 			// despite EE4 having a check for an existing copy of the Kint debugging class,
 			// if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
 			// then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
