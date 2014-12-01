@@ -724,6 +724,9 @@ class EE_Data_Migration_Manager{
 			$general_migration_error->set_borked();
 			$last_ran_migration_script_properties = $general_migration_error->properties_as_array();
 			$versions_migrated_to = 'Unknown.1.0.0';
+			//now just to make sure appears as last (in case the were previously a fatal error like this)
+			//delete the old one
+			delete_option( self::data_migration_script_option_prefix . $versions_migrated_to );
 		}
 		update_option(self::data_migration_script_option_prefix.$versions_migrated_to,$last_ran_migration_script_properties);
 
