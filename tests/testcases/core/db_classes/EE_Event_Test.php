@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Event_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -50,7 +50,7 @@ class EE_Event_Test extends EE_UnitTestCase{
 		//do it so it hides expired
 		$ds = $e->datetimes_ordered(false);
 		$this->assertArrayDoesNotContain($d_exp, $ds);
-//		$this->assertArrayDoesNotContain($d_del, $ds); @todo: bug, this assert actually fails because we have deactivated 
+//		$this->assertArrayDoesNotContain($d_del, $ds); @todo: bug, this assert actually fails because we have deactivated
 		$this->assertArrayContains($d_ok, $ds);
 		//do it so it hides expired but shows deleted
 		$ds = $e->datetimes_ordered(false, true);
@@ -70,12 +70,12 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$third_d = array_shift($ds);
 		$this->assertEquals($d_ok,$third_d);
 	}
-	
+
 	function test_active_status(){
 		$e = EE_Event::new_instance(array('status'=>'publish'));
 		$e->save();
 		$d_now = EE_Datetime::new_instance(array(
-			'EVT_ID'=>$e->ID(), 
+			'EVT_ID'=>$e->ID(),
 			'DTT_EVT_start'=>current_time('timestamp')-100,
 			'DTT_EVT_end'=>current_time('timestamp') + 50));
 		$d_now->save();
@@ -89,18 +89,18 @@ class EE_Event_Test extends EE_UnitTestCase{
 			'DTT_EVT_start'=>current_time('timestamp')+10,
 			'DTT_EVT_end'=>current_time('timestamp') + 15));
 		$d_upcoming->save();
-		
-		$this->assertEquals(EE_Datetime::active,$e->get_active_status());
+
+		$this->assertEquals(EE_Datetime::active,$e->get_active_status( TRUE ));
 		$e->_remove_relation_to($d_now, 'Datetime');
-		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status());
+		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status( TRUE ));
 		$e->_remove_relation_to($d_upcoming, 'Datetime');
-		$this->assertEquals(EE_Datetime::expired,$e->get_active_status());
+		$this->assertEquals(EE_Datetime::expired,$e->get_active_status( TRUE ));
 	}
 	function test_get_number_of_tickets_sold(){
 		$e = EE_Event::new_instance();
 		$e->save();
 		$d_now = EE_Datetime::new_instance(array(
-			'EVT_ID'=>$e->ID(), 
+			'EVT_ID'=>$e->ID(),
 			'DTT_EVT_start'=>current_time('timestamp')-100,
 			'DTT_EVT_end'=>current_time('timestamp') - 50,
 			'DTT_sold'=>5));
