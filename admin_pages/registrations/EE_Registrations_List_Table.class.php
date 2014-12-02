@@ -313,7 +313,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Registration', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			}
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registration', 'espresso_registrations_ee_delete_registrations', $item->ID() ) ) {
-				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'ee_delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 
 				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Registration Permanently', 'event_espresso' ). '">' . __( 'Delete', 'event_espresso' ) . '</a>';
 			}

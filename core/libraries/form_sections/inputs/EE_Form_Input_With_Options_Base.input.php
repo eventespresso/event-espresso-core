@@ -17,6 +17,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	protected $_options = array();
 
+	/**
+	 * whether to display the html_label_text above the checkbox/radio button options
+	 * @var boolean
+	 */
+	protected $_display_html_label_text = TRUE;
 
 	/**
 	 * whether to display an question option description as part of the input label
@@ -56,6 +61,9 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			if ( isset( $input_settings['enforce_label_size'] ) && $input_settings['enforce_label_size'] ) {
 				$this->_enforce_label_size = TRUE;
 			}
+		}
+		if ( isset( $input_settings['display_html_label_text'] )) {
+			$this->set_display_html_label_text( $input_settings['display_html_label_text'] );
 		}
 		$this->set_select_options( $answer_options );
 		parent::__construct( $input_settings );
@@ -235,6 +243,24 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			}
 		}
 		return implode(", ", $pretty_strings );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function display_html_label_text() {
+		return $this->_display_html_label_text;
+	}
+
+
+
+	/**
+	 * @param boolean $display_html_label_text
+	 */
+	public function set_display_html_label_text( $display_html_label_text ) {
+		$this->_display_html_label_text = filter_var( $display_html_label_text, FILTER_VALIDATE_BOOLEAN );
 	}
 
 

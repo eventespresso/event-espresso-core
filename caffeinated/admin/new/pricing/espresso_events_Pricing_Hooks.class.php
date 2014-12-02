@@ -242,6 +242,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_tickets = $dtts_on_existing = array();
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
+		//load money helper
+		EE_Registry::instance()->load_helper( 'Money' );
+
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
 			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
@@ -254,8 +257,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
-			$base_price = isset( $tkt['TKT_base_price'] ) ? (float) $tkt['TKT_base_price'] : 0;
+			$ticket_price = isset( $tkt['TKT_price'] ) ?  EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_price'] ) : 0;
+			$base_price = isset( $tkt['TKT_base_price'] ) ? EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_base_price'] ) : 0;
 			//if ticket price == 0 and $base_price != 0 then ticket price == base_price
 			$ticket_price = $ticket_price === 0 && $base_price !== 0 ? $base_price : $ticket_price;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;

@@ -130,7 +130,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_get_registration_status_array();
 
 		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
-		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) ? ! is_array( $this->_req_data['ATT_ID'] ) : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) && ! is_array( $this->_req_data['ATT_ID'] ) ? $this->_req_data['ATT_ID'] : 0;
 		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
 
 		$this->_page_routes = array(
@@ -1805,7 +1805,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * This is used to permanently delete registrations.  Note, this will handle not only deleting permanently the registration but also.
 	 *
-	 * 1. Deleting permanently any related Attendees IF that attendee has no other registrations attached to it.
+	 * 1. Removing relations to EE_Attendee
 	 * 2. Deleting permanently the related transaction, but ONLY if all related registrations to the transaction are ALSO trashed.
 	 * 3. Deleting permanently any related Line items but only if the above conditions are met.
 	 * 4. Removing relationships between all tickets and the related registrations
@@ -1880,12 +1880,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//delete related answers
 			$registration->delete_related_permanently('Answer');
 
-			//delete Attendee (if this registration is the only one on the attendee ).
+			//remove relationship to EE_Attendee (but we ALWAYS leave the contact record intact)
 			$attendee = $registration->get_first_related('Attendee');
-			if ( $attendee instanceof EE_Attendee && $attendee->count_related('Registration') > 1 )
-				$registration->_remove_relation_to($attendee, 'Attendee');
-			else
-				$registration->delete_related_permanently('Attendee');
+			$registration->_remove_relation_to($attendee, 'Attendee');
 
 			//now remove relationships to tickets on this registration.
 			$registration->_remove_relations('Ticket');
@@ -1918,17 +1915,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
-
-
-
-
 	/**
-	 * 		generates HTML for the Register New Attendee Admin page
-	*		@access private
-	*		@return void
-	*/
+	 * 	generates HTML for the Register New Attendee Admin page
+	 *
+	 * @access private
+	 * @throws \EE_Error
+	 * @return void
+	 */
 	public function new_registration() {
 
 		if ( ! $this->_set_reg_event() ) {
@@ -2027,7 +2020,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		set_reg_event
 	*		@access private
-	*		@return void
+	*		@return boolean
 	*/
 	private function _set_reg_event() {
 		if ( is_object( $this->_reg_event )) {
@@ -2087,24 +2080,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				break;
 			case 'questions' :
 				//process registration
-				$TXN_ID = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
-				if ( !$TXN_ID ) {
+				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
+				if ( ! $transaction instanceof EE_Transaction ) {
 					$query_args = array(
 						'action' => 'new_registration',
 						'processing_registration' => true,
 						'event_id' => $this->_reg_event->ID()
 						);
+
 					if ( defined('DOING_AJAX' ) ) {
-						$this->new_registration(); //display registration form again because there are errors (maybe validation?)
+						//display registration form again because there are errors (maybe validation?)
+						$this->new_registration();
 					} else {
 						$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 					}
 				}
+				/** @type EE_Transaction_Payments $transaction_payments */
+				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+				// maybe update status, and make sure to save transaction if not done already
+				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
+					$transaction->save();
+				}
 				$query_args = array(
 					'action' => 'view_transaction',
-					'TXN_ID' => $TXN_ID,
+					'TXN_ID' => $transaction->ID(),
 					'page' => 'espresso_transactions'
-					);
+				);
 				EE_Error::add_success( __('Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso') );
 				$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 				break;

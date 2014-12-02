@@ -93,39 +93,7 @@ class EEM_Line_Item extends EEM_Base {
 	const type_cancellation = 'cancellation';
 
 	// private instance of the EEM_Line_Item object
-	private static $_instance = NULL;
-
-
-
-	/**
-	 * 		instantiate the EEM_Line_Item singleton
-	 *
-	 * 		@access public
-	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return \EEM_Line_Item
-	 */
-	public static function instance( $timezone = NULL ) {
-		// check if instance of EEM_Line_Item already exists
-		if ( ! self::$_instance instanceof EEM_Line_Item) {
-			// instantiate Price_model
-			self::$_instance = new self( $timezone );
-		}
-		//set timezone if we have in incoming string
-		if ( ! empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
-
-		// EEM_Line_Item object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Line_Item
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
+	protected static $_instance = NULL;
 
 
 	/**

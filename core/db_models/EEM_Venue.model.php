@@ -26,36 +26,9 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Venue extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Venue
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
 		$this->_tables = array(
@@ -103,7 +76,7 @@ class EEM_Venue extends EEM_CPT_Base {
 		require_once( EE_CLASSES . 'EE_Venue.class.php');
 		require_once( EE_MODELS . 'strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 }

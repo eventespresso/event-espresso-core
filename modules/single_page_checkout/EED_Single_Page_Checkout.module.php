@@ -44,6 +44,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * @return EE_CART
+	 */
+	public function cart() {
+		return $this->_cart;
+	}
+
+
+
+	/**
+	 * @return EE_Transaction
+	 */
+	public function transaction() {
+		return $this->_transaction;
+	}
+
+
+
 
 
 	/**
@@ -287,7 +305,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
 		if ( $final_reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
 			if ( $final_reg_step->process_reg_step() ) {
-				return EED_Single_Page_Checkout::instance()->checkout->transaction->ID();
+				return EED_Single_Page_Checkout::instance()->checkout->transaction;
 			}
 		}
 		return FALSE;

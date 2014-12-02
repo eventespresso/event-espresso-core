@@ -19,7 +19,7 @@
  *
  *
  * @package			espresso_events_New_Addon_Hooks
- * @subpackage		wp-content/plugins/espresso-new-addon/admin/new_addon/espresso_events_New_Addon_Hooks.class.php
+ * @subpackage		wp-content/plugins/eea-new-addon/admin/new_addon/espresso_events_New_Addon_Hooks.class.php
  * @author				Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -36,4 +36,4 @@ class espresso_events_New_Addon_Hooks extends EE_Admin_Hooks {
 
 }
 // End of file espresso_events_New_Addon_Hooks.class.php
-// Location: /wp-content/plugins/espresso-new-addon/admin/new_addon/espresso_events_New_Addon_Hooks.class.php
+// Location: /wp-content/plugins/eea-new-addon/admin/new_addon/espresso_events_New_Addon_Hooks.class.php

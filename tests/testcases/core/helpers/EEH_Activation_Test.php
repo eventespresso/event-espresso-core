@@ -49,18 +49,18 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$this->assertFalse( EEH_Activation::generate_default_message_templates() );
 
 
-		//now simulate a migration without an active messenger that has a new messenger activated on default actually gets activated.
+		//now we simulate someone who's deactivated a messenger and we simulate a migration that triggers generating default message templates again.  The html messenger should STICK and NOT be activated.
 		unset( $active_messengers['html'] );
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 
 		$activated_response = EEH_Activation::generate_default_message_templates();
 
 		//verify we got a response (html should generate templates)
-		$this->assertTrue( $activated_response );
+		$this->assertFalse( $activated_response );
 
-		//doublecheck we now have html in the active messengers array
+		//doublecheck we still don't html in the active messengers array
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		$this->assertTrue( isset( $active_messengers['html'] ) );
+		$this->assertFalse( isset( $active_messengers['html'] ) );
 	}
 
 

@@ -168,12 +168,44 @@ final class EE_System {
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+		//ask that MySQL be forgiving of our mistakes, at least until we have time to iron them out properly
+		add_filter( 'incompatible_sql_modes', array( $this, 'make_scrict_sql_incompatible' ) );
+		add_filter( 'required_sql_modes', array( $this, 'remove_strict_sql_requirement' ) );
+		//and because wpdb has already set mode, we want to reset it
+		global $wpdb;
+		$wpdb->set_sql_mode();
 
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
 	}
 
+	/**
+	 * Removes the STRICT_ALL_TABLES mode from SQL so EE continues to work ok.
+	 * This was added in WP CORE in 4.1 on commit https://core.trac.wordpress.org/changeset/30400
+	 * Which exposed a flurry of database problems- which is handy for debugging, but VERY
+	 * unwelcome information for users (because STRICT_ALL_TABLES will make queries fail
+	 * where they would otherwise have been passable, when there were SQL problems).
+	 *
+	 * @param array $required_modes
+	 * @return array
+	 */
+	public function remove_strict_sql_requirement( $required_modes ){
+		if(($key = array_search('STRICT_ALL_TABLES', $required_modes)) !== false) {
+			unset($required_modes[$key]);
+		}
+		return array();
+	}
+	/**
+	 * In order to successfully do what remove_strict_sql_requirement is trying to do,
+	 * we also need to make 'STIRCT_ALL_TABLES' an incompatible mode too
+	 * @param array $incompatible_modes
+	 * @return array
+	 */
+	public function make_scrict_sql_incompatible( $incompatible_modes ){
+		$incompatible_modes[] = 'STRICT_ALL_TABLES';
+		return $incompatible_modes;
+	}
 
 
 	/**
@@ -442,7 +474,7 @@ final class EE_System {
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
-				//migraitons may be required now that we've upgraded
+				//migrations may be required now that we've upgraded
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 				$this->_handle_core_version_change( $espresso_db_update );
 //				echo "done upgrade";die;
@@ -723,8 +755,9 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
+		$notices = EE_Error::get_notices( FALSE );
 		//if current user is an admin and it's not an ajax request
-		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  )){
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  ) && ! isset( $notices[ 'errors' ] ) ){
 			$query_params =  array( 'page' => 'espresso_about' );
 
 			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {

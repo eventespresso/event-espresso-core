@@ -180,7 +180,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_paths' 						=> isset( $setup_args['class_paths'] ) ? (array) $setup_args['class_paths'] : array(),
 			'model_extension_paths' 	=> isset( $setup_args['model_extension_paths'] ) ? (array) $setup_args['model_extension_paths'] : array(),
 			'class_extension_paths' 		=> isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
+			'custom_post_types' => isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
+			'custom_taxonomies' => isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
 			'payment_method_paths'		=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
+			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
 		);
 
 		//check whether this addon version is compatible with EE core
@@ -300,6 +303,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				'use_wp_update'		=> isset( $setup_args['pue_options']['use_wp_update'] ) ? (string)$setup_args['pue_options']['use_wp_update'] : FALSE
 			);
 			add_action( 'AHEE__EE_System__brew_espresso__after_pue_init', array( 'EE_Register_Addon', 'load_pue_update' ));
+		}
+
+		//any custom post type/ custom capabilities or default terms to register
+		if ( !empty( self::$_settings[$addon_name]['custom_post_types'] ) || !empty( self::$_settings[$addon_name]['custom_taxonomies'] ) ) {
+			EE_Register_CPT::register( $addon_name, array( 'cpts' => self::$_settings[$addon_name]['custom_post_types'] , 'cts' => self::$_settings[$addon_name]['custom_taxonomies'], 'default_terms' => self::$_settings[$addon_name]['default_terms'] ) );
 		}
 		if( ! empty( self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) ){
 			EE_Register_Payment_Method::register($addon_name, array( 'payment_method_paths' => self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) );

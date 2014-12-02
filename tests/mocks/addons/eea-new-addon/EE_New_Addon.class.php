@@ -5,7 +5,7 @@
  * Class  EE_New_Addon
  *
  * @package			Event Espresso
- * @subpackage		espresso-new-addon
+ * @subpackage		eea-new-addon
  * @author			    Brent Christensen
  * @ version		 	$VID:$
  *
@@ -64,7 +64,11 @@ Class  EE_New_Addon extends EE_Addon {
 				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
 				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
 				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
-				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions'
+				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
+				'custom_post_types' => array(), //note for the mock we're not actually adding any custom
+								   //cpt stuff yet.
+				'custom_taxonomies' => array(),
+				'default_terms' => array()
 			)
 		);
 	}
@@ -109,4 +113,4 @@ Class  EE_New_Addon extends EE_Addon {
 
 }
 // End of file EE_New_Addon.class.php
-// Location: wp-content/plugins/espresso-new-addon/EE_New_Addon.class.php
+// Location: wp-content/plugins/eea-new-addon/EE_New_Addon.class.php

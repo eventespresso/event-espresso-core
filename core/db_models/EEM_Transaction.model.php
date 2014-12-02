@@ -12,7 +12,7 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Transaction extends EEM_Base {
 
   	// private instance of the Transaction object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
@@ -86,46 +86,6 @@ class EEM_Transaction extends EEM_Base {
 		parent::__construct( $timezone );
 
 	}
-
-
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the Espresso_model object
-	 *
-	 *		@access public
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Transaction instance
-	 */
-	public static function instance( $timezone = '' ){
-
-		// check if instance of Espresso_model already exists
-		if ( ! self::$_instance instanceof EEM_Transaction ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//we might have a timezone set, let set_timezone decide what to do with it
-		self::$_instance->set_timezone( $timezone );
-
-		// Espresso_model object
-		return self::$_instance;
-	}
-
-
-
-	/**
-	 * resets the model and returns it
-	 *
-	 * @param string $timezone
-	 * @return EEM_Transaction
-	 */
-	public static function reset( $timezone = '' ){
-		self::$_instance = NULL;
-		return self::instance( $timezone );
-	}
-
-
 
 	/**
 	 *        get the revenue per day  for the Transaction Admin page Reports Tab

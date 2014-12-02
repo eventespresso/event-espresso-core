@@ -48,4 +48,4 @@ if ( class_exists( 'EE_Addon' )) {
 add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
 
 // End of file espresso_new_addon.php
-// Location: wp-content/plugins/espresso-new-addon/espresso_new_addon.php
+// Location: wp-content/plugins/eea-new-addon/espresso_new_addon.php

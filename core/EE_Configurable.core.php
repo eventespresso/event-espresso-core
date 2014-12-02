@@ -139,6 +139,7 @@ abstract class EE_Configurable extends EE_Base {
 
 	/**
 	 * gets the class's config object
+	 *
 	 * @return EE_Config_Base
 	 */
 	public function config() {

@@ -1,4 +1,4 @@
-<h3 class="ee-registration-details-h3"><?php _e('Registration  Details:', 'event_espresso'); ?></h3>
+<h3 class="ee-registration-details-h3"><?php _e('Registration Details', 'event_espresso'); ?></h3>
 <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_heading' ); ?>
 
 <div class="ee-registration-details-dv">

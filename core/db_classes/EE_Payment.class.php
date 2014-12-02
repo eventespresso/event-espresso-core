@@ -126,6 +126,21 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	public function set_gateway_response( $gateway_response = '' ) {
 		$this->set( 'PAY_gateway_response', $gateway_response );
 	}
+	/**
+	 * Returns the name of the paymetn method used on this payment (previously known merely as 'gateway')
+	 * but since 4.6.0, payment methods are models and the paymetn keeps a foreign key to the paymetn method
+	 * used on it
+	 * @deprecated
+	 * @return string
+	 */
+	public function gateway(){
+		EE_Error::doing_it_wrong('EE_Payment::gateway', __( 'The method EE_Payment::gateway() has been deprecated. Consider instead using EE_Payment::payment_method()->name()', 'event_espresso' ), '4.6.0' );
+		if( $this->payment_method() ){
+			return $this->payment_method()->name();
+		}else{
+			return __( 'Unknown', 'event_espresso' );
+		}
+	}
 
 
 

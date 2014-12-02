@@ -138,7 +138,18 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		if (( ! self::$_event->display_ticket_selector() || $view_details || post_password_required( $event_post )) && ! is_admin() ) {
+		if (
+			(
+				! self::$_event->display_ticket_selector()
+				|| $view_details
+				|| post_password_required( $event_post )
+				|| (
+					self::$_event->get_active_status() != EE_Datetime::active
+					&& self::$_event->get_active_status() != EE_Datetime::upcoming
+				)
+			)
+			&& ! is_admin()
+		) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 
