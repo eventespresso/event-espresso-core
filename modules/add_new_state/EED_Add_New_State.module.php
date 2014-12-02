@@ -75,11 +75,13 @@ class EED_Add_New_State  extends EED_Module {
 	}
 
 
+
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  	@access 	public
-	 *  	@return 		void
+	 * @access    public
+	 * @param \WP $WP
+	 * @return        void
 	 */
 	public function run( $WP ) {
 	}
@@ -99,14 +101,18 @@ class EED_Add_New_State  extends EED_Module {
 
 
 
-
-
-
 	/**
-	 * 	display_add_new_state_micro_form
+	 *    display_add_new_state_micro_form
 	 *
-	 * 	@access 	public
-	 * 	@return 		string
+	 * @access    public
+	 * @param $input_html
+	 * @param $question
+	 * @param $answer
+	 * @param $name
+	 * @param $id
+	 * @param $class
+	 * @param $system_ID
+	 * @return        string
 	 */
 	public static function display_add_new_state_micro_form( $input_html, $question, $answer, $name, $id, $class, $system_ID ){
 		// load JS
@@ -223,26 +229,35 @@ class EED_Add_New_State  extends EED_Module {
 		return ' size="24" style="display:inline-block; width:auto;"';
 	}
 
+
+
 	/**
-	 * 	set_new_state_input_width
+	 *    set_new_state_input_width
 	 *
-	 * 	@access 	public
-	 * 	@return 		string
+	 * @access    public
+	 * @param $input_html
+	 * @param $label_html
+	 * @param $id
+	 * @return        string
 	 */
 	public static function add_new_state_submit_button( $input_html, $label_html, $id ){
 		$id = str_replace( 'new_state_abbrv', 'new_state', $id );
 		return $input_html . '&nbsp;&nbsp;&nbsp;<a id="submit-' . $id . '" class="ee-form-add-new-state-submit ee-button big" rel="' . $id . '">' . __('ADD', 'event_espresso') . '</a>';
 	}
 
+
+
 	/**
-	 * 	set_new_state_input_width
+	 *    set_new_state_input_width
 	 *
-	 * 	@access 	public
-	 * 	@return 		string
+	 * @access    public
+	 * @param $input_html
+	 * @param $label_html
+	 * @param $id
+	 * @return        string
 	 */
 	public static function cancel_new_state( $input_html, $label_html, $id ){
 		$id = str_replace( 'new_state_abbrv', 'new_state', $id );
-		'http://en.wikipedia.org/wiki/List_of_FIPS_region_codes_(A%E2%80%93C)';
 		$input_html .= '<div class="small-text"><b>' . __('Don\'t know your State/Province Abbreviation?', 'event_espresso') . '</b><br/>';
 		$input_html .= sprintf(
 			__('You can look here: %s, for a list of Countries and links to their State/Province Abbreviations ("Subdivisions assigned codes" column).', 'event_espresso'),
@@ -260,7 +275,7 @@ class EED_Add_New_State  extends EED_Module {
 	 * 	set_new_state_input_width
 	 *
 	 * 	@access 	public
-	 * 	@return 		mixed 	string | int
+	 * 	@return 	string | int
 	 */
 	public static function add_new_state() {
 		$REQ = EE_Registry::instance()->load_core('Request_Handler');
@@ -316,17 +331,18 @@ class EED_Add_New_State  extends EED_Module {
 				}
 			}
 		}
+		return FALSE;
 	}
 
 
 
-
 	/**
-	*		generate_state_abbreviation
-	*
-	* 		@access		public
-	*		@return 		boolean
-	*/
+	 *        generate_state_abbreviation
+	 *
+	 * @access        public
+	 * @param array $request_params
+	 * @return        boolean
+	 */
 	public static function unset_new_state_request_params ( $request_params ) {
 		unset( $request_params['add_new_state'] );
 		unset( $request_params['new_state_country'] );
@@ -337,16 +353,17 @@ class EED_Add_New_State  extends EED_Module {
 
 
 
-
 	/**
-	*		generate_state_abbreviation
-	*
-	* 		@access		public
-	*		@return 		boolean
-	*/
+	 *        generate_state_abbreviation
+	 *
+	 * @access        public
+	 * @param array $props_n_values
+	 * @return        boolean
+	 */
 	public static function save_new_state_to_db ( $props_n_values = array() ) {
 //		printr( $props_n_values, '$props_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( $existing_state = EEM_State::instance()->get_all( array( $props_n_values, 'limit' => 1 ))) {
+		$existing_state = EEM_State::instance()->get_all( array( $props_n_values, 'limit' => 1 ));
+		if ( ! empty( $existing_state )) {
 			return array_pop( $existing_state );
 		}
 		$new_state = EE_State::new_instance( $props_n_values );
@@ -354,29 +371,32 @@ class EED_Add_New_State  extends EED_Module {
 			// if not non-ajax admin
 			$new_state_key = $new_state->country_iso() . '-' . $new_state->abbrev();
 			$new_state_notice = sprintf(
-					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section.<br/>Check "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
+					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%$5sTo verify, edit, and/or delete this new State, please go to the %$4s and update the States / Provinces section.%$5sCheck "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
-					'<a href="' . add_query_arg( array( 'page' => 'espresso_general_settings', 'action' => 'country_settings', 'country' => $new_state->country_iso() ), admin_url( 'admin.php' )) . '">' . __( 'Event Espresso - General Settings > Countries Tab', 'event_espresso' ) . '</a>'
+					'<a href="' . add_query_arg( array( 'page' => 'espresso_general_settings', 'action' => 'country_settings', 'country' => $new_state->country_iso() ), admin_url( 'admin.php' )) . '">' . __( 'Event Espresso - General Settings > Countries Tab', 'event_espresso' ) . '</a>'.
+					'<br />'
 			);
 			EE_Error::add_persistent_admin_notice( $new_state_key, $new_state_notice );
 			$new_state->save();
 			EEM_State::instance()->reset_cached_states();
 			return $new_state;
 		}
+		return FALSE;
 	}
 
 
 
-
-
 	/**
-	*		update_country_settings
-	*
-	* 		@access		public
-	*		@return 		boolean
-	*/
+	 *        update_country_settings
+	 *
+	 * @access        public
+	 * @param string $CNT_ISO
+	 * @param string $STA_ID
+	 * @param array  $cols_n_values
+	 * @return        boolean
+	 */
 	public static function update_country_settings( $CNT_ISO = '', $STA_ID = '', $cols_n_values = array() ) {
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : FALSE;
 		if ( ! $CNT_ISO ) {
@@ -384,16 +404,15 @@ class EED_Add_New_State  extends EED_Module {
 		}
 		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
 		if (  ! $STA_abbrev && ! empty( $STA_ID )) {
-			if( $state = EEM_State::instance()->get_one_by_ID( $STA_ID )) {
-				if ( $state instanceof EE_State ) {
-					$STA_abbrev = $state->abbrev();
-				}
+			$state = EEM_State::instance()->get_one_by_ID( $STA_ID );
+			if ( $state instanceof EE_State ) {
+				$STA_abbrev = $state->abbrev();
 			}
 		}
 		if ( ! $STA_abbrev ) {
 			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		EE_Error::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev );
+		EE_Error::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev, TRUE, TRUE );
 	}
 
 
