@@ -853,16 +853,20 @@ class EE_Error extends Exception {
 
 
 	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
-	* 	@return 		void
-	*/
-	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE ) {
+	 *    dismiss_persistent_admin_notice
+	 *
+	 * @access    public
+	 * @param        string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
+	 * @param bool          $purge
+	 * @param bool          $return_immediately
+	 * @return        void
+	 */
+	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE, $return_immediately = FALSE ) {
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
-			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
+			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
+			// check if notice we wish to dismiss is actually in the $persistent_admin_notices array
+			if ( is_array( $persistent_admin_notices ) && isset( $persistent_admin_notices[ $pan_name ] )) {
 				// completely delete nag notice, or just NULL message so that it can NOT be added again ?
 				if ( $purge ) {
 					unset( $persistent_admin_notices[ $pan_name ] );
@@ -874,7 +878,9 @@ class EE_Error extends Exception {
 				}
 			}
 		}
-		if ( EE_Registry::instance()->REQ->ajax ) {
+		if ( $return_immediately ) {
+			return;
+		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
 			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
