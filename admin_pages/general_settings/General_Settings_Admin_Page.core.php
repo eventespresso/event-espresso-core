@@ -725,13 +725,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		delete_state
 	 *
 	 * 		@access 	public
-	 * 		@return 		void
+	 * 		@return 		boolean | void
 	 */
 	public function delete_state() {
 		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
 		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;
-
 		if ( ! $STA_ID ) {
 			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -742,8 +741,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_success( __( 'The State was deleted successfully.', 'event_espresso' ));
 		}
 		if ( defined( 'DOING_AJAX' )) {
-			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-			echo json_encode( array( 'return_data' => true, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
+			$notices = EE_Error::get_notices( FALSE, FALSE );
+			$notices['return_data'] = TRUE;
+			echo json_encode( $notices );
 			die();
 		} else {
 			$this->_redirect_after_action( $success, 'State', 'deleted', array( 'action' => 'country_settings' ) );
