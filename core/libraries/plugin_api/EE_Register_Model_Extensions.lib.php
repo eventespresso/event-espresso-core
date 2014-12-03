@@ -41,7 +41,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 		}
 
 		//check correct loading
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded' )) {
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
 			EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
