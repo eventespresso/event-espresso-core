@@ -371,6 +371,8 @@ class EE_Html_messenger extends EE_messenger  {
 		remove_all_actions('wp_footer');
 		remove_all_actions('wp_footer_scripts');
 		remove_all_actions('wp_enqueue_scripts');
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = $wp_styles = array();
 
 		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
 		add_action('wp_head', 'wp_enqueue_scripts');
