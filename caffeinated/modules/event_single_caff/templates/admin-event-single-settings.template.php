@@ -35,6 +35,18 @@ $values = array(
 					<p class="description"><?php _e('Do not use this if you are using the venue shortcodes in your event description.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
+			
+			 <tr>
+                <th>
+                    <label for="display_tickets_sold">
+                        <?php _e('Display Tickets Sold', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link('display_tickets_sold_info');?>
+                    </label>
+                </th>
+                <td>
+                    <?php echo EEH_Form_Fields::select_input( 'display_tickets_sold', $values, $display_tickets_sold, 'id="display_tickets_sold"' ); ?>
+                    <p class="description"><?php _e( 'This option applies to all instances where the ticket selector is displayed', 'event_espresso' ); ?></p>
+                </td>
+            </tr>
 
 		</tbody>
 	</table>
