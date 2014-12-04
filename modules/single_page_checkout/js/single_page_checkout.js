@@ -543,6 +543,7 @@ jQuery(document).ready( function($) {
 			// bye bye spinner
 			SPCO.end_ajax();
 			$( step_to_show_div ).css({ 'display' : 'none' }).removeClass('hidden').slideDown( function() {
+				SPCO.main_container.trigger( 'spco_display_step', [ step_to_show, response ] );
 				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 			});
 		},
@@ -805,10 +806,11 @@ jQuery(document).ready( function($) {
 						// get html for next reg step
 						SPCO.display_step( next_step, response );
 					} else if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
-						// display_payment_method_redirect_form
-						SPCO.switch_payment_methods( response );
-					} else if ( typeof response.return_data.redirect_form !== 'undefined' ) {
 						// switch_payment_methods
+						SPCO.switch_payment_methods( response );
+						return;
+					} else if ( typeof response.return_data.redirect_form !== 'undefined' ) {
+						// display_payment_method_redirect_form
 						SPCO.display_payment_method_redirect_form( response.return_data.redirect_form );
 					} else if ( typeof response.return_data.plz_select_method_of_payment !== 'undefined' ) {
 						// plz_select_method_of_payment_prompt
@@ -907,6 +909,7 @@ jQuery(document).ready( function($) {
 					$( payment_method_info ).append( response.return_data.payment_method_info );
 				}
 				$( payment_method_info ).slideDown();
+				SPCO.main_container.trigger( 'spco_switch_payment_methods', [ response.return_data.payment_method ] );
 			}
 			SPCO.end_ajax();
 		},
