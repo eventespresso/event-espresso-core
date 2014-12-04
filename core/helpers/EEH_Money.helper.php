@@ -38,7 +38,7 @@ class EEH_Money extends EEH_Base  {
 		$money_value = str_replace( EE_Registry::instance()->CFG->currency->dec_mrk, '.', $money_value );
 
 		//float it! and round to three decimal places
-		$money_value = round ( (float) $money_value, 3 );
+		$money_value = number_format( round ( (float) $money_value, 3 ), 3 );
 		return $money_value;
 	}
 
