@@ -2128,6 +2128,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_status_banner_single;
 	public $display_venue;
+    	public $display_tickets_sold;
 
 	/**
 	 *	class constructor
@@ -2135,6 +2136,7 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+		$this->display_tickets_sold = 1;
 	}
 }
 
