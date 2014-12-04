@@ -18,6 +18,10 @@
 <strong><?php _e('Display Venue Details', 'event_espresso'); ?></strong><br />
 <?php _e('Whether Venue information, such as the address and Google Map should be shown on the Single Event pages.', 'event_espresso'); ?>
 </li>
+<li>
+    <strong><?php _e( 'Display Tickets Sold', 'event_espresso' ); ?></strong><br />
+    <?php _e( 'Toggles whether the display to show tickets sold, tickets left are shown in the expanded detail toggle of individual tickets in the ticket selector', 'event_espresso' ); ?>
+</li>
 </ul>
 <h3>
 <?php _e('Event List Pages', 'event_espresso'); ?>
