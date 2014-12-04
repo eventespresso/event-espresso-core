@@ -296,6 +296,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<th width="15%" valign="middle" class="">
 														<span class="dashicons dashicons-clock"></span><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span>
 													</th>
+													<?php if ( true === EED_Event_Single_Caff::display_tickets_sold() ): ?>
 													<th width="12.5%" valign="middle" class="cntr">
 														<span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span>
 													</th>
@@ -308,6 +309,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<th width="12.5%" valign="middle" class="cntr">
 														<span class="smaller-text"><?php _e( 'Total Spaces<br/>Left', 'event_espresso' ); ?></span>
 													</th>
+													<?php endif; ?>
 												</tr>
 											</thead>
 											<tbody>
@@ -325,6 +327,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												<td class="cntr small-text">
 													<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
+												<?php if ( true === EED_Event_Single_Caff::display_tickets_sold() ): ?>
 												<td class="cntr small-text">
 													<?php echo $ticket->sold(); ?>
 												</td>
@@ -338,6 +341,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												<td class="cntr small-text">
 													<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 												</td>
+												<?php endif; ?>
 											</tr>
 											<?php } ?>
 										<?php } ?>
