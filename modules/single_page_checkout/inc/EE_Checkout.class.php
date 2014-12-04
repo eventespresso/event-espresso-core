@@ -480,6 +480,19 @@ class EE_Checkout {
 
 
 	/**
+	 * 	_transaction_has_primary_registration
+	 *
+	 * 	@access 		private
+	 * 	@return 		bool
+	 */
+	public function transaction_has_primary_registrant() {
+		return $this->primary_attendee_obj instanceof EE_Attendee ? TRUE : FALSE;
+		//		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * 	save_all_data
 	 * 	simply loops through the current transaction and saves all data for each registration
 	 *
