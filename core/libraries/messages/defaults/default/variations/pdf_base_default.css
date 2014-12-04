@@ -4,7 +4,7 @@ html, body { height : 100% !important; width : 100% !important; margin : 0; padd
 body { font : 82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color : #FFFFFF; }
 .noPrint { display : none !important; height : 0 !important; width : 0 !important; margin : 0 !important; padding : 0 !important; }
 ul, ul li, p, div, ol { margin : 0; padding : 0; list-style : none; }
-#invoice-header, .ticket-details, .ticket-time-and-place-details, .ticket-registrations-area, .taxes, .payment-dv, .additional-info-dv { page-break-inside : avoid; }
+#invoice-header, .ticket-details, .ticket-time-and-place-details { page-break-inside : avoid; }
 #invoice { background-color : #FFFFFF; }
 .invoice-amount, .venue-list { width :98.5%; }
 .taxes .invoice-amount, .payment-dv .invoice-amount { width :100% !important; }
@@ -25,6 +25,6 @@ td { vertical-align : top !important; }
 
 .icon { margin:0 1em 0 0 !important; }
 .registration-details,
-.registration-details tr th { margin: 0; vertical-align : center; }
-.no-bottom-margin { margin-bottom : 0px; }
+.registration-details tr th { margin: 0; vertical-align: middle; }
+.no-bottom-margin { margin-bottom : 0; }
 
