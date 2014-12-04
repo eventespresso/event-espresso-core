@@ -287,6 +287,18 @@ class EED_Event_Single  extends EED_Module {
 		$venue_name = EEH_Venue_View::venue_name();
 		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
 	}
+	
+	    /**
+	     * 	display_tickets_sold
+	     *
+	     *  @access 	public
+	     *  @return 	bool
+	     */
+	    public static function display_tickets_sold() {
+	        /** @type EE_Event_Single_Config EED_Event_Single::instance()->config() */
+	        $display_tickets_sold = isset( EED_Event_Single::instance()->config()->display_tickets_sold ) ? EED_Event_Single::instance()->config()->display_tickets_sold : TRUE;
+	        return $display_tickets_sold ? TRUE : FALSE;
+	    }
 
 
 
