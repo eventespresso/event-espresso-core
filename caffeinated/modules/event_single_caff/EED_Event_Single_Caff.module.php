@@ -88,7 +88,8 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$CFG->EED_Event_Single = new EE_Event_Single_Config();
 		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
 		$CFG->EED_Event_Single->display_venue = !empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
-		return $CFG;
+		$CFG->EED_Event_Single->display_tickets_sold = !empty( $REQ['display_tickets_sold'] ) && $REQ['display_tickets_sold'] ? TRUE : FALSE;
+		eturn $CFG;
 	}
 
 
