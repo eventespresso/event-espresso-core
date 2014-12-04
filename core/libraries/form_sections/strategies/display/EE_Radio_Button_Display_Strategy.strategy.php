@@ -29,6 +29,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$selected_attr = $this->_input->raw_value() === $value ? ' checked="checked"' : '';
 			$value_slug = sanitize_key( $value );
 			$html .= '<label for="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
+			$html .= 'id="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '-lbl"';
 			$html .= 'class="ee-radio-label-after' . $label_size_class . '">';
 			$html .= '<input id="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
 			$html .= 'name="' . $this->_input->html_name() . '"';
