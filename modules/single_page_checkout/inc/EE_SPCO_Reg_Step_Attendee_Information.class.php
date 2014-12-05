@@ -710,6 +710,15 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+					if ( $registration->status_ID() == EEM_Registration::status_id_incomplete ) {
+						// grab default reg status for the event, if set
+						$event_default_registration_status = $registration->event()->default_registration_status();
+						$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+						// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
+						$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
+						$registration->set_status( $STS_ID );
+					}
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					$this->_associate_registration_with_transaction( $registration );
