@@ -753,38 +753,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _reg_form_settings() {
-
 		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': '';
-
-		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
-		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
-
-		$this->_template_args['recaptcha_theme_options'] = array(
-				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
-				array('id'  => 'white','text'=> __('White', 'event_espresso')),
-				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
-				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
-
-		$this->_template_args['recaptcha_example'] = !empty( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
-
-		$this->_template_args['recaptcha_language_options'] = array(
-				array('id'  => 'en','text'=> __('English', 'event_espresso')),
-				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
-				array('id'  => 'nl','text'=> __('Dutch', 'event_espresso')),
-				array('id'  => 'fr','text'=> __('French', 'event_espresso')),
-				array('id'  => 'de','text'=> __('German', 'event_espresso')),
-				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
-				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
-				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
-
+		$this->_template_args = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args', $this->_template_args );
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
@@ -794,50 +764,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	protected function _display_recaptcha() {
-		if (!function_exists('recaptcha_get_html')) {
-			require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-		}
-		$content = '
-<script type="text/javascript">
-/* <! [CDATA [ */
-var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
-/*  ] ]>  */
-</script>
-<p id="spco-captcha" class="reg-page-form-field-wrap-pg">
-' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, NULL, is_ssl() ? true : false ) . '
-</p>
-';
-	return $content;
-	}
-
-
-
-
 	protected function _update_reg_form_settings() {
-
-		//userproofing recaptcha settings in here as well.  If Use reCAPTCHA is set to yes but we dont' have public or private keys then set Use reCAPTCHA to no and give error message.
-		if ( apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', true ) && isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
-			if ( empty($this->_req_data['recaptcha_publickey']) || empty($this->_req_data['recaptcha_privatekey']) ) {
-				$this->_req_data['use_captcha'] = 0;
-				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			}
-		}
-
-
-		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-
 		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
-
-		$what = 'Registration Options';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
-
+		$success = $this->_update_espresso_configuration( 'Registration Options', EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, 'Registration Options', 'updated', array( 'action' => 'view_reg_form_settings' ) );
 	}
 
 }

@@ -47,7 +47,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_CART
 	 */
 	public function cart() {
-		return $this->_cart;
+		return $this->checkout->cart;
 	}
 
 
@@ -56,7 +56,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_Transaction
 	 */
 	public function transaction() {
-		return $this->_transaction;
+		return $this->checkout->transaction;
 	}
 
 
@@ -535,11 +535,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$this->checkout->current_step->reg_form->receive_form_submission();
 					// validate form data
 					if ( ! $this->checkout->current_step->reg_form->is_valid() || ! $this->checkout->continue_reg ) {
+						// thou shall not pass !!!
 						$this->checkout->continue_reg = FALSE;
+						// any form validation errors?
 						if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
 							// bad, bad, bad registrant
 							EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 						}
+						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
 					}
 				}
