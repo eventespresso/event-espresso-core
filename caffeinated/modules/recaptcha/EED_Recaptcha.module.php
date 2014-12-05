@@ -143,7 +143,7 @@ class EED_Recaptcha  extends EED_Module {
 					RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
 					array(
 						'recaptcha_language' 	=> EE_Registry::instance()->CFG->registration->recaptcha_language,
-						'recaptcha_site_key' 		=> EE_Registry::instance()->CFG->registration->recaptcha_site_key,
+						'recaptcha_publickey' 		=> EE_Registry::instance()->CFG->registration->recaptcha_publickey,
 						'recaptcha_theme' 		=> EE_Registry::instance()->CFG->registration->recaptcha_theme,
 						'recaptcha_type' 			=> EE_Registry::instance()->CFG->registration->recaptcha_type
 					)
@@ -215,7 +215,7 @@ class EED_Recaptcha  extends EED_Module {
 		$recaptcha_response = EE_Registry::instance()->REQ->get( 'g-recaptcha-response', FALSE );
 		// Was there a reCAPTCHA response?
 		if ( $recaptcha_response ) {
-			$reCaptcha = new ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_secret_key );
+			$reCaptcha = new ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_privatekey );
 			$recaptcha_response = $reCaptcha->verifyResponse(
 				$_SERVER['REMOTE_ADDR'],
 				EE_Registry::instance()->REQ->get( 'g-recaptcha-response' )
@@ -314,20 +314,20 @@ class EED_Recaptcha  extends EED_Module {
 	//							'normalization_strategy' 	=> new EE_Int_Normalization()
 							)
 						),
-						'recaptcha_site_key' 		=> new EE_Text_Input(
+						'recaptcha_publickey' 		=> new EE_Text_Input(
 							array(
 								'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
 								'required' 				=> TRUE,
-								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) : ''
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : ''
 							)
 						),
-						'recaptcha_secret_key' 		=> new EE_Text_Input(
+						'recaptcha_privatekey' 		=> new EE_Text_Input(
 							array(
 								'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
 								'required' 				=> TRUE,
-								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) : ''
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : ''
 							)
 						)
 					)
@@ -496,14 +496,14 @@ class EED_Recaptcha  extends EED_Module {
 					if (
 						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', $EE_Registration_Config->use_captcha )
 						&& $valid_data['main_settings']['use_captcha']
-						&& ( ! $EE_Registration_Config->use_captcha && ( empty( $valid_data['main_settings']['recaptcha_site_key'] ) || empty( $valid_data['main_settings']['recaptcha_secret_key'] )))
+						&& ( ! $EE_Registration_Config->use_captcha && ( empty( $valid_data['main_settings']['recaptcha_publickey'] ) || empty( $valid_data['main_settings']['recaptcha_privatekey'] )))
 					) {
 						$valid_data['main_settings']['use_captcha'] = FALSE;
 						EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a Site Key and Secret Key.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}
 					$EE_Registration_Config->use_captcha = $valid_data['main_settings']['use_captcha'];
-					$EE_Registration_Config->recaptcha_site_key = $valid_data['main_settings']['recaptcha_site_key'];
-					$EE_Registration_Config->recaptcha_secret_key = $valid_data['main_settings']['recaptcha_secret_key'];
+					$EE_Registration_Config->recaptcha_publickey = $valid_data['main_settings']['recaptcha_publickey'];
+					$EE_Registration_Config->recaptcha_privatekey = $valid_data['main_settings']['recaptcha_privatekey'];
 					$EE_Registration_Config->recaptcha_type = $valid_data['appearance_settings']['recaptcha_type'];
 					$EE_Registration_Config->recaptcha_theme = $valid_data['appearance_settings']['recaptcha_theme'];
 					$EE_Registration_Config->recaptcha_language = $valid_data['appearance_settings']['recaptcha_language'];

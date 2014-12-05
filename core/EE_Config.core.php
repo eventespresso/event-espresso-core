@@ -1824,18 +1824,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	   */
       public $recaptcha_language;
 
-	/**
-	 * ReCaptcha site key
-	 * @var string $recaptcha_site_key
-	 */
-	public $recaptcha_site_key;
-
-	/**
-	 * ReCaptcha secret key
-	 * @var string $recaptcha_secret_key
-	 */
-	public $recaptcha_secret_key;
-
 	  /**
 	   * ReCaptcha public key
 	   * @var string $recaptcha_publickey
@@ -1877,8 +1865,8 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_theme = 'light';
 		$this->recaptcha_type = 'image';
 		$this->recaptcha_language = 'en';
-		$this->recaptcha_site_key = NULL;
-		$this->recaptcha_secret_key = NULL;
+		$this->recaptcha_publickey = NULL;
+		$this->recaptcha_privatekey = NULL;
 		$this->recaptcha_width = 500;
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
