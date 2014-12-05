@@ -88,7 +88,7 @@ jQuery(document).ready( function($) {
 		// modifier for offset_from_top
 		offset_from_top_modifier : -50,
 		// the first invalid input in a form
-		invalid_input_to_scroll_to : null,
+		invalid_input_to_scroll_to : [],
 		// display debugging info in console?
 		display_debug : eei18n.wp_debug,
 		// allow submit buttons to be enabled?
@@ -220,7 +220,7 @@ jQuery(document).ready( function($) {
 				// concatenate and tag error messages
 				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', SPCO.error_msgs.join( '<br/>' ));
 				// scroll to top of form or to the first invalid input?
-				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null ? SPCO.main_container : SPCO.invalid_input_to_scroll_to;
+				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to.length === 0 ? SPCO.main_container : SPCO.invalid_input_to_scroll_to;
 //				SPCO.console_log_object( 'display_validation_errors : SPCO.invalid_input_to_scroll_to: ', SPCO.invalid_input_to_scroll_to );
 				// display error_msg
 				SPCO.scroll_to_top_and_display_messages( SPCO.invalid_input_to_scroll_to, SPCO.generate_message_object( '', error_msg, '' ));
@@ -521,12 +521,12 @@ jQuery(document).ready( function($) {
 		/**
 		 * @function collapse_question_groups
 		 */
-		collapse_question_groups : function() {
-			$('.ee-reg-form-qstn-grp-dv').slideUp();
-			$('#spco-copy-attendee-dv').slideUp();
-			$('#spco-auto-copy-attendee-pg').slideUp();
-//			$('#spco-display-event-questions-lnk').removeClass('hidden');
-		},
+//		collapse_question_groups : function() {
+//			$('.ee-reg-form-qstn-grp-dv').slideUp();
+//			$('#spco-copy-attendee-dv').slideUp();
+//			$('#spco-auto-copy-attendee-pg').slideUp();
+////			$('#spco-display-event-questions-lnk').removeClass('hidden');
+//		},
 
 
 
@@ -557,6 +557,7 @@ jQuery(document).ready( function($) {
 			// bye bye spinner
 			SPCO.end_ajax();
 			$( step_to_show_div ).css({ 'display' : 'none' }).removeClass('hidden').slideDown( function() {
+				SPCO.main_container.trigger( 'spco_display_step', [ step_to_show, response ] );
 				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 			});
 		},
@@ -678,7 +679,7 @@ jQuery(document).ready( function($) {
 					SPCO.process_response( next_step, response );
 				},
 
-				error: function( response ) {
+				error: function() {
 					SPCO.submit_reg_form_server_error();
 				}
 
@@ -725,7 +726,7 @@ jQuery(document).ready( function($) {
 					SPCO.process_response( next_step, response );
 				},
 
-				error: function( response ) {
+				error: function() {
 					return SPCO.submit_reg_form_server_error();
 				}
 
@@ -772,7 +773,7 @@ jQuery(document).ready( function($) {
 					SPCO.process_response( 'payment_options', response );
 				},
 
-				error: function( response ) {
+				error: function() {
 					return SPCO.submit_reg_form_server_error();
 				}
 
@@ -817,10 +818,11 @@ jQuery(document).ready( function($) {
 						// get html for next reg step
 						SPCO.display_step( next_step, response );
 					} else if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
-						// display_payment_method_redirect_form
-						SPCO.switch_payment_methods( response );
-					} else if ( typeof response.return_data.redirect_form !== 'undefined' ) {
 						// switch_payment_methods
+						SPCO.switch_payment_methods( response );
+						return;
+					} else if ( typeof response.return_data.redirect_form !== 'undefined' ) {
+						// display_payment_method_redirect_form
 						SPCO.display_payment_method_redirect_form( response.return_data.redirect_form );
 					} else if ( typeof response.return_data.plz_select_method_of_payment !== 'undefined' ) {
 						// plz_select_method_of_payment_prompt
@@ -896,6 +898,7 @@ jQuery(document).ready( function($) {
 					$( payment_method_info ).append( response.return_data.payment_method_info );
 				}
 				$( payment_method_info ).slideDown();
+				SPCO.main_container.trigger( 'spco_switch_payment_methods', [ response.return_data.payment_method ] );
 			}
 			SPCO.end_ajax();
 		},
@@ -938,7 +941,7 @@ jQuery(document).ready( function($) {
 		 * @param  {number} extra
 		 */
 		set_offset_from_top : function( item, extra ) {
-			extra = typeof extra !== 'undefined' && extra !== '' ? extra : SPCO.offset_from_top_modifier;
+			extra = typeof extra !== 'undefined' ? extra : SPCO.offset_from_top_modifier;
 			SPCO.offset_from_top = $( item ).offset().top + extra;
 			SPCO.offset_from_top = Math.max( 0, SPCO.offset_from_top );
 		},

@@ -1805,7 +1805,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * This is used to permanently delete registrations.  Note, this will handle not only deleting permanently the registration but also.
 	 *
-	 * 1. Deleting permanently any related Attendees IF that attendee has no other registrations attached to it.
+	 * 1. Removing relations to EE_Attendee
 	 * 2. Deleting permanently the related transaction, but ONLY if all related registrations to the transaction are ALSO trashed.
 	 * 3. Deleting permanently any related Line items but only if the above conditions are met.
 	 * 4. Removing relationships between all tickets and the related registrations
@@ -1880,12 +1880,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//delete related answers
 			$registration->delete_related_permanently('Answer');
 
-			//delete Attendee (if this registration is the only one on the attendee ).
+			//remove relationship to EE_Attendee (but we ALWAYS leave the contact record intact)
 			$attendee = $registration->get_first_related('Attendee');
-			if ( $attendee instanceof EE_Attendee && $attendee->count_related('Registration') > 1 )
-				$registration->_remove_relation_to($attendee, 'Attendee');
-			else
-				$registration->delete_related_permanently('Attendee');
+			$registration->_remove_relation_to($attendee, 'Attendee');
 
 			//now remove relationships to tickets on this registration.
 			$registration->_remove_relations('Ticket');
