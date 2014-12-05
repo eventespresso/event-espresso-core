@@ -30,12 +30,20 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base{
-	public function normalize($value_to_normalize) {
-		return (boolean)intval($value_to_normalize);
+
+	/**
+	 * @param string | int | bool $value_to_normalize
+	 * @return boolean
+	 */
+	public function normalize( $value_to_normalize ) {
+		return filter_var( $value_to_normalize, FILTER_VALIDATE_BOOLEAN );
 	}
+
+
+
 	/**
 	 *
-	 * @param type $normalized_value
+	 * @param boolean $normalized_value
 	 * @return string
 	 */
 	public function unnormalize( $normalized_value ) {
@@ -45,6 +53,8 @@ class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base{
 			return '0';
 		}
 	}
+
+
 
 }
 

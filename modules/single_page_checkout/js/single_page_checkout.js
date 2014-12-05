@@ -14,6 +14,8 @@ jQuery(document).ready( function($) {
 		 *     offset_from_top: number,
 		 *     offset_from_top_modifier: number,
 		 *     display_debug: number,
+		 *     allow_enable_submit_buttons: boolean,
+		 *     override_messages: boolean
 	 * }}
 	 * @namespace eei18n
 	 * @type {{
@@ -89,6 +91,10 @@ jQuery(document).ready( function($) {
 		invalid_input_to_scroll_to : [],
 		// display debugging info in console?
 		display_debug : eei18n.wp_debug,
+		// allow submit buttons to be enabled?
+		allow_enable_submit_buttons : true,
+		// override SPCO messages
+		override_messages : false,
 
 
 
@@ -365,6 +371,14 @@ jQuery(document).ready( function($) {
 		},
 
 
+		/**
+		 * @function reset_offset_from_top_modifier
+		 */
+		reset_offset_from_top_modifier : function() {
+			SPCO.offset_from_top_modifier = -50;
+	},
+
+
 
 		/**
 		 * @function initialize_datepicker_inputs
@@ -572,7 +586,7 @@ jQuery(document).ready( function($) {
 		 */
 		enable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).removeClass( 'disabled' );
+				$(this).removeClass( 'disabled spco-disabled-submit-btn' );
 			});
 		},
 
@@ -583,7 +597,7 @@ jQuery(document).ready( function($) {
 		 */
 		disable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).addClass( 'disabled' );
+				$(this).addClass('disabled spco-disabled-submit-btn');
 			});
 		},
 
@@ -596,6 +610,8 @@ jQuery(document).ready( function($) {
 		 */
 		process_next_step : function( next_step_btn ) {
 			var step = $(next_step_btn).attr('rel');
+			// add trigger point so other JS can join the party
+			SPCO.main_container.trigger( 'process_next_step', [ step ] );
 			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
 				var next_step = SPCO.get_next_step_slug( step );
 //				SPCO.console_log( 'process_next_step : step', step, true );
@@ -728,7 +744,7 @@ jQuery(document).ready( function($) {
 			var payment_method = $(item).val();
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
-				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
+				SPCO.scroll_to_top_and_display_messages( $('methods-of-payment'), msg );
 			}
 			var form_data = 'step=payment_options';
 			form_data += '&action=spco_billing_form';
@@ -774,14 +790,10 @@ jQuery(document).ready( function($) {
 		process_response : function( next_step, response ) {
 			// alert( 'next_step = ' + next_step );
 			if ( typeof response !== 'undefined' && typeof response !== null ) {
-
-				if ( typeof response.recaptcha_passed !== 'undefined' ) {
-					// hide recaptcha?
-					SPCO.process_recaptcha( response );
-				} else if ( typeof response.recaptcha_reload !== 'undefined' ) {
-					// or reload recaptcha ?
-					SPCO.reload_recaptcha( response );
-                } else if ( typeof response.errors !== 'undefined' ) {
+				// add trigger point so other JS can join the party
+				SPCO.main_container.trigger( 'spco_process_response', [ next_step, response ] );
+				// process response
+				if ( typeof response.errors !== 'undefined' ) {
                     // no response...
                     SPCO.hide_notices();
                     SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
@@ -830,29 +842,6 @@ jQuery(document).ready( function($) {
             } else {
 				SPCO.submit_reg_form_server_error();
 			}
-		},
-
-
-
-		/**
-		 * @function process_recaptcha
-		 * @param  {object} response
-		 */
-		process_recaptcha : function( response ) {
-			if ( response.recaptcha_passed ) {
-				$( '#spco-captcha' ).children( 'span' ).html('');
-			}
-		},
-
-
-
-		/**
-		 * @function reload_recaptcha
-		 * @param  {object} response
-		 */
-		reload_recaptcha : function( response ) {
-			$('#recaptcha_reload').trigger('click');
-			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response );
 		},
 
 
@@ -965,6 +954,10 @@ jQuery(document).ready( function($) {
 		 * @param  {object} msg
 		 */
 		scroll_to_top_and_display_messages : function( item, msg ) {
+			// is message display being overridden by some other JS ?
+			if ( SPCO.override_messages ) {
+				return;
+			}
 			if ( $( item ).offset().top + SPCO.offset_from_top_modifier !== SPCO.offset_from_top ) {
 				SPCO.set_offset_from_top( item, SPCO.offset_from_top_modifier );
 				var messages_displayed = false;
@@ -1028,7 +1021,9 @@ jQuery(document).ready( function($) {
 				// bye bye spinner
 				SPCO.end_ajax();
 			}
-			SPCO.enable_submit_buttons();
+			if ( SPCO.allow_enable_submit_buttons ) {
+				SPCO.enable_submit_buttons();
+			}
 		},
 
 
