@@ -209,14 +209,14 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->environment = new EE_Environment_Config();
+		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
+		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
+		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
+		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', new EE_Registration_Config() );
+		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', new EE_Admin_Config() );
+		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
+		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
+		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
