@@ -610,6 +610,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _process_registrations( $registrations = array(), $valid_data = array() ) {
 		// load resources and set some defaults
 		EE_Registry::instance()->load_model( 'Attendee' );
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		// holder for primary registrant attendee object
 		$this->checkout->primary_attendee_obj = NULL;
 		// array for tracking reg form data for the primary registrant
 		$primary_registrant = array(
@@ -711,14 +714,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						return FALSE;
 					}
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
-					if ( $registration->status_ID() == EEM_Registration::status_id_incomplete ) {
-						// grab default reg status for the event, if set
-						$event_default_registration_status = $registration->event()->default_registration_status();
-						$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
-						// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
-						$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
-						$registration->set_status( $STS_ID );
-					}
+					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					$this->_associate_registration_with_transaction( $registration );
