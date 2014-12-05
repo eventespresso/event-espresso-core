@@ -27,6 +27,13 @@
 class EE_Event extends EE_CPT_Base {
 
 	/**
+	 * cached value for the the logical active status for the event
+	 * @see get_active_status()
+	 * @var string
+	 */
+	protected $_active_status = '';
+
+	/**
 	 * This is just used for caching the Primary Datetime for the Event on initial retrieval
 	 * @var EE_Datetime
 	 */
@@ -701,61 +708,62 @@ class EE_Event extends EE_CPT_Base {
 	 *
 	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
 	 *
-	 * @return int (based on EE_Datetime active constants.
+	 * @param bool $reset
+	 * @return bool | string - based on EE_Datetime active constants or FALSE if error.
 	 */
-	public function get_active_status() {
-		$status_array = array();
+	public function get_active_status( $reset = FALSE ) {
+		// if the active status has already been set, then just use that value (unless we are resetting it)
+		if ( ! empty( $this->_active_status ) && ! $reset ) {
+			return $this->_active_status;
+		}
 		//first check if event id is present on this object
-		if ( !$this->ID() ) {
+		if ( ! $this->ID() ) {
 			return FALSE;
 		}
 		//first get all datetimes ordered by date
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
 		//next loop through $datetimes and setup status array
+		$status_array = array();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
-				$status_array[ ] = $datetime->get_active_status();
+				$status_array[] = $datetime->get_active_status();
 			}
 		}
 		//now we can conditionally determine status
 		if ( $this->status() == 'publish' ) {
 			if ( in_array( EE_Datetime::active, $status_array ) ) {
-				return EE_Datetime::active;
-			}
-			else {
+				$this->_active_status = EE_Datetime::active;
+			} else {
 				if ( in_array( EE_Datetime::upcoming, $status_array ) ) {
-					return EE_Datetime::upcoming;
-				}
-				else {
+					$this->_active_status = EE_Datetime::upcoming;
+				} else {
 					if ( in_array( EE_Datetime::expired, $status_array ) ) {
-						return EE_Datetime::expired;
-					}
-					else {
+						$this->_active_status = EE_Datetime::expired;
+					} else {
 						if ( in_array( EE_Datetime::sold_out, $status_array ) ) {
-							return EE_Datetime::sold_out;
-						}
-						else {
-							return EE_Datetime::expired; //catchall
+							$this->_active_status = EE_Datetime::sold_out;
+						} else {
+							$this->_active_status = EE_Datetime::expired; //catchall
 						}
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			switch ( $this->status() ) {
 				case EEM_Event::sold_out :
-					return EE_Datetime::sold_out;
+					$this->_active_status = EE_Datetime::sold_out;
 					break;
 				case EEM_Event::cancelled :
-					return EE_Datetime::cancelled;
+					$this->_active_status = EE_Datetime::cancelled;
 					break;
 				case EEM_Event::postponed :
-					return EE_Datetime::postponed;
+					$this->_active_status = EE_Datetime::postponed;
 					break;
 				default :
-					return EE_Datetime::inactive;
+					$this->_active_status = EE_Datetime::inactive;
 			}
 		}
+		return $this->_active_status;
 	}
 
 
