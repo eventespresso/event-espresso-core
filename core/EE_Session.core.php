@@ -543,52 +543,25 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
+	 * plz see: http://stackoverflow.com/a/2031935/1475279
 	 *	@attempt to get IP address of current visitor from server
 	 *	@access public
 	 *	@return string
 	 */
 	private function _visitor_ip() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$visitor_ip = '0:0:0:0';
-
-		if ( isset( $_SERVER['REMOTE_ADDR'] )) {
-			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['REMOTE_ADDR'] )) {
-				$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
-			}
-		} else if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
-			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
-				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
+		$visitor_ip = '0.0.0.0';
+		$server_keys = array( 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' );
+		foreach ( $server_keys as $key ){
+			if ( isset( $_SERVER[ $key ] )) {
+				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] )) as $ip ) {
+					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ) {
+						$visitor_ip = $ip;
+					}
+				}
 			}
 		}
-
-		// break it up!!!
-		$ip_bits = explode( ':', $visitor_ip );
-
-		// cycle through this four times
-		for ( $i=0; $i<4; $i++ ) {
-
-			if ( ! isset( $ip_bits[$i] )) {
-				// nothing set ?
-				$ip_bits[$i] = 0;
-
-			} elseif ( ! absint( $ip_bits[$i] )) {
-				// not an absolute integer?
-				$ip_bits[$i] = 0;
-
-			} elseif ( $ip_bits[$i] < 1 ) {
-				// less than 1?
-				$ip_bits[$i] = 0;
-			}
-
-		}
-
-		// pull yourself together!!
-		$ip_bits = implode( ':', $ip_bits );
-
-		return $ip_bits;
-
+		return $visitor_ip;
 	}
 
 

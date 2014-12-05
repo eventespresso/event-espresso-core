@@ -536,9 +536,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function process_reg_step() {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if ( ! $this->checkout->continue_reg ) {
-			return FALSE;
-		}
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
 		//d( $valid_data );
