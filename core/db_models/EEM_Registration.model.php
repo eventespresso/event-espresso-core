@@ -1,30 +1,16 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * Registration Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen
+ * @author				Mike Nelson, Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
-require_once ( EE_CLASSES . 'EE_Registration.class.php' );
-
-
 class EEM_Registration extends EEM_Soft_Delete_Base {
 
   	// private instance of the Registration object
@@ -41,6 +27,16 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * The value of REG_count for a primary registrant
 	 */
 	const PRIMARY_REGISTRANT_COUNT = 1;
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an INCOMPLETE registration.
+	 * Initial status for registrations when they are first created
+	 * Payments are NOT allowed.
+	 * Automatically toggled to whatever the default Event registration status is upon completion of the attendee information reg step
+	 * NO space reserved.
+	 * Registration is NOT active
+	 */
+	const status_id_incomplete = 'RIC';
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
@@ -87,15 +83,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 
-
-
 	/**
-	 *	private constructor to prevent direct creation
-	 *	@Constructor
-	 *	@access protected
-	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
-	* 	Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *	@return void
+	 *    private constructor to prevent direct creation
+	 *
+	 * @Constructor
+	 * @access protected
+	 * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
+	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 * @return \EEM_Registration
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
@@ -111,7 +106,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_pending_payment, 'Status'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
 				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
@@ -183,7 +178,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * This returns a wpdb->results array of all registration date month and years matching the incoming query params and grouped by month and year.
-	 * @param  array  $query_params Array of query_parms as described in the comments for EEM_Base::get_all()
+	 * @param  array  $where_params Array of query_params as described in the comments for EEM_Base::get_all()
 	 * @return wpdb results array
 	 */
 	public function get_reg_months_and_years( $where_params ) {
@@ -205,17 +200,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	* 		@param		int		$ATT_ID
 	*		@return 	EE_Registration[]
 	*/
-	public function get_all_registrations_for_attendee( $ATT_ID = FALSE, $status_array = FALSE ) {
-
+	public function get_all_registrations_for_attendee( $ATT_ID = 0 ) {
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
-		if ( $registrations = $this->get_all( array( array( 'ATT_ID' => $ATT_ID )))) {
-			return $registrations;
-		} else {
-			return FALSE;
-		}
+		return $this->get_all( array( array( 'ATT_ID' => $ATT_ID )));
 	}
+
+
 
 	/**
 	 * Gets a registration given their REG_url_link. Yes, this should usually
