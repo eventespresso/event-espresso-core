@@ -264,14 +264,17 @@ class EED_Recaptcha  extends EED_Module {
 				'name' 					=> 'recaptcha_settings_form',
 				'html_id' 					=> 'recaptcha_settings_form',
 				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
-				'subsections' 			=> array(
-					'main_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
-					'main_settings' 						=> EED_Recaptcha::_recaptcha_main_settings(),
-					'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Appearance', 'event_espresso' ) )),
-					'appearance_settings' 			=> EED_Recaptcha::_recaptcha_appearance_settings(),
-//					'recaptcha_example' 				=> new EE_Form_Section_HTML( EED_Recaptcha::display_recaptcha() ),
-					'required_fields_note' 			=> new EE_Form_Section_HTML( EEH_HTML::p( __( 'All fields marked with a * are required fields', 'event_espresso' ), '', 'grey-text' ))
-				),
+				'subsections' 			=> apply_filters(
+					'FHEE__EED_Recaptcha___recaptcha_settings_form__form_subsections',
+					array(
+						'main_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
+						'main_settings' 						=> EED_Recaptcha::_recaptcha_main_settings(),
+						'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Appearance', 'event_espresso' ) )),
+						'appearance_settings' 			=> EED_Recaptcha::_recaptcha_appearance_settings(),
+						// 'recaptcha_example' 				=> new EE_Form_Section_HTML( EED_Recaptcha::display_recaptcha() ),
+						'required_fields_note' 			=> new EE_Form_Section_HTML( EEH_HTML::p( __( 'All fields marked with a * are required fields', 'event_espresso' ), '', 'grey-text' ))
+					)
+				)
 			)
 		);
 	}
@@ -291,38 +294,41 @@ class EED_Recaptcha  extends EED_Module {
 				'html_id' 					=> 'recaptcha_settings_tbl',
 				'html_class' 			=> 'form-table',
 				'layout_strategy'		=> new EE_Admin_Two_Column_Layout(),
-				'subsections' 			=> array(
-					'use_captcha' 				=> new EE_Radio_Button_Input(
-						array(
-							TRUE => __( 'Yes', 'event_espresso' ),
-							FALSE => __( 'No', 'event_espresso' )
-						),
-						array(
-							'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
-							'html_help_text' 		=> sprintf(
-								__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
-								'<a href="https://www.google.com/recaptcha/intro/index.html">',
-								'</a>'
+				'subsections' 			=> apply_filters(
+					'FHEE__EED_Recaptcha___recaptcha_main_settings__form_subsections',
+					array(
+						'use_captcha' 				=> new EE_Radio_Button_Input(
+							array(
+								TRUE => __( 'Yes', 'event_espresso' ),
+								FALSE => __( 'No', 'event_espresso' )
 							),
-							'default' 								=> isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE,
-							'display_html_label_text' 	=> FALSE,
-//							'normalization_strategy' 	=> new EE_Int_Normalization()
-						)
-					),
-					'recaptcha_site_key' 		=> new EE_Text_Input(
-						array(
-							'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
-							'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
-							'required' 				=> TRUE,
-							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) : ''
-						)
-					),
-					'recaptcha_secret_key' 		=> new EE_Text_Input(
-						array(
-							'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
-							'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
-							'required' 				=> TRUE,
-							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) : ''
+							array(
+								'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
+								'html_help_text' 		=> sprintf(
+									__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
+									'<a href="https://www.google.com/recaptcha/intro/index.html">',
+									'</a>'
+								),
+								'default' 								=> isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE,
+								'display_html_label_text' 	=> FALSE,
+	//							'normalization_strategy' 	=> new EE_Int_Normalization()
+							)
+						),
+						'recaptcha_site_key' 		=> new EE_Text_Input(
+							array(
+								'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
+								'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
+								'required' 				=> TRUE,
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_site_key ) : ''
+							)
+						),
+						'recaptcha_secret_key' 		=> new EE_Text_Input(
+							array(
+								'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
+								'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
+								'required' 				=> TRUE,
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_secret_key ) : ''
+							)
 						)
 					)
 				)
@@ -348,87 +354,90 @@ class EED_Recaptcha  extends EED_Module {
 				'html_id' 					=> 'recaptcha_appearance_settings_tbl',
 				'html_class' 			=> 'form-table',
 				'layout_strategy'		=> new EE_Admin_Two_Column_Layout(),
-				'subsections' 			=> array(
-					'recaptcha_theme' 		=> new EE_Radio_Button_Input(
-						array(
-							'light' => __( 'Light', 'event_espresso' ),
-							'dark' => __( 'Dark', 'event_espresso' )
+				'subsections' 			=> apply_filters(
+					'FHEE__EED_Recaptcha___recaptcha_appearance_settings__form_subsections',
+					array(
+						'recaptcha_theme' 		=> new EE_Radio_Button_Input(
+							array(
+								'light' => __( 'Light', 'event_espresso' ),
+								'dark' => __( 'Dark', 'event_espresso' )
+							),
+							array(
+								'html_label_text'	 	=> __( 'Theme', 'event_espresso' ),
+								'html_help_text' 		=> __( 'The color theme of the widget.', 'event_espresso' ),
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'light',
+								'display_html_label_text' => FALSE
+							)
 						),
-						array(
-							'html_label_text'	 	=> __( 'Theme', 'event_espresso' ),
-							'html_help_text' 		=> __( 'The color theme of the widget.', 'event_espresso' ),
-							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'light',
-							'display_html_label_text' => FALSE
-						)
-					),
-					'recaptcha_type' 		=> new EE_Radio_Button_Input(
-						array(
-							'image' => __( 'Image', 'event_espresso' ),
-							'audio' => __( 'Audio', 'event_espresso' )
+						'recaptcha_type' 		=> new EE_Radio_Button_Input(
+							array(
+								'image' => __( 'Image', 'event_espresso' ),
+								'audio' => __( 'Audio', 'event_espresso' )
+							),
+							array(
+								'html_label_text'	 	=> __( 'Type', 'event_espresso' ),
+								'html_help_text' 		=> __( 'The type of CAPTCHA to serve.', 'event_espresso' ),
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_type ) ? EE_Registry::instance()->CFG->registration->recaptcha_type : 'image',
+								'display_html_label_text' =>FALSE
+							)
 						),
-						array(
-							'html_label_text'	 	=> __( 'Type', 'event_espresso' ),
-							'html_help_text' 		=> __( 'The type of CAPTCHA to serve.', 'event_espresso' ),
-							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_type ) ? EE_Registry::instance()->CFG->registration->recaptcha_type : 'image',
-							'display_html_label_text' =>FALSE
+						'recaptcha_language' 		=> new EE_Select_Input(
+							array(
+								 'ar' 			=> __( 'Arabic', 'event_espresso' ),
+								 'bg' 		=> __( 'Bulgarian', 'event_espresso' ),
+								 'ca' 			=> __( 'Catalan', 'event_espresso' ),
+								 'zh-CN' 	=>  __( 'Chinese (Simplified)', 'event_espresso' ),
+								 'zh-TW' 	=>  __( 'Chinese (Traditional)	', 'event_espresso' ),
+								 'hr' 			=> __( 'Croatian', 'event_espresso' ),
+								 'cs' 			=> __( 'Czech', 'event_espresso' ),
+								 'da' 			=> __( 'Danish', 'event_espresso' ),
+								 'nl' 			=> __( 'Dutch', 'event_espresso' ),
+								 'en-GB' 	=>  __( 'English (UK)', 'event_espresso' ),
+								 'en' 			=> __( 'English (US)', 'event_espresso' ),
+								 'fil' 			=> __( 'Filipino', 'event_espresso' ),
+								 'fi' 			=> __( 'Finnish', 'event_espresso' ),
+								 'fr' 			=> __( 'French', 'event_espresso' ),
+								 'fr-CA' 	=>  __( 'French (Canadian)', 'event_espresso' ),
+								 'de' 			=> __( 'German', 'event_espresso' ),
+								 'de-AT' 	=>  __( 'German (Austria)', 'event_espresso' ),
+								 'de-CH' 	=>  __( 'German (Switzerland)', 'event_espresso' ),
+								 'el' 			=> __( 'Greek', 'event_espresso' ),
+								 'iw' 			=> __( 'Hebrew', 'event_espresso' ),
+								 'hi' 			=> __( 'Hindi', 'event_espresso' ),
+								 'hu' 		=> __( 'Hungarian', 'event_espresso' ),
+								 'id' 			=> __( 'Indonesian', 'event_espresso' ),
+								 'it' 			=> __( 'Italian', 'event_espresso' ),
+								 'ja' 			=> __( 'Japanese', 'event_espresso' ),
+								 'ko' 			=> __( 'Korean', 'event_espresso' ),
+								 'lv' 			=> __( 'Latvian', 'event_espresso' ),
+								 'lt' 			=> __( 'Lithuanian', 'event_espresso' ),
+								 'no' 		=> __( 'Norwegian', 'event_espresso' ),
+								 'fa' 			=> __( 'Persian', 'event_espresso' ),
+								 'pl' 			=> __( 'Polish', 'event_espresso' ),
+								 'pt' 			=> __( 'Portuguese', 'event_espresso' ),
+								 'pt-BR' 	=>  __( 'Portuguese (Brazil)', 'event_espresso' ),
+								 'pt-PT' 	=>  __( 'Portuguese (Portugal)', 'event_espresso' ),
+								 'ro' 			=> __( 'Romanian', 'event_espresso' ),
+								 'ru' 			=> __( 'Russian', 'event_espresso' ),
+								 'sr' 			=> __( 'Serbian', 'event_espresso' ),
+								 'sk' 			=> __( 'Slovak', 'event_espresso' ),
+								 'sl' 			=> __( 'Slovenian', 'event_espresso' ),
+								 'es' 			=> __( 'Spanish', 'event_espresso' ),
+								 'es-419' 	=>  __( 'Spanish (Latin America)', 'event_espresso' ),
+								 'sv' 			=> __( 'Swedish', 'event_espresso' ),
+								 'th' 			=> __( 'Thai', 'event_espresso' ),
+								 'tr' 			=> __( 'Turkish', 'event_espresso' ),
+								 'uk' 			=> __( 'Ukrainian', 'event_espresso' ),
+								 'vi' 			=> __( 'Vietnamese', 'event_espresso')
+							),
+							array(
+								'html_label_text'	 	=> __( 'Language', 'event_espresso' ),
+								'html_help_text' 		=> __( 'Forces the widget to render in a specific language.', 'event_espresso' ),
+								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en'
+							)
 						)
-					),
-					'recaptcha_language' 		=> new EE_Select_Input(
-						array(
-							 'ar' 			=> __( 'Arabic', 'event_espresso' ),
-							 'bg' 		=> __( 'Bulgarian', 'event_espresso' ),
-							 'ca' 			=> __( 'Catalan', 'event_espresso' ),
-							 'zh-CN' 	=>  __( 'Chinese (Simplified)', 'event_espresso' ),
-							 'zh-TW' 	=>  __( 'Chinese (Traditional)	', 'event_espresso' ),
-							 'hr' 			=> __( 'Croatian', 'event_espresso' ),
-							 'cs' 			=> __( 'Czech', 'event_espresso' ),
-							 'da' 			=> __( 'Danish', 'event_espresso' ),
-							 'nl' 			=> __( 'Dutch', 'event_espresso' ),
-							 'en-GB' 	=>  __( 'English (UK)', 'event_espresso' ),
-							 'en' 			=> __( 'English (US)', 'event_espresso' ),
-							 'fil' 			=> __( 'Filipino', 'event_espresso' ),
-							 'fi' 			=> __( 'Finnish', 'event_espresso' ),
-							 'fr' 			=> __( 'French', 'event_espresso' ),
-							 'fr-CA' 	=>  __( 'French (Canadian)', 'event_espresso' ),
-							 'de' 			=> __( 'German', 'event_espresso' ),
-							 'de-AT' 	=>  __( 'German (Austria)', 'event_espresso' ),
-							 'de-CH' 	=>  __( 'German (Switzerland)', 'event_espresso' ),
-							 'el' 			=> __( 'Greek', 'event_espresso' ),
-							 'iw' 			=> __( 'Hebrew', 'event_espresso' ),
-							 'hi' 			=> __( 'Hindi', 'event_espresso' ),
-							 'hu' 		=> __( 'Hungarian', 'event_espresso' ),
-							 'id' 			=> __( 'Indonesian', 'event_espresso' ),
-							 'it' 			=> __( 'Italian', 'event_espresso' ),
-							 'ja' 			=> __( 'Japanese', 'event_espresso' ),
-							 'ko' 			=> __( 'Korean', 'event_espresso' ),
-							 'lv' 			=> __( 'Latvian', 'event_espresso' ),
-							 'lt' 			=> __( 'Lithuanian', 'event_espresso' ),
-							 'no' 		=> __( 'Norwegian', 'event_espresso' ),
-							 'fa' 			=> __( 'Persian', 'event_espresso' ),
-							 'pl' 			=> __( 'Polish', 'event_espresso' ),
-							 'pt' 			=> __( 'Portuguese', 'event_espresso' ),
-							 'pt-BR' 	=>  __( 'Portuguese (Brazil)', 'event_espresso' ),
-							 'pt-PT' 	=>  __( 'Portuguese (Portugal)', 'event_espresso' ),
-							 'ro' 			=> __( 'Romanian', 'event_espresso' ),
-							 'ru' 			=> __( 'Russian', 'event_espresso' ),
-							 'sr' 			=> __( 'Serbian', 'event_espresso' ),
-							 'sk' 			=> __( 'Slovak', 'event_espresso' ),
-							 'sl' 			=> __( 'Slovenian', 'event_espresso' ),
-							 'es' 			=> __( 'Spanish', 'event_espresso' ),
-							 'es-419' 	=>  __( 'Spanish (Latin America)', 'event_espresso' ),
-							 'sv' 			=> __( 'Swedish', 'event_espresso' ),
-							 'th' 			=> __( 'Thai', 'event_espresso' ),
-							 'tr' 			=> __( 'Turkish', 'event_espresso' ),
-							 'uk' 			=> __( 'Ukrainian', 'event_espresso' ),
-							 'vi' 			=> __( 'Vietnamese', 'event_espresso')
-						),
-						array(
-							'html_label_text'	 	=> __( 'Language', 'event_espresso' ),
-							'html_help_text' 		=> __( 'Forces the widget to render in a specific language.', 'event_espresso' ),
-							'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en'
-						)
-					),
-				),
+					)
+				)
 			)
 		);
 	}
