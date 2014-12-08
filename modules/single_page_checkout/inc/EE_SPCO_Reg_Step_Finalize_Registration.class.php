@@ -95,11 +95,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			);
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
-			// setup URL for redirect
-			$this->checkout->redirect_url = add_query_arg(
-				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
-				$this->checkout->thank_you_page_url
-			);
+			// check if transaction has a primary registrant and that it has a related Attendee object
+			if ( $this->checkout->transaction_has_primary_registrant() ) {
+				// setup URL for redirect
+				$this->checkout->redirect_url = add_query_arg(
+					array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
+					$this->checkout->thank_you_page_url
+				);
+			} else {
+				EE_Error::add_error( __( 'A valid Primary Registration for this Transaction could not be found.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			}
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			// set a hook point
 			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
