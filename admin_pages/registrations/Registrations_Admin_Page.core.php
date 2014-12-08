@@ -1902,7 +1902,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			//remove relationship to EE_Attendee (but we ALWAYS leave the contact record intact)
 			$attendee = $registration->get_first_related('Attendee');
-			$registration->_remove_relation_to($attendee, 'Attendee');
+			if ( $attendee instanceof EE_Attendee ) {
+				$registration->_remove_relation_to($attendee, 'Attendee');
+			}
 
 			//now remove relationships to tickets on this registration.
 			$registration->_remove_relations('Ticket');
