@@ -152,7 +152,7 @@ abstract class EE_Base_Class{
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
 		//remember in entity mapper
-		if($model->has_primary_key_field() && $this->ID()){
+		if($model->has_primary_key_field() && $this->ID() && ! $bydb ){
 			$model->add_to_entity_map($this);
 		}
 		//setup all the relations
@@ -582,12 +582,28 @@ abstract class EE_Base_Class{
 	public function get_all_from_cache($relationName){
 		$cached_array_or_object =  $this->_model_relations[$relationName];
 		if(is_array($cached_array_or_object)){
-			return $cached_array_or_object;
+			$objects = $cached_array_or_object;
 		}elseif($cached_array_or_object){//if the result is not an array, but exists, make it an array
-			return array($cached_array_or_object);
+			$objects = array($cached_array_or_object);
 		}else{//if nothing was found, return an empty array
-			return array();
+			$objects = array();
 		}
+		//bugfix for https://events.codebasehq.com/projects/event-espresso/tickets/7143
+		//basically, if this model object was stored in the session, and these cached model objects
+		//already have IDs, let's make sure they're in their model's entity mapper
+		//otherwise we will have duplicates next time we call EE_Registry::instance()->load_model( $relationName )->get_one_by_ID( $result->ID() );
+		foreach( $objects as $model_object ){
+			$model = EE_Registry::instance()->load_model( $relationName );
+			if( $model instanceof EEM_Base && $model_object instanceof EE_Base_Class ){
+				//ensure its in the map if it has an ID; otherwise it will be added to the map when its saved
+				if( $model_object->ID() ){
+					$model->add_to_entity_map( $model_object );
+				}
+			}else{
+				throw new EE_Error( sprintf( __( 'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object', 'event_espresso' ), $relationName, gettype( $model_object )));
+			}
+		}
+		return $objects;
 	}
 
 
