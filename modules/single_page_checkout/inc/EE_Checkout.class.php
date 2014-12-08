@@ -505,6 +505,8 @@ class EE_Checkout {
 			// save so that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
+			// bandaid done for https://events.codebasehq.com/projects/event-espresso/tickets/7143
+			EE_Registry::instance()->reset_model( 'Registration' );
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
 				$this->_save_registration( $reg_cache_ID, $registration );
 			}
