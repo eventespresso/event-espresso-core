@@ -1298,7 +1298,7 @@ abstract class EE_Base_Class{
 			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
 				throw new EE_Error( sprintf(
-					__( 'Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s', 'event_espresso' ),
+					__( 'Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provided %s as the model object to a %s', 'event_espresso' ),
 					$otherObjectModelObjectOrID,
 					get_class( $this )
 				));
