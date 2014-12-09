@@ -841,6 +841,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+			$registration_processor->toggle_incomplete_registration_status_to_default( $primary_registration );
 			return TRUE;
 		}
 
