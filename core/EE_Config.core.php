@@ -89,6 +89,13 @@ final class EE_Config {
 	public $map_settings;
 
 	/**
+	*
+	* @deprecated
+	* @var EE_Gateway_Config
+	*/
+	public $gateway;
+
+	/**
 	 *	@var 	array	$_config_option_names
 	 * 	@access 	private
 	 */
@@ -209,6 +216,7 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
+
 		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
 		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
 		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
@@ -217,6 +225,7 @@ final class EE_Config {
 		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
 		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
 		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
+		$this->gateway =  apply_filters( 'FHEE__EE_Config___initialize_config__gateway', new EE_Gateway_Config() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -2297,8 +2306,49 @@ class EE_Environment_Config extends EE_Config_Base {
 	public function recheck_values() {
 		$this->_set_php_values();
 	}
+
+
+
 }
 
+
+
+
+
+
+
+
+/**
+ * stores payment gateway info
+ * @deprecated
+ */
+class EE_Gateway_Config extends EE_Config_Base{
+
+	/**
+	 * Array with keys that are payment gateways slugs, and values are arrays
+	 * with any config info the gateway wants to store
+	 * @var array
+	 */
+	public $payment_settings;
+
+	/**
+	 * Where keys are gateway slugs, and values are booleans indicating whether or not
+	 * the gateway is stored in the uploads directory
+	 * @var array
+	 */
+	public $active_gateways;
+
+
+
+	/**
+	 *	class constructor
+	 * @deprecated
+	 */
+	public function __construct(){
+		$this->payment_settings = array();
+		$this->active_gateways = array( 'Invoice' => FALSE );
+	}
+}
 
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php
