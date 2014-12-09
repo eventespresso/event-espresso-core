@@ -607,6 +607,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _process_registrations( $registrations = array(), $valid_data = array() ) {
 		// load resources and set some defaults
 		EE_Registry::instance()->load_model( 'Attendee' );
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		// holder for primary registrant attendee object
 		$this->checkout->primary_attendee_obj = NULL;
 		// array for tracking reg form data for the primary registrant
 		$primary_registrant = array(
@@ -707,6 +710,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					$this->_associate_registration_with_transaction( $registration );

@@ -334,6 +334,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
+	 *    is_incomplete -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_incomplete
+	 *
+	 * @access        public
+	 * @return        boolean
+	 */
+	public function is_incomplete() {
+		return $this->status_ID() == EEM_Registration::status_id_incomplete ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 *        Set Registration Date
 	 *
 	 * @access        public
@@ -629,14 +641,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			case EEM_Registration::status_id_approved:
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
 				break;
-			case EEM_Registration::status_id_not_approved:
-				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
-				break;
 			case EEM_Registration::status_id_pending_payment:
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
 				break;
+			case EEM_Registration::status_id_not_approved:
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Registration::status_id_cancelled:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
+				break;
+			case EEM_Registration::status_id_incomplete:
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-orange-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_declined:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';

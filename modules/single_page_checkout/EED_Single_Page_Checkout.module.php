@@ -787,17 +787,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 					$att_nmbr++;
 					$reg_url_link = $registration_processor->generate_reg_url_link( $att_nmbr, $item );
-					// grab default reg status for the event, if set
-					$event_default_registration_status = $event->default_registration_status();
-					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
-					// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
-					$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
 					// now create a new registration for the ticket
 					$registration = EE_Registration::new_instance( array(
 						'EVT_ID' 					=> $event->ID(),
 						'TXN_ID' 					=> $transaction->ID(),
 						'TKT_ID' 					=> $ticket->ID(),
-						'STS_ID' 					=> $STS_ID,
+						'STS_ID' 					=> EEM_Registration::status_id_incomplete,
 						'REG_date' 				=> $transaction->datetime(),
 						'REG_final_price' 	=> $ticket->price(),
 						'REG_session' 			=> EE_Registry::instance()->SSN->id(),
