@@ -61,7 +61,7 @@ final class EE_System {
 	 * @deprecated since version 4.6.0.dev.006
 	 * Now whenever a new_activation is detected the request type is still just
 	 * new_activation (same for reactivation, upgrade, downgrade etc), but if we'r ein maintenance mode
-	 * EE_System::initialize_db_if_no_migraitons_required and EE_Addon::initialize_db_if_no_migrations_required
+	 * EE_System::initialize_db_if_no_migrations_required and EE_Addon::initialize_db_if_no_migrations_required
 	 * will instead enqueue that EE plugin's db initialization for when we're taken out of maintenance mode.
 	 * (Specifically, when the migration manager indicates migrations are finished
 	 * EE_Data_Migration_Manager::initialize_db_for_enqueued_ee_plugins() will be called)
