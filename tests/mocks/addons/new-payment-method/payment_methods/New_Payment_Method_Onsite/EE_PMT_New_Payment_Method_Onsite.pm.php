@@ -37,7 +37,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
 			'name'=>'New_Payment_Method_Onsite_Form',
 			'subsections'=>array(
-				'status' => new EE_Text_Input(),//this will become the payments status when processing payments on this mock object
+				'status' => new EE_Select_Input( array( 'Approved' => 'Approved', 'Pending' => 'Pending', 'Declined' => 'Declined' ), array('html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ))),//this will become the payments status when processing payments on this mock object
 				'credit_card'=>new EE_Credit_Card_Input(array(
 					'required'=>false
 				)),
