@@ -670,6 +670,6 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 
-
+	
 }
 // end of file: /core/EE_Data_Migration_Script_Base.core.php
