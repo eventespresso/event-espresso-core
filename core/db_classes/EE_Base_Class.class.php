@@ -165,10 +165,14 @@ abstract class EE_Base_Class{
 		}
 	}
 
+
+
 	/**
 	 * Gets the field's original value when this object was constructed during this request.
 	 * This can be helpful when determining if a model object has changed or not
+	 *
 	 * @param string $field_name
+	 * @return mixed|null
 	 */
 	public function get_original( $field_name ){
 		if( isset( $this->_props_n_values_provided_in_constructor[ $field_name ] ) &&
@@ -576,16 +580,20 @@ abstract class EE_Base_Class{
 	/**
 	 * Fetches a single EE_Base_Class on that relation. (If the relation is of type
 	 * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
+	 *
 	 * @param string $relationName
+	 * @throws \EE_Error
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_from_cache($relationName){
 		$cached_array_or_object =  $this->_model_relations[$relationName];
 		if(is_array($cached_array_or_object)){
 			$objects = $cached_array_or_object;
-		}elseif($cached_array_or_object){//if the result is not an array, but exists, make it an array
+		}elseif($cached_array_or_object){
+			//if the result is not an array, but exists, make it an array
 			$objects = array($cached_array_or_object);
-		}else{//if nothing was found, return an empty array
+		}else{
+			//if nothing was found, return an empty array
 			$objects = array();
 		}
 		//bugfix for https://events.codebasehq.com/projects/event-espresso/tickets/7143
@@ -703,7 +711,7 @@ abstract class EE_Base_Class{
 	 * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
 	 * @internal param mixed $date_format valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
 	 * @internal param mixed $time_format Same as above except this is for time format
-	 * @return mixed string|bool|void|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field, or void if echoing
+	 * @return void | string | bool | EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field, or void if echoing
 	 */
 	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
 
@@ -751,9 +759,9 @@ abstract class EE_Base_Class{
 
 		if ( $echo ) {
 			$this->e( $field_name, $date_or_time );
-		 } else {
-			return $this->get( $field_name, $date_or_time );
-		}
+			return '';
+		 }
+		return $this->get( $field_name, $date_or_time );
 	}
 
 
