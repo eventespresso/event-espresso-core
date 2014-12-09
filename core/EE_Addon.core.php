@@ -217,7 +217,7 @@ abstract class EE_Addon extends EE_Configurable {
 				}
 			}
 		}
-		//if not DMS was found that shoudl be ok. This addon just doesn't require any database changes
+		//if not DMS was found that should be ok. This addon just doesn't require any database changes
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => $this->name(), 'version' => $this->version() ) );
 	}
 
@@ -236,7 +236,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function initialize_default_data() {
 		/**
 		 * Called when an addon is ensuring its default data is set (possibly called
-		 * on a reactivation, so first check for the absense of other data before setting
+		 * on a reactivation, so first check for the absence of other data before setting
 		 * default data)
 		 * @param EE_Addon $addon the addon that called this
 		 */
