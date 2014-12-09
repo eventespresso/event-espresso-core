@@ -38,6 +38,8 @@ jQuery(document).ready( function($) {
 		 *     language: string,
 		 *     EESID: string,
 		 *     datepicker_yearRange: string,
+		 *     revisit: string,
+		 *     e_reg_url_link: string
 		 * }}
 	 * @namespace response
 	 * @type {{
@@ -655,6 +657,8 @@ jQuery(document).ready( function($) {
 			form_data += '&noheader=true';
 			form_data += '&step=' + step;
 			form_data += '&EESID=' + eei18n.EESID;
+			form_data += '&revisit=' + eei18n.revisit;
+			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
@@ -701,6 +705,8 @@ jQuery(document).ready( function($) {
 			form_data += '&noheader=1';
 			form_data += '&ee_front_ajax=1';
 			form_data += '&EESID=' + eei18n.EESID;
+			form_data += '&revisit=' + eei18n.revisit;
+			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			// alert( 'form_data = ' + form_data );
 
 			$.ajax({
@@ -753,6 +759,8 @@ jQuery(document).ready( function($) {
 			form_data += '&noheader=1';
 			form_data += '&ee_front_ajax=1';
 			form_data += '&EESID=' + eei18n.EESID;
+			form_data += '&revisit=' + eei18n.revisit;
+			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 
 			// alert( 'form_data = ' + form_data );
 
