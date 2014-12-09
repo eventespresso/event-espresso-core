@@ -17,8 +17,6 @@
  * If your values are already in the database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  *
- * Description
- *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Michael Nelson
@@ -258,12 +256,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-	private $_class = '';
-
-
-
-
-
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays.
@@ -272,12 +264,15 @@ abstract class EEM_Base extends EE_Base{
 	 * finalizes constructing all the object's attributes.
 	 * Generally, rather than requiring a child to code
 	 * $this->_tables = array(
-	 *		'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
-	 *		...);
+	 *        'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
+	 *        ...);
 	 *  (thus repeating itself in the array key and in the constructor of the new EE_Table,)
 	 * each EE_Table has a function to set the table's alias after the constructor, using
 	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
 	 * do something similar.
+	 *
+	 * @param null $timezone
+	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone = NULL ){
 		// check that the model has not been loaded too soon
@@ -399,6 +394,8 @@ abstract class EEM_Base extends EE_Base{
 		// Espresso_model object
 		return static::$_instance;
 	}
+
+
 
 	/**
 	 * resets the model and returns it
@@ -1532,7 +1529,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array         $fields_n_values each key should be in field's keys, and value should be an int, string or float
 	 * @param bool|int     $new_id
 	 * @throws EE_Error
-	 * @global $wpdb only used to get the $wpdb->insert_id after performin an insert
+	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
 	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 */
@@ -3000,7 +2997,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the model object from the  entity map if it exists
 	 * @param int|string $id the ID of the model object
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class | bool
 	 */
 	public function get_from_entity_map( $id ){
 		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
