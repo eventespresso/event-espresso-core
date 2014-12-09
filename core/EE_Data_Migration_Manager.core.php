@@ -153,7 +153,7 @@ class EE_Data_Migration_Manager{
 			self::status_fatal_error
 			//note: status_no_more_migration_scripts doesn't apply
 		);
-		//make sure we've included the base migration script, because we may need the EE_Data_Migration_Script_Error class
+		//make sure we've included the base migration script, because we may need the EE_DMS_Unknown_1_0_0 class
 		//to be defined, because right now it doesn't get autoloaded on its own
 		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
@@ -721,7 +721,7 @@ class EE_Data_Migration_Manager{
 			//use the data migration error stub, which is designed specifically for this type of thing
 			//require the migration script base class file, which also has the error class
 
-			$general_migration_error = new EE_Data_Migration_Script_Error();
+			$general_migration_error = new EE_DMS_Unknown_1_0_0();
 			$general_migration_error->add_error($error_message);
 			$general_migration_error->set_borked();
 			$last_ran_migration_script_properties = $general_migration_error->properties_as_array();
