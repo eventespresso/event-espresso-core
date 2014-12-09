@@ -900,7 +900,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 										sprintf(
 											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-											'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="',
+											'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
 											'">',
 											'</a>'
 										)
