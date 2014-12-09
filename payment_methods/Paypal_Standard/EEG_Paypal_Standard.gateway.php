@@ -47,7 +47,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		'SGD',
 		'THB',
 		'TRY',
-		'TWD'
+		'TWD',
+		'RUB'
 	);
 
 
