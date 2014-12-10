@@ -124,6 +124,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['image_url'] = $this->_image_url;
 		}
 		$redirect_args['no_shipping'] = $this->_shipping_details;
+		
+		$redirect_args = apply_filters( "FHEE_EEG_Paypal_Standard_set_redirection_info_arguments", $redirect_args );
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
