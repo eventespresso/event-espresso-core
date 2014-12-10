@@ -1836,14 +1836,12 @@ class EE_Registration_Config extends EE_Config_Base {
 	  /**
 	   * ReCaptcha public key
 	   * @var string $recaptcha_publickey
-	   * @deprecated
 	   */
       public $recaptcha_publickey;
 
 	  /**
 	   * ReCaptcha private key
 	   * @var string $recaptcha_privatekey
-	   * @deprecated
 	   */
       public $recaptcha_privatekey;
 
@@ -1877,8 +1875,6 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 		$this->recaptcha_width = 500;
-		$this->recaptcha_publickey = NULL;
-		$this->recaptcha_privatekey = NULL;
 	}
 
 

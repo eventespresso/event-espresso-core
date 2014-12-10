@@ -297,7 +297,7 @@ class EED_Recaptcha  extends EED_Module {
 				'subsections' 			=> apply_filters(
 					'FHEE__EED_Recaptcha___recaptcha_main_settings__form_subsections',
 					array(
-						'use_captcha' 				=> new EE_Radio_Button_Input(
+						'use_captcha' 				=> new EE_Yes_No_Input(
 							array(
 								TRUE => __( 'Yes', 'event_espresso' ),
 								FALSE => __( 'No', 'event_espresso' )
@@ -310,8 +310,7 @@ class EED_Recaptcha  extends EED_Module {
 									'</a>'
 								),
 								'default' 								=> isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE,
-								'display_html_label_text' 	=> FALSE,
-	//							'normalization_strategy' 	=> new EE_Int_Normalization()
+								'display_html_label_text' 	=> FALSE
 							)
 						),
 						'recaptcha_publickey' 		=> new EE_Text_Input(
