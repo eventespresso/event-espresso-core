@@ -32,7 +32,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 * 		constructor
 	 * 		@Constructor
 	 * 		@access public
-	 * 		@return void
+	 * 		@return Pricing_Admin_Page_Init
 	 */
 	public function __construct() {
 

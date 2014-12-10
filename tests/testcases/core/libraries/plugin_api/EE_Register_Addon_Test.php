@@ -23,11 +23,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_reg_args;
 	private $_addon_name;
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_mock_addon_path = EE_MOCKS_DIR.'addons/new-addon/';
+		$this->_mock_addon_path = EE_MOCKS_DIR.'addons/eea-new-addon/';
 		$this->_reg_args = array(
 			'version'=>'1.0.0',
 			'min_core_version'=>'4.0.0',
-			'main_file_path'=>$this->_mock_addon_path . 'espresso-new-addon.php',
+			'main_file_path'=>$this->_mock_addon_path . 'eea-new-addon.php',
 			'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts',
 			'model_paths' => $this->_mock_addon_path . 'core/db_models',
 			'class_paths' => $this->_mock_addon_path . 'core/db_classes',
@@ -170,7 +170,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 //		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 //
 //
-//		//use the function in mocks/addons/new_addon/espresso-new-addon.php
+//		//use the function in mocks/addons/new_addon/eea-new-addon.php
 //		load_espresso_new_addon();
 //
 //		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
@@ -268,7 +268,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	 */
 //	public function test_regular_new_addon_activation(){
 //		$this->_pretend_addon_hook_time();
-//		require_once( EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php' );
+//		require_once( EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php' );
 //		EE_New_Addon::register_addon();
 //		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 //

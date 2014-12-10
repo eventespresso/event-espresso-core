@@ -47,7 +47,7 @@ class EEM_State extends EEM_Base {
 				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false, NULL, 'Country'),
 				'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation','event_espresso'), false, ''),
 				'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name','event_espresso'), false, ''),
-				'STA_active'=> new EE_Boolean_Field('STA_active', __("State Active Flag", "event_espresso"), false, false)
+				'STA_active'=> new EE_Boolean_Field('STA_active', __('State Active Flag', 'event_espresso'), false, false)
 				));
 		$this->_model_relations = array(
 			'Attendee'=>new EE_Has_Many_Relation(),
@@ -98,8 +98,8 @@ class EEM_State extends EEM_Base {
 	 * @return        array
 	 */
 	public function get_all_active_states( $countries = array(), $flush_cache = FALSE ) {
-		$countries = is_array( $countries ) && ! empty( $countries ) ? $countries : EEM_Country::instance()->get_all_active_countries();
 		if ( ! self::$_active_states || $flush_cache ) {
+			$countries = is_array( $countries ) && ! empty( $countries ) ? $countries : EEM_Country::instance()->get_all_active_countries();
 			self::$_active_states =  $this->get_all( array(
 				array( 'STA_active' => TRUE, 'CNT_ISO' => array( 'IN', array_keys( $countries ))),
 				'order_by' => array( 'STA_name'=>'ASC' ),

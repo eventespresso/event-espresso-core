@@ -26,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 ?><div class="event-display-boxes">
 			<h4 id="page_title" class="payment_type_title section-heading"><?php echo $page_title ?></h4>
-				<p class="instruct"><?php echo $payment_instructions ?></p>
+				<p class="instruct"><?php echo wpautop( $payment_instructions ) ?></p>
 		</div>
 <?php
 // End of file bank_payment_overview_content.template.php

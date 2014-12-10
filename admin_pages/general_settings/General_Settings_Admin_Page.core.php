@@ -456,7 +456,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 
 		//PUE verification stuff
-		$verify_fail = get_option( 'pue_verification_error_' . EE_PLUGIN_BASENAME );
+		$ver_option_key = 'puvererr_' . basename( EE_PLUGIN_BASENAME );
+		$verify_fail = get_option( $ver_option_key );
 		$this->_template_args['site_license_key_verified'] = $verify_fail || !empty( $verify_fail ) || ( empty( $this->_template_args['site_license_key'] ) && empty( $verify_fail ) )? '<span class="dashicons dashicons-admin-network ee-icon-color-ee-red ee-icon-size-20"></span>' : '<span class="dashicons dashicons-admin-network ee-icon-color-ee-green ee-icon-size-20"></span>';
 
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );

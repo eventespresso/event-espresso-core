@@ -8,4 +8,4 @@
  */
 
 // Bootstrap EE4 Addon
-require EEADDON_PLUGIN_DIR . 'espresso-new-addon.php';
+require EEADDON_PLUGIN_DIR . 'eea-new-addon.php';

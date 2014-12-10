@@ -5,7 +5,7 @@
  * Class  EE_New_Addon
  *
  * @package			Event Espresso
- * @subpackage		espresso-new-addon
+ * @subpackage		eea-new-addon
  * @author			    Brent Christensen
  * @ version		 	$VID:$
  *
@@ -113,4 +113,4 @@ Class  EE_New_Addon extends EE_Addon {
 
 }
 // End of file EE_New_Addon.class.php
-// Location: wp-content/plugins/espresso-new-addon/EE_New_Addon.class.php
+// Location: wp-content/plugins/eea-new-addon/EE_New_Addon.class.php

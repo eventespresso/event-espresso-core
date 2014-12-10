@@ -97,7 +97,9 @@ class EEM_Change_Log extends EEM_Base{
 			));
 		$this->_model_relations = array();
 		foreach($models_this_can_attach_to as $model){
-			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
+			if( $model != 'Change_Log' ) {
+				$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
+			}
 		}
 
 		parent::__construct( $timezone );

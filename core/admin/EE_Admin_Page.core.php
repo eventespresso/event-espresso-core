@@ -2652,12 +2652,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @access protected
 	 * @param string $route the route you want the form to direct to
-	 * @param string $additional_hidden_fields any additional hidden fields required in the form header
+	 * @param array $additional_hidden_fields any additional hidden fields required in the form header
 	 * @return void
 	 */
-	protected function _set_add_edit_form_tags( $route = FALSE, $additional_hidden_fields = array() ) {
+	protected function _set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
 
-		if ( ! $route ) {
+		if ( empty( $route )) {
 			$user_msg = __('An error occurred. No action was set for this page\'s form.', 'event_espresso');
 			$dev_msg = $user_msg . "\n" . sprintf( __('The $route argument is required for the %s->%s method.', 'event_espresso'), __FUNCTION__, __CLASS__ );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );

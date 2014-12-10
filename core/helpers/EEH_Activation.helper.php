@@ -828,6 +828,8 @@ class EEH_Activation {
 		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+		}else{
+			EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all());
 		}
 	}
 
@@ -844,7 +846,7 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -866,6 +868,7 @@ class EEH_Activation {
 					('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
+					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
 					('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
@@ -967,10 +970,13 @@ class EEH_Activation {
 		//let's determine if we've already got an active messengers option
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 
+		//things that have already been activated before
+		$has_activated = get_option( 'ee_has_activated_messenger' );
+
 		//do an initial loop to determine if we need to continue
 		$def_ms = array();
 		foreach ( $default_messengers as $msgr ) {
-			if ( isset($active_messengers[$msgr] ) ) continue;
+			if ( isset($active_messengers[$msgr] ) || isset( $has_activated[$msgr] ) ) continue;
 			$def_ms[] = $msgr;
 		}
 
@@ -1004,6 +1010,7 @@ class EEH_Activation {
 					}
 
 					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
+					$has_activated[$messenger][] = $mt;
 				}
 
 				//setup any initial settings for the messenger
@@ -1024,45 +1031,48 @@ class EEH_Activation {
 				}
 			}
 		} //end check for empty( $def_ms )
-		else {
-			//still need to see if there are any message types to activate for active messengers
-			foreach ( $active_messengers as $messenger => $settings ) {
-				$msg_obj = $settings['obj'];
-				if ( ! $msg_obj instanceof EE_messenger ) {
+
+		//still need to see if there are any message types to activate for active messengers
+		foreach ( $active_messengers as $messenger => $settings ) {
+			$msg_obj = $settings['obj'];
+			if ( ! $msg_obj instanceof EE_messenger ) {
+				continue;
+			}
+
+			$all_default_mts = $msg_obj->get_default_message_types();
+			$new_default_mts = array();
+
+			//loop through each default mt reported by the messenger and make sure its set in its active db entry.
+			foreach( $all_default_mts as $mt ) {
+				//already active? already has generated templates? || has already been activated before (we dont' want to reactivate things users intentionally deactivated).
+				if ( ( isset( $has_activated[$messenger] ) && in_array($mt, $has_activated[$messenger]) ) || isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
 					continue;
 				}
-
-				$all_default_mts = $msg_obj->get_default_message_types();
-				$new_default_mts = array();
-
-				//loop through each default mt reported by the messenger and make sure its set in its active db entry.
-				foreach( $all_default_mts as $mt ) {
-					//already active? already has generated templates?
-					if ( isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
-						continue;
+				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+				if ( !empty( $settings_fields ) ) {
+					foreach ( $settings_fields as $field => $values ) {
+						$settings[$field] = $values['default'];
 					}
-					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-					if ( !empty( $settings_fields ) ) {
-						foreach ( $settings_fields as $field => $values ) {
-							$settings[$field] = $values['default'];
-						}
-					} else {
-						$settings = array();
-					}
-					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
-					$new_default_mts[] = $mt;
+				} else {
+					$settings = array();
 				}
-
-
-				if ( ! empty( $new_default_mts ) ) {
-					$success = EEH_MSG_Template::generate_new_templates( $messenger, $new_default_mts, '', TRUE );
-				}
-
+				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
+				$new_default_mts[] = $mt;
+				$has_activated[$messenger][] = $mt;
 			}
+
+
+			if ( ! empty( $new_default_mts ) ) {
+				$success = EEH_MSG_Template::generate_new_templates( $messenger, $new_default_mts, '', TRUE );
+			}
+
 		}
 
 		//now let's save the settings for this messenger!
 		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+
+		//update $has_activated record
+		update_option( 'ee_has_activated_messenger', $has_activated );
 
 		//that's it!
 		return $success;

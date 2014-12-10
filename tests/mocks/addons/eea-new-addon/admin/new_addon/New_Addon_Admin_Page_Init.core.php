@@ -81,4 +81,4 @@ class New_Addon_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 }
 // End of file New_Addon_Admin_Page_Init.core.php
-// Location: /wp-content/plugins/espresso-new-addon/admin/new_addon/New_Addon_Admin_Page_Init.core.php
+// Location: /wp-content/plugins/eea-new-addon/admin/new_addon/New_Addon_Admin_Page_Init.core.php

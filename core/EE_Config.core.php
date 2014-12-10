@@ -89,6 +89,13 @@ final class EE_Config {
 	public $map_settings;
 
 	/**
+	*
+	* @deprecated
+	* @var EE_Gateway_Config
+	*/
+	public $gateway;
+
+	/**
 	 *	@var 	array	$_config_option_names
 	 * 	@access 	private
 	 */
@@ -209,14 +216,16 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
-		$this->core = new EE_Core_Config();
-		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
-		$this->registration = new EE_Registration_Config();
-		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Template_Config();
-		$this->map_settings = new EE_Map_Config();
-		$this->environment = new EE_Environment_Config();
+
+		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
+		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
+		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
+		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', new EE_Registration_Config() );
+		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', new EE_Admin_Config() );
+		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
+		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
+		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
+		$this->gateway =  apply_filters( 'FHEE__EE_Config___initialize_config__gateway', new EE_Gateway_Config() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -1806,9 +1815,16 @@ class EE_Registration_Config extends EE_Config_Base {
 	  /**
 	   * ReCaptcha Theme
 	   * @var string $recaptcha_theme
-	   * eg 'clean', 'red'
+	   * 	options: 'dark	', 'light'
 	   */
       public $recaptcha_theme;
+
+	  /**
+	   * ReCaptcha Type
+	   * @var string $recaptcha_type
+	   * 	options: 'audio', 'image'
+	   */
+      public $recaptcha_type;
 
 	  /**
 	   * ReCaptcha language
@@ -1816,12 +1832,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	   * eg 'en'
 	   */
       public $recaptcha_language;
-
-	  /**
-	   * ReCaptcha width
-	   * @var int $recaptcha_width
-	   */
-      public $recaptcha_width;
 
 	  /**
 	   * ReCaptcha public key
@@ -1834,6 +1844,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	   * @var string $recaptcha_privatekey
 	   */
       public $recaptcha_privatekey;
+
+	/**
+	 * ReCaptcha width
+	 * @var int $recaptcha_width
+	 * @deprecated
+	 */
+	public $recaptcha_width;
+
 
 
 
@@ -1851,11 +1869,12 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
-		$this->recaptcha_theme = 'clean';
+		$this->recaptcha_theme = 'light';
+		$this->recaptcha_type = 'image';
 		$this->recaptcha_language = 'en';
-		$this->recaptcha_width = 500;
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
+		$this->recaptcha_width = 500;
 	}
 
 
@@ -2283,8 +2302,49 @@ class EE_Environment_Config extends EE_Config_Base {
 	public function recheck_values() {
 		$this->_set_php_values();
 	}
+
+
+
 }
 
+
+
+
+
+
+
+
+/**
+ * stores payment gateway info
+ * @deprecated
+ */
+class EE_Gateway_Config extends EE_Config_Base{
+
+	/**
+	 * Array with keys that are payment gateways slugs, and values are arrays
+	 * with any config info the gateway wants to store
+	 * @var array
+	 */
+	public $payment_settings;
+
+	/**
+	 * Where keys are gateway slugs, and values are booleans indicating whether or not
+	 * the gateway is stored in the uploads directory
+	 * @var array
+	 */
+	public $active_gateways;
+
+
+
+	/**
+	 *	class constructor
+	 * @deprecated
+	 */
+	public function __construct(){
+		$this->payment_settings = array();
+		$this->active_gateways = array( 'Invoice' => FALSE );
+	}
+}
 
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php

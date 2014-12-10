@@ -116,7 +116,11 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		$r->set_status( EEM_Registration::status_id_not_approved );
 		$this->assertFalse( $r->can_checkin( $valid_DTT_ID ) );
 
-		//test four: invalid DTT and not approved reg
+		//test four: valid DTT and incomplete reg
+		$r->set_status( EEM_Registration::status_id_incomplete );
+		$this->assertFalse( $r->can_checkin( $valid_DTT_ID ) );
+
+		//test five: invalid DTT and incomplete reg
 		$this->assertFalse( $r->can_checkin( $invalid_DTT_ID ) );
 	}
 

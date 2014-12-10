@@ -260,7 +260,7 @@ class EEH_Line_Item {
 				}
 			}
 		}
-		$total_line_item->recalculate_taxes_and_tax_total();
+		$total_line_item->recalculate_total_including_taxes();
 	}
 
 

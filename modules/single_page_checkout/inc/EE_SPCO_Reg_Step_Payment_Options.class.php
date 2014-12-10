@@ -565,19 +565,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * 	_transaction_has_primary_registration
-	 *
-	 * 	@access 		private
-	 * 	@return 		bool
-	 */
-	private function _transaction_has_primary_registrant() {
-		return $this->checkout->primary_attendee_obj instanceof EE_Attendee ? TRUE : FALSE;
-//		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
-	}
-
-
-
-	/**
 	 * 	_get_selected_method_of_payment
 	 *
 	 * 	@access 		private
@@ -795,7 +782,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 		private function _setup_primary_registrant_prior_to_payment() {
 			// check if transaction has a primary registrant and that it has a related Attendee object
-			if ( ! $this->_transaction_has_primary_registrant() ) {
+			if ( ! $this->checkout->transaction_has_primary_registrant() ) {
 				// need to at least gather some primary registrant data before attempting payment
 				if ( $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form && ! $this->_capture_primary_registration_data_from_billing_form() ) {
 					return FALSE;
@@ -854,6 +841,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+			$registration_processor->toggle_incomplete_registration_status_to_default( $primary_registration );
 			return TRUE;
 		}
 
