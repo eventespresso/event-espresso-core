@@ -838,6 +838,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function translate_js_strings() {
+		EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
+		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
 		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
