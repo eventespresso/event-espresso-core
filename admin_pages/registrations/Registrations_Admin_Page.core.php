@@ -679,9 +679,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'slug' => 'incomplete',
 				'label' => __('Incomplete', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array_merge( $def_reg_status_actions, array(
+				'bulk_action' => array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
-				))
+				)
 			);
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
