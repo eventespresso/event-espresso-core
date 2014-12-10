@@ -17,9 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_CCV_Input
- * Text-field, except should evaluate to a number, and should be completely emptied
- * when cleaning out sensitive data
+ * EE_CCV_Sensitive_Data_Removal
  *
  * @package			Event Espresso
  * @subpackage
@@ -27,12 +25,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_CVV_Input extends EE_Text_Input{
-	public function __construct($options = array()) {
-		$this->set_sensitive_data_removal_strategy(new EE_CCV_Sensitive_Data_Removal());
-		$this->_add_validation_strategy(new EE_Int_Validation_Strategy());
-		parent::__construct($options);
+class EE_CCV_Sensitive_Data_Removal extends EE_Sensitive_Data_Removal_Base{
+	public function remove_sensitive_data($normalized_value){
+		// Get the ccv Length
+		$ccv_lenght = strlen($normalized_value);
+		// Replace all characters of credit card except the last four and dashes
+		for($i=0; $i<$ccv_lenght; $i++){
+			if($normalized_value[$i] == '-'){continue;}
+			$normalized_value[$i] = 'X';
+		}
+		// Return the masked Credit Card #
+		return $normalized_value;
 	}
 }
 
-// End of file EE_CCV_Input.input.php
+// End of file EE_CCV_Sensitive_Data_Removal.strategy.php
