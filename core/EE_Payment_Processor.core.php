@@ -291,8 +291,6 @@ class EE_Payment_Processor{
 					$transaction->save();
 				}
 				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $transaction, $payment );
-			} else {
-				//we should have already done that action
 			}
 
 		} else if ( $payment instanceof EE_Payment ) {
