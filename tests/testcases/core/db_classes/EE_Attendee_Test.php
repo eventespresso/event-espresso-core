@@ -89,7 +89,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Billing_Attendee_Info_Form', $billing_info_form );
 		//it should ahve been cleaned too, so lets tweak teh form values ot what they should be
 		$form_values[ 'credit_card' ] = 'XXXXXXXXX0027';
-		$form_values[ 'cvv' ] = '';
+		$form_values[ 'cvv' ] = 'XXX';
 		foreach($form_values as $input_name => $value){
 			$input = $billing_info_form->get_input( $input_name);
 			$this->assertInstanceOf( 'EE_Form_Input_Base', $input );
