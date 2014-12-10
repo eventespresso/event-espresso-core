@@ -28,7 +28,7 @@
 								<label><strong style="color:#F00"><?php _e('IMPORTANT', 'event_espresso'); ?></strong></label>
 							</th>
 							<td>
-								<strong><?php printf( __('This payment method does not support the currency set on your site (%s). Please activate a different payment method or change your site\'s country and associated currency.', 'event_espresso'), $site_currency_code ) ;?></strong><br />
+								<strong><?php printf( __('This payment method does not support the currency set on your site (%s) and so will not appear as an payment option to registrants. Please activate a different payment method or change your site\'s country and associated currency.', 'event_espresso'), $site_currency_code ) ;?></strong><br />
 							</td>
 						</tr>
 						<?php endif; ?>
