@@ -322,6 +322,10 @@ abstract class EEM_Base extends EE_Base{
 			//in the future we should automatically delete them
 			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
+		//and change logs
+		if( get_class( $this) !=  'EEM_Change_Log' ) {
+			$this->_model_relations[ 'Change_Log' ] = new EE_Has_Many_Any_Relation( FALSE );
+		}
 		/**
 		 * Filters the list of relations on a model. It is best to NOT use this directly and instead just use
 		 * EE_Register_Model_Extension
