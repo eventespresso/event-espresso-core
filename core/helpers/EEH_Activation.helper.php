@@ -828,6 +828,8 @@ class EEH_Activation {
 		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+		}else{
+			EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all());
 		}
 	}
 
