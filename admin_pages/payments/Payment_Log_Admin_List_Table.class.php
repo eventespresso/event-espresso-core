@@ -54,7 +54,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 	 * adds a checkbox to the bottom of the list table, instead of at the top with the rest of the filters
 	 */
 	public function add_download_logs_checkbox(){
-		echo "<input type='checkbox' id='download_results' name='download_results' value='true'><label for='download_results'>".__("Download Results", 'event_espresso')."</label>";
+		echo "<input type='submit' class='button-primary' id='download_results' name='download_results' value='".  __( 'Download Results', 'event_espresso' )."'>";
 	}
 
 
