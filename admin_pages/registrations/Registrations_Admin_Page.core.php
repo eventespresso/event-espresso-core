@@ -186,8 +186,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'capability' => 'ee_edit_registrations'
 					),
 
-				'process_registration_step'	=> array(
-						'func' => '_process_registration_step',
+				'process_reg_step'	=> array(
+						'func' => 'process_reg_step',
 						'noheader' => TRUE,
 						'capability' => 'ee_edit_registrations'
 					),
@@ -2022,14 +2022,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				break;
 			case 'questions' :
 				$template_args['title'] = __('Step Two: Add Registrant Details for this Registration', 'event_espresso');
-				//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first _process_registration_step run.
+				//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first process_reg_step run.
 				$template_args['content'] = EED_Single_Page_Checkout::registration_checkout_for_admin();
 				$template_args['step_button_text'] = __('Save Registration and Continue to Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = TRUE;
 				break;
 		}
 
-		$this->_set_add_edit_form_tags( 'process_registration_step', $hidden_fields ); //we come back to the process_registration_step route.
+		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
 
 		return EEH_Template::display_template( $template_path, $template_args, TRUE );
 	}
@@ -2062,12 +2062,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * 		_process_registration_step
+	 * 		process_reg_step
 	 *
 	 * 		@access 		public
 	 * 		@return 		string
 	 */
-	public function _process_registration_step() {
+	public function process_reg_step() {
 
 		$this->_set_reg_event();
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
@@ -2108,13 +2108,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'action' => 'new_registration',
 						'processing_registration' => true,
 						'event_id' => $this->_reg_event->ID()
-						);
+					);
 
-					if ( defined('DOING_AJAX' ) ) {
+					if ( defined('DOING_AJAX' )) {
 						//display registration form again because there are errors (maybe validation?)
 						$this->new_registration();
+						return;
 					} else {
 						$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+						return;
 					}
 				}
 				/** @type EE_Transaction_Payments $transaction_payments */
