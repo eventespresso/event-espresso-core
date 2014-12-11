@@ -439,7 +439,7 @@ class EEH_Template {
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
 		$icon = !$icon_style ? ' dashicons-editor-help' : $icon_style;
 		$help_text = !$help_text ? '' : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
+		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . __('Click to open the \'Help\' tab for more information about this feature.', 'event_espresso') . '" > ' . $help_text . ' </a>';
 	}
 
 

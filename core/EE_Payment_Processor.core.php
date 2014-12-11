@@ -290,9 +290,8 @@ class EE_Payment_Processor{
 				if( $save_txn ){
 					$transaction->save();
 				}
+				$this->_post_payment_processing( $transaction, $payment );
 				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $transaction, $payment );
-			} else {
-				//we should have already done that action
 			}
 
 		} else if ( $payment instanceof EE_Payment ) {
@@ -300,10 +299,25 @@ class EE_Payment_Processor{
 			//(because it queries teh DB to find the total amount paid, and saving puts
 			//the payment into the DB)
 			$payment->save();
+			$this->_post_payment_processing( $transaction, $payment );
 			if( $payment->just_approved() ){
 				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $transaction, $payment );
 			}
 		}
+	}
+
+
+
+
+	/**
+	 * Process payments and transaction after payment process completed.
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param EE_Payment     $payment
+	 *
+	 * @return void
+	 */
+	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment ) {
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		$transaction_payments->calculate_total_payments_and_update_status( $transaction );
