@@ -272,7 +272,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_step' );
 		EED_Single_Page_Checkout::instance()->_initialize();
-		EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
 		return EE_Registry::instance()->REQ->get_output();
 	}
 
@@ -289,10 +288,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'process_reg_step' );
 		EED_Single_Page_Checkout::instance()->_initialize();
-		$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
-		if ( $final_reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
-			if ( $final_reg_step->process_reg_step() ) {
-				return EED_Single_Page_Checkout::instance()->checkout->transaction;
+		if ( EED_Single_Page_Checkout::instance()->checkout->current_step->completed() ) {
+			$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
+			if ( $final_reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+				if ( $final_reg_step->process_reg_step() ) {
+					return EED_Single_Page_Checkout::instance()->checkout->transaction;
+				}
 			}
 		}
 		return FALSE;
@@ -408,7 +409,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' );
-		$this->checkout->action = $this->checkout->admin_request && $this->checkout->action == 'process_registration_step' ? 'process_reg_step' : $this->checkout->action;
 		// returning to edit ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', '' );
 		// or some other kind of revisit ?
@@ -531,9 +531,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
 				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
-					// capture form data
+					// clear out any old data in case this step is being run again
+					$this->checkout->current_step->set_valid_data( array() );
+					// capture submitted form data
 					$this->checkout->current_step->reg_form->receive_form_submission();
-					// validate form data
+					// validate submitted form data
 					if ( ! $this->checkout->current_step->reg_form->is_valid() || ! $this->checkout->continue_reg ) {
 						// thou shall not pass !!!
 						$this->checkout->continue_reg = FALSE;
@@ -569,8 +571,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				// advance to the next step! If you pass GO, collect $200
-				$this->go_to_next_step();
+				$this->_display_spco_reg_form();
 				break;
 
 			default :

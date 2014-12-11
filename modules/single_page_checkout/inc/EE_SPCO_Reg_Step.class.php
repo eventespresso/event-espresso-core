@@ -286,6 +286,15 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * @param array $valid_data
+	 */
+	public function set_valid_data( $valid_data ) {
+		$this->_valid_data = $valid_data;
+	}
+
+
+
+	/**
 	 * @return array
 	 */
 	public function valid_data() {

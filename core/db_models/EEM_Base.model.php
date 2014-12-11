@@ -1366,14 +1366,12 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class|mixed $id_or_obj
-	 * @param string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @param                     $query_params
-	 * @internal param \EE_Base_Class $ 'child $modelObject one of EE_Answer, EE_Attendee, etc.
-	 * @internal param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param int | EE_Base_Class  $id_or_obj EE_Base_Class child or its ID
+	 * @param string $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param array $query_params like EEM_Base::get_all's
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
+	public function get_first_related( EE_Base_Class $id_or_obj, $other_model_name, $query_params ){
 		$query_params['limit']=1;
 		$results = $this->get_all_related($id_or_obj,$other_model_name,$query_params);
 		if( $results ){
@@ -1531,13 +1529,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @access   protected
 	 * @param EE_Table_Base $table
 	 * @param array         $fields_n_values each key should be in field's keys, and value should be an int, string or float
-	 * @param bool|int     $new_id
+	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
 	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
-	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 */
-	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = false){
+	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
 		$insertion_col_n_values = array();
 		$format_for_insertion = array();
@@ -2290,9 +2287,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param $query_param
+	 * @param array $query_param  like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @throws EE_Error
-	 * @internal param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
@@ -3103,13 +3099,12 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param        $base_class_obj_or_id
+	 * @param EE_Base_Class | int $base_class_obj_or_id  	either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @throws EE_Error
-	 * @internal param \EE_Base_Class $ /int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @return EE_Base_Class
 	 */
-	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false){
+	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ){
 		$className = $this->_get_class_name();
 		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
@@ -3224,11 +3219,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
 	 * We consider something to be a copy if all the attributes match (except the ID, of course).
-	 * @param array|EE_Base_Class $model_object_or_attributes_array
+	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
 	 * @return \EE_Base_Class[]
-	 * @internal param array|\EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 

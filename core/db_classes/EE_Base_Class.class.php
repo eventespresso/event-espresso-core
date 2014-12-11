@@ -311,9 +311,8 @@ abstract class EE_Base_Class{
 	 *
 	 * @param string        $relationName    one of the keys in the _model_relations array on the model. Eg 'Registration' associated with this model object
 	 * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, if this is a Transaction, that could be a payment or a registration)
-	 * @param null          $cache_id
+	 * @param null          $cache_id a string or number that will be used as the key for any Belongs_To_Many items which will be stored in an array on this object
 	 * @throws EE_Error
-	 * @internal param int|string $mixed $cache_id    a string or number that will be used as the key for any Belongs_To_Many items which will be stored in an array on this object
 	 * @return mixed    index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
 	 */
 	public function cache( $relationName = '', $object_to_cache = NULL, $cache_id = NULL ){
@@ -644,8 +643,6 @@ abstract class EE_Base_Class{
 	 * verifies that the specified field is of the correct type
 	 * @param string        $field_name
 	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
-	 * @internal param mixed $value the value to check if it's of the correct type
-	 * @internal param \EE_Model_Field $fieldSettings settings for a specific field.
 	 * @return boolean
 	 */
 	public function get($field_name, $extra_cache_ref = NULL ){
@@ -705,12 +702,10 @@ abstract class EE_Base_Class{
 	 *
 	 * @access   protected
 	 * @param  string  $field_name   Field on the instantiated EE_Base_Class child object
-	 * @param null     $dt_frmt
-	 * @param null     $tm_frmt
+	 * @param null     $dt_frmt 	valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
+	 * @param null     $tm_frmt 	Same as above except this is for time format
 	 * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
 	 * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
-	 * @internal param mixed $date_format valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
-	 * @internal param mixed $time_format Same as above except this is for time format
 	 * @return void | string | bool | EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field, or void if echoing
 	 */
 	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
@@ -1381,8 +1376,7 @@ abstract class EE_Base_Class{
 	 * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
 	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
-	 * @param array  $query_params
-	 * @internal param array $query_params like EEM_Base::get_all
+	 * @param array  $query_params  like EEM_Base::get_all
 	 * @return EE_Base_Class[]
 	 */
 	public function get_many_related($relationName,$query_params = array()){
@@ -1415,11 +1409,10 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name
+	 * @param        $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params   like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
-	 * @internal param string $model_name like 'Event', or 'Registration'
 	 * @return int
 	 */
 	public function count_related($relation_name, $query_params =array(),$field_to_count = NULL, $distinct = FALSE){
@@ -1431,11 +1424,10 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name
+	 * @param        $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
-	 * @param string $field_to_sum name of field to count by. By default, uses primary key (which doesn't make much sense,
-	 *                             so you should probably change it)
-	 * @internal param string $model_name like 'Event', or 'Registration'
+	 * @param string $field_to_sum name of field to count by.
+	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)
 	 * @return int
 	 */
 	public function sum_related($relation_name, $query_params = array(), $field_to_sum = null){
@@ -1447,8 +1439,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Gets the first (ie, one) related model object of the specified type.
 	 * @param string $relationName key in the model's _model_relations array
-	 * @param array  $query_params
-	 * @internal param array $query_params like EEM_Base::get_all
+	 * @param array  $query_params  like EEM_Base::get_all
 	 * @return EE_Base_Class (not an array, a single object)
 	 */
 	public function get_first_related($relationName,$query_params = array()){
