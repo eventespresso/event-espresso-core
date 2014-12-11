@@ -87,11 +87,9 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 			}
 			EE_Registry::instance()->load_helper( 'Template' );
 			$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
-			$overridden_invoice_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php', NULL, FALSE, FALSE, TRUE );
 			$overridden_invoice_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php', NULL, FALSE, FALSE, TRUE );
-			$overridden_invoice_footer = EEH_Template::locate_template( $templates_relative_path . 'invoice_footer.template.php', NULL, FALSE, FALSE, TRUE );
 			$overridden_receipt_body= EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', NULL, FALSE, FALSE, TRUE );
-			if( $overridden_invoice_header || $overridden_invoice_body || $overridden_invoice_footer || $overridden_receipt_body ) {
+			if( $overridden_invoice_body || $overridden_receipt_body ) {
 				EE_Error::add_persistent_admin_notice( 'invoice_overriding_templates', sprintf( __( 'Note: in this version of Event Espresso, PDF and HTML Invoices and Receipts are now Messages are can be changed just like any other messages; however we noticed you had previously overriden the old default Invoice/Receipt templates. Because of this, your old Invoice/Receipt templates will continue to be used INSTEAD of the new Invoice/Receipt message equivalents. We recommend deleting your old Invoice/Receipt templates and modifying the new Invoice and Receipt messages\'s content in Messages -> Invoice and Messages -> Receipt.')), TRUE );
 			}
 
