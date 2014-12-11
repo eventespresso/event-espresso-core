@@ -967,7 +967,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
  * This is a stub data migration that we can put in the array of data migrations when we have an error
  * finding the next data migration script.
  */
-class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
+class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.

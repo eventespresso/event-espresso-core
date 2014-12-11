@@ -692,7 +692,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*	@return void
 	*/
 	private function _get_payment_methods() {
-		$this->_template_args['payment_methods'] = array(
+		$this->_template_args['payment_methods'] = apply_filters( 'FHEE__Transactions_Admin_Page__get_payment_methods', array(
 			'PP' => __( 'PayPal', 'event_espresso' ),
 			'CC' => __( 'Credit Card', 'event_espresso' ),
 			'DB'=>  __("Debit Card", 'event_espresso'),
@@ -701,7 +701,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'BK'=>  __("Bank", 'event_espresso'),
 			'IV'=>  __("Invoice", 'event_espresso'),
 			'MO'=>  __("Money Order", 'event_espresso'),
-		);
+		) );
 	}
 
 
@@ -868,6 +868,25 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					break;
 				case 'MO' :
 					$payment['gateway'] = 'Money_Order';
+					break;
+				default:
+					/**
+					 * Allows an addon to process the payment's info however they want
+					 * @param array $payment{
+					 *	@type string $gateway string corresponding to the classname
+					 *	@type string $gateway_response string
+					 *	@type string $txn_id_chq_nmbr
+					 *	@type int $PAY_ID payment ID
+					 *	@type string $date
+					 *	@type int $TXN_ID
+					 *	@type string $method
+					 *	@type string $accounting
+					 * }
+					 * @param string $payment_method same as $payment[ 'method' ],
+					 *	but provided again for convenience
+					 */
+					$payment = apply_filters( 'FHEE__Transactions_Admin_Page__apply_payments_or_refunds__unknown_payment_method',
+							$payment, $payment[ 'method' ] );
 			}
 			$payment['gateway_response'] = '';
 			//save the new payment

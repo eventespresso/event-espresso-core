@@ -117,7 +117,7 @@ class Invoice {
 		}
 
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
-		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
+		$template_args['template_payment_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['template_payment_instructions'], ENT_QUOTES)));
 		$template_args['shameless_plug'] = apply_filters( 'FHEE_Invoice__send_invoice__shameless_plug',true );
 		if(isset($_GET['receipt'])){
 			//receipt-specific stuff
@@ -278,7 +278,7 @@ class Invoice {
 				$EE->CFG->organization->email,
 				$EE->CFG->organization->vat,
 				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
-				$this->invoice_settings['pdf_instructions']
+				$this->invoice_settings['template_payment_instructions']
 		);
 
 		return str_replace($SearchValues, $ReplaceValues, $content);
