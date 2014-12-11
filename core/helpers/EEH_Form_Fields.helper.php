@@ -1398,8 +1398,11 @@ class EEH_Form_Fields {
 				)
 			);
 
+		//translate month and date
+		global $wp_locale;
+
 		foreach ( $DTTS as $DTT ) {
-			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
 			$options[] = array(
 				'text' => $date,
 				'id' => $date
