@@ -22,14 +22,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * when cleaning out sensitive data
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_CVV_Input extends EE_Text_Input{
 	public function __construct($options = array()) {
-		$this->set_sensitive_data_removal_strategy(new EE_All_Sensitive_Data_Removal());
+		$this->set_sensitive_data_removal_strategy(new EE_CCV_Sensitive_Data_Removal());
 		$this->_add_validation_strategy(new EE_Int_Validation_Strategy());
 		parent::__construct($options);
 	}

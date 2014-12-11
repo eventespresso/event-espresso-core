@@ -16,7 +16,7 @@
 <h4>GET parameters accepted:</h4>
 <ul>
 	<li>replace: REQUIRED string, the new name of the addon, with the first letter of each word capitalized and words separated by underscores (eg, "Calendar" or "Monkey_Wrench"). The addon's directory name and main file will be intelligently derived from what you provide here (eg "eea-calendar" or "eea-monkey-wrench").</li>
-	<li>search: OPTIONAL string, default is "New_Addon"</li>
+	<li>search: OPTIONAL string, default is "New_Addon" the old addon's name. This string, and derivatives of it (eg "new-addon" and "new_addon") will be replaced by "replace" (previous GET parameter) and its derivatives. If you copied the "new-payment-method", for example, you should instead provide "New_Payment_Method"</li>
 	<li>rename_parent_directory: OPTIONAL int, 1 (default) or 0. Whether to rename the parent directory (the directory that contains this script) in the normal eea-addon-fashion.</li>
 	<li>folder_path: OPTIONAL string, by default uses the current folder, but if you want you can provide the FULL path to a specific folder you want to rename. Do not provide a trailing slash.</li>
 	<li>delete_script_when_finished: OPTIONAL int, 1 (default) or 0. Whether or not to delete this script when finished renaming

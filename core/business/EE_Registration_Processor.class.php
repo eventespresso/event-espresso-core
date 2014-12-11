@@ -95,6 +95,34 @@ class EE_Registration_Processor {
 
 
 	/**
+	 *    toggle_incomplete_registration_status_to_default
+	 *
+	 * 		changes any incomplete registrations to either the event or global default registration status
+	 *
+	 * @access public
+	 * @param EE_Registration $registration
+	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @return void
+	 */
+	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
+		// is the registration currently incomplete?
+		if ( $registration->status_ID() == EEM_Registration::status_id_incomplete ) {
+			// grab default reg status for the event, if set
+			$event_default_registration_status = $registration->event()->default_registration_status();
+			// if no default reg status is set for the event, then use the global value
+			$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+			// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
+			$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
+			$registration->set_status( $STS_ID );
+			if ( $save ) {
+				$registration->save();
+			}
+		}
+	}
+
+
+
+	/**
 	 *    toggle_registration_status_for_default_approved_events
 	 *
 	 * @access public

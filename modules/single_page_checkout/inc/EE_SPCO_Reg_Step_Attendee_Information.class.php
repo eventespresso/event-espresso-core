@@ -607,6 +607,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _process_registrations( $registrations = array(), $valid_data = array() ) {
 		// load resources and set some defaults
 		EE_Registry::instance()->load_model( 'Attendee' );
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		// holder for primary registrant attendee object
 		$this->checkout->primary_attendee_obj = NULL;
 		// array for tracking reg form data for the primary registrant
 		$primary_registrant = array(
@@ -640,9 +643,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					}
 					// Houston, we have a registration!
 					$att_nmbr++;
-					// grab related answer objects
-					$answers = $registration->answers();
-					// printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$this->_attendee_data[ $reg_url_link ] = array();
 					// unset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] );
 					if ( isset( $valid_data[ $reg_url_link ] )) {
@@ -650,7 +650,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						$copy_primary = isset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
 						// filter form input data for this registration
 						$valid_data[ $reg_url_link ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $reg_url_link ] );
-						// printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//						 printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						if ( isset( $valid_data['primary_attendee'] )) {
 							$primary_registrant['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 							unset( $valid_data['primary_attendee'] );
@@ -670,7 +670,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 										$input_value = $primary_registrant[ $form_input ];
 									}
 									// not attempt to save the input data
-									if ( ! $this->_save_registration_form_input( $registration, $answers, $form_input, $input_value ) )  {
+									if ( ! $this->_save_registration_form_input( $registration, $form_input, $input_value ) )  {
 										EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
 										return FALSE;
 									}
@@ -707,6 +707,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					$this->_associate_registration_with_transaction( $registration );
@@ -724,9 +726,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 
 		} // end of foreach ( $this->checkout->transaction->registrations()  as $registration )
-//		foreach ( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE )  as $registration ) {
-//			printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		}
 		return $att_nmbr;
 	}
 
@@ -736,13 +735,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 *    _save_registration_form_input
 	 *
 	 * @param EE_Registration $registration
-	 * @param EE_Answer[] 	$answers
 	 * @param string          		$form_input
 	 * @param string           	$input_value
 	 * @return boolean
 	 */
-	private function _save_registration_form_input( EE_Registration $registration, $answers = array(), $form_input = '', $input_value = '' ) {
-
+	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
+		// grab related answer objects
+		$answers = $registration->answers();
 		// $answer_cache_id is the key used to find the EE_Answer we want
 		$answer_cache_id = $this->checkout->reg_url_link ? $form_input : $form_input . '-' . $registration->reg_url_link();
 		$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
@@ -766,10 +765,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 		}
 
-		//echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<b>$answer_cache_id : ' . $answer_cache_id . '</b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
+//		echo '<b>attendee_property: ' . $attendee_property . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
+//		echo '<b>$answer_is_obj : ' . $answer_is_obj . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
+//		echo '<b>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
 		// if this form input has a corresponding attendee property
 		if ( $attendee_property ) {
 			$this->_attendee_data[ $registration->reg_url_link() ][ $form_input ] = $input_value;
@@ -781,12 +780,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} elseif ( $answer_is_obj ) {
 			// save this data to the answer object
 			$answers[ $answer_cache_id ]->set_value( $input_value );
-			return TRUE;
+			return $answers[ $answer_cache_id ]->save();
 		} else {
 			foreach ( $answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 					$answer->set_value( $input_value );
-					return TRUE;
+					return $answer->save();
 				}
 			}
 		}

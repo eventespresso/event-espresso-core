@@ -787,17 +787,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 					$att_nmbr++;
 					$reg_url_link = $registration_processor->generate_reg_url_link( $att_nmbr, $item );
-					// grab default reg status for the event, if set
-					$event_default_registration_status = $event->default_registration_status();
-					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
-					// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
-					$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
 					// now create a new registration for the ticket
 					$registration = EE_Registration::new_instance( array(
 						'EVT_ID' 					=> $event->ID(),
 						'TXN_ID' 					=> $transaction->ID(),
 						'TKT_ID' 					=> $ticket->ID(),
-						'STS_ID' 					=> $STS_ID,
+						'STS_ID' 					=> EEM_Registration::status_id_incomplete,
 						'REG_date' 				=> $transaction->datetime(),
 						'REG_final_price' 	=> $ticket->price(),
 						'REG_session' 			=> EE_Registry::instance()->SSN->id(),
@@ -843,6 +838,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function translate_js_strings() {
+		EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
+		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
 		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
@@ -905,7 +902,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 										sprintf(
 											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-											'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="',
+											'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
 											'">',
 											'</a>'
 										)

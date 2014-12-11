@@ -10,6 +10,7 @@
  *
  */
 class EEH_Debug_Tools{
+
 	/**
 	 * 	instance of the EEH_Autoloader object
 	 *	@var 	$_instance
@@ -25,6 +26,9 @@ class EEH_Debug_Tools{
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
 	private $_times = array();
+
+
+
 	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
@@ -54,7 +58,21 @@ class EEH_Debug_Tools{
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
-		add_action( 'activated_plugin',array($this,'ee_plugin_activation_errors') );
+		add_action( 'activated_plugin', array( $this,'ee_plugin_activation_errors' ));
+		add_action( 'shutdown', array( $this,'show_db_name' ));
+	}
+
+
+
+	/**
+	 * 	show_db_name
+	 *
+	 * 	@return void
+	 */
+	public function show_db_name() {
+		if ( ! defined( 'DOING_AJAX' ) && ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS )) {
+			echo '<p style="font-size:10px;font-weight:normal;color:#E76700;margin: 1em 2em; text-align: right;">DB_NAME: '. DB_NAME .'</p>';
+		}
 	}
 
 

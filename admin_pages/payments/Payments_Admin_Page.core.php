@@ -376,6 +376,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if( $payment_method->ID() && $payment_method->active()){
 			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'update_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'deactivate_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
+			$template_args['site_currency_code'] = EE_Config::instance()->currency->code;
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
 		}else{
 			$template_args['activate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'activate_payment_method', 'payment_method_type'=>$payment_method->type()), EE_PAYMENTS_ADMIN_URL);
