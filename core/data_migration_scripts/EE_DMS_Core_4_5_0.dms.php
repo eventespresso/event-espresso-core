@@ -29,7 +29,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_5_0_update_wp_user_for_tickets(),
 			new EE_DMS_4_5_0_update_wp_user_for_prices(),
 			new EE_DMS_4_5_0_update_wp_user_for_price_types(),
-			new EE_DMS_4_5_0_update_wp_user_for_question_groups()
+			new EE_DMS_4_5_0_update_wp_user_for_question_groups(),
+			new EE_DMS_4_5_0_invoice_settings(),
 			);
 		parent::__construct();
 	}
