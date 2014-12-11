@@ -633,7 +633,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'trash' => array(
 				'slug' => 'trash',
-				'label' => 'Trash',
+				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
