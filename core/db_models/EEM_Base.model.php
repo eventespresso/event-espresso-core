@@ -1366,14 +1366,12 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class|mixed $id_or_obj
-	 * @param string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @param                     $query_params
-	 * @internal param \EE_Base_Class $ 'child $modelObject one of EE_Answer, EE_Attendee, etc.
-	 * @internal param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param int | EE_Base_Class  $id_or_obj EE_Base_Class child or its ID
+	 * @param string $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param array $query_params like EEM_Base::get_all's
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
+	public function get_first_related( EE_Base_Class $id_or_obj, $other_model_name, $query_params ){
 		$query_params['limit']=1;
 		$results = $this->get_all_related($id_or_obj,$other_model_name,$query_params);
 		if( $results ){

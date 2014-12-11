@@ -145,12 +145,12 @@ class EEH_Template {
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
-	 * @param array    $templates
+	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.  Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
-	 * @internal param array|string $mixed $templates  the template file name including extension
+	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.
+	 * 				Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
 	 * @return mixed
 	 */
 	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE, $check_if_custom = FALSE ) {
