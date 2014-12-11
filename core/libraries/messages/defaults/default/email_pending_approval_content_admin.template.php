@@ -1,4 +1,3 @@
-<!-- HEADER -->
 <table class="head-wrap" bgcolor="#999999">
     <tr>
         <td></td>
@@ -15,13 +14,11 @@
         <td></td>
     </tr>
 </table>
-<!-- END HEADER -->
-<!-- BODY -->
+
 <table class="body-wrap">
     <tr>
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
-            <!-- content -->
             <div class="content">
                 <h1><?php _e('Registration(s) Pending Payment', 'event_espresso'); ?></h1>
                 <p><?php _e('The following registration(s) are awaiting payment for the following event(s).', 'event_espresso'); ?></p>
@@ -36,4 +33,4 @@
         </td>
         <td></td>
     </tr>
-</table> <!-- END BODY -->
+</table>
