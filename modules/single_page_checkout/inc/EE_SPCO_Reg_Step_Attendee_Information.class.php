@@ -560,7 +560,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// extract attendee info from form data and save to model objects
 		$registrations_processed = $this->_process_registrations( $registrations, $valid_data );
 		// if first pass thru SPCO, then let's check processed registrations against the total number of tickets in the cart
-		if ( ! $this->checkout->revisit && $registrations_processed !== $this->checkout->total_ticket_count ) {
+		if ( $registrations_processed === FALSE ) {
+			// but return immediately if the previous step exited early due to errors
+			return FALSE;
+		} else if ( ! $this->checkout->revisit && $registrations_processed !== $this->checkout->total_ticket_count ) {
 			// generate a correctly translated string for all possible singular/plural combinations
 			if ( $this->checkout->total_ticket_count === 1 && $registrations_processed !== 1 ) {
 				$error_msg = sprintf(
@@ -650,7 +653,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						$copy_primary = isset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
 						// filter form input data for this registration
 						$valid_data[ $reg_url_link ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $reg_url_link ] );
-//						 printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						//printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]', __FILE__, __LINE__ );
 						if ( isset( $valid_data['primary_attendee'] )) {
 							$primary_registrant['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 							unset( $valid_data['primary_attendee'] );
