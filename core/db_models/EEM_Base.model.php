@@ -2963,19 +2963,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
-		$this_model_fields_n_values = array();
-		foreach( $this->field_settings() as $field_name => $field_obj ){
-			//if there is a model relation chain prefix, remove it
-			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
-			//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-			//does the field on the model relate to this column retrieved from the db?
-			//or is it a db-only field? (not relating to the model)
-			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
-			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
-			}
-		}
+		$this_model_fields_n_values = $this->_deduce_fields_n_values_from_cols_n_values( $cols_n_values );
 		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
 			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
 		}
@@ -3013,21 +3001,29 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the model object from the  entity map if it exists
 	 * @param int|string $id the ID of the model object
-	 * @return EE_Base_Class | bool
+	 * @return EE_Base_Class
 	 */
 	public function get_from_entity_map( $id ){
-		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
+		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : NULL;
 	}
 
 
 
 	/**
-	 * Adds the object to the model's mappings
+	 * add_to_entity_map
+	 *
+	 * Adds the object to the model's entity mappings
+	 * 		Effectively tells the models "Hey, this model object is the most up-to-date representation of the data,
+	 * 		and for the remainder of the request, it's even more up-to-date than what's in the database.
+	 * 		So, if the database doesn't agree with what's in the entity mapper, ignore the database"
+	 * 		If the database gets updated directly and you want the entity mapper to reflect that change,
+	 * 		then this method should be called immediately after the update query
+	 *
 	 * @param 	EE_Base_Class $object
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	public function add_to_entity_map( EE_Base_Class $object ) {
+	public function add_to_entity_map( EE_Base_Class $object) {
 		$className = $this->_get_class_name();
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
@@ -3043,6 +3039,97 @@ abstract class EEM_Base extends EE_Base{
 		} else {
 			$this->_entity_map[ $object->ID() ] = $object;
 			return $object;
+		}
+	}
+
+
+
+	/**
+	 * _deduce_fields_n_values_from_cols_n_values
+	 *
+	 * Given an array where keys are column (or column alias) names and values,
+	 * returns an array of their corresponding field names and database values
+	 *
+	 * @param string $cols_n_values
+	 * @return array
+	 */
+	protected function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
+		$this_model_fields_n_values = array();
+		foreach( $this->field_settings() as $field_name => $field_obj ){
+			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+				//does the field on the model relate to this column retrieved from the db?
+				//or is it a db-only field? (not relating to the model)
+				if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
+				}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
+				}
+			}
+		return $this_model_fields_n_values;
+	}
+
+
+
+	/**
+	 * refresh_entity_map_from_db
+	 *
+	 * Makes sure the model object in the entity map at $id assumes the values
+	 * of the database (opposite of EE_base_Class::save())
+	 *
+	 * @param int|string $id
+	 * @return EE_Base_Class
+	 */
+	public function refresh_entity_map_from_db( $id ){
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			$wpdb_results = $this->_get_all_wpdb_results( array( array ( $this->get_primary_key_field()->get_name() => $id ), 'limit' => 1 ) );
+			if( $wpdb_results && is_array( $wpdb_results ) ){
+				$one_row = reset( $wpdb_results );
+				foreach( $this->_deduce_fields_n_values_from_cols_n_values($one_row ) as $field_name => $db_value ) {
+					$obj_in_map->set_from_db( $field_name, $db_value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			return $this->get_one_by_ID( $id );
+		}
+	}
+
+
+
+	/**
+	 * refresh_entity_map_with
+	 *
+	 * Leaves the entry in the entity map alone, but updates it to match the provided
+	 * $replacing_model_obj (which we assume to be its equivalent but somehow NOT in the entity map).
+	 * This is useful if you have a model object you want to make authoritative over what's in the entity map currently.
+	 * Note: The old $replacing_model_obj should now be destroyed as it's now un-authoritative
+	 *
+	 * @param int|string    $id
+	 * @param EE_Base_Class $replacing_model_obj
+	 * @return \EE_Base_Class
+	 */
+	public function refresh_entity_map_with( $id, $replacing_model_obj ) {
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			if( $replacing_model_obj instanceof EE_Base_Class ){
+				foreach( $replacing_model_obj->model_field_array() as $field_name => $value ) {
+					$obj_in_map->set( $field_name, $value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			$this->add_to_entity_map( $replacing_model_obj );
+			return $replacing_model_obj;
 		}
 	}
 
@@ -3103,8 +3190,15 @@ abstract class EEM_Base extends EE_Base{
 		$className=get_class($this);
 		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_Base \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
-										$methodName,$className,$tagName));
+			throw new EE_Error(
+				sprintf(
+					__( 'Method %1$s on model %2$s does not exist! You can create one with the following code in functions.php or in a plugin: %4$s function my_callback(%4$s \$previousReturnValue, EEM_Base \$object\ $argsArray=NULL ){%4$s     /*function body*/%4$s      return \$whatever;%4$s }%4$s add_filter( \'%3$s\', \'my_callback\', 10, 3 );', 'event_espresso' ),
+					$methodName,
+					$className,
+					$tagName,
+					'<br />'
+				)
+			);
 		}
 
 		return apply_filters($tagName,null,$this,$args);

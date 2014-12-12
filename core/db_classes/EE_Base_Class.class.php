@@ -93,12 +93,6 @@ abstract class EE_Base_Class{
 	 * @type array EE_Model_Field_Base[]
 	 */
 	protected $_fields = array();
-	/**
-	 * Everything is related to extra meta... except extra meta, but it doesn't hurt
-	 * to have this in that case
-	 * @type array EE_Extra_Meta[]
-	 */
-	protected $_Extra_Meta = NULL;
 
 
 
@@ -163,6 +157,11 @@ abstract class EE_Base_Class{
 				$this->_model_relations[$relation_name] = array();
 			}
 		}
+		/**
+		 * Action done at the end of each model object construction
+		 * @param EE_Base_Class $this the model object just created
+		 */
+		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
 	}
 
 
@@ -996,21 +995,20 @@ abstract class EE_Base_Class{
 
 
 	/**
-	*		Saves this object to the database. An array may be supplied to set some values on this
+	 *        Saves this object to the database. An array may be supplied to set some values on this
 	 * object just before saving.
-	*
-	* 		@access		public
-	* 		@param		array		$set_cols_n_values
-	*		@return int, 1 on a successful update, the ID of
-	*					the new entry on insert; 0 on failure
-	*/
+	 *
+	 * @access public
+	 * @param array $set_cols_n_values 	keys are field names, values are their new values,
+	 * 		if provided during the save() method (often client code will change the fields' values before calling save)
+	 * @throws \EE_Error
+	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure
+	 */
 	public function save($set_cols_n_values=array()) {
 		/**
 		 * Filters the fields we're about to save on the model object
 		 *
-		 * @param array $set_cols_n_values keys are field names values are their new values, if
-		 * provided during the save() method (often client code will change the fields'
-		 * values before calling save)
+		 * @param array $set_cols_n_values
 		 * @param EE_Base_Class $model_object
 		 */
 		$set_cols_n_values = apply_filters( 'FHEE__EE_Base_Class__save__set_cols_n_values', $set_cols_n_values, $this  );
@@ -1057,6 +1055,17 @@ abstract class EE_Base_Class{
 			}else{//PK is NOT auto-increment
 				//so check if one like it already exists in the db
 				if( $this->get_model()->exists_by_ID( $this->ID() ) ){
+					if( ! $this->in_entity_map() && WP_DEBUG ){
+						throw new EE_Error(
+							sprintf(
+								__( 'Using a model object %1$s that is NOT in the entity map, can lead to unexpected errors. You should either: %4$s 1. Put it in the entity mapper by calling %2$s %4$s 2. Discard this model object and use what is in the entity mapper %4$s 3. Fetch from the database using %3$s', 'event_espresso' ),
+								get_class($this),
+								get_class( $this->get_model() ) . '::instance()->add_to_entity_map()',
+								get_class( $this->get_model() ) . '::instance()->get_one_by_ID()',
+								'<br />'
+							)
+						);
+					}
 					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
 				}else{
 					$results = $this->get_model()->insert($save_cols_n_values);
@@ -1097,7 +1106,7 @@ abstract class EE_Base_Class{
 	 * as their foreign key.  If the cached related model objects already exist in the db, saves them (so that the DB is consistent)
 	 *
 	 * Especially useful in case we JUST added this model object ot the database
-	 * and we want to let its cached relations with foreign keys to it know about that change. Eg: we've created a trasnaction but haven't saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, wether or not they exist in the DB (if they do, their DB records will be automatially updated)
+	 * and we want to let its cached relations with foreign keys to it know about that change. Eg: we've created a transaction but haven't saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, whether or not they exist in the DB (if they do, their DB records will be automatically updated)
 	 * @return void
 	 */
 	protected function _update_cached_related_model_objs_fks(){
@@ -1762,7 +1771,56 @@ abstract class EE_Base_Class{
 			return implode(",",$name_parts);
 		}
 	}
+
+	/**
+	 * in_entity_map
+	 * Checks if this model object has been proven to already be in the entity map
+	 * @return boolean
+	 */
+	public function in_entity_map(){
+		if( $this->ID() && $this->get_model()->get_from_entity_map( $this->ID() ) === $this ) {
+			//well, if we looked, did we find it in the entity map?
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	}
+
+	/**
+	 * refresh_from_db
+	 * Makes sure the fields and values on this model object are in-sync with what's in the database.
+	 * @throws EE_Error if this model object isn't in the entity mapper (because then you should
+	 * just use what's in the entity mapper and refresh it) and WP_DEBUG is TRUE
+	 */
+	public function refresh_from_db(){
+		if( $this->ID() && $this->in_entity_map() ){
+			$this->get_model()->refresh_entity_map_from_db( $this->ID() );
+		}else{
+			//if it doesn't have ID, you shouldn't be asking to refresh it from teh database (because its not in the database)
+			//if it has an ID but it's not in the map, and you're asking me to refresh it
+			//that's kinda dangerous. You should just use what's in the entity map, or add this to the entity map if there's
+			//absolutely nothing in it for this ID
+			if( WP_DEBUG ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'Trying to refresh a model object with ID "%1$s" that\'s not in the entity map? First off: you should put it in the entity map by calling %2$s. Second off, if you want what\'s in the database right now, you should just call %3$s yourself and discard this model object.', 'event_espresso' ),
+						$this->ID(),
+						get_class( $this->get_model() ) . '::instance()->add_to_entity_map()',
+						get_class( $this->get_model() ) . '::instance()->refresh_entity_map()'
+					)
+				);
+			}
+		}
+	}
+
+
+
 }
+
+
+
+
+
 
 /**
  * Interface EEI_Has_Address
