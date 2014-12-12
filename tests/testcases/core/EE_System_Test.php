@@ -229,7 +229,7 @@ class EE_System_Test extends EE_UnitTestCase{
 
 		//detect brand new activation BUT we're in maintenance mode, so it will be basically ignored
 		EE_Maintenance_Mode::instance()->set_maintenance_level( EE_Maintenance_Mode::level_2_complete_maintenance );
-		$this->assertEquals( EE_System::req_type_activation_but_not_installed, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.0.0.dev.000' ) );
+		$this->assertEquals( EE_System::req_type_new_activation, EE_System::detect_req_type_given_activation_history($activation_history, '', '1.0.0.dev.000' ) );
 		EE_Maintenance_Mode::instance()->set_maintenance_level( EE_Maintenance_Mode::level_0_not_in_maintenance );
 
 		//detect brand new activation
