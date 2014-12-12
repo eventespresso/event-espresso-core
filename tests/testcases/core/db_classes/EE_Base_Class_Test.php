@@ -406,7 +406,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertTrue( $att->in_entity_map() );
 		//we shouldn't complain at saving it now, it's in the entity map and so we're allowed
 		$att->save();
-		//also, when we clone an item in the entity map, it shouldnt eb considered in the entity map
+		//also, when we clone an item in the entity map, it shouldn't be considered in the entity map
 		$att2 = clone $att;
 		$this->assertFalse( $att2->in_entity_map() );
 	}
