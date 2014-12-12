@@ -272,6 +272,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_step' );
 		EED_Single_Page_Checkout::instance()->_initialize();
+		EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
 		return EE_Registry::instance()->REQ->get_output();
 	}
 
@@ -563,6 +564,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _process_form_action() {
+//		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
+//		d( $this->checkout );
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
 			// AJAX next step reg form
@@ -571,7 +574,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				$this->_display_spco_reg_form();
+				$this->go_to_next_step();
 				break;
 
 			default :
