@@ -75,7 +75,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map( $id );
 		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
-	
+
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
@@ -93,6 +93,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t->_add_relation_to($r, 'Registration');
 		$this->assertEquals($r->get('TXN_ID'),$t->ID());
+	}
+	/**
+	 * @group 7084
+	 */
+	function test_set_defaults_on_unspecified_fields(){
+		$r = EE_Registration::new_instance( array( 'TXN_ID' => 99 ) );
+		$this->assertEquals( 99, $r->transaction_ID() );
+		//the STS_ID should have been set to the default, not left NULL
+		$this->assertEquals( EEM_Registration::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $r->status_ID() );
 	}
 	function test_get_first_related(){
 		$t = EE_Transaction::new_instance();
