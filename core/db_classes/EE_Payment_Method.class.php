@@ -289,6 +289,20 @@ class EE_Payment_Method extends EE_Base_Class{
 		$this->set('PMD_wp_user', $wp_user_id);
 	}
 
+	/**
+	 * Overrides parent so when PMD_type is changed we refresh the _type_obj
+	 * @param type $field_name
+	 * @param type $field_value
+	 * @param type $use_default
+	 */
+	function set( $field_name, $field_value, $use_default = FALSE ){
+		if( $field_name == 'PMD_type' ){
+			//the type has probably changed, so forget about its old type object
+			$this->_type_obj = NULL;
+		}
+		parent::set($field_name, $field_value, $use_default);
+	}
+
 
 
 	/**

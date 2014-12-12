@@ -232,7 +232,9 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				//send an HTTP HEAD request to quickly verify the file exists
-				if ( ! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
+				if ( $payment_method->type_obj() instanceof EE_PMT_Base &&
+						$payment_method->type_obj()->default_button_url() &&
+						! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
 					EE_Error::add_attention( sprintf( __( "Payment Method '%s' had a broken button url, so it was reset", "event_espresso" ), $payment_method->name() ) );
 					$payment_method->save( array( 'PMD_button_url' => $payment_method->type_obj()->default_button_url() ) );
 				}

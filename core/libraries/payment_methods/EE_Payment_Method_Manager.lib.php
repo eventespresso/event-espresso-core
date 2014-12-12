@@ -207,7 +207,8 @@ class EE_Payment_Method_Manager {
 						'PMD_name'=>$pm_type_obj->pretty_name(),
 						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-						'PMD_wp_user'=>$current_user->ID
+						'PMD_wp_user'=>$current_user->ID,
+						'PMD_button_url'=> $pm_type_obj->default_button_url()
 					));
 				}
 				$payment_method->set_active();
