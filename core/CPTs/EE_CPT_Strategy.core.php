@@ -258,6 +258,26 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
+	 *	_set_paging
+	 *
+	 * @access public
+	 * @param WP_Query $WP_Query
+	 * @return void
+	 */
+	public function _set_paging( $WP_Query ) {
+		if ( $WP_Query->is_main_query() && apply_filters( 'FHEE__EE_CPT_Strategy___set_paging', TRUE )) {
+			$paged = $WP_Query->get( 'paged' );
+			if ( ! $paged ) {
+				$page = $WP_Query->get( 'page' );
+				$paged = $page ? $page : 1;
+			}
+			$WP_Query->set( 'paged', $paged );
+		}
+	}
+
+
+
+	/**
 	 *	pre_get_posts
 	 *
 	 * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
@@ -277,6 +297,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
 		$this->_set_post_type_for_terms( $WP_Query );
+		// make sure paging is always set
+		$this->_set_paging( $WP_Query );
 
 		// is a taxonomy set ?
 		if ( $WP_Query->is_tax ) {
