@@ -75,7 +75,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map( $id );
 		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
-	
+
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
@@ -381,6 +381,33 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals( 'no_sirry', $attendee->get_extra_meta('shouldnt_prevent_deletion', TRUE ) );
 		$attendee->delete_permanently();
 		//if that didn't throw an error, we're good
+	}
+
+	/**
+	 * @group 7151
+	 */
+	public function test_in_entity_map(){
+		$att = EE_Attendee::new_instance( array( 'ATT_fname' => 'mike' ) );
+		$this->assertFalse( $att->in_entity_map() );
+		$att->save();
+		$this->assertTrue( $att->in_entity_map() );
+		$serialized_attendee = serialize( $att );
+		EE_Registry::instance()->reset_model( 'Attendee' );
+		$unserialized_attendee = unserialize( $serialized_attendee );
+		//when we serialized it, it forgot if it was in the entity map or not
+		$this->assertFalse( $unserialized_attendee->in_entity_map() );
+		try{
+			//should throw an exception because we hate saving
+			//a model object that's not in the entity mapper
+			$unserialized_attendee->save();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+		EEM_Attendee::instance()->add_to_entity_map( $unserialized_attendee );
+		//we should all acknowledge it's in the entity map now
+		$this->assertTrue( $unserialized_attendee->in_entity_map() );
+		//we shouldn't complain at saving it now, it's in the entity map and so we're allowed
+		$unserialized_attendee->save();
 	}
 }
 

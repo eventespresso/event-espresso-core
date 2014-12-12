@@ -94,11 +94,11 @@ abstract class EE_Base_Class{
 	 */
 	protected $_fields = array();
 	/**
-	 * Everything is related to extra meta... except extra meta, but it doesn't hurt
-	 * to have this in that case
-	 * @type array EE_Extra_Meta[]
+	 * States whether this model object has been found to already exist in the model's
+	 * entity map. We cache this so we don't have to check too frequently
+	 * @var boolean or NULL
 	 */
-	protected $_Extra_Meta = NULL;
+	protected $_in_entity_map = FALSE;
 
 
 
@@ -163,6 +163,11 @@ abstract class EE_Base_Class{
 				$this->_model_relations[$relation_name] = array();
 			}
 		}
+		/**
+		 * Action done at the end of each model object construction
+		 * @param EE_Base_Class $this the model object just created
+		 */
+		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
 	}
 
 
@@ -1060,6 +1065,9 @@ abstract class EE_Base_Class{
 			}else{//PK is NOT auto-increment
 				//so check if one like it already exists in the db
 				if( $this->get_model()->exists_by_ID( $this->ID() ) ){
+					if( ! $this->in_entity_map() && WP_DEBUG ){
+						throw new EE_Error( sprintf( __( 'Using a model object %1$s that is NOT in the entity map. That\'s dangerous, you should either: 1. Put it in the entity mapper by calling %2$s, or just discard this model object and use what is in the entity mapper (or fetch from the database using %3$s)', 'event_espresso' ), get_class($this), get_class( $this->get_model() ) . '::instance()->add_to_entity_map()', get_class( $this->get_model() ) . '::instance()->get_one_by_ID()' ) );
+					}
 					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
 				}else{
 					$results = $this->get_model()->insert($save_cols_n_values);
@@ -1767,6 +1775,31 @@ abstract class EE_Base_Class{
 				$name_parts[] = "$name:$value";
 			}
 			return implode(",",$name_parts);
+		}
+	}
+	/**
+	 * Avoid serializng the _in_entity_map because we want to figure that out on each request
+	 * @return array properties to serialize
+	 */
+	public function __sleep(){
+		$properties = get_object_vars( $this );
+		unset( $properties[ '_in_entity_map' ] );
+		return array_keys( $properties );
+	}
+
+	/**
+	 * Checks if this model object has been proven to already be in the entity map
+	 */
+	public function in_entity_map(){
+		//have we already confirmed its in the entity map?
+		if( $this->_in_entity_map ){
+			return TRUE;
+		}elseif( $this->ID() && $this->get_model()->get_from_entity_map( $this->ID() ) ) {
+			//well, if we looked, did we find it in the entity map?
+			$this->_in_entity_map = TRUE;
+			return TRUE;
+		}else{
+			return FALSE;
 		}
 	}
 }
