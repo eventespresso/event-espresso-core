@@ -1554,7 +1554,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 
 		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $registration, $qstns );
+		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $REG_ID, $qstns );
 		// loop thru questions... FINALLY!!!
 
 		foreach ( $qstns as $QST_ID => $qstn ) {

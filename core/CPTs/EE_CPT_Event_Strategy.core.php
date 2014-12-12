@@ -81,7 +81,7 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * Should eb called when the last filter or hook is fired for thiss CPT strategy.
+	 * Should eb called when the last filter or hook is fired for this CPT strategy.
 	 * This is to avoid applying this CPT strategy for other posts or CPTs (eg,
 	 * we don't want to join to the datetime table when querying for venues, do we!?)
 	 */
@@ -112,9 +112,12 @@ class EE_CPT_Event_Strategy {
 				isset( $wp_query->query_vars['post_type'] )
 				&& $wp_query->query_vars['post_type'] == 'espresso_events'
 			)
-			|| $wp_query->is_espresso_event_single
-			|| $wp_query->is_espresso_event_archive
-			|| $wp_query->is_espresso_event_taxonomy
+			&&
+			(
+				$wp_query->is_espresso_event_single
+				|| $wp_query->is_espresso_event_archive
+				|| $wp_query->is_espresso_event_taxonomy
+			)
 		) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
@@ -141,9 +144,12 @@ class EE_CPT_Event_Strategy {
 				isset( $wp_query->query_vars['post_type'] )
 				&& $wp_query->query_vars['post_type'] == 'espresso_events'
 			)
-			|| $wp_query->is_espresso_event_single
-			|| $wp_query->is_espresso_event_archive
-			|| $wp_query->is_espresso_event_taxonomy
+			&&
+			(
+				$wp_query->is_espresso_event_single
+				|| $wp_query->is_espresso_event_archive
+				|| $wp_query->is_espresso_event_taxonomy
+			)
 		) {
 			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
@@ -171,8 +177,11 @@ class EE_CPT_Event_Strategy {
 				isset( $wp_query->query_vars['post_type'] )
 				&& $wp_query->query_vars['post_type'] == 'espresso_events'
 			)
-			|| $wp_query->is_espresso_event_archive
-			|| $wp_query->is_espresso_event_taxonomy
+			&&
+			(
+				$wp_query->is_espresso_event_archive
+				|| $wp_query->is_espresso_event_taxonomy
+			)
 		) {
 			if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events ) {
 				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql' ) . '" ';
@@ -195,12 +204,15 @@ class EE_CPT_Event_Strategy {
 		if (
 			$wp_query instanceof WP_Query
 			&&
-				(
-					isset( $wp_query->query_vars['post_type'] )
-					&& $wp_query->query_vars['post_type'] == 'espresso_events'
-				)
-			|| $wp_query->is_espresso_event_archive
-			|| $wp_query->is_espresso_event_taxonomy
+			(
+				isset( $wp_query->query_vars['post_type'] )
+				&& $wp_query->query_vars['post_type'] == 'espresso_events'
+			)
+			&&
+			(
+				$wp_query->is_espresso_event_archive
+				|| $wp_query->is_espresso_event_taxonomy
+			)
 		) {
 			$SQL = EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC';
 		}
@@ -225,8 +237,11 @@ class EE_CPT_Event_Strategy {
 				isset( $wp_query->query_vars['post_type'] )
 				&& $wp_query->query_vars['post_type'] == 'espresso_events'
 			)
-			|| $wp_query->is_espresso_event_archive
-			|| $wp_query->is_espresso_event_taxonomy
+			&&
+			(
+				$wp_query->is_espresso_event_archive
+				|| $wp_query->is_espresso_event_taxonomy
+			)
 		) {
 			// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
 			// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once
