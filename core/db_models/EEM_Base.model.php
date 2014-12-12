@@ -2998,11 +2998,14 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Adds the object to the model's entity mappings (effectively tells the models
-	 * "hey, this model object is the most up-to-date representation of the data, and
-	 * for the remainder of the request, it's even more up-to-date than what's in the database.
-	 * So, if the database doesn't agree with what's in the entity mapper, ignore the database"
-	 * If the database gets updated directly and you want the entity mapper to reflect that change
+	 * add_to_entity_map
+	 *
+	 * Adds the object to the model's entity mappings
+	 * 		Effectively tells the models "Hey, this model object is the most up-to-date representation of the data,
+	 * 		and for the remainder of the request, it's even more up-to-date than what's in the database.
+	 * 		So, if the database doesn't agree with what's in the entity mapper, ignore the database"
+	 * 		If the database gets updated directly and you want the entity mapper to reflect that change,
+	 * 		then this method should be called immediately after the update query
 	 *
 	 * @param 	EE_Base_Class $object
 	 * @throws EE_Error
@@ -3027,9 +3030,14 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+
+
 	/**
+	 * _deduce_fields_n_values_from_cols_n_values
+	 *
 	 * Given an array where keys are column (or column alias) names and values,
 	 * returns an array of their corresponding field names and database values
+	 *
 	 * @param string $cols_n_values
 	 * @return array
 	 */
@@ -3049,9 +3057,14 @@ abstract class EEM_Base extends EE_Base{
 		return $this_model_fields_n_values;
 	}
 
+
+
 	/**
+	 * refresh_entity_map_from_db
+	 *
 	 * Makes sure the model object in the entity map at $id assumes the values
 	 * of the database (opposite of EE_base_Class::save())
+	 *
 	 * @param int|string $id
 	 * @return EE_Base_Class
 	 */
@@ -3075,13 +3088,19 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+
+
 	/**
+	 * refresh_entity_map_with
+	 *
 	 * Leaves the entry in the entity map alone, but updates it to match the provided
 	 * $replacing_model_obj (which we assume to be its equivalent but somehow NOT in the entity map).
 	 * This is useful if you have a model object you want to make authoritative over what's in the entity map currently.
 	 * Note: The old $replacing_model_obj should now be destroyed as it's now un-authoritative
-	 * @param int|string $id
+	 *
+	 * @param int|string    $id
 	 * @param EE_Base_Class $replacing_model_obj
+	 * @return \EE_Base_Class
 	 */
 	public function refresh_entity_map_with( $id, $replacing_model_obj ) {
 		$obj_in_map = $this->get_from_entity_map( $id );
@@ -3159,8 +3178,15 @@ abstract class EEM_Base extends EE_Base{
 		$className=get_class($this);
 		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_Base \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
-										$methodName,$className,$tagName));
+			throw new EE_Error(
+				sprintf(
+					__( 'Method %1$s on model %2$s does not exist! You can create one with the following code in functions.php or in a plugin: %4$s function my_callback(%4$s \$previousReturnValue, EEM_Base \$object\ $argsArray=NULL ){%4$s     /*function body*/%4$s      return \$whatever;%4$s }%4$s add_filter( \'%3$s\', \'my_callback\', 10, 3 );', 'event_espresso' ),
+					$methodName,
+					$className,
+					$tagName,
+					'<br />'
+				)
+			);
 		}
 
 		return apply_filters($tagName,null,$this,$args);
