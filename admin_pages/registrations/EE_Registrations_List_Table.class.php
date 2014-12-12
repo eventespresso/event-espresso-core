@@ -153,7 +153,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		foreach ( $this->_status as $key => $value ) {
 			$status[] = array( 'id' => $key, 'text' => $value );
 		}
-		$filters[] = EEH_Form_Fields::select_input('_reg_status', $status, isset( $this->_req_data['_reg_status'] ) ? strtoupper( sanitize_key( $this->_req_data['_reg_status'] )) : '' );
+		if ( $this->_view != 'incomplete' ) {
+			$filters[] = EEH_Form_Fields::select_input('_reg_status', $status, isset( $this->_req_data['_reg_status'] ) ? strtoupper( sanitize_key( $this->_req_data['_reg_status'] )) : '' );
+		}
 
 		return $filters;
 	}

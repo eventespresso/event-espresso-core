@@ -425,6 +425,20 @@ class EE_Payment_Method extends EE_Base_Class{
 		return EEM_Currency::instance()->get_all_currencies_usable_by($this->type_obj());
 	}
 
+	/**
+	 * Reports whether or not this payment method can be used for this payment method
+	 * @param string $currency_code currency ID (code)
+	 * @return boolean
+	 */
+	public function usable_for_currency( $currency_code ) {
+		foreach( $this->get_all_usable_currencies() as $currency_obj ) {
+			if( $currency_obj->ID() == $currency_code ){
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
 
 
 	/**
