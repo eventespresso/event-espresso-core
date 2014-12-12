@@ -185,6 +185,30 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		EEM_Attendee::instance()->get_all( array( array( 'Registration.Event.EVT_name' => 'bob' ) ) );
 		$this->assertTrue(TRUE, 'No exception thrown' );
 	}
+
+	/**
+	 *
+	 * @group 7151
+	 */
+	function test_refresh_entity_map(){
+		//get an object purposefully out-of-sync with the DB
+		//call this and make sure it's wiped clean and
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array ( 'PAY_amount' => 25 ) );
+		$p->save();
+		$this->assertEquals( $p,  EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+
+		//now manually update it in teh DB, but not the model object
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "update {$wpdb->prefix}esp_payment SET PAY_amount = 100, TXN_ID = 0 WHERE PAY_ID = %d", $p->ID() ) );
+		$this->assertEquals( 1, $affected );
+
+		//and when it's refreshed, its PAY_amount should be updated too and it should no longer have any transaction cached or evenfindable
+		EEM_Payment::instance()->refresh_entity_map( $p->ID() );
+		$this->assertEquals( 100, $p->get( 'PAY_amount' ) );
+		$this->assertEquals( 0, $p->get ('TXN_ID' ) );
+		$this->assertEquals( array(), $p->get_all_from_cache( 'Transaction' ) );
+		$this->assertEquals( NULL, $p->transaction() );
+	}
 }
 
 // End of file EEM_Base_Test.php

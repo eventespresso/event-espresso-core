@@ -2951,19 +2951,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
-		$this_model_fields_n_values = array();
-		foreach( $this->field_settings() as $field_name => $field_obj ){
-			//if there is a model relation chain prefix, remove it
-			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
-			//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-			//does the field on the model relate to this column retrieved from the db?
-			//or is it a db-only field? (not relating to the model)
-			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
-			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
-			}
-		}
+		$this_model_fields_n_values = $this->_deduce_fields_n_values_from_cols_n_values( $cols_n_values );
 		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
 			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
 		}
@@ -3010,12 +2998,18 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Adds the object to the model's mappings
+	 * Adds the object to the model's entity mappings (effectively tells the models
+	 * "hey, this model object is the most up-to-date representation of the data, and
+	 * for the remainder of the request, it's even more up-to-date than what's in the database.
+	 * So, if the database doesn't agree with what's in the entity mapper, ignore the database"
+	 * If the database gets updated directly and you want the entity mapper to reflect that change
+	 *
 	 * @param 	EE_Base_Class $object
+	 * @param boolean $overwrite whether to overwrite what's in the entity map currently or not
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	public function add_to_entity_map( EE_Base_Class $object ) {
+	public function add_to_entity_map( EE_Base_Class $object, $overwrite = FALSE ) {
 		$className = $this->_get_class_name();
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
@@ -3026,11 +3020,59 @@ abstract class EEM_Base extends EE_Base{
 		}
 		// double check it's not already there
 		$classInstance = $this->get_from_entity_map( $object->ID() );
-		if ( $classInstance ) {
+		if ( $classInstance && ! $overwrite ) {
 			return $classInstance;
 		} else {
 			$this->_entity_map[ $object->ID() ] = $object;
 			return $object;
+		}
+	}
+
+	/**
+	 * Given an array where keys are column (or column alias) names and values,
+	 * returns an array of their corresponding field names and database values
+	 * @param string $cols_n_values
+	 * @return array
+	 */
+	protected function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
+		$this_model_fields_n_values = array();
+		foreach( $this->field_settings() as $field_name => $field_obj ){
+			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+				//does the field on the model relate to this column retrieved from the db?
+				//or is it a db-only field? (not relating to the model)
+				if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
+				}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
+				}
+			}
+		return $this_model_fields_n_values;
+	}
+
+	/**
+	 * Makes sure the model object in the entity map at $id assumes the values
+	 * of the database (opposite of EE_base_Class::save())
+	 * @param int|string $id
+	 * @return EE_Base_Class
+	 */
+	public function refresh_entity_map( $id ){
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			$wpdb_results = $this->_get_all_wpdb_results( array( array ( $this->get_primary_key_field()->get_name() => $id ), 'limit' => 1 ) );
+			if( $wpdb_results && is_array( $wpdb_results ) ){
+				$one_row = reset( $wpdb_results );
+				foreach( $this->_deduce_fields_n_values_from_cols_n_values($one_row ) as $field_name => $db_value ) {
+					$obj_in_map->set_from_db( $field_name, $db_value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			return $this->get_one_by_ID( $id );
 		}
 	}
 

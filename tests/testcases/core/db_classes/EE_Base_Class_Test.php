@@ -409,6 +409,27 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//we shouldn't complain at saving it now, it's in the entity map and so we're allowed
 		$unserialized_attendee->save();
 	}
+
+	/**
+	 * @group 7151
+	 */
+	public function refresh_from_db(){
+		$att = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob' ) );
+		try{
+			$att->refresh_from_db();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+		$att->save();
+		$att->refresh_from_db();
+		EE_Registry::instance()->reset_model( 'Attendee' );
+		$att = unserialize( serialize( $att ) );
+		try{
+			$att->refresh_from_db();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+	}
 }
 
 // End of file EE_Base_Class_Test.php

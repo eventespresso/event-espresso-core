@@ -1802,6 +1802,25 @@ abstract class EE_Base_Class{
 			return FALSE;
 		}
 	}
+
+	/**
+	 * Makes sure the fields and values on this model object are in-sync with what's
+	 * in the database.
+	 * @throws EE_Error if this model objet isnt in the entity mapper (because then you should
+	 * just use what's in the entity mapper and refresh it) and WP_DEBUG is TRUE
+	 */
+	public function refresh_from_db(){
+		if( $this->ID() && $this->in_entity_map() ){
+			$this->get_model()->refresh_entity_map( $this->ID() );
+		}else{
+			//if it doesn't have ID, you shouldnt be asking to refresh it from teh database (because its not in the database)
+			//if it has an ID but it's not in the map, and you're asking me to refresh it
+			//that's kinda dangerous. You should just use what's in the entity map
+			if( WP_DEBUG ) {
+				throw new EE_Error( sprintf( __( 'Trying to refresh a model object with ID \'%1$s\' thats not in the entity map? First off: you should put it in the entity map. Second off, if you want whats in the database right now, you should just call %2$s yourself and discard this model object.', 'event_espresso' ), $this->ID(), get_class( $this->get_model() ) . '::instance()->refresh_entity_map()' ) );
+			}
+		}
+	}
 }
 
 /**
