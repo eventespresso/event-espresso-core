@@ -83,7 +83,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 				// try to finalize any payment that may have been attempted, but do NOT update TXN
-				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, FALSE );
+				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction );
 			} else {
 				$payment = NULL;
 			}
