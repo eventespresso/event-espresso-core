@@ -1805,7 +1805,8 @@ abstract class EE_Base_Class{
 		}else{
 			//if it doesn't have ID, you shouldn't be asking to refresh it from teh database (because its not in the database)
 			//if it has an ID but it's not in the map, and you're asking me to refresh it
-			//that's kinda dangerous. You should just use what's in the entity map
+			//that's kinda dangerous. You should just use what's in the entity map, or add this to the entity map if there's
+			//absolutely nothing in it for this ID
 			if( WP_DEBUG ) {
 				throw new EE_Error(
 					sprintf(
