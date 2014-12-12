@@ -391,29 +391,30 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertFalse( $att->in_entity_map() );
 		$att->save();
 		$this->assertTrue( $att->in_entity_map() );
-		$serialized_attendee = serialize( $att );
 		EE_Registry::instance()->reset_model( 'Attendee' );
-		$unserialized_attendee = unserialize( $serialized_attendee );
 		//when we serialized it, it forgot if it was in the entity map or not
-		$this->assertFalse( $unserialized_attendee->in_entity_map() );
+		$this->assertFalse( $att->in_entity_map() );
 		try{
 			//should throw an exception because we hate saving
 			//a model object that's not in the entity mapper
-			$unserialized_attendee->save();
+			$att->save();
 		}catch( EE_Error $e ){
 			$this->assertTrue( TRUE );
 		}
-		EEM_Attendee::instance()->add_to_entity_map( $unserialized_attendee );
+		EEM_Attendee::instance()->add_to_entity_map( $att );
 		//we should all acknowledge it's in the entity map now
-		$this->assertTrue( $unserialized_attendee->in_entity_map() );
+		$this->assertTrue( $att->in_entity_map() );
 		//we shouldn't complain at saving it now, it's in the entity map and so we're allowed
-		$unserialized_attendee->save();
+		$att->save();
+		//also, when we clone an item in the entity map, it shouldnt eb considered in the entity map
+		$att2 = clone $att;
+		$this->assertFalse( $att2->in_entity_map() );
 	}
 
 	/**
 	 * @group 7151
 	 */
-	public function refresh_from_db(){
+	public function test_refresh_from_db(){
 		$att = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob' ) );
 		try{
 			$att->refresh_from_db();
@@ -423,7 +424,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$att->save();
 		$att->refresh_from_db();
 		EE_Registry::instance()->reset_model( 'Attendee' );
-		$att = unserialize( serialize( $att ) );
+		$att = $att;
 		try{
 			$att->refresh_from_db();
 		}catch( EE_Error $e ){

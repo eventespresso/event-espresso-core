@@ -93,12 +93,6 @@ abstract class EE_Base_Class{
 	 * @type array EE_Model_Field_Base[]
 	 */
 	protected $_fields = array();
-	/**
-	 * States whether this model object has been found to already exist in the model's
-	 * entity map. We cache this so we don't have to check too frequently
-	 * @var boolean or NULL
-	 */
-	protected $_in_entity_map = FALSE;
 
 
 
@@ -1777,26 +1771,14 @@ abstract class EE_Base_Class{
 			return implode(",",$name_parts);
 		}
 	}
-	/**
-	 * Avoid serializng the _in_entity_map because we want to figure that out on each request
-	 * @return array properties to serialize
-	 */
-	public function __sleep(){
-		$properties = get_object_vars( $this );
-		unset( $properties[ '_in_entity_map' ] );
-		return array_keys( $properties );
-	}
 
 	/**
 	 * Checks if this model object has been proven to already be in the entity map
+	 * @return boolean
 	 */
 	public function in_entity_map(){
-		//have we already confirmed its in the entity map?
-		if( $this->_in_entity_map ){
-			return TRUE;
-		}elseif( $this->ID() && $this->get_model()->get_from_entity_map( $this->ID() ) ) {
+		if( $this->ID() && $this->get_model()->get_from_entity_map( $this->ID() ) === $this ) {
 			//well, if we looked, did we find it in the entity map?
-			$this->_in_entity_map = TRUE;
 			return TRUE;
 		}else{
 			return FALSE;
@@ -1811,7 +1793,7 @@ abstract class EE_Base_Class{
 	 */
 	public function refresh_from_db(){
 		if( $this->ID() && $this->in_entity_map() ){
-			$this->get_model()->refresh_entity_map( $this->ID() );
+			$this->get_model()->refresh_entity_map_from_db( $this->ID() );
 		}else{
 			//if it doesn't have ID, you shouldnt be asking to refresh it from teh database (because its not in the database)
 			//if it has an ID but it's not in the map, and you're asking me to refresh it

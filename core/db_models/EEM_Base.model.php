@@ -2989,10 +2989,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the model object from the  entity map if it exists
 	 * @param int|string $id the ID of the model object
-	 * @return EE_Base_Class | bool
+	 * @return EE_Base_Class
 	 */
 	public function get_from_entity_map( $id ){
-		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
+		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : NULL;
 	}
 
 
@@ -3005,11 +3005,10 @@ abstract class EEM_Base extends EE_Base{
 	 * If the database gets updated directly and you want the entity mapper to reflect that change
 	 *
 	 * @param 	EE_Base_Class $object
-	 * @param boolean $overwrite whether to overwrite what's in the entity map currently or not
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	public function add_to_entity_map( EE_Base_Class $object, $overwrite = FALSE ) {
+	public function add_to_entity_map( EE_Base_Class $object) {
 		$className = $this->_get_class_name();
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
@@ -3020,7 +3019,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		// double check it's not already there
 		$classInstance = $this->get_from_entity_map( $object->ID() );
-		if ( $classInstance && ! $overwrite ) {
+		if ( $classInstance ) {
 			return $classInstance;
 		} else {
 			$this->_entity_map[ $object->ID() ] = $object;
@@ -3056,7 +3055,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param int|string $id
 	 * @return EE_Base_Class
 	 */
-	public function refresh_entity_map( $id ){
+	public function refresh_entity_map_from_db( $id ){
 		$obj_in_map = $this->get_from_entity_map( $id );
 		if( $obj_in_map ){
 			$wpdb_results = $this->_get_all_wpdb_results( array( array ( $this->get_primary_key_field()->get_name() => $id ), 'limit' => 1 ) );
@@ -3073,6 +3072,33 @@ abstract class EEM_Base extends EE_Base{
 			return $obj_in_map;
 		}else{
 			return $this->get_one_by_ID( $id );
+		}
+	}
+
+	/**
+	 * Leaves the entry in the entity map alone, but updates it to match the provided
+	 * $replacing_model_obj (which we assume to be its equivalent but somehow NOT in the entity map).
+	 * This is useful if you have a model object you want to make authoritative over what's in the entity map currently.
+	 * Note: The old $replacing_model_obj should now be destroyed as it's now un-authoritative
+	 * @param int|string $id
+	 * @param EE_Base_Class $replacing_model_obj
+	 */
+	public function refresh_entity_map_with( $id, $replacing_model_obj ) {
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			if( $replacing_model_obj instanceof EE_Base_Class ){
+				foreach( $replacing_model_obj->model_field_array() as $field_name => $value ) {
+					$obj_in_map->set( $field_name, $value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			$this->add_to_entity_map( $replacing_model_obj );
+			return $replacing_model_obj;
 		}
 	}
 
