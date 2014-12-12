@@ -872,8 +872,8 @@ abstract class EEM_Base extends EE_Base{
 			$field_obj = $this->field_settings_for($field_name);
 			//if the value is NULL, we want to assign the value to that.
 			//wpdb->prepare doesn't really handle that properly
-			$value_sql = $value===NULL ? 'NULL' : $wpdb->prepare($field_obj->get_wpdb_data_type(),
-							$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$prepared_value = $this->_prepare_value_or_use_default( $field_obj, $fields_n_values );
+			$value_sql = $prepared_value===NULL ? 'NULL' : $wpdb->prepare( $field_obj->get_wpdb_data_type(), $prepared_value );
 			$cols_n_values[] = $field_obj->get_qualified_column()."=".$value_sql;
 		}
 		return implode(",",$cols_n_values);
@@ -1366,14 +1366,12 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class|mixed $id_or_obj
-	 * @param string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @param                     $query_params
-	 * @internal param \EE_Base_Class $ 'child $modelObject one of EE_Answer, EE_Attendee, etc.
-	 * @internal param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param int | EE_Base_Class  $id_or_obj EE_Base_Class child or its ID
+	 * @param string $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param array $query_params like EEM_Base::get_all's
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
+	public function get_first_related( EE_Base_Class $id_or_obj, $other_model_name, $query_params ){
 		$query_params['limit']=1;
 		$results = $this->get_all_related($id_or_obj,$other_model_name,$query_params);
 		if( $results ){
@@ -1531,13 +1529,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @access   protected
 	 * @param EE_Table_Base $table
 	 * @param array         $fields_n_values each key should be in field's keys, and value should be an int, string or float
-	 * @param bool|int     $new_id
+	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
 	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
-	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
 	 */
-	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = false){
+	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
 		$insertion_col_n_values = array();
 		$format_for_insertion = array();
@@ -1547,15 +1544,12 @@ abstract class EEM_Base extends EE_Base{
 			if($field_obj->is_auto_increment()){
 				continue;
 			}
-			if( ! isset( $fields_n_values[$field_name]) ||  $fields_n_values[$field_name] === null){
-				//they didn't include this field. so just use default
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
-			}else{
-				//they have specified the value for this field, so use it values_already_prepared_by_model_object
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj); ;
-
+			$prepared_value = $this->_prepare_value_or_use_default($field_obj, $fields_n_values);
+			//if the value we want to assign it to is NULL, just don't mention it for the insertion
+			if( $prepared_value !== NULL ){
+				$insertion_col_n_values[ $field_obj->get_table_column() ] = $prepared_value;
+				$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 			}
-			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 		}
 
 		if($table instanceof EE_Secondary_Table && $new_id){
@@ -1580,6 +1574,25 @@ abstract class EEM_Base extends EE_Base{
 			//a unique string indicating this model
 			return $this->get_index_primary_key_string($fields_n_values);
 		}
+	}
+
+	/**
+	 * Prepare the $field_obj 's value in $fields_n_values for use in the database.
+	 * If the field doesn't allow NULL, try to use its default. (If it doesn't allow NULL,
+	 * and there is no default, we pass it along. WPDB will take care of it)
+	 * @param EE_Model_Field_Base $field_obj
+	 * @param array $fields_n_values
+	 * @return mixed string|int|float depending on what the table column will be expecting
+	 */
+	protected function _prepare_value_or_use_default( $field_obj, $fields_n_values ){
+		//if this field doesn't allow nullable, don't allow it
+		if( ! $field_obj->is_nullable() && (
+				! isset( $fields_n_values[ $field_obj->get_name() ] ) ||
+				$fields_n_values[ $field_obj->get_name() ] === NULL ) ){
+			$fields_n_values[ $field_obj->get_name() ] = $field_obj->get_default_value();
+		}
+		$unprepared_value = isset( $fields_n_values[ $field_obj->get_name() ] ) ? $fields_n_values[ $field_obj->get_name() ] : NULL;
+		return $this->_prepare_value_for_use_in_db( $unprepared_value, $field_obj);
 	}
 
 	/**
@@ -2290,9 +2303,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param $query_param
+	 * @param array $query_param  like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @throws EE_Error
-	 * @internal param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
@@ -3197,13 +3209,12 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param        $base_class_obj_or_id
+	 * @param EE_Base_Class | int $base_class_obj_or_id  	either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @throws EE_Error
-	 * @internal param \EE_Base_Class $ /int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @return EE_Base_Class
 	 */
-	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false){
+	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ){
 		$className = $this->_get_class_name();
 		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
@@ -3318,11 +3329,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
 	 * We consider something to be a copy if all the attributes match (except the ID, of course).
-	 * @param array|EE_Base_Class $model_object_or_attributes_array
+	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
 	 * @return \EE_Base_Class[]
-	 * @internal param array|\EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 

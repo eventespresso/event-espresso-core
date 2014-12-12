@@ -94,6 +94,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t->_add_relation_to($r, 'Registration');
 		$this->assertEquals($r->get('TXN_ID'),$t->ID());
 	}
+	/**
+	 * @group 7084
+	 */
+	function test_set_defaults_on_unspecified_fields(){
+		$r = EE_Registration::new_instance( array( 'TXN_ID' => 99 ) );
+		$this->assertEquals( 99, $r->transaction_ID() );
+		//the STS_ID should have been set to the default, not left NULL
+		$this->assertEquals( EEM_Registration::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $r->status_ID() );
+	}
 	function test_get_first_related(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
