@@ -14,11 +14,8 @@
  * ------------------------------------------------------------------------
  *
  * class EE_DMS_4_5_0_invoice_settings
- * The purpose of this DMS is to check that critical page shortcodes,
- * like those for the Thank You or Transactions pages, are removed from the "Posts Page"
- * in the post shortcodes array, which tracks what shortcodes are used on what posts.
- * The reason for this is because critical pages should NOT be getting displayed on the site's "Posts Page"
- * nor should those page's shortcodes be getting initialized or run.
+ * The purpose of this DMS is to migrate the 4.4-style invoice settings
+ * to their 4.5-style equivalent, both of which are stored on the gateway config object
  *
  * @package			Event Espresso
  * @subpackage		/core/data_migration_scripts/4_3_0_stages/
@@ -32,7 +29,7 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 	 * Just initializes the status of the migration
 	 */
 	public function __construct() {
-		$this->_pretty_name = __( 'Update Critical Page Shortcode Tracking', 'event_espresso' );
+		$this->_pretty_name = __( 'Update Invoice Gateway Settings', 'event_espresso' );
 		parent::__construct();
 	}
 
@@ -98,84 +95,6 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 		$this->set_completed();
 		return 1;
 	}
-
-
-
-    /**
-     * 	_get_page_for_posts
-     *
-     * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts", or "posts" if no page is selected
-     *
-     *
-     *  @access 	private
-     *  @return 	string
-     */
-    private function _get_page_for_posts() {
-        $page_for_posts = get_option( 'page_for_posts' );
-        if ( ! $page_for_posts ) {
-            return 'posts';
-        }
-        global $wpdb;
-        $SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
-        return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
-    }
-
-
-
-    /**
-     *    _update_post_shortcodes
-     *
-     * @access    private
-     * @param $page_for_posts
-     * @return    void
-     */
-    private function _update_post_shortcodes( $page_for_posts = '' ) {
-        // critical page shortcodes that we do NOT want added to the Posts page (blog)
-        $critical_shortcodes = EE_Config::instance()->core->get_critical_pages_shortcodes_array();
-        // verify that post_shortcodes is set
-        EE_Config::instance()->core->post_shortcodes = isset( EE_Config::instance()->core->post_shortcodes ) && is_array( EE_Config::instance()->core->post_shortcodes ) ? EE_Config::instance()->core->post_shortcodes : array();
-        //  just in case the site has ever had posts on frontpage at some time, then we should check for a "Posts Page" named "posts"
-        $post_pages_to_check = $page_for_posts == 'posts' ? array( $page_for_posts ) : array( 'posts', $page_for_posts );
-        // cycle thru post_shortcodes
-        foreach( $post_pages_to_check as $post_page ){
-            // cycle thru post_shortcodes
-            foreach( EE_Config::instance()->core->post_shortcodes as $post_name => $shortcodes ){
-                // are there any shortcodes to track ?
-                if ( ! empty( $shortcodes )) {
-                    // loop thru list of tracked shortcodes
-                    foreach( $shortcodes as $shortcode => $post_id ) {
-                        // if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-                        if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $post_page ) {
-                            // then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
-                            unset( EE_Config::instance()->core->post_shortcodes[ $post_name ][ $shortcode ] );
-                        }
-                        // skip the posts page, because we want all shortcodes registered for it
-                        if ( $post_name == $post_page ) {
-                            continue;
-                        }
-                        // make sure post still exists
-                        $post = get_post( $post_id );
-                        if ( $post ) {
-                            // check that the post name matches what we have saved
-                            if ( $post->post_name == $post_name ) {
-                                // if so, then break before hitting the unset below
-                                continue;
-                            }
-                        }
-                        // we don't like missing posts around here >:(
-                        unset( EE_Config::instance()->core->post_shortcodes[ $post_name ] );
-                    }
-                } else {
-                    // you got no shortcodes to keep track of !
-                    unset( EE_Config::instance()->core->post_shortcodes[ $post_name ] );
-                }
-            }
-        }
-   }
-
-
-
-
 }
 // End of file EE_DMS_4_5_0_invoice_settings.dmsstage.php
 // Location: /core/data_migration_scripts/4_3_0_stages/EE_DMS_4_5_0_invoice_settings.dmsstage.php
