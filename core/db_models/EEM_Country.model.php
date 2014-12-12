@@ -24,7 +24,7 @@
 class EEM_Country extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
   	// array of all countries
 	private static $_all_countries = FALSE;
   	// array of all active countries
@@ -33,34 +33,16 @@ class EEM_Country extends EEM_Base {
 
 
 	/**
-	 *		This function is a singleton method used to instantiate the EEM_Country object
-	 *
-	 *		@access public
-	 *		@return EEM_Country instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Country already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Country object
-		return self::$_instance;
-	}
-
-	/**
 	 * Resets the country
 	 * @return EEM_Country
 	 */
-	public static function reset(){
-		self::$_instance = NULL;
+	public static function reset( $timezone = NULL ){
 		self::$_active_countries = NULL;
 		self::$_all_countries = NULL;
-		return self::instance();
+		return parent::reset( $timezone );
 	}
 
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
 
@@ -73,7 +55,7 @@ class EEM_Country extends EEM_Base {
 				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Dropdown Select Lists','event_espresso'), false, true),
 				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso')),
 				'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
-				'RGN_ID'=>new EE_All_Caps_Text_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
+				'RGN_ID'=>new EE_Integer_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
 				'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name','event_espresso'), false,''),
 				'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
 				'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular','event_espresso'), false),
@@ -92,7 +74,7 @@ class EEM_Country extends EEM_Base {
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

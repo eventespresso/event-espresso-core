@@ -234,3 +234,7 @@
 .ticket-selector-submit-btn {
 	float: right;
 }
+
+.ee-event-expired-notice {
+	margin: 0 0 1em;
+}

@@ -717,6 +717,8 @@ final class EE_Registry {
 	 */
 	public static function reset( $hard = FALSE, $reinstantiate = TRUE ){
 		$instance = self::instance();
+		$instance->load_helper('Activation');
+		EEH_Activation::reset();
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
 		$instance->LIB = new stdClass();

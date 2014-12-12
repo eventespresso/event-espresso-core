@@ -17,8 +17,6 @@
  * If your values are already in the database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  *
- * Description
- *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Michael Nelson
@@ -258,12 +256,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-	private $_class = '';
-
-
-
-
-
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays.
@@ -272,15 +264,26 @@ abstract class EEM_Base extends EE_Base{
 	 * finalizes constructing all the object's attributes.
 	 * Generally, rather than requiring a child to code
 	 * $this->_tables = array(
-	 *		'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
-	 *		...);
+	 *        'Event_Post_Table' => new EE_Table('Event_Post_Table','wp_posts')
+	 *        ...);
 	 *  (thus repeating itself in the array key and in the constructor of the new EE_Table,)
 	 * each EE_Table has a function to set the table's alias after the constructor, using
 	 * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
 	 * do something similar.
+	 *
+	 * @param null $timezone
+	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone = NULL ){
-		/**
+		// check that the model has not been loaded too soon
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
+			throw new EE_Error (
+				sprintf(
+					__( 'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
+		}		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
@@ -318,6 +321,10 @@ abstract class EEM_Base extends EE_Base{
 			//because they have related extra meta info. For now just orphan those extra meta
 			//in the future we should automatically delete them
 			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
+		}
+		//and change logs
+		if( get_class( $this) !=  'EEM_Change_Log' ) {
+			$this->_model_relations[ 'Change_Log' ] = new EE_Has_Many_Any_Relation( FALSE );
 		}
 		/**
 		 * Filters the list of relations on a model. It is best to NOT use this directly and instead just use
@@ -368,6 +375,39 @@ abstract class EEM_Base extends EE_Base{
 				$field->set_timezone( $timezone );
 			}
 		}
+	}
+
+	/**
+	 *		This function is a singleton method used to instantiate the Espresso_model object
+	 *
+	 *		@access public
+	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 *		@return static (as in the concrete child class)
+	 */
+	public static function instance( $timezone = NULL ){
+
+		// check if instance of Espresso_model already exists
+		if ( ! static::$_instance instanceof static) {
+			// instantiate Espresso_model
+			static::$_instance = new static( $timezone );
+		}
+
+		//we might have a timezone set, let set_timezone decide what to do with it
+		static::$_instance->set_timezone( $timezone );
+
+		// Espresso_model object
+		return static::$_instance;
+	}
+
+
+
+	/**
+	 * resets the model and returns it
+	 * @return static
+	 */
+	public static function reset(  $timezone = NULL ){
+		static::$_instance = NULL;
+		return self::instance( $timezone );
 	}
 
 
@@ -832,8 +872,8 @@ abstract class EEM_Base extends EE_Base{
 			$field_obj = $this->field_settings_for($field_name);
 			//if the value is NULL, we want to assign the value to that.
 			//wpdb->prepare doesn't really handle that properly
-			$value_sql = $value===NULL ? 'NULL' : $wpdb->prepare($field_obj->get_wpdb_data_type(),
-							$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$prepared_value = $this->_prepare_value_or_use_default( $field_obj, $fields_n_values );
+			$value_sql = $prepared_value===NULL ? 'NULL' : $wpdb->prepare( $field_obj->get_wpdb_data_type(), $prepared_value );
 			$cols_n_values[] = $field_obj->get_qualified_column()."=".$value_sql;
 		}
 		return implode(",",$cols_n_values);
@@ -1111,14 +1151,19 @@ abstract class EEM_Base extends EE_Base{
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
 		}
-		$wpdb->last_error = NULL;
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->show_errors( FALSE );
+		if( WP_DEBUG ){
+			$wpdb->last_error = NULL;
+			$old_show_errors_value = $wpdb->show_errors;
+			$wpdb->show_errors( FALSE );
+		}
+
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
-		$wpdb->show_errors( $old_show_errors_value );
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
-		if( ! empty( $wpdb->last_error ) ){
-			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+		if( WP_DEBUG ){
+			$wpdb->show_errors( $old_show_errors_value );
+			if( ! empty( $wpdb->last_error ) ){
+				throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+			}
 		}
 		return $result;
 	}
@@ -1321,14 +1366,12 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @param EE_Base_Class|mixed $id_or_obj
-	 * @param string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @param                     $query_params
-	 * @internal param \EE_Base_Class $ 'child $modelObject one of EE_Answer, EE_Attendee, etc.
-	 * @internal param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param int | EE_Base_Class  $id_or_obj EE_Base_Class child or its ID
+	 * @param string $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param array $query_params like EEM_Base::get_all's
 	 * @return EE_Base_Class
 	 */
-	public function get_first_related(EE_Base_Class $id_or_obj,$other_model_name,$query_params){
+	public function get_first_related( EE_Base_Class $id_or_obj, $other_model_name, $query_params ){
 		$query_params['limit']=1;
 		$results = $this->get_all_related($id_or_obj,$other_model_name,$query_params);
 		if( $results ){
@@ -1486,13 +1529,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @access   protected
 	 * @param EE_Table_Base $table
 	 * @param array         $fields_n_values each key should be in field's keys, and value should be an int, string or float
-	 * @param bool|int     $new_id
+	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
-	 * @global $wpdb only used to get the $wpdb->insert_id after performin an insert
-	 * @internal param int $new_id for now we assume only int keys
+	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
 	 * @return int ID of new row inserted
 	 */
-	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = false){
+	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
 		$insertion_col_n_values = array();
 		$format_for_insertion = array();
@@ -1502,15 +1544,12 @@ abstract class EEM_Base extends EE_Base{
 			if($field_obj->is_auto_increment()){
 				continue;
 			}
-			if( ! isset( $fields_n_values[$field_name]) ||  $fields_n_values[$field_name] === null){
-				//they didn't include this field. so just use default
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
-			}else{
-				//they have specified the value for this field, so use it values_already_prepared_by_model_object
-				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj); ;
-
+			$prepared_value = $this->_prepare_value_or_use_default($field_obj, $fields_n_values);
+			//if the value we want to assign it to is NULL, just don't mention it for the insertion
+			if( $prepared_value !== NULL ){
+				$insertion_col_n_values[ $field_obj->get_table_column() ] = $prepared_value;
+				$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 			}
-			$format_for_insertion[] = $field_obj->get_wpdb_data_type();
 		}
 
 		if($table instanceof EE_Secondary_Table && $new_id){
@@ -1535,6 +1574,25 @@ abstract class EEM_Base extends EE_Base{
 			//a unique string indicating this model
 			return $this->get_index_primary_key_string($fields_n_values);
 		}
+	}
+
+	/**
+	 * Prepare the $field_obj 's value in $fields_n_values for use in the database.
+	 * If the field doesn't allow NULL, try to use its default. (If it doesn't allow NULL,
+	 * and there is no default, we pass it along. WPDB will take care of it)
+	 * @param EE_Model_Field_Base $field_obj
+	 * @param array $fields_n_values
+	 * @return mixed string|int|float depending on what the table column will be expecting
+	 */
+	protected function _prepare_value_or_use_default( $field_obj, $fields_n_values ){
+		//if this field doesn't allow nullable, don't allow it
+		if( ! $field_obj->is_nullable() && (
+				! isset( $fields_n_values[ $field_obj->get_name() ] ) ||
+				$fields_n_values[ $field_obj->get_name() ] === NULL ) ){
+			$fields_n_values[ $field_obj->get_name() ] = $field_obj->get_default_value();
+		}
+		$unprepared_value = isset( $fields_n_values[ $field_obj->get_name() ] ) ? $fields_n_values[ $field_obj->get_name() ] : NULL;
+		return $this->_prepare_value_for_use_in_db( $unprepared_value, $field_obj);
 	}
 
 	/**
@@ -2245,9 +2303,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @param $query_param
+	 * @param array $query_param  like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @throws EE_Error
-	 * @internal param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
@@ -2906,19 +2963,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
-		$this_model_fields_n_values = array();
-		foreach( $this->field_settings() as $field_name => $field_obj ){
-			//if there is a model relation chain prefix, remove it
-			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
-			//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-			//does the field on the model relate to this column retrieved from the db?
-			//or is it a db-only field? (not relating to the model)
-			if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
-			}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
-				$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
-			}
-		}
+		$this_model_fields_n_values = $this->_deduce_fields_n_values_from_cols_n_values( $cols_n_values );
 		if( $this->has_primary_key_field() && isset( $this_model_fields_n_values[ $this->primary_key_name() ] ) ){
 			$primary_key = $this_model_fields_n_values[ $this->primary_key_name() ];
 		}
@@ -2959,18 +3004,26 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function get_from_entity_map( $id ){
-		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
+		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : NULL;
 	}
 
 
 
 	/**
-	 * Adds the object to the model's mappings
+	 * add_to_entity_map
+	 *
+	 * Adds the object to the model's entity mappings
+	 * 		Effectively tells the models "Hey, this model object is the most up-to-date representation of the data,
+	 * 		and for the remainder of the request, it's even more up-to-date than what's in the database.
+	 * 		So, if the database doesn't agree with what's in the entity mapper, ignore the database"
+	 * 		If the database gets updated directly and you want the entity mapper to reflect that change,
+	 * 		then this method should be called immediately after the update query
+	 *
 	 * @param 	EE_Base_Class $object
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	public function add_to_entity_map( EE_Base_Class $object ) {
+	public function add_to_entity_map( EE_Base_Class $object) {
 		$className = $this->_get_class_name();
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
@@ -2986,6 +3039,97 @@ abstract class EEM_Base extends EE_Base{
 		} else {
 			$this->_entity_map[ $object->ID() ] = $object;
 			return $object;
+		}
+	}
+
+
+
+	/**
+	 * _deduce_fields_n_values_from_cols_n_values
+	 *
+	 * Given an array where keys are column (or column alias) names and values,
+	 * returns an array of their corresponding field names and database values
+	 *
+	 * @param string $cols_n_values
+	 * @return array
+	 */
+	protected function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
+		$this_model_fields_n_values = array();
+		foreach( $this->field_settings() as $field_name => $field_obj ){
+			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+				//does the field on the model relate to this column retrieved from the db?
+				//or is it a db-only field? (not relating to the model)
+				if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
+				}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
+					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
+				}
+			}
+		return $this_model_fields_n_values;
+	}
+
+
+
+	/**
+	 * refresh_entity_map_from_db
+	 *
+	 * Makes sure the model object in the entity map at $id assumes the values
+	 * of the database (opposite of EE_base_Class::save())
+	 *
+	 * @param int|string $id
+	 * @return EE_Base_Class
+	 */
+	public function refresh_entity_map_from_db( $id ){
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			$wpdb_results = $this->_get_all_wpdb_results( array( array ( $this->get_primary_key_field()->get_name() => $id ), 'limit' => 1 ) );
+			if( $wpdb_results && is_array( $wpdb_results ) ){
+				$one_row = reset( $wpdb_results );
+				foreach( $this->_deduce_fields_n_values_from_cols_n_values($one_row ) as $field_name => $db_value ) {
+					$obj_in_map->set_from_db( $field_name, $db_value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			return $this->get_one_by_ID( $id );
+		}
+	}
+
+
+
+	/**
+	 * refresh_entity_map_with
+	 *
+	 * Leaves the entry in the entity map alone, but updates it to match the provided
+	 * $replacing_model_obj (which we assume to be its equivalent but somehow NOT in the entity map).
+	 * This is useful if you have a model object you want to make authoritative over what's in the entity map currently.
+	 * Note: The old $replacing_model_obj should now be destroyed as it's now un-authoritative
+	 *
+	 * @param int|string    $id
+	 * @param EE_Base_Class $replacing_model_obj
+	 * @return \EE_Base_Class
+	 */
+	public function refresh_entity_map_with( $id, $replacing_model_obj ) {
+		$obj_in_map = $this->get_from_entity_map( $id );
+		if( $obj_in_map ){
+			if( $replacing_model_obj instanceof EE_Base_Class ){
+				foreach( $replacing_model_obj->model_field_array() as $field_name => $value ) {
+					$obj_in_map->set( $field_name, $value );
+				}
+				//clear the cache of related model objects
+				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
+					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+				}
+			}
+			return $obj_in_map;
+		}else{
+			$this->add_to_entity_map( $replacing_model_obj );
+			return $replacing_model_obj;
 		}
 	}
 
@@ -3046,8 +3190,15 @@ abstract class EEM_Base extends EE_Base{
 		$className=get_class($this);
 		$tagName="FHEE__{$className}__{$methodName}";
 		if(!has_filter($tagName)){
-			throw new EE_Error(sprintf(__("Method %s on model %s does not exist! You can create one with the following code in functions.php or in a plugin: add_filter('%s','my_callback',10,3);function my_callback(\$previousReturnValue,EEM_Base \$object\$argsArray=null){/*function body*/return \$whatever;}","event_espresso"),
-										$methodName,$className,$tagName));
+			throw new EE_Error(
+				sprintf(
+					__( 'Method %1$s on model %2$s does not exist! You can create one with the following code in functions.php or in a plugin: %4$s function my_callback(%4$s \$previousReturnValue, EEM_Base \$object\ $argsArray=NULL ){%4$s     /*function body*/%4$s      return \$whatever;%4$s }%4$s add_filter( \'%3$s\', \'my_callback\', 10, 3 );', 'event_espresso' ),
+					$methodName,
+					$className,
+					$tagName,
+					'<br />'
+				)
+			);
 		}
 
 		return apply_filters($tagName,null,$this,$args);
@@ -3058,13 +3209,12 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param        $base_class_obj_or_id
+	 * @param EE_Base_Class | int $base_class_obj_or_id  	either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @throws EE_Error
-	 * @internal param \EE_Base_Class $ /int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @return EE_Base_Class
 	 */
-	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false){
+	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ){
 		$className = $this->_get_class_name();
 		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
@@ -3179,11 +3329,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
 	 * We consider something to be a copy if all the attributes match (except the ID, of course).
-	 * @param array|EE_Base_Class $model_object_or_attributes_array
+	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
 	 * @return \EE_Base_Class[]
-	 * @internal param array|\EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 

@@ -38,6 +38,10 @@ class EE_Pending_Approval_message_type extends EE_Registration_Base_message_type
 			'plural' => __('registrations pending payment', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'registration'
+			);
+
 		parent::__construct();
 	}
 

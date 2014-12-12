@@ -10,6 +10,7 @@
  *
  */
 class EEH_Debug_Tools{
+
 	/**
 	 * 	instance of the EEH_Autoloader object
 	 *	@var 	$_instance
@@ -25,6 +26,9 @@ class EEH_Debug_Tools{
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
 	private $_times = array();
+
+
+
 	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
@@ -54,7 +58,21 @@ class EEH_Debug_Tools{
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
-		add_action( 'activated_plugin',array($this,'ee_plugin_activation_errors') );
+		add_action( 'activated_plugin', array( $this,'ee_plugin_activation_errors' ));
+		add_action( 'shutdown', array( $this,'show_db_name' ));
+	}
+
+
+
+	/**
+	 * 	show_db_name
+	 *
+	 * 	@return void
+	 */
+	public function show_db_name() {
+		if ( ! defined( 'DOING_AJAX' ) && ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS )) {
+			echo '<p style="font-size:10px;font-weight:normal;color:#E76700;margin: 1em 2em; text-align: right;">DB_NAME: '. DB_NAME .'</p>';
+		}
 	}
 
 
@@ -261,41 +279,44 @@ if ( !function_exists( 'dump_post' ) ) {
 		d($post);
 	}
 }
-
-
-
-
-
 /**
- * 	@ print_r an array
- * 	@ access public
- * 	@ return void
+ *    @ print_r an array
+ *    @ access public
+ *    @ return void
+ *
+ * @param mixed  $var
+ * @param bool   $var_name
+ * @param string $file
+ * @param int    $line
+ * @param string $height
+ * @param bool   $die
  */
-function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
-
-	if( ! $var_name ) {
-		if ( is_object( $var )) {
-			$var_name = 'object';
-		} else if ( is_array( $var )) {
-			$var_name = 'array';
-		} else if ( is_numeric( $var )) {
-			$var_name = 'numeric';
-		} else {
-			$var_name = 'string';
-		}
+function printr( $var, $var_name = FALSE, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
+	$print_r = FALSE;
+	if ( is_object( $var )) {
+		$var_name = ! $var_name ? 'object' : $var_name;
+		$print_r = TRUE;
+	} else if ( is_array( $var )) {
+		$var_name = ! $var_name ? 'array' : $var_name;
+		$print_r = TRUE;
+	} else if ( is_numeric( $var )) {
+		$var_name = ! $var_name ? 'numeric' : $var_name;
+	} else if ( is_string( $var )) {
+		$var_name = ! $var_name ? 'string' : $var_name;
+	} else if ( is_null( $var )) {
+		$var_name = ! $var_name ? 'null' : $var_name;
 	}
+	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
+	ob_start();
+	echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
+	echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
+	$print_r ? print_r($var) : var_dump($var);
+	echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+	$result = ob_get_clean();
 
-	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
-	$var_name = ucwords( $var_name );
-
-
-	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
-	echo '<h3><b>' . $var_name . '</b></h3>';
-	echo print_r($var);
-	echo '</pre>';
-
-
-	if( $die ) {
-		die();
+	if ( $die ) {
+		die( $result );
+	} else {
+		echo $result;
 	}
 }

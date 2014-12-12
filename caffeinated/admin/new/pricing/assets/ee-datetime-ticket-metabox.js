@@ -1239,7 +1239,7 @@ jQuery(document).ready(function($) {
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text(accounting.formatMoney(price_amount));
 			newTKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount));
-			newTKTrow.find('.ticket-display-row-TKT_price').text(accounting.formatMoney(price_amount));
+			newTKTrow.find('.edit-ticket-TKT_price').val(price_amount);
 
 			/*newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
@@ -1995,7 +1995,9 @@ jQuery(document).ready(function($) {
 	$('.event-datetimes-container').on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
-		tktHelper.updateDTTrow(data.datetimeRow);
+		if ( typeof data.datetimeRow !== 'undefined' ) {
+			tktHelper.updateDTTrow(data.datetimeRow);
+		}
 	});/**/
 
 

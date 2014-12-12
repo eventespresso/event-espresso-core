@@ -56,10 +56,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		switch( $field_name ) {
 			case 'REG_code' :
-				$this->set_reg_code( $field_value );
+				$this->set_reg_code( $field_value, $use_default );
 				break;
 			case 'STS_ID' :
-				$this->set_status( $field_value );
+				$this->set_status( $field_value, $use_default );
 				break;
 			default :
 				parent::set( $field_name, $field_value, $use_default );
@@ -76,9 +76,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 *
 	 * @access        public
 	 * @param string $new_STS_ID
+	 * @param boolean $use_default
 	 * @return bool
 	 */
-	public function set_status( $new_STS_ID = '' ) {
+	public function set_status( $new_STS_ID = NULL, $use_default = FALSE ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed
@@ -95,8 +96,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this, $old_STS_ID, $new_STS_ID );
 			}
 			// update status
-			parent::set( 'STS_ID', $new_STS_ID );
+			parent::set( 'STS_ID', $new_STS_ID, $use_default );
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
+			return TRUE;
+		}else{
+			//even though the old value matches the new value, it's still good to
+			//allow the parent set method to have a say
+			parent::set( 'STS_ID', $new_STS_ID, $use_default );
 			return TRUE;
 		}
 		return FALSE;
@@ -329,6 +335,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 */
 	public function is_declined() {
 		return $this->status_ID() == EEM_Registration::status_id_declined ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 *    is_incomplete -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_incomplete
+	 *
+	 * @access        public
+	 * @return        boolean
+	 */
+	public function is_incomplete() {
+		return $this->status_ID() == EEM_Registration::status_id_incomplete ? TRUE : FALSE;
 	}
 
 
@@ -629,14 +647,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			case EEM_Registration::status_id_approved:
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
 				break;
-			case EEM_Registration::status_id_not_approved:
-				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
-				break;
 			case EEM_Registration::status_id_pending_payment:
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
 				break;
+			case EEM_Registration::status_id_not_approved:
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Registration::status_id_cancelled:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
+				break;
+			case EEM_Registration::status_id_incomplete:
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-orange-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_declined:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
@@ -941,13 +962,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 *
 	 * @access    public
 	 * @param    string $REG_code Registration Code
+	 * @param	boolean $use_default
 	 */
-	public function set_reg_code( $REG_code ) {
+	public function set_reg_code( $REG_code, $use_default = FALSE ) {
 		if ( empty( $REG_code ) && $this->ID() ) {
 			EE_Error::add_error( __( 'REG_code can not be empty.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		if ( ! $this->reg_code() ) {
-			parent::set( 'REG_code', $REG_code );
+			parent::set( 'REG_code', $REG_code, $use_default );
 		} else {
 			EE_Error::doing_it_wrong(
 				__CLASS__ . '::' . __FUNCTION__,

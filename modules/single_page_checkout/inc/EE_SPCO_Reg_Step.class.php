@@ -286,6 +286,15 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * @param array $valid_data
+	 */
+	public function set_valid_data( $valid_data ) {
+		$this->_valid_data = $valid_data;
+	}
+
+
+
+	/**
 	 * @return array
 	 */
 	public function valid_data() {
@@ -409,7 +418,7 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$html .= $this->reg_form->form_open( $this->reg_step_url() );
+			$html .= $this->checkout->admin_request ? '' : $this->reg_form->form_open( $this->reg_step_url() );
 			if ( EE_Registry::instance()->REQ->ajax ) {
 				$this->reg_form->localize_validation_rules();
 				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
@@ -417,8 +426,8 @@ abstract class EE_SPCO_Reg_Step {
 			} else {
 				$html .= $this->reg_form->get_html_and_js();
 			}
-			$html .= $this->reg_step_submit_button();
-			$html .= $this->reg_form->form_close();
+			$html .= $this->checkout->admin_request ? '' :$this->reg_step_submit_button();
+			$html .= $this->checkout->admin_request ? '' :$this->reg_form->form_close();
 		}
 		return $html;
 	}

@@ -321,7 +321,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	private function _set_supports_labels_defaults() {
 		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
 		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
-		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundled structural changes for templates.', 'event_espresso');
 
 		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
 
@@ -365,7 +365,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function get_variation( EE_Messages_Template_Pack $pack, $message_type_name, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
 		$this->_tmp_pack = $pack;
-		return $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters );
+		$variation_path = apply_filters( 'EE_messenger__get_variation__variation', false, $pack, $this->name, $message_type_name, $url, $type, $variation, $skip_filters );
+		$variation_path = empty( $variation_path ) ? $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters ) : $variation_path;
+		return $variation_path;
+
 	}
 
 
@@ -577,7 +580,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
 		$this->_incoming_message_type = $message_type;
-		return $this->_send_message();
+		$this->_send_message();
 	}
 
 

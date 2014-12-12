@@ -16,36 +16,7 @@
 			</thead>
 			<tbody>
 			<?php echo $transaction_details;?>
-<?php
-/*		if ( $payments ) {
-		foreach ( $payments as $payment ){
-			if ( $payment instanceof EE_Payment ) {
-?>
-				<tr class="reg-page-totals-spn">
-					<td class="jst-rght"><?php echo __('Payment: ', 'event_espresso') . date_i18n( $pay_date_frmt, (int)$payment->timestamp() ); ?></td>
-					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $payment->amount() );?></td>
-					<?php	do_action( 'AHEE__registration_page_payment_options__payment_info_table_payment_row_end', $payment ); ?>
-				</tr>
-<?php
-			}
-		}
-	}
-	if ( $grand_total != $amount_owing ) {
-?>
-				<tr class="reg-page-totals-spn">
-					<td class="jst-rght"><?php echo __('Grand Total: ', 'event_espresso');?></td>
-					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $grand_total );?></td>
-					<?php	do_action( 'AHEE__registration_page_payment_options__payment_info_table_grand_total_row_end', $grand_total ); ?>
-				</tr>
-<?php
-}
-?>
-				<tr id="reg-page-grand-total-dv" class="reg-page-totals-spn">
-					<td class="jst-rght"><?php echo __('Total Amount Due: ', 'event_espresso');?></td>
-					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $amount_owing );?></td>
-					<?php	do_action( 'AHEE__registration_page_payment_options__payment_info_table_amount_owing_row_end', $amount_owing ); ?>
-				</tr>
-				<?php */ ?>
+			<?php	do_action( 'AHEE__registration_page_payment_options__payment_info_table_tbody_end' ); ?>
 			</tbody>
 		</table>
 	</div>

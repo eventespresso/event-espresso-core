@@ -26,7 +26,7 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
@@ -51,7 +51,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 *		@access protected
 	 *		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		$this->_tables = array(
@@ -66,9 +66,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
 				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
 				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
-				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), true, current_time('timestamp')),
+				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), FALSE, current_time('timestamp')),
 				'ATT_author'=>new EE_Integer_Field('post_author', __("WP User that Created Attendee", "event_espresso"), false, get_current_user_id() ),
-				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), true),
+				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), false, 0),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_attendees'),// EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees'),
 				'status' => new EE_WP_Post_Status_Field('post_status', __('Attendee Status', 'event_espresso'), false, 'publish')
 			),
@@ -90,45 +90,17 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Registration'=>new EE_Has_Many_Relation(),
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
-			'Event'=>new EE_HABTM_Relation('Registration'),
-			'Message' => new EE_Has_Many_Any_Relation( FALSE ),//allow deletion of attendees even if they have messages in the queue for them
+			'Event'=>new EE_HABTM_Relation('Registration', FALSE ),
 		);
 		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
-		parent::__construct();
+		parent::__construct( $timezone );
 
 	}
 	public function get_all_wpdb_results($query_params){
 		return $this->_get_all_wpdb_results($query_params);
 	}
 
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Attendee
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 
 	/**
 	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)

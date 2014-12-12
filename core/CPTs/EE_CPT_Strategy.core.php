@@ -258,6 +258,26 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
+	 *	_set_paging
+	 *
+	 * @access public
+	 * @param WP_Query $WP_Query
+	 * @return void
+	 */
+	public function _set_paging( $WP_Query ) {
+		if ( $WP_Query->is_main_query() && apply_filters( 'FHEE__EE_CPT_Strategy___set_paging', TRUE )) {
+			$paged = $WP_Query->get( 'paged' );
+			if ( ! $paged ) {
+				$page = $WP_Query->get( 'page' );
+				$paged = $page ? $page : 1;
+			}
+			$WP_Query->set( 'paged', $paged );
+		}
+	}
+
+
+
+	/**
 	 *	pre_get_posts
 	 *
 	 * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
@@ -277,6 +297,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
 		$this->_set_post_type_for_terms( $WP_Query );
+		// make sure paging is always set
+		$this->_set_paging( $WP_Query );
 
 		// is a taxonomy set ?
 		if ( $WP_Query->is_tax ) {
@@ -391,7 +413,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_fields( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( isset( $this->CPT['meta_table'] )) {
+		if ( ! empty( $this->CPT['meta_table'] )) {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
@@ -410,7 +432,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_join( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( isset( $this->CPT['meta_table'] )) {
+		if ( ! empty( $this->CPT['meta_table'] )) {
 			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';

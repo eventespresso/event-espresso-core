@@ -34,8 +34,8 @@ if ( count( $registrations ) > 0 ) {
 					<tr>
 						<td>
 						<?php
-							echo $registration->ticket()->name();
-							echo $registration->ticket()->description() ? '<br/>' . $registration->ticket()->description() : '';
+							echo '<span class="spco-ticket-info-name">' . $registration->ticket()->name() . '</span>';
+							echo $registration->ticket()->description() ? '<br/><span class="spco-ticket-info-description">' . $registration->ticket()->description() . '</span>' : '';
 						?>
 						</td>
 						<td class="jst-cntr"><?php echo $ticket_count[ $registration->ticket()->ID() ];?></td>

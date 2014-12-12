@@ -15,6 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @subpackage
  * @author				Mike Nelson
  *
+ * @group payment_methods
  */
 class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 /**

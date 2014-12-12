@@ -15,6 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group payment_methods
+ * @group live
  */
 class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	/**

@@ -217,17 +217,26 @@ class EE_Transaction_Processor {
 		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] )) {
 			return FALSE;
 		}
-		// if  it's current status value matches the incoming value (no change)
-		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
-			return FALSE;
-		}
 		// if  we're trying to complete a step that hasn't even started
 		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
 			return FALSE;
 		}
-		// if  we're trying to set a start time for an already completed step
-		if ( is_numeric( $status ) && $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
-			return FALSE;
+		// if we're trying to set a start time
+		if ( is_numeric( $status )) {
+			// but we're trying to set a start time for an already completed step
+			if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
+				return FALSE;
+			}
+			// status IS a timestamp BUT it's current status value matches the incoming value (no change)
+			if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
+				// this will happen in cases where multiple AJAX requests occur during the same step
+				return TRUE;
+			}
+		} else {
+			// status is not a timestamp BUT it's current status value matches the incoming value (no change)
+			if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
+				return FALSE;
+			}
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;

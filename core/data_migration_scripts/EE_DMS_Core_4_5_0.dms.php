@@ -32,7 +32,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_5_0_update_wp_user_for_tickets(),
 			new EE_DMS_4_5_0_update_wp_user_for_prices(),
 			new EE_DMS_4_5_0_update_wp_user_for_price_types(),
-			new EE_DMS_4_5_0_update_wp_user_for_question_groups()
+			new EE_DMS_4_5_0_update_wp_user_for_question_groups(),
+			new EE_DMS_4_5_0_invoice_settings(),
 			);
 		parent::__construct();
 	}
@@ -107,7 +108,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
 				  DTT_name VARCHAR(255) NOT NULL default '',
-				  DTT_description TEXT NOT NULL default '',
+				  DTT_description TEXT NOT NULL,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) DEFAULT -1,
@@ -450,7 +451,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
-					  TKT_description TEXT NOT NULL DEFAULT '',
+					  TKT_description TEXT NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',

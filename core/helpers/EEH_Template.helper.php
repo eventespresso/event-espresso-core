@@ -145,19 +145,19 @@ class EEH_Template {
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
-	 * @param array    $templates
+	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.  Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
-	 * @internal param array|string $mixed $templates  the template file name including extension
+	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.
+	 * 				Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
 	 * @return mixed
 	 */
 	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE, $check_if_custom = FALSE ) {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
 
-		if ( $check_if_custom and !empty( $template_path ) )
+		if ( $check_if_custom && !empty( $template_path ) )
 			return TRUE;
 
 		// not in the theme
@@ -196,13 +196,15 @@ class EEH_Template {
 					// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 					EE_PLUGIN_DIR_PATH
 					);
-				$template_folder_paths = array_merge($core_paths, $template_folder_paths );
+				$template_folder_paths = array_merge( $template_folder_paths, $core_paths );
 			}
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
+
 			// array to hold all possible template paths
 			$full_template_paths = array();
+
 			// loop through $templates
 			foreach ( (array)$templates as $template ) {
 				// while looping through all template folder paths
@@ -215,6 +217,8 @@ class EEH_Template {
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+
+
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
@@ -246,6 +250,19 @@ class EEH_Template {
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		/**
+		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
+		 * modifications.  NOTE... modifying these things can cause breakage as most templates running through
+		 * the display_template method are templates we DON'T want modified (usually because of js
+		 * dependencies etc).  So unless you know what you are doing, do NOT filter templates or template args
+		 * using this.
+		 *
+		 * @since 4.6.0
+		 */
+		$template_path = apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
+		$template_args = apply_filters( 'FHEE__EEH_Template__display_template__template_args', $template_args );
+
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
 			return '';
@@ -422,7 +439,7 @@ class EEH_Template {
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
 		$icon = !$icon_style ? ' dashicons-editor-help' : $icon_style;
 		$help_text = !$help_text ? '' : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
+		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . __('Click to open the \'Help\' tab for more information about this feature.', 'event_espresso') . '" > ' . $help_text . ' </a>';
 	}
 
 

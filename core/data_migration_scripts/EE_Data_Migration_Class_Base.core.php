@@ -125,6 +125,8 @@ abstract class EE_Data_Migration_Class_Base {
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
 	 */
 	public function add_error($error){
+		//bandaid fix because somehow _errors becomes a string...
+		$this->_errors = (array) $this->_errors;
 		if(count($this->_errors) >= 50){
 			$this->_errors[50] = 'More, but limit reached...';
 		}else{

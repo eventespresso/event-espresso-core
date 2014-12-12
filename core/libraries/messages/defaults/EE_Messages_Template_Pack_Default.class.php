@@ -45,7 +45,7 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 					'horizon' => __('Horizon', 'event_espresso'),
 					'lola' => __('Lola', 'event_espresso'),
 					'tranquility' => __('Tranquility', 'event_espresso'),
-					'union' => __('Union', 'event_espresso')
+					'union' => __('Union', 'event_espresso'),
 					),
 				'invoice' =>
 					array(
@@ -54,9 +54,31 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 					'horizon' => __('Horizon', 'event_espresso'),
 					'lola' => __('Lola', 'event_espresso'),
 					'tranquility' => __('Tranquility', 'event_espresso'),
-					'union' => __('Union', 'event_espresso')
+					'union' => __('Union', 'event_espresso'),
 					)
 				)
 			);
+	}
+
+
+
+	public function get_default_variation( $messenger, $message_type, $type, $url, $file_extension ) {
+		$base = $url ? $this->_base_url : $this->_base_path;
+		$base_path = $this->_base_path;
+		//possible variation paths considering whether message type is present or not in the file name.
+		$path_string = 'variations/' . $messenger . '_' . $message_type . '_'  . $type . '_default' . $file_extension;
+		$default_path_string = 'variations/' . $messenger . '_' . $type . '_default' . $file_extension;
+		//first see if fully validated file exists.
+		if ( is_readable( $base_path . $path_string ) ) {
+			$variation_path = $base . $path_string;
+		//otherwise see if default exists.
+		} elseif ( is_readable( $base_path . $default_path_string ) ) {
+			$variation_path = $base . $default_path_string;
+		} else {
+			//no matches found so nothing is present.
+			$variation_path = '';
+		}
+
+		return $variation_path;
 	}
 }

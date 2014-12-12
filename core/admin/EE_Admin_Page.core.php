@@ -897,7 +897,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//if we've routed and this route has a no headers route AND a sent_headers_route, then we need to reset the routing properties to the new route.
 		//now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
-		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_route'] ) ) {
+		if ( $this->_is_UI_request === FALSE && is_array( $this->_route) && ! empty( $this->_route['headers_sent_route'] ) ) {
 			$this->_reset_routing_properties( $this->_route['headers_sent_route'] );
 		}
 	}
@@ -1247,15 +1247,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
-		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
+		$capability = ! empty( $route_to_check ) && isset( $this->_page_routes[$route_to_check] ) && is_array( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
 		if ( empty( $capability ) && empty( $route_to_check )  ) {
-			$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+			$capability = is_array( $this->_route ) && empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
 		} else {
 			$capability = empty( $capability ) ? 'manage_options' : $capability;
 		}
 
-		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+		$id = is_array( $this->_route ) && ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+
 		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $route_to_check, $id ) ) && ! defined( 'DOING_AJAX')) {
 			if ( $verify_only ) {
 				return FALSE;
@@ -2652,12 +2653,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @access protected
 	 * @param string $route the route you want the form to direct to
-	 * @param string $additional_hidden_fields any additional hidden fields required in the form header
+	 * @param array $additional_hidden_fields any additional hidden fields required in the form header
 	 * @return void
 	 */
-	protected function _set_add_edit_form_tags( $route = FALSE, $additional_hidden_fields = array() ) {
+	protected function _set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
 
-		if ( ! $route ) {
+		if ( empty( $route )) {
 			$user_msg = __('An error occurred. No action was set for this page\'s form.', 'event_espresso');
 			$dev_msg = $user_msg . "\n" . sprintf( __('The $route argument is required for the %s->%s method.', 'event_espresso'), __FUNCTION__, __CLASS__ );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );

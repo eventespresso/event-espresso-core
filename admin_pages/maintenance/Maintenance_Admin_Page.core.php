@@ -210,7 +210,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
 			//now, just so we can display the page correctly, make a error migraiton script stage object
 			//and also put the error on it. It only persists for the duration of this request
-			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
 			$exception_thrown = true;
 		}
@@ -384,7 +384,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
 			//now, just so we can display the page correctly, make a error migraiton script stage object
 			//and also put the error on it. It only persists for the duration of this request
-			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
 		}
 		$success = $this->_req_data['success']=='1' ? true : false;

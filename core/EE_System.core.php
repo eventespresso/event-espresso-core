@@ -171,7 +171,6 @@ final class EE_System {
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -440,7 +439,7 @@ final class EE_System {
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
-				//migraitons may be required now that we've upgraded
+				//migrations may be required now that we've upgraded
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 				$this->_handle_core_version_change( $espresso_db_update );
 //				echo "done upgrade";die;
@@ -703,8 +702,9 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
+		$notices = EE_Error::get_notices( FALSE );
 		//if current user is an admin and it's not an ajax request
-		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  )){
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  ) && ! isset( $notices[ 'errors' ] ) ){
 			$query_params =  array( 'page' => 'espresso_about' );
 
 			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {

@@ -36,7 +36,17 @@ class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
 	 */
 	public function do_direct_payment($payment, $billing_info = null) {
 		$this->log( $billing_info, $payment );
-		$payment->set_status( $this->_pay_model->approved_status() );
+		switch( $billing_info[ 'status' ] ){
+			case 'Approved':
+				$payment->set_status( $this->_pay_model->approved_status() );
+				break;
+			case 'Pending':
+				$payment->set_status( $this->_pay_model->pending_status() );
+				breka;
+			case 'Declined':
+				$payment->set_status( $this->_pay_model->declined_status() );
+				break;
+		}
 		return $payment;
 	}
 }

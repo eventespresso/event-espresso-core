@@ -34,7 +34,8 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_6_0_state_system_question(),
 			new EE_DMS_4_6_0_billing_info(),
 			new EE_DMS_4_6_0_transactions(),
-			new EE_DMS_4_6_0_payments()
+			new EE_DMS_4_6_0_payments(),
+			new EE_DMS_4_6_0_invoice_settings()
 		);
 		parent::__construct();
 	}
@@ -128,7 +129,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
 				  DTT_name VARCHAR(255) NOT NULL default '',
-				  DTT_description TEXT NOT NULL default '',
+				  DTT_description TEXT NOT NULL,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) DEFAULT -1,
@@ -249,26 +250,6 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (GRP_ID),
 					KEY MTP_user_id (MTP_user_id)";
 		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
-
-
-
-
-		$table_name = 'esp_message';
-		$sql = "MSG_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-					MSG_messenger varchar(20) NOT NULL DEFAULT '',
-					MSG_message_type varchar(50) NOT NULL DEFAULT '',
-					MSG_context varchar(50) NOT NULL DEFAULT '',
-					MSG_recipient_ID varchar(45),
-					MSG_recipient_type varchar(45),
-					MSG_content  text NOT NULL DEFAULT '',
-					MSG_address_to varchar(100) NOT NULL DEFAULT '',
-					MSG_address_from varchar(100) NOT NULL DEFAULT '',
-					MSG_priority tinyint NOT NULL DEFAULT '0',
-					STS_ID varchar(3) NOT NULL DEFAULT '1',
-					MSG_created datetime DEFAULT '0000-00-00 00:00:00',
-					MSG_modified datetime DEFAULT '0000-00-00 00:00:00',
-					PRIMARY KEY  (MSG_ID)";
-		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_event_message_template';
 		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -436,7 +417,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_status';
 		$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
 					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
-					  STS_type set('event','registration','transaction','payment','email', 'message') COLLATE utf8_bin NOT NULL,
+					  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
 					  STS_desc tinytext COLLATE utf8_bin,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
@@ -520,7 +501,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
-					  TKT_description TEXT NOT NULL DEFAULT '',
+					  TKT_description TEXT NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',

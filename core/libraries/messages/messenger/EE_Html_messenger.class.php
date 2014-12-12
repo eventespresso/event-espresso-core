@@ -134,17 +134,14 @@ class EE_Html_messenger extends EE_messenger  {
 
 	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
 		if ( $sending_messenger_name = 'pdf' ) {
-			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 8 );
+			add_filter( 'EE_messenger__get_variation__variation', array( $this, 'add_html_css' ), 10, 8 );
 		}
 	}
 
 
 
-	public function add_html_css( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
-		//prevent recursion on this callback.
-		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10 );
-		$variation = $this->get_variation( $template_pack, $message_type, $url, $type, $variation, TRUE  );
-		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 8 );
+	public function add_html_css( $variation_path, EE_Messages_Template_Pack $template_pack, $messenger_name, $message_type_name, $url, $type, $variation, $skip_filters ) {
+		$variation = $template_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters );
 		return $variation;
 	}
 
@@ -374,6 +371,8 @@ class EE_Html_messenger extends EE_messenger  {
 		remove_all_actions('wp_footer');
 		remove_all_actions('wp_footer_scripts');
 		remove_all_actions('wp_enqueue_scripts');
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = $wp_styles = array();
 
 		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
 		add_action('wp_head', 'wp_enqueue_scripts');
