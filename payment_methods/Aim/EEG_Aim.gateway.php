@@ -244,8 +244,16 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param EEI_Payment $payment
 	 */
 	private function _log_clean_request($request_array,$payment){
-		unset($request_array['x_card_num']);
-		unset($request_array['card_code']);
+		$keys_to_filter_out = array( 'x_card_num', 'x_card_code', 'x_exp_date' );
+		foreach($request_array as $index => $keyvaltogether ) {
+			foreach( $keys_to_filter_out as $key ) {
+				if( strpos( $keyvaltogether, $key ) === 0 ){
+					//found it at the first character
+					//so its one of them
+					unset( $request_array[ $index ] );
+				}
+			}
+		}
 		$this->log(array('AIM Request sent:'=>$request_array),$payment);
 	}
 
