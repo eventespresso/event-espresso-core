@@ -398,16 +398,24 @@ class EED_Messages  extends EED_Module {
 		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 			return; //no messages sent please.
 		}
-		//next let's only send out notifications if the registration was finalized.
+		//next let's only send out notifications if the registration was finalized. Yeah I tried using extra_details... but it doesn't have the correct info for reg_steps.  Whereas $registration->transaction->reg_steps() DOES.
 		$transaction = $registration->transaction();
+
 		if ( $transaction instanceof EE_Transaction ) {
 			$reg_steps = $transaction->reg_steps();
 			if ( ! is_array( $reg_steps ) || empty( $reg_steps['finalize_registration'] )  ) {
 				return; //registration not finalized yet so no messages.
 			}
+
+
+			//we also need to make sure that we do NOT repeat sending a pending payment reg status IF finalize registration was already visited (takes care of customers returning to make payment)
+			if ( is_array( $extra_details ) && ! empty( $extra_details['revisit'] ) && !empty( $extra_details['old_reg_status'] ) && $extra_details['old_reg_status'] != 'RAP'  ) {
+				return;
+			}
 		} else {
 			return; //no messages sent cause there's not even a transaction record!
 		}
+
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
