@@ -914,6 +914,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment =NULL;
 		$this->checkout->transaction->save();
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment_processor->set_revisit( $this->checkout->revisit );
 		if ( ! $payment_processor instanceof EE_Payment_Processor ) {
 			return FALSE;
 		}

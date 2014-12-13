@@ -31,6 +31,13 @@ class EE_Payment_Processor{
 	private static $_instance = NULL;
 
 	/**
+	 * Used to set if the payment is being processed on a revisit or not.
+	 *
+	 * @var bool
+	 */
+	protected $_revisit = FALSE;
+
+	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
 	 *@return EE_Payment_Processor instance
@@ -53,6 +60,17 @@ class EE_Payment_Processor{
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Payment_Processor__construct' );
+	}
+
+
+
+	/**
+	 * Used to set the $_revisit property.
+	 *
+	 * @param bool $revisit true, payment processor is invoked during a revisit.  false, fresh visit.
+	 */
+	public function set_revisit( $revisit ) {
+		$this->_revisit = $revisit;
 	}
 
 
@@ -323,6 +341,7 @@ class EE_Payment_Processor{
 		$transaction_payments->calculate_total_payments_and_update_status( $transaction );
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		$transaction_processor->set_revisit( $this->_revisit );
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}

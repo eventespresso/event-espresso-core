@@ -15,6 +15,7 @@
 class EE_Transaction_Processor {
 
 	private $_registration_query_params = array();
+	protected $_revisit = FALSE;
 
 
 
@@ -76,6 +77,20 @@ class EE_Transaction_Processor {
 			}
 		}
 		return TRUE;
+	}
+
+
+
+	/**
+	 * Allows external (usually checkout) to set whether the transaction is being revisited by registrant or not.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param bool $revisit
+	 * @return void
+	 */
+	public function set_revisit( $revisit  ) {
+		$this->_revisit = $revisit;
 	}
 
 
@@ -332,7 +347,8 @@ class EE_Transaction_Processor {
 			'old_txn_status' 	=> $transaction->status_ID(),
 			'reg_steps' 			=> $transaction->reg_steps(),
 			'last_payment'	=> $payment,
-			'finalized' 			=> $finalized
+			'finalized' 			=> $finalized,
+			'revisit' => $this->_revisit
 		);
 		// now update the registrations and add the results to our $update_params
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
