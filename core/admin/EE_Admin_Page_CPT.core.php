@@ -1257,6 +1257,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		add_action( 'admin_print_styles', array( $this, 'add_new_admin_page_global' ) );
 
+		//modify the default editor title field with default title.
+		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
+
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 		EEH_Template::display_template( $template, $this->_template_args );
 
