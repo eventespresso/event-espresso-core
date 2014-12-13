@@ -398,10 +398,17 @@ class EED_Messages  extends EED_Module {
 		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
 			return; //no messages sent please.
 		}
-		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
-		if ( ! is_numeric( $extra_details['finalized'] ) || $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
-			return;
+		//next let's only send out notifications if the registration was finalized.
+		$transaction = $registration->transaction();
+		if ( $transaction instanceof EE_Transaction ) {
+			$reg_steps = $transaction->reg_steps();
+			if ( ! is_array( $reg_steps ) || empty( $reg_steps['finalize_registration'] )  ) {
+				return; //registration not finalized yet so no messages.
+			}
+		} else {
+			return; //no messages sent cause there's not even a transaction record!
 		}
+
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
 		$message_type = self::_get_reg_status_array( $registration->status_ID() );
