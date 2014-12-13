@@ -198,7 +198,8 @@ class EE_Registration_Processor {
 						'old_txn_status' 				=> NULL,
 						'last_payment'				=> NULL,
 						'old_reg_status' 				=> NULL,
-						'new_reg_status' 			=> NULL
+						'new_reg_status' 			=> NULL,
+						'revisit' => FALSE
 					),
 					$additional_details
 				)
