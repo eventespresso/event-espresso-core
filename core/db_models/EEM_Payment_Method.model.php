@@ -86,7 +86,7 @@ class EEM_Payment_Method extends EEM_Base {
 			'FHEE__EEM_Payment_Method__scopes',
 			array(
 				self::scope_cart 		=> __( "Front-end Registration Page", 'event_espresso' ),
-				self::scope_admin 	=> __( "Admin Registration Page", 'event_espresso' )
+				self::scope_admin 	=> __( "Admin Registration Page (no online processing)", 'event_espresso' )
 			)
 		);
 	}
