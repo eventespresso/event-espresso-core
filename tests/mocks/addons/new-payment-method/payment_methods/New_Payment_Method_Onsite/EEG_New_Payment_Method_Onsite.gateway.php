@@ -42,7 +42,7 @@ class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
 				break;
 			case 'Pending':
 				$payment->set_status( $this->_pay_model->pending_status() );
-				breka;
+				break;
 			case 'Declined':
 				$payment->set_status( $this->_pay_model->declined_status() );
 				break;
