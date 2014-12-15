@@ -1,4 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
+
 /**
  * Class EE_Transaction_Processor
  *
@@ -12,10 +14,35 @@
  *
  */
 
-class EE_Transaction_Processor {
+class EE_Transaction_Processor extends EE_Processor_Base {
 
+	/**
+	 * 	@var EE_Registration_Processor $_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
+	/**
+	 * 	@var array $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * 	@access 	private
+	 */
 	private $_registration_query_params = array();
-	protected $_revisit = FALSE;
+
+
+
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 * @param array $registration_query_params
+	 *@return EE_Transaction_Processor instance
+	 */
+	public static function instance( $registration_query_params = array() ) {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_Transaction_Processor ) {
+			self::$_instance = new self( $registration_query_params );
+		}
+		return self::$_instance;
+	}
 
 
 
@@ -23,7 +50,7 @@ class EE_Transaction_Processor {
 	 * @param array $registration_query_params
 	 * @return EE_Transaction_Processor
 	 */
-	function __construct( $registration_query_params = array() ) {
+	private function __construct( $registration_query_params = array() ) {
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 	}
@@ -77,20 +104,6 @@ class EE_Transaction_Processor {
 			}
 		}
 		return TRUE;
-	}
-
-
-
-	/**
-	 * Allows external (usually checkout) to set whether the transaction is being revisited by registrant or not.
-	 *
-	 * @since 4.6.0
-	 *
-	 * @param bool $revisit
-	 * @return void
-	 */
-	public function set_revisit( $revisit  ) {
-		$this->_revisit = $revisit;
 	}
 
 
@@ -232,26 +245,22 @@ class EE_Transaction_Processor {
 		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] )) {
 			return FALSE;
 		}
+		// if  we're trying to complete a step that is already completed
+		if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
+			return FALSE;
+		}
 		// if  we're trying to complete a step that hasn't even started
 		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
 			return FALSE;
 		}
-		// if we're trying to set a start time
-		if ( is_numeric( $status )) {
-			// but we're trying to set a start time for an already completed step
-			if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
+		// if we're trying to set a start time, but for an already completed step
+		if ( is_numeric( $status ) && $txn_reg_steps[ $reg_step_slug ] !== FALSE ) {
 				return FALSE;
 			}
-			// status IS a timestamp BUT it's current status value matches the incoming value (no change)
-			if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
-				// this will happen in cases where multiple AJAX requests occur during the same step
-				return TRUE;
-			}
-		} else {
-			// status is not a timestamp BUT it's current status value matches the incoming value (no change)
-			if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
-				return FALSE;
-			}
+		// if current status value matches the incoming value (no change)
+		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
+			// this will happen in cases where multiple AJAX requests occur during the same step
+			return FALSE;
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
@@ -334,21 +343,22 @@ class EE_Transaction_Processor {
 	 * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param \EE_Payment    $payment
+	 * @param \EE_Payment | NULL    $payment
 	 * @param array          $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
 	 * @throws \EE_Error
 	 * @return array
 	 */
-	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, EE_Payment $payment = NULL, $registration_query_params = array() ) {
+	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'old_txn_status' 	=> $transaction->status_ID(),
-			'reg_steps' 			=> $transaction->reg_steps(),
-			'last_payment'	=> $payment,
-			'finalized' 			=> $finalized,
-			'revisit' => $this->_revisit
+			'old_txn_status' 			=> $transaction->status_ID(),
+			'reg_steps' 					=> $transaction->reg_steps(),
+			'last_payment'			=> $payment,
+			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
+			'finalized' 					=> $finalized,
+			'revisit' 						=> $this->_revisit
 		);
 		// now update the registrations and add the results to our $update_params
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
@@ -385,7 +395,7 @@ class EE_Transaction_Processor {
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 		// check that method exists
 		if ( ! method_exists( $registration_processor, $method_name )) {
-			throw new EE_Error( __( 'Method does nto exist.', 'event_espresso' ));
+			throw new EE_Error( __( 'Method does not exist.', 'event_espresso' ));
 		}
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
