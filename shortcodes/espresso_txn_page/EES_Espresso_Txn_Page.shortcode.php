@@ -88,10 +88,6 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
 			$payment_processor->process_ipn( $_REQUEST, $this->_current_txn, $payment_method_slug );
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-			// update the TXN if payment conditions have changed
-			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->_current_txn );
 		}
 
 	}
