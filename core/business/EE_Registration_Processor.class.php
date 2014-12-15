@@ -1,4 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
+
 /**
  * Class EE_Registration_Processor
  *
@@ -13,12 +15,47 @@
 
 class EE_Registration_Processor {
 
+	/**
+	 * initial reg status at the beginning of this request.
+	 *
+	 * @var string
+	 */
+	protected $_old_reg_status = NULL;
+
+	/**
+	 * reg status at the end of the request after all processing.
+	 *
+	 * @var string
+	 */
+	protected $_new_reg_status = NULL;
+
+	/**
+	 * 	@var EE_Registration_Processor $_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
+
+
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 *@return EE_Registration_Processor instance
+	 */
+	public static function instance() {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_Registration_Processor ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
 
 
 	/**
 	 * @return EE_Registration_Processor
 	 */
-	function __construct() {
+	private function __construct() {
 	}
 
 
@@ -59,6 +96,45 @@ class EE_Registration_Processor {
 
 
 	/**
+	 * @return string
+	 */
+	public function old_reg_status() {
+		return $this->_old_reg_status;
+	}
+
+
+
+	/**
+	 * @param string $old_reg_status
+	 */
+	public function set_old_reg_status( $old_reg_status ) {
+		// only set the first time
+		if ( $this->_old_reg_status === NULL ) {
+			$this->_old_reg_status = $old_reg_status;
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function new_reg_status() {
+		return $this->_new_reg_status;
+	}
+
+
+
+	/**
+	 * @param string $new_reg_status
+	 */
+	public function set_new_reg_status( $new_reg_status ) {
+		$this->_new_reg_status = $new_reg_status;
+	}
+
+
+
+	/**
 	 * 	manually_update_registration_status
 	 *
 	 * 	@access public
@@ -68,12 +144,14 @@ class EE_Registration_Processor {
 	 * 	@return boolean
 	 */
 	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = TRUE ) {
-		// get current REG_Status
-		$old_reg_status = $registration->status_ID();
+		// set initial REG_Status
+		$this->set_old_reg_status( $registration->status_ID() );
+		// set incoming REG_Status
+		$this->set_new_reg_status( $new_reg_status );
 		// toggle reg status but only if it has changed and the user can do so
-		if ( $old_reg_status !== $new_reg_status && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
+		if ( $this->old_reg_status() !== $this->new_reg_status() && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
 			// change status to new value
-			if ( $registration->set_status( $new_reg_status )) {
+			if ( $registration->set_status( $this->new_reg_status() )) {
 				if ( $save ) {
 					$registration->save();
 				}
@@ -82,8 +160,8 @@ class EE_Registration_Processor {
 					$registration,
 					array(
 						'manually_updated' 	=> TRUE,
-						'old_reg_status' 			=> $old_reg_status,
-						'new_reg_status' 		=> $new_reg_status
+						'old_reg_status' 			=> $this->old_reg_status(),
+						'new_reg_status' 		=> $this->new_reg_status()
 					)
 				);
 			}
@@ -194,12 +272,12 @@ class EE_Registration_Processor {
 						'payment_updates' 		=> FALSE,
 						'status_updates' 			=> FALSE,
 						'finalized' 						=> FALSE,
+						'revisit' 							=> FALSE,
 						'reg_steps' 						=> array(),
 						'old_txn_status' 				=> NULL,
 						'last_payment'				=> NULL,
 						'old_reg_status' 				=> NULL,
-						'new_reg_status' 			=> NULL,
-						'revisit' => FALSE
+						'new_reg_status' 			=> NULL
 					),
 					$additional_details
 				)
@@ -217,12 +295,14 @@ class EE_Registration_Processor {
 	 * @return bool
 	 */
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
-		$old_reg_status = $registration->status_ID();
+		// set initial REG_Status
+		$this->set_old_reg_status( $registration->status_ID() );
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, FALSE ) || $this->toggle_registration_status_if_no_monies_owing( $registration, FALSE )) {
 			$registration->save();
 		}
-		$new_reg_status = $registration->status_ID();
+		// set new  REG_Status
+		$this->set_new_reg_status( $registration->status_ID() );
 		// send messages
 		$this->trigger_registration_update_notifications(
 			$registration,
@@ -230,12 +310,12 @@ class EE_Registration_Processor {
 				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
 				array(
 					'checkout_or_payment' 	=> TRUE,
-					'old_reg_status' 					=> $old_reg_status,
-					'new_reg_status' 				=> $new_reg_status
+					'old_reg_status' 					=> $this->old_reg_status(),
+					'new_reg_status' 				=> $this->new_reg_status()
 				)
 			)
 		);
-		return $new_reg_status == EEM_Registration::status_id_approved ? TRUE : FALSE;
+		return $this->new_reg_status() == EEM_Registration::status_id_approved ? TRUE : FALSE;
 	}
 
 
