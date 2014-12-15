@@ -1,41 +1,24 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_Payment_Processor
  *
- * CLass for handling processing of payments for transactions.
+ * Class for handling processing of payments for transactions.
  *
  * @package			Event Espresso
  * @subpackage		core/libraries/payment_methods
  * @author			Mike Nelson
  *
- * ------------------------------------------------------------------------
  */
-class EE_Payment_Processor{
+class EE_Payment_Processor extends EE_Processor_Base {
 	/**
      * 	@var EE_Payment_Processor $_instance
 	 * 	@access 	private
      */
 	private static $_instance = NULL;
 
-	/**
-	 * Used to set if the payment is being processed on a revisit or not.
-	 *
-	 * @var bool
-	 */
-	protected $_revisit = FALSE;
+
 
 	/**
 	 *@singleton method used to instantiate class object
@@ -60,17 +43,6 @@ class EE_Payment_Processor{
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Payment_Processor__construct' );
-	}
-
-
-
-	/**
-	 * Used to set the $_revisit property.
-	 *
-	 * @param bool $revisit true, payment processor is invoked during a revisit.  false, fresh visit.
-	 */
-	public function set_revisit( $revisit ) {
-		$this->_revisit = $revisit;
 	}
 
 
@@ -122,6 +94,7 @@ class EE_Payment_Processor{
 	 * @return string
 	 */
 	public function get_ipn_url_for_payment_method( $transaction, $payment_method ){
+		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$primary_reg = $transaction->primary_registration();
 		if( ! $primary_reg instanceof EE_Registration ){
@@ -213,7 +186,7 @@ class EE_Payment_Processor{
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(
-					"Error occured while receiving IPN. Transaction: %s, req data: %s. The error was '%s'",
+					"Error occurred while receiving IPN. Transaction: %s, req data: %s. The error was '%s'",
 					print_r( $transaction, TRUE ),
 					print_r( $_req_data, TRUE ),
 					$e->getMessage()
@@ -265,9 +238,10 @@ class EE_Payment_Processor{
 	 * @return EE_Payment
 	 */
 	public function process_refund($payment_method,$payment_to_refund,$refund_info = array()){
+		/** @type EE_Payment_Method $payment_method */
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
-		if($payment_method->type_obj()->supports_sending_refunds()){
-			$payment_method->do_direct_refund($payment_to_refund,$refund_info);
+		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
+			$payment_method->do_direct_refund( $payment_to_refund,$refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}
 		return $payment_to_refund;
