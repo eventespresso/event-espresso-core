@@ -208,13 +208,15 @@ class EE_Payment_Method_Manager {
 						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
 						'PMD_wp_user'=>$current_user->ID,
-						'PMD_button_url'=> $pm_type_obj->default_button_url()
 					));
 				}
 				$payment_method->set_active();
 				$payment_method->set_description( $pm_type_obj->default_description() );
 				//handles the goofy case where someone activates the invoice gateway which is also
 				$payment_method->set_type($pm_type_obj->system_name());
+				if( ! $payment_method->button_url() ){
+					$payment_method->set_button_url( $pm_type_obj->default_button_url() );
+				}
 				$payment_method->save();
 				foreach($payment_method->get_all_usable_currencies() as $currency_obj){
 					$payment_method->_add_relation_to($currency_obj, 'Currency');
