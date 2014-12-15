@@ -300,8 +300,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		//let's add page_templates metabox if this cpt added support for it.
-		//temprorarily disabling this feature because of https://events.codebasehq.com/projects/event-espresso/tickets/7197 but for now just leaving the code in, in case its ever requested back.
-		/**if ( $this->_supports_page_templates($this->_cpt_object->name) ) {
+		if ( $this->_supports_page_templates($this->_cpt_object->name) ) {
 			add_meta_box( 'page_templates', __('Page Template', 'event_espresso' ), array( $this, 'page_template_meta_box' ), $this->_cpt_routes[$this->_req_action], 'side', 'default' );
 		}/**/
 
