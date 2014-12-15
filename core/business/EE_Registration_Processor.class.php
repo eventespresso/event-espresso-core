@@ -183,6 +183,8 @@ class EE_Registration_Processor {
 	 * @return void
 	 */
 	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
+		// set initial REG_Status
+		$this->set_old_reg_status( $registration->status_ID() );
 		// is the registration currently incomplete?
 		if ( $registration->status_ID() == EEM_Registration::status_id_incomplete ) {
 			// grab default reg status for the event, if set
@@ -209,6 +211,8 @@ class EE_Registration_Processor {
 	 * @return boolean
 	 */
 	public function toggle_registration_status_for_default_approved_events( EE_Registration $registration, $save = TRUE ) {
+		// set initial REG_Status
+		$this->set_old_reg_status( $registration->status_ID() );
 		// toggle reg status to approved IF the event default reg status is approved
 		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
 			// toggle status to approved
@@ -231,6 +235,8 @@ class EE_Registration_Processor {
 	 * 	@return boolean
 	 */
 	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE ) {
+		// set initial REG_Status
+		$this->set_old_reg_status( $registration->status_ID() );
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
