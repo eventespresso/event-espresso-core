@@ -520,7 +520,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		//does this called object HAVE a page template set that is something other than the default.
 		$template = get_post_meta( $object->ID, '_wp_page_template', true );
 		//exit early if default or not set or invalid path (accounts for theme changes)
-		if ( $template == 'default' || empty( $template ) || validate_file( $template ) != 0 ) {
+		if ( $template == 'default' || empty( $template ) || validate_file( $template ) != 0 || ! is_readable( $template ) ) {
 			return $current_template;
 		}
 		//made it here so we SHOULD be able to just locate the template and then return it.

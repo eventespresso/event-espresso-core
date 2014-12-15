@@ -302,7 +302,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//let's add page_templates metabox if this cpt added support for it.
 		if ( $this->_supports_page_templates($this->_cpt_object->name) ) {
 			add_meta_box( 'page_templates', __('Page Template', 'event_espresso' ), array( $this, 'page_template_meta_box' ), $this->_cpt_routes[$this->_req_action], 'side', 'default' );
-		}
+		}/**/
 
 
 		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
@@ -1256,6 +1256,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		add_action( 'admin_print_styles', array( $this, 'add_new_admin_page_global' ) );
+
+		//modify the default editor title field with default title.
+		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
 
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 		EEH_Template::display_template( $template, $this->_template_args );
