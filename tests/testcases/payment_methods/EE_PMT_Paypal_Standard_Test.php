@@ -68,7 +68,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( sprintf( '%s for %s', $second_item->ticket()->name(), $second_item->ticket_event_name() ), $rargs[ 'item_name_2' ] );
 		$this->assertEquals( $second_item->ticket()->price(), $rargs[ 'amount_2' ] );
 		$this->assertEquals( 1, $rargs[ 'quantity_1' ] );
-		$this->assertEquals( $t->tax_total(), $rargs[ 'tax' ] );
+		$this->assertEquals( $t->tax_total(), $rargs[ 'tax_cart' ] );
 		$this->assertEquals( $this->_paypal_id, $rargs[ 'business' ] );
 		$this->assertEquals( self::return_url, $rargs[ 'return' ] );
 		$this->assertEquals( self::cancel_url, $rargs[ 'cancel_return' ] );
