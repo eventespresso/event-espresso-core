@@ -488,7 +488,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function edit_lnk_url() {
-		return 	add_query_arg( array( /*'ee' => '_register', */'step' => $this->slug() ), $this->checkout->reg_page_base_url );
+		return 	add_query_arg( array( 'step' => $this->slug() ), $this->checkout->reg_page_base_url );
 
 	}
 
@@ -503,6 +503,20 @@ abstract class EE_SPCO_Reg_Step {
 
 
 
+
+
+
+	/**
+	 * 	__sleep
+	 * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+	 * EE_Checkout will handle the reimplementation of itself upon waking,
+	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+	 * @return array
+	 */
+	function __sleep() {
+		// remove the reg form and the checkout
+		return array_diff( array_keys( get_object_vars( $this )), array( 'reg_form', 'checkout' ));
+	}
 }
 
 // End of file EE_SPCO_Reg_Step.class.php
