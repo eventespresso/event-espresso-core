@@ -17,8 +17,8 @@
 class EEM_Datetime_Test extends EE_UnitTestCase {
 
 	public function setUp() {
-		//set timezone string.
-		update_option( 'timezone_string', 'America/Vancouver' );
+		//set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
+		update_option( 'timezone_string', 'Australia/Sydney' );
 		parent::setUp();
 	}
 
@@ -32,17 +32,24 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	/**
 	 * Tests the get_datetimes_for_event_ordered_by_DTT_order method.
 	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/6744 for bug being tested below.
+	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/6909 for bug related to non expired
+	 *      	  events being considered expired.
 	 * @since 4.5.0
 	 * @group 6744
+	 * @group 6909
 	 */
 	public function test_get_datetimes_for_event_ordered_by_DTT_order__different_timezone() {
+
 		//create an event and datetime
 		$event = $this->factory->event->create();
 
 		//for test we want something today.
 		$start_date = (int) current_time('timestamp');
-		$end_date = (int) current_time('timestamp') + (60*60*2);
+		$end_date = (int) current_time('timestamp') + (60*60);
+
+
 		$dtt = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date, 'DTT_EVT_end' => $end_date ) );
+
 		//verify
 		$this->assertInstanceOf( 'EE_Event', $event );
 		$this->assertInstanceOf( 'EE_Datetime', $dtt );
@@ -64,7 +71,10 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$datetimes_on_event = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_DTT_order( $event->ID(), false );
 		$second_dtt_chk = reset( $datetimes_on_event );
 
-		//we SHOULD also have the datetime returned because the end TIME is two hours from now.
+		//we SHOULD also have the datetime returned because the end TIME is one hour from now.
+		$this->assertInstanceOf( 'EE_Datetime', $second_dtt_chk );
+		$this->assertEquals( $second_dtt_chk->ID(), $dtt->ID() );
+	}
 		$this->assertInstanceOf( 'EE_Datetime', $second_dtt_chk );
 		$this->assertEquals( $second_dtt_chk->ID(), $dtt->ID() );
 	}
