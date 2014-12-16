@@ -92,7 +92,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
 				//if we're not letting paypal calculate shipping, tell them its 0
 				if( ! $this->_paypal_shipping ){
-					$redirect_args['shipping_' . $item_num ] = '0.00';
+					$redirect_args['shipping_' . $item_num ] = '0';
+					$redirect_args['shipping2_' . $item_num ] = '0';
 				}
 				$item_num++;
 			}
@@ -102,7 +103,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			//if we aren't allowing paypal to calculate shipping, set it to 0
 			if( ! $this->_paypal_shipping ){
-				$redirect_args['shipping_' . $item_num ] = '0.00';
+				$redirect_args['shipping_' . $item_num ] = '0';
+				$redirect_args['shipping2_' . $item_num ] = '0';
 			}
 			$item_num++;
 
@@ -112,6 +114,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = 0;
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
 		}
 		//add our taxes to the order if we're NOT using paypal's
 		if( ! $this->_paypal_taxes ){
