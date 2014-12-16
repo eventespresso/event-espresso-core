@@ -453,10 +453,10 @@ class EE_Checkout {
 		if ( ! $this->revisit ) {
 			$this->update_txn_reg_steps_array();
 		}
-		// save all data to the db, but suppress errors
-		$this->save_all_data( FALSE );
-		// and cache the checkout in the session
+		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
+		// save all data to the db, but suppress errors
+//		$this->save_all_data( FALSE );
 	}
 
 
@@ -694,7 +694,7 @@ class EE_Checkout {
 	private function _refresh_registration_attendee( $registration ) {
 		$attendee = $registration->attendee();
 		// verify object
-		if ( $attendee instanceof EE_Attendee ) {
+		if ( $attendee instanceof EE_Attendee && $attendee->ID() ) {
 			// make sure the cached attendee is added to the model entity mapper
 			$registration->attendee()->get_model()->refresh_entity_map_with( $attendee->ID(), $attendee );
 		}
@@ -713,8 +713,10 @@ class EE_Checkout {
 		foreach ( $registration->answers() as $cache_key => $answer ) {
 			// verify object
 			if ( $answer instanceof EE_Answer ) {
-				// make sure the cached answer is added to the model entity mapper
-				$answer->get_model()->refresh_entity_map_with( $answer->ID(), $answer );
+				if ( $answer->ID() ) {
+					// make sure the cached answer is added to the model entity mapper
+					$answer->get_model()->refresh_entity_map_with( $answer->ID(), $answer );
+				}
 			} else {
 				EE_Error::add_error(
 					__( 'An invalid Answer object was discovered when attempting to update the model entity mapper.', 'event_espresso' ),
