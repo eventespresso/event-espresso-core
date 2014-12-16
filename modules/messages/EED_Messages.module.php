@@ -393,34 +393,35 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-		self::_load_controller();
+		// let's NOT send out notifications if the registration was NOT finalized.
+		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+			return;
+		}
+		// and only send messages during revisit if the reg status changes
+		if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+			return;
+		}
 		// make sure appropriate admin params are set for sending messages
-		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
-			return; //no messages sent please.
+		if (
+			(
+				is_admin() && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
+			) && (
+				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
+			)
+		) {
+			//no messages sent please.
+			return;
 		}
-		//next let's only send out notifications if the registration was finalized. Yeah I tried using extra_details... but it doesn't have the correct info for reg_steps.  Whereas $registration->transaction->reg_steps() DOES.
-		$transaction = $registration->transaction();
-
-		if ( $transaction instanceof EE_Transaction ) {
-			$reg_steps = $transaction->reg_steps();
-			if ( ! is_array( $reg_steps ) || empty( $reg_steps['finalize_registration'] )  ) {
-				return; //registration not finalized yet so no messages.
-			}
-
-
-			//we also need to make sure that we do NOT repeat sending a pending payment reg status IF finalize registration was already visited (takes care of customers returning to make payment)
-			if ( is_array( $extra_details ) && ! empty( $extra_details['revisit'] ) && !empty( $extra_details['old_reg_status'] ) && $extra_details['old_reg_status'] != 'RAP'  ) {
-				return;
-			}
-		} else {
-			return; //no messages sent cause there's not even a transaction record!
-		}
-
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
 		$message_type = self::_get_reg_status_array( $registration->status_ID() );
+//		printr( $message_type, '$message_type', __FILE__, __LINE__ );
+//		printr( $extra_details, '$extra_details', __FILE__, __LINE__ );
+//		printr( $registration, '$registration', __FILE__, __LINE__ );
+//		die();
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
+			self::_load_controller();
 			self::$_EEMSG->send_message(
 				$message_type,
 				array( $registration->transaction(), NULL )
