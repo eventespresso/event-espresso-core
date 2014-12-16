@@ -74,14 +74,14 @@ abstract class EE_SPCO_Reg_Step {
 	 * 	@access private
 	 *	@var string $_success_message
 	 */
-	private $_success_message = NULL;
+	protected $_success_message = NULL;
 
 	/**
 	 * 	$_instructions - a brief description of how to complete the reg step. Usually displayed in conjunction with the previous step's success message.
 	 * 	@access private
 	 *	@var string $_instructions
 	 */
-	private $_instructions = NULL;
+	protected $_instructions = NULL;
 
 	/**
 	 * 	$_valid_data - the normalized and validated data for this step
