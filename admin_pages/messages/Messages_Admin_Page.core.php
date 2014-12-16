@@ -1361,7 +1361,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$_POST['GRP_ID'] = $this->_req_data['GRP_ID']; //make sure post global has the GRP_ID param for later use.
+		EE_Registry::instance()->REQ->set( 'GRP_ID', $this->_req_data['GRP_ID'] );
 
 		$MSG = new EE_messages();
 
