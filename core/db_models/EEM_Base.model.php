@@ -3121,9 +3121,12 @@ abstract class EEM_Base extends EE_Base{
 				foreach( $replacing_model_obj->model_field_array() as $field_name => $value ) {
 					$obj_in_map->set( $field_name, $value );
 				}
-				//clear the cache of related model objects
+				//make the model object in the entity map's cache match the $replacing_model_obj
 				foreach ( $this->relation_settings() as $relation_name => $relation_obj ){
 					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
+					foreach( $replacing_model_obj->get_all_from_cache( $relation_name ) as $cache_id => $cached_obj ) {
+						$obj_in_map->cache( $relation_name, $cached_obj, $cache_id );
+					}
 				}
 			}
 			return $obj_in_map;
