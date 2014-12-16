@@ -167,6 +167,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $include_expired = TRUE, $include_deleted= TRUE, $limit = NULL  ) {
+
+		//sanitize EVT_ID
+		$EVT_ID = intval( $EVT_ID );
+
 		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
@@ -248,6 +252,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL ){
+		//sanitize EVT_ID
+		$EVT_ID = intval( $EVT_ID );
 		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
@@ -275,6 +281,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_ticket_ordered_by_start_time($TKT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
+		//sanitize TKT_ID
+		$TKT_ID =  intval( $TKT_ID );
 		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$query_params =array(array('Ticket.TKT_ID'=>$TKT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
@@ -305,6 +313,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_ticket_ordered_by_DTT_order( $TKT_ID, $include_expired = true, $include_deleted = true, $limit = NULL ) {
+		//sanitize id.
+		$TKT_ID =  intval( $TKT_ID );
 		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Ticket.TKT_ID' => $TKT_ID );
