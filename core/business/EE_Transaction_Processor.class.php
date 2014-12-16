@@ -253,14 +253,22 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
 			return FALSE;
 		}
-		// if we're trying to set a start time, but for an already completed step
-		if ( is_numeric( $status ) && $txn_reg_steps[ $reg_step_slug ] !== FALSE ) {
-				return FALSE;
-			}
 		// if current status value matches the incoming value (no change)
 		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
 			// this will happen in cases where multiple AJAX requests occur during the same step
 			return FALSE;
+		}
+		// if we're trying to set a start time
+		if ( is_numeric( $status )) {
+			// for an already completed step
+			if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
+				return FALSE;
+			}
+			// but if the step has already been initialized...
+			if ( is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
+				// skip the update below, but don't return FALSE so that errors won't be displayed
+				return TRUE;
+			}
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
