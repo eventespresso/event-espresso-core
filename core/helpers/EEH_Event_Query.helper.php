@@ -82,16 +82,9 @@ class EEH_Event_Query {
 	 * filter_query_parts
 	 *
 	 * @access    public
-	 * @return    void
+	 * @param \WP_Query $WP_Query
 	 */
-	public static function filter_query_parts() {
-
-		add_action( 'pre_get_posts', array( __CLASS__, 'maybe_add_filters') );
-
-	}
-
-
-	public static function maybe_add_filters(  $WP_Query ) {
+	public static function filter_query_parts( WP_Query $WP_Query) {
 		//ONLY add our filters if this isn't the main wp_query, because if this is the main wp_query we already have our cpt strategies take care of adding things in.
 		if ( $WP_Query instanceof WP_Query && ! $WP_Query->is_main_query() ) {
 			// build event list query
@@ -99,7 +92,7 @@ class EEH_Event_Query {
 			add_filter( 'posts_join', array( 'EEH_Event_Query', 'posts_join' ), 10, 2 );
 			add_filter( 'posts_where', array( 'EEH_Event_Query', 'posts_where' ), 10, 2 );
 			add_filter( 'posts_orderby', array( 'EEH_Event_Query', 'posts_orderby' ), 10, 2 );
-			add_filter( 'posts_clauses_request', array( __CLASS__, 'posts_clauses' ), 10, 2 );
+			add_filter( 'posts_clauses_request', array( 'EEH_Event_Query', 'posts_clauses' ), 10, 2 );
 		}
 	}
 
@@ -213,11 +206,9 @@ class EEH_Event_Query {
 	 * @return array   array of clauses
 	 */
 	public static function posts_clauses( $clauses, WP_Query $wp_query ) {
-		global $wpdb;
 		if ( isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			$clauses['distinct'] = "DISTINCT";
 		}
-
 		return $clauses;
 	}
 
