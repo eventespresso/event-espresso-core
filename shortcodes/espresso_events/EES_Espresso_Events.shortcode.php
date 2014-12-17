@@ -174,9 +174,10 @@ class EE_Event_List_Query extends WP_Query {
 		}
 		// setup the events list query
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		EEH_Event_Query::filter_query_parts();
+		// set params that will get used by the filters
 		EEH_Event_Query::set_query_params( $this->_month, $this->_category_slug, $this->_show_expired, $this->_order_by, $this->_sort );
-
+		//add query filters
+		add_action( 'pre_get_posts', array( 'EEH_Event_Query', 'filter_query_parts' ), 10, 1 );
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
 		remove_all_filters( 'FHEE__content_espresso_events__event_class' );
