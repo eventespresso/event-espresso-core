@@ -273,9 +273,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// we need to save this payment in order for transaction to be updated correctly
 			// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
 			$payment->save();
-			if ( $payment->just_approved() ) {
-				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful';
-			}
+			$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
+
 		} else {
 			// there is no payment. Must be an offline gateway
 			// but have we already triggered pending payment notification?
@@ -286,7 +285,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 						'TXN_ID' 					=> $transaction->ID(),
 						'STS_ID' 					=> EEM_Payment::status_id_pending,
 						'PAY_timestamp' 	=> current_time('timestamp'),
-//						'PAY_amount' 		=> $transaction->total(),
 						'PAY_amount' 		=> 0.00,
 						'PMD_ID' 				=> $transaction->payment_method_ID()
 					)
