@@ -238,11 +238,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _no_payment_required() {
-
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'no_payment_required';
-
+		// generate no_payment_required form
 		return new EE_Form_Section_Proper(
 			array(
 				'name' 					=> $this->reg_form_name(),
@@ -476,20 +474,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return 	\EE_Form_Section_Proper
 	 */
 	private function _payment_method_billing_info( EE_Payment_Method $payment_method ) {
-		// only display the selected or default PM
-		$pm_style = $this->checkout->selected_method_of_payment == $payment_method->slug() ? '' : 'display:none;';
+		$currently_selected = $this->checkout->selected_method_of_payment == $payment_method->slug() ? TRUE : FALSE;
 		// it's all in the details
 		if ( $payment_method->description() ) {
 			$info_html = EEH_HTML::h3 ( 'Important information regarding your payment', '', 'spco-payment-method-hdr' );
 			$info_html .= EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' );
 			// generate the billing form for payment method
-			$billing_form = $this->_get_billing_form_for_payment_method( $payment_method, TRUE );
+			$billing_form = $this->_get_billing_form_for_payment_method( $payment_method, $currently_selected );
 
 			return new EE_Form_Section_Proper(
 				array(
 					'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
 					'html_class' 			=> 'spco-payment-method-info-dv',
-					'html_style' 			=> $pm_style,
+					'html_style' 			=> $currently_selected ? '' : 'display:none;',
 					'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
 					'subsections' 			=> array(
 						'info' 					=> new EE_Form_Section_HTML( $info_html ),
@@ -523,9 +520,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
 			)
 		);
-		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, TRUE );
+		// now generate billing form for selected method of payment
+		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
 		$billing_info = $payment_method_billing_info instanceof EE_Form_Section_Proper ? $payment_method_billing_info->get_html() : '';
 		$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $billing_info ));
+		// localize validation rules for main form
+		$this->checkout->current_step->reg_form->localize_validation_rules();
+		$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
 		return TRUE;
 	}
 
@@ -552,9 +553,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// if this is the initial payment options form generation being called via AJAX
 			if ( $setup_validation_rules && EE_Registry::instance()->REQ->ajax ) {
 				// then we need to setup the validation rules for this payment method
-				$payment_method->type_obj()->billing_form()->localize_validation_rules();
+//				$payment_method->type_obj()->billing_form()->localize_validation_rules();
 				// and add them to the JSON response
-				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
+//				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
 			}
 			return $payment_method->type_obj()->billing_form();
 		}
@@ -573,9 +574,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _get_selected_method_of_payment( $required = FALSE ) {
 		// is selected_method_of_payment set in the request ?
-		if ( EE_Registry::instance()->REQ->is_set( 'selected_method_of_payment' )) {
-			// grab it and sanitize it
-			$selected_method_of_payment = EE_Registry::instance()->REQ->get( 'selected_method_of_payment' );
+		$selected_method_of_payment = EE_Registry::instance()->REQ->get( 'selected_method_of_payment', FALSE );
+		if ( $selected_method_of_payment ) {
+			// sanitize it
 			$selected_method_of_payment = is_array( $selected_method_of_payment ) ? array_shift( $selected_method_of_payment ) : $selected_method_of_payment;
 			$selected_method_of_payment = sanitize_text_field( $selected_method_of_payment );
 			// store it in the session so that it's available for all subsequent requests including AJAX

@@ -104,6 +104,7 @@ class EED_Recaptcha  extends EED_Module {
 	public static function enqueue_styles_and_scripts() {
 		wp_register_script( 'espresso_recaptcha', RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js', array( 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, TRUE );
 		EE_Registry::$i18n_js_strings['no_SPCO_error'] = __( 'It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['no_recaptcha_error'] = __( 'There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['recaptcha_fail'] = __( 'Please complete the anti-spam test before proceeding.', 'event_espresso' );
 	}
 

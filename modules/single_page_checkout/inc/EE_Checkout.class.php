@@ -50,6 +50,12 @@ class EE_Checkout {
 	public $generate_reg_form = TRUE;
 
 	/**
+	 * process a reg form submission or not ?
+	 * @type bool
+	 */
+	public $process_form_submission = FALSE;
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
@@ -195,13 +201,26 @@ class EE_Checkout {
 	 * @return    \EE_Checkout
 	 */
 	public function __construct(  ) {
-		$this->json_response = new EE_SPCO_JSON_Response();
 		$this->reg_page_base_url = EE_Registry::instance()->CFG->core->reg_page_url();
 		$this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
 		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
 		$this->reg_cache_where_params = array( 'order_by' => array( 'REG_count' => 'ASC' ));
+	}
+
+
+
+	/**
+	 *    reset_for_current_request
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public function reset_for_current_request() {
+		$this->redirect = FALSE;
+		$this->json_response = new EE_SPCO_JSON_Response();
+		EE_Form_Section_Proper::reset_js_localization();
 	}
 
 
@@ -370,6 +389,8 @@ class EE_Checkout {
 		foreach ( $this->reg_steps as $reg_step ) {
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
 		}
+		// reset reg step html
+//		$this->json_response->set_reg_step_html( '' );
 	}
 
 

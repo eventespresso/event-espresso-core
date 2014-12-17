@@ -7,7 +7,6 @@ jQuery(document).ready(function($){
 	 *
 	 * @namespace EEFV
 	 * @type {{
-	 *     validation_rules_array: object,
 	 *     validation_rules_per_html_form: object,
 	 *     form_validators: object,
 	 * }}
@@ -21,8 +20,6 @@ jQuery(document).ready(function($){
 	 */
 	EEFV = {
 
-		// validation rules from the eei18n localized JSON array
-		validation_rules_array : ee_form_section_vars.form_data,
 		//foreach ee form section, compile an array of what validation rules apply to which html form
 		validation_rules_per_html_form : {},
 		// current form to be validated
@@ -34,12 +31,13 @@ jQuery(document).ready(function($){
 		 *	@function initialize
 		 */
 		initialize : function( form_data ) {
-			//EEFV.console_log( 'EEFV.initialize > form_data', form_data, true );
+//			console.log( ' ' );
+//			console.log( JSON.stringify( 'EEFV.initialize > ee_form_section_vars.form_data: ', null, 4 ));
+//			console.log( ee_form_section_vars.form_data );
             // reset previous form validation rules
             EEFV.reset_validation_rules();
-			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
-			//EEFV.apply_rules();
+			EEFV.apply_rules();
 			EEFV.add_url_validator();
 			//console.log( EEFV.validation_rules_per_html_form );
 			//console.log( EEFV.form_validators );
@@ -62,7 +60,7 @@ jQuery(document).ready(function($){
 		 */
 		setup_validation_rules : function( form_sections_to_validate ) {
 
-			//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
+			EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
 
 			// loop through all form sections
 			$.each( form_sections_to_validate, function( index, form_data ){
@@ -77,30 +75,22 @@ jQuery(document).ready(function($){
 						form_id = EEFV.generate_random_string(15);
 						html_form.attr( 'id', form_id );
 					}
-					// if the form already exists, then let's reset it
-					if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-						EEFV.form_validators[ form_id ].resetForm();
-						// remove the non-js-generated server-side validation errors
-						// because we will allow jquery validate to populate them
-						EEFV.form_validators[ form_id ].find('.error').remove();
-					}
-					EEFV.form_validators[ form_id ] = html_form.validate();
-
-
-					//EEFV.console_log( 'EEFV.setup_validation_rules > form_id', form_id, true );
-					EEFV.console_log( 'EEFV.setup_validation_rules > form_data', form_data, true );
+					EEFV.console_log( 'EEFV.setup_validation_rules > form_id', form_id, true );
+					EEFV.console_log( 'EEFV.setup_validation_rules > form_data.validation_rules', form_data.validation_rules, true );
+					// remove the non-js-generated server-side validation errors
+					// because we will allow jquery validate to populate them
+					$( form_data.form_section_id ).find('.error').remove();
 
 					// now add form section's validation rules
-					//EEFV.apply_rules( form_data );
-					//if ( typeof( EEFV.validation_rules_per_html_form[ form_id ] ) === 'undefined' ){
-					//	EEFV.validation_rules_per_html_form[ form_id ] = {
-					//		'rules' : form_data.validation_rules,
-					//		'errors' : form_data.errors
-					//	};
-					//} else {
-					//	$.extend( EEFV.validation_rules_per_html_form[ form_id ].rules, form_data.validation_rules );
-					//	$.extend( EEFV.validation_rules_per_html_form[ form_id ].errors, form_data.errors );
-					//}
+					if ( typeof( EEFV.validation_rules_per_html_form[ form_id ] ) === 'undefined' ){
+						EEFV.validation_rules_per_html_form[ form_id ] = {
+							'rules' : form_data.validation_rules,
+							'errors' : form_data.errors
+						};
+					} else {
+						$.extend( EEFV.validation_rules_per_html_form[ form_id ].rules, form_data.validation_rules );
+						$.extend( EEFV.validation_rules_per_html_form[ form_id ].errors, form_data.errors );
+					}
 				}
 
 			});
@@ -113,16 +103,18 @@ jQuery(document).ready(function($){
 		/**
 		 *	@function apply_rules
 		 */
-		apply_rules : function( form_data ) {
-
-			EEFV.console_log( 'EEFV.apply_rules > form_data', form_data, true );
+		apply_rules : function() {
+//			console.log( ' ' );
+//			console.log( JSON.stringify( 'EEFV.apply_rules', null, 4 ));
+//			console.log( JSON.stringify( 'EEFV.apply_rules > EEFV.validation_rules_per_html_form: ', null, 4 ));
+//			console.log( EEFV.validation_rules_per_html_form );
 
 			//now apply those validation rules to each html form, and show the server-side errors properly
-			$.each( form_data, function( form_section_id, form_section ){
+			$.each( EEFV.validation_rules_per_html_form, function( form_id, form_validation ){
 				//console.log( JSON.stringify( 'EEFV.apply_rules > form_id: ' + form_id, null, 4 ));
-                 if ( typeof form_section.validation_rules !== 'undefined' ) {
+                if ( typeof form_validation.rules !== 'undefined' ) {
 
-                    //EEFV.form_validators[ form_id ] = $( '#'+form_id ).validate();
+                    EEFV.form_validators[ form_id ] = $( '#'+form_id ).validate();
                     //console.log( JSON.stringify( 'EEFV.apply_rules > form_validation.errors: ', null, 4 ));
                     //console.log( form_validation.errors );
                     if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
@@ -222,12 +214,12 @@ jQuery(document).ready(function($){
 		 */
 		console_log: function ( item_name, value, spacer ) {
 			if ( eei18n.wp_debug ) {
-				if ( spacer === true ) {
-					console.log( ' ' );
-				}
 				if ( typeof value === 'object' ) {
 					EEFV.console_log_object( item_name, value, 0 );
 				} else {
+					if ( spacer === true ) {
+						console.log( ' ' );
+					}
 					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' ) {
 						console.log( item_name + ' = ' + value );
 					} else if ( typeof item_name !== 'undefined' ) {
@@ -249,28 +241,29 @@ jQuery(document).ready(function($){
 				depth = typeof depth !== 'undefined' ? depth : 0;
 				var spacer = '';
 				for ( var i = 0; i < depth; i++ ) {
-					spacer = spacer + '. ';
+					spacer = spacer + '  ';
 				}
 				if ( typeof obj === 'object' ) {
-					if ( typeof obj_name !== 'undefined' ) {
-						//console.log( obj_name );
-						EEFV.console_log( spacer + obj_name );
-					} else {
-						//console.log( 'console_log_object : ' );
-						EEFV.console_log( spacer + 'console_log_object : ' );
+					if ( ! depth ) {
+						console.log( ' ' );
 					}
-					spacer = spacer + '. ';
-					depth++;
+					if ( typeof obj_name !== 'undefined' ) {
+						console.log( spacer + obj_name );
+					} else {
+						console.log( spacer + 'console_log_object : ' );
+					}
 					$.each( obj, function( index, value ){
 						if ( typeof value === 'object' ) {
-							if ( depth < 3 ) {
+							if ( depth < 4 ) {
+								depth++;
 								EEFV.console_log_object( index, value, depth );
 							}
 						} else {
-							EEFV.console_log( spacer + index, value, depth );
-							depth++;
+							console.log( spacer + spacer + index + ' = ' + value );
 						}
+						depth--;
 					});
+					//depth = 0;
 				} else {
 					EEFV.console_log( spacer + obj_name, obj, true );
 				}

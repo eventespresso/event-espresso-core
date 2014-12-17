@@ -271,6 +271,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_reg_steps();
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_step' );
+		EE_Registry::instance()->REQ->set( 'process_form_submission', FALSE );
 		EED_Single_Page_Checkout::instance()->_initialize();
 		EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
 		return EE_Registry::instance()->REQ->get_output();
@@ -387,9 +388,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
 			}
 		}
-		// reset redirect
-		$checkout->redirect = FALSE;
-		$checkout->json_response = new EE_SPCO_JSON_Response();
+		// reset anything that needs a clean slate for each request
+		$checkout->reset_for_current_request();
 		return $checkout;
 	}
 
@@ -418,6 +418,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->revisit = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 		// and whether or not to generate a reg form for this request
 		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
+		// and whether or not to process a reg form submission for this request
+		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
+		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
 	}
 
 
@@ -860,6 +863,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
 		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
 		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['validation_error'] = __( 'There appears to be a problem with the form validation configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
