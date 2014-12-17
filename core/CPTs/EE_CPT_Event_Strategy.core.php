@@ -58,6 +58,7 @@ class EE_CPT_Event_Strategy {
 		if ( $WP_Query instanceof WP_Query ) {
 			$WP_Query->is_espresso_event_single = is_single() ? TRUE : FALSE;
 			$WP_Query->is_espresso_event_archive = is_archive() ? TRUE : FALSE;
+			$WP_Query->is_espresso_event_taxonomy = is_tax( 'espresso_event_categories' ) ? TRUE : FALSE;
 		}
 
 	}
@@ -170,6 +171,8 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
 //		global $wpdb;
+		d( $wp_query->is_espresso_event_taxonomy );
+		d( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events );
 		if (
 			$wp_query instanceof WP_Query
 			&&
@@ -187,6 +190,7 @@ class EE_CPT_Event_Strategy {
 				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql', TRUE ) . '" ';
 			}
 		}
+		d( $SQL );
 		return $SQL;
 	}
 
