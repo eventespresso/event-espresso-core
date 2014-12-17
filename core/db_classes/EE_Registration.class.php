@@ -473,7 +473,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 
-		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?)
+		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?).  This also validates if the message type and messenger is active.
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
@@ -535,7 +535,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 
-		//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
+
+		//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?) (this also validates if the message type and messenger is active)
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
 			'MTP_messenger' => 'html',
