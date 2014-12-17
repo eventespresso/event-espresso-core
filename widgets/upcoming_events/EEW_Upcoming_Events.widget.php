@@ -282,9 +282,9 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								default :
 									$len_class =  'one-line';
 							}
-							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
+							echo '<a class="ee-widget-event-name-a" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
-								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
+								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
 							}
 							if ( $show_dates ) {
 								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
