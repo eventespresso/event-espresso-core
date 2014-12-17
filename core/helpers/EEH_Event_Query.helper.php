@@ -217,7 +217,7 @@ class EEH_Event_Query {
 		if ( isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			$clauses['distinct'] = "DISTINCT";
 		}
-		d($clauses);
+
 		return $clauses;
 	}
 
