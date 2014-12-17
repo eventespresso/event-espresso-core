@@ -496,10 +496,10 @@ final class EE_Registry {
 				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf (
-						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) are correct: %s','event_espresso'),
+						__('The %1$s file %2$s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) are correct: %3$s','event_espresso'),
 						trim( $type, '.' ),
 						$class_name,
-						implode( ', ', $file_paths )
+						'<br />' . implode( ',<br />', $file_paths )
 					)
 				);
 			}

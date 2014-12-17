@@ -17,8 +17,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return EE_Registration
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
 		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
 	}
 
@@ -56,7 +55,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		switch( $field_name ) {
 			case 'REG_code' :
-				$this->set_reg_code( $field_value, $use_default );
+				if ( ! empty( $field_value ) && $this->reg_code() == '' ) {
+					$this->set_reg_code( $field_value, $use_default );
+				}
 				break;
 			case 'STS_ID' :
 				$this->set_status( $field_value, $use_default );
@@ -965,8 +966,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @param	boolean $use_default
 	 */
 	public function set_reg_code( $REG_code, $use_default = FALSE ) {
-		if ( empty( $REG_code ) && $this->ID() ) {
+		if ( empty( $REG_code )) {
 			EE_Error::add_error( __( 'REG_code can not be empty.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return;
 		}
 		if ( ! $this->reg_code() ) {
 			parent::set( 'REG_code', $REG_code, $use_default );

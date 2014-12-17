@@ -821,8 +821,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 		private function _capture_primary_registration_data_from_billing_form() {
-			$primary_attendee = $this->checkout->billing_form->create_attendee_from_billing_form_data();
-			if ( ! $primary_attendee instanceof EE_Attendee ) {
+			$this->checkout->primary_attendee_obj = $this->checkout->billing_form->create_attendee_from_billing_form_data();
+			if ( ! $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 				EE_Error::add_error(
 					sprintf(
 						__( 'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
@@ -843,7 +843,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
-			if ( ! $primary_registration->_add_relation_to( $primary_attendee, 'Attendee' ) instanceof EE_Attendee ) {
+			if ( ! $primary_registration->_add_relation_to( $this->checkout->primary_attendee_obj, 'Attendee' ) instanceof EE_Attendee ) {
 				EE_Error::add_error(
 					sprintf(
 						__( 'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
@@ -918,6 +918,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		try {
+			$payment_processor->set_revisit( $this->checkout->revisit );
 			// generate payment object
 			$payment = $payment_processor->process_payment(
 				$payment_method,
