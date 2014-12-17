@@ -315,16 +315,9 @@ class EEW_Upcoming_Events  extends WP_Widget {
 							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
 								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
-								$line_break = '<br  style="margin: 0 0 .5em;"/>';
-							} else {
-								$line_break = '<br style="margin: .5em 0;"/>';
 							}
 							$desc = $event->short_description( 25 );
-							if ( $show_dates || ( $show_desc && $desc )) {
-								echo '<p>';
-							}
 							if ( $show_dates ) {
-								echo '<span class="dashicons dashicons-calendar"></span>';
 								$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', get_option( 'date_format' ));
 								$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', get_option( 'time_format' ));
 								$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', get_option( 'date_format' ));
@@ -335,14 +328,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 									echo espresso_list_of_event_dates( $event->ID(), $date_format, $time_format, FALSE, NULL, TRUE, TRUE, $date_limit );
 								}
 							}
-							if ( $show_dates && ( $show_desc && $desc )) {
-								echo $line_break;
-							}
 							if ( $show_desc && $desc ) {
-								echo $desc;
-							}
-							if ( $show_dates || ( $show_desc && $desc )) {
-								echo '</p>';
+								echo '<p style="margin-top: .5em">' . $desc . '</p>';
 							}
 							echo '</li>';
 						}
