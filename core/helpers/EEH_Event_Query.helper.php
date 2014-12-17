@@ -82,16 +82,9 @@ class EEH_Event_Query {
 	 * filter_query_parts
 	 *
 	 * @access    public
-	 * @return    void
+	 * @param \WP_Query $WP_Query
 	 */
-	public static function filter_query_parts() {
-
-		add_action( 'pre_get_posts', array( __CLASS__, 'maybe_add_filters') );
-
-	}
-
-
-	public static function maybe_add_filters(  $WP_Query ) {
+	public static function filter_query_parts( WP_Query $WP_Query) {
 		//ONLY add our filters if this isn't the main wp_query, because if this is the main wp_query we already have our cpt strategies take care of adding things in.
 		if ( $WP_Query instanceof WP_Query && ! $WP_Query->is_main_query() ) {
 			// build event list query
