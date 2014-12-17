@@ -16,6 +16,11 @@ ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 	margin:0 0 0 1em;
 }
 
+input.print_button {
+	padding: 8px;
+	background-color: white;
+}
+
 #invoice { width:740px; height:auto; padding:1cm; margin:0 auto; overflow:hidden; background-color:#fff; }
 #invoice-header tr { background-color: #ffffff !important; }
 
