@@ -30,8 +30,11 @@ For all testers on github, please take note of the following when reporting issu
 3. Report your issue as clearly as possible.  By "clear" we mean:
 
 	i. Specify the branch this occurred in.
+
 	ii. Be specific about the steps you took to reproduce.
+
 	iii. Feel free to use screenshots/screencasts to illustrate
+
 	iv. Use url's for the page the issue to place on where possible.
 
 4. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
