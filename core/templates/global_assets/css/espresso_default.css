@@ -212,6 +212,13 @@
 .ee-upcoming-events-widget-header-dv.three-line {
 	min-height: 4.8em;
 }
+.ee-upcoming-events-widget-title-h5 {
+	margin: 3em 0 0;
+}
+.ee-upcoming-events-widget-li img {
+	max-width:100% !important;
+	height:auto !important;
+}
 .ee-upcoming-events-widget-header-dv img {
 	width:100%;
 }
