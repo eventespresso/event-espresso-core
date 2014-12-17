@@ -68,10 +68,13 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function process_reg_step() {
+//		printr( $this->checkout, '$this->checkout', __FILE__, __LINE__ );
 		// ensure all data gets saved to the db and all model object relations get updated
 		if ( $this->checkout->save_all_data() ) {
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			//set revisit flag in txn processor
+			$transaction_processor->set_revisit( $this->checkout->revisit );
 			// at this point we'll consider a TXN to not have failed
 			if ( $transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction )) {
 				$this->checkout->transaction->save();
@@ -82,8 +85,12 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			if ( $this->checkout->payment_required() ) {
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-				// try to finalize any payment that may have been attempted, but do NOT update TXN
-				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction );
+				//have to do this because $transaction_processor is not a singleton and payment_processor instantiates a new transaction_processor.
+				$payment_processor->set_revisit( $this->checkout->revisit );
+				// try to finalize any payment that may have been attempted,
+				// but do NOT call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment(),
+				// we'll do that manually below
+				$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, FALSE );
 			} else {
 				$payment = NULL;
 			}
@@ -93,6 +100,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$payment,
 				$this->checkout->reg_cache_where_params
 			);
+			// make sure any final TXN changes make it to the db
+			$this->checkout->transaction->save();
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// check if transaction has a primary registrant and that it has a related Attendee object
