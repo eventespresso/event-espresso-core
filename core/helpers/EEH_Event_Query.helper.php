@@ -99,7 +99,7 @@ class EEH_Event_Query {
 			add_filter( 'posts_join', array( 'EEH_Event_Query', 'posts_join' ), 10, 2 );
 			add_filter( 'posts_where', array( 'EEH_Event_Query', 'posts_where' ), 10, 2 );
 			add_filter( 'posts_orderby', array( 'EEH_Event_Query', 'posts_orderby' ), 10, 2 );
-			add_filter( 'posts_clauses_request', array( __CLASS__, 'posts_clauses' ), 10, 2 );
+			add_filter( 'posts_clauses_request', array( 'EEH_Event_Query', 'posts_clauses' ), 10, 2 );
 		}
 	}
 
@@ -213,11 +213,9 @@ class EEH_Event_Query {
 	 * @return array   array of clauses
 	 */
 	public static function posts_clauses( $clauses, WP_Query $wp_query ) {
-		global $wpdb;
 		if ( isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			$clauses['distinct'] = "DISTINCT";
 		}
-		d($clauses);
 		return $clauses;
 	}
 
