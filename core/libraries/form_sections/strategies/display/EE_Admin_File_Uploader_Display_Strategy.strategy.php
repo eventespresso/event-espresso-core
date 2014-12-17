@@ -16,8 +16,8 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 			$image_src = '';
 		}
 		return "<span class='ee_media_uploader_area'>".
-					"<input class='ee_media_url {$input->html_class()}' type='text' name='{$input->html_name()}' size='34' value='{$input->raw_value_in_form()}'>".
-					"<a href='#' class='ee_media_upload'><img src='".admin_url('images/media-button-image.gif')."' alt='Add an Image'></a>".
+					"<input class='regular-text ee_media_url {$input->html_class()}' type='text' name='{$input->html_name()}' size='34' value='{$input->raw_value_in_form()}'>".
+					"&nbsp;<a href='#' class='ee_media_upload'><img src='".admin_url('images/media-button-image.gif')."' alt='Add an Image'></a>".
 					"<img class='ee_media_image' src='$image_src' />".
 				"</span>";
 	}

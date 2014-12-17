@@ -222,14 +222,20 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertFalse( $p2->in_entity_map() );
 		//make the two EE_Payments diverge
 		$p2->set( 'PAY_amount', 99 );
+		$t = EE_Transaction::new_instance();
+		$p2->cache( 'Transaction', $t );
 		$this->assertEquals( 25, $p->get( 'PAY_amount' ) );
 		$this->assertEquals( 99, $p2->get( 'PAY_amount' ) );
+		$this->assertNotEquals( $p->get_all_from_cache( 'Transaction' ), $p2->get_all_from_cache( 'Transaction' ) );
 		//now update the payment in the entity map with the other
 		EEM_Payment::instance()->refresh_entity_map_with( $p->ID(), $p2 );
 		$this->assertEquals( 99, $p->get ('PAY_amount' ) );
-		//make sure p hasn't changed into p2. that's not what we wanted to do. We wanted to just
-		//UPDATE p with p2's values
+		//make sure p hasn't changed into p2. that's not what we wanted to do...
+		$this->assertFalse( $p2 === $p );
+		//We wanted to just UPDATE p with p2's values
 		$this->assertEquals( $p, EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+		//and make sure p's cache was updated to be the same as p2's
+		$this->assertEquals( $p2->get_all_from_cache( 'Transaction' ), $p->get_all_from_cache( 'Transaction' ) );
 	}
 }
 
