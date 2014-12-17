@@ -173,7 +173,6 @@ class EE_CPT_Event_Strategy {
 				$SQL .=  ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . current_time( 'mysql', TRUE ) . '" ';
 			}
 		}
-		d( $SQL );
 		return $SQL;
 	}
 
