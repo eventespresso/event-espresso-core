@@ -56,8 +56,8 @@ class EE_CPT_Event_Strategy {
 		// 'posts_join'
 		$this->_add_filters();
 		if ( $WP_Query instanceof WP_Query ) {
-			$WP_Query->is_espresso_event_single = is_single() ? TRUE : FALSE;
-			$WP_Query->is_espresso_event_archive = is_archive() ? TRUE : FALSE;
+			$WP_Query->is_espresso_event_single = is_singular('espresso_events') ? TRUE : FALSE;
+			$WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events') ? TRUE : FALSE;
 			$WP_Query->is_espresso_event_taxonomy = is_tax( 'espresso_event_categories' ) ? TRUE : FALSE;
 		}
 
@@ -110,11 +110,6 @@ class EE_CPT_Event_Strategy {
 			$wp_query instanceof WP_Query
 			&&
 			(
-				isset( $wp_query->query_vars['post_type'] )
-				&& $wp_query->query_vars['post_type'] == 'espresso_events'
-			)
-			&&
-			(
 				$wp_query->is_espresso_event_single
 				|| $wp_query->is_espresso_event_archive
 				|| $wp_query->is_espresso_event_taxonomy
@@ -142,11 +137,6 @@ class EE_CPT_Event_Strategy {
 			$wp_query instanceof WP_Query
 			&&
 			(
-				isset( $wp_query->query_vars['post_type'] )
-				&& $wp_query->query_vars['post_type'] == 'espresso_events'
-			)
-			&&
-			(
 				$wp_query->is_espresso_event_single
 				|| $wp_query->is_espresso_event_archive
 				|| $wp_query->is_espresso_event_taxonomy
@@ -171,15 +161,8 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
 //		global $wpdb;
-		d( $wp_query->is_espresso_event_taxonomy );
-		d( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events );
 		if (
 			$wp_query instanceof WP_Query
-			&&
-			(
-				isset( $wp_query->query_vars['post_type'] )
-				&& $wp_query->query_vars['post_type'] == 'espresso_events'
-			)
 			&&
 			(
 				$wp_query->is_espresso_event_archive
@@ -209,11 +192,6 @@ class EE_CPT_Event_Strategy {
 			$wp_query instanceof WP_Query
 			&&
 			(
-				isset( $wp_query->query_vars['post_type'] )
-				&& $wp_query->query_vars['post_type'] == 'espresso_events'
-			)
-			&&
-			(
 				$wp_query->is_espresso_event_archive
 				|| $wp_query->is_espresso_event_taxonomy
 			)
@@ -236,11 +214,6 @@ class EE_CPT_Event_Strategy {
 	public function posts_groupby( $SQL, WP_Query $wp_query ) {
 		if (
 			$wp_query instanceof WP_Query
-			&&
-			(
-				isset( $wp_query->query_vars['post_type'] )
-				&& $wp_query->query_vars['post_type'] == 'espresso_events'
-			)
 			&&
 			(
 				$wp_query->is_espresso_event_archive
