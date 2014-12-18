@@ -431,12 +431,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			return $switch_to_url;
 		}
 
-		$content = '
+		if ( ! empty( $switch_to_url ) ) {
+
+		return  '
 <form method="post" action="' . $switch_to_url . '" >
 	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
 </form>
 		';
-		return $content;
+		}
+		return '';
 	}
 
 
