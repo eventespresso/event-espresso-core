@@ -91,7 +91,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'title' => NULL,
 			'limit' => 10,
 			'css_class' => NULL,
-			'show_expired' => EED_Events_Archive::instance()->config()->display_expired_events,
+			'show_expired' => FALSE,
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
