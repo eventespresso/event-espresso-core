@@ -796,9 +796,17 @@ jQuery(document).ready( function($) {
 				},
 
 				success: function( response ){
-//					SPCO.console_log_object( 'display_payment_method : response', response );
-					response.return_data.payment_method = payment_method;
-					SPCO.process_response( 'payment_options', response );
+					//SPCO.console_log_object( 'display_payment_method : response', response );
+					if ( typeof response !== 'undefined' && typeof response !== null ) {
+						if ( typeof response.return_data === 'undefined' ) {
+							response.return_data = {};
+						}
+						response.return_data.payment_method = payment_method;
+						SPCO.process_response( 'payment_options', response );
+					} else {
+						var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
+						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
+					}
 				},
 
 				error: function() {
@@ -946,6 +954,9 @@ jQuery(document).ready( function($) {
 					}
 					SPCO.main_container.trigger( 'spco_switch_payment_methods', [ response.return_data.payment_method ] );
 				});
+			} else {
+				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'switch_payment_methods', eei18n.invalid_payment_method ), '' );
+				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			}
 			SPCO.end_ajax();
 		},
