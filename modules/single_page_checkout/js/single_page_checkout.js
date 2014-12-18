@@ -8,6 +8,7 @@ jQuery(document).ready( function($) {
 		 *     methods_of_payment: object,
 		 *     current_form_to_validate: object,
 		 *     form_inputs: object,
+		 *     additional_post_data: string,
 		 *     require_values: object,
 		 *     multi_inputs_that_do_not_require_values: object,
 		 *     success_msgs: object,
@@ -81,6 +82,8 @@ jQuery(document).ready( function($) {
 		current_form_to_validate : null,
 		// all form inputs within the SPCO main_container
 		form_inputs : null,
+		// string of key value pairs like "&foo=bar" to get appended to outgoing AJAX data
+		additional_post_data : null,
 		// array of input fields that require values
 		require_values : [],
 		// array of multi-value inputs (checkboxes and radio buttons) that do NOT require values
@@ -676,6 +679,8 @@ jQuery(document).ready( function($) {
 			form_data += '&EESID=' + eei18n.EESID;
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
+			form_data += SPCO.additional_post_data;
+
 			// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
@@ -725,6 +730,7 @@ jQuery(document).ready( function($) {
 			form_data += '&EESID=' + eei18n.EESID;
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
+			form_data += SPCO.additional_post_data;
 			// alert( 'form_data = ' + form_data );
 
 			$.ajax({
@@ -775,12 +781,12 @@ jQuery(document).ready( function($) {
 			form_data += '&action=spco_billing_form';
 			form_data += '&selected_method_of_payment=' + payment_method;
 			form_data += '&process_form_submission=0';
-			//form_data += '&generate_reg_form=0';
 			form_data += '&noheader=1';
 			form_data += '&ee_front_ajax=1';
 			form_data += '&EESID=' + eei18n.EESID;
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
+			form_data += SPCO.additional_post_data;
 
 			// alert( 'form_data = ' + form_data );
 
@@ -824,6 +830,8 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		process_response : function( next_step, response ) {
+			//clear additional_post_data
+			SPCO.additional_post_data = null;
 			// alert( 'next_step = ' + next_step );
 			if ( typeof response !== 'undefined' && typeof response !== null ) {
 				// add trigger point so other JS can join the party
