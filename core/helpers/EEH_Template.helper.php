@@ -541,7 +541,7 @@ class EEH_Template {
 	 * @return string
 	 */
 	public static function layout_array_as_table($data) {
-	if (is_object($data)) {
+	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
 	EE_Registry::instance()->load_helper('Array');
