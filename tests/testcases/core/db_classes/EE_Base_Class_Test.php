@@ -433,7 +433,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$att->save();
 		$att->refresh_from_db();
 		EE_Registry::instance()->reset_model( 'Attendee' );
-		$att = $att;
 		try{
 			$att->refresh_from_db();
 		}catch( EE_Error $e ){

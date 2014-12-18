@@ -3,7 +3,10 @@
  * This is the template for the html messenger and invoice message type main content field.
  */
 ?>
-[DISPLAY_PDF_BUTTON]
+<div class="print_button_div noPrint">
+	[INVOICE_RECEIPT_SWITCHER_BUTTON] [DISPLAY_PDF_BUTTON]
+	<div class="clear"></div>
+</div>
 <div id="invoice">
 	<table id="invoice-header" class="not-really-a-table">
 		<tr>
