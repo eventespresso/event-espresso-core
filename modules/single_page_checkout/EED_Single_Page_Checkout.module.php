@@ -743,6 +743,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$reg_step->initialize_reg_step();
 			// i18n
 			$reg_step->translate_js_strings();
+			// the text that appears on the reg step form submit button
+			$reg_step->set_submit_button_text();
 		}
 
 	}

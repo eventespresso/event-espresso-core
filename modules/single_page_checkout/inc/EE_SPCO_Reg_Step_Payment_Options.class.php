@@ -476,30 +476,37 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return 	\EE_Form_Section_Proper
 	 */
 	private function _payment_method_billing_info( EE_Payment_Method $payment_method ) {
-		// only display the selected or default PM
-		$pm_style = $this->checkout->selected_method_of_payment == $payment_method->slug() ? '' : 'display:none;';
+		// generate the billing form for payment method
+		$billing_form = $this->_get_billing_form_for_payment_method( $payment_method, TRUE );
 		// it's all in the details
+		$info_html = EEH_HTML::h3 ( __( 'Important information regarding your payment', 'event_espresso' ), '', 'spco-payment-method-hdr' );
+		// add some info regarding the step, either from what's saved in the admin, or a default string depending on whether the PM has a billing form or not
 		if ( $payment_method->description() ) {
-			$info_html = EEH_HTML::h3 ( 'Important information regarding your payment', '', 'spco-payment-method-hdr' );
-			$info_html .= EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' );
-			// generate the billing form for payment method
-			$billing_form = $this->_get_billing_form_for_payment_method( $payment_method, TRUE );
-
-			return new EE_Form_Section_Proper(
-				array(
-					'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
-					'html_class' 			=> 'spco-payment-method-info-dv',
-					'html_style' 			=> $pm_style,
-					'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
-					'subsections' 			=> array(
-						'info' 					=> new EE_Form_Section_HTML( $info_html ),
-						'billing_form' 		=> $this->checkout->selected_method_of_payment == $payment_method->slug() ? $billing_form : new EE_Form_Section_HTML()
-					)
-				)
-			);
+			$payment_method_info = $payment_method->description();
+		} elseif ( $billing_form instanceof EE_Billing_Info_Form ) {
+			$payment_method_info = sprintf( __( 'Please provide the following billing information, then click the "%1$s" button below in order to proceed.', 'event_espresso' ), $this->submit_button_text() );
 		} else {
-			return new EE_Form_Section_HTML( EEH_HTML::div ( ' ', 'spco-payment-method-info-' . $payment_method->slug() ));
+			$payment_method_info = sprintf( __( 'Please click the "%1$s" button below in order to proceed.', 'event_espresso' ), $this->submit_button_text() );
 		}
+		$info_html .= EEH_HTML::p (
+			apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_method_billing_info__payment_method_info', $payment_method_info ),
+			'',
+			'spco-payment-method-desc ee-attention'
+		);
+
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
+				'html_class' 			=> 'spco-payment-method-info-dv',
+				// only display the selected or default PM
+				'html_style' 			=> $this->checkout->selected_method_of_payment == $payment_method->slug() ? '' : 'display:none;',
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
+				'subsections' 			=> array(
+					'info' 					=> new EE_Form_Section_HTML( $info_html ),
+					'billing_form' 		=> $this->checkout->selected_method_of_payment == $payment_method->slug() ? $billing_form : new EE_Form_Section_HTML()
+				)
+			)
+		);
 
 	}
 
