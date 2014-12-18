@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
 		process_SPCO_response : function( SPCO_response ) {
 			//alert( 'process_SPCO_response' );
 			//SPCO.console_log_object( 'SPCO_response', SPCO_response, 0 );
-			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' && typeof SPCO_response.return_data.payment_method_info === 'undefined' ) {
+			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' /*&& typeof SPCO_response.return_data.payment_method_info === 'undefined'*/ ) {
 				if ( SPCO_response.recaptcha_passed ) {
 					//alert( 'recaptcha passed' );
 					// remove recaptcha
