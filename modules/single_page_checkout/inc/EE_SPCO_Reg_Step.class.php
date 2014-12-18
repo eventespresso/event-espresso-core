@@ -200,7 +200,9 @@ abstract class EE_SPCO_Reg_Step {
 	 * @param string $submit_button_text
 	 */
 	public function set_submit_button_text( $submit_button_text = '' ) {
-		$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		}
 	}
 
 
