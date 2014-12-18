@@ -1,6 +1,6 @@
-jQuery(document).ready(function($) {
+var EE_RECAPTCHA;
 
-	var EE_RECAPTCHA;
+jQuery(document).ready(function($) {
 
 	/**
 	 * @namespace EE_RECAPTCHA
@@ -79,16 +79,15 @@ jQuery(document).ready(function($) {
 		process_SPCO_response : function( SPCO_response ) {
 			//alert( 'process_SPCO_response' );
 			//SPCO.console_log_object( 'SPCO_response', SPCO_response, 0 );
-			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' /*&& typeof SPCO_response.return_data.payment_method_info === 'undefined'*/ ) {
+			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' ) {
 				if ( SPCO_response.recaptcha_passed ) {
-					//alert( 'recaptcha passed' );
 					// remove recaptcha
 					EE_RECAPTCHA.recaptcha_div.html('');
 					EE_RECAPTCHA.not_a_robot = true;
 				} else {
 					//alert( 'recaptcha failed' );
 					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.passed() error', eei18n.recaptcha_fail ));
-					//EE_RECAPTCHA.recaptcha_div.find('.rc-button-reload').trigger('click');
+					Recaptcha.reload();
 				}
 			}
 		},
