@@ -46,6 +46,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 
 
 		EE_Registry::instance()->load_helper('Array');
+		EEH_Formatter::indent( 1 );
 		if( EEH_Array::is_multi_dimensional_array( $this->_input->options() )){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
 		}else{
@@ -60,7 +61,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 
 	/**
 	 * Checks if that $value is one of the selected ones
-	 * @param string|int $value
+	 * @param string|int $value unnormalized value option (string)
 	 * @return boolean
 	 */
 	protected function _check_if_option_selected($value){
@@ -68,7 +69,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		if( ! $selected_options ){
 			return false;
 		}
-		$equality = in_array("$value",$selected_options );
+		$equality = in_array($value,$selected_options );
 		return $equality;
 	}
 }
