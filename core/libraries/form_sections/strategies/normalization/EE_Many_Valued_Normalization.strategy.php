@@ -51,9 +51,18 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 		}
 		$normalized_array_value = array();
 		foreach( $items_to_normalize as $key => $individual_item ){
-			$normalized_array_value[ $key ] = $this->_individual_item_normalization_strategy->normalize( $individual_item );
+			$normalized_array_value[ $key ] = $this->normalize_one( $individual_item );
 		}
 		return $normalized_array_value;
+	}
+
+	/**
+	 * Normalized the one item (called for each array item in EE_Many_values_Normalization::normalize())
+	 * @param string $individual_value_to_normalize but definetely NOT an array
+	 * @return mixed
+	 */
+	public function normalize_one( $individual_value_to_normalize ) {
+		return $this->_individual_item_normalization_strategy->normalize( $individual_value_to_normalize );
 	}
 
 	/**
@@ -67,9 +76,18 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 		}
 		$nonnormal_values = array();
 		foreach( $normalized_values as $key => $value ) {
-			$nonnormal_values[ $key ] = $this->_individual_item_normalization_strategy->unnormalize( $value );
+			$nonnormal_values[ $key ] = $this->unnormalize_one( $value );
 		}
 		return $nonnormal_values;
+	}
+
+	/**
+	 * Unnormalizes an individual item in the array of values
+	 * @param mixed $individual_value_to_unnormalize but certainly NOT an array
+	 * @return string
+	 */
+	public function unnormalize_one( $individual_value_to_unnormalize ) {
+		return $this->_individual_item_normalization_strategy->unnormalize( $individual_value_to_unnormalize );
 	}
 }
 

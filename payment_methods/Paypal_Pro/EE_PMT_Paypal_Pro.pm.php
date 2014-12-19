@@ -85,7 +85,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'html_id'=> 'ee-Paypal_Pro-billing-form',
 				'subsections'=>array(
 					'credit_card'=>new EE_Credit_Card_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_name' => __( 'Card Number', 'event_espresso' ))
 					),
 					'credit_card_type'=>new EE_Select_Input(
 						//the options are set dynamically
@@ -104,6 +104,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				)
 			)
 		);
+
 		if($this->_pm_instance->debug_mode()){
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),

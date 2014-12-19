@@ -184,6 +184,30 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * submit_button_text
+	 * the text that appears on the reg step form submit button
+	 * @return string
+	 */
+	public function submit_button_text() {
+		return $this->_submit_button_text;
+	}
+
+
+
+	/**
+	 * set_submit_button_text
+	 * sets the text that appears on the reg step form submit button
+	 * @param string $submit_button_text
+	 */
+	public function set_submit_button_text( $submit_button_text = '' ) {
+		if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		}
+	}
+
+
+
+	/**
 	 * @param boolean $is_current_step
 	 */
 	public function set_is_current_step( $is_current_step ) {
@@ -447,7 +471,7 @@ abstract class EE_SPCO_Reg_Step {
 			'html_id' 							=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_class' 					=> 'spco-next-step-btn',
 			'other_html_attributes' 	=> ' rel="' . $this->slug() . '"',
-			'default'							=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
+			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
 		ob_start();

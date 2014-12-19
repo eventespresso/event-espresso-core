@@ -2,6 +2,9 @@
 <p>
 <?php _e('Adjust the settings for the PayPal Standard payment gateway.', 'event_espresso'); ?>
 </p>
+<p>
+<?php printf( __( 'See %1$shere%2$s for list of currencies supported by Paypal Standard', 'event_espresso' ), "<a href='https://www.paypal.com/multicurrency'>","</a>" ); ?>
+</p>
 <h3><?php _e('PayPal Standard Settings', 'event_espresso'); ?></h3>
 <ul>
 <li>

@@ -5,6 +5,9 @@
 			<p>
 				<?php printf(__('Mijireh is basically a middle-man between Event Espresso and over 90 payment gateways. Most of the configuration occurs on %sMijireh\' website%s, where you configure your Mijireh store with the %spayment gateway of your choice%s.', 'event_espresso'),'<a href="http://www.mijireh.com/">','</a>','<a href="http://www.mijireh.com/docs/payment-gateways/">','</a>'); ?>
 			</p>
+			<p>
+			<?php _e( 'For information on what currencies you can use with Mijireh, please consult the payment gateway Mijireh is setup to use.', 'event_espresso' ) ?>
+			</p>
 
 		<h3><?php _e('Mijireh Checkout Page Design', 'event_espresso'); ?></h3>
 			<p>
