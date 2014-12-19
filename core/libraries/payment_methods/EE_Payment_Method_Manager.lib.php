@@ -57,6 +57,7 @@ class EE_Payment_Method_Manager {
 			$this->_register_payment_methods();
 			//if in admin lets ensure caps are set.
 			if ( is_admin() ) {
+				add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, 'add_payment_method_caps' ) );
 				EE_Registry::instance()->CAP->init_caps();
 			}
 		}
@@ -246,5 +247,33 @@ class EE_Payment_Method_Manager {
 	}
 
 
+
+
+	/**
+	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter to add dynamic payment method
+	 * access caps.
+	 *
+	 * @param array $caps capabilities being filtered
+	 */
+	public function add_payment_method_caps( $caps ) {
+		/* add dynamic caps from payment methods
+		 * at the time of writing, october 20 2014, these are the caps added:
+		 * ee_payment_method_admin_only
+		 * ee_payment_method_aim
+		 * ee_payment_method_bank
+		 * ee_payment_method_check
+		 * ee_payment_method_invoice
+		 * ee_payment_method_mijireh
+		 * ee_payment_method_paypal_pro
+		 * ee_payment_method_paypal_standard
+		 * Any other payment methods added to core or via addons will also get
+		 * their related capability automatically added too, so long as they are
+		 * registered properly using EE_Register_Payment_Method::register()
+		 */
+		foreach( $this->payment_method_types() as $payment_method_type_obj ){
+			$caps['administrator'][] = $payment_method_type_obj->cap_name();
+		}
+		return $caps;
+	}
 
 }
