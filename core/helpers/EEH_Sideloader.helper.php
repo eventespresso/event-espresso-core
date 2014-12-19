@@ -38,7 +38,7 @@ class EEH_Sideloader extends EEH_Base {
 
 
 	/**
-	 * constructor allows the user to set the properties on the sideloader on construct.  However, there are also setters for doing so.	
+	 * constructor allows the user to set the properties on the sideloader on construct.  However, there are also setters for doing so.
 	 *
 	 * @access public
 	 * @param array $init array fo initializing the sideloader if keys match the properties.
@@ -53,7 +53,7 @@ class EEH_Sideloader extends EEH_Base {
 	 *
 	 * @access private
 	 * @param  array  $init array on init (keys match properties others ignored)
-	 * @return void 
+	 * @return void
 	 */
 	private function _init( $init ) {
 		$defaults = array(
@@ -78,7 +78,7 @@ class EEH_Sideloader extends EEH_Base {
 
 	//utilities
 	private function _get_wp_uploads_dir() {}
-	
+
 	//setters
 	public function set_upload_to( $upload_to_folder ) {
 		$this->_upload_to = $upload_to_folder;
@@ -126,7 +126,9 @@ class EEH_Sideloader extends EEH_Base {
 
 		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
 			unlink( $temp_file );
-			EE_Error::add_error( sprintf( __('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s<br />Here is the path given: %s', 'event_espresso'), var_export( $response, true ), $this->_upload_from ), __FILE__, __FUNCTION__, __LINE__ );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				EE_Error::add_error( sprintf( __('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s<br />Here is the path given: %s', 'event_espresso'), var_export( $response, true ), $this->_upload_from ), __FILE__, __FUNCTION__, __LINE__ );
+			}
 			return false;
 		}
 
