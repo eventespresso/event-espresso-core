@@ -202,7 +202,7 @@ class EE_Payment_Method_Manager {
 		$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
 		if( ! $payment_method){
 			global $current_user;
-			$pm_type_class = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($payment_method_type);
+			$pm_type_class = $this->payment_method_class_from_type($payment_method_type);
 			if(class_exists($pm_type_class)){
 				/** @var $pm_type_obj EE_PMT_Base */
 				$pm_type_obj = new $pm_type_class;
