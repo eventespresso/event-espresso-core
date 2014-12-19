@@ -46,6 +46,24 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase{
 			$this->assertTrue(True);
 		}
 	}
+	/**
+	 * @group 7230
+	 */
+	public function test_register__too_late() {
+		$this->_pretend_addon_hook_time();
+		//double-check no one else is filtering payment method types
+		remove_all_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register');
+
+		//first verify it doesn't already exists
+		$pmt_exists = EE_Payment_Method_Manager::reset()->payment_method_type_exists( $this->_pmt_name );
+		$this->assertFalse( $pmt_exists );
+
+
+		EE_Register_Payment_Method::register($this->_pmt_name, $this->_pmt_args);
+		//now check it does exist
+		$pmt_exists = EE_Payment_Method_Manager::instance()->payment_method_type_exists( $this->_pmt_name );
+		$this->assertTrue( $pmt_exists );
+	}
 
 	public function test_register__success(){
 		$this->_pretend_addon_hook_time();

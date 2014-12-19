@@ -16,7 +16,7 @@
 		</div>
 
 		<?php endforeach; ?>
-		<p class="help"><?php _e( 'Note: Credit Card expiry dates and CCV are not stored. Only the last 4 digits of credit card numbers are stored.', 'event_espresso' );?></p>
+		<p class="help"><?php _e( 'Note: Card expiry dates and CCV are not stored. Only the last 4 digits of card numbers are stored.', 'event_espresso' );?></p>
 <?php endif; ?>
 
 	</div>
