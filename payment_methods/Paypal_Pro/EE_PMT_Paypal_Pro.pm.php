@@ -81,7 +81,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			'name'=> $form_name,
 			'html_id'=> 'ee-Paypal_Pro-billing-form',
 			'subsections'=>array(
-				'credit_card'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'credit_card'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_name' => __( 'Card Number', 'event_espresso' ) )),
 				'credit_card_type'=>new EE_Select_Input( array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types ))),//the options are set dynamically
 				'exp_month'=>new EE_Credit_Card_Month_Input( TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'exp_year'=>new EE_Credit_Card_Year_Input( TRUE, 1, 15, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),

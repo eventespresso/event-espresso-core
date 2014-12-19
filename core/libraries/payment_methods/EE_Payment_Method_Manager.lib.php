@@ -193,6 +193,7 @@ class EE_Payment_Method_Manager {
 	 * @return string
 	 */
 	public function payment_method_class_from_type($type){
+		$this->maybe_register_payment_methods();
 		return "EE_PMT_".$type;
 	}
 
