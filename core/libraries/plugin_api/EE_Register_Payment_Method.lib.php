@@ -71,6 +71,10 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 		);
 		// add to list of modules to be registered
 		add_filter( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', array( 'EE_Register_Payment_Method', 'add_payment_methods' ));
+
+		if ( did_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register' ) ) {
+			self::_failsafe_registration();
+		}
 	}
 
 
@@ -87,6 +91,22 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 			$payment_method_folders = array_merge( $payment_method_folders, $settings['payment_method_paths'] );
 		}
 		return $payment_method_folders;
+	}
+
+
+
+	protected static function _failsafe_registration() {
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+		foreach ( self::$_settings as $settings ) {
+			foreach ( $settings['payment_method_paths'] as $path )  {
+				$payment_method_name = basename( $path );
+				//was this registered?
+				if ( ! EE_Payment_Method_Manager::instance()->payment_method_type_exists( $payment_method_name ) ) {
+					EE_Payment_Method_Manager::instance()->maybe_register_payment_methods(true);
+				}
+
+			}
+		}
 	}
 
 

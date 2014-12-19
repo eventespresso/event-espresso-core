@@ -129,7 +129,9 @@ class EE_Payment_Method_Manager {
 	 * @return boolean
 	 */
 	public function payment_method_type_exists($payment_method_name, $force_recheck = FALSE){
-		$this->maybe_register_payment_methods($force_recheck);
+		if ( ! is_array( $this->_payment_method_types ) || ! isset( $this->_payment_method_types[$payment_method_name] ) ) {
+			$this->maybe_register_payment_methods($force_recheck);
+		}
 		if(isset($this->_payment_method_types[$payment_method_name])){
 			require_once($this->_payment_method_types[$payment_method_name]);
 			return true;
