@@ -28,22 +28,23 @@ class EEH_HTML {
 	 * Generates an opening HTML <XX> tag and adds any passed attributes
 	 * if passed content, it will also add that, as well as the closing </XX> tag
 	 *
-	 * @access private
+	 * @access protected
 	 * @param string $tag
+	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @param string $id - html id attribute
 	 * @param string $class - html class attribute
 	 * @param string $style - html style attribute for applying inline styles
-	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @param bool   $force_close
 	 * @return string
 	 */
-	private static function _open_tag( $tag = 'div', $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+	protected static function _open_tag( $tag = 'div', $content = '', $id = '', $class = '', $style = '', $other_attributes = '', $force_close = FALSE ) {
 		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
 		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
 		$html = EEH_HTML::nl() . '<' . $tag . $attributes . '>' . EEH_HTML::nl( 1 );
-		if ( ! empty( $content ) || $tag === 'p' ) {
+		if ( ! empty( $content ) || $force_close ) {
 			$html .= $content;
 			$html .= EEH_HTML::_close_tag( $tag, $id, $class );
 		}
@@ -55,12 +56,13 @@ class EEH_HTML {
 	/**
 	 * Generates HTML closing </XX> tag - if passed the id or class attribute used for the opening tag, will append a comment
 	 *
+	 * @access protected
 	 * @param string $tag
 	 * @param string $id - html id attribute
 	 * @param string $class - html class attribute
 	 * @return string
 	 */
-	private static function _close_tag( $tag = 'div', $id = '', $class = '' ) {
+	protected static function _close_tag( $tag = 'div', $id = '', $class = '' ) {
 		if ( $id ) {
 			$comment = EEH_HTML::comment( 'close ' . $id );
 		} else if ( $class ) {
@@ -118,22 +120,22 @@ class EEH_HTML {
 	 * @return string
 	 */
 	public static function h1( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h1', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h1', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h2( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h2', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h2', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h3( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h4( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h5( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h5', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h5', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h6( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h6', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'h6', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 
 
@@ -150,7 +152,73 @@ class EEH_HTML {
 	 * @return string
 	 */
 	public static function p( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'p', $content, $id, $class, $style, $other_attributes );
+		return EEH_HTML::_open_tag( 'p', $content, $id, $class, $style, $other_attributes, TRUE );
+	}
+
+
+
+	/**
+	 * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::span( 'this is some inline text' );
+	 *
+	 * @access public
+	 * @param string $href URL to link to
+	 * @param string $link_text - the text that will become "hyperlinked"
+	 * @param string $title - html title attribute
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
+	public static function link( $href = '', $link_text = '', $title = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		$link_text = ! empty( $link_text ) ? $link_text : $href;
+		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
+		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
+		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
+		$attributes .= ! empty( $title ) ? ' title="' . $title . '"' : '';
+		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
+		return '<a href="' . $href . '" ' . $attributes . '>'  . $link_text  . '</a>';
+	}
+
+
+
+	/**
+	 * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::span( 'this is some inline text' );
+	 *
+	 * @access protected
+	 * @param string $tag
+	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
+	protected static function _inline_tag( $tag = 'span', $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
+		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
+		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
+		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
+		return '<' . $tag . ' ' . $attributes . '>'  . $content  . '</' . $tag . '>';
+	}
+
+
+
+	/**
+	 * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::span( 'this is some inline text' );
+	 *
+	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
+	public static function label( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_inline_tag( 'label', $content, $id, $class, $style, $other_attributes );
 	}
 
 
@@ -167,11 +235,24 @@ class EEH_HTML {
 	 * @return string
 	 */
 	public static function span( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
-		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
-		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
-		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
-		return '<span' . $attributes . '>'  . $content  . '</span>';
+		return EEH_HTML::_inline_tag( 'span', $content, $id, $class, $style, $other_attributes );
+	}
+
+
+
+	/**
+	 * Generates HTML <span></span> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::span( 'this is some inline text' );
+	 *
+	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
+	public static function strong( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_inline_tag( 'strong', $content, $id, $class, $style, $other_attributes );
 	}
 
 
@@ -368,7 +449,6 @@ class EEH_HTML {
 	 * @param string $class - html class attribute
 	 * @param string $style - html style attribute for applying inline styles
 	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
-	 * @internal param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @return string
 	 */
 	public static function img( $src = '', $alt = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
@@ -397,13 +477,25 @@ class EEH_HTML {
 
 
 	/**
+	 * br - generates a line break
+	 *
+	 * @param int $nmbr - the number of line breaks to return
+	 * @return string
+	 */
+	public static function br( $nmbr = 1 ) {
+		return str_repeat( '<br />', $nmbr );
+	}
+
+
+
+	/**
 	 * nbsp - generates non-breaking space entities based on number supplied
 	 *
 	 * @param int $nmbr - the number of non-breaking spaces to return
 	 * @return string
 	 */
 	public static function nbsp( $nmbr = 1 ) {
-		return str_repeat( "&nbsp;", $nmbr );
+		return str_repeat( '&nbsp;', $nmbr );
 	}
 
 
