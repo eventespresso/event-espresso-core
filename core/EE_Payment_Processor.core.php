@@ -218,11 +218,9 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
 			$payment = $last_payment_method->type_obj()->finalize_payment_for( $transaction );
-			if ( $update_txn ) {
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
-			}
+			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			return $payment;
-		}else{
+		} else {
 			return NULL;
 		}
 	}
