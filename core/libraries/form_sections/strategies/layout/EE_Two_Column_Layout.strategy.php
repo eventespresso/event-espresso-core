@@ -8,7 +8,11 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_begin( $additional_args = array() ) {
-		return EEH_Formatter::nl(1) . '<table class="' . $this->_form_section->html_class() . '" id="' . $this->_form_section->html_id() . '" style="' . $this->_form_section->html_style() . '">';
+		// only open the table if there are no parent sections (meaning this is the top of the form)
+		if ( ! $this->_form_section->parent_section() ) {
+			return EEH_Formatter::nl(1) . '<table class="' . $this->_form_section->html_class() . '" id="' . $this->_form_section->html_id() . '" style="' . $this->_form_section->html_style() . '">' . EEH_Formatter::nl(1) . '<tbody>';
+		}
+		return '';
 	}
 
 
@@ -19,7 +23,11 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_end( $additional_args = array() ) {
-		return EEH_Formatter::nl(-1) . '</table>';
+		// only close the table if there are no parent sections (meaning this is the bottom of the form)
+		if ( ! $this->_form_section->parent_section() ) {
+			return EEH_Formatter::nl(-1) . '</tbody>' . EEH_Formatter::nl(-1) . '</table>';
+		}
+		return '';
 	}
 
 
@@ -32,16 +40,16 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	public function layout_input( $input ) {
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input ) {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input();
 		} else {
 			$html .= EEH_Formatter::nl(1) . '<tr>';
 			$html .= EEH_Formatter::nl(1) . '<th>';
 			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
 			$html .= EEH_Formatter::nl(-1) . '</th>';
 			$html .= EEH_Formatter::nl() . '<td>';
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors()/* . '<br/>'*/;
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input();
+			$html .= $input->get_html_for_errors() != '' ? EEH_Formatter::nl() . $input->get_html_for_errors() : '';
+			$html .= $input->get_html_for_help() != '' ? EEH_Formatter::nl() . $input->get_html_for_help() : '';
 			$html .= EEH_Formatter::nl(-1) . '</td>';
 			$html .= EEH_Formatter::nl(-1) . '</tr>' .  EEH_Formatter::nl(-1);
 		}
