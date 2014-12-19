@@ -138,7 +138,18 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		if (( ! self::$_event->display_ticket_selector() || $view_details || post_password_required( $event_post )) && ! is_admin() ) {
+		if (
+			(
+				! self::$_event->display_ticket_selector()
+				|| $view_details
+				|| post_password_required( $event_post )
+				|| (
+					self::$_event->get_active_status() != EE_Datetime::active
+					&& self::$_event->get_active_status() != EE_Datetime::upcoming
+				)
+			)
+			&& ! is_admin()
+		) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 
@@ -174,7 +185,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_required' => 'DESC', 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
 		));
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
