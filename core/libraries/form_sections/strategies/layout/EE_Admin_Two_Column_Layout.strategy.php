@@ -4,7 +4,7 @@
  * specific to the WP Admin
  */
 
-class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout{
+class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 
 	/**
 	 * Overriding the parent table layout to include <tbody> tags
@@ -15,24 +15,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout{
 	 */
 	public function layout_form_begin( $additional_args = array() ) {
 		$this->_form_section->set_html_class('form-table');
-		$html = parent::layout_form_begin( $additional_args );
-		return $html . EEH_Formatter::nl(1) . '<tbody>';
-	}
-
-
-
-
-
-	/**
-	 * Overriding the parent table layout to include </tbody> tag
-	 *
-	 * @param array $additional_args
-	 *
-	 * @return string
-	 */
-	public function layout_form_end( $additional_args = array() ) {
-		$html = EEH_Formatter::nl(-1) . '</tbody>';
-		return $html . parent::layout_form_end( $additional_args );
+		return parent::layout_form_begin( $additional_args );
 	}
 
 	/**
@@ -41,21 +24,24 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout{
 	 * @return string
 	 */
 	public function layout_input( $input ) {
-		if( $input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy ){
+		if ( $input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy ) {
 			$input->set_html_class( 'large-text' );
-			if( $input instanceof EE_Text_Area_Input ){
+			if ( $input instanceof EE_Text_Area_Input ) {
 				$input->set_rows( 4 );
 				$input->set_cols( 60 );
 			}
-		}elseif ( $input->get_display_strategy() instanceof EE_Text_Input_Display_Strategy ||
-			 $input->get_display_strategy() instanceof EE_Admin_File_Uploader_Display_Strategy ) {
+		} else if ( $input->get_display_strategy() instanceof EE_Text_Input_Display_Strategy || $input->get_display_strategy() instanceof EE_Admin_File_Uploader_Display_Strategy ) {
 			$input->set_html_class( 'large-text' );
 		}
 
 		//overriding parent to add wp admin specific things.
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input ) {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input()/* . '<br/>'*/;
+			$html .= EEH_Formatter::nl(1) . '<tr>';
+			$html .= EEH_Formatter::nl(1) . '<td colspan="2">';
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input();
+			$html .= EEH_Formatter::nl(-1) . '</td>';
+			$html .= EEH_Formatter::nl(-1) . '</tr>';
 		} else {
 			//if label is in input, let's remove that (typically happens with checkboxes and radios, no need to repeat the label).
 			$input_html = str_replace( $input->html_label_text(), '', $input->get_html_for_input() );
@@ -64,12 +50,13 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout{
 			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
 			$html .= EEH_Formatter::nl(-1) . '</th>';
 			$html .= EEH_Formatter::nl() . '<td>';
-			$html .= EEH_Formatter::nl(1) . $input_html/* . '<br/>'*/;
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors()/* . '<br/>'*/;
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_Formatter::nl(1) . $input_html;
+			$html .= $input->get_html_for_errors() != '' ? EEH_Formatter::nl() . $input->get_html_for_errors() : '';
+			$html .= $input->get_html_for_help() != '' ? EEH_Formatter::nl() . $input->get_html_for_help() : '';
 			$html .= EEH_Formatter::nl(-1) . '</td>';
-			$html .= EEH_Formatter::nl(-1) . '</tr>' .  EEH_Formatter::nl(-1);
+			$html .= EEH_Formatter::nl(-1) . '</tr>';
 		}
+		$html .= EEH_Formatter::nl(-1);
 		return $html;
 	}
 }
