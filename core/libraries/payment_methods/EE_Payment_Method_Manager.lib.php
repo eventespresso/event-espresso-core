@@ -52,9 +52,13 @@ class EE_Payment_Method_Manager {
 	 * or just re-use the PMTs we found last time we checked during this request (if
 	 * we have not yet checked during this request, then we need to check anyways)
 	 */
-	protected function _maybe_register_payment_methods( $force_recheck = FALSE ){
+	public function maybe_register_payment_methods( $force_recheck = FALSE ){
 		if( ! $this->_payment_method_types || $force_recheck ){
-			$this->register_payment_methods();
+			$this->_register_payment_methods();
+			//if in admin lets ensure caps are set.
+			if ( is_admin() ) {
+				EE_Registry::instance()->CAP->init_caps();
+			}
 		}
 	}
 
@@ -63,11 +67,12 @@ class EE_Payment_Method_Manager {
 	 *
 	 * 		@return array
 	 */
-	function register_payment_methods() {
+	protected function _register_payment_methods() {
 		// grab list of installed modules
 		$pm_to_register = glob( EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$pm_to_register = apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', $pm_to_register );
+
 		// loop through folders
 		foreach ( $pm_to_register as $pm_path ) {
 				$this->register_payment_method( $pm_path );
@@ -123,7 +128,7 @@ class EE_Payment_Method_Manager {
 	 * @return boolean
 	 */
 	public function payment_method_type_exists($payment_method_name, $force_recheck = FALSE){
-		$this->_maybe_register_payment_methods($force_recheck);
+		$this->maybe_register_payment_methods($force_recheck);
 		if(isset($this->_payment_method_types[$payment_method_name])){
 			require_once($this->_payment_method_types[$payment_method_name]);
 			return true;
@@ -139,7 +144,7 @@ class EE_Payment_Method_Manager {
 	 * @return array
 	 */
 	public function payment_method_type_names($with_prefixes = FALSE, $force_recheck = FALSE ){
-		$this->_maybe_register_payment_methods($force_recheck);
+		$this->maybe_register_payment_methods($force_recheck);
 		if($with_prefixes){
 			$classnames = array_keys($this->_payment_method_types);
 			$payment_methods = array();
@@ -158,7 +163,7 @@ class EE_Payment_Method_Manager {
 	 * @return EE_PMT_Base[]
 	 */
 	public function payment_method_types( $force_recheck = FALSE ){
-		$this->_maybe_register_payment_methods($force_recheck);
+		$this->maybe_register_payment_methods($force_recheck);
 		$pmt_objs = array();
 		foreach($this->payment_method_type_names(true) as $classname){
 			$pmt_objs[] = new $classname;
