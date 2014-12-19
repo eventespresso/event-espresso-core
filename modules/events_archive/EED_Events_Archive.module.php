@@ -104,7 +104,7 @@ class EED_Events_Archive  extends EED_Module {
 		$this->load_event_list_assets();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		EEH_Event_Query::filter_query_parts();
+		// set params that will get used by the filters
 		EEH_Event_Query::set_query_params(
 			'', 	// month
 			'', 	// category
@@ -112,6 +112,8 @@ class EED_Events_Archive  extends EED_Module {
 			'start_date', 	// orderby
 			'ASC' 	// sort
 		);
+		//add query filters
+		add_action( 'pre_get_posts', array( 'EEH_Event_Query', 'filter_query_parts' ), 11, 1 );
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );

@@ -186,7 +186,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	left                    : 50%;
 	margin-left             : -15px;
 	padding                 : 0;
-	z-index                 : 20000;
+	z-index                 : 9999999;
 	font-size               : 48px;
 	color                   : #000000;
 	-webkit-font-smoothing  : antialiased;

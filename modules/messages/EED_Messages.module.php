@@ -534,8 +534,8 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function send_newsletter_message( $contacts, $grp_id ) {
-		//make sure mtp is id and set it in the $_POST global for later messages setup.
-		$_POST['GRP_ID'] = (int) $grp_id;
+		//make sure mtp is id and set it in the EE_Request Handler later messages setup.
+		EE_Registry::instance()->REQ->set( 'GRP_ID', (int) $grp_id );
 
 		self::_load_controller();
 		self::$_EEMSG->send_message('newsletter', $contacts);

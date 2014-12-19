@@ -66,7 +66,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
 			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso'),
-			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso')
+			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_URL]' => __( 'This parses to the url that will switch to the receipt if an invoice is displayed, and switch to the invoice if receipt is displayed. If a message type OTHER than invoice or receipt is displayed then this will just return the url for the invoice. If the related message type is not active  then will parse to an empty string.', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_BUTTON]' => sprintf( __( 'The same as %1$s[INVOICE_RECEIPT_SWITCHER_URL]%2$s except this returns the html for a button linked to the invoice or receipt.', 'event_espresso' ), '<code>', '</code>' )
 			);
 	}
 
@@ -190,6 +192,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				}
 				return $reg->receipt_url();
 				break;
+
+			case "[INVOICE_RECEIPT_SWITCHER_URL]" :
+				return $this->_get_invoice_receipt_switcher( FALSE );
+				break;
+
+			case "[INVOICE_RECEIPT_SWITCHER_BUTTON]" :
+				return $this->_get_invoice_receipt_switcher();
+				break;
+
 
 		}
 
@@ -391,6 +402,44 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
+	}
+
+
+
+
+
+	/**
+	 * get invoice/receipt switch button or url.
+	 *
+	 * @param bool $button true (default) returns the html for a button, false just returns the url.
+	 *
+	 * @return string
+	 */
+	protected function _get_invoice_receipt_switcher( $button = TRUE ) {
+		$reg = $this->_data->primary_reg_obj;
+		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
+		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
+			return'';
+		}
+
+		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
+		$switch_to_label = $switch_to_invoice && ! $message_type instanceof EE_Receipt_message_type ? __('View Invoice', 'event_espresso' ) : __( 'Switch to Invoice', 'event_espresso' );
+		$switch_to_label = ! $switch_to_invoice ? __( 'Switch to Receipt', 'event_espresso' ) : $switch_to_label;
+		$switch_to_url = $switch_to_invoice ? $reg->invoice_url() : $reg->receipt_url();
+
+		if ( ! $button ) {
+			return $switch_to_url;
+		}
+
+		if ( ! empty( $switch_to_url ) ) {
+
+		return  '
+<form method="post" action="' . $switch_to_url . '" >
+	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
+</form>
+		';
+		}
+		return '';
 	}
 
 

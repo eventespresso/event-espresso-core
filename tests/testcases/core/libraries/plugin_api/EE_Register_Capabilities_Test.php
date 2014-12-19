@@ -68,7 +68,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 	private function _pretend_capabilities_registered() {
 		//pretend correct hookpoint set.
 		global $wp_actions;
-		unset( $wp_actions['AHEE__EE_Capabilities__init_role_caps__complete'] );
+		unset( $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] );
 		//register capabilities
 		EE_Register_Capabilities::register( 'Test_Capabilities', $this->_valid_capabilities );
 

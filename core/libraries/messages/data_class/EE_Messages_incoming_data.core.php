@@ -339,7 +339,7 @@ abstract class EE_Messages_incoming_data {
 
 			if ( !empty( $eventsetup) ) {
 				foreach ( $eventsetup as $eid => $items ) {
-					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID())));
+					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID()), 'default_where_conditions' => 'none'));
 					$events[$eid] = array(
 						'ID' => $eid,
 						'event' => $evtcache[$eid],
