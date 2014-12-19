@@ -78,6 +78,7 @@ class EE_Payment_Method_Manager {
 		foreach ( $pm_to_register as $pm_path ) {
 				$this->register_payment_method( $pm_path );
 		}
+		do_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods' );
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', $this->_payment_method_types );
 	}
@@ -129,7 +130,8 @@ class EE_Payment_Method_Manager {
 	 * @return boolean
 	 */
 	public function payment_method_type_exists($payment_method_name, $force_recheck = FALSE){
-		if ( ! is_array( $this->_payment_method_types ) || ! isset( $this->_payment_method_types[$payment_method_name] ) ) {
+		if ( ! is_array( $this->_payment_method_types ) || ! isset( $this->_payment_method_types[$payment_method_name] )
+				|| $force_recheck ) {
 			$this->maybe_register_payment_methods($force_recheck);
 		}
 		if(isset($this->_payment_method_types[$payment_method_name])){

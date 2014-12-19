@@ -72,7 +72,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 		// add to list of modules to be registered
 		add_filter( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', array( 'EE_Register_Payment_Method', 'add_payment_methods' ));
 
-		if ( did_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register' ) ) {
+		if ( did_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods' ) ) {
 			self::_failsafe_registration();
 		}
 	}
