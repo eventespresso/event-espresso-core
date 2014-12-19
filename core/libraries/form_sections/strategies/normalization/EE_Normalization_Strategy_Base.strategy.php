@@ -43,11 +43,31 @@ abstract class EE_Normalization_Strategy_Base extends EE_Form_Input_Strategy_Bas
 	abstract function normalize($value_to_normalize);
 
 	/**
+	 * Identical to normalize, except normalize_one() CANNOT be passed an array and
+	 * never returns an array. Useful if the normalization strategy converts between arrays
+	 * @param string $individual_item_to_normalize
+	 * @return mixed
+	 */
+	public function normalize_one( $individual_item_to_normalize ){
+		return $this->normalize( $individual_item_to_normalize );
+	}
+
+	/**
 	 * Takes the normalized value (for an Yes_No_Input this could be TRUE or FALSE), and converts it into
 	 * the value you would use in the html form (for a Yes_No_Input this could be '1' or '0').
 	 * @returns string|array the 'raw' value as used in the form, usually a string or array of strings.
 	 */
 	abstract function unnormalize( $normalized_value );
+
+	/**
+	 * Normally the same as unnormalize, except it CANNOT be passed an array and
+	 * ALWAYS returns a string
+	 * @param mixed $individual_item_to_unnormalize NOT an array
+	 * @return string
+	 */
+	public function unnormalize_one( $individual_item_to_unnormalize ) {
+		return $this->unnormalize( $individual_item_to_unnormalize );
+	}
 }
 
 // End of file EE_Normalization_Strategy_Base.strategy.php

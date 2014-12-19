@@ -362,9 +362,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			}else{
 				$where_query_params = array();
 			}
-			$relation_obj->remove_relations($this->_model_object, $where_query_params);
+			$this->_model_object->_remove_relations( $relation_name, $where_query_params );
 			foreach($normalized_input_value as $id){
-				$relation_obj->add_relation_to($this->_model_object, $id);
+				$this->_model_object->_add_relation_to( $id, $relation_name );
 			}
 		}
 		return TRUE;
