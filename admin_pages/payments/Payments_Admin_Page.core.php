@@ -280,9 +280,17 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
+		/**
+		 * first let's ensure payment methods have been setup. We do this here because when people activate a
+		 * payment method for the first time (as an addon), it may not setup its capabilities or get registered correctly due
+		 * to the loading process.  However, people MUST setup the details for the payment method so its safe to do a
+		 * recheck here.
+		 */
+		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+		EE_Payment_Method_Manager::instance()->maybe_register_payment_methods( TRUE );
+
 		EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all_active());
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
 		$tabs = array();
 		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
