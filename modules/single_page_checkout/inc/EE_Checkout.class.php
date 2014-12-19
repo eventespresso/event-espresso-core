@@ -489,7 +489,6 @@ class EE_Checkout {
 	 */
 	public function transaction_has_primary_registrant() {
 		return $this->primary_attendee_obj instanceof EE_Attendee ? TRUE : FALSE;
-		//		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
 	}
 
 
@@ -697,6 +696,10 @@ class EE_Checkout {
 		if ( $attendee instanceof EE_Attendee && $attendee->ID() ) {
 			// make sure the cached attendee is added to the model entity mapper
 			$registration->attendee()->get_model()->refresh_entity_map_with( $attendee->ID(), $attendee );
+			// maybe cache primary_attendee_obj ?
+			if ( $registration->is_primary_registrant() ) {
+				$this->primary_attendee_obj = $attendee;
+			}
 		}
 	}
 
