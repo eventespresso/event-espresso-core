@@ -49,9 +49,11 @@ class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table{
 					break;
 				case 'card-exp-date-mnth':
 					$new_input_name = 'exp_month';
+					$input_value = '';
 					break;
 				case 'card-exp-date-year':
 					$new_input_name = 'exp_year';
+					$input_value = 0;
 					break;
 				case 'ccv-code':
 					$new_input_name = 'cvv';
