@@ -429,7 +429,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if(isset($this->_req_data['payment_method'])){
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
-			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
+			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( $payment_method_slug );
 			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','payment_method'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
