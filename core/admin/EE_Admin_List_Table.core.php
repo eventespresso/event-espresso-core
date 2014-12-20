@@ -488,6 +488,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
+		$assembled_views = '';
 
 		if ( empty( $views )) {
 			return;
@@ -496,11 +497,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;
 			if ( isset( $view['slug'] ) && isset( $view['class'] ) && isset( $view['url'] ) && isset( $view['label']) ) {
-				$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+				$assembled_views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
 			}
 		}
 
-		echo is_array( $views) && ! empty( $views ) ? implode( " |</li>\n", $views ) . "</li>\n" : '';
+		echo is_array( $assembled_views) && ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
 		echo "</ul>";
 	}
 
