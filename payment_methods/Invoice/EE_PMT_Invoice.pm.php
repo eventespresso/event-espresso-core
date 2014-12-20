@@ -144,7 +144,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment'						=> $payment,
 					'page_confirmation_text'					=> '',
 					'page_extra_info'	=> '',
-					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'pdf' )
+					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'html' )
 				),
 				$this->_pm_instance->all_extra_meta_array()
 			),
