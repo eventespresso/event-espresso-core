@@ -297,6 +297,8 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
 
 		parent::__construct( $menu_args, $required );
+
+		$this->position = ! empty( $this->position ) ? (int) $this->position : $this->position;
 	}
 
 
@@ -304,7 +306,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		$main =  add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback );
+		$main =  add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback, $this->icon_url, $this->position );
 		if ( ! empty( $this->subtitle ) ) {
 			add_submenu_page( $this->parent_slug, $this->subtitle, $this->subtitle, $this->capability, $this->menu_slug, $this->menu_callback );
 		}
