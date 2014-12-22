@@ -87,7 +87,6 @@ jQuery(document).ready(function($) {
 				} else {
 					//alert( 'recaptcha failed' );
 					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.passed() error', eei18n.recaptcha_fail ));
-					Recaptcha.reload();
 				}
 			}
 		},
