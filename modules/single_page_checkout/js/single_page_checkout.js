@@ -693,7 +693,7 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
-
+			alert( 'SPCO.additional_post_data = ' + SPCO.additional_post_data );
 			// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
@@ -744,6 +744,8 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
+			alert( 'SPCO.additional_post_data = ' + SPCO.additional_post_data );
+
 			// alert( 'form_data = ' + form_data );
 
 			$.ajax({
@@ -803,6 +805,7 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
+			alert( 'SPCO.additional_post_data = ' + SPCO.additional_post_data );
 
 			// alert( 'form_data = ' + form_data );
 
