@@ -78,7 +78,7 @@ jQuery(document).ready( function($) {
 		main_container : $('#ee-single-page-checkout-dv'),
 		// #methods-of-payment div
 		methods_of_payment : null,
-	// depending on what step is in progress, this is the current form
+		// depending on what step is in progress, this is the current form
 		current_form_to_validate : null,
 		// all form inputs within the SPCO main_container
 		form_inputs : null,
@@ -119,6 +119,7 @@ jQuery(document).ready( function($) {
 				SPCO.form_inputs = SPCO.main_container.find( ':input' );
 				SPCO.disable_caching();
 				SPCO.set_validation_defaults();
+				SPCO.initialize_form_validation();
 				SPCO.uncheck_copy_option_inputs();
 				SPCO.set_listener_for_advanced_copy_options_checkbox();
 				SPCO.set_listener_for_copy_all_attendee_info_checkbox();
@@ -149,6 +150,7 @@ jQuery(document).ready( function($) {
 		 *	@function set_validation_defaults
 		 */
 		set_validation_defaults : function() {
+
 			// jQuery validation object
 			$.validator.setDefaults({
 
@@ -181,6 +183,17 @@ jQuery(document).ready( function($) {
 
 			});
 
+		},
+
+
+
+		/**
+		 *	@function initialize_form_validation
+		 */
+		initialize_form_validation : function() {
+			if ( SPCO.verify_form_validation_exists( 'initialize_form_validation' )) {
+				EEFV.initialize( ee_form_section_vars.form_data );
+			}
 		},
 
 
@@ -894,19 +907,35 @@ jQuery(document).ready( function($) {
 
 
 		/**
-		 * @function remove_previous_validation_rules
+		 * @function verify_form_validation_exists
+		 * @param  {string} source
 		 */
-		remove_previous_validation_rules : function() {
+		verify_form_validation_exists : function( source ) {
+			// set error source
+			if ( typeof source === 'undefined' || source === '' ) {
+				source = 'verify_form_validation_exists';
+			}
 			if ( typeof EEFV === 'undefined' ) {
 				// if WP_DEBUG is on, then display an error
 				if ( eei18n.wp_debug ) {
-					var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'remove_previous_validation_rules', eei18n.validation_error ), '' );
+					var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( source, eei18n.validation_error ), '' );
 					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 				}
-				return;
+				return false;
 			}
-			// remove any previously applied validation rules for each html form
-			EEFV.remove_previous_validation_rules();
+			return true;
+		},
+
+
+
+		/**
+		 * @function remove_previous_validation_rules
+		 */
+		remove_previous_validation_rules : function() {
+			if ( SPCO.verify_form_validation_exists( 'remove_previous_validation_rules' )) {
+				// remove any previously applied validation rules for each html form
+				EEFV.remove_previous_validation_rules();
+			}
 		},
 
 
@@ -918,21 +947,15 @@ jQuery(document).ready( function($) {
 		 */
 		set_new_validation_rules : function( next_step, validation_rules ) {
 			//SPCO.console_log( 'set_new_validation_rules : next_step', next_step, true );
-			if ( typeof EEFV === 'undefined' ) {
-				// if WP_DEBUG is on, then display an error
-				if ( eei18n.wp_debug ) {
-					var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'set_new_validation_rules', eei18n.validation_error ), '' );
-					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
+			if ( SPCO.verify_form_validation_exists( 'set_new_validation_rules' )) {
+				// pass new rules for setup
+				EEFV.initialize( validation_rules.form_data );
+				// the form id for the current step
+				var form_id = 'ee-spco-' + next_step + '-reg-step-form';
+				if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
+					//SPCO.console_log( 'set_new_validation_rules : form_id', form_id, true );
+					SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 				}
-				return;
-			}
-			// pass new rules for setup
-			EEFV.initialize( validation_rules.form_data );
-			// the form id for the current step
-			var form_id = 'ee-spco-' + next_step + '-reg-step-form';
-			if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-				//SPCO.console_log( 'set_new_validation_rules : form_id', form_id, true );
-				SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 			}
 		},
 
