@@ -410,7 +410,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				if ( $form->form_data_present_in( $this->_req_data )) {
 					$form->receive_form_submission( $this->_req_data );
 				}
-				echo $form->get_html_and_js();
+				echo $form->form_open() . $form->get_html_and_js() . $form->form_close();
 		} else {
 			echo $this->_activate_payment_method_button( $payment_method )->get_html_and_js();
 		}
@@ -445,7 +445,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
 					array(
 						'pci_dss_compliance_' . $payment_method->slug() 				=> $this->_pci_dss_compliance( $payment_method ),
-						'currency_support_' . $payment_method->slug()					=> $this->_currency_support( $payment_method ),
+//						'currency_support_' . $payment_method->slug()					=> $this->_currency_support( $payment_method ),
 						'payment_method_settings_' . $payment_method->slug() 	=> $this->_payment_method_settings( $payment_method ),
 						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
 						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
@@ -569,11 +569,20 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return \EE_Form_Section_HTML
 	 */
 	protected function _update_payment_method_button( EE_Payment_Method $payment_method ) {
-		return new EE_Submit_Input(
+		$update_button = new EE_Submit_Input(
 			array(
 				'html_id' 		=> 'save_' . $payment_method->slug() . '_settings',
 				'default' 		=> sprintf( __( 'Update %s Payment Settings', 'event_espresso' ), $payment_method->admin_name() ),
 				'html_label' => EEH_HTML::nbsp()
+			)
+		);
+		return new EE_Form_Section_HTML(
+			EEH_HTML::no_row( EEH_HTML::br(2) ) .
+			EEH_HTML::tr(
+				EEH_HTML::th( __( 'Update Settings', 'event_espresso') ) .
+				EEH_HTML::td(
+					$update_button->get_html_for_input()
+				)
 			)
 		);
 	}
@@ -591,7 +600,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$link_text_and_title = sprintf( __( 'Deactivate %1$s Payments?', 'event_espresso'), $payment_method->admin_name() );
 		return new EE_Form_Section_HTML(
 			EEH_HTML::tr(
-				EEH_HTML::th() .
+				EEH_HTML::th( __( 'Deactivate Payment Method', 'event_espresso') ) .
 				EEH_HTML::td(
 					EEH_HTML::link(
 						EE_Admin_Page::add_query_args_and_nonce(
