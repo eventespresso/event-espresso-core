@@ -94,16 +94,6 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * @function response_callback
-		 * @param  {string} response
-		 */
-		response_callback : function( response ) {
-			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
-		},
-
-
-
-		/**
 		 * @function display_error
 		 * @param  {string} msg
 		 */
@@ -140,3 +130,13 @@ jQuery(document).ready(function($) {
 	EE_RECAPTCHA.initialize();
 
 });
+
+var espresso_recaptcha_verification = function( response ) {
+	jQuery(document).ready(function($) {
+		if ( typeof response !== 'undefined' && response !== '' && typeof SPCO.additional_post_data !== 'undefined' && SPCO.additional_post_data.indexOf( 'g-recaptcha-response' ) === -1 ) {
+			alert( 'g-recaptcha-response = ' + response );
+			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
+		}
+	});
+};
+
