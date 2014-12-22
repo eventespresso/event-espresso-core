@@ -12,14 +12,14 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 		// the actual input
 		$input = '<input type="text" size="34" ';
 		$input .= 'name="' . $this->_input->html_name() . '" ';
-		$input .= $this->_input->html_class() != '' ? 'class="regular-text ee_media_url ' . $this->_input->html_class() . '" ' : 'class="regular-text ee_media_url" ';
+		$input .= $this->_input->html_class() != '' ? 'class="large-text ee_media_url ' . $this->_input->html_class() . '" ' : 'class="large-text ee_media_url" ';
 		$input .= 'value="' . $this->_input->raw_value_in_form() . '">';
 		// image uploader
 		$uploader = EEH_HTML::link( '#', '<img src="' . admin_url( 'images/media-button-image.gif' ) . '" >', __( 'click to add an image', 'event_espresso' ), '', 'ee_media_upload )' );
 		//only attempt to show the image if it at least exists
-		$image = $this->src_exists( $this->_input->raw_value() ) ? EEH_HTML::img( $this->_input->raw_value(), __( 'logo', 'event_espresso' ), '', 'ee_media_image' ) : '';
+		$image = $this->src_exists( $this->_input->raw_value() ) ? EEH_HTML::br(2) . EEH_HTML::img( $this->_input->raw_value(), __( 'logo', 'event_espresso' ), '', 'ee_media_image' ) : '';
 		// html string
-		return EEH_HTML::span( $input . EEH_HTML::nbsp() . $uploader .  EEH_HTML::nbsp() . $image );
+		return EEH_HTML::span( $input . EEH_HTML::nbsp() . $uploader . $image );
 	}
 	/**
 	 * Its important this media only get enqueued AFTER init, but before the footer... where the
