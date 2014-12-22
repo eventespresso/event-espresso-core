@@ -254,11 +254,6 @@ jQuery(document).ready(function($){
 	};
 	// end of EEFV object
 
-	/**
-	 *	run EEFV
-	 */
-	EEFV.initialize( ee_form_section_vars.form_data );
-
 });
 
 // example  ee_form_section_vars
