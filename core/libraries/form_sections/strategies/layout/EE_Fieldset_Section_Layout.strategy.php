@@ -26,11 +26,13 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout{
 	protected $_legend_text;
 
 
+
 	/**
-	 * 	construct
+	 *    construct
+	 *
+	 * @param array $options
 	 */
 	function __construct( $options = array() ){
-		EE_Registry::instance()->load_helper('Formatter');
 		foreach( $options as $key => $value ) {
 			$key = '_' . $key;
 			if ( property_exists( $this, $key )) {
