@@ -94,6 +94,16 @@ jQuery(document).ready(function($) {
 
 
 		/**
+		 * @function response_callback
+		 * @param  {string} response
+		 */
+		response_callback : function( response ) {
+			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
+		},
+
+
+
+		/**
 		 * @function display_error
 		 * @param  {string} msg
 		 */
