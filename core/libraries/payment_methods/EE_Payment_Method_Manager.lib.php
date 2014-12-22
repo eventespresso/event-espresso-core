@@ -255,6 +255,21 @@ class EE_Payment_Method_Manager {
 
 
 	/**
+	 * Deactivates a payment method of the given payment method slug.
+	 *
+	 * @param string $payment_method_slug The slug for the payment method to deactivate.
+	 *
+	 * @return int count of rows updated.
+	 */
+	public function deactivate_payment_method( $payment_method_slug ) {
+		$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
+		return $count_updated;
+	}
+
+
+
+
+	/**
 	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter to add dynamic payment method
 	 * access caps.
 	 *
