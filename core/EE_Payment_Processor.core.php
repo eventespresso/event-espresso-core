@@ -275,22 +275,18 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 		} else {
 			// there is no payment. Must be an offline gateway
-			// but have we already triggered pending payment notification?
-			if ( $transaction->status_ID() !== EEM_Transaction::incomplete_status_code ) {
-				//create a hacky payment object, but dont save it
-				$payment = EE_Payment::new_instance(
-					array(
-						'TXN_ID' 					=> $transaction->ID(),
-						'STS_ID' 					=> EEM_Payment::status_id_pending,
-						'PAY_timestamp' 	=> current_time('timestamp'),
-						'PAY_amount' 		=> 0.00,
-						'PMD_ID' 				=> $transaction->payment_method_ID()
-					)
-				);
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
-				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
-			}
-
+			//create a hacky payment object, but dont save it
+			$payment = EE_Payment::new_instance(
+				array(
+					'TXN_ID' 					=> $transaction->ID(),
+					'STS_ID' 					=> EEM_Payment::status_id_pending,
+					'PAY_timestamp' 	=> current_time('timestamp'),
+					'PAY_amount' 		=> 0.00,
+					'PMD_ID' 				=> $transaction->payment_method_ID()
+				)
+			);
+			$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 		}
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
