@@ -26,7 +26,9 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 	 * @return string
 	 */
 	public function layout_subsection( $form_section ){
-		if ( $form_section instanceof EE_Form_Section_Base ) {
+		if ( $form_section instanceof EE_Form_Section_Proper ) {
+			return EEH_HTML::no_row( $form_section->get_html_and_js(), 2 );
+		} else if ( $form_section instanceof EE_Form_Section_HTML ) {
 			return $form_section->get_html_and_js();
 		}
 		return '';
@@ -65,9 +67,7 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 		//overriding parent to add wp admin specific things.
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input ) {
-			$html .= EEH_HTML::tr(
-				EEH_HTML::td( $input->get_html_for_input(), '', '',  '', 'colspan="2"' )
-			);
+			$html .= EEH_HTML::no_row( $input->get_html_for_input(), 2 );
 		} else {
 			$html .= EEH_HTML::tr(
 				EEH_HTML::th( $input->get_html_for_label(), '', '',  '', 'scope="row"' ) . EEH_HTML::td( $input_html )
