@@ -457,6 +457,24 @@ class EEH_HTML {
 
 
 	/**
+	 * no_row - for generating a "hidden" table row, good for embedding tables within tables
+	 * generates a new table row with one td cell that spans however many columns you set
+	 * removes all styles from the tr and td
+	 *
+	 * @param string $content
+	 * @param int    $colspan
+	 * @return string
+	 */
+	public static function no_row( $content = '', $colspan = 2 ) {
+		return EEH_HTML::tr(
+			EEH_HTML::td( $content, '', '',  'padding:0; height:0; overflow:hidden; border:none;', 'colspan="' . $colspan . '"' ),
+			'', '',  'padding:0; height:0; overflow:hidden; border:none;'
+		);
+	}
+
+
+
+	/**
 	 * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
 	 * usage: echo EEH_HTML::span( 'this is some inline text' );
 	 *
