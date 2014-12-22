@@ -102,7 +102,8 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function enqueue_styles_and_scripts() {
-		wp_register_script( 'espresso_recaptcha', RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js', array( 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'google_recaptcha', 'https://www.google.com/recaptcha/api.js?hl=' . EE_Registry::instance()->CFG->registration->recaptcha_language, array( 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_recaptcha', RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js', array( 'google_recaptcha' ), EVENT_ESPRESSO_VERSION, TRUE );
 		EE_Registry::$i18n_js_strings['no_SPCO_error'] = __( 'It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['no_recaptcha_error'] = __( 'There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['recaptcha_fail'] = __( 'Please complete the anti-spam test before proceeding.', 'event_espresso' );
@@ -143,8 +144,7 @@ class EED_Recaptcha  extends EED_Module {
 				EEH_Template::display_template(
 					RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
 					array(
-						'recaptcha_language' 	=> EE_Registry::instance()->CFG->registration->recaptcha_language,
-						'recaptcha_publickey' 		=> EE_Registry::instance()->CFG->registration->recaptcha_publickey,
+						'recaptcha_publickey' 	=> EE_Registry::instance()->CFG->registration->recaptcha_publickey,
 						'recaptcha_theme' 		=> EE_Registry::instance()->CFG->registration->recaptcha_theme,
 						'recaptcha_type' 			=> EE_Registry::instance()->CFG->registration->recaptcha_type
 					)
