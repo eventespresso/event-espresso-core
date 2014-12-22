@@ -90,6 +90,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
+				if( ! $line_item->is_taxable() ) {
+					$redirect_args['tax_' . $item_num] = 0;
+				}
 				//if we're not letting paypal calculate shipping, tell them its 0
 				if( ! $this->_paypal_shipping ){
 					$redirect_args['shipping_' . $item_num ] = '0';

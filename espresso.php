@@ -445,6 +445,12 @@ interface EEI_Line_Item{
 	 * @return int count of items saved
 	 */
 	public function save_this_and_descendants_to_txn( $txn_id = NULL );
+
+	/**
+	 * Indicates whether or not taxes should apply to this line item
+	 * @return boolean
+	 */
+	public function is_taxable();
 }
 
 interface EEI_Registration{
