@@ -351,6 +351,8 @@ jQuery(document).ready( function($) {
 				e.preventDefault();
 				e.stopPropagation();
 			});
+			// set additional_post_data as empty string
+			SPCO.additional_post_data = '';
 		},
 
 
@@ -846,7 +848,7 @@ jQuery(document).ready( function($) {
 		 */
 		process_response : function( next_step, response ) {
 			//clear additional_post_data
-			SPCO.additional_post_data = null;
+			SPCO.additional_post_data = '';
 			// alert( 'next_step = ' + next_step );
 			if ( typeof response !== 'undefined' && typeof response !== null ) {
 				// add trigger point so other JS can join the party
