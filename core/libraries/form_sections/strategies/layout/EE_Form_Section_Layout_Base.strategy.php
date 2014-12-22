@@ -22,7 +22,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * 	__construct
 	 */
 	function __construct(){
-		EE_Registry::instance()->load_helper('Formatter');
+		EE_Registry::instance()->load_helper('HTML');
 	}
 
 
@@ -74,6 +74,7 @@ abstract class EE_Form_Section_Layout_Base{
 			$this->layout_form_end(),
 			$this->_form_section
 		);
+
 		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
@@ -202,10 +203,9 @@ abstract class EE_Form_Section_Layout_Base{
 		$hook_name = str_replace( array( '-', ' ' ), '_', $this->_form_section->html_id() );
 		do_action( 'AHEE__Form_Section_Layout__' . $hook_name, $this->_form_section );
 		$html = apply_filters( 'AFEE__Form_Section_Layout__' . $hook_name . '__html', $html, $this->_form_section );
-		$html .= EEH_Formatter::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
-		$html .= EEH_Formatter::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
+		$html .= EEH_HTML::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
+		$html .= EEH_HTML::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
 		return $html;
-
 	}
 
 

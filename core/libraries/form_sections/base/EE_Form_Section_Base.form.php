@@ -96,6 +96,9 @@ abstract class EE_Form_Section_Base {
 	 * }
 	 */
 	function __construct( $options_array = array() ) {
+		// used by display strategies
+		EE_Registry::instance()->load_helper('HTML');
+		// assign incoming values to properties
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;
 			if ( property_exists( $this, $key ) && empty( $this->$key )) {
@@ -310,7 +313,7 @@ abstract class EE_Form_Section_Base {
 		if ( ! empty( $method )) {
 			$this->set_method( $method );
 		}
-		return EEH_Formatter::nl(1) . '<form id="' . $this->html_id() . '" action="' . $this->action() . '" method="' . $this->method() . '"' . $other_attributes . '>';
+		return EEH_HTML::nl( 1, 'form' ) . '<form id="' . $this->html_id() . '" action="' . $this->action() . '" method="' . $this->method() . '"' . $other_attributes . '>';
 	}
 
 
@@ -320,7 +323,7 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	public function form_close() {
-		return EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_Formatter::nl();
+		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
 
 
