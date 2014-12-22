@@ -46,7 +46,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 			$html.=$this->_display_options( $this->_input->options() );
 		}
 
-		$html.= EEH_HTML::nl( -1, 'select' ) . '</select>';
+		$html.= EEH_HTML::nl( 0, 'select' ) . '</select>';
 		return $html;
 	}
 

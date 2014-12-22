@@ -708,7 +708,8 @@ class EEH_HTML {
 			'h6' 	=> 0,
 			'p' 	=> 0,
 			'ul' 	=> 0,
-			'li' 	=> 1
+			'li' 	=> 1,
+			'option' => 1
 		);
 	}
 

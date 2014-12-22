@@ -56,7 +56,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 			$html.=$this->_display_options( $this->_input->options() );
 		}
 
-		$html.= EEH_HTML::nl( -1, 'select' ) . "</select>";
+		$html.= EEH_HTML::nl( 0, 'select' ) . "</select>";
 		return $html;
 	}
 
