@@ -378,7 +378,7 @@ abstract class EE_Messages_incoming_data {
 		$this->total_ticket_count = $total_ticket_count;
 		$this->registrations = $registrations;
 
-		$this->tax_line_items = $this->txn->tax_items();
+		$this->tax_line_items = array_merge( $this->txn->tax_items(), $this->txn->non_ticket_line_items() );
 		$this->payments = $this->txn->payments();
 
 

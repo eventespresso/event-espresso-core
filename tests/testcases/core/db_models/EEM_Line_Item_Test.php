@@ -38,13 +38,22 @@ class EEM_Line_Item_Test extends EE_UnitTestCase {
 				array(
 					'TXN_ID' => $txn->ID(),
 					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => NULL,
+					'OBJ_ID' => 0
+				)
+				);
+		$line_item_for_venue = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'TXN_ID' => $txn->ID(),
+					'LIN_type' => EEM_Line_Item::type_line_item,
 					'OBJ_type' => 'Venue',
 					'OBJ_ID' => 0
 				)
 				);
 		$non_ticket_line_items = EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $txn );
-		$this->assertEquals( 1, count( $non_ticket_line_items ) );
+		$this->assertEquals( 2, count( $non_ticket_line_items ) );
 		$this->assertTrue( in_array( $line_item_for_nothing, $non_ticket_line_items ) );
+		$this->assertTrue( in_array( $line_item_for_venue, $non_ticket_line_items ) );
 	}
 }
 

@@ -158,7 +158,9 @@ class EEM_Line_Item extends EEM_Base {
 		return $this->get_all( array( array(
 			'LIN_type' => self::type_line_item,
 			'TXN_ID' => $transaction,
-			'OBJ_type' => array( '!=', 'Ticket')
+			'OR' => array(
+				'OBJ_type*notticket' => array( '!=', 'Ticket'),
+				'OBJ_type*null' => array( 'IS_NULL' ))
 		)));
 	}
 
