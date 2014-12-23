@@ -656,8 +656,7 @@ class EEH_HTML {
 	 */
 	public static function nl( $indent = 0, $tag = 'none' ) {
 		$html = "\n";
-		$html .=EEH_HTML::indent( $indent, $tag );
-//		$html = "\n" . '<!-- ' . $tag . ' : ' . EEH_HTML::$_indent[ $tag ] . ' -->';
+		EEH_HTML::indent( $indent, $tag );
 		for ( $x = 0; $x < EEH_HTML::$_indent[ $tag ]; $x++ ) {
 			$html .= "\t";
 		}
@@ -681,7 +680,6 @@ class EEH_HTML {
 		}
 		EEH_HTML::$_indent[ $tag ] += intval( $indent );
 		EEH_HTML::$_indent[ $tag ] = EEH_HTML::$_indent[ $tag ] >= 0 ? EEH_HTML::$_indent[ $tag ] : 0;
-//		return '<!-- indent ' . EEH_HTML::$_indent[ $tag ] . ' : ' . $tag . ' : ' . $indent . ' -->';
 	}
 
 
@@ -693,12 +691,16 @@ class EEH_HTML {
 	private static function _set_default_indentation() {
 		// set some initial formatting for table indentation
 		EEH_HTML::$_indent = array(
-			'table' 	=> 0,
-			'thead' => 1,
-			'tbody' => 1,
-			'tr' 	=> 2,
-			'th' 	=> 3,
-			'td' 	=> 3,
+			'none' 	=> 0,
+			'form' 	=> 0,
+			'checkbox' 	=> 1,
+			'select' 	=> 1,
+			'table' 	=> 1,
+			'thead' => 2,
+			'tbody' => 2,
+			'tr' 	=> 3,
+			'th' 	=> 4,
+			'td' 	=> 4,
 			'div' 	=> 0,
 			'h1' 	=> 0,
 			'h2' 	=> 0,
