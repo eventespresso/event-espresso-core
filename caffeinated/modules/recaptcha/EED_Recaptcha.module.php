@@ -167,7 +167,7 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function recaptcha_passed() {
 		// logged in means you have already passed a turing test of sorts
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() || EED_Recaptcha::_bypass_recaptcha() ) {
 			return TRUE;
 		}
 		// was test already passed?
@@ -193,8 +193,33 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_response( $recaptcha_response = array() ) {
-		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::$_not_a_robot;
+		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::_bypass_recaptcha() ? TRUE :  EED_Recaptcha::$_not_a_robot;
 		return $recaptcha_response;
+	}
+
+
+
+
+	/**
+	 * 	_bypass_recaptcha
+	 *
+	 * 	@access private
+	 * 	@return 	boolean
+	 */
+	private static function _bypass_recaptcha() {
+		// an array of key value pairs that must match exactly with the incoming request, in order to bypass recaptcha for the current request ONLY
+		$bypass_request_params_array = apply_filters( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array() );
+		// does $bypass_request_params_array have any values ?
+		if ( empty( $bypass_request_params_array )) {
+			return FALSE;
+		}
+		// initially set bypass to TRUE
+		$bypass_recaptcha = TRUE;
+		foreach ( $bypass_request_params_array as $key => $value ) {
+			// if $key is not found or value doesn't match exactly, then toggle bypass to FALSE, otherwise carry over it's value. This way, one missed setting results in no bypass
+			$bypass_recaptcha = isset( $_REQUEST[ $key ] ) && $_REQUEST[ $key ] === $value ? $bypass_recaptcha : FALSE;
+		}
+		return $bypass_recaptcha;
 	}
 
 
