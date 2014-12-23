@@ -289,6 +289,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				);
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
+			}else{
+				//ok so the transaction is already set to incomplete...
+				//and we're basically wanting to set it to incomplete again?
+				//don't bother
+				return;
 			}
 
 		}
