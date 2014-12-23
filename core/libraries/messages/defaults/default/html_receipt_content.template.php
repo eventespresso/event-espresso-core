@@ -41,14 +41,14 @@
 		[EVENT_LIST]
 	</div>
 	<div class="taxes">
-		<h3 class="section-title"><?php _e( "Taxes", 'event_espresso' ) ?></h3>
+		<h3 class="section-title"><?php _e( "Additional Charges/Discounts", 'event_espresso' ) ?></h3>
 		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
-					<th class="left ticket_th"><?php _e( "Tax Name", "event_espresso" ); ?></th>
+					<th class="left ticket_th"><?php _e( "Name", "event_espresso" ); ?></th>
 					<th class="left"><?php _e( 'Description', 'event_espresso' ); ?></th>
 					<th class="event_th item_c"><?php _e( 'Rate', 'event_espresso' ); ?></th>
-					<th class="subtotal_th"><?php _e( 'Tax Amount', 'event_espresso' ); ?></th>
+					<th class="subtotal_th"><?php _e( 'Amount', 'event_espresso' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
