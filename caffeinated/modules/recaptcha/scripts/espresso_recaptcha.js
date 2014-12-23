@@ -80,7 +80,11 @@ jQuery(document).ready(function($) {
 			//alert( 'process_SPCO_response' );
 			//SPCO.console_log_object( 'SPCO_response', SPCO_response, 0 );
 			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' ) {
-				if ( SPCO_response.recaptcha_passed ) {
+				// bypass recaptcha ?
+				if ( SPCO_response.bypass_recaptcha ) {
+					//  you're still not a robot
+					EE_RECAPTCHA.not_a_robot = false;
+				} else if ( SPCO_response.recaptcha_passed ) {
 					// remove recaptcha
 					EE_RECAPTCHA.recaptcha_div.html('');
 					EE_RECAPTCHA.not_a_robot = true;

@@ -193,7 +193,12 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_response( $recaptcha_response = array() ) {
-		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::_bypass_recaptcha() ? TRUE :  EED_Recaptcha::$_not_a_robot;
+		if ( EED_Recaptcha::_bypass_recaptcha() ) {
+			$recaptcha_response['bypass_recaptcha'] = TRUE;
+			$recaptcha_response['recaptcha_passed'] = TRUE;
+		} else {
+			$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::$_not_a_robot;
+		}
 		return $recaptcha_response;
 	}
 
