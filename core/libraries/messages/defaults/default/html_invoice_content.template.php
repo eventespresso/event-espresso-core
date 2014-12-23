@@ -79,8 +79,8 @@
 			</tr>
 			<tr class="total_tr odd">
 				<td colspan="2">&nbsp;</td>
-				<td colspan="2" class="total" id="total_currency"><?php _e( 'Tax Total', 'event_espresso' ); ?></td>
-				<td class="total">[TXN_TAX_SUBTOTAL]</td>
+				<td colspan="2" class="total" id="total_currency"><?php _e( 'Total', 'event_espresso' ); ?></td>
+				<td class="total">[TOTAL_COST]</td>
 			</tr>
 		</tbody>
 	</table>
