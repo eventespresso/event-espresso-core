@@ -131,6 +131,12 @@ jQuery(document).ready(function($) {
 
 });
 
+
+
+/**
+ * @function espresso_recaptcha_verification
+ * @param  {string} response
+ */
 var espresso_recaptcha_verification = function( response ) {
 	jQuery(document).ready(function($) {
 		if ( typeof response !== 'undefined' && response !== '' && typeof SPCO.additional_post_data !== 'undefined' && SPCO.additional_post_data.indexOf( 'g-recaptcha-response' ) === -1 ) {
