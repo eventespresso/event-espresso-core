@@ -118,3 +118,7 @@
 		</tfoot>
 	</table>
 </div>
+<div class="print_button_div noPrint">
+	[INVOICE_RECEIPT_SWITCHER_BUTTON] [DISPLAY_PDF_BUTTON]
+	<div class="clear"></div>
+</div>
