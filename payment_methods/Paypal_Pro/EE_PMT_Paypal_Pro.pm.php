@@ -58,7 +58,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'signature'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal API Signature %s", "event_espresso"),$this->get_help_tab_link())
 				)),
-				'credit_card_types'=>new EE_Checkbox_Multi_Input($this->card_types_supported()),
+				'credit_card_types'=>new EE_Checkbox_Multi_Input($this->card_types_supported(), array( 'html_label_text' => __( 'Card Types Supported', 'event_espresso' ))),
 				)
 			)
 		);
@@ -85,12 +85,12 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'html_id'=> 'ee-Paypal_Pro-billing-form',
 				'subsections'=>array(
 					'credit_card'=>new EE_Credit_Card_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_name' => __( 'Card Number', 'event_espresso' ))
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Number', 'event_espresso' ))
 					),
 					'credit_card_type'=>new EE_Select_Input(
 						//the options are set dynamically
 						array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types )),
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Type', 'event_espresso' ))
 					),
 					'exp_month'=>new EE_Month_Input(
 						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )

@@ -65,7 +65,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['in_use']['count'] = EEM_Attendee::instance()->count();
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_delete_registration' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_delete_registration' ) ) {
 			$this->_views['trash']['count'] = EEM_Attendee::instance()->count_deleted();
 		}
 	}
