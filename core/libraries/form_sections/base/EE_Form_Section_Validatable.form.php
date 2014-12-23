@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Used from within a controller, Form Sections handle input sanitization.
  * And the EE_Model_Form_Section takes care of taking a model object and producing a generic form section,
  * and takes a filled form section, and can save the model object to the database.
- * Note there are actually two children of EE_Form_Section_Validatable: EE_Form_Section_Proper and EE_Form_INput_Base.
+ * Note there are actually two children of EE_Form_Section_Validatable: EE_Form_Section_Proper and EE_Form_Input_Base.
  * The former is what you probably expected EE_Form_Section_Validatable to be, whereas the latter is the parent class for
  * all fields within a form section. So this means that a Form Input is considered a subsection of form section in its own right.
  *
@@ -73,7 +73,6 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 
 	/**
 	 * Performs validation on this form section (and subsections). Should be called after _normalize()
-	 * @param array $req_data
 	 * @return boolean of whether or not the form section is valid
 	 */
 	abstract protected function _validate();
@@ -105,12 +104,12 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * If such an EE_Validation_Error object is passed in as the first arg, simply sets this as its form section, and adds
 	 * it to the list of validation errors
 	 * of errors
-	 * @param mixed string $message internationalized string describing the validation error; or it could be a proper EE_Validation_Error object
+	 * @param mixed $message_or_object internationalized string describing the validation error; or it could be a proper EE_Validation_Error object
 	 * @param string $error_code a short key which can be used to uniquely identify the error
 	 * @param Exception $previous_exception if there was an exception that caused the error, that exception
 	 * @return void
 	 */
-	function add_validation_error($message_or_object, $error_code = null,$previous_exception = null){
+	function add_validation_error( $message_or_object, $error_code = NULL, $previous_exception = NULL ){
 		if($message_or_object instanceof EE_Validation_Error){
 			$validation_error= $message_or_object;
 			$validation_error->set_form_section($this);
@@ -121,7 +120,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	}
 
 	/**
-	 * When generating the JS for the jquery valiation rules like<br>
+	 * When generating the JS for the jquery validation rules like<br>
 	 * <code>$( "#myform" ).validate({
 		rules: {
 		  password: "required",
@@ -135,7 +134,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 		password_again: {
 			equalTo: "#password"
 		  }</code>
-	 * except we leave it as a PHP obejct, and leave wp_localize_script to
+	 * except we leave it as a PHP object, and leave wp_localize_script to
 	 * turn it into a JSON object which can be used by the js
 	 * @return array
 	 */

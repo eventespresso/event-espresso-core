@@ -560,7 +560,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[$this->html_name()] = $jquery_validation_rules;
+			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
 		}else{
 			return array();
 		}

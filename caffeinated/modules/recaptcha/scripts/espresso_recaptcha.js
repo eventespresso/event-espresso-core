@@ -1,6 +1,6 @@
-jQuery(document).ready(function($) {
+var EE_RECAPTCHA;
 
-	var EE_RECAPTCHA;
+jQuery(document).ready(function($) {
 
 	/**
 	 * @namespace EE_RECAPTCHA
@@ -15,6 +15,7 @@ jQuery(document).ready(function($) {
 	 * @namespace eei18n
 	 * @type {{
 		 *     no_SPCO_error : string,
+		 *     no_recaptcha_error : string,
 		 *     recaptcha_fail : string
 		 * }}
 	 */
@@ -36,11 +37,19 @@ jQuery(document).ready(function($) {
 			}
 			// ensure that the SPCO js class is loaded
 			if ( typeof SPCO === 'undefined' ) {
-				EE_RECAPTCHA.display_no_SPCO_error( eei18n.no_SPCO_error );
+				// if WP_DEBUG is on, then display an error
+				if ( eei18n.wp_debug ) {
+					EE_RECAPTCHA.display_no_SPCO_error( eei18n.no_SPCO_error );
+				}
 				return;
 			}
+			// ensure that the proper html markup exists
 			if ( EE_RECAPTCHA.recaptcha_div === 'undefined' || EE_RECAPTCHA.recaptcha_div.length === 0 ) {
-				alert( 'NO recaptcha_div!' );
+				// if WP_DEBUG is on, then display an error
+				if ( eei18n.wp_debug ) {
+					var msg = SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.initialize() error', eei18n.no_recaptcha_error );
+					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, SPCO.generate_message_object( '', msg, '' ));
+				}
 				return;
 			}
 			EE_RECAPTCHA.set_listener_for_SPCO_response();
@@ -71,15 +80,17 @@ jQuery(document).ready(function($) {
 			//alert( 'process_SPCO_response' );
 			//SPCO.console_log_object( 'SPCO_response', SPCO_response, 0 );
 			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' ) {
-				if ( SPCO_response.recaptcha_passed ) {
-					//alert( 'recaptcha passed' );
+				// bypass recaptcha ?
+				if ( SPCO_response.bypass_recaptcha ) {
+					//  you're still not a robot
+					EE_RECAPTCHA.not_a_robot = false;
+				} else if ( SPCO_response.recaptcha_passed ) {
 					// remove recaptcha
 					EE_RECAPTCHA.recaptcha_div.html('');
 					EE_RECAPTCHA.not_a_robot = true;
 				} else {
 					//alert( 'recaptcha failed' );
 					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.passed() error', eei18n.recaptcha_fail ));
-					//EE_RECAPTCHA.recaptcha_div.find('.rc-button-reload').trigger('click');
 				}
 			}
 		},
@@ -123,3 +134,18 @@ jQuery(document).ready(function($) {
 	EE_RECAPTCHA.initialize();
 
 });
+
+
+
+/**
+ * @function espresso_recaptcha_verification
+ * @param  {string} response
+ */
+var espresso_recaptcha_verification = function( response ) {
+	jQuery(document).ready(function($) {
+		if ( typeof response !== 'undefined' && response !== '' && typeof SPCO.additional_post_data !== 'undefined' && SPCO.additional_post_data.indexOf( 'g-recaptcha-response' ) === -1 ) {
+			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
+		}
+	});
+};
+
