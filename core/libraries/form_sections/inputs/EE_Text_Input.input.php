@@ -2,12 +2,10 @@
 /**
  * Class EE_Text_Input
  *
- * Description
- *
- * @package            Event Espresso
+ * @package 			Event Espresso
  * @subpackage    core
- * @author                Brent Christensen
- * @since                $VID:$
+ * @author 				Mike Nelson
+ * @since               	4.6
  *
  */
 class EE_Text_Input extends EE_Form_Input_Base{
