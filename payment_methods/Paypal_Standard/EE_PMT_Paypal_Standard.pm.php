@@ -61,7 +61,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 				)),
 				'paypal_taxes' => new EE_Yes_No_Input(array(
 					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $this->get_help_tab_link() ),
-					'html_help_text' => __('Whether Paypal should calculate order taxes', 'event_espresso'),
+					'html_help_text' => __('Whether Paypal should calculate order taxes on taxable tickets', 'event_espresso'),
 					'default' => FALSE
 				)),
 				'paypal_shipping' => new EE_Yes_No_Input(array(
