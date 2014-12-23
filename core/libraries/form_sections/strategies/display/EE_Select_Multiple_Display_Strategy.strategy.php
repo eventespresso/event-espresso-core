@@ -50,6 +50,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		$html .= '>';
 
 		EE_Registry::instance()->load_helper('Array');
+		EEH_Formatter::indent( 1 );
 		if( EEH_Array::is_multi_dimensional_array( $this->_input->options() )){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
 		}else{
@@ -63,31 +64,16 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 
 
 	/**
-	 * Displays a flat list of options as option tags
-	 * @param array $options
-	 * @return string
-	 */
-	protected function _display_options( $options ){
-		$html = '';
-		EEH_HTML::indent( 1, 'option' );
-		foreach( $options as $value => $display_text ){
-			$html.= EEH_HTML::nl( 0, 'option' ) . '<option value="' . esc_attr( $value ) . '"' . $this->_check_if_option_selected( $value ) . '>' . $display_text . '</option>';
-		}
-		return $html;
-	}
-
-
-	/**
 	 * Checks if that $value is one of the selected ones
-	 * @param string|int $value
-	 * @return string
+	 * @param string|int $value unnormalized value option (string)
+	 * @return boolean
 	 */
 	protected function _check_if_option_selected( $value ){
-		$selected_options = $this->_input->normalized_value();
+		$selected_options = $this->_input->raw_value();
 		if ( empty( $selected_options )){
-			return '';
+			return FALSE;
 		}
-		return in_array( $value, $selected_options ) ? ' selected="selected"' : '';
+		return in_array( $value, $selected_options ) ? TRUE : FALSE;
 	}
 
 

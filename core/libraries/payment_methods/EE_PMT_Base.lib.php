@@ -597,6 +597,7 @@ abstract class EE_PMT_Base{
 	 * @return string html for the link to a help tab
 	 */
 	public function get_help_tab_link(){
+		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
 	}
 

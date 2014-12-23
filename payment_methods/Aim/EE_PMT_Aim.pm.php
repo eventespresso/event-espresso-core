@@ -53,10 +53,10 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				'credit_card'=>new EE_Credit_Card_Input(array(
 					'required'=>true
 				)),
-				'exp_month'=>new EE_Month_Input(true, array(
+				'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
 					'required'=>true
 				)),
-				'exp_year'=>new EE_Year_Input(),
+				'exp_year'=>new EE_Credit_Card_Year_Input(),
 				'cvv'=>new EE_CVV_Input(),
 			)
 		));

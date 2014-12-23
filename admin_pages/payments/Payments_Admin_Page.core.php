@@ -280,10 +280,16 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
+		/**
+		 * first let's ensure payment methods have been setup. We do this here because when people activate a
+		 * payment method for the first time (as an addon), it may not setup its capabilities or get registered correctly due
+		 * to the loading process.  However, people MUST setup the details for the payment method so its safe to do a
+		 * recheck here.
+		 */
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		EEM_Payment_Method::instance()->verify_button_urls( EEM_Payment_Method::instance()->get_all_active() );
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_helper( 'HTML' );
-		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		//setup tabs, one for each payment method type
 		$tabs = array();
 		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ) {
@@ -710,7 +716,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if(isset($this->_req_data['payment_method'])){
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
-			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
+			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( $payment_method_slug );
 			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','payment_method'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
