@@ -25,6 +25,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public static function set_hooks() {
 		add_action( 'wp_ajax_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'spco_billing_form' ));
 		add_action( 'wp_ajax_nopriv_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'spco_billing_form' ));
+		add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EE_SPCO_Reg_Step_Payment_Options', 'bypass_recaptcha_for_load_payment_method' ), 10, 1 );
 	}
 
 
@@ -507,6 +508,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 * bypass_recaptcha_for_load_payment_method
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function bypass_recaptcha_for_load_payment_method() {
+		return array(
+			'EESID' 		=> EE_Registry::instance()->SSN->id(),
+			'step' 		=> 'payment_options',
+			'action' 	=> 'spco_billing_form'
+		);
 	}
 
 
