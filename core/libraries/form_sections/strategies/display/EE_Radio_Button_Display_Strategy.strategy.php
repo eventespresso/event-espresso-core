@@ -22,28 +22,31 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
 			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
-//		d( $this->_input->get_normalization_strategy() );
+
 		$html = $this->display_label();
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		foreach( $this->_input->options() as $value => $display_text ){
 			$value = $this->_input->get_normalization_strategy()->unnormalize( $value );
+
 			$selected_attr = $this->_input->raw_value() === $value ? ' checked="checked"' : '';
-			$value_slug = sanitize_key( $value );
-			$html .= '<label for="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
-			$html .= 'id="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '-lbl"';
-			$html .= 'class="ee-radio-label-after' . $label_size_class . '">';
-			$html .= '<input id="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
-			$html .= 'name="' . $this->_input->html_name() . '"';
-			$html .= 'class="' . $this->_input->html_class() . '"';
-			$html .= 'style="' . $this->_input->html_style() . '"';
-			$html .= 'type="radio"';
-			$html .= 'value="' . esc_attr( $value ) . '"';
+			$html_id = $this->_append_chars( $this->_input->html_id(), '-' ) . sanitize_key( $value );
+
+			$html .= '<label for="' . $html_id . '"';
+			$html .= ' id="' . $html_id . '-lbl"';
+			$html .= ' class="ee-radio-label-after' . $label_size_class . '">';
+			$html .= '<input id="' . $html_id . '"';
+			$html .= ' name="' . $this->_input->html_name() . '"';
+			$html .= ' class="' . $this->_input->html_class() . '"';
+			$html .= ' style="' . $this->_input->html_style() . '"';
+			$html .= ' type="radio"';
+			$html .= ' value="' . esc_attr( $value ) . '"';
 			$html .= $selected_attr;
 			$html .= '>' . $display_text . '</label>';
 		}
 		return $html;
 	}
+
 
 
 
