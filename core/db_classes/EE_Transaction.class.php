@@ -210,7 +210,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 */
 	public function set_txn_session_data( $session_data ) {
 		if ( $session_data instanceof EE_Session ) {
-			$this->set( 'TXN_session_data', $session_data->get_session_data() );
+			$this->set( 'TXN_session_data', $session_data->get_session_data( NULL, TRUE ));
 		} else {
 			$this->set( 'TXN_session_data', $session_data );
 		}
