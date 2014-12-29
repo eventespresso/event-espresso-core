@@ -467,8 +467,8 @@ class EEH_HTML {
 	 */
 	public static function no_row( $content = '', $colspan = 2 ) {
 		return EEH_HTML::tr(
-			EEH_HTML::td( $content, '', '',  'padding:0; height:0; overflow:hidden; border:none;', 'colspan="' . $colspan . '"' ),
-			'', '',  'padding:0; height:0; overflow:hidden; border:none;'
+			EEH_HTML::td( $content, '', '',  'padding:0; border:none;', 'colspan="' . $colspan . '"' ),
+			'', '',  'padding:0; border:none;'
 		);
 	}
 
