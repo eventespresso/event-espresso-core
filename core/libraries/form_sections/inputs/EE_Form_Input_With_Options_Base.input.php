@@ -169,8 +169,12 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		$flat_array = array();
 		foreach( $question_options_array as $question_option ) {
 			if ( $question_option instanceof EE_Question_Option ) {
-				$value = $this->_use_desc_in_label ? $question_option->value() . '<span class="ee-question-option-desc"> - ' . $question_option->desc() . '</span>' : $question_option->value();
-				$flat_array[ $question_option->value() ] = $value;
+				$desc = '';
+				if ( $this->_use_desc_in_label ) {
+					$desc = $question_option->desc();
+					$desc = ! empty( $desc ) ? '<span class="ee-question-option-desc"> - ' . $desc . '</span>' : '';
+				}
+				$flat_array[ $question_option->value() ] = $question_option->value() . $desc;
 			} elseif ( is_array( $question_option )) {
 				$non_question_option = $this->_flatten_select_options( $question_option );
 				$flat_array = $flat_array + $non_question_option;

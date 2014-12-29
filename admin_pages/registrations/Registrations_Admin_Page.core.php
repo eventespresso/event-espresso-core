@@ -592,6 +592,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_script('ee-spco-for-admin');
 		add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		EED_Ticket_Selector::load_tckt_slctr_assets();
+		EE_Datepicker_Input::enqueue_styles_and_scripts();
 	}
 
 

@@ -516,7 +516,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// Date
 			case EEM_Question::QST_type_date :
-				return new EE_Text_Input( $input_constructor_args );
+				return new EE_Datepicker_Input( $input_constructor_args );
 				break;
 			// fallback
 			default :
