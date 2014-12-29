@@ -31,6 +31,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			// convert to unnormalized string
 			$value = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
 			$html_id = $multi ? $this->_append_chars( $this->_input->html_id(), '-' ) . sanitize_key( $value ) : $this->_input->html_id();
+			$html .= EEH_Formatter::nl(0);
 			$html .= '<label for="' . $html_id . '" id="' . $html_id . '-lbl" class="ee-checkbox-label-after' . $label_size_class . '">';
 			$html .= EEH_Formatter::nl(1);
 			$html .= '<input type="checkbox"';
