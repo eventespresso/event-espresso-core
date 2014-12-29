@@ -475,6 +475,8 @@ class EE_Checkout {
 			$this->update_txn_reg_steps_array();
 		}
 		// cache the checkout in the session
+		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
+		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
 		// save all data to the db, but suppress errors
 //		$this->save_all_data( FALSE );
