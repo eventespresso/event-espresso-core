@@ -371,6 +371,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
 			//get pretty trnasaction status
 			$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
+			$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
+			$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
+			//just get all the payment methods used for this transaction (if primary registrant and something has been paid)
+			$reg_csv_array[ __( 'Payment Method', 'event_espresso' )] = $registration->is_primary_registrant() && $registration->transaction()->paid() ? implode(", ",EEM_Payment_Method::instance()->get_col(
+					array(
+						array(
+							'Payment.TXN_ID' => $registration->transaction_ID(),
+							'Payment.STS_ID' => EEM_Payment::status_id_approved
+						)
+					), 'PMD_admin_name')) : '' ;
 			//get whether or not the user has checked in
 			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 			//get ticket of registration and its price
