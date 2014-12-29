@@ -38,10 +38,10 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( '1', $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals('<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-1" id="test-use-captcha-1-lbl" class="ee-radio-label-after micro-lbl">
-	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1" checked="checked">Yes
+	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1" checked="checked">&nbsp;Yes
 </label>
 <label for="test-use-captcha-0" id="test-use-captcha-0-lbl" class="ee-radio-label-after micro-lbl">
-	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0">No
+	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0">&nbsp;No
 </label>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 
 		$form->populate_defaults( array( 'use_captcha' => 0 ) );
@@ -50,10 +50,10 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( '0', $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals( '<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-1" id="test-use-captcha-1-lbl" class="ee-radio-label-after micro-lbl">
-	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1">Yes
+	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1">&nbsp;Yes
 </label>
 <label for="test-use-captcha-0" id="test-use-captcha-0-lbl" class="ee-radio-label-after micro-lbl">
-	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0" checked="checked">No
+	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0" checked="checked">&nbsp;No
 </label>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 	}
 
