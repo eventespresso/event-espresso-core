@@ -29,20 +29,23 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		foreach( $this->_input->options() as $value => $display_text ){
 			$value = $this->_input->get_normalization_strategy()->unnormalize( $value );
 
-			$selected_attr = $this->_input->raw_value() === $value ? ' checked="checked"' : '';
 			$html_id = $this->_append_chars( $this->_input->html_id(), '-' ) . sanitize_key( $value );
-
+			$html .= EEH_Formatter::nl(0);
 			$html .= '<label for="' . $html_id . '"';
 			$html .= ' id="' . $html_id . '-lbl"';
 			$html .= ' class="ee-radio-label-after' . $label_size_class . '">';
+			$html .= EEH_Formatter::nl(1);
 			$html .= '<input id="' . $html_id . '"';
 			$html .= ' name="' . $this->_input->html_name() . '"';
 			$html .= ' class="' . $this->_input->html_class() . '"';
 			$html .= ' style="' . $this->_input->html_style() . '"';
 			$html .= ' type="radio"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
-			$html .= $selected_attr;
-			$html .= '>' . $display_text . '</label>';
+			$html .= $this->_input->raw_value() === $value ? ' checked="checked"' : '';
+			$html .= '>&nbsp;';
+			$html .= $display_text;
+			$html .= EEH_Formatter::nl(-1) . '</label>';
+
 		}
 		return $html;
 	}
