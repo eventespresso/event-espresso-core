@@ -7,7 +7,7 @@
  *
  * @package 			Event Espresso
  * @subpackage 	core
- * @author 				Mike Nelson, Brent Christensen
+ * @author 				Mike Nelson
  * @since 				$VID:$
  *
  */
@@ -30,11 +30,11 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$value = $this->_input->get_normalization_strategy()->unnormalize( $value );
 
 			$html_id = $this->_append_chars( $this->_input->html_id(), '-' ) . sanitize_key( $value );
-			$html .= EEH_Formatter::nl(0);
+			$html .= EEH_HTML::nl(0);
 			$html .= '<label for="' . $html_id . '"';
 			$html .= ' id="' . $html_id . '-lbl"';
 			$html .= ' class="ee-radio-label-after' . $label_size_class . '">';
-			$html .= EEH_Formatter::nl(1);
+			$html .= EEH_HTML::nl(1);
 			$html .= '<input id="' . $html_id . '"';
 			$html .= ' name="' . $this->_input->html_name() . '"';
 			$html .= ' class="' . $this->_input->html_class() . '"';
@@ -44,7 +44,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= $this->_input->raw_value() === $value ? ' checked="checked"' : '';
 			$html .= '>&nbsp;';
 			$html .= $display_text;
-			$html .= EEH_Formatter::nl(-1) . '</label>';
+			$html .= EEH_HTML::nl(-1) . '</label>';
 
 		}
 		return $html;
