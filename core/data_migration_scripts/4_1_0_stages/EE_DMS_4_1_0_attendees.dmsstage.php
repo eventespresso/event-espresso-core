@@ -1,7 +1,7 @@
-<?php 
+<?php
 /**
  * migrates 3.1 attendee rows into 4.1 registrations, attendees, transactions, line items, payments
- * 
+ *
  * 3.1 Attendee table definition:
  * delimiter $$
 
@@ -120,7 +120,7 @@ CREATE TABLE `wp_events_detail` (
 				'ATT_email'=>new EE_Email_Field('ATT_email', __('Email Address','event_espresso'), true, ''),
 				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', __('Phone','event_espresso'), true, ''),
 			));
- * 
+ *
  * 4.1 Registration tables and models:
  * $this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
@@ -141,10 +141,10 @@ CREATE TABLE `wp_events_detail` (
 				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registration ','event_espresso'), true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
 				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
-				'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )	
+				'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )
 			)
 		);
- * 
+ *
  * 4.1 Transaction tables and models:
  * $this->_tables = array(
 			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
@@ -160,7 +160,7 @@ CREATE TABLE `wp_events_detail` (
 				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, '')
 			)
 		);
- * 
+ *
  * 4.1 Payment tables and models:
  * $this->_tables = array(
 			'Payment'=>new EE_Primary_Table('esp_payment','PAY_ID')
@@ -201,7 +201,7 @@ CREATE TABLE `wp_events_detail` (
 				'LIN_total'=>new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
 				'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, null),
 				'LIN_parent'=>new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
-				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', 
+				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item',
 						array(
 							self::type_line_item=>  __("Line Item", "event_espresso"),
 							self::type_sub_line_item=>  __("Sub-Item", "event_espresso"),
@@ -225,6 +225,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_ticket_table;
 	private $_new_ticket_datetime_table;
 	private $_new_datetime_table;
+	private $_new_datetime_ticket_table;
+	private $_new_price_table;
+	private $_new_ticket_price_table;
 	/**
 	 * Rememebrs whether or not the mer table exists
 	 * @var boolean
@@ -244,9 +247,12 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$this->_new_ticket_table = $wpdb->prefix."esp_ticket";
 		$this->_new_ticket_datetime_table = $wpdb->prefix."esp_datetime_ticket";
 		$this->_new_datetime_table = $wpdb->prefix."esp_datetime";
+		$this->_new_datetime_ticket_table = $wpdb->prefix."esp_datetime_ticket";
+		$this->_new_price_table = $wpdb->prefix."esp_price";
+		$this->_new_ticket_price_table = $wpdb->prefix."esp_ticket_price";
 		parent::__construct();
 	}
-	
+
 	protected function _migrate_old_row($old_row) {
 		//first check if there's already a new attendee with similar characteristics
 		$new_att_id = $this->_find_attendee_cpt_matching($old_row);
@@ -262,7 +268,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			}
 		}
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_cpt_table, $new_att_id);
-		
+
 		$txn_id = $this->_insert_new_transaction($old_row);
 		if( ! $txn_id){
 			//if we couldnt make the transaction, also abandon all hope
@@ -272,8 +278,8 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		if($pay_id){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_payment_table,$pay_id);
 		}
-		
-		
+
+
 		//even if there was no payment, we can go ahead with adding the reg
 		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
 		if($new_regs){
@@ -281,7 +287,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 	}
 	/**
-	 * Checks if there's already an attendee CPT in the db that has the same 
+	 * Checks if there's already an attendee CPT in the db that has the same
 	 * first and last name, and email. If so, returns its ID as an int.
 	 * @global type $wpdb
 	 * @param array $old_attendee
@@ -326,7 +332,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	private function _insert_attendee_meta_row($old_attendee,$new_attendee_cpt_id){
 		global $wpdb;
 		//get the state and country ids from the old row
@@ -353,7 +359,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			'CNT_ISO'=>$new_country_iso,
 			'ATT_zip'=>stripslashes($old_attendee['zip']),
 			'ATT_email'=>stripslashes($old_attendee['email']),
-			'ATT_phone'=>stripslashes($old_attendee['phone']),			
+			'ATT_phone'=>stripslashes($old_attendee['phone']),
 		);
 		$datatypes = array(
 			'%d',//ATT_ID
@@ -376,7 +382,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	/**
 	 * Note: we don't necessarily create a new transaction for each attendee row.
 	 * Only if the old attendee 'is_primary' is true; otherwise we find the old attendee row that
@@ -388,7 +394,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private function _insert_new_transaction($old_attendee){
 		global $wpdb;
 		if(intval($old_attendee['is_primary'])){//primary attendee, so create txn
-			
+
 			//maps 3.1 payment stati onto 4.1 transaction stati
 			$txn_status_mapping = array(
 				'Completed'=>'TCM',
@@ -427,15 +433,15 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
 				$primary_attendee_old_id = is_array($primary_attendee) ? $primary_attendee['id'] : NULL;
 			}
-			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);			
+			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
 			if( ! $txn_id){
 				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  $this->_json_encode($old_attendee),$primary_attendee_old_id));
 				$txn_id = 0;
 			}
 			return $txn_id;
 		}
-		
-		
+
+
 	}
 	/**
 	 * Detects if the MER tables exist
@@ -445,7 +451,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private function _mer_tables_exist(){
 		if( $this->_mer_tables_exist === NULL){
 			global $wpdb;
-			
+
 			if( $wpdb->get_var("SHOW TABLES LIKE '{$this->_old_mer_table}'") != $this->_old_mer_table){
 				$this->_mer_tables_exist = false;
 			}else{
@@ -454,7 +460,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		return $this->_mer_tables_exist;
 	}
-	
+
 	/**
 	 * Gets the 4.1 registration's status given the 3.1 attendee row. We consider
 	 * whether the event required pre-approval or not,a dn the 4.1 payment status.
@@ -480,20 +486,20 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _insert_new_registrations($old_attendee,$new_attendee_id,$new_txn_id){
 		global $wpdb;
-		
+
 		$STS_ID = $this->_get_reg_status_for_old_payment_status($old_attendee);
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix.'events_detail', $old_attendee['event_id'], $wpdb->posts);
 		if( ! $new_event_id){
 			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],$this->_json_encode($old_attendee)));
 		}
-		
+
 		$ticket_id = $this->_try_to_find_new_ticket_id($old_attendee,$new_event_id);
 		if( ! $ticket_id){
-			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),$this->_json_encode($old_attendee)));
+			$ticket_id = $this->_insert_new_ticket_because_none_found( $old_attendee, $new_event_id );
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();
-		//4 cases we need to account for: 
+		//4 cases we need to account for:
 		//1 old attendee_details row with a quantity of X (no mer)
 		//Y old attendee_details rows with a quantity of 1 (no mer) joined by their common registration_id
 		//Y old attendee_details rows with a quantity of x (because of mer)
@@ -544,7 +550,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$this->_add_regs_to_ticket_and_datetimes($ticket_id,count($new_regs),$STS_ID);
 		return $new_regs;
 	}
-	
+
 	/**
 	 * Increments the sold values on the ticket and its related datetimes by the amount sold,
 	 * which should be done directly after adding the rows. Yes this means we're constantly incrementing
@@ -565,9 +571,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$success = $wpdb->query($wpdb->prepare("UPDATE {$this->_new_ticket_table} SET TKT_sold=TKT_sold+%d WHERE TKT_ID=%d",$quantity_sold,$new_ticket_id));
 		if($success){
 			//get the ticket's datetimes, and increment them too
-			$success_update_dateimtes =  $wpdb->query($wpdb->prepare("UPDATE {$this->_new_ticket_table} TKT 
-				INNER JOIN {$this->_new_ticket_datetime_table} as DTK ON TKT.TKT_ID = DTK.TKT_ID  
-				INNER JOIN {$this->_new_datetime_table} as DTT ON DTK.DTT_ID = DTT.DTT_ID 
+			$success_update_dateimtes =  $wpdb->query($wpdb->prepare("UPDATE {$this->_new_ticket_table} TKT
+				INNER JOIN {$this->_new_ticket_datetime_table} as DTK ON TKT.TKT_ID = DTK.TKT_ID
+				INNER JOIN {$this->_new_datetime_table} as DTT ON DTK.DTT_ID = DTT.DTT_ID
 				SET DTT.DTT_sold = DTT.DTT_sold + %d WHERE TKT.TKT_ID = %d",$quantity_sold,$new_ticket_id));
 			if( ! $success_update_dateimtes){
 				$this->add_error(sprintf(__("Could not update datetimes related to ticket with ID %d's TKT_sold by %d because %s", "event_espresso"),$new_ticket_id,$quantity_sold,$wpdb->last_error));
@@ -590,10 +596,10 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$tickets_table = $this->_new_ticket_table;
 		$datetime_tickets_table = $this->_new_ticket_datetime_table;
 		$datetime_table = $this->_new_datetime_table;
-		
+
 		$old_att_price_option = $old_attendee['price_option'];
 		$old_att_price = floatval($old_attendee['orig_price']);
-		
+
 		$old_att_start_date = $old_attendee['start_date'];
 		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
 		$old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
@@ -605,7 +611,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$wpdb->prepare("$tickets_table.TKT_name = %s",$old_att_price_option),//names match?
 			$wpdb->prepare("$datetime_table.EVT_ID = %d",$new_event_id),//events match?
 		);
-		$select_and_join_part = "SELECT $tickets_table.TKT_ID FROM $tickets_table INNER JOIN 
+		$select_and_join_part = "SELECT $tickets_table.TKT_ID FROM $tickets_table INNER JOIN
 			$datetime_tickets_table ON $tickets_table.TKT_ID = $datetime_tickets_table.TKT_ID INNER JOIN
 			$datetime_table ON $datetime_tickets_table.DTT_ID = $datetime_table.DTT_ID";
 		//start running queries, widening search each time by removing a condition
@@ -615,13 +621,101 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			array_shift($conditions);
 		}while( ! $ticket_id_found && $conditions);
 		return $ticket_id_found;
-		
+
+	}
+
+	/**
+	 * If we couldn't find a 4.1 ticket for a 3.1 attendee row, this function creates one;
+	 * and it also tries to find a datetime that works, and a inserts a price, and associates
+	 * the new ticket to that datetime and price.
+	 * @return int ticket id
+	 */
+	private function _insert_new_ticket_because_none_found( $old_attendee, $new_event_id ) {
+		global $wpdb;
+		$old_att_price_option = $old_attendee['price_option'];
+		$old_att_price = floatval($old_attendee['orig_price']);
+
+		$old_att_start_date = $old_attendee['start_date'];
+		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
+		$old_att_start_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
+
+
+		//insert new datetime unless we find one
+		$datetime_id = $wpdb->get_var( $wpdb->prepare( "SELECT DTT_ID FROM " . $this->_new_datetime_table . " WHERE DTT_EVT_start=%s AND EVT_ID=%d LIMIT 1", $old_att_start_datetime, $new_event_id ), ARRAY_A );
+		if( ! $datetime_id ) {
+			$old_att_end_date = $old_attendee['start_date'];
+			$old_att_end_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
+			$old_att_end_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_end_date $old_att_end_time:00");
+			$wpdb->insert( $this->_new_datetime_table,
+					array(
+						'EVT_ID' => $new_event_id,
+						'DTT_EVT_start' => $old_att_start_datetime,
+						'DTT_EVT_end' => $old_att_end_datetime,
+						'DTT_deleted' => TRUE
+					),
+					array(
+						'%d',//EVT_ID
+						'%s',//DTT_EVT_start
+						'%s',//DTT_EVT_end
+						'%d',//DTT_deleted
+					));
+			$datetime_id = $wpdb->insert_id;
+		}
+
+		//insert new ticket
+		$success = $wpdb->insert( $wpdb->prefix . 'esp_ticket',
+				array(
+					'TKT_name' => $old_att_price_option,
+					'TKT_qty' => -1,
+					'TKT_price' => $old_att_price,
+
+				),
+				array(
+					'%s',//name
+					'%d',//qty
+					'%d',//price
+				));
+		$ticket_id = $wpdb->insert_id;
+		//associate the ticket with the datetime we found earlier
+		$wpdb->insert( $this->_new_datetime_ticket_table,
+				array(
+					'DTT_ID' => $datetime_id,
+					'TKT_ID' => $ticket_id
+				),
+				array(
+					'%d',//DTT_ID
+					'%d',//TKT_ID
+				));
+		//insert new price
+		$wpdb->insert( $this->_new_price_table,
+				array(
+					'PRC_amount' => $old_att_price,
+					'PRC_name' => $old_att_price_option,
+					'PRC_deleted' => TRUE
+				),
+				array(
+					'%d',//PRC_amount
+					'%s',//PRC_name
+					'%d',//PRC_deleted
+				));
+		$price_id = $wpdb->insert_id;
+		//associate the price to the ticket
+		$wpdb->insert( $this->_new_ticket_price_table,
+				array(
+					'TKT_ID' => $ticket_id,
+					'PRC_ID' => $price_id
+				),
+				array(
+					'%d',//TKT_ID
+					'%d',//PRC_ID
+				) );
+		return $ticket_id;
 	}
 	/**
 	 * Counts all the registrations on this transaction. If $count_only_older is TRUE then returns the number added SO FAR (ie,
 	 * only considers attendee rows with an ID less than this one's), but if $count_only_older is FALSe returns ALL
 	 * @global type $wpdb
-	 * @param array $old_attendee_row 
+	 * @param array $old_attendee_row
 	 * @param boolean $count_only_older true if you want the running count (ie, the total up to this row), and false if you want ALL
 	 * @return int
 	 */
@@ -629,16 +723,16 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$count_only_older_sql = $count_only_older ? $wpdb->prepare(" AND id<%d",$old_attendee_row['id']) : '';
 		$count = intval($wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s $count_only_older_sql",$old_attendee_row['registration_id'])));
-		
+
 		if( $this->_mer_tables_exist()){
 			//if MER exists, then its a little tricky.
-			//when users registered by adding items to the cart, and it was a 
-			//group registration requiring additional attendee INFO, then the attendee rows 
+			//when users registered by adding items to the cart, and it was a
+			//group registration requiring additional attendee INFO, then the attendee rows
 			//DO NOT have the same registration_id (although they probably should have)
 			//they are related just like MER attendee rows are related, through the MER group table
 			//BUT we want to count all the MER attendee rows for the same registration
 			$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee_row['registration_id']);
-			
+
 			$count_using_mer_table = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM {$this->_old_table} att INNER JOIN {$this->_old_mer_table} mer ON att.registration_id = mer.registration_id WHERE att.event_id=%d AND mer.primary_registration_id = %s $count_only_older_sql",$old_attendee_row['event_id'],$primary_attendee['registration_id']));
 			$count = max($count_using_mer_table,$count);
 		}
@@ -669,7 +763,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],
 				'PAY_via_admin'=>$by_admin,
 				'PAY_details'=>$old_attendee['transaction_details']
-				
+
 			);
 			$datatypes = array(
 				'%d',//TXN_Id
@@ -690,14 +784,14 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			}
 			$new_id = $wpdb->insert_id;
 			return $new_id;
-			
+
 		}else{
 			return 0;
 		}
-		
-		
+
+
 	}
-	
+
 	/**
 	 * If MER is active, if you want ot fin dthe other registrations on that attendee row
 	 * @global type $wpdb
@@ -712,5 +806,5 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$old_att_for_primary_reg = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->_old_mer_table} AS mer INNER JOIN {$this->_old_table} AS att ON mer.primary_registration_id = att.registration_id WHERE mer.registration_id=%s LIMIT 1",$old_registration_id),ARRAY_A);
 return $old_att_for_primary_reg;
 	}
-	
+
 }
