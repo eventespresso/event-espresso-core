@@ -9,6 +9,34 @@
  *
  */
 class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
+
+	/**
+	 * return EE_Admin_File_Uploader_Display_Strategy
+	 */
+	function __construct() {
+		// kinda hacky... but at this point it's too late to enqueue the scripts for the media uploader, so we're going to do that now
+		EE_Admin_File_Uploader_Display_Strategy::enqueue_scripts();
+	}
+
+
+
+	/**
+	 * Its important this media only get enqueued AFTER init, but before the footer... where the
+	 * rest of our forms JS gets enqueued. Otherwise the JS gets enqueued fine, and loaded on the page fine,
+	 * but when you upload an image it gets uploaded fine to the server, but it doesn't display and reports an error
+	 * (also it doesn't show any of the currently existing media in the modal window that pops up when you click the button
+	 * to select media).
+	 * Besides that, no special consideration should be required to make the media uploader appear, besides having
+	 * this input displayed.
+	 */
+	static function enqueue_scripts(){
+		wp_enqueue_media();
+		wp_enqueue_script('media-upload');
+		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
+	}
+
+
+
 	/**
 	 *
 	 * @return string of html to display the field
@@ -31,7 +59,7 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 	}
 
 
-	
+
 	/**
 	 * Asserts an image actually exists as quickly as possible by sending a HEAD
 	 * request
