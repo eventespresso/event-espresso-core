@@ -212,6 +212,29 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		);
 		return $transaction;
 	}
+
+	/**
+	 * @group 7201
+	 */
+	public function test_process_ipn() {
+		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
+		$this->assertTrue( $pm->type_obj() instanceof EE_PMT_Mock_Offsite );
+		$this->assertTrue( $pm->type_obj()->get_gateway() instanceof EEG_Mock_Offsite );
+		$txn = $this->new_typical_transaction();
+
+		//we don't want to bother sending messages. We're not wanting ot test that right now
+		remove_all_filters( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' );
+
+		$payment = EE_Payment_Processor::instance()->process_payment($pm, $txn);
+		$fake_req_data = array(
+			'gateway_txn_id' => $payment->txn_id_chq_nmbr(),
+			'status' => EEM_Payment::status_id_approved
+		);
+		$this->assertNotEmpty( $payment->ID() );
+		$payment = EE_Payment_Processor::instance()->process_ipn( $fake_req_data, $txn, $pm->slug() );
+		$this->assertTrue( $payment instanceof EE_Payment );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->STS_ID() );
+	}
 }
 
 // End of file EE_Payment_Processor_Test.php

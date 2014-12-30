@@ -3219,11 +3219,14 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ){
 		$className = $this->_get_class_name();
+		$primary_key_field = $this->get_primary_key_field();
 		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
-		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
+		}elseif( $primary_key_field instanceof EE_Primary_Key_Int_Field && (
+				is_int( $base_class_obj_or_id ) ||
+				is_string( $base_class_obj_or_id ) )){//assume it's an ID. either a proper integer or a string representing an integer (eg "101" instead of 101)
 			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
-		}elseif(is_string($base_class_obj_or_id)){
+		}elseif( $primary_key_field instanceof EE_Primary_Key_String_Field && is_string($base_class_obj_or_id) ){
 			//assume its a string representation of the object
 			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
 		}else{

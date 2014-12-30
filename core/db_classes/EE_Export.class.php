@@ -341,7 +341,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}else{
 			$query_params[ 'force_join' ][] = 'Event';
 		}
-		$registrations = $reg_model->get_all();
+		$registrations = $reg_model->get_all( $query_params );
 
 		//get all questions which relate to someone in this group
 		$registration_ids = array_keys($registrations);
@@ -375,14 +375,21 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 			//get ticket of registration and its price
 			$ticket_model = EE_Registry::instance()->load_model('Ticket');
-			$ticket = $registration->ticket();
-			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket->name();
-			//get datetime(s) of registration
-			$datetimes_strings = array();
-			foreach($ticket->datetimes() as $datetime){
-				$datetimes_strings[] = $datetime->start_date_and_time();
+			if( $registration->ticket() ) {
+				$ticket_name = $registration->ticket()->name();
+				$datetimes_strings = array();
+				foreach($registration->ticket()->datetimes() as $datetime){
+					$datetimes_strings[] = $datetime->start_date_and_time();
+				}
+
+			} else {
+				$ticket_name = __( 'Unknown', 'event_espresso' );
+				$datetimes_strings = array( __( 'Unknown', 'event_espresso' ) );
 			}
+			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket_name;
 			$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
+			//get datetime(s) of registration
+
 			//add attendee columns
 			$attendee = $registration->attendee();
 			foreach($att_fields_to_include as $att_field_name){
@@ -420,7 +427,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			//now fill out the questions THEY answered
 			foreach($registration->answers() as $answer){
 				/* @var $answer EE_Answer */
-				$reg_csv_array[$answer->question()->admin_label()] = $answer->pretty_value();
+				if( $answer->question() instanceof EE_Question ){
+					$question_label = $answer->question()->admin_label();
+				}else{
+					$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer->question_ID() );
+				}
+				$reg_csv_array[ $question_label ] = $answer->pretty_value();
 			}
 			$registrations_csv_ready_array[] = $reg_csv_array;
 		}
