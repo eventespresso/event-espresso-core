@@ -254,14 +254,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles() {
-		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_media();
-		wp_enqueue_script('media-upload');
-		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
-		wp_enqueue_script('ee-text-links');
-		wp_register_script('espresso_payments', EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',array('ee-datepicker'),FALSE,TRUE);
-		wp_enqueue_script('espresso_payments');
-		wp_enqueue_style('espresso-ui-theme');
+		wp_enqueue_script( 'ee_admin_js' );
+		wp_enqueue_script( 'ee-text-links' );
+		wp_enqueue_script( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js', array( 'espresso-ui-theme', 'ee-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -271,8 +266,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_default() {
 		//styles
 		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style('espresso_payments');
-		wp_enqueue_style('ee-text-links');
+		wp_enqueue_style( 'espresso_payments' );
+		wp_enqueue_style( 'ee-text-links' );
 		//scripts
 	}
 
