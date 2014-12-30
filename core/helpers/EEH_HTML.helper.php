@@ -368,7 +368,6 @@ class EEH_HTML {
 	 * @param string $class - html class attribute
 	 * @param string $style - html style attribute for applying inline styles
 	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
-	 * @internal param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @return string
 	 */
 	public static function img( $src = '', $alt = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
