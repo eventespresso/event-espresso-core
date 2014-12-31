@@ -696,8 +696,10 @@ class EEH_HTML {
 		EEH_HTML::$_indent = array(
 			'none' 	=> 0,
 			'form' 	=> 0,
-			'checkbox' 	=> 1,
-			'select' 	=> 1,
+			'checkbox' 	=> 0,
+			'select' 	=> 0,
+			'option' => 0,
+			'optgroup' => 0,
 			'table' 	=> 1,
 			'thead' => 2,
 			'tbody' => 2,
@@ -713,9 +715,7 @@ class EEH_HTML {
 			'h6' 	=> 0,
 			'p' 	=> 0,
 			'ul' 	=> 0,
-			'li' 	=> 1,
-			'option' => 1,
-			'optgroup' => 1
+			'li' 	=> 1
 		);
 	}
 
