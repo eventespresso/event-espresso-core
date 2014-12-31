@@ -209,7 +209,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}else{
 //				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
-				$payment->set_amount($update_info['mc_gross']);
+				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
 				$payment->set_details($update_info);
 			}
