@@ -679,9 +679,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 									} else if ( $copy_primary && isset( $primary_registrant[ $form_input ] ) && $input_value == NULL ) {
 										$input_value = $primary_registrant[ $form_input ];
 									}
-									// not attempt to save the input data
-									if ( ! $this->_save_registration_form_input( $registration, $form_input, $input_value ) )  {
-										EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
+									// now attempt to save the input data
+									if ( ! $this->_save_registration_form_input( $registration, $form_input, $input_value ))  {
+										EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: "%1$s" with the submitted value: "%2$s"', 'event_espresso' ), $form_input, $input_value ), __FILE__, __FUNCTION__, __LINE__ );
 										return FALSE;
 									}
 								}
@@ -775,7 +775,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 		}
 
-//		echo '<b>$answer_cache_id : ' . $answer_cache_id . '</b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
+//		echo '<br /><br /><b>$answer_cache_id : ' . $answer_cache_id . '</b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
 //		echo '<b>attendee_property: ' . $attendee_property . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
 //		echo '<b>$answer_is_obj : ' . $answer_is_obj . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
 //		echo '<b>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
@@ -795,7 +795,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			foreach ( $answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 					$answer->set_value( $input_value );
-					return $answer->save();
+					return $answer->save() !== FALSE ? TRUE : FALSE;
 				}
 			}
 		}
