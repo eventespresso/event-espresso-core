@@ -7,7 +7,7 @@ class EE_No_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_begin() {
-		return EEH_Formatter::nl(1);
+		return EEH_HTML::nl(1);
 	}
 
 
@@ -19,25 +19,25 @@ class EE_No_Layout extends EE_Form_Section_Layout_Base{
 	public function layout_input( $input ) {
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input  ) {
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
+			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Submit_Input  ) {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input();
+			$html .= EEH_HTML::nl(1) . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Select_Input  ) {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
+			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
+			$html .= EEH_HTML::nl() . $input->get_html_for_input();
+			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_HTML::nl(1) . $input->get_html_for_errors();
+			$html .= EEH_HTML::nl() . $input->get_html_for_input();
+			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		} else {
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
+			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
+			$html .= EEH_HTML::nl() . $input->get_html_for_input();
+			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		}
-		$html .= EEH_Formatter::nl(-1);
+		$html .= EEH_HTML::nl(-1);
 		return $html;
 	}
 
@@ -50,7 +50,7 @@ class EE_No_Layout extends EE_Form_Section_Layout_Base{
 	 */
 	public function layout_subsection( $form_section ){
 //		d( $form_section );
-		return EEH_Formatter::nl(1) . $form_section->get_html_and_js() . EEH_Formatter::nl(-1);
+		return EEH_HTML::nl(1) . $form_section->get_html_and_js() . EEH_HTML::nl(-1);
 	}
 
 
@@ -59,6 +59,6 @@ class EE_No_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_end(){
-		return EEH_Formatter::nl(-1);
+		return EEH_HTML::nl(-1);
 	}
 }
