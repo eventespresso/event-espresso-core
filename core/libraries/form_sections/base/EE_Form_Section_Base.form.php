@@ -30,6 +30,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 abstract class EE_Form_Section_Base {
 
 	/**
+	 * the URL the form is submitted to
+	 * @var string
+	 */
+	protected $_action;
+
+	/**
+	 * POST (default) or GET
+	 * @var string
+	 */
+	protected $_method;
+
+	/**
 	 * html_id and html_name are derived from this by default
 	 * @var string
 	 */
@@ -84,6 +96,9 @@ abstract class EE_Form_Section_Base {
 	 * }
 	 */
 	function __construct( $options_array = array() ) {
+		// used by display strategies
+		EE_Registry::instance()->load_helper('HTML');
+		// assign incoming values to properties
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;
 			if ( property_exists( $this, $key ) && empty( $this->$key )) {
@@ -103,6 +118,49 @@ abstract class EE_Form_Section_Base {
 		$this->_parent_section = $parent_form_section;
 		$this->_name = $name;
 		$this->_set_default_html_id_if_empty();
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function action() {
+		return $this->_action;
+	}
+
+
+
+	/**
+	 * @param string $action
+	 */
+	public function set_action( $action ) {
+		$this->_action = $action;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function method() {
+		return ! empty( $this->_method ) ? $this->_method : 'POST';
+	}
+
+
+
+	/**
+	 * @param string $method
+	 */
+	public function set_method( $method ) {
+		switch ( $method ) {
+			case 'get' :
+			case 'GET' :
+				$this->_method = 'GET';
+				break;
+			default :
+				$this->_method = 'POST';
+		}
 	}
 
 
@@ -248,8 +306,14 @@ abstract class EE_Form_Section_Base {
 	 * @param string $other_attributes anything else added to the form open tag, MUST BE VALID HTML
 	 * @return string
 	 */
-	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
-		return EEH_Formatter::nl(1) . '<form id="' . $this->html_id() . '" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
+	public function form_open( $action = '', $method = '', $other_attributes = '' ) {
+		if ( ! empty( $action )) {
+			$this->set_action( $action );
+		}
+		if ( ! empty( $method )) {
+			$this->set_method( $method );
+		}
+		return EEH_HTML::nl( 1, 'form' ) . '<form id="' . $this->html_id() . '" action="' . $this->action() . '" method="' . $this->method() . '"' . $other_attributes . '>';
 	}
 
 
@@ -259,7 +323,7 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	public function form_close() {
-		return EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_Formatter::nl();
+		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
 
 

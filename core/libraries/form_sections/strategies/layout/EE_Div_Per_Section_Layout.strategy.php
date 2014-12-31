@@ -7,7 +7,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_begin() {
-		return EEH_Formatter::nl(1) . '<div id="' . $this->_form_section->html_id() . '" class="' . $this->_form_section->html_class() . '" style="' . $this->_form_section->html_style() . '">';
+		return EEH_HTML::div( '', $this->_form_section->html_id(), $this->_form_section->html_class(), $this->_form_section->html_style() );
 	}
 
 
@@ -19,33 +19,36 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	public function layout_input( $input ) {
 		$html = '';
 		if ( $input instanceof EE_Hidden_Input  ) {
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
+			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Submit_Input  ) {
-			$html .= EEH_Formatter::nl(1) . '<div id="' . $input->html_id() . '-submit-dv" class="' . $input->html_class() . '-submit-dv">';
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl(-1) . '</div>';
+			$html .= EEH_HTML::div( $input->get_html_for_input(), $input->html_id() . '-submit-dv', $input->html_class() . '-submit-dv' );
 		} else if ( $input instanceof EE_Select_Input  ) {
-			$html .= EEH_Formatter::nl(1) . '<div id="' . $input->html_id() . '-input-dv" class="' . $input->html_class() . '-input-dv">';
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
-			$html .= EEH_Formatter::nl(-1) . '</div>';
+			$html .= EEH_HTML::div(
+				EEH_HTML::nl(1) . $input->get_html_for_label() .
+				EEH_HTML::nl() . $input->get_html_for_errors() .
+				EEH_HTML::nl() . $input->get_html_for_input() .
+				EEH_HTML::nl() . $input->get_html_for_help(),
+				$input->html_id() . '-input-dv',
+				$input->html_class() . '-input-dv'
+			);
 		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
-			$html .= EEH_Formatter::nl(1) . '<div id="' . $input->html_id() . '-input-dv" class="' . $input->html_class() . '-input-dv">';
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
-			$html .= EEH_Formatter::nl(-1) . '</div>';
+			$html .= EEH_HTML::div(
+				EEH_HTML::nl() . $input->get_html_for_errors() .
+				EEH_HTML::nl() . $input->get_html_for_input() .
+				EEH_HTML::nl() . $input->get_html_for_help(),
+				$input->html_id() . '-input-dv',
+				$input->html_class() . '-input-dv'
+			);
 		} else {
-			$html .= EEH_Formatter::nl(1) . '<div id="' . $input->html_id() . '-input-dv" class="' . $input->html_class() . '-input-dv">';
-			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
-			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
-			$html .= EEH_Formatter::nl(-1) . '</div>';
+			$html .= EEH_HTML::div(
+				EEH_HTML::nl(1) . $input->get_html_for_label() .
+				EEH_HTML::nl() . $input->get_html_for_errors() .
+				EEH_HTML::nl() . $input->get_html_for_input() .
+				EEH_HTML::nl() . $input->get_html_for_help(),
+				$input->html_id() . '-input-dv',
+				$input->html_class() . '-input-dv'
+			);
 		}
-		$html .= EEH_Formatter::nl(-1);
 		return $html;
 	}
 
@@ -58,7 +61,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 */
 	public function layout_subsection( $form_section ){
 //		d( $form_section );
-		return EEH_Formatter::nl(1) . $form_section->get_html_and_js() . EEH_Formatter::nl(-1);
+		return EEH_HTML::nl(1) . $form_section->get_html_and_js() . EEH_HTML::nl(-1);
 	}
 
 
@@ -67,6 +70,6 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_form_end(){
-		return EEH_Formatter::nl(-1) . '</div>';
+		return EEH_HTML::divx( $this->_form_section->html_id(), $this->_form_section->html_class() );
 	}
 }

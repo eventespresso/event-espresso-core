@@ -149,7 +149,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				}
 				$payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
 				$payment->set_status($payment_status);
-				$payment->set_amount($response->amount);
+				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
+				$payment->set_amount( floatval( $response->amount ) );
 				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
 				$payment->set_extra_accntng($primary_registrant->reg_code());
 				$payment->set_details(print_r($response,true));

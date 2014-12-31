@@ -49,7 +49,8 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
 				'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ),
 				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
-				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
+				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ),
+				'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
 				'PMD_wp_user' => new EE_Integer_Field( 'PMD_wp_user', __( "User ID", 'event_espresso' ), FALSE, 1 ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
@@ -190,18 +191,21 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @throws EE_Error
 	 */
 	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ) {
+		//first: check if it's a slug
+		if( is_string( $base_class_obj_or_id ) ) {
+			$obj = $this->get_one_by_slug( $base_class_obj_or_id );
+			if( $obj ) {
+				return $obj;
+			}
+		}
+		//ok so it wasn't a slug we were passed. try the usual then (ie, it's an object or an ID)
 		try {
 			return parent::ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db );
 		}
 		catch ( EE_Error $e ) {
-			//last ditch-try to find one by the slug
-			$obj = $this->get_one_by_slug( $base_class_obj_or_id );
-			if ( $obj ) {
-				return $obj;
-			} else {
-				throw new EE_Error( sprintf( __( "'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso" ), $base_class_obj_or_id ) );
-			}
+			//handle it outside the catch
 		}
+		throw new EE_Error( sprintf( __( "'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso" ), $base_class_obj_or_id ) );
 	}
 
 
