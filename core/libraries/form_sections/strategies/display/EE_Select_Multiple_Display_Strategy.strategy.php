@@ -38,7 +38,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 			throw new EE_Error(sprintf(__('Cannot use Select Multiple Display Strategy with an input that doesn\'t have options', "event_espresso")));
 		}
 
-		$html = EEH_HTML::nl( 1, 'select' );
+		$html = EEH_HTML::nl( 0, 'select' );
 		$html .= '<select multiple';
 		$html .= ' id="' . $this->_input->html_id() . '"';
 		$html .= ' name="' . $this->_input->html_name() . '[]"';
@@ -50,14 +50,14 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		$html .= '>';
 
 		EE_Registry::instance()->load_helper('Array');
-		EEH_Formatter::indent( 1 );
+		EEH_HTML::indent( 1, 'select' );
 		if( EEH_Array::is_multi_dimensional_array( $this->_input->options() )){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
 		}else{
 			$html.=$this->_display_options( $this->_input->options() );
 		}
 
-		$html.= EEH_HTML::nl( 0, 'select' ) . "</select>";
+		$html.= EEH_HTML::nl( -1, 'select' ) . "</select>";
 		return $html;
 	}
 
