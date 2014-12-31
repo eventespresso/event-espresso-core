@@ -117,6 +117,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = 0;
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
+			$redirect_args['on1_'.$item_num] = 'RETURN URL';
+			$redirect_args['os1_' . $item_num] = $return_url;
+//			$redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
 			$redirect_args['shipping_' . $item_num ] = '0';
 			$redirect_args['shipping2_' . $item_num ] = '0';
 		}
