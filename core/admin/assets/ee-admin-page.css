@@ -138,6 +138,10 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	display : inline-block; width : 99%; min-width : 486px;
 }
 
+.ee_media_url {
+	width: 90% !important;
+}
+
 #admin-page-header { clear : both; padding : .25em 0 0; }
 .admin-page-header-edit-lnk { margin : 0 0 0 1em; font-size : 10px; }
 .admin-page-header-go-back-lnk { margin : 0 0 0 1em; font-size : 12px; }

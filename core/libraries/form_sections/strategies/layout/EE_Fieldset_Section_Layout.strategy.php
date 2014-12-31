@@ -26,11 +26,13 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout{
 	protected $_legend_text;
 
 
+
 	/**
-	 * 	construct
+	 *    construct
+	 *
+	 * @param array $options
 	 */
 	function __construct( $options = array() ){
-		EE_Registry::instance()->load_helper('Formatter');
 		foreach( $options as $key => $value ) {
 			$key = '_' . $key;
 			if ( property_exists( $this, $key )) {
@@ -45,7 +47,7 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout{
 	 * @return string
 	 */
 	public function layout_form_begin() {
-		$html = EEH_Formatter::nl(1) . '<fieldset id="' . $this->_form_section->html_id() . '" class="' . $this->_form_section->html_class() . '" style="' . $this->_form_section->html_style() . '">';
+		$html = EEH_HTML::nl(1) . '<fieldset id="' . $this->_form_section->html_id() . '" class="' . $this->_form_section->html_class() . '" style="' . $this->_form_section->html_style() . '">';
 		$html .= '<legend class="' . $this->legend_class() . '">' . $this->legend_text() . '</legend>';
 		return $html;
 	}
@@ -57,7 +59,7 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout{
 	 * @return string
 	 */
 	public function layout_form_end(){
-		return EEH_Formatter::nl(-1) . '</fieldset>';
+		return EEH_HTML::nl(-1) . '</fieldset>';
 	}
 
 

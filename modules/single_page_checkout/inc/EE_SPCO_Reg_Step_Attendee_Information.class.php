@@ -209,7 +209,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// generate hidden input
 		return new EE_Hidden_Input(
 			array(
-				'layout_strategy' => new EE_Div_Per_Section_Layout(),
 				'html_id' 				=> 'additional-attendee-reg-info-' . $registration->reg_url_link(),
 				'default'				=> $additional_attendee_reg_info
 			)
@@ -232,9 +231,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'subsections' 			=> array(
 				'reg_form_qstn_grp_hdr' => $this->question_group_header( $question_group )
 			),
-			'layout_strategy' 	=> $this->checkout->admin_request
-					? new EE_Two_Column_Layout()
-					: new EE_Div_Per_Section_Layout()
+			'layout_strategy' 	=> $this->checkout->admin_request ? new EE_Admin_Two_Column_Layout() : new EE_Div_Per_Section_Layout()
 		);
 		// where params
 		$query_params = array( 'QST_deleted' => 0 );
@@ -277,17 +274,28 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$html = '';
 		// group_name
 		if ( $question_group->show_group_name() && $question_group->name() != '' ) {
-			$html .= EEH_Formatter::nl(1);
-			$html .= $this->checkout->admin_request ? '<br /><h3 style="font-size: 1.3em; padding-left:0;"' : '<h4';
-			$html .= ' class="' . ( $this->checkout->admin_request ? 'ee-reg-form-qstn-grp-title title' : 'ee-reg-form-qstn-grp-title section-title' ) . '">';
-			$html .=  $question_group->name() . '</h4>';
-			$html .=  $this->checkout->admin_request ? '</h3>' : '</h4>';
+			EE_Registry::instance()->load_helper('HTML');
+			if ( $this->checkout->admin_request ) {
+				$html .= EEH_HTML::br();
+				$html .= EEH_HTML::h3(
+					$question_group->name(),
+					'', 'ee-reg-form-qstn-grp-title title', 'font-size: 1.3em; padding-left:0;'
+				);
+			} else {
+				$html .= EEH_HTML::h4(
+					$question_group->name(),
+					'', 'ee-reg-form-qstn-grp-title section-title'
+				);
+			}
 		}
 		// group_desc
 		if ( $question_group->show_group_desc() && $question_group->desc() != '' ) {
-			$html .=  '<p class="';
-			$html .=  $this->checkout->admin_request ? 'ee-reg-form-qstn-grp-desc-pg' : 'ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text';
-			$html .=  '>' . $question_group->desc() . '</p>';
+			$html .= EEH_HTML::p(
+				$question_group->desc(),
+				'',
+				$this->checkout->admin_request ? 'ee-reg-form-qstn-grp-desc-pg' : 'ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text'
+			);
+
 		}
 		return new EE_Form_Section_HTML( $html );
 	}
@@ -303,14 +311,15 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		return new EE_Form_Section_Proper(
 			array(
 				'subsections' 			=> $this->copy_attendee_info_inputs(),
-				'layout_strategy' 	=> new EE_Template_Layout( array(
-							'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
-							'begin_template_file' 			=> NULL,
-							'input_template_file' 				=> NULL,
-							'subsection_template_file' 	=> NULL,
-							'end_template_file' 				=> NULL
-						)
+				'layout_strategy' 	=> new EE_Template_Layout(
+					array(
+						'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
+						'begin_template_file' 			=> NULL,
+						'input_template_file' 				=> NULL,
+						'subsection_template_file' 	=> NULL,
+						'end_template_file' 				=> NULL
 					)
+				)
 			)
 		);
 	}
@@ -386,7 +395,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// generate hidden input
 		return new EE_Hidden_Input(
 			array(
-				'layout_strategy' => new EE_Div_Per_Section_Layout(),
 				'html_id' 				=> 'primary_registrant',
 				'default'				=> $registration->reg_url_link()
 			)
@@ -459,7 +467,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$input_constructor_args = array(
 			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
-			'html_class' 			=> $this->checkout->admin_request ? 'ee-reg-qstn regular-text' : 'ee-reg-qstn',
+			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',

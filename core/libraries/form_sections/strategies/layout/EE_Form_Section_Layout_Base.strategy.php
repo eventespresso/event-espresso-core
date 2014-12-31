@@ -22,7 +22,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * 	__construct
 	 */
 	function __construct(){
-		EE_Registry::instance()->load_helper('Formatter');
+		EE_Registry::instance()->load_helper('HTML');
 	}
 
 
@@ -56,9 +56,25 @@ abstract class EE_Form_Section_Layout_Base{
 	 */
 	function layout_form(){
 		$html = '';
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$this->_form_section->name(),EEH_Formatter::nl(1) . $this->layout_form_begin(),$this->_form_section);
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop__for_'.$this->_form_section->name(),$this->layout_form_loop(),$this->_form_section);
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_'.$this->_form_section->name(),EEH_Formatter::nl(-1) . $this->layout_form_end(),$this->_form_section);
+		// layout_form_begin
+		$html .= apply_filters(
+			'FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_' . $this->_form_section->name(),
+			$this->layout_form_begin(),
+			$this->_form_section
+		);
+		// layout_form_loop
+		$html .= apply_filters(
+			'FHEE__EE_Form_Section_Layout_Base__layout_form__loop__for_' . $this->_form_section->name(),
+			$this->layout_form_loop(),
+			$this->_form_section
+		);
+		// layout_form_end
+		$html .= apply_filters(
+			'FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_' . $this->_form_section->name(),
+			$this->layout_form_end(),
+			$this->_form_section
+		);
+
 		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
@@ -167,9 +183,12 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Input_Base $input
 	 * @return string
 	 */
-	public function display_help_text($input){
-		$tag = is_admin() ? 'p' : 'span';
-		return '<' . $tag . ' id="' . $input->html_id() . '-help" class="' . $input->html_help_class() . '" style="' . $input->html_help_style() . '">' . $input->html_help_text() . '</' . $tag . '>';
+	public function display_help_text( $input ){
+		if ( $input->html_help_text() != '' ) {
+			$tag = is_admin() ? 'p' : 'span';
+			return '<' . $tag . ' id="' . $input->html_id() . '-help" class="' . $input->html_help_class() . '" style="' . $input->html_help_style() . '">' . $input->html_help_text() . '</' . $tag . '>';
+		}
+		return '';
 	}
 
 
@@ -180,13 +199,13 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function add_form_section_hooks_and_filters( $html ){
+		// replace dashes and spaces with underscores
 		$hook_name = str_replace( array( '-', ' ' ), '_', $this->_form_section->html_id() );
 		do_action( 'AHEE__Form_Section_Layout__' . $hook_name, $this->_form_section );
 		$html = apply_filters( 'AFEE__Form_Section_Layout__' . $hook_name . '__html', $html, $this->_form_section );
-		$html .= EEH_Formatter::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
-		$html .= EEH_Formatter::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
+		$html .= EEH_HTML::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
+		$html .= EEH_HTML::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
 		return $html;
-
 	}
 
 

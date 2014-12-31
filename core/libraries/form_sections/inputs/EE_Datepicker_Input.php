@@ -1,5 +1,13 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-
+/**
+ * Class EE_Datepicker_Input
+ *
+ * @package            Event Espresso
+ * @subpackage    core
+ * @author                Mike Nelson
+ * @since                4.6
+ *
+ */
 class EE_Datepicker_Input extends EE_Text_Input{
 
 	/**
@@ -12,6 +20,7 @@ class EE_Datepicker_Input extends EE_Text_Input{
 		parent::__construct( $options );
 		// add some style and make it dance
 		add_action( 'wp_enqueue_scripts', array( 'EE_Datepicker_Input', 'enqueue_styles_and_scripts' ));
+		add_action( 'admin_enqueue_scripts', array( 'EE_Datepicker_Input', 'enqueue_styles_and_scripts' ));
 	}
 
 
@@ -24,7 +33,7 @@ class EE_Datepicker_Input extends EE_Text_Input{
 	 */
 	public static function enqueue_styles_and_scripts() {
 		// load css
-		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_style( 'espresso-ui-theme');
 		// i18n
 		// load JS

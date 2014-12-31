@@ -206,7 +206,8 @@ abstract class EE_Gateway{
 	 * @return string
 	 */
 	public function format_currency($amount){
-		return $this->_template->format_currency($amount, true);
+		return number_format( $amount, 2, '.', '' );
+//		return $this->_template->format_currency($amount, true);
 	}
 
 	/**

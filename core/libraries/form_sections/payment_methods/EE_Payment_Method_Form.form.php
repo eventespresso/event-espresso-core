@@ -52,17 +52,18 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		if($this->_extra_meta_inputs){
 			$this->_subsections = array_merge($this->_subsections,$this->_extra_meta_inputs);
 		}
-		$this->_subsections['PMD_button_url'] = new EE_Admin_File_Uploader_Input(array(
-			'html_label_text'=>  __("Button URL", 'event_espresso')
-		));
-		$this->_subsections['PMD_scope'] = new EE_Checkbox_Multi_Input(EEM_Payment_Method::instance()->scopes(),array(
-			'html_label_text'=>$this->_model->field_settings_for('PMD_scope')->get_nicename() . EEH_Template::get_help_tab_link('payment_methods_overview')
-		));
+		$this->_subsections['PMD_button_url'] = new EE_Admin_File_Uploader_Input(
+			array( 'html_label_text'=>  __( 'Button URL', 'event_espresso' ))
+		);
+		$this->_subsections['PMD_scope'] = new EE_Checkbox_Multi_Input(
+			EEM_Payment_Method::instance()->scopes(),
+			array( 'html_label_text' => $this->_model->field_settings_for('PMD_scope')->get_nicename() . EEH_Template::get_help_tab_link( 'payment_methods_overview' ))
+		);
 		//setup the currency options
 		$this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(
 			EEM_Currency::instance()->get_all_currencies_usable_by( $this->_payment_method_type ),
 			array(
-				'html_label_text'=>  __("Currencies Supported", 'event_espresso'),
+				'html_label_text'=>  __( 'Currencies Supported', 'event_espresso' ),
 				'required'=>TRUE
 			)
 		);
@@ -132,10 +133,6 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			if(isset($extra_meta[$input_name])){
 				$extra_meta_input->set_default($extra_meta[$input_name]);
 			}
-		}
-		$currency_input = $this->get_input('Currency');
-		if($currency_input instanceof EE_Payment_Method_Currencies_Input){
-			$currency_input->set_payment_method($model_obj);
 		}
 	}
 
