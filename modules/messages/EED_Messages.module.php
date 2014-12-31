@@ -393,6 +393,10 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return;
+		}
 		// let's NOT send out notifications if the registration was NOT finalized.
 		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
 			return;

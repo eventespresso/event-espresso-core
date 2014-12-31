@@ -824,11 +824,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						if ( $this->checkout->current_step->success_message() != '' ) {
 							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
 						}
-						// did we just successfully complete the processing for this step, and this is NOT the Finalize Registration step ?
-						if ( $this->checkout->action == 'process_reg_step' && ! $this->checkout->current_step->is_final_step() ) {
-							// mark this reg step as completed
-							$this->checkout->current_step->set_completed();
-						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();
 						// store our progress so far

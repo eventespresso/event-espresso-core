@@ -26,13 +26,19 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
+
+	/**
+	 *
+	 * @throws EE_Error
+	 * @return string of html to display the field
+	 */
 	public function display() {
 
 		if( ! $this->_input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error(sprintf(__('Cannot use Select Multiple Display Strategy with an input that doesn\'t have options', "event_espresso")));
 		}
 
-		$html = EEH_Formatter::nl();
+		$html = EEH_HTML::nl( 0, 'select' );
 		$html .= '<select multiple';
 		$html .= ' id="' . $this->_input->html_id() . '"';
 		$html .= ' name="' . $this->_input->html_name() . '[]"';
@@ -43,17 +49,15 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		$html .= ' style="' . $this->_input->html_style() . '"';
 		$html .= '>';
 
-
-
 		EE_Registry::instance()->load_helper('Array');
-		EEH_Formatter::indent( 1 );
+		EEH_HTML::indent( 1, 'select' );
 		if( EEH_Array::is_multi_dimensional_array( $this->_input->options() )){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
 		}else{
 			$html.=$this->_display_options( $this->_input->options() );
 		}
 
-		$html.= EEH_Formatter::nl(-1) . "</select>";
+		$html.= EEH_HTML::nl( -1, 'select' ) . "</select>";
 		return $html;
 	}
 
@@ -64,14 +68,15 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 	 * @param string|int $value unnormalized value option (string)
 	 * @return boolean
 	 */
-	protected function _check_if_option_selected($value){
+	protected function _check_if_option_selected( $value ){
 		$selected_options = $this->_input->raw_value();
-		if( ! $selected_options ){
-			return false;
+		if ( empty( $selected_options )){
+			return FALSE;
 		}
-		$equality = in_array($value,$selected_options );
-		return $equality;
+		return in_array( $value, $selected_options ) ? TRUE : FALSE;
 	}
-}
 
+
+
+}
 // End of file EE_Select_Multiple_Display_Strategy.strategy.php

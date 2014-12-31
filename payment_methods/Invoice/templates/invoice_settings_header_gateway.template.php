@@ -19,16 +19,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * invoice_settings_header_gateway
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-?></td></tr><tr>
+?>
+	<tr>
 		<th><h4><?php _e("Invoice Gateway Settings", 'event_espresso');?></h4></th>
-		<td>						
+		<td>
 			<span class="description"><?php _e("The following settings affect the functioning of the Invoice gateway.", 'event_espresso');?></span>
 		</td>
-	</tr><tr><td><?php
+	</tr>
+<?php
 
 // End of file invoice_settings_header_gateway.template.php
