@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * EE_Help_Tour
  *
- * This is the parent class for all the EE_Help_Tour objects that setup the steps for a help_tour on a page.  
+ * This is the parent class for all the EE_Help_Tour objects that setup the steps for a help_tour on a page.
  *
  *
  * @package		EE_Help_Tour
@@ -50,7 +50,7 @@ abstract class EE_Help_Tour extends EE_Base {
 
 
 	/**
-	 * This will contain the formatted array for the stops that gets used by EE_Admin_Page->_add_help_tour() for setting up a tour on a given page. 
+	 * This will contain the formatted array for the stops that gets used by EE_Admin_Page->_add_help_tour() for setting up a tour on a given page.
 	 * format for array is:
 	 * array(
 	 *		0 => array(
@@ -65,7 +65,7 @@ abstract class EE_Help_Tour extends EE_Base {
 	 *				)
 	 *			)
 	 *		);
-	 * 
+	 *
 	 * @access protected
 	 * @var array
 	 */
@@ -76,7 +76,7 @@ abstract class EE_Help_Tour extends EE_Base {
 	/**
 	 * This contains any stop specific options for the tour.
 	 * defaults are set but child classes can override.
-	 * 
+	 *
 	 * @access protected
 	 * @var array
 	 */
@@ -166,10 +166,11 @@ abstract class EE_Help_Tour extends EE_Base {
 		  	'tipAdjustmentX' => 0,			//allow for adjustment of tip
 		  	'scroll' => true, //whether to scrollTo the next step or not
 		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
-		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms) 
-		  	'autoStart' => true,			// true or false - false tour starts when restart called 
+		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms)
+		  	'autoStart' => true,			// true or false - false tour starts when restart called
 		  	'startTimerOnClick' => true,       // true/false to start timer on first click
 		  	'nextButton' => true,              // true/false for next button visibility
+		  	'button_text' => __('Next', 'event_espresso'),
 		  	'tipAnimation' => 'fade',           // 'pop' or 'fade' in each tip
 		  	'pauseAfter' => array(),                // array of indexes where to pause the tour after
 		  	'tipAnimationFadeSpeed' => 300,    // if 'fade'- speed in ms of transition
@@ -185,7 +186,7 @@ abstract class EE_Help_Tour extends EE_Base {
 		  	'preStepCallback' => 'EEHelpTour_preStepCallback',    // A method to call before each step
 		  	'postStepCallback' => 'EEHelpTour_postStepCallback',        // A method to call after each step (remember this will correspond with a js method that you will have to define in a js file BEFORE ee-help-tour.js loads, if the default methods do not exist, then ee-help-tour.js just substitues empty functions $.noop)/**/
 			);
-		
+
 		$options = !empty( $options ) && is_array($options)  ? array_merge( $defaults, $options ) : $defaults;
 		$this->_options = $options;
 	}
@@ -194,7 +195,7 @@ abstract class EE_Help_Tour extends EE_Base {
 	/**
 	 * getter functions to return all the properties for the tour.
 	 */
-	
+
 
 	/**
 	 * get_slug
@@ -226,6 +227,11 @@ abstract class EE_Help_Tour extends EE_Base {
 	 * @return array
 	 */
 	public function get_stops() {
+		foreach( $this->_stops as $ind => $stop ) {
+			if ( ! isset( $stop['button_text'] ) ) {
+				$this->_stops[$ind]['button_text'] = $this->_options['button_text'];
+			}
+		}
 		return $this->_stops;
 	}
 
@@ -244,5 +250,5 @@ abstract class EE_Help_Tour extends EE_Base {
 		}
 		return apply_filters( 'FHEE__' . get_class($this) . '__get_options', $this->_options, $this );
 	}
-	
+
 }
