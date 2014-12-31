@@ -678,6 +678,9 @@ class EEH_HTML {
 			EEH_HTML::_set_default_indentation();
 			$default_indentation = TRUE;
 		}
+		if ( ! isset( EEH_HTML::$_indent[ $tag ] )) {
+			EEH_HTML::$_indent[ $tag ] = 1;
+		}
 		EEH_HTML::$_indent[ $tag ] += intval( $indent );
 		EEH_HTML::$_indent[ $tag ] = EEH_HTML::$_indent[ $tag ] >= 0 ? EEH_HTML::$_indent[ $tag ] : 0;
 	}
@@ -711,7 +714,8 @@ class EEH_HTML {
 			'p' 	=> 0,
 			'ul' 	=> 0,
 			'li' 	=> 1,
-			'option' => 1
+			'option' => 1,
+			'optgroup' => 1
 		);
 	}
 
