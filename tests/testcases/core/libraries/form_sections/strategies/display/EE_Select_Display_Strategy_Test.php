@@ -24,12 +24,11 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$input = $form->get_input( 'input1' );
 		$expected_output =
-'
-<select id="form-input1" name="form[input1]" class="" style="">
-	<option value="foo">Foo</option>
-	<option value="bar">Bar</option>
-	<option value="baz&#039;em">Baz</option>
-</select>';
+'	<select id="form-input1" name="form[input1]" class="" style="">
+		<option value="foo">Foo</option>
+		<option value="bar">Bar</option>
+		<option value="baz&#039;em">Baz</option>
+	</select>';
 		$this->assertEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
@@ -38,12 +37,11 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "baz'em", $input->normalized_value() );
 		$this->assertEquals( "baz'em", $input->raw_value() );
 		$expected_output2 =
-'
-<select id="form-input1" name="form[input1]" class="" style="">
-	<option value="foo">Foo</option>
-	<option value="bar">Bar</option>
-	<option value="baz&#039;em" selected="selected">Baz</option>
-</select>';
+'	<select id="form-input1" name="form[input1]" class="" style="">
+		<option value="foo">Foo</option>
+		<option value="bar">Bar</option>
+		<option value="baz&#039;em" selected="selected">Baz</option>
+	</select>';
 		$this->assertEquals( $expected_output2, $input->get_html_for_input() );
 
 	}
@@ -60,19 +58,18 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 					)));
 		$output = $input->get_html_for_input();
 		$expected_output =
-'
-<select id="" name="" class="" style="">
-	<optgroup label="code_var_names">
-		<option value="foo">Foo</option>
-		<option value="bar">Bar</option>
-		<option value="baz">Baz</option>
-	</optgroup>
-	<optgroup label="monkey_types">
-		<option value="chimp">Chimp</option>
-		<option value="orang">Orangutang</option>
-		<option value="baboob">Baboon</option>
-	</optgroup>
-</select>';
+'	<select id="" name="" class="" style="">
+		<optgroup label="code_var_names">
+			<option value="foo">Foo</option>
+			<option value="bar">Bar</option>
+			<option value="baz">Baz</option>
+		</optgroup>
+		<optgroup label="monkey_types">
+			<option value="chimp">Chimp</option>
+			<option value="orang">Orangutang</option>
+			<option value="baboob">Baboon</option>
+		</optgroup>
+	</select>';
 		$this->assertEquals( $expected_output, $output );
 
 
