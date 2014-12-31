@@ -245,7 +245,7 @@ class EE_Payment_Method_Manager {
 		}
 		if( $payment_method->type() == 'Invoice' ){
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
-			$messages->ensure_messenger_is_active( 'html' );
+			$messages->ensure_message_type_is_active( 'invoice', 'html' );
 			$messages->ensure_messenger_is_active( 'pdf' );
 		}
 		return $payment_method;
