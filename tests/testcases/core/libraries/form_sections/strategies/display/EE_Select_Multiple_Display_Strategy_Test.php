@@ -24,12 +24,11 @@ class EE_Select_Multiple_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$input = $form->get_input( 'input1' );
 		$expected_output =
-'
-<select multiple id="form-input1" name="form[input1][]" class="" style="">
-	<option value="foo">Foo</option>
-	<option value="bar">Bar</option>
-	<option value="baz&#039;em">Baz</option>
-</select>';
+'	<select multiple id="form-input1" name="form[input1][]" class="" style="">
+		<option value="foo">Foo</option>
+		<option value="bar">Bar</option>
+		<option value="baz&#039;em">Baz</option>
+	</select>';
 		$this->assertEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
@@ -38,12 +37,11 @@ class EE_Select_Multiple_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->normalized_value() );
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->raw_value() );
 		$expected_output2 =
-'
-<select multiple id="form-input1" name="form[input1][]" class="" style="">
-	<option value="foo">Foo</option>
-	<option value="bar" selected="selected">Bar</option>
-	<option value="baz&#039;em" selected="selected">Baz</option>
-</select>';
+'	<select multiple id="form-input1" name="form[input1][]" class="" style="">
+		<option value="foo">Foo</option>
+		<option value="bar" selected="selected">Bar</option>
+		<option value="baz&#039;em" selected="selected">Baz</option>
+	</select>';
 		$this->assertEquals( $expected_output2, $input->get_html_for_input() );
 
 	}
