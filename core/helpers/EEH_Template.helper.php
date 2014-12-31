@@ -145,12 +145,12 @@ class EEH_Template {
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
-	 * @param array    $templates
+	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.  Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
-	 * @internal param array|string $mixed $templates  the template file name including extension
+	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.
+	 * 				Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
 	 * @return mixed
 	 */
 	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE, $check_if_custom = FALSE ) {
@@ -439,7 +439,7 @@ class EEH_Template {
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
 		$icon = !$icon_style ? ' dashicons-editor-help' : $icon_style;
 		$help_text = !$help_text ? '' : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
+		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . __('Click to open the \'Help\' tab for more information about this feature.', 'event_espresso') . '" > ' . $help_text . ' </a>';
 	}
 
 
@@ -541,7 +541,7 @@ class EEH_Template {
 	 * @return string
 	 */
 	public static function layout_array_as_table($data) {
-	if (is_object($data)) {
+	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
 	EE_Registry::instance()->load_helper('Array');

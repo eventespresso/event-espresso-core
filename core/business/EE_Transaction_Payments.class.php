@@ -1,4 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
+
 /**
  * Class EE_Transaction_Payments
  *
@@ -13,12 +15,33 @@
 
 class EE_Transaction_Payments {
 
+	/**
+	 * 	@var EE_Transaction_Payments $_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
+
+
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 *@return EE_Transaction_Payments instance
+	 */
+	public static function instance() {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_Transaction_Payments ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
 
 
 	/**
 	 * @return EE_Transaction_Payments
 	 */
-	function __construct() {
+	private function __construct() {
 	}
 
 

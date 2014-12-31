@@ -7,7 +7,7 @@
  *
  * @package 			Event Espresso
  * @subpackage 	core
- * @author 				Mike Nelson, Brent Christensen
+ * @author 				Mike Nelson
  * @since 				$VID:$
  *
  */
@@ -22,35 +22,53 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
 			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
-		//d( $this->_input );
+
 		$html = $this->display_label();
+		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		foreach( $this->_input->options() as $value => $display_text ){
-			$selected_attr = $this->_input->raw_value() === $value ? ' checked="checked"' : '';
-			$value_slug = sanitize_key( $value );
-			$html .= '<label for="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
-			$html .= 'class="ee-radio-label-after' . $label_size_class . '">';
-			$html .= '<input id="' . rtrim( $this->_input->html_id(), '-' ) . '-' . $value_slug . '"';
-			$html .= 'name="' . $this->_input->html_name() . '"';
-			$html .= 'class="' . $this->_input->html_class() . '"';
-			$html .= 'style="' . $this->_input->html_style() . '"';
-			$html .= 'type="radio"';
-			$html .= 'value="' . esc_attr( $value ) . '"';
-			$html .= $selected_attr;
-			$html .= '>' . $display_text . '</label>';
+			$value = $this->_input->get_normalization_strategy()->unnormalize( $value );
+
+			$html_id = $this->_append_chars( $this->_input->html_id(), '-' ) . sanitize_key( $value );
+			$html .= EEH_HTML::nl(0);
+			$html .= '<label for="' . $html_id . '"';
+			$html .= ' id="' . $html_id . '-lbl"';
+			$html .= ' class="ee-radio-label-after' . $label_size_class . '">';
+			$html .= EEH_HTML::nl(1);
+			$html .= '<input id="' . $html_id . '"';
+			$html .= ' name="' . $this->_input->html_name() . '"';
+			$html .= ' class="' . $this->_input->html_class() . '"';
+			$html .= ' style="' . $this->_input->html_style() . '"';
+			$html .= ' type="radio"';
+			$html .= ' value="' . esc_attr( $value ) . '"';
+			$html .= $this->_input->raw_value() === $value ? ' checked="checked"' : '';
+			$html .= '>&nbsp;';
+			$html .= $display_text;
+			$html .= EEH_HTML::nl(-1) . '</label>';
+
 		}
 		return $html;
 	}
 
 
 
+
 	/**
 	 * Gets the HTML for the 'label', which is just text for this (because labels
 	 * should be for each input)
+	 *
+	 * @throws \EE_Error
 	 * @return string
 	 */
 	public function display_label(){
-		return '<div id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . '" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</div>';
+		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
+			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
+		}
+		if ( $this->_input->display_html_label_text() ) {
+			return '<div id="' . $this->_input->html_label_id() . '" class="' . $this->_input->html_label_class() . '" style="' . $this->_input->html_label_style() . '">' . $this->_input->html_label_text() . '</div>';
+		} else {
+			return '';
+		}
 	}
 
 }

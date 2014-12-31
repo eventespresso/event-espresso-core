@@ -1,11 +1,16 @@
 <?php
-
+require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 /**
+ * Class EE_Belongs_To_Relation
+ *
  * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction
  * (because Registration's TXN_ID field is on Registration, and points to the Transaction's PK)
+ *
+ * @package            Event Espresso
+ * @subpackage    core
+ * @author                MIke Nelson
+ *
  */
-require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
-
 class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 
 	/**
@@ -13,12 +18,20 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	 * to the other model. This knows how to join the models,
 	 * get related models across the relation, and add-and-remove the relationships.
 	 * @param boolean $block_deletes For Belongs_To relations, this is set to FALSE by default. if there are related models across this relation, block (prevent and add an error) the deletion of this model
-	 * @param type $blocking_delete_error_message a customized error message on blocking deletes instead of the default
+	 * @param string $related_model_objects_deletion_error_message a customized error message on blocking deletes instead of the default
 	 */
 	function __construct($block_deletes = false, $related_model_objects_deletion_error_message = null) {
 		parent::__construct($block_deletes, $related_model_objects_deletion_error_message);
 	}
 
+
+
+	/**
+	 * get_join_statement
+	 * @param string $model_relation_chain
+	 * @return string
+	 * @throws \EE_Error
+	 */
 	function get_join_statement($model_relation_chain) {
 		//create the sql string like
 		$this_table_fk_field = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
@@ -38,7 +51,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	function add_relation_to($this_obj_or_id, $other_obj_or_id) {
 		$this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		$other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
-		//find the field on th eother model which is a foreign key to this model
+		//find the field on the other model which is a foreign key to this model
 		$fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		if ( $this_model_obj->get($fk_on_this_model->get_name()) != $other_model_obj->ID()){
 			//set that field on the other model to this model's ID
@@ -57,7 +70,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	function remove_relation_to($this_obj_or_id, $other_obj_or_id) {
 		$this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		$other_model_obj = $this->get_other_model()->ensure_is_obj( $other_obj_or_id );
-		//find the field on th eother model which is a foreign key to this model
+		//find the field on the other model which is a foreign key to this model
 		$fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		//set that field on the other model to this model's ID
 		$this_model_obj->set($fk_on_this_model->get_name(), null, true);
@@ -66,7 +79,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	}
 
 	/**
-	 * Overrides parent so that we don't NEED to save the $model_object before getting the related objcets.
+	 * Overrides parent so that we don't NEED to save the $model_object before getting the related objects.
 	 * @param EE_Base_Class $model_obj_or_id
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param boolean $values_already_prepared_by_model_object

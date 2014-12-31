@@ -149,7 +149,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				}
 				$payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
 				$payment->set_status($payment_status);
-				$payment->set_amount($response->amount);
+				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
+				$payment->set_amount( floatval( $response->amount ) );
 				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
 				$payment->set_extra_accntng($primary_registrant->reg_code());
 				$payment->set_details(print_r($response,true));
@@ -244,8 +245,16 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param EEI_Payment $payment
 	 */
 	private function _log_clean_request($request_array,$payment){
-		unset($request_array['x_card_num']);
-		unset($request_array['card_code']);
+		$keys_to_filter_out = array( 'x_card_num', 'x_card_code', 'x_exp_date' );
+		foreach($request_array as $index => $keyvaltogether ) {
+			foreach( $keys_to_filter_out as $key ) {
+				if( strpos( $keyvaltogether, $key ) === 0 ){
+					//found it at the first character
+					//so its one of them
+					unset( $request_array[ $index ] );
+				}
+			}
+		}
 		$this->log(array('AIM Request sent:'=>$request_array),$payment);
 	}
 

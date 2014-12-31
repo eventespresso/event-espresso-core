@@ -61,7 +61,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 				)),
 				'paypal_taxes' => new EE_Yes_No_Input(array(
 					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $this->get_help_tab_link() ),
-					'html_help_text' => __('Whether Paypal should calculate order taxes', 'event_espresso'),
+					'html_help_text' => __('Whether Paypal should calculate order taxes on taxable tickets', 'event_espresso'),
 					'default' => FALSE
 				)),
 				'paypal_shipping' => new EE_Yes_No_Input(array(
@@ -116,7 +116,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		//when they return to our site
 		//so in case teh IPN is arriving later, let's try to process an IPN!
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			return EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
+			return $this->handle_ipn($_POST, $transaction );
 		}else{
 			return parent::finalize_payment_for( $transaction );
 		}
@@ -124,4 +124,4 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 
 
 
-}//NOTIFY URL: http://eventespresso.com/sandbox/dev1/transactions/?e_reg_url_link=1-07eae3d1b8e76de4b3bd9181a69408b5&ee_payment_method=paypal_standard
+}

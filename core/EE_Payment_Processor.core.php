@@ -1,34 +1,24 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_Payment_Processor
  *
- * CLass for handling processing of payments for transactions.
+ * Class for handling processing of payments for transactions.
  *
  * @package			Event Espresso
  * @subpackage		core/libraries/payment_methods
  * @author			Mike Nelson
  *
- * ------------------------------------------------------------------------
  */
-class EE_Payment_Processor{
+class EE_Payment_Processor extends EE_Processor_Base {
 	/**
      * 	@var EE_Payment_Processor $_instance
 	 * 	@access 	private
      */
 	private static $_instance = NULL;
+
+
 
 	/**
 	 *@singleton method used to instantiate class object
@@ -67,10 +57,10 @@ class EE_Payment_Processor{
 	 * @param string               				$return_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
 	 * @param bool                 				$by_admin
-	 * @param boolean              				$save_txn 		whether or not to save the transaction as part of this function call
+	 * @param boolean              				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @return EE_Payment | NULL
 	 */
-	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
+	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE ) {
 		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		// verify transaction
@@ -78,9 +68,17 @@ class EE_Payment_Processor{
 		$transaction->set_payment_method_ID( $payment_method->ID() );
 		// verify payment method type
 		if ( $payment_method->type_obj() instanceof EE_PMT_Base ){
-			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $return_url, NULL, $method, $by_admin );
+			$payment = $payment_method->type_obj()->process_payment(
+				$transaction,
+				$amount,
+				$billing_form,
+				$return_url,
+				EE_Registry::instance()->CFG->core->cancel_page_url(),
+				$method,
+				$by_admin
+			);
 			//offline gateways DON'T return a payment object, so check it
-			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
+			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			return $payment;
 		} else {
 			EE_Error::add_error(
@@ -104,6 +102,7 @@ class EE_Payment_Processor{
 	 * @return string
 	 */
 	public function get_ipn_url_for_payment_method( $transaction, $payment_method ){
+		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$primary_reg = $transaction->primary_registration();
 		if( ! $primary_reg instanceof EE_Registration ){
@@ -129,12 +128,12 @@ class EE_Payment_Processor{
 	 * @param 	$_req_data
 	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
 	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
-	 * @param boolean           				$save_txn       whether to save the associated transaction or not
+	 * @param boolean           				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws EE_Error
 	 * @throws Exception
 	 * @return EE_Payment
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
 //		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
@@ -181,7 +180,7 @@ class EE_Payment_Processor{
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
-				$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -195,7 +194,7 @@ class EE_Payment_Processor{
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(
-					"Error occured while receiving IPN. Transaction: %s, req data: %s. The error was '%s'",
+					"Error occurred while receiving IPN. Transaction: %s, req data: %s. The error was '%s'",
 					print_r( $transaction, TRUE ),
 					print_r( $_req_data, TRUE ),
 					$e->getMessage()
@@ -217,21 +216,19 @@ class EE_Payment_Processor{
 	 * provider.
 	 *
 	 * @param EE_Transaction | int $transaction
-	 * @param bool                 $update_txn
+	 * @param bool 	$update_txn  whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
 	 * @return EE_Payment
 	 */
 	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
-		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		/** @var $transaction EE_Transaction */
+		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
 			$payment = $last_payment_method->type_obj()->finalize_payment_for( $transaction );
-			if ( $update_txn ) {
-				$this->update_txn_based_on_payment( $transaction, $payment );
-			}
+			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			return $payment;
-		}else{
+		} else {
 			return NULL;
 		}
 	}
@@ -246,10 +243,11 @@ class EE_Payment_Processor{
 	 * @internal param float $amount
 	 * @return EE_Payment
 	 */
-	public function process_refund($payment_method,$payment_to_refund,$refund_info = array()){
+	public function process_refund( $payment_method, $payment_to_refund, $refund_info = array() ){
+		/** @type EE_Payment_Method $payment_method */
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
-		if($payment_method->type_obj()->supports_sending_refunds()){
-			$payment_method->do_direct_refund($payment_to_refund,$refund_info);
+		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
+			$payment_method->do_direct_refund( $payment_to_refund,$refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}
 		return $payment_to_refund;
@@ -269,47 +267,68 @@ class EE_Payment_Processor{
 	 * tied to payment processing
 	 * @param EE_Transaction $transaction
 	 * @param EE_Payment $payment
-	 * @param boolean $save_txn whether or not to save the transaction in this function
+	 * @param boolean $update_txn whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * (you can save 1 DB query if you know you're going to save it later instead)
 	 */
-	public function update_txn_based_on_payment( $transaction, $payment, $save_txn = TRUE ){
+	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = TRUE ){
+		$do_action = FALSE;
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
-		if ( $payment === NULL ) {
-			//there is no payment. Must be an offline gateway
-			//but have we already triggered pending payment notification?
-			if ( $transaction->status_ID() !== EEM_Transaction::incomplete_status_code ) {
-				//create a hacky payment object, but dont save it
-				$payment = EE_Payment::new_instance( array(
-					'TXN_ID' => $transaction->ID(),
-					'STS_ID' => EEM_Payment::status_id_pending,
-					'PAY_timestamp' => current_time('timestamp'),
-					'PAY_amount' => $transaction->total(),
-					'PMD_ID' => $transaction->payment_method_ID() ) );
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
-				if( $save_txn ){
-					$transaction->save();
-				}
-				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $transaction, $payment );
-			} else {
-				//we should have already done that action
-			}
-
-		} else if ( $payment instanceof EE_Payment ) {
-			//we need to save this payment in order for transaction to be updated correctly
-			//(because it queries teh DB to find the total amount paid, and saving puts
-			//the payment into the DB)
+		// verify payment
+		if ( $payment instanceof EE_Payment ) {
+			// we need to save this payment in order for transaction to be updated correctly
+			// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
 			$payment->save();
-			if( $payment->just_approved() ){
-				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $transaction, $payment );
-			}
+			$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
+
+		} else {
+			// there is no payment. Must be an offline gateway
+			//create a hacky payment object, but dont save it
+			$payment = EE_Payment::new_instance(
+				array(
+					'TXN_ID' 					=> $transaction->ID(),
+					'STS_ID' 					=> EEM_Payment::status_id_pending,
+					'PAY_timestamp' 	=> current_time('timestamp'),
+					'PAY_amount' 		=> 0.00,
+					'PMD_ID' 				=> $transaction->payment_method_ID()
+				)
+			);
+			$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 		}
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		$transaction_payments->calculate_total_payments_and_update_status( $transaction );
+		// call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
+		if ( $update_txn ) {
+			$this->_post_payment_processing( $transaction, $payment, $update_txn );
+		}
+		// and set a hook point for others to use?
+		if ( $do_action ) {
+			do_action( $do_action, $transaction, $payment );
+		}
+	}
+
+
+
+
+	/**
+	 * Process payments and transaction after payment process completed.
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param EE_Payment     $payment
+	 *
+	 * @return void
+	 */
+	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment ) {
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		$transaction_processor->set_revisit( $this->_revisit );
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
+		$transaction->save();
 	}
+
+
+
  }

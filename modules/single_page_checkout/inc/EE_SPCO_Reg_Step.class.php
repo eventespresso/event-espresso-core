@@ -74,14 +74,14 @@ abstract class EE_SPCO_Reg_Step {
 	 * 	@access private
 	 *	@var string $_success_message
 	 */
-	private $_success_message = NULL;
+	protected $_success_message = NULL;
 
 	/**
 	 * 	$_instructions - a brief description of how to complete the reg step. Usually displayed in conjunction with the previous step's success message.
 	 * 	@access private
 	 *	@var string $_instructions
 	 */
-	private $_instructions = NULL;
+	protected $_instructions = NULL;
 
 	/**
 	 * 	$_valid_data - the normalized and validated data for this step
@@ -184,6 +184,30 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * submit_button_text
+	 * the text that appears on the reg step form submit button
+	 * @return string
+	 */
+	public function submit_button_text() {
+		return $this->_submit_button_text;
+	}
+
+
+
+	/**
+	 * set_submit_button_text
+	 * sets the text that appears on the reg step form submit button
+	 * @param string $submit_button_text
+	 */
+	public function set_submit_button_text( $submit_button_text = '' ) {
+		if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		}
+	}
+
+
+
+	/**
 	 * @param boolean $is_current_step
 	 */
 	public function set_is_current_step( $is_current_step ) {
@@ -281,6 +305,15 @@ abstract class EE_SPCO_Reg_Step {
 	 */
 	public function set_instructions( $instructions ) {
 		$this->_instructions = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_instructions__instructions', $instructions, $this );
+	}
+
+
+
+	/**
+	 * @param array $valid_data
+	 */
+	public function set_valid_data( $valid_data ) {
+		$this->_valid_data = $valid_data;
 	}
 
 
@@ -445,37 +478,34 @@ abstract class EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			return '';
 		}
+		EE_Registry::instance()->load_helper('HTML');
+		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
 		$sbmt_btn = new EE_Submit_Input( array(
 //			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
 			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_id' 							=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_class' 					=> 'spco-next-step-btn',
 			'other_html_attributes' 	=> ' rel="' . $this->slug() . '"',
-			'default'							=> ! empty( $this->checkout->next_step->_submit_button_text )
-				? $this->checkout->next_step->_submit_button_text
-				: sprintf( __( 'Proceed to %s', 'event_espresso' ), $this->checkout->next_step->name() )
+			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
-		ob_start();
-		if ( $this->checkout->admin_request ) {
-			echo EEH_Formatter::nl(1) . '<table class="form-table" style="margin-left:2em;">';
-			echo EEH_Formatter::nl(1) . '<tr>';
-			echo EEH_Formatter::nl(1) . '<th>';
-			echo EEH_Formatter::nl(-1) . '</th>';
-			echo EEH_Formatter::nl() . '<td style="padding-left:10px;">';
-		}
-		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
-		echo '<div id="spco-' . $this->slug() . '-whats-next-buttons-dv" class="spco-whats-next-buttons">';
-		echo $sbmt_btn->get_html_for_input();
-		echo '</div>';
-		echo '<!--end spco-whats-next-buttons-->';
-		if ( $this->checkout->admin_request ) {
-			echo EEH_Formatter::nl(-1) . '</td>';
-			echo EEH_Formatter::nl(-1) . '</tr>';
-			echo EEH_Formatter::nl(-1) . '</table>';
-			echo '<br />';
-		}
-		return ob_get_clean();
+		return EEH_HTML::div(
+			$sbmt_btn->get_html_for_input(),
+			'spco-' . $this->slug() . '-whats-next-buttons-dv',
+			'spco-whats-next-buttons'
+		);
+//		if ( $this->checkout->admin_request ) {
+//			$html = EEH_HTML::table(
+//				EEH_HTML::tr(
+//					EEH_HTML::th() .
+//					EEH_HTML::td( $html, '', '', 'padding-left:10px;' )
+//				),
+//				'', 'form-table', 'margin-left:2em;'
+//			);
+//			$html .= EEH_HTML::br();
+//		}
+//		return $html;
+
 	}
 
 
@@ -494,7 +524,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function edit_lnk_url() {
-		return 	add_query_arg( array( /*'ee' => '_register', */'step' => $this->slug() ), $this->checkout->reg_page_base_url );
+		return 	add_query_arg( array( 'step' => $this->slug() ), $this->checkout->reg_page_base_url );
 
 	}
 
@@ -509,6 +539,20 @@ abstract class EE_SPCO_Reg_Step {
 
 
 
+
+
+
+	/**
+	 * 	__sleep
+	 * to conserve db space, let's remove the reg_form and the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+	 * EE_Checkout will handle the reimplementation of itself upon waking,
+	 * but we won't bother with the reg form, because if needed, it will be regenerated anyways
+	 * @return array
+	 */
+	function __sleep() {
+		// remove the reg form and the checkout
+		return array_diff( array_keys( get_object_vars( $this )), array( 'reg_form', 'checkout' ));
+	}
 }
 
 // End of file EE_SPCO_Reg_Step.class.php

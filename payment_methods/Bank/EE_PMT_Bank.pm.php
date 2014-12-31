@@ -38,7 +38,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 		$this->_pretty_name = __("Bank", 'event_espresso');
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'bank-logo.png';
-		$this->_default_description = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
+		$this->_default_description = __( 'Make payment using an electronic funds transfer from your bank.', 'event_espresso' );
 	}
 
 
@@ -68,7 +68,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 				'payment_instructions'=>new EE_Text_Area_Input(array(
 					'html_label_text'=>  sprintf(__("Payment Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 					'html_help_text' => __( 'Provide instructions on how registrants can send the bank draft payment. Eg, mention your account name, bank account number, bank name, bank routing code, and bank address, etc.', 'event_espresso' ),
-					'default'=>  __('Please initiate an electronic payment using the following bank information: <br/> Account Onwer: Luke Skywalker <br/>Bank Account # 1234567890 <br/>Bank Name: Rebellion Bank <br/>Routing Number: 12345 <br/>Bank Address: 12345 Wookie Rd., Planet Corellian. <br/>  Payment must be received within 48 hours of event date.', 'event_espresso')
+					'default'=>  __('Please initiate an electronic payment using the following bank information: <br/> Account Owner: Luke Skywalker <br/>Bank Account # 1234567890 <br/>Bank Name: Rebellion Bank <br/>Routing Number: 12345 <br/>Bank Address: 12345 Wookie Rd., Planet Corellian. <br/>  Payment must be received within 48 hours of event date.', 'event_espresso')
 				)),
 			),
 			'exclude'=>array('PMD_debug_mode')

@@ -254,14 +254,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles() {
-		wp_enqueue_script('ee_admin_js');
-		wp_enqueue_media();
-		wp_enqueue_script('media-upload');
-		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
-		wp_enqueue_script('ee-text-links');
-		wp_register_script('espresso_payments', EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',array('ee-datepicker'),FALSE,TRUE);
-		wp_enqueue_script('espresso_payments');
-		wp_enqueue_style('espresso-ui-theme');
+		wp_enqueue_script( 'ee_admin_js' );
+		wp_enqueue_script( 'ee-text-links' );
+		wp_enqueue_script( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js', array( 'espresso-ui-theme', 'ee-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -271,8 +266,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_default() {
 		//styles
 		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style('espresso_payments');
-		wp_enqueue_style('ee-text-links');
+		wp_enqueue_style( 'espresso_payments' );
+		wp_enqueue_style( 'ee-text-links' );
 		//scripts
 	}
 
@@ -280,37 +275,57 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
-		EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all_active());
+		/**
+		 * first let's ensure payment methods have been setup. We do this here because when people activate a
+		 * payment method for the first time (as an addon), it may not setup its capabilities or get registered correctly due
+		 * to the loading process.  However, people MUST setup the details for the payment method so its safe to do a
+		 * recheck here.
+		 */
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+		EEM_Payment_Method::instance()->verify_button_urls( EEM_Payment_Method::instance()->get_all_active() );
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
 		$tabs = array();
-		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
-			//we don't want to show admin-only PMTs for now
-			if($pmt_obj instanceof EE_PMT_Admin_Only){
+		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ) {
+			// we don't want to show admin-only PMTs for now
+			if ( $pmt_obj instanceof EE_PMT_Admin_Only ) {
 				continue;
 			}
-
 			//check access
 			if ( ! EE_Registry::instance()->CAP->current_user_can( $pmt_obj->cap_name(), 'specific_payment_method_type_access' ) ) {
 				continue;
 			}
-
 			//check for any active pms of that type
-			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
-			if( ! $payment_method ){
-				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_obj->system_name(),'PMD_name'=>$pmt_obj->pretty_name(),'PMD_admin_name'=>$pmt_obj->pretty_name(), 'PMD_slug'=>sanitize_key($pmt_obj->system_name())));
+			$payment_method = EEM_Payment_Method::instance()->get_one_of_type( $pmt_obj->system_name() );
+			if ( ! $payment_method instanceof EE_Payment_Method ) {
+				$payment_method = EE_Payment_Method::new_instance(
+					array(
+						'PMD_slug'					=>sanitize_key( $pmt_obj->system_name() ),
+						'PMD_type'					=>$pmt_obj->system_name(),
+						'PMD_name'				=>$pmt_obj->pretty_name(),
+						'PMD_admin_name'	=>$pmt_obj->pretty_name()
+					)
+				);
 			}
+
 			add_meta_box(
-						'espresso_' . $payment_method->slug() . '_payment_settings', //html id
-					sprintf(__('%s Settings', 'event_espresso'),$payment_method->admin_name()), //title
-					array($this, 'payment_method_settings_meta_box'), //callback
-					NULL, //post type
-					'normal',//context
-					'default',//priority
-					array(//callback args
-						'payment_method'=>$payment_method,
-					));
+				//html id
+				'espresso_' . $payment_method->slug() . '_payment_settings',
+				//title
+				sprintf( __('%s Settings', 'event_espresso'), $payment_method->admin_name() ),
+				//callback
+				array( $this, 'payment_method_settings_meta_box' ),
+				//post type
+				NULL,
+				//context
+				'normal',
+				//priority
+				'default',
+				//callback args
+				array( 'payment_method' => $payment_method )
+			);
+
 			//setup for tabbed content
 			$tabs[$payment_method->slug()] = array(
 				'label' => $payment_method->admin_name(),
@@ -318,32 +333,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'href' => 'espresso_' . $payment_method->slug() . '_payment_settings',
 				'title' => __('Modify this Payment Method', 'event_espresso'),
 				'slug' => $payment_method->slug()
-				);
-		}
-		//decide which payment method tab to open first, as dictated by the request's 'payment_method'
-		if( isset($this->_req_data['payment_method']) ){
-			//if they provided the current payment method, use it
-			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
-			//double-check it exists
-			if( ! $payment_method = EEM_Payment_Method::instance()->get_one(array(array('PMD_slug'=>$payment_method_slug))) || ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base && ! EE_Registry::instance()->CAP->current_user_can( $payment_method->type_obj()->cap_name(), 'specific_payment_method_type_access' ) ) ){
-				$payment_method_slug = FALSE;
-			}
-		}else{
-			$payment_method_slug = FALSE;
-		}
-		//if that didn't work or wasn't provided, find another way to select the currrent pm
-		if( ! $payment_method_slug){
-			//otherwise, look for an active one
-			$an_active_pm = EEM_Payment_Method::instance()->get_one_active('CART');
-			if($an_active_pm && $an_active_pm->type_obj() instanceof EE_PMT_Base && EE_Registry::instance()->CAP->current_user_can($an_active_pm->type_obj()->cap_name(), 'specific_payment_method_type_access' ) ) {
-				$payment_method_slug = $an_active_pm->slug();
-			}else{
-				$payment_method_slug = 'paypal_standard';
-
-			}
+			);
 		}
 
-		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $payment_method_slug );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $this->_get_active_payment_method_slug() );
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -351,52 +344,348 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 *   _get_active_payment_method_slug
+	 * 	@return string
+	 */
+	protected function _get_active_payment_method_slug(){
+		$payment_method_slug = FALSE;
+		//decide which payment method tab to open first, as dictated by the request's 'payment_method'
+		if ( isset( $this->_req_data['payment_method'] )) {
+			// if they provided the current payment method, use it
+			$payment_method_slug = sanitize_key( $this->_req_data['payment_method'] );
+		}
+		$payment_method = EEM_Payment_Method::instance()->get_one( array( array( 'PMD_slug' => $payment_method_slug )));
+		// if that didn't work or wasn't provided, find another way to select the current pm
+		if ( ! $this->_verify_payment_method( $payment_method )) {
+			// like, looking for an active one
+			$payment_method = EEM_Payment_Method::instance()->get_one_active( 'CART' );
+			// test that one as well
+			if ( $this->_verify_payment_method( $payment_method )) {
+				$payment_method_slug = $payment_method->slug();
+			} else {
+				$payment_method_slug = 'paypal_standard';
+			}
+		}
+		return $payment_method_slug;
+	}
+
+
+
+	/**
 	 * 	payment_method_settings_meta_box
+	 * 	returns TRUE if the passed payment method is properly constructed and the logged in user has the correct capabilities to access it
+	 *
+	 * @param \EE_Payment_Method $payment_method
+	 * @return boolean
+	 */
+	protected function _verify_payment_method( $payment_method ){
+		if (
+			$payment_method instanceof EE_Payment_Method &&
+			$payment_method->type_obj() instanceof EE_PMT_Base &&
+			EE_Registry::instance()->CAP->current_user_can( $payment_method->type_obj()->cap_name(), 'specific_payment_method_type_access' )
+		) {
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 *    payment_method_settings_meta_box
 	 *
 	 * @param NULL  $post_obj_which_is_null is an object containing the current post (as a $post object)
-	 * @param array $metabox                is an array with metabox id, title, callback, and args elements.
-	 *                                      the value at 'args' has key 'payment_method', as set within _payment_methods_list
+	 * @param array $metabox is an array with metabox id, title, callback, and args elements. the value at 'args' has key 'payment_method', as set within _payment_methods_list
+	 * @return string
 	 * @throws EE_Error
 	 */
-	public function payment_method_settings_meta_box( $post_obj_which_is_null, $metabox){
-		$payment_method = isset($metabox['args']) && isset($metabox['args']['payment_method']) ? $metabox['args']['payment_method'] : NULL;
+	public function payment_method_settings_meta_box( $post_obj_which_is_null, $metabox ){
+		$payment_method = isset( $metabox['args'], $metabox['args']['payment_method'] ) ? $metabox['args']['payment_method'] : NULL;
 		if ( ! $payment_method instanceof EE_Payment_Method ){
-			throw new EE_Error(sprintf(__("Payment method metabox setup incorrectly. No Payment method object was supplied", "event_espresso")));
+			throw new EE_Error( sprintf( __( 'Payment method metabox setup incorrectly. No Payment method object was supplied', 'event_espresso' )));
 		}
-		$template_args = array(
-			'payment_method'=>$payment_method
-		);
-		//modify the form so we only have/show fields that will be implemented for this version
-		$form = $payment_method->type_obj()->settings_form();
-		$this->_simplify_form($form);
-		if($form->form_data_present_in($this->_req_data)){
-			$form->receive_form_submission($this->_req_data);
-		}
-		//if the payment method really exists show its form, otherwise the activation template
-		if( $payment_method->ID() && $payment_method->active()){
-			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'update_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
-			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'deactivate_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
-			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
-		}else{
-			$template_args['activate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'activate_payment_method', 'payment_method_type'=>$payment_method->type()), EE_PAYMENTS_ADMIN_URL);
-			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_activate.template.php', $template_args);
+		$payment_method_scopes = $payment_method->active();
+		// if the payment method really exists show its form, otherwise the activation template
+		if ( $payment_method->ID() && ! empty( $payment_method_scopes )) {
+				$form = $this->_generate_payment_method_settings_form( $payment_method );
+				if ( $form->form_data_present_in( $this->_req_data )) {
+					$form->receive_form_submission( $this->_req_data );
+				}
+				echo $form->form_open() . $form->get_html_and_js() . $form->form_close();
+		} else {
+			echo $this->_activate_payment_method_button( $payment_method )->get_html_and_js();
 		}
 	}
+
+
+
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_Proper
+	 */
+	protected function _generate_payment_method_settings_form( EE_Payment_Method $payment_method ) {
+		if ( ! $payment_method instanceof EE_Payment_Method ){
+			return new EE_Form_Section_Proper();
+		}
+		return new EE_Form_Section_Proper(
+			array(
+				'name' 	=> $payment_method->slug() . '_settings_form',
+				'html_id' 	=> $payment_method->slug() . '_settings_form',
+				'action' 	=> EE_Admin_Page::add_query_args_and_nonce(
+					array(
+						'action' 						=> 'update_payment_method',
+						'payment_method' 	=> $payment_method->slug()
+					),
+					EE_PAYMENTS_ADMIN_URL
+				),
+				'layout_strategy'		=> new EE_Admin_Two_Column_Layout(),
+				'subsections' 			=> apply_filters(
+					'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
+					array(
+						'pci_dss_compliance_' . $payment_method->slug() 				=> $this->_pci_dss_compliance( $payment_method ),
+//						'currency_support_' . $payment_method->slug()					=> $this->_currency_support( $payment_method ),
+						'payment_method_settings_' . $payment_method->slug() 	=> $this->_payment_method_settings( $payment_method ),
+						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
+						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
+						'fine_print_' . $payment_method->slug()									=> $this->_fine_print()
+					)
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 * _pci_dss_compliance
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_Proper
+	 */
+	protected function _pci_dss_compliance( EE_Payment_Method $payment_method ) {
+		if ( $payment_method->type_obj()->requires_https() ) {
+			return new EE_Form_Section_HTML(
+				EEH_HTML::tr(
+					EEH_HTML::th(
+						EEH_HTML::label(
+							EEH_HTML::strong( __( 'IMPORTANT', 'event_espresso' ), '', 'important-notice' )
+						)
+					) .
+					EEH_HTML::td(
+						EEH_HTML::strong( __( 'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso' )) .
+						EEH_HTML::br() .
+						__( 'Learn more about ', 'event_espresso' ) . EEH_HTML::link( 'https://www.pcisecuritystandards.org/merchants/index.php', __( 'PCI DSS compliance', 'event_espresso' ))
+					)
+				)
+			);
+		} else {
+			return new EE_Form_Section_HTML('');
+		}
+	}
+
+
+
+	/**
+	 * _currency_support
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_Proper
+	 */
+	protected function _currency_support( EE_Payment_Method $payment_method ) {
+		if ( $payment_method->usable_for_currency( EE_Config::instance()->currency->code )) {
+			return new EE_Form_Section_HTML(
+				EEH_HTML::tr(
+					EEH_HTML::th(
+						EEH_HTML::label(
+							EEH_HTML::strong( __( 'IMPORTANT', 'event_espresso' ), '', 'important-notice' )
+						)
+					) .
+					EEH_HTML::td(
+						EEH_HTML::strong(
+							sprintf(
+								__( 'This payment method does not support the currency set on your site (%1$s) and so will not appear as a payment option to registrants. Please activate a different payment method or change your site\'s country and associated currency.', 'event_espresso'),
+								EE_Config::instance()->currency->code
+							)
+						)
+					)
+				)
+			);
+		} else {
+			return new EE_Form_Section_HTML('');
+		}
+	}
+
+
+	/**
+	 * _update_payment_method_button
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_HTML
+	 */
+	protected function _payment_method_settings( EE_Payment_Method $payment_method ) {
+		//modify the form so we only have/show fields that will be implemented for this version
+		return $this->_simplify_form( $payment_method->type_obj()->settings_form(), $payment_method->name() );
+	}
+
+
 
 	/**
 	 * Simplifies the form to merely reproduce 4.1's gateway settings functionality
-	 * @param EE_Payment_Method_Form $form_section
+	 *
+	 * @param EE_Form_Section_Proper $form_section
+	 * @param string                 $payment_method_name
+	 * @return \EE_Payment_Method_Form
+	 * @throws \EE_Error
 	 */
-	protected function _simplify_form($form_section){
-		$form_section->exclude(array(
-			'PMD_type',//dont want them changing the type
-			'PMD_order',//or the order, for now
-			'PMD_slug',//or the slug (probably never)
-			'PMD_wp_user',//or the user's ID
-			'Currency'//or the currency, until the rest of EE supports simultaneous currencies
-		));
-
+	protected function _simplify_form( $form_section, $payment_method_name = '' ){
+		if ( $form_section instanceof EE_Payment_Method_Form ) {
+			$form_section->exclude(
+				array(
+					'PMD_type', //dont want them changing the type
+					'PMD_order', //or the order, for now
+					'PMD_slug', //or the slug (probably never)
+					'PMD_wp_user', //or the user's ID
+					'Currency' //or the currency, until the rest of EE supports simultaneous currencies
+				)
+			);
+			return $form_section;
+		} else {
+			throw new EE_Error( sprintf( __( 'The EE_Payment_Method_Form for the "%1$s" payment method is missing or invalid.', 'event_espresso' ), $payment_method_name ));
+		}
 	}
+
+
+
+	/**
+	 * _update_payment_method_button
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_HTML
+	 */
+	protected function _update_payment_method_button( EE_Payment_Method $payment_method ) {
+		$update_button = new EE_Submit_Input(
+			array(
+				'html_id' 		=> 'save_' . $payment_method->slug() . '_settings',
+				'default' 		=> sprintf( __( 'Update %s Payment Settings', 'event_espresso' ), $payment_method->admin_name() ),
+				'html_label' => EEH_HTML::nbsp()
+			)
+		);
+		return new EE_Form_Section_HTML(
+			EEH_HTML::no_row( EEH_HTML::br(2) ) .
+			EEH_HTML::tr(
+				EEH_HTML::th( __( 'Update Settings', 'event_espresso') ) .
+				EEH_HTML::td(
+					$update_button->get_html_for_input()
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 * _deactivate_payment_method_button
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_Proper
+	 */
+	protected function _deactivate_payment_method_button( EE_Payment_Method $payment_method ) {
+		$link_text_and_title = sprintf( __( 'Deactivate %1$s Payments?', 'event_espresso'), $payment_method->admin_name() );
+		return new EE_Form_Section_HTML(
+			EEH_HTML::tr(
+				EEH_HTML::th( __( 'Deactivate Payment Method', 'event_espresso') ) .
+				EEH_HTML::td(
+					EEH_HTML::link(
+						EE_Admin_Page::add_query_args_and_nonce(
+							array(
+								'action'=>'deactivate_payment_method',
+								'payment_method'=>$payment_method->slug()
+							),
+							EE_PAYMENTS_ADMIN_URL
+						),
+						$link_text_and_title,
+						$link_text_and_title,
+						'deactivate_' . $payment_method->slug(),
+						'espresso-button button-secondary'
+					)
+				)
+			)
+		);
+	}
+
+
+	/**
+	 * _activate_payment_method_button
+	 *
+	 * @access protected
+	 * @param \EE_Payment_Method $payment_method
+	 * @return \EE_Form_Section_Proper
+	 */
+	protected function _activate_payment_method_button( EE_Payment_Method $payment_method ) {
+		$link_text_and_title = sprintf( __( 'Activate %1$s Payment Method?', 'event_espresso'), $payment_method->admin_name() );
+		return new EE_Form_Section_Proper(
+			array(
+				'name' 	=> 'activate_' . $payment_method->slug() . '_settings_form',
+				'html_id' 	=> 'activate_' . $payment_method->slug() . '_settings_form',
+				'action' 	=> '#',
+				'layout_strategy'		=> new EE_Admin_Two_Column_Layout(),
+				'subsections' 			=> apply_filters(
+					'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
+					array(
+						new EE_Form_Section_HTML(
+							EEH_HTML::tr(
+								EEH_HTML::th(
+									EEH_HTML::label( __( 'Click to Activate ', 'event_espresso' ))
+								) .
+								EEH_HTML::td(
+									EEH_HTML::link(
+										EE_Admin_Page::add_query_args_and_nonce(
+											array(
+												'action' => 'activate_payment_method',
+												'payment_method_type' => $payment_method->type()
+											),
+											EE_PAYMENTS_ADMIN_URL
+										),
+										$link_text_and_title,
+										$link_text_and_title,
+										'activate_' . $payment_method->slug(),
+										'espresso-button-green button-primary'
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+
+	/**
+	 * _fine_print
+	 *
+	 * @access protected
+	 * @return \EE_Form_Section_HTML
+	 */
+	protected function _fine_print() {
+		return new EE_Form_Section_HTML(
+			EEH_HTML::tr(
+				EEH_HTML::th() .
+				EEH_HTML::td(
+					EEH_HTML::p( __( 'All fields marked with a * are required fields', 'event_espresso' ), '', 'grey-text' )
+				)
+			)
+		);
+	}
+
+
 
 	/**
 	 * Activates a payment method of that type. Mostly assuming there is only 1 of that type (or none so far)
@@ -422,7 +711,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if(isset($this->_req_data['payment_method'])){
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
-			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
+			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( $payment_method_slug );
 			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','payment_method'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));

@@ -58,10 +58,13 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
-	 * Indicates a new activation, but we couldn't install everything properly because
-	 * EE was in maintenance mode. So when we exit maintenance mode, we will
-	 * consider the next request to be a reactivation and will verify default data
-	 * is in place and tables are setup
+	 * @deprecated since version 4.6.0.dev.006
+	 * Now whenever a new_activation is detected the request type is still just
+	 * new_activation (same for reactivation, upgrade, downgrade etc), but if we'r ein maintenance mode
+	 * EE_System::initialize_db_if_no_migrations_required and EE_Addon::initialize_db_if_no_migrations_required
+	 * will instead enqueue that EE plugin's db initialization for when we're taken out of maintenance mode.
+	 * (Specifically, when the migration manager indicates migrations are finished
+	 * EE_Data_Migration_Manager::initialize_db_for_enqueued_ee_plugins() will be called)
 	 */
 	const req_type_activation_but_not_installed = 5;
 
@@ -168,44 +171,11 @@ final class EE_System {
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-		//ask that MySQL be forgiving of our mistakes, at least until we have time to iron them out properly
-		add_filter( 'incompatible_sql_modes', array( $this, 'make_scrict_sql_incompatible' ) );
-		add_filter( 'required_sql_modes', array( $this, 'remove_strict_sql_requirement' ) );
-		//and because wpdb has already set mode, we want to reset it
-		global $wpdb;
-		$wpdb->set_sql_mode();
-
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
 	}
 
-	/**
-	 * Removes the STRICT_ALL_TABLES mode from SQL so EE continues to work ok.
-	 * This was added in WP CORE in 4.1 on commit https://core.trac.wordpress.org/changeset/30400
-	 * Which exposed a flurry of database problems- which is handy for debugging, but VERY
-	 * unwelcome information for users (because STRICT_ALL_TABLES will make queries fail
-	 * where they would otherwise have been passable, when there were SQL problems).
-	 *
-	 * @param array $required_modes
-	 * @return array
-	 */
-	public function remove_strict_sql_requirement( $required_modes ){
-		if(($key = array_search('STRICT_ALL_TABLES', $required_modes)) !== false) {
-			unset($required_modes[$key]);
-		}
-		return array();
-	}
-	/**
-	 * In order to successfully do what remove_strict_sql_requirement is trying to do,
-	 * we also need to make 'STIRCT_ALL_TABLES' an incompatible mode too
-	 * @param array $incompatible_modes
-	 * @return array
-	 */
-	public function make_scrict_sql_incompatible( $incompatible_modes ){
-		$incompatible_modes[] = 'STRICT_ALL_TABLES';
-		return $incompatible_modes;
-	}
 
 
 	/**
@@ -463,11 +433,6 @@ final class EE_System {
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
 				$this->_handle_core_version_change( $espresso_db_update );
 				break;
-			case EE_System::req_type_activation_but_not_installed:
-				//just record that it was activated, but don't install anything
-				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
-				$this->_handle_core_version_change( $espresso_db_update );
-				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				$this->_handle_core_version_change( $espresso_db_update );
@@ -502,12 +467,6 @@ final class EE_System {
 		$this->update_list_of_installed_versions( $espresso_db_update );
 		//get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-
-		foreach( EE_Registry::instance()->addons as $addon ){
-			if( ! has_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $addon, 'initialize_db_if_no_migrations_required' ) ) ){
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $addon, 'initialize_db_if_no_migrations_required' ));
-			}
-		}
 	}
 
 
@@ -569,8 +528,9 @@ final class EE_System {
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
 	 * If migration script/process did not exist, this is what would happen on every activation/reactivation/upgrade.
-	 * NOTE: does nothing if we're in maintenance mode (which would be the case if we detect there are data
-	 * migration scripts that need to be run)
+	 * NOTE: if we're in maintenance mode (which would be the case if we detect there are data
+	 * migration scripts that need to be run and a version change happens), enqueues core for database initialization,
+	 * so that it will be done when migrations are finished
 	 * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
 	 *		however,
 	 * @return void
@@ -579,7 +539,6 @@ final class EE_System {
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
-			// set flag for flushing rewrite rules
 			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
@@ -590,6 +549,8 @@ final class EE_System {
 					$addon->initialize_db_if_no_migrations_required();
 				}
 			}
+		}else{
+			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
 			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
@@ -653,59 +614,45 @@ final class EE_System {
 	 */
 	public static function detect_req_type_given_activation_history( $activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to ){
 		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
-		//there are some exceptions if we're in maintenance mode. So are we in MM?
-		if( EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			//ok check if this is a new install while in MM...
-			if( $activation_history_for_addon ){
-				$req_type = EE_System::req_type_normal;
-			}else{
-				//so this should have been a "new install" request, but we're in MM
-				//so set things up so that when we exit MM, we will consider it a delayed install
-				//for that, WE LEAVE THE activation indicator option in place
-				$req_type = EE_System::req_type_activation_but_not_installed;
-			}
-		}else{
-			if( $activation_history_for_addon ){
-				//it exists, so this isn't a completely new install
-				//check if this version already in that list of previously installed versions
-				if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
-					//it a version we haven't seen before
-					if( $version_is_higher === 1 ){
-						$req_type = EE_System::req_type_upgrade;
-					}else{
+		if( $activation_history_for_addon ){
+			//it exists, so this isn't a completely new install
+			//check if this version already in that list of previously installed versions
+			if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
+				//it a version we haven't seen before
+				if( $version_is_higher === 1 ){
+					$req_type = EE_System::req_type_upgrade;
+				}else{
+					$req_type = EE_System::req_type_downgrade;
+				}
+				delete_option( $activation_indicator_option_name );
+			} else {
+				// its not an update. maybe a reactivation?
+				if( get_option( $activation_indicator_option_name, FALSE ) ){
+					if ( $version_is_higher === -1 ){
 						$req_type = EE_System::req_type_downgrade;
+					}elseif( $version_is_higher === 0 ){
+						//we've seen this version before, but it's an activation. must be a reactivation
+						$req_type = EE_System::req_type_reactivation;
+					}else{//$version_is_higher === 1
+						$req_type = EE_System::req_type_upgrade;
 					}
 					delete_option( $activation_indicator_option_name );
 				} else {
-					// its not an update. maybe a reactivation?
-					if( get_option( $activation_indicator_option_name, FALSE ) ){
-						if ( $version_is_higher === -1 ){
-							$req_type = EE_System::req_type_downgrade;
-						}elseif( $version_is_higher === 0 ){
-							//we've seen this version before, but it's an activation. must be a reactivation
-							$req_type = EE_System::req_type_reactivation;
-						}else{//$version_is_higher === 1
-							$req_type = EE_System::req_type_upgrade;
-						}
-						delete_option( $activation_indicator_option_name );
-					} else {
-						//we've seen this version before and the activation indicate doesn't show it was just activated
-						if ( $version_is_higher === -1 ){
-							$req_type = EE_System::req_type_downgrade;
-						}elseif( $version_is_higher === 0 ){
-							//we've seen this version before and it's not an activation. its normal request
-							$req_type = EE_System::req_type_normal;
-						}else{//$version_is_higher === 1
-							$req_type = EE_System::req_type_upgrade;
-						}
+					//we've seen this version before and the activation indicate doesn't show it was just activated
+					if ( $version_is_higher === -1 ){
+						$req_type = EE_System::req_type_downgrade;
+					}elseif( $version_is_higher === 0 ){
+						//we've seen this version before and it's not an activation. its normal request
+						$req_type = EE_System::req_type_normal;
+					}else{//$version_is_higher === 1
+						$req_type = EE_System::req_type_upgrade;
 					}
 				}
-			} else {
-				//brand new install and we're not in MM
-				$req_type = EE_System::req_type_new_activation;
-				delete_option( $activation_indicator_option_name );
-
 			}
+		} else {
+			//brand new install
+			$req_type = EE_System::req_type_new_activation;
+			delete_option( $activation_indicator_option_name );
 		}
 		return $req_type;
 	}

@@ -466,11 +466,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 */
 	public function gateway_response_on_transaction() {
 		$payment = $this->get_first_related( 'Payment' );
-		if ( $payment instanceof EE_Payment ) {
-			$details = $payment->details();
-			return isset( $details[ 'response_msg' ] ) ? $details[ 'response_msg' ] : '';
-		}
-		return '';
+		return $payment instanceof EE_Payment ? $payment->gateway_response() : '';
 	}
 
 

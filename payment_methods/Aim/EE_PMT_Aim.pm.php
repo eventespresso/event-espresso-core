@@ -37,7 +37,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
-		$this->_default_description = __( 'Please provide the following billing information', 'event_espresso' );
+		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
 		parent::__construct($pm_instance);
 	}
 
@@ -53,10 +53,10 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				'credit_card'=>new EE_Credit_Card_Input(array(
 					'required'=>true
 				)),
-				'exp_month'=>new EE_Month_Input(true, array(
+				'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
 					'required'=>true
 				)),
-				'exp_year'=>new EE_Year_Input(),
+				'exp_year'=>new EE_Credit_Card_Year_Input(),
 				'cvv'=>new EE_CVV_Input(),
 			)
 		));
@@ -77,24 +77,24 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
-		EE_Registry::instance()->load_helper('Template');
-		$form = new EE_Payment_Method_Form(array(
-			'extra_meta_inputs'=>array(
-				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Authorize.net API Login ID %s", "event_espresso"),  $this->get_help_tab_link())
-				)),
-				'transaction_key'=>new EE_Text_Input(array(
-					'html_label_text'=> sprintf(__("Authorize.net Transaction Key %s", "event_espresso"), $this->get_help_tab_link())
-				)),
-				'test_transactions'=>new EE_Yes_No_Input(array(
-					'html_label_text'=>  sprintf(__("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link()),
-					'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso')
-				)),
+		return new EE_Payment_Method_Form(
+			array(
+				'extra_meta_inputs'=>array(
+					'login_id'=>new EE_Text_Input(
+						array( 'html_label_text'=>  sprintf( __("Authorize.net API Login ID %s", "event_espresso"),  $this->get_help_tab_link() ))
+					),
+					'transaction_key'=>new EE_Text_Input(
+						array( 'html_label_text'=> sprintf( __("Authorize.net Transaction Key %s", "event_espresso"), $this->get_help_tab_link() ))
+					),
+					'test_transactions'=>new EE_Yes_No_Input(
+						array(
+							'html_label_text'=>  sprintf( __("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link() ),
+							'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso')
+						)
+					),
+				)
 			)
-		));
-//		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Sandbox Server? %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_link)));
-//		$form->get_input('PMD_debug_mode')->set_html_help_text(__("Account is on Authorize.net's sandbox server", 'event_espresso'));
-		return $form;
+		);
 	}
 
 
@@ -107,9 +107,9 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	public function help_tabs_config(){
 		return array(
 			$this->get_help_tab_name() => array(
-						'title' => __('Authorize.net AIM Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_aim'
-						),
+				'title' => __('Authorize.net AIM Settings', 'event_espresso'),
+				'filename' => 'payment_methods_overview_aim'
+			),
 		);
 	}
 

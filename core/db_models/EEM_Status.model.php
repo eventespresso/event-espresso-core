@@ -92,6 +92,10 @@ class EEM_Status extends EEM_Base {
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
 	  			),
+	  		EEM_Registration::status_id_incomplete => array(
+	  			__('incomplete', 'event_espresso'),
+	  			__('incomplete', 'event_espresso')
+	  			),
 	  		EEM_Registration::status_id_declined => array(
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')

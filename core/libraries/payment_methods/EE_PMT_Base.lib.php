@@ -295,7 +295,7 @@ abstract class EE_PMT_Base{
 				'TXN_ID' => $transaction->ID(),
 				'STS_ID' => EEM_Payment::status_id_failed,
 				'PAY_source' => $method,
-				'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
+				'PAY_amount' => $amount !== NULL ? $amount : $transaction->remaining(),
 				'PMD_ID' => $this->_pm_instance->ID(),
 				'PAY_gateway_response'=>NULL,
 			);
@@ -597,6 +597,7 @@ abstract class EE_PMT_Base{
 	 * @return string html for the link to a help tab
 	 */
 	public function get_help_tab_link(){
+		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
 	}
 

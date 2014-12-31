@@ -165,16 +165,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 		// ensure that "required" is set correctly
-		switch( $this->_required ) {
-			case 1 :
-			case 'true' :
-			case 'TRUE' :
-			case TRUE :
-				$this->set_required( TRUE );
-				break;
-			default :
-				$this->set_required( FALSE );
-		}
+		$this->set_required( $this->_required );
 
 		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 
@@ -569,7 +560,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[$this->html_name()] = $jquery_validation_rules;
+			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
 		}else{
 			return array();
 		}
@@ -601,10 +592,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @param boolean $required
 	 */
 	function set_required($required = true){
-		if($required){
-			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
-		}else{
-			unset($this->_validation_strategies[get_class(new EE_Required_Validation_Strategy())]);
+		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN );
+		if ( $required ) {
+			$this->_add_validation_strategy( new EE_Required_Validation_Strategy() );
+		} else {
+			unset( $this->_validation_strategies[ get_class( new EE_Required_Validation_Strategy() ) ] );
 		}
 		$this->_required = $required;
 	}

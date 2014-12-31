@@ -282,8 +282,7 @@ abstract class EE_Model_Relation_Base{
 	/**
 	 * Removes ALL relation instances for this relation obj
 	 * @param EE_Base_Class|int $this_obj_or_id
-	 * @param array             $where_query_param
-	 * @internal param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+	 * @param array $where_query_param  like EEM_Base::get_all's $query_params[0] (where conditions)
 	 * @return EE_Base_Class[]
 	 */
 	public function remove_relations($this_obj_or_id,$where_query_param = array()){

@@ -401,12 +401,12 @@ class EEH_Line_Item {
 		//add this as a new tax descendant
 		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
 		$tax_subtotal->delete_children_line_items();
-
+		$taxable_total = $total_line_item->taxable_total();
 		$new_tax = EE_Line_Item::new_instance(array(
 			'TXN_ID' => $total_line_item->TXN_ID(),
 			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
 			'LIN_desc' => $description ? $description : '',
-			'LIN_percent' => $amount /  $total_line_item->taxable_total() * 100,
+			'LIN_percent' => $taxable_total ? ( $amount / $total_line_item->taxable_total()  * 100 ) : 0,
 			'LIN_total' => $amount,
 			'LIN_parent' => $tax_subtotal->ID(),
 			'LIN_type' => EEM_Line_Item::type_tax

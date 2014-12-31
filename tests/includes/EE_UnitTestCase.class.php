@@ -421,8 +421,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 					$field_name == 'PMD_type' ||
 					$field->get_name() == 'CNT_cur_dec_mrk' ||
 					$field->get_name() == 'CNT_cur_thsnds' ||
-					$field->get_name() == 'CNT_tel_code'
-					){
+					$field->get_name() == 'CNT_tel_code'){
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||

@@ -410,21 +410,16 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$classname = get_class($this);
 		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this, $this->_screen );
 
-		if ( empty($filters) )
+		if ( empty( $filters )) {
 			return;
-
+		}
 		foreach ( $filters as $filter ) {
 			echo $filter;
 		}
-
-		if ( !empty( $filters ) ) {
-
-			//add filter button at end
-			echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
-
-			//add reset filters button at end
-			echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
-		}
+		//add filter button at end
+		echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
+		//add reset filters button at end
+		echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
 	}
 
 
@@ -493,6 +488,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
+		$assembled_views = '';
 
 		if ( empty( $views )) {
 			return;
@@ -500,10 +496,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;
-			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+			if ( isset( $view['slug'] ) && isset( $view['class'] ) && isset( $view['url'] ) && isset( $view['label']) ) {
+				$assembled_views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+			}
 		}
 
-		echo implode( " |</li>\n", $views ) . "</li>\n";
+		echo is_array( $assembled_views) && ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
 		echo "</ul>";
 	}
 
@@ -567,8 +565,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
 			$this->_filters();
-			echo "\n";
 			echo $this->_get_hidden_fields();
+			echo '<br class="clear">';
 		}else{
 			echo '<div class="list-table-bottom-buttons alignleft actions">';
 			foreach($this->_bottom_buttons as $type => $action){

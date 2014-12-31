@@ -828,6 +828,8 @@ class EEH_Activation {
 		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+		}else{
+			EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all());
 		}
 	}
 
@@ -844,7 +846,7 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -866,6 +868,7 @@ class EEH_Activation {
 					('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
+					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
 					('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),

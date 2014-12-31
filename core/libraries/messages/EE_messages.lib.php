@@ -146,11 +146,11 @@ class EE_messages {
 			$active_messengers[ $messenger->name ][ 'obj' ] = $messenger;
 
 			/** @var EE_messenger[] $installed_messengers  */
-			$mts_to_activate = ! empty( $message_types ) ? $mts :  $messenger->get_default_message_types();
+			$mts_to_activate = ! empty( $mts ) ? $mts :  $messenger->get_default_message_types();
 			foreach ( $mts_to_activate as $message_type ) {
 				//we need to setup any initial settings for message types
 				/** @var EE_message_type[] $installed_mts */
-				$settings_fields = $message_types[ $message_type ]->get_admin_settings_fields();
+				$settings_fields = isset( $message_types[$message_type] ) ? $message_types[ $message_type ]->get_admin_settings_fields() : array();
 				if ( !empty( $settings_fields ) ) {
 					foreach ( $settings_fields as $field => $values ) {
 						$settings[$field] = $values[ 'default' ];

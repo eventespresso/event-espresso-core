@@ -547,6 +547,9 @@ class EEH_Form_Fields {
 		}
 
 		$QFI = self::_load_system_dropdowns( $QFI );
+		$QFI = self::_load_specialized_dropdowns( $QFI );
+
+		//we also need to verify
 
 		$display_text = $QFI->get('QST_display_text');
 		$input_name = $QFI->get('QST_input_name');
@@ -568,6 +571,7 @@ class EEH_Form_Fields {
 		$label_b4 = $QFI->get_meta( 'label_b4' );
 		$use_desc_4_label = $QFI->get_meta( 'use_desc_4_label' );
 
+
 		switch ( $QFI->get('QST_type') ){
 
 			case 'TEXTAREA' :
@@ -577,6 +581,7 @@ class EEH_Form_Fields {
 			case 'DROPDOWN' :
 					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, TRUE );
 				break;
+
 
 			case 'RADIO_BTN' :
 					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, $label_b4, $use_desc_4_label );
@@ -1186,6 +1191,29 @@ class EEH_Form_Fields {
 
 
 	/**
+	 * This preps dropdowns that are specialized.
+	 *
+	 * @since  4.6.0
+	 *
+	 * @param EE_Question_Form_Input $QFI
+	 *
+	 * @return EE_Question_Form_Input
+	 */
+	protected static function _load_specialized_dropdowns( $QFI ) {
+		switch( $QFI->get( 'QST_type' ) ) {
+			case 'STATE' :
+				$QFI = self::generate_state_dropdown( $QFI );
+				break;
+			case 'COUNTRY' :
+				$QFI = self::generate_country_dropdown( $QFI );
+				break;
+		}
+		return $QFI;
+	}
+
+
+
+	/**
 	 *    generate_state_dropdown
 	 * @param array $QST
 	 * @param bool  $get_all
@@ -1398,8 +1426,11 @@ class EEH_Form_Fields {
 				)
 			);
 
+		//translate month and date
+		global $wp_locale;
+
 		foreach ( $DTTS as $DTT ) {
-			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
 			$options[] = array(
 				'text' => $date,
 				'id' => $date

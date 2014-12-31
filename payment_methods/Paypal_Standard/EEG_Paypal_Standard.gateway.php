@@ -47,7 +47,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		'SGD',
 		'THB',
 		'TRY',
-		'TWD'
+		'TWD',
+		'RUB'
 	);
 
 
@@ -89,8 +90,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
-				if( $this->_paypal_shipping ){
-					$redirect_args['shipping_' . $item_num ] = '0.00';
+				if( ! $line_item->is_taxable() ) {
+					$redirect_args['tax_' . $item_num] = 0;
+				}
+				//if we're not letting paypal calculate shipping, tell them its 0
+				if( ! $this->_paypal_shipping ){
+					$redirect_args['shipping_' . $item_num ] = '0';
+					$redirect_args['shipping2_' . $item_num ] = '0';
 				}
 				$item_num++;
 			}
@@ -98,6 +104,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this is a partial payment, so we can't really show all the line items
 			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
+			//if we aren't allowing paypal to calculate shipping, set it to 0
+			if( ! $this->_paypal_shipping ){
+				$redirect_args['shipping_' . $item_num ] = '0';
+				$redirect_args['shipping2_' . $item_num ] = '0';
+			}
 			$item_num++;
 
 		}
@@ -106,10 +117,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = 0;
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
+			$redirect_args['on1_'.$item_num] = 'RETURN URL';
+			$redirect_args['os1_' . $item_num] = $return_url;
+//			$redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
 		}
 		//add our taxes to the order if we're NOT using paypal's
 		if( ! $this->_paypal_taxes ){
-			$redirect_args['tax'] = $total_line_item->get_total_tax();
+			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 		}
 
 		$redirect_args['business'] = $this->_paypal_id;
@@ -124,6 +140,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['image_url'] = $this->_image_url;
 		}
 		$redirect_args['no_shipping'] = $this->_shipping_details;
+
+		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args );
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
@@ -194,7 +212,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}else{
 //				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
-				$payment->set_amount($update_info['mc_gross']);
+				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
 				$payment->set_details($update_info);
 			}
