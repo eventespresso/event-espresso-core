@@ -531,19 +531,24 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	function redirect_form( $inside_form_html = NULL ) {
 		$redirect_url = $this->redirect_url();
 		if ( ! empty( $redirect_url )) {
-			EE_Registry::instance()->load_helper('Formatter');
-			$method = $this->redirect_args() ? 'POST' : 'GET';
+			EE_Registry::instance()->load_helper('HTML');
+			// what ? no inner form content?
 			if( $inside_form_html === NULL ) {
-				$inside_form_html = EEH_Formatter::nl(0) . '<p style="text-align:center;"><br/>';
-				$inside_form_html .= EEH_Formatter::nl(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
-				$inside_form_html .= EEH_Formatter::nl(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
-				$inside_form_html .= EEH_Formatter::nl(-1) . '</p>';
+				$inside_form_html = EEH_HTML::p(
+					sprintf(
+						__('If you are not automatically redirected to the payment website within 10 seconds... %1$s %2$s Click Here %3$s', 'event_espresso'),
+						EEH_HTML::br(2),
+						'<input type="submit" value="',
+						'">'
+					),
+					'', '', 'text-align:center;'
+				);
 			}
-
-			$form = EEH_Formatter::nl(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
-			$form .= EEH_Formatter::nl(1) . $this->redirect_args_as_inputs();
+			$method = $this->redirect_args() ? 'POST' : 'GET';
+			$form = EEH_HTML::nl(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
+			$form .= EEH_HTML::nl(1) . $this->redirect_args_as_inputs();
 			$form .= $inside_form_html;
-			$form .= EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl(-1);
+			$form .= EEH_HTML::nl(-1) . '</form>' . EEH_HTML::nl(-1);
 			return $form;
 		} else {
 			return NULL;
@@ -560,9 +565,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	function redirect_args_as_inputs(){
 		$html = '';
 		if( $this->redirect_args() !== NULL && is_array( $this->redirect_args() )) {
-			EE_Registry::instance()->load_helper('Formatter');
+			EE_Registry::instance()->load_helper('HTML');
 			foreach($this->redirect_args() as $name => $value){
-				$html .= EEH_Formatter::nl(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
+				$html .= EEH_HTML::nl(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
 			}
 		}
 		return $html;

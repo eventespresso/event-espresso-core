@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EEH_Formatter
  *
- * This is a helper utility class containging a variety for formatting helpers for Event Espresso.
+ * This is a helper utility class containing a variety for formatting helpers for Event Espresso.
  *
  * @package		Event Espresso
  * @subpackage	/helper/EEH_Formatter.helper.php
@@ -27,11 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class EEH_Formatter {
-	/**
-	 * Used by EEH_Formatter::nl() and EEH_Formatter::indent()
-	 * @var int
-	 */
-	static $tab_level = 0;
+
 
 	/**
 	 * _admin_format_content
@@ -127,29 +123,6 @@ class EEH_Formatter {
 			return date_i18n( $format, strtotime( $date ));
 		}
 	}
-
-	/**
-	 * return a newline and tabs ("nl" stands for "new line")
-	 * @param int $indent the number of tabs to ADD to the current indent (can be negative or zero)
-	* @return string - newline character plus # of indents passed (can be + or -)
-	*/
-   public static function nl( $indent = 0 ) {
-	   self::$tab_level += $indent;
-	   $html = EENL;
-	   for ( $x = 0; $x < self::$tab_level; $x++ ) {
-		   $html .= "\t";
-	   }
-	   return $html;
-   }
-   /**
-    * Changes the indents used in EEH_Formatter::nl. Often its convenient to change
-    * the indentation level without actually creating a new line
-    * @param int $indent_change can be negative to decrease the indentation level
-    * @return void
-    */
-   public static function indent( $indent_change ){
-	   self::$tab_level += $indent_change;
-   }
 
 
 
