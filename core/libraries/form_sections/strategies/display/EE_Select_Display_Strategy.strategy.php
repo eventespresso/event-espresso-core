@@ -24,7 +24,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		}
 		EE_Registry::instance()->load_helper('Array');
 
-		$html = EEH_HTML::nl( 1, 'select' );
+		$html = EEH_HTML::nl( 0, 'select' );
 		$html .= '<select';
 		$html .= ' id="' . $this->_input->html_id() . '"';
 		$html .= ' name="' . $this->_input->html_name() . '"';
@@ -35,7 +35,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html .= ' style="' . $this->_input->html_style() . '"';
 		$html .= '>';
 
-		EEH_HTML::indent( 1 );
+		EEH_HTML::indent( 1, 'select' );
 		if ( EEH_Array::is_multi_dimensional_array( $this->_input->options() )) {
 			foreach( $this->_input->options() as $opt_group_label => $opt_group ){
 				$html .= EEH_HTML::nl( 1, 'optgroup' ) . '<optgroup label="' . esc_attr( $opt_group_label ) . '">';
@@ -46,7 +46,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 			$html.=$this->_display_options( $this->_input->options() );
 		}
 
-		$html.= EEH_HTML::nl( 0, 'select' ) . '</select>';
+		$html.= EEH_HTML::nl( -1, 'select' ) . '</select>';
 		return $html;
 	}
 
