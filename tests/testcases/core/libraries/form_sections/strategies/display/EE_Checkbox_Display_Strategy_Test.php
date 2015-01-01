@@ -34,9 +34,7 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="form-input1-bazem" id="form-input1-bazem-lbl" class="ee-checkbox-label-after micro-lbl">
 	<input type="checkbox" name="form[input1][]" id="form-input1-bazem" class="" style="" value="baz&#039;em">&nbsp;Baz
 </label>';
-		$actual_output = $input->get_html_for_input();
-		$this->assertEquals( str_replace( array( '\n', '\r', '\t'  ), ' ', $expected_output ), str_replace( array( '\n', '\r', '\t'  ), ' ', $actual_output ));
-//		$this->assertEquals( mb_convert_encoding( $expected_output, 'UTF-8' ), mb_convert_encoding( $actual_output, 'UTF-8' ));
+		$this->assertEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
 			'input1' => array( "baz'em", 'bar' )
