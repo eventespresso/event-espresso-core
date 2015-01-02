@@ -192,7 +192,7 @@ class EEH_Autoloader {
 		}
 
 		//we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
-		self::register_autoloader($class_to_filepath_map, $read_check = false );
+		self::register_autoloader($class_to_filepath_map, FALSE );
 	}
 
 
