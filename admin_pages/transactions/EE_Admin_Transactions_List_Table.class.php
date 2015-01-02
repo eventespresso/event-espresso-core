@@ -280,14 +280,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 
         //Build row actions
-        $view_lnk = '
+        $actionlinks = array();
+        $actionlinks['view_lnk'] = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-cart"></span>
 			</a>
 		</li>';
 
-         $dl_invoice_lnk = '
+        $actionlinks['dl_invoice_lnk'] = '
 		<li>
 			<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
 				<span class="ee-icon ee-icon-PDF-file-type ee-icon-size-16"></span>
@@ -296,33 +297,34 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
       		//only show payment reminder link if the message type is active.
-      		$EEMSG = EE_Registry::instance()->load_lib('messages');
-      		$active_mts = $EEMSG->get_active_message_types();
-      		if ( in_array( 'payment_reminder', $active_mts ) ) {
-	       $send_pay_lnk = '
+		$EEMSG = EE_Registry::instance()->load_lib('messages');
+		$active_mts = $EEMSG->get_active_message_types();
+		if ( in_array( 'payment_reminder', $active_mts ) ) {
+			$actionlinks['send_pay_lnk'] = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-email-alt"></span>
 			</a>
 		</li>';
-		$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
+			$actionlinks['send_pay_lnk'] = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $actionlinks['send_pay_lnk'] : '';
 		} else {
-			$send_pay_lnk = '';
+			$actionlinks['send_pay_lnk'] = '';
 		}
 
-	        $view_reg_lnk = '
+		$actionlinks['view_reg_lnk'] = '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-clipboard"></span>
 			</a>
 		</li>';
 
-			$actions = '
-		<ul class="txn-overview-actions-ul">' .
-		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
-		</ul>';
+		$actionlinks = apply_filters( 'FHEE__Admin_Transactions_List_Table__column_actions__action_links', $actionlinks, $item );
 
-			return $actions;
+		$actions = '<ul class="txn-overview-actions-ul">' . "\n\t";
+		$actions .= implode( "\n\t", $actionlinks );
+		$actions .= "\n</ul>\t";
+
+		return $actions;
     }
 
 
