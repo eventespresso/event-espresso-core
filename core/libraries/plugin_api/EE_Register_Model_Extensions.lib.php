@@ -41,12 +41,15 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 		}
 
 		//check correct loading
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded' )) {
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded'  )) {
 			EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
-					__('An attempt was made to register "%s" as a group models has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.','event_espresso'),
-					$model_id
+					__('An attempt was made to register "%1$s" as a Model extension has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.%2$s Hook Status: %2$s "AHEE__EE_System__load_espresso_addons" : %3$s %2$s "AHEE__EE_Admin__loaded" : %4$s%2$s','event_espresso'),
+					$model_id,
+					'<br />',
+					did_action( 'AHEE__EE_System__load_espresso_addons' ) ? 'action done' : 'action NOT done',
+					did_action( 'AHEE__EE_Admin__loaded' ) ? 'action done' : 'action NOT done'
 				),
 				'4.3'
 			);
