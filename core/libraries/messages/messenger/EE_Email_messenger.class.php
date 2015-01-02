@@ -441,11 +441,11 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function set_from_name( $from_name ) {
 		$parsed_from = $this->_parse_from();
-		if ( ! empty( $parsed_from[0] ) ) {
-			return $parsed_from[0];
-		} else {
-			return $from_name;
+		if ( is_array( $parsed_from) && ! empty( $parsed_from[0] ) ) {
+			$from_name =  $parsed_from[0];
 		}
+
+		return stripslashes_deep( html_entity_decode($from_name,  ENT_QUOTES,"UTF-8" ) );
 	}
 
 
