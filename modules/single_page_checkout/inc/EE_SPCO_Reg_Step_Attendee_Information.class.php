@@ -75,14 +75,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function generate_reg_form() {
 		$this->_print_copy_info = FALSE;
 		$primary_registrant = NULL;
+		// autoload Line_Item_Display classes
+		EEH_Autoloader::register_line_item_display_autoloaders();
+		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
+		EE_Registry::instance()->load_helper('Line_Item');
 		/** @var $subsections EE_Form_Section_Proper[] */
 		$subsections = array(
 			'default_hidden_inputs' => $this->reg_step_hidden_inputs()
 		);
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
-			'registrations' =>array(),
-			'ticket_count' 	=>array()
+			'registrations' => array(),
+			'ticket_count' 	=> array()
 		);
 		// grab the saved registrations from the transaction
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
@@ -95,6 +99,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						if ( ! $this->checkout->admin_request ) {
 							$template_args['registrations'][ $registration->reg_url_link() ] = $registration;
 							$template_args['ticket_count'][ $registration->ticket()->ID() ] = isset( $template_args['ticket_count'][ $registration->ticket()->ID() ] ) ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1 : 1;
+							$ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs( $this->checkout->cart->get_grand_total(), 'Ticket', array( $registration->ticket()->ID() ) );
+							$ticket_line_item = is_array( $ticket_line_item ) ? reset( $ticket_line_item ) : $ticket_line_item;
+							$template_args['ticket_line_item'][ $registration->ticket()->ID() ] = $Line_Item_Display->display_line_item( $ticket_line_item );
 						}
 						if ( $registration->is_primary_registrant() ) {
 							$primary_registrant = $registration->reg_url_link();
@@ -310,7 +317,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// array of params to pass to parent constructor
 		return new EE_Form_Section_Proper(
 			array(
-				'subsections' 			=> $this->copy_attendee_info_inputs(),
+				'subsections' 			=> $this->_copy_attendee_info_inputs(),
 				'layout_strategy' 	=> new EE_Template_Layout(
 					array(
 						'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
