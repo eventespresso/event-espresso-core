@@ -597,11 +597,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize_transaction() {
 		try {
+			// ensure cart totals have been calculated
+			$this->checkout->cart->recalculate_all_cart_totals();
+			// grab the cart grand total
+			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
 			return EE_Transaction::new_instance( array(
 				'TXN_timestamp' 	=> current_time( 'timestamp' ),
 				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
-				'TXN_total' 				=> $this->checkout->cart->get_cart_grand_total(),
+				'TXN_total' 				=> $cart_total > 0 ? $cart_total : 0,
 				'TXN_paid' 				=> 0,
 				'STS_ID' 					=> EEM_Transaction::failed_status_code,
 			));
