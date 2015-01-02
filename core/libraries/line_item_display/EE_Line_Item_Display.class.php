@@ -18,7 +18,7 @@ class EE_Line_Item_Display {
 	/**
 	 * @param $context - where/how the line items are being displayed
 	 */
-	public function __construct( $context ) {
+	public function __construct( $context = '' ) {
 		$context = strtolower( $context );
 		switch ( $context ) {
 			case 'invoice' :
