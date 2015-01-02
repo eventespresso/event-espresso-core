@@ -70,7 +70,7 @@ class EEH_Autoloader {
 	 * @return 	void
 	 */
 	public static function espresso_autoloader( $class_name ) {
-		if ( isset( self::$_autoloaders[ $class_name ] ) && is_readable( self::$_autoloaders[ $class_name ] )) {
+		if ( isset( self::$_autoloaders[ $class_name ] ) ) {
 			require_once( self::$_autoloaders[ $class_name ] );
 		}
 	}
@@ -82,10 +82,11 @@ class EEH_Autoloader {
 	 *
 	 * @access    public
 	 * @param array | string $class_paths - array of key => value pairings between class names and paths
+	 * @param bool $read_check true if we need to check whether the file is readable or not.
 	 * @throws \EE_Error
 	 * @return        void
 	 */
-	public static function register_autoloader( $class_paths ) {
+	public static function register_autoloader( $class_paths, $read_check = true ) {
 		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
 		foreach ( $class_paths as $class => $path ) {
 			// don't give up! you gotta...
@@ -98,7 +99,7 @@ class EEH_Autoloader {
 				throw new EE_Error ( sprintf( __( 'No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));
 			}
 			// is file readable ?
-			if ( ! is_readable( $path )) {
+			if ( $read_check && ! is_readable( $path )) {
 				throw new EE_Error ( sprintf( __( 'The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
 			}
 			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
@@ -189,7 +190,9 @@ class EEH_Autoloader {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );
 			}
 		}
-		self::register_autoloader($class_to_filepath_map);
+
+		//we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
+		self::register_autoloader($class_to_filepath_map, $read_check = false );
 	}
 
 
