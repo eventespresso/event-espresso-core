@@ -373,10 +373,11 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string formatted header for email
 	 */
 	protected function _headers() {
+		$from = stripslashes_deep( html_entity_decode($this->_from,  ENT_QUOTES,"UTF-8" ) );
 		$headers = array(
 			'MIME-Version: 1.0',
-			'From:' . $this->_from,
-			'Reply-To:' . $this->_from,
+			'From:' . $from,
+			'Reply-To:' . $from,
 			'Content-Type:text/html; charset=utf-8'
 			);
 
