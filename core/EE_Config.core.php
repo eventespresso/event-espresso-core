@@ -1240,7 +1240,7 @@ class EE_Config_Base{
 
 		//just handling escaping of strings for now.
 		if ( is_string( $this->$property ) ) {
-			return htmlentities( stripslashes( $this->$property ), ENT_QUOTES, 'UTF-8' );
+			return stripslashes( $this->$property );
 		}
 
 		return $this->$property;
