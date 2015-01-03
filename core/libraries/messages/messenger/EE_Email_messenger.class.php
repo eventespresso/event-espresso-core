@@ -488,6 +488,24 @@ class EE_Email_messenger extends EE_messenger  {
 	}
 
 
+
+
+	/**
+	 * This just returns any existing test settings that might be saved in the database
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_existing_test_settings() {
+		$settings = parent::get_existing_test_settings();
+		//override subject if present because we always want it to be fresh.
+		if ( is_array( $settings ) && ! empty( $settings['subject'] ) ) {
+			$settings['subject'] = sprintf( __('Test email sent from %s', 'event_espresso'), get_bloginfo('name') );
+		}
+		return $settings;
+	}
+
+
 }
 
 // end of file:	includes/core/messages/messengers/EE_Email_messenger.class.php
