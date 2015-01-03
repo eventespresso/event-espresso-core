@@ -23,8 +23,8 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase{
 			)
 		));
 		$input = $form->get_input( 'input1' );
-		$expected_output =
-'<div id="form-input1-lbl" class="" style="">Input1</div>
+		$expected_output = '
+<div id="form-input1-lbl" class="" style="">Input1</div>
 <label for="form-input1-foo" id="form-input1-foo-lbl" class="ee-checkbox-label-after micro-lbl">
 	<input type="checkbox" name="form[input1][]" id="form-input1-foo" class="" style="" value="foo">&nbsp;Foo
 </label>
@@ -41,8 +41,8 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->normalized_value() );
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->raw_value() );
-		$expected_output2 =
-'<div id="form-input1-lbl" class="" style="">Input1</div>
+		$expected_output2 = '
+<div id="form-input1-lbl" class="" style="">Input1</div>
 <label for="form-input1-foo" id="form-input1-foo-lbl" class="ee-checkbox-label-after micro-lbl">
 	<input type="checkbox" name="form[input1][]" id="form-input1-foo" class="" style="" value="foo">&nbsp;Foo
 </label>

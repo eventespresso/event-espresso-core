@@ -749,7 +749,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// the text that appears on the reg step form submit button
 			$reg_step->set_submit_button_text();
 		}
-
+		// dynamically creates hook point like: AHEE__Single_Page_Checkout___initialize_reg_step__attendee_information
+		do_action( "AHEE__Single_Page_Checkout___initialize_reg_step__{$this->checkout->current_step->slug()}", $this->checkout->current_step );
 	}
 
 

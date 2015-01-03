@@ -23,8 +23,7 @@ class EE_Select_Multiple_Display_Strategy_Test extends EE_UnitTestCase{
 			)
 		));
 		$input = $form->get_input( 'input1' );
-		$expected_output =
-'
+		$expected_output = '
 <select multiple id="form-input1" name="form[input1][]" class="" style="">
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
@@ -37,8 +36,7 @@ class EE_Select_Multiple_Display_Strategy_Test extends EE_UnitTestCase{
 		));
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->normalized_value() );
 		$this->assertEquals( array( "baz'em", 'bar' ), $input->raw_value() );
-		$expected_output2 =
-'
+		$expected_output2 = '
 <select multiple id="form-input1" name="form[input1][]" class="" style="">
 	<option value="foo">Foo</option>
 	<option value="bar" selected="selected">Bar</option>
