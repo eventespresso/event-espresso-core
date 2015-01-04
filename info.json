@@ -1,3 +1,19 @@
 {
-	"versionFile" : "espresso.php"
+	"versionFile" : "espresso.php",
+	"slug" : "event-espresso-core",
+	"releaseFilesRemove" : [
+		"src/tests/**",
+		"src/info.json",
+		"src/circle.yml",
+		"src/screenshot*.jpg"
+	],
+	"decafFilesRemove" : [
+		"src/tests**",
+		"src/info.json",
+		"src/circle.yml",
+		"src/screenshot*.jpg",
+		"src/caffeinated"
+	],
+	"awsbucket" : "",
+	"awsregion" : ""
 }
