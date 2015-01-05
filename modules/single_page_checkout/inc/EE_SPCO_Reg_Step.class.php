@@ -522,6 +522,7 @@ abstract class EE_SPCO_Reg_Step {
 	}
 
 
+
 	/**
 	 * div_class - returns  a css class of "hidden" for current step, but nothing for others
 	 * @return string
@@ -532,6 +533,13 @@ abstract class EE_SPCO_Reg_Step {
 
 
 
+	/**
+	 * update_checkout
+	 * @return void
+	 */
+	public function update_checkout() {
+		$this->checkout->stash_transaction_and_checkout();
+	}
 
 
 
