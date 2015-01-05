@@ -469,7 +469,7 @@ class EE_Checkout {
 	 * 	stash_transaction_and_checkout
 	 *
 	 * 	@access public
-	 * 	@return 	bool
+	 * 	@return 	void
 	 */
 	public function stash_transaction_and_checkout() {
 		if ( ! $this->revisit ) {
