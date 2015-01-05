@@ -470,6 +470,7 @@ abstract class EE_SPCO_Reg_Step {
 	}
 
 
+
 	/**
 	 * div_class - returns nothing for current step, but a css class of "hidden" for others
 	 * @return string
@@ -478,10 +479,11 @@ abstract class EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			return '';
 		}
-		EE_Registry::instance()->load_helper('HTML');
+		ob_start();
 		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
+		$html = ob_get_clean();
+		// generate submit button
 		$sbmt_btn = new EE_Submit_Input( array(
-//			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
 			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_id' 							=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_class' 					=> 'spco-next-step-btn',
@@ -489,24 +491,15 @@ abstract class EE_SPCO_Reg_Step {
 			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
-		return EEH_HTML::div(
+		EE_Registry::instance()->load_helper('HTML');
+		$html .= EEH_HTML::div(
 			$sbmt_btn->get_html_for_input(),
 			'spco-' . $this->slug() . '-whats-next-buttons-dv',
 			'spco-whats-next-buttons'
 		);
-//		if ( $this->checkout->admin_request ) {
-//			$html = EEH_HTML::table(
-//				EEH_HTML::tr(
-//					EEH_HTML::th() .
-//					EEH_HTML::td( $html, '', '', 'padding-left:10px;' )
-//				),
-//				'', 'form-table', 'margin-left:2em;'
-//			);
-//			$html .= EEH_HTML::br();
-//		}
-//		return $html;
-
+		return $html;
 	}
+
 
 
 	/**
