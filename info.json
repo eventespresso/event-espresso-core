@@ -1,6 +1,6 @@
 {
 	"versionFile" : "espresso.php",
-	"versionType" : "beta",
+	"versionType" : "alpha",
 	"slug" : "event-espresso-core",
 	"releaseFilesRemove" : [
 		"src/tests/**",
