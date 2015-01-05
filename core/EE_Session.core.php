@@ -189,8 +189,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
 	/**
 	 * @retrieve session data
 	 * @access	public
@@ -295,9 +293,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * retrieve session data
 	  * @access    public
 	  * @param null $key
+	  * @param bool $reset_cache
 	  * @return    array
 	  */
-	public function get_session_data( $key = NULL ) {
+	public function get_session_data( $key = NULL, $reset_cache = FALSE ) {
+		if ( $reset_cache ) {
+			$this->reset_cart();
+			$this->reset_checkout();
+			$this->reset_transaction();
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
