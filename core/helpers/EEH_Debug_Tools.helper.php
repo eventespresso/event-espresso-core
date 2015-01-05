@@ -297,7 +297,7 @@ if ( !function_exists( 'dump_post' ) ) {
 function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
 	$print_r = FALSE;
 	if ( is_object( $var )) {
-		$var_name .= $var_name == '' ? get_class( $var ) : $var_name . ' : ' . get_class( $var );
+		$var_name = $var_name == '' ? get_class( $var ) : $var_name . ' : ' . get_class( $var );
 		$print_r = TRUE;
 	} else if ( is_array( $var )) {
 		$var_name = $var_name == '' ? 'array' : $var_name;
