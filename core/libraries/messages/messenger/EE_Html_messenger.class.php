@@ -344,7 +344,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		$this->_template_args = array(
-			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
+			'page_title' => html_entity_decode( stripslashes( $this->_subject ), ENT_QUOTES, "UTF-8"),
 			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
