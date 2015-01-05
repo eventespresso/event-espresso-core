@@ -68,7 +68,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction->set_payment_method_ID( $payment_method->ID() );
 		// verify payment method type
 		if ( $payment_method->type_obj() instanceof EE_PMT_Base ){
-			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $return_url, NULL, $method, $by_admin );
+			$payment = $payment_method->type_obj()->process_payment(
+				$transaction,
+				$amount,
+				$billing_form,
+				$return_url,
+				EE_Registry::instance()->CFG->core->cancel_page_url(),
+				$method,
+				$by_admin
+			);
 			//offline gateways DON'T return a payment object, so check it
 			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			return $payment;

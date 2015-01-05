@@ -465,6 +465,8 @@ abstract class EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			return '';
 		}
+		EE_Registry::instance()->load_helper('HTML');
+		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
 		$sbmt_btn = new EE_Submit_Input( array(
 			'layout_strategy' 			=> new EE_Div_Per_Section_Layout(),
 			'html_name' 					=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
@@ -474,26 +476,23 @@ abstract class EE_SPCO_Reg_Step {
 			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
-		ob_start();
-		if ( $this->checkout->admin_request ) {
-			echo EEH_Formatter::nl(1) . '<table class="form-table" style="margin-left:2em;">';
-			echo EEH_Formatter::nl(1) . '<tr>';
-			echo EEH_Formatter::nl(1) . '<th>';
-			echo EEH_Formatter::nl(-1) . '</th>';
-			echo EEH_Formatter::nl() . '<td style="padding-left:10px;">';
-		}
-		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
-		echo '<div id="spco-' . $this->slug() . '-whats-next-buttons-dv" class="spco-whats-next-buttons">';
-		echo $sbmt_btn->get_html_for_input();
-		echo '</div>';
-		echo '<!--end spco-whats-next-buttons-->';
-		if ( $this->checkout->admin_request ) {
-			echo EEH_Formatter::nl(-1) . '</td>';
-			echo EEH_Formatter::nl(-1) . '</tr>';
-			echo EEH_Formatter::nl(-1) . '</table>';
-			echo '<br />';
-		}
-		return ob_get_clean();
+		return EEH_HTML::div(
+			$sbmt_btn->get_html_for_input(),
+			'spco-' . $this->slug() . '-whats-next-buttons-dv',
+			'spco-whats-next-buttons'
+		);
+//		if ( $this->checkout->admin_request ) {
+//			$html = EEH_HTML::table(
+//				EEH_HTML::tr(
+//					EEH_HTML::th() .
+//					EEH_HTML::td( $html, '', '', 'padding-left:10px;' )
+//				),
+//				'', 'form-table', 'margin-left:2em;'
+//			);
+//			$html .= EEH_HTML::br();
+//		}
+//		return $html;
+
 	}
 
 

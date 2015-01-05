@@ -85,6 +85,13 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		//setup messengers for selects
 		$i=1;
+		$m_values[0]['id'] = 'all';
+		$m_values[0]['text'] = __('All Messengers', 'event_espresso' );
+		foreach ( $messengers as $messenger => $args ) {
+			$m_values[$i]['id'] = $messenger;
+			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
+			$i++;
+		}
 		foreach ( $messengers as $messenger => $args ) {
 			$m_values[$i]['id'] = $messenger;
 			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);

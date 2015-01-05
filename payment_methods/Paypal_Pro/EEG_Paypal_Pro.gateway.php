@@ -250,7 +250,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				}else{
 					$payment->set_status($this->_pay_model->declined_status());
 				}
-				$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
+				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
+				$payment->set_amount(isset($PayPalResult['AMT']) ? floatval( $PayPalResult['AMT'] ) : 0);
 				$payment->set_gateway_response($message);
 				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
 

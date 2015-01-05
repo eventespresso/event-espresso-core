@@ -60,6 +60,7 @@ class EE_Checkout {
 	 * @type int
 	 */
 	public $total_ticket_count = 0;
+
 	/**
 	 * the reg step slug from the incoming request
 	 * @type string

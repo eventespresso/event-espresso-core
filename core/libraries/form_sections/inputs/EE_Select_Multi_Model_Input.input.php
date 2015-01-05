@@ -63,14 +63,13 @@ class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 	public function set_select_options( $answer_options = array() ) {
 		//convert the model objects to select from into normal select options
 		$select_options = array();
-		foreach( $answer_options as $model_obj){
-			if($this->_naming_method){
-				$callback_on_class = $this->_naming_method;
-				$display_value = call_user_func(array($model_obj,$callback_on_class));
+		foreach( $answer_options as $model_obj ){
+			if( $this->_naming_method ){
+				$display_value = call_user_func( array( $model_obj, $this->_naming_method ));
 			}else{
 				$display_value = $model_obj->name();
 			}
-			$select_options[$model_obj->ID()] = $display_value;
+			$select_options[ $model_obj->ID() ] = $display_value;
 		}
 		parent::set_select_options($select_options);
 	}

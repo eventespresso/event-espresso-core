@@ -122,6 +122,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			return TRUE;
 		}
 		$this->checkout->redirect = FALSE;
+		// mark this reg step as completed
+		$this->checkout->current_step->set_completed();
 		return FALSE;
 
 	}
