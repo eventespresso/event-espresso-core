@@ -576,7 +576,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function get_billing_form_html_for_payment_method() {
 		// how have they chosen to pay?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
-		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
+		$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
+		if ( ! $this->checkout->payment_method ) {
 			return FALSE;
 		}
 		EE_Error::add_success(
