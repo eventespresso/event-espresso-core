@@ -271,10 +271,12 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
     	$registration = $item->primary_registration();
     	$attendee = $registration->attendee();
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
         //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 		$dl_invoice_lnk_url = $registration->invoice_url();
+		$dl_receipt_lnk_url = $registration->receipt_url();
 		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
 		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 
@@ -286,25 +288,33 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				</a>
 			</li>';
 
-		if ( $attendee instanceof EE_Attendee && ! empty( $dl_invoice_lnk_url )) {
-			$dl_invoice_lnk = '
-			<li>
-				<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
-					<span class="ee-icon ee-icon-PDF-file-type ee-icon-size-16"></span>
-				</a>
-			</li>';
-		} else {
-			$dl_invoice_lnk = '';
-		}
 
-		//only show payment reminder link if the message type is active.
-//		$EEMSG = EE_Registry::instance()->load_lib('messages');
-//		$active_mts = $EEMSG->get_active_message_types();
-//		if ( in_array( 'payment_reminder', $active_mts ) ) {
+	//only show invoice link if message type is active.
+	if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'invoice' ) ) {
+		$dl_invoice_lnk = '
+		<li>
+			<a title="' . __( 'View Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
+				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+			</a>
+		</li>';
+	} else {
+		$dl_invoice_lnk = '';
+	}
 
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' )) {
+	//only show receipt link if message type is active.
+	if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'receipt' ) ) {
+		$dl_receipt_lnk = '
+		<li>
+			<a title="' . __( 'View Transaction Receipt', 'event_espresso' ) . '" target="_blank" href="'.$dl_receipt_lnk_url.'" class="tiny-text">
+				<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
+			</a>
+		</li>';
+	} else {
+		$dl_receipt_lnk = '';
+	}
 
+      		//only show payment reminder link if the message type is active.
+      		if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' ) ) {
 		$send_pay_lnk = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ? '
 			<li>
 				<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
@@ -325,7 +335,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 		return '
 		<ul class="txn-overview-actions-ul">' .
-		$view_lnk . $dl_invoice_lnk . $send_pay_lnk . $view_reg_lnk . '
+		$view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $send_pay_lnk . $view_reg_lnk . '
 		</ul>';
 
     }

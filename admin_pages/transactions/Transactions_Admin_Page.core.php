@@ -385,9 +385,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'class' => 'dashicons dashicons-cart',
 					'desc' => __('View Transaction Details', 'event_espresso')
 				),
-				'download_invoice' => array(
-					'class' => 'ee-icon ee-icon-PDF-file-type',
-					'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
+				'view_invoice' => array(
+					'class' => 'dashicons dashicons-media-spreadsheet',
+					'desc' => __('View Transaction Invoice', 'event_espresso')
+				),
+				'view_receipt' => array(
+					'class' => 'dashicons dashicons-media-default',
+					'desc' => __('View Transaction Receipt', 'event_espresso' )
 				),
 				'view_registration' => array(
 					'class' => 'dashicons dashicons-clipboard',
@@ -420,11 +424,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$more_items = apply_filters(
 			'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
 			array(
-				'blank' => array(
-					'class' => '',
-					'desc' => ''
-				),
-				'overpaid' => array(
+				 'overpaid' => array(
 					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
 					'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
 				),
