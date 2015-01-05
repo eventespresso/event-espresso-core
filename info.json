@@ -2,6 +2,8 @@
 	"versionFile" : "espresso.php",
 	"versionType" : "alpha",
 	"slug" : "event-espresso-core",
+	"archiveBaseUrl" : "http://build.eventespresso.com/",
+	"archiveBasePath" : "~/www/build/"
 	"releaseFilesRemove" : [
 		"src/tests/**",
 		"src/info.json",
