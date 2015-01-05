@@ -382,7 +382,7 @@ final class EE_Config {
 		foreach( $this->addons as $addon_name => $addon_config_obj ) {
 			$addon_config_obj = maybe_unserialize( $addon_config_obj );
 			$config_class = get_class( $addon_config_obj );
-			if ( $addon_config_obj instanceof $config_class ) {
+			if ( $addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class ) {
 				$this->update_config( 'addons', $addon_name, $addon_config_obj, FALSE );
 			}
 			$this->addons->$addon_name = NULL;
