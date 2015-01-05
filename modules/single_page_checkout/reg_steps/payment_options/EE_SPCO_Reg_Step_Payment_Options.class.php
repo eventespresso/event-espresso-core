@@ -52,7 +52,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'payment_options';
 		$this->_name = __('Payment Options', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'payment_options_main.template.php';
+		$this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'payment_options_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please select a method of payment and provide any necessary billing information before proceeding.', 'event_espresso'));
@@ -191,7 +191,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				),
 				'layout_strategy'		=> new EE_Template_Layout(
 					array(
-						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'sold_out_events.template.php', // layout_template
+						'layout_template_file' 	=> SPCO_REG_STEPS_PATH . $this->_slug . DS . 'sold_out_events.template.php', // layout_template
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__template_args',
 							array(
@@ -231,7 +231,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				),
 				'layout_strategy'		=> new EE_Template_Layout(
 					array(
-						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'events_requiring_pre_approval.template.php', // layout_template
+						'layout_template_file' 	=> SPCO_REG_STEPS_PATH . $this->_slug . DS . 'events_requiring_pre_approval.template.php', // layout_template
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__template_args',
 							array(
@@ -268,7 +268,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				),
 				'layout_strategy' 	=> new EE_Template_Layout(
 					array(
-						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'no_payment_required.template.php', // layout_template
+						'layout_template_file' 	=> SPCO_REG_STEPS_PATH . $this->_slug . DS . 'no_payment_required.template.php', // layout_template
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___no_payment_required__template_args',
 							array(
@@ -324,7 +324,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs( FALSE )
 					),
 					'layout_strategy'	=> new EE_Template_Layout( array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
+							'layout_template_file' 	=> $this->_template, // layout_template
 							'template_args'  				=> apply_filters(
 								'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__template_args',
 								array(
