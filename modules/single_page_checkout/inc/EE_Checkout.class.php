@@ -526,7 +526,7 @@ class EE_Checkout {
 	public function save_all_data( $show_errors = TRUE ) {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			// save so that TXN has ID
+			// save to ensure that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
