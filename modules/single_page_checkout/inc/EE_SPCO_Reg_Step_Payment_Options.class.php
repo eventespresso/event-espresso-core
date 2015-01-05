@@ -98,13 +98,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->checkout->reset_reg_steps();
 			return;
 		}
+		$this->get_available_payment_methods();
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	public function get_available_payment_methods() {
 		// load EEM_Payment_Method
 		EE_Registry::instance()->load_model( 'Payment_Method' );
-		// get all active payment methods
-		$this->checkout->available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
-
-		$this->generate_reg_form_for_actions( array( 'get_billing_form_html_for_payment_method' ));
-
+		// is a payment method already set?
+		if ( $this->checkout->selected_method_of_payment instanceof EE_Payment_Method ) {
+			$this->checkout->available_payment_methods = array( $this->checkout->selected_method_of_payment );
+		} else {
+			// get all active payment methods
+			$this->checkout->available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
+		}
 	}
 
 
@@ -594,7 +605,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Billing_Info_Form
 	 */
 	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method ) {
-		if( $payment_method->type_obj()->billing_form( $this->checkout->transaction ) instanceof EE_Billing_Info_Form ) {
+		$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
+		if( $billing_form instanceof EE_Billing_Info_Form ) {
 			if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
 				EE_Error::add_success(
 					apply_filters(
@@ -603,7 +615,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					)
 				);
 			}
-			return $payment_method->type_obj()->billing_form();
+			return $billing_form;
 		}
 		// no actual billing form, so return empty HTML form section
 		return new EE_Form_Section_HTML();
@@ -1000,7 +1012,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->transaction,
 				$this->checkout->cart->get_cart_grand_total(),
 				$this->checkout->billing_form,
-				$this->_get_return_url( $payment_method )
+				$this->_get_return_url( $payment_method ),
+				'CART',
+				$this->checkout->admin_request,
+				TRUE,
+				$this->reg_step_url()
 			);
 		} catch( Exception $e ) {
 			EE_Error::add_error(
