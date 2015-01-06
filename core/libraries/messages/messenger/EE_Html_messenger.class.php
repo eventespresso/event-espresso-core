@@ -344,7 +344,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		$this->_template_args = array(
-			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
+			'page_title' => html_entity_decode( stripslashes( $this->_subject ), ENT_QUOTES, "UTF-8"),
 			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
@@ -371,8 +371,8 @@ class EE_Html_messenger extends EE_messenger  {
 		remove_all_actions('wp_footer');
 		remove_all_actions('wp_footer_scripts');
 		remove_all_actions('wp_enqueue_scripts');
-		global $wp_scripts, $wp_styles;
-		$wp_scripts = $wp_styles = array();
+		global $wp_scripts, $wp_styles, $wp_actions, $wp_filter;
+		$wp_scripts = $wp_styles = $wp_actions = $wp_filter = array();
 
 		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
 		add_action('wp_head', 'wp_enqueue_scripts');

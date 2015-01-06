@@ -304,7 +304,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 		$payee_name = ! empty( $invoice_settings['template_invoice_payee_name'] ) ? $invoice_settings['template_invoice_payee_name'] : '';
-		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) : $payee_name;
 		return $payee_name;
 	}
 
@@ -322,7 +322,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 		$payee_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
-		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'email' ) : $payee_email;
 		return $payee_email;
 	}
 
@@ -373,9 +373,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$payee_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
 		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
-			$payee_address = $organization->address_1 . '<br>';
-			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
-			$payee_address .= $organization->city . '<br>';
+			$payee_address = $organization->get_pretty( 'address_1' ) . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->get_pretty( 'address_2' ) . '<br>' : '';
+			$payee_address .= $organization->get_pretty( 'city' ) . '<br>';
 
 			//state
 			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );

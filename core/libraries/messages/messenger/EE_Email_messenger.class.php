@@ -374,10 +374,11 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string formatted header for email
 	 */
 	protected function _headers() {
+		$from = stripslashes_deep( html_entity_decode($this->_from,  ENT_QUOTES,"UTF-8" ) );
 		$headers = array(
 			'MIME-Version: 1.0',
-			'From:' . $this->_from,
-			'Reply-To:' . $this->_from,
+			'From:' . $from,
+			'Reply-To:' . $from,
 			'Content-Type:text/html; charset=utf-8'
 			);
 
@@ -442,11 +443,11 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function set_from_name( $from_name ) {
 		$parsed_from = $this->_parse_from();
-		if ( ! empty( $parsed_from[0] ) ) {
-			return $parsed_from[0];
-		} else {
-			return $from_name;
+		if ( is_array( $parsed_from) && ! empty( $parsed_from[0] ) ) {
+			$from_name =  $parsed_from[0];
 		}
+
+		return stripslashes_deep( html_entity_decode($from_name,  ENT_QUOTES,"UTF-8" ) );
 	}
 
 
@@ -485,6 +486,24 @@ class EE_Email_messenger extends EE_messenger  {
 			$body = preg_replace( $s_width, 'width=100%', $body );/**/
 		}
 		return $body;
+	}
+
+
+
+
+	/**
+	 * This just returns any existing test settings that might be saved in the database
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_existing_test_settings() {
+		$settings = parent::get_existing_test_settings();
+		//override subject if present because we always want it to be fresh.
+		if ( is_array( $settings ) && ! empty( $settings['subject'] ) ) {
+			$settings['subject'] = sprintf( __('Test email sent from %s', 'event_espresso'), get_bloginfo('name') );
+		}
+		return $settings;
 	}
 
 
