@@ -280,13 +280,13 @@ abstract class EE_PMT_Base{
 	 * @param float                $amount
 	 * @param EE_Billing_Info_Form $billing_info
 	 * @param string               $return_url
-	 * @param null                 $fail_url
+	 * @param string                 $cancel_url
 	 * @param string               $method
 	 * @param bool           $by_admin
 	 * @return \EE_Base_Class|\EE_Payment|null
 	 * @throws EE_Error
 	 */
-	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
+	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$cancel_url = '', $method = 'CART', $by_admin = FALSE ){
 		// @todo: add surcharge for the payment method, if any
 		if ( $this->_gateway ) {
 			//there is a gateway, so we're going to make a payment object
@@ -333,7 +333,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					EE_Config::instance()->core->cancel_page_url()
+					empty( $cancel_url ) ? EE_Registry::instance()->CFG->core->cancel_page_url() : $cancel_url
 				);
 
 			//  Onsite Gateway
