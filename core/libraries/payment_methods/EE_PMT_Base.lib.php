@@ -21,16 +21,19 @@ abstract class EE_PMT_Base{
 	const offline = 'off-line';
 
 	/**
-	 *
 	 * @var EE_Payment_Method
 	 */
 	protected $_pm_instance = NULL;
 
 	/**
-	 **
 	 * @var boolean
 	 */
 	protected $_requires_https = FALSE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $_has_billing_form = FALSE;
 
 	/**
 	 * @var EE_Gateway
@@ -222,22 +225,35 @@ abstract class EE_PMT_Base{
 	}
 
 
+
+	/**
+	 * @return boolean
+	 */
+	public function has_billing_form() {
+		return $this->_has_billing_form;
+	}
+
+
+
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form | NULL
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
-		if( ! $this->_billing_form ){
+		// ensure billing form is generated
+		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
-		if( $this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
-				$transaction instanceof EE_Transaction &&
-				$transaction->primary_registration() instanceof EE_Registration &&
-				$transaction->primary_registration()->attendee() instanceof EE_Attendee ){
+		if (
+			$this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
+			$transaction instanceof EE_Transaction &&
+			$transaction->primary_registration() instanceof EE_Registration &&
+			$transaction->primary_registration()->attendee() instanceof EE_Attendee
+		){
 			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
 		}
 		return $this->_billing_form;
