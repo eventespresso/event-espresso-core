@@ -461,6 +461,19 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			EEH_Line_Item::add_ticket_purchase( $line_item_total, $ticket, $qty );
 		}
 
+		$shipping_line_item = EE_Line_Item::new_instance( array(
+			'LIN_name' => __( 'Shipping Surcharge', 'event_espresso' ),
+			'LIN_desc' => __( 'Sent via Millenium Falcon', 'event_espresso' ),
+			'LIN_unit_price' => 20,
+			'LIN_quantity' => 1,
+			'LIN_is_taxable' => TRUE,
+			'LIN_total' => 20,
+			'LIN_type' => EEM_Line_Item::type_line_item
+		));
+		$shipping_line_item->save();
+		EEH_Line_Item::add_item($line_item_total, $shipping_line_item );
+		$this->additional_line_items = array( $shipping_line_item );
+
 		//now let's add taxes
 		EEH_Line_Item::apply_taxes( $line_item_total );
 
@@ -468,10 +481,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
 
 		foreach ( $ticket_line_items as $line_id => $line_item ) {
-			$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
-			$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
-			$line_items[$line_item->ID()]['children'] = $line_item->children();
-			$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+			if( $line_item->OBJ_ID() && $line_item->OBJ_type() ){
+				$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
+				$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
+				$line_items[$line_item->ID()]['children'] = $line_item->children();
+				$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+			}
 		}
 
 		$this->line_items_with_children = $line_items;

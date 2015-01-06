@@ -160,7 +160,7 @@ abstract class EE_Messages_incoming_data {
 	 * @since 4.5
 	 * @var EE_Line_Item[]
 	 */
-	public $non_ticket_line_items;
+	public $additional_line_items;
 
 
 	/**
@@ -386,7 +386,7 @@ abstract class EE_Messages_incoming_data {
 		$this->registrations = $registrations;
 
 		$this->tax_line_items =  $this->txn->tax_items();
-		$this->non_ticket_line_items = $this->txn->non_ticket_line_items();
+		$this->additional_line_items = $this->txn->non_ticket_line_items();
 		$this->payments = $this->txn->payments();
 
 
