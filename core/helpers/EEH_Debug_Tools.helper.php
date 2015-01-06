@@ -306,7 +306,7 @@ function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $heig
 		$var_name = $var_name == '' ? 'numeric' : $var_name;
 	} else if ( is_string( $var )) {
 		$var_name = $var_name == '' ? 'string' : $var_name;
-		echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b></h5>';
 		return;
 	} else if ( is_null( $var )) {
 		$var_name = $var_name == '' ? 'null' : $var_name;
