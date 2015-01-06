@@ -63,7 +63,7 @@ class EE_Newsletter_message_type extends EE_message_type {
 
     protected function _default_template_field_subject() {
         foreach ( $this->_contexts as $context => $details ) {
-            $content[$context] = sprintf( __('Message from %s', 'event_espresso'), EE_Registry::instance()->CFG->organization->name);
+            $content[$context] = sprintf( __('Message from %s', 'event_espresso'), EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) );
         }
         return $content;
     }

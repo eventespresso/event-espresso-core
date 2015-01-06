@@ -139,7 +139,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 		if ($transaction_id_or_obj instanceof EE_Transaction){
 			$transaction_id = $transaction_id_or_obj->ID();
 		}else{
-			$transaction_id = $transaction_id;
+			$transaction_id = $transaction_id_or_obj;
 		}
 		return $this->get_all(array(array('Registration.Transaction.TXN_ID'=>$transaction_id)));
 	}

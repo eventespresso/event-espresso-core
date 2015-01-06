@@ -47,8 +47,8 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$org_config = EE_Registry::instance()->CFG->organization;
-		$default_address = trim($org_config->address_1);
-		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->address_2);
+		$default_address = trim($org_config->get_pretty( 'address_1' ) );
+		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->get_pretty( 'address_2' ) );
 		$default_address .= '<br />' . trim($org_config->city);
 		$state_obj = EE_Registry::instance()->load_model('State')->get_one_by_ID($org_config->STA_ID);
 		if($state_obj){
@@ -59,12 +59,12 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			$default_address .= '<br />' . $country_obj->name();
 		}
 
-		$default_address .= '<br />' . trim($org_config->zip);
+		$default_address .= '<br />' . trim($org_config->get_pretty( 'zip' ) );
 		$this->_payment_settings['active'] = '';
 		$this->_payment_settings['pdf_title'] = __('Invoice Payments', 'event_espresso');
 		$this->_payment_settings['pdf_instructions'] = __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.', 'event_espresso');
 		$this->_payment_settings['page_instructions'] = __('Please send Invoice to the address below. Payment must be received within 48 hours of event date.', 'event_espresso');
-		$this->_payment_settings['payable_to'] = trim($org_config->name);
+		$this->_payment_settings['payable_to'] = trim($org_config->get_pretty( 'name' ) );
 		$this->_payment_settings['payment_address'] = $default_address;
 		$this->_payment_settings['invoice_logo_url'] = '';
 		$this->_payment_settings['show'] = true;

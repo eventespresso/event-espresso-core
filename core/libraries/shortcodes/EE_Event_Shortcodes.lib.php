@@ -119,12 +119,12 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_FACEBOOK_URL]' :
 				$facebook_url = $this->_data->get_post_meta('event_facebook', true );
-				return empty( $facebook_url ) ? EE_Registry::instance()->CFG->organization->facebook : $facebook_url;
+				return empty( $facebook_url ) ? EE_Registry::instance()->CFG->organization->get_pretty('facebook' ) : $facebook_url;
 				break;
 
 			case '[EVENT_TWITTER_URL]' :
 				$twitter_url = $this->_data->get_post_meta('event_twitter', true);
-				return empty( $twitter_url ) ? EE_Registry::instance()->CFG->organization->twitter : $twitter_url;
+				return empty( $twitter_url ) ? EE_Registry::instance()->CFG->organization->get_pretty('twitter' ) : $twitter_url;
 				break;
 
 			case '[EVENT_AUTHOR_EMAIL]' :
