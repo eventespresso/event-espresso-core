@@ -46,16 +46,16 @@ Class EE_Check extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$organization = EE_Registry::instance()->CFG->organization;
-		$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
-		$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
-		$default_address .= $organization->city != '' ? $organization->city : '';
+		$default_address = $organization->address_1 != '' ? $organization->get_pretty( 'address_1' ) . '<br />' : '';
+		$default_address .= $organization->address_2 != '' ? $organization->get_pretty( 'address_2' ) . '<br />' : '';
+		$default_address .= $organization->city != '' ? $organization->get_pretty( 'city' ) : '';
 		$default_address .= ( $organization->city != '' && $organization->STA_ID != '') ? ', ' : '<br />';
-		
+
 		$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
 		$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) ;
 		$default_address .=  $state ? $state->name() . '<br />' : '';
 		$default_address .= $country ? $country->name(). '<br />' : '';
-		$default_address .= $organization->zip != '' ? $organization->zip : '';
+		$default_address .= $organization->zip != '' ? $organization->get_pretty( 'zip' ) : '';
 		$this->_payment_settings = array(
 				'check_title' => __('Check/Money Order Payments', 'event_espresso'),
 				'check_instructions' => __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso'),
@@ -89,7 +89,7 @@ Class EE_Check extends EE_Offline_Gateway {
 				<input class="regular-text" type="text" name="check_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['check_title']); ?>" />
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th>
 				<label for="check_instructions">
@@ -100,7 +100,7 @@ Class EE_Check extends EE_Offline_Gateway {
 				<textarea name="check_instructions" cols="50" rows="5"><?php echo stripslashes_deep($this->_payment_settings['check_instructions']); ?></textarea>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th>
 				<label for="payable_to"><?php _e('Payable To', 'event_espresso'); ?></label>
@@ -109,7 +109,7 @@ Class EE_Check extends EE_Offline_Gateway {
 				<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th>
 				<label for="payment_address"><?php _e('Address to Send Payment', 'event_espresso'); ?></label>
@@ -122,7 +122,7 @@ Class EE_Check extends EE_Offline_Gateway {
 	}
 
 	protected function _display_settings_help() {
-		
+
 	}
 
 	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
@@ -137,7 +137,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		<?php
 	}
 	/**
-	 * Handles the thank you page logic given this specific transaction 
+	 * Handles the thank you page logic given this specific transaction
 	 * @param EE_Payment $payment
 	 */
 	public function get_payment_overview_content(EE_Payment $payment) {
