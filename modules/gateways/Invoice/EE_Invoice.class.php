@@ -47,6 +47,9 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	protected function _default_settings() {
 		$org_config = EE_Registry::instance()->CFG->organization;
+		$default_address = trim($org_config->get_pretty( 'address_1' ) );
+		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->get_pretty( 'address_2' ) );
+		$default_address .= '<br />' . trim($org_config->city);
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
 		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 
