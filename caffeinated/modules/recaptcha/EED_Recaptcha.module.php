@@ -55,6 +55,7 @@ class EED_Recaptcha  extends EED_Module {
 			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0 );
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+			add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method' ), 10, 1 );
 		}
 	}
 
@@ -156,6 +157,19 @@ class EED_Recaptcha  extends EED_Module {
 
 
 
+	/**
+	 * bypass_recaptcha_for_spco_load_payment_method
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function bypass_recaptcha_for_spco_load_payment_method() {
+		return array(
+			'EESID' 		=> EE_Registry::instance()->SSN->id(),
+			'step' 		=> 'payment_options',
+			'action' 	=> 'switch_spco_billing_form'
+		);
+	}
 
 
 
