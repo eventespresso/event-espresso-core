@@ -48,6 +48,8 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 	 */
 	public function populate_from_attendee( EE_Attendee $attendee ){
 		if ( $attendee instanceof EE_Attendee ) {
+			echo '<h2 style="color:#E76700;">populate_from_attendee<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+			printr( $attendee->full_name(), '$attendee->full_name()', __FILE__, __LINE__ );
 			/** @var $attendee EE_Attendee */
 			$state = $attendee->state_obj();
 			$country = $attendee->country_obj();
