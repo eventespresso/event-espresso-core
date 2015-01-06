@@ -470,7 +470,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			'LIN_total' => 20,
 			'LIN_type' => EEM_Line_Item::type_line_item
 		));
-		$shipping_line_item->save();
 		EEH_Line_Item::add_item($line_item_total, $shipping_line_item );
 		$this->additional_line_items = array( $shipping_line_item );
 
