@@ -261,9 +261,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 * @param string $event_name
 	 * @return string
 	 */
-	private function _find_unique_slug($event_name){
+	private function _find_unique_slug($event_name, $old_identifier = ''){
 		$count = 0;
-		$original_name = sanitize_title($event_name);
+		$original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
 		$event_slug = $original_name;
 		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
 			$event_slug = sanitize_title($original_name."-".++$count);
@@ -489,9 +489,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_venue_into_posts($old_event){
 		global $wpdb;
 		$insertion_array = array(
-					'post_title'=>stripslashes($old_event['venue_title']),//VNU_name
+					'post_title'=>$old_event['venue_title'] ? stripslashes($old_event['venue_title']) : stripslashes( sprintf( __( 'Venue of %s', 'event_espresso' ), $old_event['event_name'])),//VNU_name
 					'post_content'=>'',//VNU_desc
-					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
+					'post_name'=> $this->_find_unique_slug( $old_event['venue_title'], sanitize_title( 'venue-of-' . $old_event['event_name'] ) ),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_excerpt'=>'',//VNU_short_desc arbitraty only 50 characters
