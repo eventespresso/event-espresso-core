@@ -850,7 +850,7 @@ jQuery(document).ready( function($) {
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
 			// alert( 'next_step = ' + next_step );
-			if ( typeof response !== 'undefined' && typeof response !== null ) {
+			if ( typeof response === 'object' ) {
 				// add trigger point so other JS can join the party
 				SPCO.main_container.trigger( 'spco_process_response', [ next_step, response ] );
 				// process response
@@ -901,7 +901,8 @@ jQuery(document).ready( function($) {
 				}
 
             } else {
-				SPCO.submit_reg_form_server_error();
+				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'process_response', eei18n.invalid_json_response ), '' );
+				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 			}
 		},
 
