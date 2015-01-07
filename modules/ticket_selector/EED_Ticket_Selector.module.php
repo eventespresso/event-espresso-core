@@ -137,8 +137,24 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-
-		if (( ! self::$_event->display_ticket_selector() || $view_details || post_password_required( $event_post )) && ! is_admin() ) {
+		// grab event status
+		$_event_active_status = self::$_event->get_active_status();
+		if (
+			! is_admin()
+			&& (
+				! self::$_event->display_ticket_selector()
+				|| $view_details
+				|| post_password_required( $event_post )
+				|| (
+					$_event_active_status != EE_Datetime::active
+					&& $_event_active_status != EE_Datetime::upcoming
+					&& ! (
+						$_event_active_status == EE_Datetime::inactive
+						&& is_user_logged_in()
+					)
+				)
+			)
+		) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 
