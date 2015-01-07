@@ -350,6 +350,7 @@ class EE_Html_messenger extends EE_messenger  {
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
+
 		$this->_deregister_wp_hooks();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		echo $this->_get_main_template();
@@ -369,14 +370,15 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _deregister_wp_hooks() {
 		remove_all_actions('wp_head');
 		remove_all_actions('wp_footer');
-		remove_all_actions('wp_footer_scripts');
+		remove_all_actions('wp_print_footer_scripts');
 		remove_all_actions('wp_enqueue_scripts');
-		global $wp_scripts, $wp_styles, $wp_actions, $wp_filter;
-		$wp_scripts = $wp_styles = $wp_actions = $wp_filter = array();
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = $wp_styles = array();
 
 		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
-		add_action('wp_head', 'wp_enqueue_scripts');
 		add_action( 'wp_footer', 'wp_print_footer_scripts' );
+		add_action( 'wp_print_footer_scripts', '_wp_footer_scripts' );
+		add_action('wp_head', 'wp_enqueue_scripts');
 	}
 
 
