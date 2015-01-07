@@ -117,12 +117,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
-		// we do NOT want to do anything with regards to registering addons during plugin activation.
-		// since plugin activation happens AFTER most of the typical hooks have already run,
-		// any attempts to utilize or reference those hook points will fail, which can result in errors
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'activate' ) {
-			return;
-		}
 		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
