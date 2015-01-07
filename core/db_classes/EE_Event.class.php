@@ -181,7 +181,7 @@ class EE_Event extends EE_CPT_Base {
 	 * @return bool
 	 */
 	function display_ticket_selector() {
-		return $this->get( 'EVT_display_ticket_selector' );
+		return (bool)$this->get( 'EVT_display_ticket_selector' );
 	}
 
 
