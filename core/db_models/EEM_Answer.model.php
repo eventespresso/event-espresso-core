@@ -41,7 +41,8 @@ class EEM_Answer extends EEM_Base {
 		EEM_Attendee::city_question_id => 'ATT_city',
 		EEM_Attendee::state_question_id => 'STA_ID',
 		EEM_Attendee::country_question_id => 'CNT_ISO',
-		EEM_Attendee::zip_question_id => 'ATT_zip'
+		EEM_Attendee::zip_question_id => 'ATT_zip',
+		EEM_Attendee::phone_question_id => 'ATT_phone'
 	);
 
 
