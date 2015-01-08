@@ -47,6 +47,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= EEH_HTML::nl( -1, 'radio' ) . '</label>';
 
 		}
+		$html .= EEH_HTML::div( '', '', 'clear-float' );
 		return $html;
 	}
 
@@ -64,7 +65,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
 			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
-		if ( $this->_input->display_html_label_text() ) {
+		if ( $this->_input->display_html_label_text() != '' ) {
 			$html = EEH_HTML::nl( 0, 'radio' );
 			$html .= '<div id="' . $this->_input->html_label_id() . '"';
 			$html .= ' class="' . $this->_input->html_label_class() . '"';

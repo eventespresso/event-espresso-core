@@ -611,7 +611,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					__( 'The selected method of payment could not be determined.%sPlease ensure that you have selected one before proceeding.%sIf you continue to experience difficulties, then refresh your browser and try again, or contact %s for assistance.', 'event_espresso' ),
 					'<br/>',
 					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
+					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
@@ -874,7 +874,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 				return FALSE;
@@ -885,7 +885,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'The primary registrant for this transaction could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 				return FALSE;
@@ -895,7 +895,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 				return FALSE;
@@ -926,7 +926,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'The selected method of payment could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 				return NULL;
@@ -938,7 +938,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 				return NULL;
@@ -979,7 +979,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				sprintf(
 					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||%3$s', 'event_espresso' ),
 					'<br/>',
-					EE_Registry::instance()->CFG->organization->email,
+					EE_Registry::instance()->CFG->organization->get_pretty( 'email' ),
 					$e->getMessage()
 				), __FILE__, __FUNCTION__, __LINE__
 			);
@@ -1075,7 +1075,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				sprintf(
 					__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
+					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 			return FALSE;
@@ -1118,7 +1118,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					sprintf(
 						__( 'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					), __FILE__, __FUNCTION__, __LINE__
 				);
 			}
@@ -1207,7 +1207,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			sprintf(
 				__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 				'<br/>',
-				EE_Registry::instance()->CFG->organization->email
+				EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 			),
 			__FILE__, __FUNCTION__, __LINE__
 		);
