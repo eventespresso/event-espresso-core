@@ -66,6 +66,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase{
 	}
 
 	public function test_register__success(){
+		EE_Register_Payment_Method::deregister( $this->_pmt_name );
 		$this->_pretend_addon_hook_time();
 		//double-check no one else is filtering payment method types
 		remove_all_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register');

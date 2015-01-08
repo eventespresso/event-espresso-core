@@ -155,6 +155,8 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 			PRIMARY KEY  (MATTM_ID)'
 				);
 		$this->assertTableExists( 'esp_mock_attendee_meta' );
+
+		EE_Register_Model_Extensions::deregister( $this->_model_group );
 	}
 
 	/**
