@@ -24,7 +24,7 @@
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address, EEI_Attendee {
+class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 
 	/**
 	 * Sets some dynamic defaults
@@ -378,7 +378,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address, EEI_Attendee {
 	}
 
 	/**
-	 * REturns the country's name if known, otherwise 'Unknown'
+	 * Returns the country's name if known, otherwise 'Unknown'
 	 * @return string
 	 */
 	public function country_name(){
