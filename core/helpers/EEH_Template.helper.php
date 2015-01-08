@@ -329,11 +329,11 @@ class EEH_Template {
 	 * @param  float      $amount       raw money value
 	 * @param  boolean    $return_raw   whether to return the formatted float value only with no currency sign or code
 	 * @param  boolean    $display_code whether to display the country code (USD). Default = TRUE
-	 * @param bool|string $CNT_ISO      2 letter ISO code for a country
+	 * @param string $CNT_ISO      2 letter ISO code for a country
 	 * @param string      $cur_code_span_class
 	 * @return string        the html output for the formatted money value
 	 */
-	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' ) {
+	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = '', $cur_code_span_class = 'currency-code' ) {
 		// ensure amount was received
 		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
@@ -346,8 +346,8 @@ class EEH_Template {
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
 		if ( is_float( $amount_formatted )) {
-			// was a country ISO code passed ? if so generate currency cofing object for that country
-			$mny = $CNT_ISO !== FALSE ? new EE_Currency_Config( $CNT_ISO ) : NULL;
+			// was a country ISO code passed ? if so generate currency config object for that country
+			$mny = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : NULL;
 			// verify results
 			if ( ! $mny instanceof EE_Currency_Config ) {
 				// set default config country currency settings
@@ -392,7 +392,9 @@ class EEH_Template {
 	 * @return string             The localized label for the status id.
 	 */
 	public static function pretty_status( $status_id, $plural = FALSE, $schema = 'upper' ) {
-		$status = EE_Registry::instance()->load_model( 'Status' )->localized_status( array( $status_id => __( 'unknown', 'event_espresso' )), $plural, $schema );
+		/** @type EEM_Status $EEM_Status */
+		$EEM_Status = EE_Registry::instance()->load_model( 'Status' );
+		$status = $EEM_Status->localized_status( array( $status_id => __( 'unknown', 'event_espresso' )), $plural, $schema );
 		return $status[ $status_id ];
 	}
 
@@ -469,7 +471,7 @@ class EEH_Template {
 
 			$custom_class = !empty( $stop['custom_class'] ) ? ' class="' . $stop['custom_class'] . '"' : '';
 			$button_text = !empty( $stop['button_text'] ) ? ' data-button="' . $stop['button_text'] . '"' : '';
-			$innercontent = isset($stop['content']) ? $stop['content'] : '';
+			$inner_content = isset($stop['content']) ? $stop['content'] : '';
 
 			//options
 			if ( isset( $stop['options'] ) && is_array( $stop['options'] ) ) {
@@ -483,7 +485,7 @@ class EEH_Template {
 			}
 
 			//let's put all together
-			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $innercontent . '</li>';
+			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $inner_content . '</li>';
 		}
 
 		$content .= '</ol>';
@@ -593,6 +595,11 @@ class EEH_Template {
 	 *
 	 * @since 4.4.0
 	 * @see   self:get_paging_html() for argument docs.
+	 * @param      $total_items
+	 * @param      $current
+	 * @param      $per_page
+	 * @param      $url
+	 * @param bool $show_num_field
 	 */
 	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
 		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field );

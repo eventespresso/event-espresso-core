@@ -153,6 +153,9 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		require_once EE_CORE . 'EE_Deprecated.core.php';
+		// load interfaces
+		require_once EE_CORE . 'EEI_Interfaces.php';
+		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
 
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
