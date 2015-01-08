@@ -498,7 +498,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 		} else {
 			EE_Error::add_error(
-				__( 'The Registration Confirmation email could not be sent because a registration URL link is missing or invalid.', 'event_espresso' ),
+				__( 'The Registration Confirmation email could not be sent because a registration token is missing or invalid.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
