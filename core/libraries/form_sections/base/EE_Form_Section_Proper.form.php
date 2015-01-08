@@ -184,9 +184,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param array $default_data
 	 */
 	public function populate_defaults($default_data){
+		echo '<h2 style="color:#E76700;">populate_defaults<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		foreach($this->subsections() as $subsection_name => $subsection){
 			if(isset($default_data[$subsection_name])){
 				if($subsection instanceof EE_Form_Input_Base){
+					printr( $default_data[$subsection_name], $subsection_name, __FILE__, __LINE__ );
 					$subsection->set_default($default_data[$subsection_name]);
 				}elseif($subsection instanceof EE_Form_Section_Proper){
 					$subsection->populate_defaults($default_data[$subsection_name]);
@@ -392,11 +394,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * add our form section data to a static variable accessible by all form sections
+	 * @param bool $return_for_subsection
 	 * @return void
 	 */
-	public function localize_validation_rules(){
+	public function localize_validation_rules( $return_for_subsection = FALSE ){
 		// we only want to localize vars ONCE for the entire form, so if the form section doesn't have a parent, then it must be the top dog
-		if ( ! $this->parent_section() ) {
+		if ( ! $this->parent_section() || $return_for_subsection ) {
 			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
 				'form_section_id'=> $this->html_id( TRUE ),
 				'validation_rules'=> $this->get_jquery_validation_rules(),

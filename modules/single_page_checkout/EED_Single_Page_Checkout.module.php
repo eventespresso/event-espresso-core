@@ -182,6 +182,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		define( 'SPCO_IMG_URL', plugin_dir_url( __FILE__ ) . 'img' . DS );
 		define( 'SPCO_JS_URL', plugin_dir_url( __FILE__ ) . 'js' . DS );
 		define( 'SPCO_INC_PATH', SPCO_BASE_PATH . 'inc' . DS );
+		define( 'SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS );
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
 	}
@@ -202,7 +203,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 		// load EE_SPCO_Reg_Step base class
-		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
+//		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
 		// filter list of reg_steps
 		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', EED_Single_Page_Checkout::get_reg_steps() );
 		// sort by key (order)
@@ -244,25 +245,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( $reg_steps )) {
 			$reg_steps = array(
 				10 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'attendee_information',
 					'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
 					'slug' => 'attendee_information',
 					'has_hooks' => FALSE
 				),
 				20 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'registration_confirmation',
 					'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
 					'slug' => 'registration_confirmation',
 					'has_hooks' => FALSE
 				),
 				30 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'payment_options',
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options',
 					'has_hooks' => TRUE
 				),
 				999 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'finalize_registration',
 					'class_name' => 'EE_SPCO_Reg_Step_Finalize_Registration',
 					'slug' => 'finalize_registration',
 					'has_hooks' => FALSE

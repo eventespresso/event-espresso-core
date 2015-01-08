@@ -21,16 +21,19 @@ abstract class EE_PMT_Base{
 	const offline = 'off-line';
 
 	/**
-	 *
 	 * @var EE_Payment_Method
 	 */
 	protected $_pm_instance = NULL;
 
 	/**
-	 **
 	 * @var boolean
 	 */
 	protected $_requires_https = FALSE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $_has_billing_form = FALSE;
 
 	/**
 	 * @var EE_Gateway
@@ -222,22 +225,37 @@ abstract class EE_PMT_Base{
 	}
 
 
+
+	/**
+	 * @return boolean
+	 */
+	public function has_billing_form() {
+		return $this->_has_billing_form;
+	}
+
+
+
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form | NULL
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
-		if( ! $this->_billing_form ){
+		echo '<h2 style="color:#E76700;">billing_form<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+		// ensure billing form is generated
+		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form ){
+			echo '<h2 style="color:#E76700;">generate_new_billing_form<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
-		if( $this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
-				$transaction instanceof EE_Transaction &&
-				$transaction->primary_registration() instanceof EE_Registration &&
-				$transaction->primary_registration()->attendee() instanceof EE_Attendee ){
+		if (
+			$this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
+			$transaction instanceof EE_Transaction &&
+			$transaction->primary_registration() instanceof EE_Registration &&
+			$transaction->primary_registration()->attendee() instanceof EE_Attendee
+		){
 			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
 		}
 		return $this->_billing_form;
@@ -280,13 +298,13 @@ abstract class EE_PMT_Base{
 	 * @param float                $amount
 	 * @param EE_Billing_Info_Form $billing_info
 	 * @param string               $return_url
-	 * @param null                 $fail_url
+	 * @param string                 $cancel_url
 	 * @param string               $method
 	 * @param bool           $by_admin
 	 * @return \EE_Base_Class|\EE_Payment|null
 	 * @throws EE_Error
 	 */
-	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
+	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$cancel_url = '', $method = 'CART', $by_admin = FALSE ){
 		// @todo: add surcharge for the payment method, if any
 		if ( $this->_gateway ) {
 			//there is a gateway, so we're going to make a payment object
@@ -333,7 +351,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					EE_Config::instance()->core->cancel_page_url()
+					empty( $cancel_url ) ? EE_Registry::instance()->CFG->core->cancel_page_url() : $cancel_url
 				);
 
 			//  Onsite Gateway

@@ -35,7 +35,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
+		$this->_template = SPCO_REG_STEPS_PATH . $this->_slug . DS . 'attendee_info_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please answer the following registration questions before proceeding.', 'event_espresso'));
@@ -130,7 +130,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout(
 						array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'layout_template_file' 	=> $this->_template, // layout_template
 							'template_args' 				=> $template_args
 						)
 					),
@@ -184,7 +184,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			} else {
 				$form_args['subsections'][ 'attendee_info_not_required_' . $registration->reg_url_link() ] = new EE_Form_Section_HTML(
 					EEH_Template::locate_template(
-						SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_info_not_required.template.php',
+						SPCO_REG_STEPS_PATH . $this->_slug . DS . 'attendee_info_not_required.template.php',
 						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__attendee_info_not_required_template_args', array()),
 						TRUE,
 						TRUE
@@ -320,7 +320,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				'subsections' 			=> $this->_copy_attendee_info_inputs(),
 				'layout_strategy' 	=> new EE_Template_Layout(
 					array(
-						'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
+						'layout_template_file' 			=> SPCO_REG_STEPS_PATH . $this->_slug . DS . 'copy_attendee_info.template.php', // layout_template
 						'begin_template_file' 			=> NULL,
 						'input_template_file' 				=> NULL,
 						'subsection_template_file' 	=> NULL,
@@ -342,7 +342,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _auto_copy_attendee_info() {
 		return new EE_Form_Section_HTML(
 			EEH_Template::locate_template(
-				SPCO_TEMPLATES_PATH . 'attendee_information' . DS . '_auto_copy_attendee_info.template.php',
+				SPCO_REG_STEPS_PATH . $this->_slug . DS . '_auto_copy_attendee_info.template.php',
 				apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__auto_copy_attendee_info__template_args', array()),
 				TRUE,
 				TRUE

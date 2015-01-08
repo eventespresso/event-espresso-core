@@ -797,7 +797,7 @@ jQuery(document).ready( function($) {
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
 			}
 			var form_data = 'step=payment_options';
-			form_data += '&action=spco_billing_form';
+			form_data += '&action=switch_spco_billing_form';
 			form_data += '&selected_method_of_payment=' + payment_method;
 			form_data += '&generate_reg_form=1';
 			form_data += '&process_form_submission=0';
