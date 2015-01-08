@@ -1,0 +1,22 @@
+{
+	"versionFile" : "espresso.php",
+	"versionType" : "rc",
+	"slug" : "event-espresso-core",
+	"archiveBaseUrl" : "http://build.eventespresso.com/",
+	"archiveBasePath" : "~/www/build/",
+	"releaseFilesRemove" : [
+		"src/tests/**",
+		"src/info.json",
+		"src/circle.yml",
+		"src/screenshot*.jpg"
+	],
+	"decafFilesRemove" : [
+		"src/tests**",
+		"src/info.json",
+		"src/circle.yml",
+		"src/screenshot*.jpg",
+		"src/caffeinated"
+	],
+	"awsbucket" : "",
+	"awsregion" : ""
+}
