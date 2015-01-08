@@ -540,6 +540,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
 			return FALSE;
 		}
+		$this->checkout->payment_method = EEM_Payment_Method::reset()->get_one_by_slug($this->checkout->selected_method_of_payment);
 		EE_Error::add_success(
 			apply_filters(
 				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
