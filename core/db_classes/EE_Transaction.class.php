@@ -203,6 +203,22 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
+	 *        Set session data within the TXN object
+	 *
+	 * @access        public
+	 * @param        EE_Session|array $session_data
+	 */
+	public function set_txn_session_data( $session_data ) {
+		if ( $session_data instanceof EE_Session ) {
+			$this->set( 'TXN_session_data', $session_data->get_session_data( NULL, TRUE ));
+		} else {
+			$this->set( 'TXN_session_data', $session_data );
+		}
+	}
+
+
+
+	/**
 	 *        get Transaction hash salt
 	 * @access        public
 	 */
@@ -600,22 +616,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;
-	}
-
-
-
-	/**
-	 *        Set session data within the TXN object
-	 *
-	 * @access        public
-	 * @param        EE_Session|array $session_data
-	 */
-	public function set_txn_session_data( $session_data ) {
-		if ( $session_data instanceof EE_Session ) {
-			$this->set( 'TXN_session_data', $session_data->get_session_data() );
-		} else {
-			$this->set( 'TXN_session_data', $session_data );
-		}
 	}
 
 

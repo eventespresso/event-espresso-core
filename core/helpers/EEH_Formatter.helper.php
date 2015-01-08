@@ -73,14 +73,13 @@ class EEH_Formatter {
 
 	/**
 	 * ee_tep_parse_input_field_data
-	 * //todo this needs filled out.
 	 *
-	 * @param  [type] $data  [description]
-	 * @param  [type] $parse [description]
-	 * @return [type]        [description]
+	 * @param  string $data  string to be "translated"
+	 * @param  array] $parse array in the form array( 'from' => 'to', ... )
+	 * @return string
 	 */
 	static public	function ee_tep_parse_input_field_data($data, $parse) {
-		return strtr(trim($data), $parse);
+		return strtr( trim($data), $parse);
 	}
 
 
@@ -88,8 +87,8 @@ class EEH_Formatter {
 
 	/**
 	 * [ee_tep_not_null description]
-	 * @param  [type] $value [description]
-	 * @return [type]        [description]
+	 * @param  string | array $value [description]
+	 * @return bool       [description]
 	 */
 	static public function ee_tep_not_null($value) {
 		if (is_array($value)) {
@@ -109,11 +108,12 @@ class EEH_Formatter {
 
 
 
-	/*
-	 * Date formatting function
+
+	/**
 	 * Formats a date
-	 * @params string $date
-	 * @params string $format - format for the date
+	 * @param string $date
+	 * @param string $format - format for the date
+	 * @return string
 	 */
 	static public function event_date_display( $date, $format = '' ) {
 		if ( empty( $date )) {
@@ -133,15 +133,6 @@ class EEH_Formatter {
 
 
 
-
-interface EEI_Address_Formatter {
-	public function format( $address, $address2, $city, $state, $country, $zip );
-}
-
-
-
-
-
 /**
  * ------------------------------------------------------------------------
  *
@@ -156,6 +147,16 @@ interface EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
+
+	/**
+	 * @param string $address
+	 * @param string $address2
+	 * @param string $city
+	 * @param string $state
+	 * @param string $country
+	 * @param string $zip
+	 * @return string
+	 */
 	public function format( $address, $address2, $city, $state, $country, $zip ) {
 		$formatted_address = $address;
 		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
@@ -186,6 +187,15 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
+	/**
+	 * @param string $address
+	 * @param string $address2
+	 * @param string $city
+	 * @param string $state
+	 * @param string $country
+	 * @param string $zip
+	 * @return string
+	 */
 	public function format( $address, $address2, $city, $state, $country, $zip ) {
 		$formatted_address = $address;
 		$formatted_address .=  ! empty( $address ) && ! empty( $address2 ) ? ', ' : '';
@@ -221,6 +231,15 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_Null_Address_Formatter implements EEI_Address_Formatter {
+	/**
+	 * @param string $address
+	 * @param string $address2
+	 * @param string $city
+	 * @param string $state
+	 * @param string $country
+	 * @param string $zip
+	 * @return string
+	 */
 	public function format( $address, $address2, $city, $state, $country, $zip ) {
 		return NULL;
 	}
@@ -247,21 +266,21 @@ class EE_Null_Address_Formatter implements EEI_Address_Formatter {
  */
 class EEH_Address {
 
-
 	/**
-	* 	format - output formatted EE object address information
-	*
-	* 	@access public
-	* 	@param object EEI_Has_Address $obj_with_address
-	* 	@param string $type how the address is formatted. for example: 'multiline' or 'inline'
-	* 	@param boolean $use_schema whether to apply schema.org formatting to the address
-	* 	@return string
-	*/
+	 *    format - output formatted EE object address information
+	 *
+	 * @access public
+	 * @param         object EEI_Address $obj_with_address
+	 * @param string  $type how the address is formatted. for example: 'multiline' or 'inline'
+	 * @param boolean $use_schema whether to apply schema.org formatting to the address
+	 * @param bool    $add_wrapper
+	 * @return string
+	 */
 	public static function format ( $obj_with_address = NULL, $type = 'multiline', $use_schema = TRUE, $add_wrapper = TRUE ) {
-		// check that incoming object implements the EEI_Has_Address interface
-		if ( ! $obj_with_address instanceof EEI_Has_Address ) {
+		// check that incoming object implements the EEI_Address interface
+		if ( ! $obj_with_address instanceof EEI_Address ) {
 			$msg = __( 'The address could not be formatted.', 'event_espresso' );
-			$dev_msg = __( 'The EE_Address_Formater requires passed objects to implement the EEI_Has_Address interface.', 'event_espresso' );
+			$dev_msg = __( 'The EE_Address_Formatter requires passed objects to implement the EEI_Address interface.', 'event_espresso' );
 			EE_Error::add_error( $msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return NULL;
 		}
@@ -271,7 +290,7 @@ class EEH_Address {
 		$use_schema = ! is_admin() ? $use_schema : FALSE;
 		$formatted_address = $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
 		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' . $formatted_address . '</div>' : $formatted_address;
-		// return the formated address
+		// return the formatted address
 		return $formatted_address;
 	}
 
@@ -281,37 +300,37 @@ class EEH_Address {
 	* 	_get_formatter - obtain the requester formatter class
 	*
 	* 	@access private
-	* 	@param object EEI_Has_Address $obj_with_address
 	* 	@param string $type how the address is formatted. for example: 'multiline' or 'inline'
-	* 	@param boolean $use_schema whether to apply schema.org formatting to the address
-	* 	@return string
+	* 	@return EEI_Address_Formatter
 	*/
 	private static function _get_formatter( $type ) {
 		switch( $type ) {
+
 			case 'multiline' :
-				$formatter = new EE_MultiLine_Address_Formatter();
-				break;
+				return new EE_MultiLine_Address_Formatter();
+
 			case 'inline' :
-				$formatter = new EE_Inline_Address_Formatter();
-				break;
+				return new EE_Inline_Address_Formatter();
+
 			default :
-				$formatter = new EE_Null_Address_Formatter();
+				return new EE_Null_Address_Formatter();
+
 		}
-		return $formatter;
 	}
 
 
 
 	/**
-	* 	_regular_formatting
-	* 	adds formatting to an address
-	*
-	* 	@access private
-	* 	@param object EEI_Address_Formatter $formatter
-	* 	@param object EEI_Has_Address $obj_with_address
-	* 	@return string
-	*/
-	private static function _regular_formatting( $formatter, $obj_with_address, $add_wrapper = TRUE ){
+	 *    _regular_formatting
+	 *    adds formatting to an address
+	 *
+	 * @access private
+	 * @param      object EEI_Address_Formatter $formatter
+	 * @param      object EEI_Address $obj_with_address
+	 * @param bool $add_wrapper
+	 * @return string
+	 */
+	private static function _regular_formatting( EEI_Address_Formatter $formatter, EEI_Address $obj_with_address, $add_wrapper = TRUE ){
 		$formatted_address = $add_wrapper ? '<div>' : '';
 		$state_obj = $obj_with_address->state_obj();
 		$formatted_address .= $formatter->format(
@@ -323,7 +342,7 @@ class EEH_Address {
 			$obj_with_address->zip()
 		);
 		$formatted_address .= $add_wrapper ? '</div>' : '';
-		// return the formated address
+		// return the formatted address
 		return $formatted_address;
 	}
 
@@ -335,10 +354,10 @@ class EEH_Address {
 	*
 	* 	@access private
 	* 	@param object EEI_Address_Formatter $formatter
-	* 	@param object EEI_Has_Address $obj_with_address
+	* 	@param object EEI_Address $obj_with_address
 	* 	@return string
 	*/
-	private static function _schema_formatting( $formatter, $obj_with_address ){
+	private static function _schema_formatting( EEI_Address_Formatter $formatter, EEI_Address $obj_with_address ){
 		$formatted_address = '<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">';
 		$formatted_address .= $formatter->format(
 			EEH_Schema::streetAddress( $obj_with_address ),
@@ -349,7 +368,7 @@ class EEH_Address {
 			EEH_Schema::postalCode( $obj_with_address )
 		);
 		$formatted_address .= '</div>';
-		// return the formated address
+		// return the formatted address
 		return $formatted_address;
 	}
 
@@ -364,7 +383,7 @@ class EEH_Address {
 /**
  * ------------------------------------------------------------------------
  *
- * EEH_Address
+ * EEH_Schema
  *
  * This class is a collection of static methods for applying schema.org formatting to passed items
  *
@@ -416,7 +435,7 @@ class EEH_Schema {
 
 	/**
 	* 	postOfficeBoxNumber
-	* 	The post offce box number for PO box addresses.
+	* 	The post office box number for PO box addresses.
 	*
 	* 	@access public
 	* 	@param object $obj_with_address
@@ -497,7 +516,7 @@ class EEH_Schema {
 	*
 	* 	@access public
 	* 	@param string $url - the URL that the link will resolve to
-	* 	@param string $text - the text that will be used for the visable link
+	* 	@param string $text - the text that will be used for the visible link
 	* 	@param array $attributes - array of additional link attributes in  attribute_name => value pairs. ie: array( 'title' => 'click here', 'class' => 'link-class' )
 	* 	@return string (link)
 	*/
@@ -507,7 +526,7 @@ class EEH_Schema {
 			$atts .= ' ' . $attribute . '="' . $value . '"';
 		}
 		$text = $text !== NULL && $text !== '' ? $text : $url;
-		return $url !== NULL && $url !== '' ? '<a  itemprop="url" href="' . $url . '"' . $atts . '>' . $text . '</a>' : '';
+		return $url !== NULL && $url !== '' ? '<a itemprop="url" href="' . $url . '"' . $atts . '>' . $text . '</a>' : '';
 	}
 
 
@@ -517,17 +536,36 @@ class EEH_Schema {
 
 
 
-class EE_Generic_Address implements EEI_Has_Address {
 
-	private $_address = NULL;
-	private $_address2 = NULL;
-	private $_city = NULL;
-	private $_state_ID = NULL;
-	private $_state_obj = NULL;
-	private $_country_ID = NULL;
-	private $_country_obj = NULL;
-	private $_zip = NULL;
 
+/**
+ * Class EE_Generic_Address
+ *
+ * @package            Event Espresso
+ * @subpackage    core
+ * @author                Brent Christensen
+ *
+ */
+class EE_Generic_Address implements EEI_Address {
+
+	private $_address = '';
+	private $_address2 = '';
+	private $_city = '';
+	private $_state_ID = '';
+	private $_state_obj = '';
+	private $_country_ID = '';
+	private $_country_obj = '';
+	private $_zip = '';
+
+	/**
+	 * @param string $address
+	 * @param string $address2
+	 * @param string $city
+	 * @param EE_State | string $state
+	 * @param EE_Country | string $country
+	 * @param string $zip
+	 * @return EE_Generic_Address
+	 */
 	public function __construct( $address, $address2, $city, $state, $country, $zip ) {
 		$this->_address = $address;
 		$this->_address2 = $address2;
@@ -536,51 +574,121 @@ class EE_Generic_Address implements EEI_Has_Address {
 			$this->_state_obj = $state;
 		} else {
 			$this->_state_ID = $state;
+			$this->_state_obj = $this->_get_state_obj();
 		}
 		if ( $country instanceof EE_Country ) {
 			$this->_country_obj = $country;
 		} else {
 			$this->_country_ID = $country;
+			$this->_country_obj = $this->_get_country_obj();
 		}
 		$this->_zip = $zip;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function address() {
 		return $this->_address;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function address2() {
 		return $this->_address2;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function city() {
 		return $this->_city;
 	}
 
+
+
+	/**
+	 * @return \EE_State
+	 */
 	private function _get_state_obj() {
-		return $this->_state_ob !== NULL ? $this->_state_ob : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_state_ID );
+		return $this->_state_obj !== NULL ? $this->_state_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_state_ID );
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function state_ID() {
 		return $this->_state_ID;
 	}
 
-	public function state_obj() {
-		return $this->_state_ob;
+
+
+	/**
+	 * @return string
+	 */
+	public function state_name() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  __( 'Unknown', 'event_espresso' );
 	}
 
+
+
+	/**
+	 * @return \EE_State
+	 */
+	public function state_obj() {
+		return $this->_state_obj;
+	}
+
+
+
+	/**
+	 * @return EE_Country
+	 */
 	private function _get_country_obj() {
 		return ! empty( $this->_country_obj ) ? $this->_country_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_country_ID );
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function country_ID() {
 		return $this->_country_ID;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function country_name() {
+		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  __( 'Unknown', 'event_espresso' );
+	}
+
+
+
+	/**
+	 * @return \EE_Country
+	 */
 	public function country_obj() {
 		return $this->_country_obj;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function zip() {
 		return $this->_zip;
 	}
