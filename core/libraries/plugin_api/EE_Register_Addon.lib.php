@@ -117,7 +117,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
-
 		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));

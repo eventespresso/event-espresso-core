@@ -81,6 +81,11 @@ class EE_Register_CPT implements EEI_Plugin_API {
 				);
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_registry[ $cpt_ref ] ) ){
+			return;
+		}
+
 		//make sure cpt ref is unique.
 		if ( isset( self::$_registry[$cpt_ref] ) ) {
 			$cpt_ref = uniqid() . '_' . $cpt_ref;
