@@ -8,7 +8,8 @@
 		"src/tests/**",
 		"src/info.json",
 		"src/circle.yml",
-		"src/screenshot*.jpg"
+		"src/screenshot*.jpg",
+		"src/readme.txt"
 	],
 	"decafFilesRemove" : [
 		"src/tests**",
