@@ -258,7 +258,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 		//first test to make sure we've got an array!
 		if ( !is_array($this->_data) ) {
-			throw new EE_Error( sprintf( __('Expecting an array for the data sent to %s', 'event_espresso'), get_class($this) ) );
+			throw new EE_Error( sprintf( __('Expecting an array for the data sent to %s. Instead it was %s', 'event_espresso'), get_class($this), gettype( $this->_data ) ) );
 		}
 
 		//next test to make sure we've got the required template in the index!
