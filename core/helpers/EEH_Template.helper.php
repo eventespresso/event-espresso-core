@@ -145,11 +145,10 @@ class EEH_Template {
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
-	 * @param array    $templates
+	 * @param array    $templates the template file name including extension
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @internal param array|string $mixed $templates  the template file name including extension
 	 * @return mixed
 	 */
 	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE ) {
