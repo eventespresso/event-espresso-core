@@ -226,7 +226,6 @@ class EEH_Event_Query {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= EEH_Event_Query::posts_fields_sql_for_orderby( EEH_Event_Query::$_event_query_orderby );
-//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 		return $SQL;
 	}
@@ -284,9 +283,9 @@ class EEH_Event_Query {
 	public static function posts_join( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			// Category
-			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::$_event_query_category );
-			$SQL .= EEH_Event_Query::posts_join_for_orderby( EEH_Event_Query::$_event_query_orderby );
-//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			$SQL = EEH_Event_Query::posts_join_sql_for_show_expired( $SQL, EEH_Event_Query::$_event_query_show_expired );
+			$SQL = EEH_Event_Query::posts_join_sql_for_terms( $SQL, EEH_Event_Query::$_event_query_category );
+			$SQL = EEH_Event_Query::posts_join_for_orderby( $SQL, EEH_Event_Query::$_event_query_orderby );
 		}
 		return $SQL;
 	}
@@ -297,11 +296,31 @@ class EEH_Event_Query {
 	 *    posts_join_sql_for_terms
 	 *
 	 * @access    public
-	 * @param    string $join_terms pass TRUE or term string, doesn't really matter since this value doesn't really get used for anything yet
-	 * @return    string
+	 * @param string   $SQL
+	 * @param    boolean $show_expired if TRUE, then displayed past events
+	 * @return string
 	 */
-	public static function posts_join_sql_for_terms( $join_terms = '' ) {
-		$SQL = '';
+	public static function posts_join_sql_for_show_expired( $SQL = '', $show_expired = FALSE ) {
+		if ( ! $show_expired ) {
+			$join = EEM_Event::instance()->table() . '.ID = ' . EEM_Datetime::instance()->table() . '.' . EEM_Event::instance()->primary_key_name();
+			if ( strpos( $SQL, $join ) === FALSE ) {
+				$SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . $join . ' ) ';
+			}
+		}
+		return $SQL;
+	}
+
+
+
+	/**
+	 *    posts_join_sql_for_terms
+	 *
+	 * @access 	public
+	 * @param 	string   $SQL
+	 * @param 	string $join_terms pass TRUE or term string, doesn't really matter since this value doesn't really get used for anything yet
+	 * @return 	string
+	 */
+	public static function posts_join_sql_for_terms( $SQL = '', $join_terms = '' ) {
 		if ( ! empty( $join_terms ) ) {
 			global $wpdb;
 			$SQL .= " LEFT JOIN $wpdb->term_relationships ON ($wpdb->posts.ID = $wpdb->term_relationships.object_id)";
@@ -317,37 +336,120 @@ class EEH_Event_Query {
 	 *    posts_join_for_orderby
 	 *    usage:  $SQL .= EEH_Event_Query::posts_join_for_orderby( $orderby_params );
 	 *
-	 * @access    public
-	 * @param    array $orderby_params
-	 * @return    string
+	 * @access 	public
+	 * @param 	string   $SQL
+	 * @param 	array $orderby_params
+	 * @return 	string
 	 */
-	public static function posts_join_for_orderby( $orderby_params = array() ) {
-		$SQL = '';
-		global $wpdb;
+	public static function posts_join_for_orderby( $SQL = '', $orderby_params = array() ) {
 		foreach ( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
 				case 'ticket_start' :
 				case 'ticket_end' :
-					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Ticket::instance()->table() . ' ON (' . EEM_Datetime_Ticket::instance()->table() . '.TKT_ID = ' . EEM_Ticket::instance()->table() . '.TKT_ID )';
+					$SQL .= EEH_Event_Query::_posts_join_for_datetime( $SQL, EEM_Datetime_Ticket::instance()->table() . '.' . EEM_Datetime::instance()->primary_key_name() );
+					$SQL .= ' LEFT JOIN ' . EEM_Ticket::instance()->table() . ' ON (' . EEM_Datetime_Ticket::instance()->table() . '.' . EEM_Ticket::instance()->primary_key_name() . ' = ' . EEM_Ticket::instance()->table() . '.' . EEM_Ticket::instance()->primary_key_name() . ' )';
 					break;
 				case 'venue_title' :
 				case 'city' :
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->table() . '.VNU_ID )';
+					$SQL .= EEH_Event_Query::_posts_join_for_event_venue( $SQL );
 					break;
 				case 'state' :
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= EEH_Event_Query::_posts_join_for_event_venue( $SQL );
+					$SQL .= EEH_Event_Query::_posts_join_for_venue_state( $SQL );
 					break;
 				case 'start_date' :
 				default :
-					$SQL .= 'LEFT JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+					$SQL .= EEH_Event_Query::_posts_join_for_datetime( $SQL, EEM_Event::instance()->table() . '.ID' );
 					break;
 
 			}
 		}
 		return $SQL;
+	}
+
+
+
+	/**
+	 *    _posts_join_for_datetime
+	 *
+	 * @access    protected
+	 * @param string $SQL
+	 * @param string $join
+	 * @return string
+	 */
+	protected static function _posts_join_for_datetime( $SQL = '', $join = '' ) {
+		if ( ! empty( $join )) {
+			$join .= ' = ' . EEM_Datetime::instance()->table() . '.' . EEM_Event::instance()->primary_key_name();
+			if ( strpos( $SQL, $join ) === FALSE ) {
+				return ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . $join . ' )';
+			}
+		}
+		return '';
+	}
+
+
+
+	/**
+	 *    _posts_join_for_event_venue
+	 *
+	 * @access    protected
+	 * @param string $SQL
+	 * @return string
+	 */
+	protected static function _posts_join_for_event_venue( $SQL = '' ) {
+		// Event Venue table name
+		$event_venue_table = EEM_Event_Venue::instance()->table();
+		// generate conditions for:  Event <=> Event Venue  JOIN clause
+		$event_to_event_venue_join = EEM_Event::instance()->table() . '.ID = ' . $event_venue_table . '.' . EEM_Event::instance()->primary_key_name();
+		// don't add joins if they have already been added
+		if ( strpos( $SQL, $event_to_event_venue_join ) === FALSE ) {
+			// Venue table name
+			$venue_table = EEM_Venue::instance()->table();
+			// Venue table pk
+			$venue_table_pk = EEM_Venue::instance()->primary_key_name();
+			// Venue Meta table name
+			$venue_meta_table = EEM_Venue::instance()->second_table();
+			// generate JOIN clause for: Event <=> Event Venue
+			$venue_SQL = " LEFT JOIN $event_venue_table ON ( $event_to_event_venue_join )";
+			// generate JOIN clause for: Event Venue <=> Venue
+			$venue_SQL .= " LEFT JOIN $venue_table as Venue ON ( $event_venue_table.$venue_table_pk = Venue.ID )";
+			// generate JOIN clause for: Venue <=> Venue Meta
+			$venue_SQL .= " LEFT JOIN $venue_meta_table ON ( Venue.ID = $venue_meta_table.$venue_table_pk )";
+			unset( $event_venue_table, $event_to_event_venue_join, $venue_table, $venue_table_pk, $venue_meta_table );
+			return $venue_SQL;
+		}
+		unset( $event_venue_table, $event_to_event_venue_join );
+		return '';
+	}
+
+
+
+	/**
+	 *    _posts_join_for_venue_state
+	 *
+	 * @access    protected
+	 * @param string $SQL
+	 * @return string
+	 */
+	protected static function _posts_join_for_venue_state( $SQL = '' ) {
+		// Venue Meta table name
+		$venue_meta_table = EEM_Venue::instance()->second_table();
+		// State table name
+		$state_table = EEM_State::instance()->table();
+		// State table pk
+		$state_table_pk = EEM_State::instance()->primary_key_name();
+		// verify vars
+		if ( $venue_meta_table && $state_table && $state_table_pk ) {
+			// like: wp_esp_venue_meta.STA_ID = wp_esp_state.STA_ID
+			$join = "$venue_meta_table.$state_table_pk = $state_table.$state_table_pk";
+			// don't add join if it has already been added
+			if ( strpos( $SQL, $join ) === FALSE ) {
+				unset( $state_table_pk, $venue_meta_table, $venue_table_pk );
+				return " LEFT JOIN $state_table ON ( $join )";
+			}
+		}
+		unset( $join, $state_table, $state_table_pk, $venue_meta_table, $venue_table_pk );
+		return '';
 	}
 
 
@@ -368,7 +470,6 @@ class EEH_Event_Query {
 			$SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug( EEH_Event_Query::$_event_query_category  );
 			// Start Date
 			$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( EEH_Event_Query::$_event_query_month );
-//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 		return $SQL;
 	}
@@ -433,7 +534,6 @@ class EEH_Event_Query {
 	public static function posts_orderby( $SQL = '', WP_Query $wp_query ) {
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			$SQL = EEH_Event_Query::posts_orderby_sql( EEH_Event_Query::$_event_query_orderby, EEH_Event_Query::$_event_query_sort );
-//			echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 		return $SQL;
 	}
