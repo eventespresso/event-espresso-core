@@ -551,7 +551,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
-				'PRC_is_default' => 0, //make sure we set PRC_is_default to 0 for all ticket saves from event_editor
+				'PRC_is_default' => false, //make sure we set PRC_is_default to false for all ticket saves from event_editor
 				'PRC_order' => $row
 				);
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
