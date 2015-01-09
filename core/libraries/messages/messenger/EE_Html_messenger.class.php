@@ -123,6 +123,10 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('line_item'),
 				'required' => array('[TAX_LINE_ITEM_LIST]')
 				),
+			'additional_line_item_list' => array(
+				'shortcodes' => array('line_item'),
+				'required' => array('[ADDITIONAL_LINE_ITEM_LIST]')
+			),
 			'payment_list' => array(
 				'shortcodes' => array('payment'),
 				'required' => array('[PAYMENT_LIST_*]')
@@ -288,6 +292,17 @@ class EE_Html_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '5',
 						'shortcodes_required' => array('[TAX_LINE_ITEM_LIST]')
+						),
+					'additional_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[ADDITIONAL_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[ADDITIONAL_LINE_ITEM_LIST]')
 						),
 					'payment_list' => array(
 						'input' => 'textarea',
