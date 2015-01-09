@@ -807,7 +807,7 @@ Class EEM_Gateways {
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		if ( isset( $session_data['billing_info'] ) && is_array( $session_data['billing_info'] )) {
 			foreach( $session_data['billing_info'] as $name => $billing_input_array ){
-				if ( $billing_input_array['sanitize'] == 'ccard' ){
+				if ( in_array( $billing_input_array['sanitize'], array( 'ccard', 'ccmm', 'ccyy' ) ) ){
 					$session_data['billing_info'][$name]['value'] = $this->MaskCreditCard( $billing_input_array['value'] );
 				} elseif ( $billing_input_array['sanitize'] == 'ccv' ){
 					$session_data['billing_info'][$name]['value'] = '';

@@ -120,7 +120,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 */
 	protected function _maybe_mtp_filters( $_where = array() ) {
 		//account for messenger or message type filters
-		if ( isset($_REQUEST['ee_messenger_filter_by'] ) && $_REQUEST['ee_messenger_filter_by'] != 'none_selected' ) {
+		if ( isset($_REQUEST['ee_messenger_filter_by'] ) && $_REQUEST['ee_messenger_filter_by'] != 'none_selected' && $_REQUEST['ee_messenger_filter_by'] != 'all'  ) {
 			$_where['MTP_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
 		}
 

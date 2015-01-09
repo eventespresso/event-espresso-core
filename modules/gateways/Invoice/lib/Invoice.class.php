@@ -60,13 +60,13 @@ class Invoice {
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 
-		$template_args['organization'] = stripslashes( $EE->CFG->organization->name );
-		$template_args['street'] = empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2;
-		$template_args['city'] = $EE->CFG->organization->city;
+		$template_args['organization'] = $EE->CFG->organization->get_pretty( 'name' );
+		$template_args['street'] = empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->get_pretty( 'address_1' ) : $EE->CFG->organization->get_pretty( 'address_1' ) . '<br>' . $EE->CFG->organization->get_pretty( 'address_2' );
+		$template_args['city'] = $EE->CFG->organization->get_pretty( 'city' );
 		$template_args['state'] = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
 		$template_args['country'] = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
-		$template_args['zip'] = $EE->CFG->organization->zip;
-		$template_args['email'] = $EE->CFG->organization->email;
+		$template_args['zip'] = $EE->CFG->organization->get_pretty( 'zip' );
+		$template_args['email'] = $EE->CFG->organization->get_pretty( 'email' );
 
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = $this->registration->date();
@@ -264,18 +264,18 @@ class Invoice {
 			$org_state_name = '';
 		}
 		$ReplaceValues = array(
-				stripslashes( $EE->CFG->organization->name ),
+				$EE->CFG->organization->get_pretty( 'name' ),
 				$this->registration->reg_code(),
 				$this->transaction->ID(),
 				$primary_attendee->full_name(),
 				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/' : EE_GATEWAYS_URL . 'Invoice/lib/templates/',
 				$this->registration->invoice_url(),//home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
-				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,
-				$EE->CFG->organization->city,
+				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->get_pretty( 'address_1' ) : $EE->CFG->organization->get_pretty( 'address_1' ) . '<br>' . $EE->CFG->organization->get_pretty( 'address_2' ),
+				$EE->CFG->organization->get_pretty( 'city' ),
 				$org_state_name,
-				$EE->CFG->organization->zip,
-				$EE->CFG->organization->email,
+				$EE->CFG->organization->get_pretty( 'zip' ),
+				$EE->CFG->organization->get_pretty( 'email' ),
 				$EE->CFG->organization->vat,
 				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
 				$this->invoice_settings['template_payment_instructions']
