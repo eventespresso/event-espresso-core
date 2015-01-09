@@ -330,10 +330,6 @@ class EED_Recaptcha  extends EED_Module {
 					array(
 						'use_captcha' 				=> new EE_Yes_No_Input(
 							array(
-								TRUE => __( 'Yes', 'event_espresso' ),
-								FALSE => __( 'No', 'event_espresso' )
-							),
-							array(
 								'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
 								'html_help_text' 		=> sprintf(
 									__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
