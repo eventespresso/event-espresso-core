@@ -131,7 +131,7 @@ class EE_Brewing_Regular extends EE_Base {
 								'PRC_amount'=>15.00,
 								'PRC_name'=>  __("Sales Tax", "event_espresso"),
 								'PRC_desc'=>  '',
-								'PRC_is_default'=>true,
+								'PRC_is_default'=>false,
 								'PRC_overrides'=>NULL,
 								'PRC_deleted'=>false,
 								'PRC_order'=>50,
