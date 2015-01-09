@@ -1,6 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- *
  * Class EEH_Debug_Tools
  *
  * @package 			Event Espresso
@@ -36,7 +35,7 @@ class EEH_Debug_Tools{
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EEH_Debug_Tools )) {
+		if ( ! self::$_instance instanceof EEH_Debug_Tools ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -52,8 +51,13 @@ class EEH_Debug_Tools{
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
-		if( ! class_exists('Kint')){
-			require_once( EE_THIRD_PARTY . 'kint' . DS . 'Kint.class.php' );
+		if ( ! class_exists( 'Kint' ) &&  file_exists( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' )){
+			// despite EE4 having a check for an existing copy of the Kint debugging class,
+			// if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
+			// then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
+			// so we've moved it to our test folder so that it is not included with production releases
+			// plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
+			require_once( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' );
 		}
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
@@ -83,7 +87,7 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public function espresso_session_footer_dump() {
-		if ( function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
+		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
 //			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
@@ -122,7 +126,9 @@ class EEH_Debug_Tools{
 			ksort( $priorities );
 			foreach( $priorities as $priority => $function ){
 				echo $priority;
-				foreach( $function as $name => $properties ) echo "\t$name<br />";
+				foreach( $function as $name => $properties ) {
+					echo "\t$name<br />";
+				}
 			}
 		}
 		return;
@@ -131,6 +137,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * 	start_timer
 	 * @param null $timer_name
 	 */
 	public function start_timer( $timer_name = NULL ){
@@ -140,6 +147,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * stop_timer
 	 * @param string $timer_name
 	 */
 	public function stop_timer($timer_name = 'default'){
@@ -182,6 +190,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * show_times
 	 * @param bool $output_now
 	 * @return string
 	 */
@@ -201,7 +210,7 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public static function ee_plugin_activation_errors() {
-		if ( WP_DEBUG === TRUE ) {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			$activation_errors = ob_get_contents();
 			if ( class_exists( 'EE_Registry' )) {
 				EE_Registry::instance()->load_helper( 'File' );
@@ -252,7 +261,7 @@ class EEH_Debug_Tools{
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp_query' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp_query' ) ) {
 	function dump_wp_query(){
 		global $wp_query;
 		d($wp_query);
@@ -263,7 +272,7 @@ if ( !function_exists( 'dump_wp_query' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp' ) ) {
 	function dump_wp(){
 		global $wp;
 		d($wp);
@@ -274,7 +283,7 @@ if ( !function_exists( 'dump_wp' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_post' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
 	function dump_post(){
 		global $post;
 		d($post);
