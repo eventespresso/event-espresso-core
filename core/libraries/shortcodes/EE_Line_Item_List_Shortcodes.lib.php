@@ -119,7 +119,6 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 		$templates = $this->_data['template'];
 
 		$tax_line_items = $this->_data['data']->tax_line_items;
-
 		$line_item_list = '';
 		foreach ( $tax_line_items as $line_item ) {
 			$line_item_list .= $this->_shortcode_helper->parse_line_item_list_template( $templates['tax_line_item_list'], $line_item, $valid_shortcodes, $this->_extra_data );

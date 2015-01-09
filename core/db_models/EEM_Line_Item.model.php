@@ -148,6 +148,22 @@ class EEM_Line_Item extends EEM_Base {
 		)));
 	}
 
+	/**
+	 * Gets all line items unrelated to tickets that are normal line items
+	 * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
+	 * @param EE_Transaction|int $transaction
+	 */
+	public function get_all_non_ticket_line_items_for_transaction( $transaction ) {
+		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
+		return $this->get_all( array( array(
+			'LIN_type' => self::type_line_item,
+			'TXN_ID' => $transaction,
+			'OR' => array(
+				'OBJ_type*notticket' => array( '!=', 'Ticket'),
+				'OBJ_type*null' => array( 'IS_NULL' ))
+		)));
+	}
+
 
 
 }
