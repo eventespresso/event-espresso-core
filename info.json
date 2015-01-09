@@ -1,7 +1,7 @@
 {
 	"versionFile" : "espresso.php",
 	"versionType" : "rc",
-	"slug" : "event-espresso-core",
+	"slug" : "event-espresso-core-reg",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
 	"releaseFilesRemove" : [
