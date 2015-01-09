@@ -257,7 +257,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ?  EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_price'] ) : 0;
+			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
+			//note incoming ['TKT_price'] value is already in standard notation (via js).
+			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
+
+			//note incoming base price needs converted from localized value.
 			$base_price = isset( $tkt['TKT_base_price'] ) ? EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_base_price'] ) : 0;
 			//if ticket price == 0 and $base_price != 0 then ticket price == base_price
 			$ticket_price = $ticket_price === 0 && $base_price !== 0 ? $base_price : $ticket_price;

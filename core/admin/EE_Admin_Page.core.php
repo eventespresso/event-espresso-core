@@ -3103,20 +3103,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-	/**
-	 * correct variable display
-	 *
-	 * @access protected
-	 * @param array $var
-	 * @return string
-	 */
-	protected function _display_nice( $var ) {
-		return htmlentities( stripslashes( $var ), ENT_QUOTES, 'UTF-8' );
-	}
-
-
-
 	/**
 	 * updates  espresso configuration settings
 	 *
