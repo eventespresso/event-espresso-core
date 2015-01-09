@@ -1,14 +1,15 @@
 {
 	"versionFile" : "espresso.php",
 	"versionType" : "beta",
-	"slug" : "event-espresso-core",
+	"slug" : "event-espresso-core-reg",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
 	"releaseFilesRemove" : [
 		"src/tests/**",
 		"src/info.json",
 		"src/circle.yml",
-		"src/screenshot*.jpg"
+		"src/screenshot*.jpg",
+		"src/readme.txt"
 	],
 	"decafFilesRemove" : [
 		"src/tests**",
