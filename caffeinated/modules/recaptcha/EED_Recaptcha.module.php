@@ -344,7 +344,7 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
-								'required' 				=> TRUE,
+//								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : ''
 							)
 						),
@@ -352,7 +352,7 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
-								'required' 				=> TRUE,
+//								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : ''
 							)
 						)
