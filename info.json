@@ -1,7 +1,5 @@
 {
 	"versionFile" : "espresso.php",
-	"versionType" : "beta",
-	"branch" : "beta",
 	"slug" : "event-espresso-core-reg",
 	"name" : "Event Espresso Core",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
@@ -20,11 +18,27 @@
 		"src/screenshot*.jpg",
 		"src/caffeinated"
 	],
-	"sandboxsite" : "~/www/ee4sandbox/b/wp-content/plugins/event-espresso-core",
-	"sandboxdecafsite" : "~/www/ee4sandbox/bd/wp-content/plugins/event-espresso-core",
-	"sandboxUrl" : "ee4b.eventespresso.com",
+	"sites" : {
+		"master" : {
+			"sandboxsite" : "~/www/ee4sandbox/m/wp-content/plugins/event-espresso-core",
+			"sandboxdecafsite" : "~/www/ee4sandbox/md/wp-content/plugins/event-espresso-core",
+			"sandboxUrl" : "ee4m.eventespresso.com",
+			"sandboxdecafUrl" : "ee4md.eventespresso.com"
+		},
+		"beta" : {
+			"sandboxsite" : "~/www/ee4sandbox/b/wp-content/plugins/event-espresso-core",
+			"sandboxdecafsite" : "~/www/ee4sandbox/bd/wp-content/plugins/event-espresso-core",
+			"sandboxUrl" : "ee4b.eventespresso.com",
+			"sandboxdecafUrl" : "ee4bd.eventespresso.com"
+		},
+		"alpha" : {
+			"sandboxsite" : "~/www/ee4sandbox/a/wp-content/plugins/event-espresso-core",
+			"sandboxdecafsite" : "~/www/ee4sandbox/ad/wp-content/plugins/event-espresso-core",
+			"sandboxUrl" : "ee4a.eventespresso.com",
+			"sandboxdecafUrl" : "ee4ad.eventespresso.com"
+		}
+	},
 	"github" : true,
-	"sandboxdecafUrl" : "ee4bd.eventespresso.com",
 	"awsbucket" : "",
 	"awsregion" : ""
 }
