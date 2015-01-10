@@ -1,6 +1,8 @@
 {
 	"versionFile" : "espresso.php",
 	"slug" : "event-espresso-core-reg",
+	"wpOrgSlug" : "event-espresso-decaf",
+	"wpOrgUser" : "eventespresso",
 	"name" : "Event Espresso Core",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
@@ -8,15 +10,15 @@
 		"src/tests/**",
 		"src/info.json",
 		"src/circle.yml",
-		"src/screenshot*.jpg",
-		"src/readme.txt"
+		"src/readme.txt",
+		"src/wp-assets/**"
 	],
 	"decafFilesRemove" : [
-		"src/tests**",
+		"src/tests/**",
 		"src/info.json",
 		"src/circle.yml",
-		"src/screenshot*.jpg",
-		"src/caffeinated"
+		"src/caffeinated",
+		"src/wp-assets/**"
 	],
 	"sites" : {
 		"master" : {
