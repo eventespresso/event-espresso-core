@@ -1,7 +1,9 @@
 {
 	"versionFile" : "espresso.php",
 	"versionType" : "beta",
+	"branch" : "beta",
 	"slug" : "event-espresso-core-reg",
+	"name" : "Event Espresso Core",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
 	"releaseFilesRemove" : [
@@ -18,6 +20,11 @@
 		"src/screenshot*.jpg",
 		"src/caffeinated"
 	],
+	"sandboxsite" : "~/www/ee4sandbox/b/wp-content/plugins/event-espresso-core",
+	"sandboxdecafsite" : "~/www/ee4sandbox/bd/wp-content/plugins/event-espresso-core",
+	"sandboxUrl" : "ee4b.eventespresso.com",
+	"github" : true,
+	"sandboxdecafUrl" : "ee4bd.eventespresso.com",
 	"awsbucket" : "",
 	"awsregion" : ""
 }
