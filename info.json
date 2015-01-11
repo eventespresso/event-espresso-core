@@ -3,6 +3,7 @@
 	"slug" : "event-espresso-core-reg",
 	"wpOrgSlug" : "event-espresso-decaf",
 	"wpOrgUser" : "eventespresso",
+	"wpOrgRelease" : "4.4.6.p",
 	"name" : "Event Espresso Core",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
