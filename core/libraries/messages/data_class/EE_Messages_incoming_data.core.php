@@ -147,6 +147,13 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $tax_line_items;
 
+	/**
+	 * Hold teh line items which aren't taxes and don't relate
+	 * to tickets. So: promotions and miscellaneous charges
+	 * @since 4.5
+	 * @var EE_Line_Item[]
+	 */
+	public $additional_line_items;
 
 
 	/**
@@ -371,7 +378,8 @@ abstract class EE_Messages_incoming_data {
 		$this->total_ticket_count = $total_ticket_count;
 		$this->registrations = $registrations;
 
-		$this->tax_line_items = $this->txn->tax_items();
+		$this->tax_line_items =  $this->txn->tax_items();
+		$this->additional_line_items = $this->txn->non_ticket_line_items();
 		$this->payments = $this->txn->payments();
 
 
