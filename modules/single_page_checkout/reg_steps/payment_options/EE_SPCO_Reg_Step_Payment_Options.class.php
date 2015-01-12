@@ -660,7 +660,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 		// generate billing form for selected method of payment if it hasn't been done already
-		if ( $this->checkout->payment_method->type_obj()->has_billing_form() && ! $this->checkout->billing_form ) {
+		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
 			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
 		}
 		if ( $this->checkout->billing_form instanceof EE_Form_Section_Proper ) {
