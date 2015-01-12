@@ -135,7 +135,8 @@ Backup your WordPress before installing any updates.
 
 == Other Notes ==
 
-**Use Cases**
+** Use Cases **
+
 Event registration and ticketing for WordPress with Event Espresso is very flexible.  We can't list all the ways Event Espresso has been used, but here are some use-cases and examples. We'll add more details to these examples as we have time. Let us know if you need additional clarity.
 
 = Arts &amp; Culture =
