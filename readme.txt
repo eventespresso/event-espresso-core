@@ -53,7 +53,7 @@ But just in case you want some **advanced features**, you can grab a copy of our
 Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_dscreenshots_tab)** to get access to more features (including [Transaction Reporting](http://eventespresso.com/features/transaction-reporting/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Transaction+Reporting), [Event Check-in](http://eventespresso.com/features/event-check-list/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Event+Check-in), [Contact Profiles & Contact List](http://eventespresso.com/features/contacts/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Contact+Profiles+Contact+List), [Tax Administration](http://eventespresso.com/features/tax-administration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Tax+Administration), etc.) and additional payment options for your WordPress events.
 
 = Testimonials & Reviews =
-> Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. EventEspresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
+> Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. Event Espresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
 
 Brandon P. - [Experience Farm](http://www.experiencefarm.com/)
 
@@ -65,7 +65,7 @@ Brad Williams - [WebDevStudios](http://webdevstudios.com/)
  
 Jenifer - [Jenifer Design](http://jeniferdesign.com/)
 
-> EventEspresso saves us money, saves our secretary 16-24 hours and looks so professionally done that people ask us how we do it; which we happily tell them, "Event Espresso, and be sure to get the ticketing add-on."
+> Event Espresso saves us money, saves our secretary 16-24 hours and looks so professionally done that people ask us how we do it; which we happily tell them, "Event Espresso, and be sure to get the ticketing add-on."
 
 David - [House of Prayer](http://hop.org/)
 
