@@ -1461,6 +1461,19 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * get_table_obj_by_alias
+	 * returns table name given it's alias
+	 *
+	 * @param string $table_alias
+	 * @return EE_Primary_Table | EE_Secondary_Table
+	 */
+	public function get_table_obj_by_alias( $table_alias = '' ) {
+		return isset( $this->_tables[ $table_alias ] ) ? $this->_tables[ $table_alias ] : NULL;
+	}
+
+
+
+	/**
 	 * Gets all the tables of type EE_Other_Table from EE_CPT_Model::_tables
 	 * @return EE_Secondary_Table[]
 	 */

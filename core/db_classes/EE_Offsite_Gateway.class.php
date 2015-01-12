@@ -5,16 +5,16 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
 	protected $fields = array();
-	
-	
-	
+
+
+
 	/**
 	 *  Gets the URL that the user should generally be sent back to after payment completion offiste
 	 *  Adds the reg_url_link in order to remember which session we were in the middle of processing
 	 * @param EE_Registration or int, current registration we want to link back to in the return url.
 	 * @param boolean $urlencode whether or not to url-encode the url (if true, you probably intend to pass
 	 * this string as a URL parameter itself, or maybe a post parameter)
-	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just 
+	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just
 	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
 	 */
 	protected function _get_notify_url( $registration, $urlencode = false ){
@@ -38,21 +38,21 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		}
 		return $url;
 	}
-	
+
 	protected function __construct(EEM_Gateways &$model) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		parent::__construct($model);
 	}
-	
+
 	/**
 	 * 		process_gateway_selection()
 	 * 		@access public
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
-	public function process_gateway_selection() {	
+	public function process_gateway_selection() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$msg = $this->_EEM_Gateways->display_name() . __( ' gateway selected.', 'event_espresso' );
-		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
+		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
 
 	/**
@@ -77,9 +77,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 */
 	public function redirect_after_reg_step_3() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-	
+
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	
+
 		if ( $this->_EEM_Gateways->ajax() ) {
 			$form_data =  $this->_EEM_Gateways->off_site_form();
 			$response_data = array(
@@ -121,20 +121,21 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	public function submitPayment() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$pre_form = "<html>\n";
-		$pre_form .= "<head><title>Processing Payment...</title></head>\n";
+		$pre_form .= "<head><title>" . __( 'Processing Payment...', 'event_espresso' ) . "</title></head>\n";
 		$pre_form .= "<body>\n";
-		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">Please wait...<br/>your order is being processed and you will be redirected to the payment website.</h2>";
+		$form = "<h2 style=\"margin:2em auto; line-height:2em; text-align:center;\">";
+		$form .= sprintf( __( 'Please wait...%syour order is being processed and you will be redirected to the payment website.', 'event_espresso' ), '<br/>' ) . "</h2>";
 		$form .= "<form method=\"POST\" name=\"gateway_form\" ";
 		$form .= "action=\"" . $this->_gatewayUrl . "\">\n";
 		$form .= $this->_output_inputs();
-		$form .= "<p style=\"text-align:center;\"><br/>If you are not automatically redirected to ";
-		$form .= "the payment website within 10 seconds...<br/><br/>\n";
-		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+		$form .= "<p style=\"text-align:center;\"><br/>";
+		$form .= __( 'If you are not automatically redirected to the payment website within 10 seconds...', 'event_espresso' ) . "<br/><br/>\n";
+		$form .= "<input type=\"submit\" value=\"" . __( 'Click Here', 'event_espresso' ) . "\"></p>\n";
 		$form .= "</form>\n";
 		$post_form = "</body></html>\n";
 		return array('pre-form' => $pre_form, 'form' => $form, 'post-form' => $post_form);
 	}
-	
+
 	protected function _output_inputs() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$output = '';
@@ -143,7 +144,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		}
 		return $output;
 	}
-	
+
 	/**
 	 * This function should create a payment given the IPN data, and update the transaction accordingly.
 	 * I would have made thsi function abstract, but then I'd get compile-time errors until I rewrote all the gateways...
@@ -153,9 +154,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 */
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
 		throw new EE_Error(sprintf(__('handle_ipn_for_transaction not implemented for gateway %s. || This function should take care of creating a payment given the ipn data, and updating the transaction accordingly.','event_espresso'),get_class($this)));
-	
+
 	}
-	
+
 	/**
 	 * Handles the gateway-specific logic when displaying the payment page..
 	 * @global type $EE_Session
@@ -167,5 +168,5 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		$this->_EEM_Gateways->handle_ipn_for_transaction($transaction);
 		parent::thank_you_page_logic($transaction);
 	}
-	
+
 }

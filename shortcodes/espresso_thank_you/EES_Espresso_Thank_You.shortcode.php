@@ -528,6 +528,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
+		if ( ! $this->_primary_registrant->is_not_approved() ) {
 ?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
@@ -546,6 +547,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		<div class="clear"></div>
 	</div>
 <?php
+		} else {
+?>
+	<div id="espresso-thank-you-page-not-approved-message-dv">
+		<h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
+		<p id="events-requiring-pre-approval-pg" class="small-text">
+			<?php echo apply_filters( 'AHEE__EES_Espresso_Thank_You__get_ajax_content__not_approved_message', __('The Event you have registered for does not require payment at this time and was not billed for during this transaction. Billing will only occur after all attendees have been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso') ); ?>
+		</p>
+		<div class="clear"></div>
+	</div>
+		<?php
+		}
 	}
 
 
