@@ -1,10 +1,10 @@
 === Event Espresso 4 Decaf - Event Management and Registration System ===
 Contributors: eventespresso, sethshoultes
 Donate link: http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
-Tags: booking, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, ticket, ticketing, tickets, training, virtual events, wordcamp, wordpress events
+Tags: events, event, event booking, class booking, booking, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, ticket, ticketing, tickets, training, virtual events, wordcamp, wordpress events
 Requires at least: 3.9
-Tested up to: 4.0
-Stable tag: 4.4.1
+Tested up to: 4.1
+Stable tag: 4.4.4.decaf
 License: GPL2
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
@@ -52,6 +52,31 @@ But just in case you want some **advanced features**, you can grab a copy of our
 
 Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_dscreenshots_tab)** to get access to more features (including [Transaction Reporting](http://eventespresso.com/features/transaction-reporting/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Transaction+Reporting), [Event Check-in](http://eventespresso.com/features/event-check-list/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Event+Check-in), [Contact Profiles & Contact List](http://eventespresso.com/features/contacts/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Contact+Profiles+Contact+List), [Tax Administration](http://eventespresso.com/features/tax-administration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_screenshots_tab&utm_content=Tax+Administration), etc.) and additional payment options for your WordPress events.
 
+= Testimonials & Reviews =
+> Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. EventEspresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
+> 
+> Brandon P.
+> [Experience Farm](http://www.experiencefarm.com/)
+
+> It is a very, very slick plugin. It's one of those plugins where you install it, change a couple of settings, and boom you're selling tickets.
+> 
+> Brad Williams, WebDevStudios
+> [WebDevStudios](http://webdevstudios.com/)
+
+> [Tri-South, Inc](http://tri-southinc.com/) is using Event Espresso to manage the course catalog, event ticketing, and class registration. [As their developer] I have customized a few items to make the site and plugin a seamless integration. The client is very pleased!
+> 
+> Jenifer Design
+> [Jenifer Design](http://jeniferdesign.com/)
+
+> EventEspresso saves us money, saves our secretary 16-24 hours and looks so professionally done that people ask us how we do it; which we happily tell them, "Event Espresso, and be sure to get the ticketing add-on."
+> 
+> David
+> [House of Prayer](http://hop.org/)
+
+> I have been using Event Espresso to run my festival and have been very happy with how it has worked out. They have provided tremendous support and their iPhone app is amazing and easy to use. I suggest using it for your event.
+> 
+> Alex Grant
+> [Byron Spirit Festival](http://www.spiritfestival.com.au/)
 
 = Support =
 This version is self-supported only. We DO NOT regularly monitor the WordPress.org support forums. For faster support you can purchase a [support license](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and ask questions in our [support forum](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=ee4_decaf_plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin.
@@ -70,8 +95,6 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 6. Contact List
 7. In-app Documentation
 8. Customizable Country Settings
-9. Multiple Attendee Registration
-10. Accurate Attendee Manager
 
 == Installation ==
 
@@ -111,6 +134,108 @@ The changelog for the premium version [can be found here](http://eventespresso.c
 Backup your WordPress before installing any updates.
 
 == Other Notes ==
+
+** Use Cases **
+
+Event registration and ticketing for WordPress with Event Espresso is very flexible.  We can't list all the ways Event Espresso has been used, but here are some use-cases and examples. We'll add more details to these examples as we have time. Let us know if you need additional clarity.
+
+= Arts &amp; Culture =
+
+* City Tours
+* Club Performances
+* Concerts
+* Film Festivals
+* Museum Tickets
+* Music Festivals
+* Movie Theater Ticket Sales
+* Plays and Theatrical Performances
+* Social Events
+
+= Business =
+
+* Asset/Resource Booking/Scheduling
+* Car Wash Sales &amp; Reservations
+* House Cleaning Services
+* [Model Agency Booking/Scheduling](http://eventespresso.com/use-cases/modeling-talent-agency-scheduling/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* Room Booking/Scheduling
+* Haunted House Ticket Sales
+
+= Classes =
+
+* Art Classes
+* Cooking Classes
+* Dance Classes
+* Continuing Education Classes
+* Fitness Club Classes
+* Martial Arts Classes
+* Firearms and Concealed Weapons Training
+* Music Classes
+* Scrap booking Classes
+* [Skydiving Classes](http://eventespresso.com/use-cases/skydiving-jumping-class-reservations/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* Training Classes
+* Yoga Classes
+* Drivers Education
+* Technical/IT Training
+
+= Community Events</strong> <strong>Conferences =
+
+* Group Meetings
+* Political Conferences
+* Social Media Conferences
+* Tradeshow Booth Reservations/Sales
+* WordCamps
+* Youth Conferences/Camps
+* Geek/IT Conferences/Camps
+
+= Education =
+
+* Course Registrations
+* School Lunch Reservations
+* Parent Teacher Conferences
+* Parent Teacher Association Conferences and Meetings
+
+= Fundraisers &amp; Non-Profit Organizations =
+
+* Boy Scout Troop Events
+* Donation Drives
+* Indusry Association Events
+* Religous Events
+* Volunteer Management
+
+= Government =
+
+* Chamber of Commerce
+* Community Recreation Centers
+* Department of Justice
+
+= Parties =
+
+* Birthday Parties
+* Christmas Parties
+* Class Reunions
+* New-Year's Eve Parties
+* Weddings
+
+= Recreation =
+
+* [Skydiving Bookings](http://eventespresso.com/use-cases/skydiving-jumping-class-reservations/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* Adventure Tours
+
+= Socials =
+
+* Dancing
+* Speed Dating
+
+= Sports =
+
+* Races
+* Sports Arena Tickets and Season Passes
+* Tournament Registration
+* Football and Soccer Training
+* Tennis Classes
+
+If you aren't quite sure if Event Espresso will work for you and it's not listed above, then [contact us](http://eventespresso.com/contact/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) and we'll do our best to evaluate your needs.
+
 
 = License =
 
