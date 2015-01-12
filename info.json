@@ -20,9 +20,9 @@
 		"src/circle.yml",
 		"src/caffeinated",
 		"src/wp-assets/**",
-		"src/core/modules/gateways/Aim/**",
-		"src/core/modules/gateways/Mijireh/**",
-		"src/core/modules/gateways/Paypal_Pro/**"
+		"src/modules/gateways/Aim/**",
+		"src/modules/gateways/Mijireh/**",
+		"src/modules/gateways/Paypal_Pro/**"
 	],
 	"sites" : {
 		"master" : {
