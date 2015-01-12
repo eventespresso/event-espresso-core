@@ -19,7 +19,10 @@
 		"src/info.json",
 		"src/circle.yml",
 		"src/caffeinated",
-		"src/wp-assets/**"
+		"src/wp-assets/**",
+		"src/modules/gateways/Aim/**",
+		"src/modules/gateways/Mijireh/**",
+		"src/modules/gateways/Paypal_Pro/**"
 	],
 	"sites" : {
 		"master" : {
