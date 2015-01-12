@@ -694,6 +694,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 		return $this->get_first_related( 'Payment', array( 'order_by' => array( 'PAY_ID' => 'desc' ) ) );
 	}
 
+	/**
+	 * Gets all the line items which are unrelated to tickets on this transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function non_ticket_line_items(){
+		return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $this->ID() );
+	}
+
 
 
 

@@ -87,12 +87,12 @@ class EE_CPT_Event_Strategy {
 	 * we don't want to join to the datetime table when querying for venues, do we!?)
 	 */
 	protected function _remove_filters(){
-		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
-		remove_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
-//		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
-		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
+		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1, 2 );
+		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
+		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
+		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
-		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
+		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
 	}
 
 
@@ -142,9 +142,8 @@ class EE_CPT_Event_Strategy {
 				|| $wp_query->is_espresso_event_taxonomy
 			)
 		) {
-			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-			$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+			$SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Event::instance()->table() . '.ID = ' . EEM_Datetime::instance()->table() . '.' . EEM_Event::instance()->primary_key_name() . ' ) ';
 		}
 		return $SQL;
 	}
