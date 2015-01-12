@@ -242,10 +242,8 @@ abstract class EE_PMT_Base{
 	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form | NULL
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
-		echo '<h2 style="color:#E76700;">billing_form<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		// ensure billing form is generated
 		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form ){
-			echo '<h2 style="color:#E76700;">generate_new_billing_form<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
