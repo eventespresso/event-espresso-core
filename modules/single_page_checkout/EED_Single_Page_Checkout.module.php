@@ -90,6 +90,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		EED_Single_Page_Checkout::set_definitions();
 		if ( defined( 'DOING_AJAX' )) {
+			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
+			ob_start();
 			EED_Single_Page_Checkout::load_request_handler();
 			EED_Single_Page_Checkout::load_reg_steps();
 		}
@@ -816,6 +818,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
+						return;
 					}
 				}
 			} catch( EE_Error $e ) {
@@ -843,7 +846,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				$this->go_to_next_step();
 				break;
 
 			default :
@@ -864,8 +866,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
 
 				} else {
 					EE_Error::add_error(
@@ -879,6 +879,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			// end default
 		}
+		// advance to the next step! If you pass GO, collect $200
+		$this->go_to_next_step();
 	}
 
 
@@ -1046,6 +1048,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step() {
+		if ( EE_Registry::instance()->REQ->ajax ) {
+			// capture contents of output buffer we started earlier in the request, and insert into JSON response
+			$this->checkout->json_response->set_unexpected_errors( ob_get_clean() );
+		}
 		// just return for these conditions
 		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' || $this->checkout->action == 'update_checkout' ) {
 			return;
@@ -1055,7 +1061,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			echo $json_response;
-			die();
+			exit();
 		}
 		// going somewhere ?
 		if ( $this->checkout->redirect ) {
