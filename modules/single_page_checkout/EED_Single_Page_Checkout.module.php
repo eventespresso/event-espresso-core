@@ -600,8 +600,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize_transaction() {
 		try {
-			// ensure cart totals have been calculated
+			// ensure cart totals have been recalculated and saved
 			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
+			$this->checkout->cart->get_grand_total()->save();
 			// grab the cart grand total
 			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
