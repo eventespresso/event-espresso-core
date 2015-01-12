@@ -336,14 +336,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'html_id' 				=> 'ee-' . $this->slug() . '-extra-hidden-inputs',
 				'layout_strategy'	=> new EE_Div_Per_Section_Layout(),
 				'subsections' 		=> array(
-					'selected_method_of_payment_input' => new EE_Hidden_Input(
-						array(
-							'normalization_strategy' 	=> NULL,
-							'html_name' 						=> 'selected_method_of_payment',
-							'html_id' 								=> 'reg-page-selected-method-of-payment',
-							'default'								=> $this->checkout->selected_method_of_payment
-						)
-					),
 					'spco_no_payment_required' => new EE_Hidden_Input(
 						array(
 							'normalization_strategy' 	=> new EE_Boolean_Normalization(),
