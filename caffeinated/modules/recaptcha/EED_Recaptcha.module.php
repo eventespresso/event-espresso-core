@@ -330,10 +330,6 @@ class EED_Recaptcha  extends EED_Module {
 					array(
 						'use_captcha' 				=> new EE_Yes_No_Input(
 							array(
-								TRUE => __( 'Yes', 'event_espresso' ),
-								FALSE => __( 'No', 'event_espresso' )
-							),
-							array(
 								'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
 								'html_help_text' 		=> sprintf(
 									__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
@@ -348,7 +344,6 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
-								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : ''
 							)
 						),
@@ -356,7 +351,6 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
-								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : ''
 							)
 						)
@@ -524,7 +518,7 @@ class EED_Recaptcha  extends EED_Module {
 					$valid_data = $recaptcha_settings_form->valid_data();
 					// user proofing recaptcha:  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
 					if (
-						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', $EE_Registration_Config->use_captcha )
+						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', TRUE, $EE_Registration_Config )
 						&& $valid_data['main_settings']['use_captcha']
 						&& ( ! $EE_Registration_Config->use_captcha && ( empty( $valid_data['main_settings']['recaptcha_publickey'] ) || empty( $valid_data['main_settings']['recaptcha_privatekey'] )))
 					) {

@@ -766,8 +766,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _update_reg_form_settings() {
 		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
-		$success = $this->_update_espresso_configuration( 'Registration Options', EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, 'Registration Options', 'updated', array( 'action' => 'view_reg_form_settings' ) );
+		$success = $this->_update_espresso_configuration( __('Registration Form Options', 'event_espresso'), EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, __('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
 	}
 
 }
