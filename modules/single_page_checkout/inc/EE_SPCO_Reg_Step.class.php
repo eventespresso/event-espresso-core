@@ -534,10 +534,12 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
-	 * update_checkout
+	 * update_checkout with changes that have been made to the cart
 	 * @return void
 	 */
 	public function update_checkout() {
+		// grab the cart grand total and reset TXN total
+		$this->checkout->transaction->set_total( $this->checkout->cart->get_cart_grand_total() );
 		$this->checkout->stash_transaction_and_checkout();
 	}
 
