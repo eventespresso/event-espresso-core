@@ -54,29 +54,24 @@ Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&u
 
 = Testimonials & Reviews =
 > Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. EventEspresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
-> 
-> Brandon P.
-> [Experience Farm](http://www.experiencefarm.com/)
+
+Brandon P. - [Experience Farm](http://www.experiencefarm.com/)
 
 > It is a very, very slick plugin. It's one of those plugins where you install it, change a couple of settings, and boom you're selling tickets.
-> 
-> Brad Williams, WebDevStudios
-> [WebDevStudios](http://webdevstudios.com/)
+
+Brad Williams - [WebDevStudios](http://webdevstudios.com/)
 
 > [Tri-South, Inc](http://tri-southinc.com/) is using Event Espresso to manage the course catalog, event ticketing, and class registration. [As their developer] I have customized a few items to make the site and plugin a seamless integration. The client is very pleased!
-> 
-> Jenifer Design
-> [Jenifer Design](http://jeniferdesign.com/)
+ 
+Jenifer - [Jenifer Design](http://jeniferdesign.com/)
 
 > EventEspresso saves us money, saves our secretary 16-24 hours and looks so professionally done that people ask us how we do it; which we happily tell them, "Event Espresso, and be sure to get the ticketing add-on."
-> 
-> David
-> [House of Prayer](http://hop.org/)
+
+David - [House of Prayer](http://hop.org/)
 
 > I have been using Event Espresso to run my festival and have been very happy with how it has worked out. They have provided tremendous support and their iPhone app is amazing and easy to use. I suggest using it for your event.
-> 
-> Alex Grant
-> [Byron Spirit Festival](http://www.spiritfestival.com.au/)
+
+Alex Grant - [Byron Spirit Festival](http://www.spiritfestival.com.au/)
 
 = Support =
 This version is self-supported only. We DO NOT regularly monitor the WordPress.org support forums. For faster support you can purchase a [support license](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and ask questions in our [support forum](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=ee4_decaf_plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin.
