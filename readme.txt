@@ -580,7 +580,7 @@ Event Espresso 4.2.reg
 
 **Features/Enhancements:**
 
-* Support for Calendar Add-on (see below)
+* Support for [Calendar Add-on](http://eventespresso.com/product/ee4-events-calendar/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_changelog_tab&utm_content=calendar+addon)
 * Drag and Drop ordering of tickets in the event editor.
 * Order Questions by Question Group (no longer ordering questions by question order).
 * Option to turn OFF the Ticket Selector in the Event Details page for events without tickets/registrations.
