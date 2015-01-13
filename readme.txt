@@ -133,8 +133,7 @@ We DO NOT regularly monitor the support forums on WordPress.org. You'll find a f
 
 = What if I don't have (or don't want) a WordPress website? =
 
-If you want to organize your event fast without the hassle of managing a server, plugins and security then build you event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=event_espresso_pricing_faq&utm_medium=page&utm_campaign=event_espresso&utm_content=link).
-
+If you want to organize your event fast without the hassle of managing a server, plugins and security then build your event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=EE4_faq&utm_campaign=EE4&utm_content=link).
 
 == Changelog ==
 
