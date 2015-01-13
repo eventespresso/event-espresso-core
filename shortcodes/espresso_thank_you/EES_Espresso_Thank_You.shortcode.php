@@ -202,7 +202,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			);
 			return;
 		}
-		if ( EE_Registry::instance()->REQ->is_set( 'resend' )) {
+		if ( EE_Registry::instance()->REQ->is_set( 'resend_reg_confirmation' )) {
 			return EES_Espresso_Thank_You::resend_reg_confirmation_email();
 		}
 		// soon to be derprecated
@@ -466,7 +466,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['SPCO_attendee_information_url'] = $this->_SPCO_attendee_information_url;
 
 		$template_args['resend_reg_confirmation_url'] = add_query_arg(
-			array( 'e_reg_url_link'=>$this->_reg_url_link, 'resend' => 'reg_confirmation' ),
+			array( 'token'=>$this->_reg_url_link, 'resend_reg_confirmation' => 'true' ),
 			EE_Registry::instance()->CFG->core->thank_you_page_url()
 		);
 		// verify template arguments
@@ -482,10 +482,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function resend_reg_confirmation_email() {
 		EE_Registry::instance()->load_core( 'Request_Handler' );
-		$reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+		$reg_url_link = EE_Registry::instance()->REQ->get( 'token' );
+
 		// was a REG_ID passed ?
 		if ( $reg_url_link ) {
-			// get registration from reg_url_link
 			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => $reg_url_link )));
 			if ( $registration instanceof EE_Registration ) {
 				// resend email
@@ -498,7 +498,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 		} else {
 			EE_Error::add_error(
-				__( 'The Registration Confirmation email could not be sent because a registration URL link is missing or invalid.', 'event_espresso' ),
+				__( 'The Registration Confirmation email could not be sent because a registration token is missing or invalid.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
