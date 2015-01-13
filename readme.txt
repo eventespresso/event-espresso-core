@@ -717,7 +717,9 @@ Event Espresso 4.1.6.reg
 
 
 = Feb 20, 2014 =
-<p><strong id="4.1.5">Event Espresso 4.1.5.reg**
+
+Event Espresso 4.1.5.reg
+
 **Bugfixes:**
 
 * Fix Error if ESPRESSO_EVENTS shortcode uses multiple params for sorting
@@ -726,7 +728,7 @@ Event Espresso 4.1.6.reg
 
 **Features/Enhancements:**
 
-* On **new installs</strong> of EE4 the QST_display_text is now a  TEXT field and max character count for QST_admin_label, QSG_name and  QSO_value increased to 255 from 100
+* On **new installs** of EE4 the QST_display_text is now a  TEXT field and max character count for QST_admin_label, QSG_name and  QSO_value increased to 255 from 100
 
 
 = Feb 18, 2014 =
@@ -822,7 +824,7 @@ Backup your WordPress before installing any updates.
 
 == Other Notes ==
 
-** Use Cases **
+**Use Cases**
 
 Event registration and ticketing for WordPress with Event Espresso is very flexible.  We can't list all the ways Event Espresso has been used, but here are some use-cases and examples. We'll add more details to these examples as we have time. Let us know if you need additional clarity.
 
