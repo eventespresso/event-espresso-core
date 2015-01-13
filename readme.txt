@@ -109,7 +109,7 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 = What is Event Espresso? =
 
-Event Espresso is ticket and event management software for the modern world. Do you need to convince someone about Event Espresso? Share our [new video](http://eventespresso.com/2012/11/what-is-event-espresso-video/) or [print a brochure](http://ee-screenshots.s3.amazonaws.com/2012/02/EE_brochure_small.pdf.
+Event Espresso is ticket and event management software for the modern world. Do you need to convince someone about Event Espresso? Share our [new video](http://eventespresso.com/2012/11/what-is-event-espresso-video/) or [print a brochure](http://ee-screenshots.s3.amazonaws.com/2012/02/EE_brochure_small.pdf).
 
 = Can I fully manage my events with Event Espresso Decaf? =
 
