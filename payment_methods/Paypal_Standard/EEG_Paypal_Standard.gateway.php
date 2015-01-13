@@ -3,6 +3,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
 /**
  * EEG_Paypal_Standard
  *
+ * Note: one important feature of the Paypal Standard Gateway is that it can allow
+ * Paypal itself to calculate taxes and shipping on an order, and then when the IPN
+ * for the payment is received from Paypal, this class will update the line items
+ * accordingly (also bearing in mind that this could be a payment re-attempt, in
+ * which case Paypal shouldn't add shipping or taxes twice).
+ *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
@@ -86,6 +92,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the entire transaction,
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
+				//if this is a re-attempt at paying, don't re-add paypal's shipping
+				if( $line_item->code() == 'paypal_shipping' ) {
+					continue;
+				}
 				$redirect_args['item_name_' . $item_num] = substr(
 						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
@@ -100,16 +110,23 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				}
 				$item_num++;
 			}
+			//add our taxes to the order if we're NOT using paypal's
+			if( ! $this->_paypal_taxes ){
+				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
+			}
 		}else{
 			//this is a partial payment, so we can't really show all the line items
 			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			//if we aren't allowing paypal to calculate shipping, set it to 0
-			if( ! $this->_paypal_shipping ){
-				$redirect_args['shipping_' . $item_num ] = '0';
-				$redirect_args['shipping2_' . $item_num ] = '0';
-			}
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
+			//paypal can't calculate taxes because we don't know what parts of it are taxable
+			$redirect_args['tax_cart'] = '0';
+
 			$item_num++;
+
+
 
 		}
 		if($this->_debug_mode){
@@ -122,10 +139,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 //			$redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
 			$redirect_args['shipping_' . $item_num ] = '0';
 			$redirect_args['shipping2_' . $item_num ] = '0';
-		}
-		//add our taxes to the order if we're NOT using paypal's
-		if( ! $this->_paypal_taxes ){
-			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 		}
 
 		$redirect_args['business'] = $this->_paypal_id;
@@ -167,6 +180,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( ! $payment ){
 			$payment = $transaction->last_payment();
 		}
+		//take note of whether or not we COULD have allowed paypal to add taxes and shipping
+		//when we sent the customer to paypal (because if we couldn't itemize the transaction, we
+		//wouldn't have known what parts were taxable, meaning we would have had to tell paypal
+		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
+		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
 			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
@@ -193,17 +211,19 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		$grand_total_needs_resaving = FALSE;
 //		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
-		//check if we've already processed this payment
-		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso') );
+
+		//might paypal have added shipping?
+		if( $could_allow_paypal_to_add_taxes_and_shipping && $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
+			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
 			$grand_total_needs_resaving = TRUE;
 
 		}
-		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
+		//might paypal have changed the taxes?
+		if( $could_allow_paypal_to_add_taxes_and_shipping && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
 			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			$grand_total_needs_resaving = TRUE;
 		}
-
+		//check if we've already processed this payment
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
@@ -223,8 +243,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			'payment (updated)' => $payment->model_field_array()),
 				$payment);
 		if( $grand_total_needs_resaving ){
+//			echo "total lin eitem total: " . $transaction->total_line_item()->total();
 			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
 		}
+//		echo "Vardump of total lin eitem:";var_dump($transaction->total_line_item());
 		return $payment;
 	}
 

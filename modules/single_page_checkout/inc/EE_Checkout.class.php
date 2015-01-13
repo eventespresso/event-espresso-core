@@ -676,6 +676,7 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+		$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
 		return TRUE;
 	}
 
