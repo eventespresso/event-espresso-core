@@ -25,23 +25,17 @@ if ( count( $registrations ) > 0 ) {
 			<div class="spco-ticket-info-dv small-text">
 				<h5><?php _e('Ticket Details', 'event_espresso');?></h5>
 				<table>
-					<tr>
-						<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
-						<th scope="col" width="7.5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
-						<th scope="col" width="17.5%" class="jst-cntr"><?php _e('Price', 'event_espresso');?></th>
-						<th scope="col" width="17.5%" class="jst-cntr"><?php _e('Total', 'event_espresso');?></th>
-					</tr>
-					<tr>
-						<td>
-						<?php
-							echo '<span class="spco-ticket-info-name">' . $registration->ticket()->name() . '</span>';
-							echo $registration->ticket()->description() ? '<br/><span class="spco-ticket-info-description">' . $registration->ticket()->description() . '</span>' : '';
-						?>
-						</td>
-						<td class="jst-cntr"><?php echo $ticket_count[ $registration->ticket()->ID() ];?></td>
-						<td class="jst-rght"><?php echo EEH_Template::format_currency( $registration->ticket()->price() );?></td>
-						<td class="jst-rght"><?php echo EEH_Template::format_currency( $registration->ticket()->price() * $ticket_count[ $registration->ticket()->ID() ] );?></td>
-					</tr>
+					<thead>
+						<tr>
+							<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+							<th scope="col" width="7.5%" class="jst-rght"><?php _e('Qty', 'event_espresso');?></th>
+							<th scope="col" width="17.5%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
+							<th scope="col" width="17.5%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>
+						</tr>
+					</thead>
+					<tbody>
+					<?php echo $ticket_line_item[ $registration->ticket()->ID() ]; ?>
+					</tbody>
 				</table>
 			</div>
 				<?php } ?>

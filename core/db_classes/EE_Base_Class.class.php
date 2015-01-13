@@ -1435,7 +1435,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)

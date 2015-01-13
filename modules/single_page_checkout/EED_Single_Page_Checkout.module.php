@@ -38,6 +38,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EED_Single_Page_Checkout
 	 */
 	public static function instance() {
+		add_filter( 'EED_Single_Page_Checkout__SPCO_active', '__return_true' );
 		return parent::get_instance( __CLASS__ );
 	}
 
@@ -89,6 +90,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		EED_Single_Page_Checkout::set_definitions();
 		if ( defined( 'DOING_AJAX' )) {
+			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
+			ob_start();
 			EED_Single_Page_Checkout::load_request_handler();
 			EED_Single_Page_Checkout::load_reg_steps();
 		}
@@ -143,6 +146,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 *   update_checkout
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public static function update_checkout() {
+		EED_Single_Page_Checkout::process_ajax_request( 'update_checkout' );
+	}
+
+
+
+	/**
 	 *    load_request_handler
 	 *
 	 * @access    public
@@ -169,6 +184,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		define( 'SPCO_IMG_URL', plugin_dir_url( __FILE__ ) . 'img' . DS );
 		define( 'SPCO_JS_URL', plugin_dir_url( __FILE__ ) . 'js' . DS );
 		define( 'SPCO_INC_PATH', SPCO_BASE_PATH . 'inc' . DS );
+		define( 'SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS );
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
 	}
@@ -189,7 +205,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 		// load EE_SPCO_Reg_Step base class
-		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
+//		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
 		// filter list of reg_steps
 		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', EED_Single_Page_Checkout::get_reg_steps() );
 		// sort by key (order)
@@ -231,25 +247,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( $reg_steps )) {
 			$reg_steps = array(
 				10 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'attendee_information',
 					'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
 					'slug' => 'attendee_information',
 					'has_hooks' => FALSE
 				),
 				20 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'registration_confirmation',
 					'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
 					'slug' => 'registration_confirmation',
 					'has_hooks' => FALSE
 				),
 				30 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'payment_options',
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options',
 					'has_hooks' => TRUE
 				),
 				999 => array(
-					'file_path' => SPCO_INC_PATH,
+					'file_path' => SPCO_REG_STEPS_PATH . 'finalize_registration',
 					'class_name' => 'EE_SPCO_Reg_Step_Finalize_Registration',
 					'slug' => 'finalize_registration',
 					'has_hooks' => FALSE
@@ -541,6 +557,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * _get_cart_for_current_session_and_setup_new_transaction
 	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
 	 *
+	 * 	@access public
+	 * @param EE_Transaction $transaction
+	 * 	@return EE_Cart
+	 */
+	public function get_cart_for_transaction( EE_Transaction $transaction ) {
+		return EE_Cart::get_cart_from_txn( $transaction );
+	}
+
+
+
+	/**
+	 * _get_transaction_and_cart_for_current_session
+	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
+	 *
 	 * 	@access private
 	 * 	@return EE_Transaction
 	 */
@@ -570,11 +600,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize_transaction() {
 		try {
+			// ensure cart totals have been calculated
+			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
+			// grab the cart grand total
+			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
 			return EE_Transaction::new_instance( array(
 				'TXN_timestamp' 	=> current_time( 'timestamp' ),
 				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
-				'TXN_total' 				=> $this->checkout->cart->get_cart_grand_total(),
+				'TXN_total' 				=> $cart_total > 0 ? $cart_total : 0,
 				'TXN_paid' 				=> 0,
 				'STS_ID' 					=> EEM_Transaction::failed_status_code,
 			));
@@ -784,6 +818,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
+						return;
 					}
 				}
 			} catch( EE_Error $e ) {
@@ -811,7 +846,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				$this->go_to_next_step();
 				break;
 
 			default :
@@ -832,8 +866,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
 
 				} else {
 					EE_Error::add_error(
@@ -847,6 +879,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			// end default
 		}
+		// advance to the next step! If you pass GO, collect $200
+		$this->go_to_next_step();
 	}
 
 
@@ -1014,8 +1048,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step() {
-
-		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' ) {
+		if ( EE_Registry::instance()->REQ->ajax ) {
+			// capture contents of output buffer we started earlier in the request, and insert into JSON response
+			$this->checkout->json_response->set_unexpected_errors( ob_get_clean() );
+		}
+		// just return for these conditions
+		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' || $this->checkout->action == 'update_checkout' ) {
 			return;
 		}
 		// if this is an ajax request AND a callback function exists
@@ -1023,7 +1061,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			echo $json_response;
-			die();
+			exit();
 		}
 		// going somewhere ?
 		if ( $this->checkout->redirect ) {

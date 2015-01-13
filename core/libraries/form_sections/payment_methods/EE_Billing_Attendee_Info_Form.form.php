@@ -44,25 +44,28 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 
 	/**
 	 * Sets the defaults for the billing form according to the attendee's details
-	 * @param int | \EE_Attendee $attendee
+	 * @param EE_Attendee $attendee
 	 */
-	public function populate_from_attendee( $attendee ){
-		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
-		/** @var $attendee EE_Attendee */
-		$state = $attendee->state_obj();
-		$country = $attendee->country_obj();
-		$this->populate_defaults(array(
-			'first_name'=>$attendee->fname(),
-			'last_name'=>$attendee->lname(),
-			'email'=>$attendee->email(),
-			'address'=>$attendee->address(),
-			'address2'=>$attendee->address2(),
-			'city'=>$attendee->city(),
-			'state'=> $state ? $attendee->state_obj()->name() : '',
-			'country'=> $country ? $attendee->country_obj()->name() : '',
-			'zip'=>$attendee->zip(),
-			'phone'=>$attendee->phone(),
-		));
+	public function populate_from_attendee( EE_Attendee $attendee ){
+		if ( $attendee instanceof EE_Attendee ) {
+			/** @var $attendee EE_Attendee */
+			$state = $attendee->state_obj();
+			$country = $attendee->country_obj();
+			$this->populate_defaults(
+				array(
+					'first_name' 	=> $attendee->fname(),
+					'last_name' 		=> $attendee->lname(),
+					'email' 			=> $attendee->email(),
+					'address' 			=> $attendee->address(),
+					'address2' 		=> $attendee->address2(),
+					'city' 				=> $attendee->city(),
+					'state' 				=> $state instanceof EE_State ? $state->name() : '',
+					'country' 			=> $country instanceof EE_Country ? $country->name() : '',
+					'zip' 					=> $attendee->zip(),
+					'phone' 			=> $attendee->phone(),
+				)
+			);
+		}
 	}
 
 

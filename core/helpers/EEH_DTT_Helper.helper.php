@@ -47,7 +47,7 @@ class EEH_DTT_Helper {
 		}
 		return $timezone;
 	}
-	
+
 
 
 
@@ -78,7 +78,7 @@ class EEH_DTT_Helper {
 
 
 	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
-		
+
 		$timezone = self::get_timezone();
 
 		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
@@ -195,7 +195,7 @@ class EEH_DTT_Helper {
 	 * helper for doing simple datetime calculations on a given datetime from EE_Base_Class and modifying it IN the EE_Base_Class so you don't have to do anything else.
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
 	 * @param  string        $dttfield What field in the class has the date to manipulate
-	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years	
+	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
 	 * @param  integer       $value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
@@ -219,16 +219,17 @@ class EEH_DTT_Helper {
 
 
 
-
 	/**
 	 * Simply takes an incoming UTC timestamp and does calcs on it based on the incoming parameters and returns the new timestamp.
-	 * @param  string  $utcdtt UTC timestamp
-	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
-	 * @param  integer $value  What you want to increment the date by
+	 *
+	 * @param  int  $utcdtt UTC timestamp
+	 * @param  string  $what a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer $value What you want to increment the date by
 	 * @param  string  $operand What operand you wish to use for the calculation
-	 * @return string          new UTC timestamp
+	 * @param string   $format  'timestamp' or 'mysql' just like current_time()
+	 * @return string  	new UTC timestamp
 	 */
-	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+' ) {
+	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+', $format = 'timestamp' ) {
 		$newdtt = '';
 
 		switch ( $what ) {
@@ -253,16 +254,134 @@ class EEH_DTT_Helper {
 		}
 
 		switch ( $operand ) {
-			case '+':
-				$newdtt = $utcdtt + $value;
-				break;
 			case '-':
 				$newdtt = $utcdtt - $value;
 				break;
+			case '+':
+			default :
+				$newdtt = $utcdtt + $value;
+				break;
+		}
+
+		if ( $format == 'mysql' ) {
+			$newdtt = gmdate( 'Y-m-d H:i:s', $newdtt );
 		}
 
 		return $newdtt;
 	}
 
 
-}// end class EEH_DTT_Helper
+
+	/**
+	 * get_interval
+	 * returns a DateInterval object for two dates
+	 *
+	 * @param mixed $date_1
+	 * @param mixed $date_2
+	 * @return bool|\DateInterval
+	 */
+	public static function get_interval( $date_1, $date_2 ) {
+		$date_1 = $date_1 instanceof DateTime ? $date_1 : new DateTime( $date_1 );
+		$date_2 = $date_2 instanceof DateTime ? $date_2 : new DateTime( $date_2 );
+		return $date_1->diff( $date_2 );
+	}
+
+
+
+	/**
+	 * 	dates_represent_one_24_hour_day
+	 *
+	 * 	 returns TRUE if the the first date starts at midnight on one day, and the next date ends at midnight on the very next day,
+	 * 	 this means the date can safely be displayed as: gmdate( 'Y-m-d', $date_1 ) to indicate a full 24 hour day
+	 *
+	 * @param mixed $date_1
+	 * @param mixed $date_2
+	 * @return bool
+	 */
+	public static function dates_represent_one_24_hour_day( $date_1, $date_2 ) {
+		return $date_1 == $date_2 || ( gmdate( 'H:i:s', strtotime( $date_1 )) === '00:00:00' && ( strtotime( $date_2 ) -  strtotime( $date_1 )) == DAY_IN_SECONDS ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * 	process_start_date
+	 *
+	 * 	if the passed datetime starts at midnight, then it will remove the time formatting from the returned datetime string
+	 *
+	 * @param mixed  $start_date
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @return bool
+	 */
+	public static function process_start_date( $start_date, $date_format = '', $time_format = '' ) {
+		// set and filter date and time formats when a range is returned
+		$date_format = EEH_DTT_Helper::set_date_format( $date_format );
+		$time_format = EEH_DTT_Helper::set_time_format( $time_format );
+		$start_date = strtotime( $start_date );
+		return gmdate( 'H:i:s', $start_date ) === '00:00:00' ? date_i18n( $date_format , $start_date ) : date_i18n( $date_format . ' ' . $time_format, $start_date );
+	}
+
+
+
+	/**
+	 * 	process_end_date
+	 *
+	 * 	if the passed datetime starts at midnight, then it will remove the time formatting from the returned datetime string
+	 * 	as well, if $bump_to_previous_day is TRUE (default) and the passed datetime starts at midnight, it will get bumped to the previous date
+	 *
+	 * @param        $end_date
+	 * @param bool   $bump_to_previous_day
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @internal param mixed $start_date
+	 * @return bool
+	 */
+	public static function process_end_date( $end_date, $bump_to_previous_day = TRUE, $date_format = '', $time_format = '' ) {
+		// set and filter date and time formats when a range is returned
+		$date_format = EEH_DTT_Helper::set_date_format( $date_format );
+		$time_format = EEH_DTT_Helper::set_time_format( $time_format );
+		$end_date = strtotime( $end_date );
+		if ( gmdate( 'H:i:s', $end_date ) === apply_filters( 'FHEE__EEH_DTT_Helper__process_end_date__end_of_day_H_i_s', '00:00:00' )) {
+			if ( $bump_to_previous_day ) {
+				$end_date = $end_date - DAY_IN_SECONDS;
+			}
+			return date_i18n( $date_format , $end_date );
+		} else {
+			return date_i18n( $date_format . ' ' . $time_format, $end_date );
+		}
+	}
+
+
+
+	/**
+	 *    set_date_format
+	 *
+	 * @param string $date_format
+	 * @return bool
+	 */
+	public static function set_date_format( $date_format = '' ) {
+		// set and filter date format
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		return apply_filters( 'FHEE__EEH_DTT_Helper__set_date_format__date_format', $date_format );
+	}
+
+
+
+	/**
+	 *    set_time_format
+	 *
+	 * @param string $time_format
+	 * @return bool
+	 */
+	public static function set_time_format( $time_format = '' ) {
+		// set and filter time format
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
+		return apply_filters( 'FHEE__EEH_DTT_Helper__set_time_format__time_format', $time_format );
+	}
+
+
+
+
+}
+// end class EEH_DTT_Helper

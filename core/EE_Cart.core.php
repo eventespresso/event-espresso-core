@@ -132,19 +132,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * @return EE_Line_Item
 	 */
 	private function _create_grand_total(){
-		$this->_grand_total = EEH_Line_Item::create_default_total_line_item();
+		$this->_grand_total = EEH_Line_Item::create_total_line_item();
 		return $this->_grand_total;
 	}
 
 
 
 	/**
-	 *	Gets all the item line items (ie, all line items for registrations, products, etc. NOT taxes or promotions)
+	 *	Gets all the line items of object type Ticket
 	 *	@access public
 	 *	@return \EE_Line_Item[]
 	 */
 	public function get_tickets() {
-		return EEH_Line_Item::get_items_subtotal( $this->_grand_total )->children();
+		return EEH_Line_Item::get_ticket_line_items( $this->_grand_total );
 	}
 
 
@@ -170,7 +170,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *  Gets all tha tax line items
+	 *  Gets all the tax line items
 	 * @return \EE_Line_Item[]
 	 */
 	public function get_taxes(){
@@ -197,8 +197,62 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
-		EEH_Line_Item::add_ticket_purchase( $this->_grand_total, $ticket, $qty );
+		EEH_Line_Item::add_ticket_purchase( $this->get_event_line_item_for_ticket( $ticket ), $ticket, $qty );
 		return $this->save_cart() ? TRUE : FALSE;
+	}
+
+
+
+	 /**
+	  *    get_event_line_item_for_ticket
+	  *
+	  * @access public
+	  * @param EE_Ticket $ticket
+	  * @throws \EE_Error
+	  * @return EE_Line_Item
+	  */
+	public function get_event_line_item_for_ticket( EE_Ticket $ticket ) {
+
+		$event = $ticket->first_datetime()->event();
+		if ( ! $event instanceof EE_Event ) {
+			throw new EE_Error( __( 'The supplied ticket has no event data associated with it.','event_espresso' ));
+		}
+		$event_line_item = NULL;
+		foreach ( EEH_Line_Item::get_event_subtotals( $this->get_grand_total() ) as $event_line_item ) {
+			// default event subtotal, we should only ever find this the first time this method is called
+			if ( ! $event_line_item->OBJ_ID() ) {
+				// let's use this! but first... set the event details
+				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+				break;
+			} else if ( $event_line_item->OBJ_ID() === $event->ID() ) {
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			} else {
+				$event_line_item = $this->add_subtotal_line_item_for_event( $event );
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			}
+		}
+		return $event_line_item;
+	}
+
+
+
+	 /**
+	  *    get_cart_total_before_tax
+	  *
+	  * @access public
+	  * @param \EE_Event $event
+	  * @return EE_Line_Item
+	  */
+	public function add_subtotal_line_item_for_event( EE_Event $event ) {
+		// first find the pre-tax subtotal line item
+		$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $this->_grand_total );
+		// create a new "event" subtotal below that
+		$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, NULL, $event );
+		// and set the event details
+		EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+		return $event_line_item;
 	}
 
 
@@ -238,13 +292,27 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
+	 *	Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
+	 *	@access public
+	 *	@return float
+	 */
+	public function recalculate_all_cart_totals() {
+		$pre_tax_total = $this->get_cart_total_before_tax();
+		$taxes_total = EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+		$this->_grand_total->set_total( $pre_tax_total + $taxes_total );
+		$this->_grand_total->save_this_and_descendants_to_txn();
+		return $this->get_grand_total()->total();
+	}
+
+
+
+	/**
 	 *	deletes an item from the cart
 	 *	@access public
 	 *	@param mixed - string or array - line_item_ids
 	 *	@return int on success, FALSE on fail
 	 */
 	public function delete_items( $line_item_codes = FALSE ) {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return EEH_Line_Item::delete_items($this->get_grand_total(), $line_item_codes );
 
@@ -276,13 +344,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	 *	@save cart to session
-	 *	@access public
-	 *	@return TRUE on success, FALSE on fail
-	 */
-	public function save_cart() {
-		EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+	 /**
+	  * @save cart to session
+	  * @access public
+	  * @param bool $apply_taxes
+	  * @return TRUE on success, FALSE on fail
+	  */
+	public function save_cart( $apply_taxes = TRUE ) {
+		if ( $apply_taxes ) {
+			EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+		}
 		return EE_Registry::instance()->SSN->set_cart( $this );
 	}
 

@@ -206,7 +206,7 @@ class EE_Checkout {
 		$this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
-		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
+		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->ajax;
 		$this->reg_cache_where_params = array( 'order_by' => array( 'REG_count' => 'ASC' ));
 	}
 
@@ -219,7 +219,11 @@ class EE_Checkout {
 	 * @return    void
 	 */
 	public function reset_for_current_request() {
+		$this->process_form_submission = FALSE;
+		$this->continue_reg = TRUE;
 		$this->redirect = FALSE;
+		$this->redirect_url = '';
+		$this->redirect_form = '';
 		$this->json_response = new EE_SPCO_JSON_Response();
 		EE_Form_Section_Proper::reset_js_localization();
 	}
@@ -469,7 +473,7 @@ class EE_Checkout {
 	 * 	stash_transaction_and_checkout
 	 *
 	 * 	@access public
-	 * 	@return 	bool
+	 * 	@return 	void
 	 */
 	public function stash_transaction_and_checkout() {
 		if ( ! $this->revisit ) {

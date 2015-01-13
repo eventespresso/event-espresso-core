@@ -242,8 +242,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
 		if ( ! $checkout_url ) {
-			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
@@ -295,8 +294,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_view_details_btn() {
 		if ( ! self::$_event->get_permalink() ) {
-			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
 		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __('View Details', 'event_espresso' ));
@@ -321,8 +319,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
-			$error_msg = sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			return FALSE;
 		}
 //		d( EE_Registry::instance()->REQ );
@@ -336,7 +336,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		//d( EE_Registry::instance()->SSN );
@@ -356,12 +356,11 @@ class EED_Ticket_Selector extends  EED_Module {
 				$singular = 'You have attempted to purchase %s ticket.';
 				$plural = 'You have attempted to purchase %s tickets.';
 				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
-
+				// dev only message
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
-				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( $limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 
 				// all data appears to be valid
@@ -383,35 +382,39 @@ class EED_Ticket_Selector extends  EED_Module {
 							$success = ! $ticket_added ? FALSE : $success;
 						} else {
 							// nothing added to cart retrieved
-							$error_msg = sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+							EE_Error::add_error(
+								sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+								__FILE__, __FUNCTION__, __LINE__
+							);
 						}
 					}
 				}
 //				d( EE_Registry::instance()->CART );
-//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE
+//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
+						EE_Registry::instance()->CART->get_cart_total_before_tax();
+						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__just_before_saving_cart_and_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
 						EE_Registry::instance()->CART->save_cart();
 						EE_Registry::instance()->SSN->update();
+//						d( EE_Registry::instance()->CART );
+//						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
 					} else {
 						// nothing added to cart
-						$error_msg = __( 'No tickets were added for the event.', 'event_espresso' );
-						EE_Error::add_attention( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_attention( __( 'No tickets were added to the cart..', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
 
 				} else {
 					// no ticket quantities were selected
-					$error_msg = __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' );
-					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error( __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 			// at this point, just return if registration is being made from admin
@@ -432,8 +435,10 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			$error_msg = sprintf( __( 'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf( __( 'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 
 		return FALSE;
@@ -562,8 +567,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			} 	// end foreach $inputs_to_clean
 
 		} else {
-			$error_msg = 'The event id provided was not valid';
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The event id provided was not valid.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -600,20 +604,21 @@ class EED_Ticket_Selector extends  EED_Module {
 			// greedy greedy greedy eh?
 			if ( $available_spaces > 0 ) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
-				$error_msg = sprintf(
-					_n(
-						'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-						 'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+				EE_Error::add_error(
+					sprintf(
+						_n(
+							'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+							'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+							$available_spaces,
+							'event_espresso'
+						),
 						$available_spaces,
-						'event_espresso'
+						'<br />'
 					),
-					$available_spaces,
-					'<br />'
+					__FILE__, __FUNCTION__, __LINE__
 				);
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
-				$error_msg = __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso');
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return FALSE;
 		}

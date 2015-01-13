@@ -67,7 +67,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ) {
 		parent::__construct( $fieldValues, $bydb, $timezone );
-		if ( !$this->get( 'LIN_code' ) ) {
+		if ( ! $this->get( 'LIN_code' ) ) {
 			$this->set_code( $this->generate_code() );
 		}
 	}
@@ -286,6 +286,16 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
+	 * Sets order
+	 * @param int $order
+	 */
+	function set_order( $order ) {
+		$this->set( 'LIN_order', $order );
+	}
+
+
+
+	/**
 	 * Gets parent
 	 * @return int
 	 */
@@ -397,18 +407,16 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
-	 * Gets the object that this model-joins-to. Eg, if this line item join model object
-	 * is for a ticket, this will return the ticket object
-	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
+	 * Gets the object that this model-joins-to.
+	 * returns one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object
+	 *
+	 * 		Eg, if this line item join model object is for a ticket, this will return the EE_Ticket object
+	 *
+	 * @return EE_Base_Class | NULL
 	 */
 	function get_object() {
 		$model_name_of_related_obj = $this->OBJ_type();
-		$is_model_name = EE_Registry::instance()->is_model_name( $model_name_of_related_obj );
-		if ( !$is_model_name ) {
-			return NULL;
-		} else {
-			return $this->get_first_related( $model_name_of_related_obj );
-		}
+		return EE_Registry::instance()->is_model_name( $model_name_of_related_obj ) ? $this->get_first_related( $model_name_of_related_obj ) : NULL;
 	}
 
 
@@ -429,20 +437,36 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
+	 * Gets the EE_Datetime that's related to the ticket, IF this is for a ticket
+	 * @return EE_Datetime | NULL
+	 */
+	function get_ticket_datetime() {
+		if ( $this->OBJ_type() === 'Ticket' ) {
+			$ticket = $this->ticket();
+			if ( $ticket instanceof EE_Ticket ) {
+				$datetime = $ticket->first_datetime();
+				if ( $datetime instanceof EE_Datetime ) {
+					return $datetime;
+				}
+			}
+		}
+		return NULL;
+	}
+
+
+
+	/**
 	 * Gets the event's name that's related to the ticket, if this is for
 	 * a ticket
 	 * @return string
 	 */
 	function ticket_event_name() {
 		$event_name = __( "Unknown", "event_espresso" );
-		$ticket = $this->ticket();
-		if ( $ticket ) {
-			$datetime = $ticket->first_datetime();
-			if ( $datetime instanceof EE_Datetime ) {
-				$event = $datetime->event();
-				if ( $event instanceof EE_Event ) {
-					$event_name = $event->name();
-				}
+		$datetime = $this->get_ticket_datetime();
+		if ( $datetime ) {
+			$event = $datetime->event();
+			if ( $event instanceof EE_Event ) {
+				$event_name = $event->name();
 			}
 		}
 		return $event_name;
@@ -458,12 +482,9 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function ticket_datetime_start( $date_format = '', $time_format = '' ) {
 		$first_datetime_string = __( "Unknown", "event_espresso" );
-		$ticket = $this->ticket();
-		if ( $ticket instanceof EE_Ticket ) {
-			$first_datetime = $ticket->first_datetime();
-			if ( $first_datetime ) {
-				$first_datetime_string = $first_datetime->start_date_and_time( $date_format, $time_format );
-			}
+		$datetime = $this->get_ticket_datetime();
+		if ( $datetime ) {
+			$first_datetime_string = $datetime->start_date_and_time( $date_format, $time_format );
 		}
 		return $first_datetime_string;
 	}
@@ -649,7 +670,6 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @param bool $include_taxable_items_only. If FALSE (default), updates the line items and sub-totals. If TRUE, just finds the amount taxable in this line item's price or its children's.
 	 * @throws EE_Error
 	 * @return float
 	 */
@@ -659,7 +679,7 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->is_tax_sub_total() ) {
 			return 0;
 		} elseif ( $this->is_sub_line_item() ) {
-			throw new EE_Error( sprintf( __( "Calculating the pretax-total on subline items doesn't make sense right now. You were trying to calculate it on %s", "event_espresso" ), d( $this ) ) );
+			throw new EE_Error( sprintf( __( 'Calculating the pretax-total on sub-line items doesn\'t make sense right now. You were trying to calculate it on %s', "event_espresso" ), print_r( $this, TRUE ) ) );
 		} elseif ( $this->is_line_item() ) {
 			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
 			$total = $this->unit_price() * $this->quantity();
@@ -743,7 +763,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$this->_recalculate_tax_sub_total();
 		$total = 0;
 		foreach ( $this->tax_descendants() as $tax_line_item ) {
-			$total += $tax_line_item->total();
+			if ( $tax_line_item instanceof EE_Line_Item ) {
+				$total += $tax_line_item->total();
+			}
 		}
 		return $total;
 	}
@@ -755,7 +777,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function get_items_total() {
 		$total = 0;
-		foreach ( $this->_get_descendants_of_type( EEM_Line_Item::type_line_item ) as $item ) {
+		foreach ( $this->get_items() as $item ) {
 			if ( $item instanceof EE_Line_Item ) {
 				$total += $item->total();
 			}
@@ -771,7 +793,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants() {
-		return $this->_get_descendants_of_type( EEM_Line_Item::type_tax );
+		return EEH_Line_Item::get_tax_descendants( $this );
 	}
 
 
@@ -781,50 +803,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function get_items() {
-		return $this->_get_descendants_of_type( EEM_Line_Item::type_line_item );
-	}
-
-
-
-	/**
-	 * Gets all descendants of the specified type
-	 * @param string $type one of the constants on EEM_Line_Item
-	 * @return EE_Line_Item[]
-	 */
-	protected function _get_descendants_of_type( $type ) {
-		$line_items_of_type = array();
-		foreach ( $this->children() as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
-				if ( $child_line_item->type() == $type ) {
-					$line_items_of_type[ ] = $child_line_item;
-				} else {
-					//go-through-all-its children looking for taxes
-					$line_items_of_type = array_merge( $line_items_of_type, $child_line_item->_get_descendants_of_type( $type ) );
-				}
-			}
-		}
-		return $line_items_of_type;
-	}
-
-	/**
-	 * Uses a breadth-first-search in order to find the nearest descendant of
-	 * the specified type and returns it, else NULL
-	 * @param string $type like one of the EEM_Line_Item::type_*
-	 * @return EE_Line_Item
-	 */
-	public function get_nearest_descendant_of_type( $type ) {
-		foreach( $this->children() as $child ){
-			if( $child->type() == $type ){
-				return $child;
-			}
-		}
-		foreach($this->children() as $child ){
-			$descendant_found = $child->get_nearest_descendant_of_type( $type );
-			if( $descendant_found ){
-				return $descendant_found;
-			}
-		}
-		return NULL;
+		return EEH_Line_Item::get_line_item_descendants( $this );
 	}
 
 
@@ -882,6 +861,28 @@ class EE_Line_Item extends EE_Base_Class {
 				$child_line_item->save_this_and_descendants_to_txn( $txn_id );
 			}
 		}
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @param string $type one of the constants on EEM_Line_Item
+	 * @return EE_Line_Item[]
+	 */
+	protected function _get_descendants_of_type( $type ) {
+		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
+		return EEH_Line_Item::get_descendants_of_type( $this, $type );
+	}
+
+	/**
+	 * @deprecated
+	 * @param string $type like one of the EEM_Line_Item::type_*
+	 * @return EE_Line_Item
+	 */
+	public function get_nearest_descendant_of_type( $type ) {
+		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
+		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
 
 
