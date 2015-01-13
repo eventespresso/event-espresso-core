@@ -107,13 +107,33 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 == Frequently Asked Questions ==
 
+= What is Event Espresso? =
+
+Event Espresso is ticket and event management software for the modern world. Do you need to convince someone about Event Espresso? Share our [new video](http://eventespresso.com/2012/11/what-is-event-espresso-video/) or [print a brochure](http://ee-screenshots.s3.amazonaws.com/2012/02/EE_brochure_small.pdf.
+
 = Can I fully manage my events with Event Espresso Decaf? =
 
 You will be able to fully manage basic events with Event Espresso Decaf. This will be sufficient for many WordPress users. If you need advanced features you can check out our Premium [Event Management plugin](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Event+Management+plugin&utm_campaign=ee4_decaf_plugin_faq_tab)
 
+= Will Event Espresso work on my server? =
+
+We have a plugin available that will check your server for the [minimum requirements](http://eventespresso.com/requirements/).
+
+= Do you support WordPress multisite? =
+
+WordPress multisite brings some complexity that can lead to some challenges. As such we cannot support multisite, but we'll offer recommendations wherever we can. Multisite compatibility is much better with EE4 than EE3. If you're unsure about using multisite then please read [this article](http://halfelf.org/2011/dont-use-wordpress-multisite/).
+
+= Which web browsers work with Event Espresso? =
+
+Event Espresso has been tested with the most current versions Internet Explorer (Windows only), Firefox, Safari, Chrome on the Windows PC and Mac OSX platforms. Event Espresso may function just as well in older or other, less popular browsers, but we only support those listed previously. For more information, please see our [supported web browsers](http://eventespresso.com/faqs/supported-web-browsers/) page.
+
 = Do you monitor the WordPress.org support forums? =
 
 We DO NOT regularly monitor the support forums on WordPress.org. You'll find a faster response time at the [support forums on our website](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forums+on+our+website&utm_campaign=ee4_decaf_plugin_faq_tab).
+
+= What if I don't have (or don't want) a WordPress website? =
+
+If you want to organize your event fast without the hassle of managing a server, plugins and security then build you event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=event_espresso_pricing_faq&utm_medium=page&utm_campaign=event_espresso&utm_content=link).
 
 
 == Changelog ==
