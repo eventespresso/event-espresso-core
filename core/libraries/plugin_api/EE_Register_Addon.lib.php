@@ -162,6 +162,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'config_name' 					=> isset( $setup_args['config_name'] ) ? (string) $setup_args['config_name']: '',
 			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' 			=> isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
+			// an array of  "full server paths" for any folders containing classes that might be invoked by the addon
+			'autoloader_folders' 			=> isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
 			// array of full server paths to any EE_DMS data migration scripts used by the addon
 			'dms_paths' 						=> isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array(),
 			// array of full server paths to any EED_Modules used by the addon
@@ -241,7 +243,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
+			// setup autoloader for single file
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
+		}
+		// setup autoloaders for folders
+		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_folders'] )) {
+			foreach ( self::$_settings[ $addon_name ]['autoloader_folders'] as $autoloader_folder ) {
+				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $autoloader_folder );
+			}
 		}
 		// register new models
 		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
