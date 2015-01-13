@@ -281,15 +281,14 @@ jQuery(document).ready(function($) {
 		/**
 		 *    resend_reg_confirmation_email
 		 */
-		resend_reg_confirmation_email: function () {
+		resend_reg_confirmation_email: function ( token ) {
 
 			$.ajax({
 				type: "POST",
 				url: eei18n.ajax_url,
 				data: {
 					action : "espresso_resend_reg_confirmation_email",
-					e_reg_url_link : eei18n.e_reg_url_link,
-					id : $(this).attr( 'rel' ),
+					token : token,
 					ee_front_ajax : 1
 				},
 				dataType: "json",
@@ -396,7 +395,7 @@ jQuery(document).ready(function($) {
 	$('.ee-registrations-list tbody').on( 'click', '.ee-resend-reg-confirmation-email', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		eeThnx.resend_reg_confirmation_email();
+		eeThnx.resend_reg_confirmation_email( $(this).attr( 'rel' ));
 	});
 
 
