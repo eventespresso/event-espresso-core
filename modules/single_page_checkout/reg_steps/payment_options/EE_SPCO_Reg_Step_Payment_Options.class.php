@@ -371,6 +371,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$reset_payment_method = $force_reset ? TRUE : sanitize_text_field( EE_Registry::instance()->REQ->get( 'reset_payment_method', FALSE ));
 		if ( $reset_payment_method ) {
 			$this->checkout->selected_method_of_payment = NULL;
+			$this->checkout->payment_method = NULL;
+			$this->checkout->billing_form = NULL;
 			$this->_save_selected_method_of_payment();
 		}
 	}
@@ -628,7 +630,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/********************************************************************************************************/
 
 
-
 	/**
 	 * switch_payment_method
 	 *
@@ -636,10 +637,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function switch_payment_method() {
-//		printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__ );
-//		printr( $this->checkout->selected_method_of_payment, '$this->checkout->selected_method_of_payment', __FILE__, __LINE__ );
-//		printr( $this->checkout->payment_method, '$this->checkout->payment_method', __FILE__, __LINE__ );
-//		printr( $this->checkout->billing_form->get_html(), '$this->checkout->billing_form->get_html()', __FILE__, __LINE__ );
 		// generate billing form for selected method of payment if it hasn't been done already
 		if ( empty( $this->checkout->selected_method_of_payment )) {
 			// how have they chosen to pay?
@@ -663,6 +660,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
 			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
 		}
+		// fill form with attendee info if applicable
+		if ( $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form && $this->checkout->transaction_has_primary_registrant() ) {
+			$this->checkout->billing_form->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
+		}
+		// and debug content
+		if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form && $this->checkout->payment_method->type_obj() instanceof EE_PMT_Base ) {
+			$this->checkout->billing_form = $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings( $this->checkout->billing_form );
+		}
+		// get html and validation rules for form
 		if ( $this->checkout->billing_form instanceof EE_Form_Section_Proper ) {
 			$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $this->checkout->billing_form->get_html() ));
 			// localize validation rules for main form
