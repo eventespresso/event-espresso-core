@@ -567,7 +567,7 @@ class EEH_Line_Item {
 		$objects = array();
 		foreach ( $parent_line_item->children() as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
-				if ( $child_line_item->OBJ_type() == $OBJ_type && in_array( $child_line_item->OBJ_ID(), $OBJ_IDs )) {
+				if ( is_array( $OBJ_IDs ) && $child_line_item->OBJ_type() == $OBJ_type && in_array( $child_line_item->OBJ_ID(), $OBJ_IDs )) {
 					$objects[] = $child_line_item;
 				} else {
 					//go-through-all-its children looking for more matches
