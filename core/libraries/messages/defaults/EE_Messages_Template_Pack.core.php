@@ -322,6 +322,8 @@ abstract class  EE_Messages_Template_Pack {
 		$fallback_path = $filtered_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
 		$mt_defined_full_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
 		$mt_defined_fallback_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
+		$base_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
+		$base_defined_fallback_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
 
 		/**
 		 * Template checks are done heirarchically in the following order:
@@ -343,6 +345,10 @@ abstract class  EE_Messages_Template_Pack {
 			$actual_path = $mt_defined_full_path;
 		} elseif ( is_readable( $mt_defined_fallback_path ) ) {
 			$actual_path = $mt_defined_fallback_path;
+		} elseif ( is_readable( $base_defined_full_path ) ) {
+			$actual_path = $base_defined_full_path;
+		} elseif ( is_readable( $base_defined_fallback_path ) ) {
+			$actual_path = $base_defined_fallback_path;
 		} else  {
 			$actual_path = '';
 		}
