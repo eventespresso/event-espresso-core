@@ -37,7 +37,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					<ul style="margin:1em 2em 1.5em; line-height:1.2em;">
 						<li><?php _e('While testing, use the credit card number listed below. Other numbers will produce an error.', 'event_espresso'); ?></li>
 						<li><?php _e('Expiry Date can be any valid date in the future', 'event_espresso'); ?></li>
-						<li><?php printf(__('CVV2 should be 115 (see %s paypals documentation for other special codes %s)', 'event_espresso'),'<a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions#id108HH0RJ0TS">','</a>'); ?></li>
+						<li><?php printf(__('CVV2 should be 115 (see %s paypals documentation for other special codes %s)', 'event_espresso'),'<a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions#id108HH0RJ0TS" target="_blank">','</a>'); ?></li>
 					</ul>
 
 					<p class="test-credit-cards-info-pg">
@@ -64,7 +64,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espresso'); ?></strong><br/>
-						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s. Also be aware that you can generate AVS errors by using certain strings in your address field, and CVV errors using certain CVV values. See %s this paypal doc %s', 'event_espresso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>","<a href='https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions'>","</a>"); ?></span>
+						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s. Also be aware that you can generate AVS errors by using certain strings in your address field, and CVV errors using certain CVV values. See %s this paypal doc %s', 'event_espresso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1' target='_blank'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk' target='_blank'>","</a>","<a href='https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions' target='_blank'>","</a>"); ?></span>
 					</p>
 
 					<div class="tbl-wrap">

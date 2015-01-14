@@ -336,7 +336,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		//d( EE_Registry::instance()->SSN );
@@ -399,7 +399,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
 					} else {
