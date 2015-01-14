@@ -258,7 +258,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'slug' => 'registration_confirmation',
 					'has_hooks' => FALSE
 				),
-				30 => array(
+				5 => array(
 					'file_path' => SPCO_REG_STEPS_PATH . 'payment_options',
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options',
@@ -423,7 +423,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//make sure this request is marked as belonging to EE
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 		// which step is being requested ?
-		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
+		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', $this->_get_first_step() );
 		// which step is being edited ?
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
@@ -437,6 +437,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+	}
+
+
+
+	/**
+	 *    _get_first_step
+	 *  gets slug for first step in $_reg_steps_array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	private function _get_first_step() {
+		$first_step = reset( EED_Single_Page_Checkout::$_reg_steps_array );
+		return isset( $first_step['slug'] ) ? $first_step['slug'] : 'attendee_information';
 	}
 
 
