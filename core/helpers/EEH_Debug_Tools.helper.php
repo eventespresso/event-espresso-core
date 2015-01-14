@@ -305,6 +305,7 @@ if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
  * @param bool   $die
  */
 function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
+	$format = ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? TRUE : FALSE;
 	$print_r = FALSE;
 	if ( is_object( $var )) {
 		$var_name = $var_name == '' ? get_class( $var ) : $var_name . ' : ' . get_class( $var );
@@ -316,19 +317,23 @@ function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $heig
 		$var_name = $var_name == '' ? 'numeric' : $var_name;
 	} else if ( is_string( $var )) {
 		$var_name = $var_name == '' ? 'string' : $var_name;
-		echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b></h5>';
+		if ( $format ) {
+			echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b></h5>';
+		} else {
+			echo "\n" . $var_name . ' : ' . $var . "\n" . $file . ' : ' . $line . "\n";
+		}
 		return;
 	} else if ( is_null( $var )) {
 		$var_name = $var_name == '' ? 'null' : $var_name;
 	}
 	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
 	ob_start();
-	echo '<div style="padding:1em;">';
-	echo '<h5 style="color:#2EA2CC;margin: 1em 0 0;"><b>' . $var_name . '</b></h5>
-	<span style="font-size:10px;font-weight:normal;">' . $file . ' &nbsp; &nbsp; &nbsp; line no: ' . $line . '</span><br />';
-	echo '<pre style="display:block; width:100%; height:' . $height . ';color:#E76700;">';
+	echo $format ? '<div style="padding:1em;">' : '';
+	echo $format ? '<h5 style="color:#2EA2CC;margin: 1em 0 0;"><b>' . $var_name . '</b></h5>' : "\n" . $var_name;
+	echo $format ? '<span style="font-size:10px;font-weight:normal;">' . $file . ' &nbsp; &nbsp; &nbsp; line no: ' . $line . '</span><br />' : "\n" . $file . ' : ' . $line;
+	echo $format ? '<pre style="display:block; width:100%; height:' . $height . ';color:#E76700;">' : "\n";
 	$print_r ? print_r($var) : var_dump($var);
-	echo '</pre></div>';
+	echo $format ? '</pre></div>' : "\n";
 	$result = ob_get_clean();
 
 	if ( $die ) {
