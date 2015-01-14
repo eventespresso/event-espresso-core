@@ -394,9 +394,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
-						EE_Registry::instance()->CART->get_cart_total_before_tax();
-						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__just_before_saving_cart_and_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
-						EE_Registry::instance()->CART->save_cart();
+						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
+						EE_Registry::instance()->CART->recalculate_all_cart_totals();
+						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
 //						d( EE_Registry::instance()->CART );
 //						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
