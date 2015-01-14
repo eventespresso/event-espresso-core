@@ -797,6 +797,8 @@ jQuery(document).ready( function($) {
 			var form_data = 'step=payment_options';
 			form_data += '&action=spco_billing_form';
 			form_data += '&selected_method_of_payment=' + payment_method;
+			form_data += '&reset_payment_method=1';
+			form_data += '&generate_reg_form=1';
 			form_data += '&process_form_submission=0';
 			form_data += '&noheader=1';
 			form_data += '&ee_front_ajax=1';
