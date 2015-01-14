@@ -562,6 +562,50 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		return $saved_columns;
 	}
 
+
+
+	/**
+	 * Generates the columns for a single row of the table.
+	 * Overridden from wp_list_table so as to allow us to filter the column content for a given
+	 * column.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 *
+	 * @param object $item The current item
+	 */
+	protected function single_row_columns( $item ) {
+		list( $columns, $hidden ) = $this->get_column_info();
+
+		foreach ( $columns as $column_name => $column_display_name ) {
+			$class = "class='$column_name column-$column_name'";
+
+			$style = '';
+			if ( in_array( $column_name, $hidden ) )
+				$style = ' style="display:none;"';
+
+			$attributes = "$class$style";
+
+			if ( 'cb' == $column_name ) {
+				echo '<th scope="row" class="check-column">';
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content', $this->column_cb( $item ), $item, $this );
+				echo '</th>';
+			}
+			elseif ( method_exists( $this, 'column_' . $column_name ) ) {
+				echo "<td $attributes>";
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content', call_user_func( array( $this, 'column_' . $column_name ), $item ), $item, $this );
+				echo "</td>";
+			}
+			else {
+				echo "<td $attributes>";
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content', $this->column_default( $item, $column_name ), $item, $column_name, $this );
+				echo "</td>";
+			}
+		}
+	}
+
+
+
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
 			$this->_filters();

@@ -537,7 +537,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function get_billing_form_html_for_payment_method() {
 		// how have they chosen to pay?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
-		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
+		$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
+		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
 			return FALSE;
 		}
 		EE_Error::add_success(
@@ -547,8 +548,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 		// now generate billing form for selected method of payment
-		$payment_method_billing_info = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
-		$billing_info = $payment_method_billing_info instanceof EE_Form_Section_Proper ? $payment_method_billing_info->get_html() : '';
+		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
+		// fill form with attendee info if applicable
+		if ( $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form && $this->checkout->transaction_has_primary_registrant() ) {
+			$payment_method_billing_form->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
+		}
+		// and debug content
+		if ( $payment_method_billing_form instanceof EE_Billing_Info_Form && $this->checkout->payment_method->type_obj() instanceof EE_PMT_Base ) {
+			$payment_method_billing_form = $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings( $payment_method_billing_form );
+		}
+		$billing_info = $payment_method_billing_form instanceof EE_Form_Section_Proper ? $payment_method_billing_form->get_html() : '';
 		$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $billing_info ));
 		// localize validation rules for main form
 		$this->checkout->current_step->reg_form->localize_validation_rules();
@@ -868,6 +877,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 		private function _capture_primary_registration_data_from_billing_form() {
+			// convert billing form data into an attendee
 			$this->checkout->primary_attendee_obj = $this->checkout->billing_form->create_attendee_from_billing_form_data();
 			if ( ! $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 				EE_Error::add_error(

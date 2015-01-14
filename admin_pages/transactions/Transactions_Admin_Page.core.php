@@ -431,10 +431,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
 				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
-			 'failed' => array(
+			 /**'failed' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
 				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
-				),
+				),/**/
 		);
 
 		return array_merge( $items, $more_items);
@@ -995,6 +995,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $start_date = min( $start_date, $end_date );
 	    $end_date = max( $start_date, $end_date );
 
+	    //failed transactions
+	    $failed = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'failed' ? TRUE: FALSE;
+
 	    //set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
 
@@ -1052,6 +1055,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $search_string ),
 				'TXN_session_data' => array( 'LIKE', $search_string )
 				);
+		}
+
+		if ( $failed ) {
+			$_where['STS_ID'] = EEM_Transaction::failed_status_code;
+		} else {
+			$_where['STS_ID'] = array( '!=', EEM_Transaction::failed_status_code );
 		}
 
 		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
