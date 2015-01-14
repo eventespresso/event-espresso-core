@@ -466,6 +466,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*	@return void
 	*/
 	protected function _transaction_details() {
+		do_action( 'AHEE__Transactions_Admin_Page__transaction_details__start', $this->_transaction );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		$this->_set_transaction_status_array();
