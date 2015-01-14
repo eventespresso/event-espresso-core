@@ -47,19 +47,29 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_Billing_Info_Form
 	 */
 	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
-		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
-			'name'=>'AIM_Form',
-			'subsections'=>array(
-				'credit_card'=>new EE_Credit_Card_Input(array(
-					'required'=>true
-				)),
-				'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
-					'required'=>true
-				)),
-				'exp_year'=>new EE_Credit_Card_Year_Input(),
-				'cvv'=>new EE_CVV_Input(),
+		$form = new EE_Billing_Attendee_Info_Form(
+			$this->_pm_instance,
+			array(
+				'name'=>'AIM_Billing_Form',
+				'subsections'=>array(
+					'credit_card'=>new EE_Credit_Card_Input( array(
+						'required'=>true, 'html_class' => 'ee-billing-qstn'
+					)),
+					'exp_month'=>new EE_Credit_Card_Month_Input(
+						true,
+						array(
+							'required'=>true, 'html_class' => 'ee-billing-qstn'
+						)
+					),
+					'exp_year'=>new EE_Credit_Card_Year_Input( array(
+						'required'=>true, 'html_class' => 'ee-billing-qstn'
+					)),
+					'cvv'=>new EE_CVV_Input( array(
+						'required'=>true, 'html_class' => 'ee-billing-qstn'
+					)),
+				)
 			)
-		));
+		);
 		if($this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta('test_transactions',true,false)){
 			$form->get_input('credit_card')->set_default('4007000000027');
 			$form->get_input('exp_year')->set_default('2020');
