@@ -247,9 +247,22 @@ abstract class EE_PMT_Base{
 	/**
 	 * Creates the billing form for this payment method type
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form
+	 * @return \EE_Billing_Info_Form
 	 */
 	abstract function generate_new_billing_form( EE_Transaction $transaction = NULL );
+
+
+
+	/**
+	 * apply_billing_form_debug_settings
+	 * applies debug data to the form
+	 *
+	 * @param \EE_Billing_Info_Form $billing_form
+	 * @return \EE_Billing_Info_Form
+	 */
+	public function apply_billing_form_debug_settings( EE_Billing_Info_Form $billing_form ) {
+		return $billing_form;
+	}
 
 
 

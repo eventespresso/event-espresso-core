@@ -47,37 +47,46 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_Billing_Info_Form
 	 */
 	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
-		$form = new EE_Billing_Attendee_Info_Form(
-			$this->_pm_instance,
-			array(
-				'name'=>'AIM_Billing_Form',
-				'subsections'=>array(
-					'credit_card'=>new EE_Credit_Card_Input( array(
-						'required'=>true, 'html_class' => 'ee-billing-qstn'
-					)),
-					'exp_month'=>new EE_Credit_Card_Month_Input(
-						true,
-						array(
-							'required'=>true, 'html_class' => 'ee-billing-qstn'
-						)
-					),
-					'exp_year'=>new EE_Credit_Card_Year_Input( array(
-						'required'=>true, 'html_class' => 'ee-billing-qstn'
-					)),
-					'cvv'=>new EE_CVV_Input( array(
-						'required'=>true, 'html_class' => 'ee-billing-qstn'
-					)),
-				)
+		$billing_form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
+			'name'=>'AIM_Form',
+			'subsections'=>array(
+				'credit_card'=>new EE_Credit_Card_Input(array(
+					'required'=>true
+				)),
+				'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
+					'required'=>true
+				)),
+				'exp_year'=>new EE_Credit_Card_Year_Input(),
+				'cvv'=>new EE_CVV_Input(),
 			)
-		);
-		if($this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta('test_transactions',true,false)){
-			$form->get_input('credit_card')->set_default('4007000000027');
-			$form->get_input('exp_year')->set_default('2020');
-			$form->get_input('cvv')->set_default(('123'));
-			$form->add_subsections(array('fyi_about_autofill'=> $form->payment_fields_autofilled_notice_html() ),'credit_card');
-			$form->add_subsections(array('debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php' )), 'first_name' );
+		));
+		return $this->apply_billing_form_debug_settings( $billing_form );
+	}
+
+
+
+	/**
+	 * apply_billing_form_debug_settings
+	 * applies debug data to the form
+	 *
+	 * @param \EE_Billing_Info_Form $billing_form
+	 * @return \EE_Billing_Info_Form
+	 */
+	public function apply_billing_form_debug_settings( EE_Billing_Info_Form $billing_form ) {
+		if ( $this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta( 'test_transactions', TRUE, FALSE )) {
+			$billing_form->get_input( 'credit_card' )->set_default( '4007000000027' );
+			$billing_form->get_input( 'exp_year' )->set_default( '2020' );
+			$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+			$billing_form->add_subsections(
+				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
+				'credit_card'
+			);
+			$billing_form->add_subsections(
+				array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php' )),
+				'first_name'
+			);
 		}
-		return $form;
+		return $billing_form;
 	}
 
 
