@@ -3,17 +3,17 @@
 <?php _e('Adjust the settings for the Authorize.net AIM payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-<?php printf( __( 'See %1$shere%2$s for list of currencies supported by Authorize.net AIM', 'event_espresso' ), "<a href='http://www.authorize.net/international/'>","</a>" ); ?>
+<?php printf( __( 'See %1$shere%2$s for list of currencies supported by Authorize.net AIM', 'event_espresso' ), "<a href='http://www.authorize.net/international/'  target='_blank'>","</a>" ); ?>
 </p>
 <h3><?php _e('Authorize.net AIM Settings', 'event_espresso'); ?></h3>
 <ul>
 <li>
 <?php _e('<strong>Authorize.net API Login ID</strong>', 'event_espresso'); ?><br />
-<?php _e('Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405">API Login ID</a>.', 'event_espresso'); ?>
+<?php _e('Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405"  target="_blank">API Login ID</a>.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Authorize.net Transaction Key</strong>', 'event_espresso'); ?><br />
-<?php _e('Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405">Transaction Key</a>.', 'event_espresso'); ?>
+<?php _e('Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank">Transaction Key</a>.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Is this an account on the Authorize.net development server?</strong>', 'event_espresso'); ?><br />

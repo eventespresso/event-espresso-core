@@ -89,7 +89,7 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_definitions() {
-		EED_Recaptcha::$_not_a_robot = FALSE;
+		EED_Recaptcha::$_not_a_robot = is_user_logged_in();
 		define( 'RECAPTCHA_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'RECAPTCHA_BASE_URL', plugin_dir_url( __FILE__ ));
 	}

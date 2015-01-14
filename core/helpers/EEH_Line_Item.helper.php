@@ -23,26 +23,29 @@ class EEH_Line_Item {
 	//delete ticket purchase
 	//add promotion
 	/**
-	 * Adds a simple item ( unrelated to any other model object) to the total line item,
-	 * in the correct spot in the line item tree.
-	 *
+	 * Adds a simple item ( unrelated to any other model object) to the total line item
+	 * in the correct spot in the line item tree (also verifying it doesn't add a duplicate based on the LIN_code)
 	 * @param EE_Line_Item $parent_line_item
-	 * @param string       $name
-	 * @param float        $unit_price
-	 * @param string       $description
-	 * @param int          $quantity
-	 * @param boolean      $taxable
+	 * @param string $name
+	 * @param float $unit_price
+	 * @param string $description
+	 * @param int $quantity
+	 * @param boolean $taxable
+	 * @param boolean $code if set to a value, ensures there is only one line item with that code
 	 * @return boolean success
 	 */
-	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE ){
+	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL  ){
+		$items_subtotal = self::get_items_subtotal( $parent_line_item );
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
 			'LIN_unit_price' => $unit_price,
 			'LIN_quantity' => $quantity,
 			'LIN_is_taxable' => $taxable,
+			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
 			'LIN_total' => floatval( $unit_price ) * intval( $quantity ),
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
+			'LIN_code' => $code,
 		));
 		return self::add_item( $parent_line_item, $line_item );
 	}

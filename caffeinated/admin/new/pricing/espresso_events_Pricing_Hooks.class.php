@@ -843,7 +843,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
-			'TKT_registrations' => $default ? 0 : $ticket->count_registrations(),
+			'TKT_registrations' => $default ? 0 : $ticket->count_registrations( array( array( 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) ) ) ),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
