@@ -93,7 +93,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// 	overpaid transactions
 		// 	$ 0.00 transactions (no payment required)
 		// TODO: if /when we implement donations, then this will need overriding
-		if ( ! $this->checkout->payment_required() ) {
+		if ( ! $this->completed() && ! $this->checkout->payment_required() ) {
 			$this->checkout->remove_reg_step( $this->_slug );
 			$this->checkout->reset_reg_steps();
 			return;
@@ -109,9 +109,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EE_Registry::instance()->load_helper( 'HTML' );
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'payments_closed';
-		$payment_required = FALSE;
+		$payment_required = TRUE;
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
+		// these reg statuses do NOT require payment
+		$no_payment_required = array(
+			EEM_Registration::status_id_not_approved,
+			EEM_Registration::status_id_cancelled,
+			EEM_Registration::status_id_declined
+		);
 		$reg_count = 0;
 		// loop thru registrations to gather info
 		foreach ( $this->checkout->transaction->registrations() as $registration ) {
@@ -126,22 +132,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// add event to list of events with pre-approval reg status
 				$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
 			}
-			// these reg statuses require payment (if event is not free)
-			$requires_payment = array(
-				EEM_Registration::status_id_pending_payment,
-				EEM_Registration::status_id_approved
-			);
-			$payment_required = in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ? TRUE : $payment_required;
+			$payment_required = in_array( $registration->status_ID(), $no_payment_required ) || $registration->ticket()->is_free() ? FALSE : $payment_required;
 		}
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
 			$form = $this->_sold_out_events( $sold_out_events );
 		} else if ( ! empty( $events_requiring_pre_approval )) {
 			$form = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
-		} else if ( $payment_required ) {
-			$form = $this->_display_payment_options( $reg_count );
-		} else {
+		} else if ( ! $payment_required ) {
 			$form = $this->_no_payment_required();
+		} else {
+			$form = $this->_display_payment_options( $reg_count );
 		}
 //		d( $form );
 		return $form;
