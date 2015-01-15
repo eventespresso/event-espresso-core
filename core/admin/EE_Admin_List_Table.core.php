@@ -645,4 +645,32 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	public function get_admin_page() {
 		return $this->_admin_page;
 	}
+
+
+
+	/**
+	 * A "helper" function for all children to provide an html string of
+	 * actions to output in their content.  It is preferable for child classes
+	 * to use this method for generating their actions content so that it's
+	 * filterable by plugins
+	 *
+	 * @param string $action_container what are the html container
+	 *                                 		          elements for this actions string?
+	 * @param string $action_class     What class is for the container
+	 *                                 		       element.
+	 * @param string $action_items     The contents for the action items
+	 *                                 		       container.  This is filtered before
+	 *                                 		       returned.
+	 *
+	 * @return string The assembled action elements container.
+	 */
+	protected function _action_string( $action_items, $action_container = 'ul', $action_class = '', $action_id = '' ) {
+		$content = '';
+		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
+		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
+		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
+		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $this );
+		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
+		return $content;
+	}
 }
