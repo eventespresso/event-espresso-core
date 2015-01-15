@@ -312,11 +312,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );
 
-		$content = '<div style="width:100%;">' . "\n\t";
-		$content .= implode( "\n\t", $actionlinks );
-		//todo: we need to put back in a email attendees link via the new messages system
-		$content .= "\n" . '</div>' . "\n";
-		return $content;
+		return $this->_action_string( implode( "\n\t", $actionlinks ), $item, 'div' );
 	}
 
 

@@ -875,8 +875,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		if ( ! empty( $func )) {
+			$base_call = $addon_call = FALSE;
 			//try to access page route via this class
-			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
+			if ( ! is_array( $func ) && method_exists( $this, $func ) && ( $base_call = call_user_func_array( array( $this, &$func  ), $args ) ) === FALSE ) {
 				// user error msg
 				$error_msg =  __( 'An error occurred. The  requested page route could not be found.', 'event_espresso' );
 				// developer error msg
@@ -885,13 +886,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			//for pluggability by addons first let's see if just the function exists (this will also work in the case where $func is an array indicating class/method)
 			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
-			if ( !empty( $error_msg ) && call_user_func_array( $func, $args ) === FALSE ) {
+
+			if ( $base_call === FALSE && ( $addon_call = call_user_func_array( $func, $args ) )=== FALSE ) {
 				$error_msg = __('An error occurred. The requested page route could not be found', 'event_espresso' );
 				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $func );
 			}
 
 
-			if ( !empty( $error_msg ) )
+			if ( !empty( $error_msg ) && $base_call === FALSE && $addon_call === FALSE )
 				throw new EE_Error( $error_msg );
 		}
 
@@ -2685,6 +2687,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// close form
 		$this->_template_args['after_admin_page_content'] = '</form>';
 
+	}
+
+
+
+	/**
+	 * Public Wrapper for _redirect_after_action() method since its
+	 * discovered it would be useful for external code to have access.
+	 *
+	 * @see EE_Admin_Page::_redirect_after_action() for params.
+	 * @since 4.5.0
+	 */
+	public function redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+		$this->_redirect_after_action( $success, $what, $action_desc, $query_args, $override_overwrite );
 	}
 
 
