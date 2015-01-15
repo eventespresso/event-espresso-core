@@ -908,9 +908,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
 							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
-							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, 0),
+							(3, '" . __('Fixed Discount', 'event_espresso') . "', 2,  0, 30, 0),
 							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
-							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
+							(5, '" . __('Fixed Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_price_types__SQL', $SQL );
 				$wpdb->query( $SQL );
 			}
