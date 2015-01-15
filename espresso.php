@@ -45,11 +45,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-<<<<<<< HEAD
 		return '4.6.0.alpha.093';
-=======
-		return '4.5.0.beta.069';
->>>>>>> beta
 	}
 } else {
 	unset( $_GET['activate'] );
