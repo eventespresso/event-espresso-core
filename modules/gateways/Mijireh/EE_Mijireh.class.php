@@ -93,7 +93,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		//does nothign because this has been deprecated
 	}
 	protected function _format_float($float){
-		return number_format($float, 2);
+		return number_format($float, 2, '.', '');
 	}
 
 	/**
