@@ -137,18 +137,23 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-
+		// grab event status
+		$_event_active_status = self::$_event->get_active_status();
 		if (
-			(
+			! is_admin()
+			&& (
 				! self::$_event->display_ticket_selector()
 				|| $view_details
 				|| post_password_required( $event_post )
 				|| (
-					self::$_event->get_active_status() != EE_Datetime::active
-					&& self::$_event->get_active_status() != EE_Datetime::upcoming
+					$_event_active_status != EE_Datetime::active
+					&& $_event_active_status != EE_Datetime::upcoming
+					&& ! (
+						$_event_active_status == EE_Datetime::inactive
+						&& is_user_logged_in()
+					)
 				)
 			)
-			&& ! is_admin()
 		) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
@@ -331,7 +336,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		//d( EE_Registry::instance()->SSN );
@@ -389,9 +394,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
-						EE_Registry::instance()->CART->get_cart_total_before_tax();
-						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__just_before_saving_cart_and_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
-						EE_Registry::instance()->CART->save_cart();
+						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
+						EE_Registry::instance()->CART->recalculate_all_cart_totals();
+						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
 //						d( EE_Registry::instance()->CART );
 //						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
@@ -399,7 +404,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__redirect_url_if_success', get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
 					} else {

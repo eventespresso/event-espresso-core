@@ -101,6 +101,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$payment,
 				$this->checkout->reg_cache_where_params
 			);
+			// this will result in the base session properties getting saved to the TXN_Session_data field
+			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( NULL, TRUE ));
 			// make sure any final TXN changes make it to the db
 			$this->checkout->transaction->save();
 			// you don't have to go home but you can't stay here !

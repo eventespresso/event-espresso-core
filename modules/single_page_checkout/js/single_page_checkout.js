@@ -799,6 +799,7 @@ jQuery(document).ready( function($) {
 			var form_data = 'step=payment_options';
 			form_data += '&action=switch_spco_billing_form';
 			form_data += '&selected_method_of_payment=' + payment_method;
+			form_data += '&reset_payment_method=1';
 			form_data += '&generate_reg_form=1';
 			form_data += '&process_form_submission=0';
 			form_data += '&noheader=1';
@@ -853,7 +854,7 @@ jQuery(document).ready( function($) {
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
 			// alert( 'next_step = ' + next_step );
-			if ( typeof response !== 'undefined' && typeof response !== null ) {
+			if ( typeof response === 'object' ) {
 				// trigger a custom event so that other JS functions can add listeners for the "spco_process_response" event
 				SPCO.main_container.trigger( 'spco_process_response', [ next_step, response ] );
 				// process response
@@ -904,7 +905,8 @@ jQuery(document).ready( function($) {
 				}
 
             } else {
-				SPCO.submit_reg_form_server_error();
+				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'process_response', eei18n.invalid_json_response ), '' );
+				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 			}
 		},
 

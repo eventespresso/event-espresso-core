@@ -184,11 +184,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param array $default_data
 	 */
 	public function populate_defaults($default_data){
-		echo '<h2 style="color:#E76700;">populate_defaults<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		foreach($this->subsections() as $subsection_name => $subsection){
 			if(isset($default_data[$subsection_name])){
 				if($subsection instanceof EE_Form_Input_Base){
-					printr( $default_data[$subsection_name], $subsection_name, __FILE__, __LINE__ );
 					$subsection->set_default($default_data[$subsection_name]);
 				}elseif($subsection instanceof EE_Form_Section_Proper){
 					$subsection->populate_defaults($default_data[$subsection_name]);

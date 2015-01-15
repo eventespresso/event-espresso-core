@@ -83,7 +83,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			$this->_pm_instance,
 			array(
 				'name'=> 'Paypal_Pro_Billing_Form',
-				'html_id'=> 'ee-Paypal_Pro-billing-form',
+//				'html_id'=> 'ee-Paypal_Pro-billing-form',
 				'subsections'=>array(
 					'credit_card'=>new EE_Credit_Card_Input(
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Number', 'event_espresso' ))
@@ -96,8 +96,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 					'exp_month'=>new EE_Month_Input(
 						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
 					),
-					'exp_year'=>new EE_Year_Input(
-						TRUE, 1, 15, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+					'exp_year'=>new EE_Credit_Card_Year_Input(
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn'  )
 					),
 					'cvv'=>new EE_CVV_Input(
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
@@ -105,8 +105,20 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				)
 			)
 		);
+		return $this->apply_billing_form_debug_settings( $billing_form );
+	}
 
-		if($this->_pm_instance->debug_mode()){
+
+
+	/**
+	 * apply_billing_form_debug_settings
+	 * applies debug data to the form
+	 *
+	 * @param \EE_Billing_Info_Form $billing_form
+	 * @return \EE_Billing_Info_Form
+	 */
+	public function apply_billing_form_debug_settings( EE_Billing_Info_Form $billing_form ) {
+		if ( $this->_pm_instance->debug_mode() ) {
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
 				'credit_card'
@@ -115,10 +127,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php' )),
 				'first_name'
 			);
-			$billing_form->get_input('credit_card')->set_default('5424180818927383');
-			$billing_form->get_input('credit_card_type')->set_default('MasterCard');
-			$billing_form->get_input('exp_year')->set_default( date('Y') + 6 );
-			$billing_form->get_input('cvv')->set_default('115');
+			$billing_form->get_input( 'credit_card' )->set_default( '5424180818927383' );
+			$billing_form->get_input( 'credit_card_type' )->set_default( 'MasterCard' );
+			$billing_form->get_input( 'exp_year' )->set_default( date('Y') + 6 );
+			$billing_form->get_input( 'cvv' )->set_default( '115' );
 		}
 		return $billing_form;
 	}

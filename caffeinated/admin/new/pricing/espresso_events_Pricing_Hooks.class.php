@@ -551,7 +551,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
-				'PRC_is_default' => 0, //make sure we set PRC_is_default to 0 for all ticket saves from event_editor
+				'PRC_is_default' => false, //make sure we set PRC_is_default to false for all ticket saves from event_editor
 				'PRC_order' => $row
 				);
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
@@ -843,7 +843,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
-			'TKT_registrations' => $default ? 0 : $ticket->count_registrations(),
+			'TKT_registrations' => $default ? 0 : $ticket->count_registrations( array( array( 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) ) ) ),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),

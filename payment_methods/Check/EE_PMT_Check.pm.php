@@ -59,16 +59,16 @@ class EE_PMT_Check extends EE_PMT_Base{
 	public function generate_new_settings_form() {
 			if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 				$organization = EE_Registry::instance()->CFG->organization;
-				$organization_name = $organization->name;
-				$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
-				$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
-				$default_address .= $organization->city != '' ? $organization->city : '';
+				$organization_name = $organization->get_pretty( 'name' );
+				$default_address = $organization->address_1 != '' ? $organization->get_pretty( 'address_1' ) . '<br />' : '';
+				$default_address .= $organization->address_2 != '' ? $organization->get_pretty( 'address_2' ) . '<br />' : '';
+				$default_address .= $organization->city != '' ? $organization->get_pretty( 'city' ) : '';
 				$default_address .= ( $organization->city != '' && $organization->STA_ID != '') ? ', ' : '<br />';
 				$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
 				$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) ;
 				$default_address .=  $state ? $state->name() . '<br />' : '';
 				$default_address .= $country ? $country->name(). '<br />' : '';
-				$default_address .= $organization->zip != '' ? $organization->zip : '';
+				$default_address .= $organization->zip != '' ? $organization->get_pretty( 'zip' ) : '';
 			}else{
 				$default_address = 'unknown';
 				$organization_name = 'unknown';

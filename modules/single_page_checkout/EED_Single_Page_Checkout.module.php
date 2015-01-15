@@ -90,6 +90,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		EED_Single_Page_Checkout::set_definitions();
 		if ( defined( 'DOING_AJAX' )) {
+			// going to start an output buffer in case anything gets accidentally output that might disrupt our JSON response
+			ob_start();
 			EED_Single_Page_Checkout::load_request_handler();
 			EED_Single_Page_Checkout::load_reg_steps();
 		}
@@ -256,7 +258,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'slug' => 'registration_confirmation',
 					'has_hooks' => FALSE
 				),
-				30 => array(
+				5 => array(
 					'file_path' => SPCO_REG_STEPS_PATH . 'payment_options',
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options',
@@ -421,7 +423,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//make sure this request is marked as belonging to EE
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 		// which step is being requested ?
-		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
+		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', $this->_get_first_step() );
 		// which step is being edited ?
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
@@ -435,6 +437,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+	}
+
+
+
+	/**
+	 *    _get_first_step
+	 *  gets slug for first step in $_reg_steps_array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	private function _get_first_step() {
+		$first_step = reset( EED_Single_Page_Checkout::$_reg_steps_array );
+		return isset( $first_step['slug'] ) ? $first_step['slug'] : 'attendee_information';
 	}
 
 
@@ -816,6 +833,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
+						return;
 					}
 				}
 			} catch( EE_Error $e ) {
@@ -843,7 +861,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				$this->go_to_next_step();
 				break;
 
 			default :
@@ -864,8 +881,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
 
 				} else {
 					EE_Error::add_error(
@@ -879,6 +894,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			// end default
 		}
+		// advance to the next step! If you pass GO, collect $200
+		$this->go_to_next_step();
 	}
 
 
@@ -893,6 +910,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
 		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
 		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['invalid_json_response'] = __( 'An invalid response was returned from the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['validation_error'] = __( 'There appears to be a problem with the form validation configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['invalid_payment_method'] = __( 'There appears to be a problem with the payment method configuration! Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
@@ -1045,6 +1063,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step() {
+		if ( EE_Registry::instance()->REQ->ajax ) {
+			// capture contents of output buffer we started earlier in the request, and insert into JSON response
+			$this->checkout->json_response->set_unexpected_errors( ob_get_clean() );
+		}
 		// just return for these conditions
 		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' || $this->checkout->action == 'update_checkout' ) {
 			return;
@@ -1054,7 +1076,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			echo $json_response;
-			die();
+			exit();
 		}
 		// going somewhere ?
 		if ( $this->checkout->redirect ) {

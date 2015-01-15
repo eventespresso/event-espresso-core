@@ -274,7 +274,17 @@ class EEM_Payment_Method extends EEM_Base {
 				//so deactivate it and move on
 				$payment_method->deactivate();
 				$payment_method->save();
-				EE_Error::add_attention( sprintf( __( "There is no payment method type '%s', so the payment method '%s' was deactivated", "event_espresso" ), $payment_method->type(), $payment_method->name() ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_attention(
+					sprintf(
+						__( 'An error occurred while attempting to use the "%1$s" payment method, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated?%2$sIt can be reactivated on the %3$sPlugins admin page%4$s||%2$sThe actual error was:%2$s%5$s', 'event_espresso' ),
+						$payment_method->name(),
+						'<br />',
+						'<a href="' . admin_url('plugins.php') . '">',
+						'</a>',
+						$e->getMessage()
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 			}
 		}
 		return $usable_payment_methods;

@@ -334,7 +334,6 @@ class EEH_DTT_Helper {
 	 * @param bool   $bump_to_previous_day
 	 * @param string $date_format
 	 * @param string $time_format
-	 * @internal param mixed $start_date
 	 * @return bool
 	 */
 	public static function process_end_date( $end_date, $bump_to_previous_day = TRUE, $date_format = '', $time_format = '' ) {

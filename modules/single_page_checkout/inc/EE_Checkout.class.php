@@ -206,7 +206,7 @@ class EE_Checkout {
 		$this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
-		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
+		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->ajax;
 		$this->reg_cache_where_params = array( 'order_by' => array( 'REG_count' => 'ASC' ));
 	}
 
@@ -219,7 +219,11 @@ class EE_Checkout {
 	 * @return    void
 	 */
 	public function reset_for_current_request() {
+		$this->process_form_submission = FALSE;
+		$this->continue_reg = TRUE;
 		$this->redirect = FALSE;
+		$this->redirect_url = '';
+		$this->redirect_form = '';
 		$this->json_response = new EE_SPCO_JSON_Response();
 		EE_Form_Section_Proper::reset_js_localization();
 	}
@@ -526,7 +530,7 @@ class EE_Checkout {
 	public function save_all_data( $show_errors = TRUE ) {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			// save so that TXN has ID
+			// save to ensure that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
@@ -676,6 +680,7 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+		$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
 		return TRUE;
 	}
 

@@ -393,27 +393,11 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-		// currently only using this to send messages for the primary registrant
-		if ( ! $registration->is_primary_registrant() ) {
-			return;
-		}
-		// let's NOT send out notifications if the registration was NOT finalized.
-		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
-			return;
-		}
-		// and only send messages during revisit if the reg status changes
-		if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
-			return;
-		}
-		// make sure appropriate admin params are set for sending messages
-		if (
-			(
-				is_admin() && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
-			) && (
-				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
-			)
-		) {
-			//no messages sent please.
+
+		$do_send = self::_verify_registration_notification_send( $registration, $extra_details );
+
+		if ( ! $do_send ) {
+			//no messages please
 			return;
 		}
 
@@ -432,6 +416,44 @@ class EED_Messages  extends EED_Module {
 			);
 		}
 
+	}
+
+
+
+	/**
+	 * This is a helper method used to very whether a registration notification should be sent or
+	 * not.  Prevents duplicate notifications going out for registration context notifications.
+	 *
+	 * @param EE_Registration $registration  [description]
+	 * @param array           $extra_details [description]
+	 *
+	 * @return bool          true = send away, false = nope halt the presses.
+	 */
+	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return false;
+		}
+		// let's NOT send out notifications if the registration was NOT finalized.
+		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+			return false;
+		}
+		// and only send messages during revisit if the reg status changes
+		if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+			return false;
+		}
+		// make sure appropriate admin params are set for sending messages
+		if (
+			(
+				is_admin() && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
+			) && (
+				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
+			)
+		) {
+			//no messages sent please.
+			return false;
+		}
+		return true;
 	}
 
 

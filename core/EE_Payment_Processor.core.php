@@ -88,7 +88,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				sprintf(
 					__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
+					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 			return NULL;
@@ -160,7 +160,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 						sprintf(
 							__( 'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso' ),
 							'<br/>',
-							EE_Registry::instance()->CFG->organization->email
+							EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 						),
 						__FILE__, __FUNCTION__, __LINE__
 					);

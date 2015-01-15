@@ -73,6 +73,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 				__( 'In order to register a message type with EE_Register_Message_Type::register, you must include a unique name for the message type, plus an array containing the following keys: "mtfilename", "autoloadpaths"', 'event_espresso' )
 			);
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_message_type_registry[ $mt_name ] ) ){
+			return;
+		}
+
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
             EE_Error::doing_it_wrong(

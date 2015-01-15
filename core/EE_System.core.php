@@ -153,6 +153,9 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		require_once EE_CORE . 'EE_Deprecated.core.php';
+		// load interfaces
+		require_once EE_CORE . 'EEI_Interfaces.php';
+		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
 
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
@@ -858,7 +861,7 @@ final class EE_System {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 
-		if ( is_admin()  ) {
+		if ( is_admin() && apply_filters( 'FHEE__EE_System__brew_espresso__load_pue', TRUE )  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
 			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );

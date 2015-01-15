@@ -1,6 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- *
  * Class EEH_Debug_Tools
  *
  * @package 			Event Espresso
@@ -36,7 +35,7 @@ class EEH_Debug_Tools{
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EEH_Debug_Tools )) {
+		if ( ! self::$_instance instanceof EEH_Debug_Tools ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -52,14 +51,19 @@ class EEH_Debug_Tools{
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
-		if( ! class_exists('Kint')){
-			require_once( EE_THIRD_PARTY . 'kint' . DS . 'Kint.class.php' );
+		if ( ! class_exists( 'Kint' ) &&  file_exists( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' )){
+			// despite EE4 having a check for an existing copy of the Kint debugging class,
+			// if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
+			// then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
+			// so we've moved it to our test folder so that it is not included with production releases
+			// plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
+			require_once( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' );
 		}
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
-		add_action( 'activated_plugin', array( $this,'ee_plugin_activation_errors' ));
-		add_action( 'shutdown', array( $this,'show_db_name' ));
+		add_action( 'activated_plugin', array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
+		add_action( 'shutdown', array( 'EEH_Debug_Tools', 'show_db_name' ));
 	}
 
 
@@ -69,7 +73,7 @@ class EEH_Debug_Tools{
 	 *
 	 * 	@return void
 	 */
-	public function show_db_name() {
+	public static function show_db_name() {
 		if ( ! defined( 'DOING_AJAX' ) && ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS )) {
 			echo '<p style="font-size:10px;font-weight:normal;color:#E76700;margin: 1em 2em; text-align: right;">DB_NAME: '. DB_NAME .'</p>';
 		}
@@ -83,7 +87,7 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public function espresso_session_footer_dump() {
-		if ( function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
+		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
 //			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
@@ -122,7 +126,9 @@ class EEH_Debug_Tools{
 			ksort( $priorities );
 			foreach( $priorities as $priority => $function ){
 				echo $priority;
-				foreach( $function as $name => $properties ) echo "\t$name<br />";
+				foreach( $function as $name => $properties ) {
+					echo "\t$name<br />";
+				}
 			}
 		}
 		return;
@@ -131,6 +137,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * 	start_timer
 	 * @param null $timer_name
 	 */
 	public function start_timer( $timer_name = NULL ){
@@ -140,6 +147,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * stop_timer
 	 * @param string $timer_name
 	 */
 	public function stop_timer($timer_name = 'default'){
@@ -182,6 +190,7 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 * show_times
 	 * @param bool $output_now
 	 * @return string
 	 */
@@ -200,9 +209,9 @@ class EEH_Debug_Tools{
 	 *
 	 * 	@return void
 	 */
-	public function ee_plugin_activation_errors() {
-		if ( WP_DEBUG === TRUE ) {
-			$errors = ob_get_contents();
+	public static function ee_plugin_activation_errors() {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			$activation_errors = ob_get_contents();
 			if ( class_exists( 'EE_Registry' )) {
 				EE_Registry::instance()->load_helper( 'File' );
 			} else {
@@ -212,15 +221,16 @@ class EEH_Debug_Tools{
 				try {
 					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
 					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
-					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 				} catch( EE_Error $e ){
 					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
 				}
 			} else {
 				// old school attempt
-				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 			}
-			update_option( 'ee_plugin_activation_errors', $errors );
+			$activation_errors = get_option( 'ee_plugin_activation_errors', '' ) . $activation_errors;
+			update_option( 'ee_plugin_activation_errors', $activation_errors );
 		}
 	}
 
@@ -251,7 +261,7 @@ class EEH_Debug_Tools{
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp_query' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp_query' ) ) {
 	function dump_wp_query(){
 		global $wp_query;
 		d($wp_query);
@@ -262,7 +272,7 @@ if ( !function_exists( 'dump_wp_query' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_wp' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_wp' ) ) {
 	function dump_wp(){
 		global $wp;
 		d($wp);
@@ -273,7 +283,7 @@ if ( !function_exists( 'dump_wp' ) ) {
  * borrowed from Kint Debugger
  * Plugin URI: http://upthemes.com/plugins/kint-debugger/
  */
-if ( !function_exists( 'dump_post' ) ) {
+if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
 	function dump_post(){
 		global $post;
 		d($post);
@@ -295,6 +305,7 @@ if ( !function_exists( 'dump_post' ) ) {
  * @param bool   $die
  */
 function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
+	$format = ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? TRUE : FALSE;
 	$print_r = FALSE;
 	if ( is_object( $var )) {
 		$var_name = $var_name == '' ? get_class( $var ) : $var_name . ' : ' . get_class( $var );
@@ -306,19 +317,23 @@ function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $heig
 		$var_name = $var_name == '' ? 'numeric' : $var_name;
 	} else if ( is_string( $var )) {
 		$var_name = $var_name == '' ? 'string' : $var_name;
-		echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b></h5>';
+		if ( $format ) {
+			echo '<h5 style="color:#2EA2CC;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b></h5>';
+		} else {
+			echo "\n" . $var_name . ' : ' . $var . "\n" . $file . ' : ' . $line . "\n";
+		}
 		return;
 	} else if ( is_null( $var )) {
 		$var_name = $var_name == '' ? 'null' : $var_name;
 	}
 	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
 	ob_start();
-	echo '<div style="padding:1em;">';
-	echo '<h5 style="color:#2EA2CC;margin: 1em 0 0;"><b>' . $var_name . '</b></h5>
-	<span style="font-size:10px;font-weight:normal;">' . $file . ' &nbsp; &nbsp; &nbsp; line no: ' . $line . '</span><br />';
-	echo '<pre style="display:block; width:100%; height:' . $height . ';color:#E76700;">';
+	echo $format ? '<div style="padding:1em;">' : '';
+	echo $format ? '<h5 style="color:#2EA2CC;margin: 1em 0 0;"><b>' . $var_name . '</b></h5>' : "\n" . $var_name;
+	echo $format ? '<span style="font-size:10px;font-weight:normal;">' . $file . ' &nbsp; &nbsp; &nbsp; line no: ' . $line . '</span><br />' : "\n" . $file . ' : ' . $line;
+	echo $format ? '<pre style="display:block; width:100%; height:' . $height . ';color:#E76700;">' : "\n";
 	$print_r ? print_r($var) : var_dump($var);
-	echo '</pre></div>';
+	echo $format ? '</pre></div>' : "\n";
 	$result = ob_get_clean();
 
 	if ( $die ) {

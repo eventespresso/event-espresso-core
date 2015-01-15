@@ -376,7 +376,15 @@ class EE_Payment_Method extends EE_Base_Class{
 			if ( EE_Payment_Method_Manager::instance()->payment_method_type_exists( $this->type() )) {
 				$class_name = EE_Payment_Method_Manager::instance()->payment_method_class_from_type( $this->type() );
 				if ( ! class_exists( $class_name )) {
-					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate an EE addon?", "event_espresso"),$class_name));
+					throw new EE_Error(
+						sprintf(
+							__( 'An attempt to use the "%1$s" payment method failed, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated? It can be reactivated on the %3$sPlugins Admin Page%4$s', 'event_espresso' ),
+							$class_name,
+							'<br />',
+							'<a href="' . admin_url('plugins.php') . '">',
+							'</a>'
+						)
+					);
 				}
 				$r = new ReflectionClass( $class_name );
 					$this->_type_obj = $r->newInstanceArgs( array( $this ));

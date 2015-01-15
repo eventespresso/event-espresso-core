@@ -40,13 +40,20 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register Model extensions with EE_Register_Model_Extensions::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_extension_paths" (an array of full server paths to folders that contain model extensions), and "class_extension_paths" (an array of full server paths to folders that contain class extensions)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_registry[ $model_id ] ) ){
+			return;
+		}
 		//check correct loading
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' )) {
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded'  )) {
 			EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
-					__('An attempt was made to register "%s" as a group models has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.','event_espresso'),
-					$model_id
+					__('An attempt was made to register "%1$s" as a Model extension has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.%2$s Hook Status: %2$s "AHEE__EE_System__load_espresso_addons" : %3$s %2$s "AHEE__EE_Admin__loaded" : %4$s%2$s','event_espresso'),
+					$model_id,
+					'<br />',
+					did_action( 'AHEE__EE_System__load_espresso_addons' ) ? 'action done' : 'action NOT done',
+					did_action( 'AHEE__EE_Admin__loaded' ) ? 'action done' : 'action NOT done'
 				),
 				'4.3'
 			);

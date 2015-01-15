@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * mijireh_settings_after_form
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------

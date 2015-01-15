@@ -123,6 +123,10 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('line_item'),
 				'required' => array('[TAX_LINE_ITEM_LIST]')
 				),
+			'additional_line_item_list' => array(
+				'shortcodes' => array('line_item'),
+				'required' => array('[ADDITIONAL_LINE_ITEM_LIST]')
+			),
 			'payment_list' => array(
 				'shortcodes' => array('payment'),
 				'required' => array('[PAYMENT_LIST_*]')
@@ -289,6 +293,17 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '5',
 						'shortcodes_required' => array('[TAX_LINE_ITEM_LIST]')
 						),
+					'additional_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[ADDITIONAL_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[ADDITIONAL_LINE_ITEM_LIST]')
+						),
 					'payment_list' => array(
 						'input' => 'textarea',
 						'label' => '[PAYMENT_LIST]',
@@ -344,12 +359,13 @@ class EE_Html_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		$this->_template_args = array(
-			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
+			'page_title' => html_entity_decode( stripslashes( $this->_subject ), ENT_QUOTES, "UTF-8"),
 			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
 			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
+
 		$this->_deregister_wp_hooks();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		echo $this->_get_main_template();
@@ -369,14 +385,15 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _deregister_wp_hooks() {
 		remove_all_actions('wp_head');
 		remove_all_actions('wp_footer');
-		remove_all_actions('wp_footer_scripts');
+		remove_all_actions('wp_print_footer_scripts');
 		remove_all_actions('wp_enqueue_scripts');
-		global $wp_scripts, $wp_styles, $wp_actions, $wp_filters;
-		$wp_scripts = $wp_styles = $wp_actions = $wp_filters = array();
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = $wp_styles = array();
 
 		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
-		add_action('wp_head', 'wp_enqueue_scripts');
 		add_action( 'wp_footer', 'wp_print_footer_scripts' );
+		add_action( 'wp_print_footer_scripts', '_wp_footer_scripts' );
+		add_action('wp_head', 'wp_enqueue_scripts');
 	}
 
 

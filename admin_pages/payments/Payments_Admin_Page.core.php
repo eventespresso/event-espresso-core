@@ -446,7 +446,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
 					array(
 						'pci_dss_compliance_' . $payment_method->slug() 				=> $this->_pci_dss_compliance( $payment_method ),
-//						'currency_support_' . $payment_method->slug()					=> $this->_currency_support( $payment_method ),
+						'currency_support_' . $payment_method->slug()					=> $this->_currency_support( $payment_method ),
 						'payment_method_settings_' . $payment_method->slug() 	=> $this->_payment_method_settings( $payment_method ),
 						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
 						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
@@ -497,7 +497,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return \EE_Form_Section_Proper
 	 */
 	protected function _currency_support( EE_Payment_Method $payment_method ) {
-		if ( $payment_method->usable_for_currency( EE_Config::instance()->currency->code )) {
+		if ( ! $payment_method->usable_for_currency( EE_Config::instance()->currency->code )) {
 			return new EE_Form_Section_HTML(
 				EEH_HTML::tr(
 					EEH_HTML::th(

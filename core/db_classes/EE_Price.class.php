@@ -99,6 +99,18 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	*		set is_default
+	*
+	* 		@access		public
+	*		@param		bool		$PRC_is_default
+	*/
+	public function set_is_default( $PRC_is_default = FALSE ) {
+		$this->set( 'PRC_is_default', $PRC_is_default );
+	}
+
+
+
+	/**
 	*		set deleted
 	*
 	* 		@access		public
@@ -185,6 +197,17 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	 */
 	public function wp_user() {
 		return $this->get('PRC_wp_user');
+	}
+
+
+
+	/**
+	 *    get is_default
+	 * @access        public
+	 * @return        bool
+	 */
+	public function is_default() {
+		return $this->get( 'PRC_is_default' );
 	}
 
 

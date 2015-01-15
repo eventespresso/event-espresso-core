@@ -492,12 +492,18 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
-	 * Adds the line item as a child to this line item
+	 * Adds the line item as a child to this line item. If there is another child line
+	 * item with the same LIN_code, it is overwriten by this new one
 	 * @param EE_Line_Item $line_item
 	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
 		if ( $this->ID() ) {
+			//check for any duplicate line items (with the same code), if so, thsi replaces it
+			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
+			if( $line_item_with_same_code instanceof EE_Line_Item ) {
+				$this->delete_child_line_item( $line_item_with_same_code->code() );
+			}
 			$line_item->set_parent_ID( $this->ID() );
 			if( $this->TXN_ID() ){
 				$line_item->set_TXN_ID( $this->TXN_ID() );
@@ -793,6 +799,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants() {
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_tax_descendants( $this );
 	}
 
@@ -803,6 +810,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function get_items() {
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_line_item_descendants( $this );
 	}
 
@@ -872,6 +880,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	protected function _get_descendants_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_descendants_of_type( $this, $type );
 	}
 
@@ -882,6 +891,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function get_nearest_descendant_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
 

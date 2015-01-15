@@ -203,6 +203,22 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
+	 *        Set session data within the TXN object
+	 *
+	 * @access        public
+	 * @param        EE_Session|array $session_data
+	 */
+	public function set_txn_session_data( $session_data ) {
+		if ( $session_data instanceof EE_Session ) {
+			$this->set( 'TXN_session_data', $session_data->get_session_data( NULL, TRUE ));
+		} else {
+			$this->set( 'TXN_session_data', $session_data );
+		}
+	}
+
+
+
+	/**
 	 *        get Transaction hash salt
 	 * @access        public
 	 */
@@ -605,22 +621,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
-	 *        Set session data within the TXN object
-	 *
-	 * @access        public
-	 * @param        EE_Session|array $session_data
-	 */
-	public function set_txn_session_data( $session_data ) {
-		if ( $session_data instanceof EE_Session ) {
-			$this->set( 'TXN_session_data', $session_data->get_session_data() );
-		} else {
-			$this->set( 'TXN_session_data', $session_data );
-		}
-	}
-
-
-
-	/**
 	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
 	 * @return EE_Form_Section_Proper
 	 */
@@ -692,6 +692,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 */
 	public function last_payment() {
 		return $this->get_first_related( 'Payment', array( 'order_by' => array( 'PAY_ID' => 'desc' ) ) );
+	}
+
+	/**
+	 * Gets all the line items which are unrelated to tickets on this transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function non_ticket_line_items(){
+		return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $this->ID() );
 	}
 
 

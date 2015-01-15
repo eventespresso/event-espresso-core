@@ -2,7 +2,7 @@
 /**
  * meant to convert DBs between 4.6 and 4.6
  * mostly just
- * -move payment methods from EE_COnfig into a seperate table just for them
+ * -move payment methods from EE_Config into a separate table just for them
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
@@ -19,10 +19,24 @@ foreach($stages as $filepath){
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_6_0__autoloaded_stages',$class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
+
+
+
+
+/**
+ * Class EE_DMS_Core_4_6_0
+ *
+ * @package            Event Espresso
+ * @subpackage    core
+ * @author                Mike Nelson
+ * @since                4.6.0
+ *
+ */
 class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
-
-
+	/**
+	 * return EE_DMS_Core_4_6_0
+	 */
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.6.0.P", "event_espresso");
 		$this->_priority = 10;
@@ -39,6 +53,13 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		);
 		parent::__construct();
 	}
+
+
+
+	/**
+	 * @param array $version_array
+	 * @return bool
+	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
 		if($version_string <= '4.6.0' && $version_string >= '4.5.0' ){
@@ -53,9 +74,21 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			return false;
 		}
 	}
+
+
+
+	/**
+	 * @return string|void
+	 */
 	public function pretty_name() {
 		return __("Core Data Migration to version 4.6.0", "event_espresso");
 	}
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function schema_changes_before_migration() {
 		//relies on 4.1's EEH_Activation::create_table
 		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
@@ -551,7 +584,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$script_4_5_defaults->insert_default_prices();
 		$script_4_5_defaults->insert_default_tickets();
 
-		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen here
 		EE_Config::instance()->update_espresso_config(false, true);
 		$this->add_default_admin_only_payments();
 		$this->insert_default_currencies();
@@ -574,14 +607,14 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$user_id = EEH_Activation::get_default_creator_id();
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
 
-			$SQL = "SELECT COUNT( * ) FROM " . $table_name;
+			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
 			if ( ! $existing_payment_methods ) {
 				//make sure we hae payment method records for the following
 				//so admins can record payments for them from the admin page
 				$default_admin_only_payment_methods = array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
-					__("Cash", 'event_espresso')=>  __("Cash Deliverd Physically", 'event_espresso'),
+					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
 					__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
 					__("Credit Card", 'event_espresso') =>  __("Offline Credit Card Payment", 'event_espresso'),
 					__("Debit Card", 'event_espresso')=>  __("Offline Debit Payment", 'event_espresso'),
@@ -639,10 +672,10 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$currency_table = $wpdb->prefix."esp_currency";
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
 
-			$SQL = "SELECT COUNT('CUR_code') FROM " . $currency_table;
+			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);
 			if ( ! $countries ) {
-				$SQL = "INSERT INTO " . $currency_table . "
+				$SQL = "INSERT INTO $currency_table
 				( CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active) VALUES
 				( 'EUR',  'Euro',  'Euros',  '€',  2,1),
 				( 'AED',  'Dirham',  'Dirhams', 'د.إ',2,1),

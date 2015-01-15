@@ -21,6 +21,11 @@ class EE_SPCO_JSON_Response {
 	/**
 	 * @var string
 	 */
+	protected $_unexpected_errors = '';
+
+	/**
+	 * @var string
+	 */
 	protected $_attention = '';
 
 	/**
@@ -103,6 +108,9 @@ class EE_SPCO_JSON_Response {
 		if ( $this->errors() ) {
 			$JSON_response['errors'] = $this->errors();
 		}
+		if ( $this->unexpected_errors() ) {
+			$JSON_response['unexpected_errors'] = $this->unexpected_errors();
+		}
 		if ( $this->success() ) {
 			$JSON_response['success'] = $this->success();
 		}
@@ -178,6 +186,24 @@ class EE_SPCO_JSON_Response {
 	 */
 	public function errors() {
 		return $this->_errors;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function unexpected_errors() {
+		return $this->_unexpected_errors;
+	}
+
+
+
+	/**
+	 * @param string $unexpected_errors
+	 */
+	public function set_unexpected_errors( $unexpected_errors ) {
+		$this->_unexpected_errors = $unexpected_errors;
 	}
 
 
