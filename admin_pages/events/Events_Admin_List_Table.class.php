@@ -296,7 +296,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );
 
-		return $this->_action_string( implode( "\n\t", $actionlinks ), 'div' );
+		return $this->_action_string( implode( "\n\t", $actionlinks ), $item, 'div' );
 	}
 
 

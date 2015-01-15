@@ -662,15 +662,19 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @param string $action_items     The contents for the action items
 	 *                                 		       container.  This is filtered before
 	 *                                 		       returned.
+	 * @param string $action_id           What id (optional) is used for the
+	 *                                    	        container element.
+	 * @param object $item                 The object for the column displaying
+	 *                                     	       the actions.
 	 *
 	 * @return string The assembled action elements container.
 	 */
-	protected function _action_string( $action_items, $action_container = 'ul', $action_class = '', $action_id = '' ) {
+	protected function _action_string( $action_items, $item, $action_container = 'ul', $action_class = '', $action_id = '' ) {
 		$content = '';
 		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
 		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
 		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
-		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $this );
+		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $item, $this );
 		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
 		return $content;
 	}

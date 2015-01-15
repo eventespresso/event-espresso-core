@@ -485,7 +485,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>' : '';
 
-			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk, 'ul', 'reg-overview-actions-ul' );
+			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk, $item, 'ul', 'reg-overview-actions-ul' );
 	}
 
 }
