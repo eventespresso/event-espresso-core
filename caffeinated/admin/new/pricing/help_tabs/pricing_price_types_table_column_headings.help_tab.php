@@ -7,7 +7,7 @@
 </li>
 <li>
 <strong><?php _e('Discount', 'event_espresso'); ?></strong><br />
-<?php _e('The discount base type is a kind of Price Type that modifies the base price by subtracting a value or percentage (depends on price type options). For example, a "Percent Discount" price type and "Dollar Discount" are both extensions of the "discount" base type. The "Percent Discount" price type has been set to give percentage discounts, whereas the "Dollar Discount" has been set to give dollar discounts.', 'event_espresso'); ?>
+<?php _e('The discount base type is a kind of Price Type that modifies the base price by subtracting a value or percentage (depends on price type options). For example, a "Percent Discount" price type and "Fixed Discount" are both extensions of the "discount" base type. The "Percent Discount" price type has been set to give percentage discounts, whereas the "Fixed Discount" has been set to give fixed discounts.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php _e('Surcharge', 'event_espresso'); ?></strong><br />

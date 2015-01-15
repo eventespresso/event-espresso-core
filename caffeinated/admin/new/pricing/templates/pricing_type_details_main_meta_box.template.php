@@ -25,7 +25,7 @@
 
 			<tr>
 				<th>
-					<label><?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?></label>
+					<label><?php _e('Percentage or Fixed Amount?', 'event_espresso'); ?></label>
 				</th>
 				<td>
 					<?php $yes_checked = $price_type->is_percent() ? ' checked="checked"' : ''; ?>
@@ -34,13 +34,13 @@
 					</label>
 					<?php $no_checked = $price_type->is_percent() ? '' : ' checked="checked"'; ?>
 					<label style="margin-right:15px;"><input type="radio" name="PRT_is_percent" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
-						<?php _e('Dollar', 'event_espresso');?>
+						<?php _e('Fixed', 'event_espresso');?>
 					</label>
-					<p class="description"><?php _e('Whether this Price Type will be applied as a percentage or applied as a set dollar amount.', 'event_espresso'); ?></p>
+					<p class="description"><?php _e('Whether this Price Type will be applied as a percentage or applied as a set fixed amount.', 'event_espresso'); ?></p>
 					<?php if ( $price_type->base_type() == EEM_Price_Type::base_type_tax ) :
 						//base type is tax so let's just let the user know that taxes are always percentage.
 						?>
-						<p class="description" style="color:#E44064"><?php _e( 'The selected base type for this price type is "Tax".  Taxes are always assumed to be a percentage.  If you want to use a dollar value for a tax then please change the base type to a surcharge.', 'event_espresso' ); ?></p>
+						<p class="description" style="color:#E44064"><?php _e( 'The selected base type for this price type is "Tax".  Taxes are always assumed to be a percentage.  If you want to use a fixed value for a tax then please change the base type to a surcharge.', 'event_espresso' ); ?></p>
 					<?php endif; ?>
 				</td>
 			</tr>
