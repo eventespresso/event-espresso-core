@@ -266,12 +266,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function _set_paging( $WP_Query ) {
 		if ( $WP_Query->is_main_query() && apply_filters( 'FHEE__EE_CPT_Strategy___set_paging', TRUE )) {
-			$paged = $WP_Query->get( 'paged' );
-			if ( ! $paged ) {
-				$page = $WP_Query->get( 'page' );
-				$paged = $page ? $page : 1;
-			}
-			$WP_Query->set( 'paged', $paged );
+			$WP_Query->set( 'paged', get_query_var( 'page' ));
 		}
 	}
 
