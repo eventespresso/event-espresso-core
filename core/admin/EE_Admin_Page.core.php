@@ -2693,6 +2693,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * Public Wrapper for _redirect_after_action() method since its
+	 * discovered it would be useful for external code to have access.
+	 *
+	 * @see EE_Admin_Page::_redirect_after_action() for params.
+	 * @since 4.5.0
+	 */
+	public function redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+		$this->_redirect_after_action( $success, $what, $action_desc, $query_args, $override_overwrite );
+	}
+
+
+
+	/**
 	 * 	_redirect_after_action
 	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
 	 *	@param string 	$what 		- what the action was performed on
