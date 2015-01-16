@@ -415,6 +415,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('currency_code', $paypal_cur);
 		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
 		$this->addField('no_shipping ', $no_shipping);
+		$this->addField('bn', 'EventEspresso_SP');//EE will blow up if you change this
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 
