@@ -153,6 +153,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['image_url'] = $this->_image_url;
 		}
 		$redirect_args['no_shipping'] = $this->_shipping_details;
+		$redirect_args['bn'] = 'EventEspresso_SP';//EE will blow up if you change this
 
 		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args );
 
