@@ -762,7 +762,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		 *
 		 * @var bool
 		 */
-		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_regisration_form_input', FALSE, $registration, $form_input, $input_value, $this );
+		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this );
 
 		if ( $has_processed ) {
 			return TRUE;
