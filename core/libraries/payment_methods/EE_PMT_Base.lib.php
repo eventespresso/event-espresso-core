@@ -633,6 +633,20 @@ abstract class EE_PMT_Base{
 		return 'ee_payment_method_' . strtolower( $this->system_name() );
 	}
 
+	/**
+	 * Called by client code to tell the gateway that if it wants to change
+	 * the transaction or line items or registrations related to teh payment it already
+	 * processed (we think, but possibly not) that now's the time to do it.
+	 * It is expected that gateways will store any info they need for this on the PAY_details,
+	 * or maybe an extra meta value
+	 * @param EE_Payment $payment
+	 * @return void
+	 */
+	public function update_txn_based_on_payment( $payment ){
+		if( $this->_gateway instanceof EE_Gateway ){
+			$this->_gateway->update_txn_based_on_payment( $payment );
+		}
+	}
 
 
 }

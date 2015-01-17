@@ -180,21 +180,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( ! $payment ){
 			$payment = $transaction->last_payment();
 		}
-		//take note of whether or not we COULD have allowed paypal to add taxes and shipping
-		//when we sent the customer to paypal (because if we couldn't itemize the transaction, we
-		//wouldn't have known what parts were taxable, meaning we would have had to tell paypal
-		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
-		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
 			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
-		}
-		//verify the transaction exists
-		if(empty($transaction)){
-			return false;
 		}
 
 
@@ -209,44 +200,29 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$status = $this->_pay_model->declined_status();//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
 		}
-		$grand_total_needs_resaving = FALSE;
-//		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
-
-		//might paypal have added shipping?
-		if( $could_allow_paypal_to_add_taxes_and_shipping && $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
-			$grand_total_needs_resaving = TRUE;
-
-		}
-		//might paypal have changed the taxes?
-		if( $could_allow_paypal_to_add_taxes_and_shipping && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
-			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
-			$grand_total_needs_resaving = TRUE;
-		}
 		//check if we've already processed this payment
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
 				//echo "duplicated ipn! dont bother updating transaction foo!";
-//				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
+				$this->log( array(
+					'message' => sprintf( __( 'It appears we have received a duplicate IPN from paypal for payment %d', 'event_espresso' ), $payment->ID()),
+					'payment' => $payment->model_field_array(),
+					'IPN data' => $update_info ),
+						$payment );
 			}else{
 //				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
 				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
-				$payment->set_details($update_info);
+				$payment->set_details( $update_info );
+				$this->log( array(
+					'message' => sprintf( __( 'Updated payment either from IPN or as part of POST from paypal', 'event_espresso' )),
+					'payment' => $payment->model_field_array(),
+					'IPN_data' => $update_info ),
+						$payment);
 			}
 		}
-		$this->log( array(
-			'IPN Data' => $update_info,
-			'transaction (not yet updated)' => $transaction->model_field_array(),
-			'payment (updated)' => $payment->model_field_array()),
-				$payment);
-		if( $grand_total_needs_resaving ){
-//			echo "total lin eitem total: " . $transaction->total_line_item()->total();
-			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
-		}
-//		echo "Vardump of total lin eitem:";var_dump($transaction->total_line_item());
 		return $payment;
 	}
 
@@ -305,6 +281,60 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$payment->set_status(EEM_Payment::status_id_failed);
 			return false;
 		}
+	}
+
+	/**
+	 * Updates the transaction and line items based on the payment IPN data from paypal,
+	 * like the taxes or shipping
+	 * @param EEI_Payment $payment
+	 */
+	public function update_txn_based_on_payment( $payment ) {
+		$update_info = $payment->details();
+		$redirect_args = $payment->redirect_args();
+		$transaction = $payment->transaction();
+		if( ! $transaction ){
+			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldnt be executed properly', 'event_espresso' ), $payment );
+			return;
+		}
+		if( ! is_array( $update_info ) || ! isset( $update_info[ 'mc_shipping' ] ) || ! isset( $update_info[ 'tax' ] ) ) {
+			$this->log(
+					array( 'message' => __( 'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from paypal', 'event_espresso' ),
+				'payment' => $payment->model_field_array() ),
+					$payment );
+			return;
+		}
+		//take note of whether or not we COULD have allowed paypal to add taxes and shipping
+		//when we sent the customer to paypal (because if we couldn't itemize the transaction, we
+		//wouldn't have known what parts were taxable, meaning we would have had to tell paypal
+		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
+//		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
+
+		$grand_total_needs_resaving = FALSE;
+
+		//might paypal have added shipping?
+		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
+			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
+			$grand_total_needs_resaving = TRUE;
+
+		}
+		//might paypal have changed the taxes?
+		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $redirect_args[ 'tax_cart' ] ){
+			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
+			$grand_total_needs_resaving = TRUE;
+		}
+
+		if( $grand_total_needs_resaving ){
+			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
+		}
+		$this->log( array(
+			'message' => __( 'Updated transaction related to payment', 'event_espresso' ),
+			'transaction (updated)' => $transaction->model_field_array(),
+			'payment (updated)' => $payment->model_field_array(),
+			'use_paypal_shipping' => $this->_paypal_shipping,
+			'use_paypal_tax' => $this->_paypal_taxes,
+			'grand_total_needed_resaving' => $grand_total_needs_resaving,),
+
+				$payment);
 	}
 
 

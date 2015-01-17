@@ -180,7 +180,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+				if( $this->_ok_to_update_txn_based_on_payments( $transaction ) ) {
+					$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+				}else{
+					//wait- don't update the txn just yet, just save the payment.
+					//the txn will get updated later. We want to avoid updating the
+					//txn now because there might be a race condition where a cached
+					//version of it will overwrite any changes we would make to it now anyways
+					$payment->save();
+				}
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -276,6 +284,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		// verify payment
 		if ( $payment instanceof EE_Payment ) {
+			if( $payment->payment_method() instanceof EE_Payment_Method &&
+					$payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
+				$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
+			}
 			// we need to save this payment in order for transaction to be updated correctly
 			// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
 			$payment->save();
@@ -309,6 +321,27 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		}
 	}
 
+	/**
+	 * Decides whether or not now is the right time to update the transaction
+	 * based on payments. This is useful because when an IPN is received, we don't necessarily
+	 * always want to immediately update the transactiona nd its related data. why?
+	 * because it's possible that there's a cached version of the transaction in a session that will
+	 * overwrite what the IPN would save anyways. So we want to only update the txn
+	 * once we know that won't happen.
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	protected function _ok_to_update_txn_based_on_payments( $transaction ) {
+		$txn_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		/* @var $txn_processor EE_Transaction_Processor */
+		if( $txn_processor->all_reg_steps_completed( $transaction ) ) {
+			//note: this doesn't account for when someone goes to paypal to pay but never returns.
+			//although an IPN was received, the txn won't be updated
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 
 
