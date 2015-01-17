@@ -257,6 +257,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_args['subsections'][ $identifier ] = $this->reg_form_question( $registration, $question );
 			}
 		}
+		$form_args['subsections'] = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__question_group_reg_form__subsections_array', $form_args['subsections'], $registration, $question_group, $this );
+
 		// filter for additional content after questions
 		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '', $registration, $question_group, $this ));
 //		d( $form_args );
