@@ -656,6 +656,20 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					if ( ! $this->checkout->revisit ) {
 						$registration->save();
 					}
+
+					/**
+					 * This allows plugins to trigger a fail on processing of a
+					 * registration for any conditions they may have for it to pass.
+					 *
+					 * @var bool   if TRUE is returned by the plugin then the
+					 *      		registration processing is halted.
+					 */
+					$allstop = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this );
+
+					if ( $allstop ) {
+						return FALSE;
+					}
+
 					// Houston, we have a registration!
 					$att_nmbr++;
 					$this->_attendee_data[ $reg_url_link ] = array();
