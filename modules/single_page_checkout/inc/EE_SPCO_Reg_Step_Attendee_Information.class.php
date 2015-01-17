@@ -755,6 +755,19 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
+
+		/**
+		 * allow for plugins to hook in and do their own processing of the form input. For
+		 * plugins to bypass normal processing here, they just need to return a truthy value.
+		 *
+		 * @var bool
+		 */
+		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_regisration_form_input', FALSE, $registration, $form_input, $input_value, $this );
+
+		if ( $has_processed ) {
+			return TRUE;
+		}
+
 		// grab related answer objects
 		$answers = $registration->answers();
 		// $answer_cache_id is the key used to find the EE_Answer we want
