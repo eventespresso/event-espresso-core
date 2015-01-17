@@ -891,6 +891,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
+
+		/**
+		 * global action hook for enqueueing styles and scripts with
+		 * spco calls.
+		 */
+		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts', $this );
+
+		/**
+		 * dynamic action hook for enqueueing styles and scripts with spco calls.
+		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_sytles_and_scripts__attendee_information
+		 */
+		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
+
 		// add css and JS for current step
 		$this->checkout->current_step->enqueue_styles_and_scripts();
 	}
