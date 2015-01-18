@@ -46,30 +46,24 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @since    4.3.0
 	 * @param array $setup_args
 	 * @throws EE_Error
-	 * @internal param string $addon_name 		the EE_Addon's name. Required.
+	 * @param string $addon_name 		the EE_Addon's name. Required.
 	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
-	 * @internal param string admin_path 			full server path to the folder where the addon\'s admin files reside
-	 * @internal param string main_file_path the full server path to the main file loaded directly by WP
-	 * @internal param string autoloader_paths 	an array of class names and the full server paths to those files. Required.
-	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
-	 * @internal param string module_paths 		an array of full server paths to any EED_Modules used by the addon
-	 * @internal param string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
-	 * @internal param string widgets 					an array of full server paths to folders that contain WP_Widgets
-	 * @type array message_types {
-	 *       		 An array of message types with the key as the message type name and the values as below:
-	 *
-	 *        		@type string $mtfilename             The filename of the message type being
-	 *                                                                          registered.  This will be the main
-	 *                                                                          EE_{Messagetype_Name}_message_type class. (
-	 *                                                                          eg. EE_Declined_Registration_message_type.
-	 *                                                                          class.php). Required.
-	 *                     @type array $autoloadpaths          An array of paths to add to the messages
-	 *                                                                          autoloader for the new message type. Required.
-	 *                     @type array $messengers_to_activate_with An array of messengers that this message
-	 *                                                                          type should activate with. Each value in the
-	 *                                                                          array should match the name property of a
-	 *                                                                          EE_messenger. Optional.
-	 *       	}
+	 * 		@type string admin_path 			full server path to the folder where the addon\'s admin files reside
+	 * 		@type string main_file_path 		the full server path to the main file loaded directly by WP
+	 * 		@type string autoloader_paths 	an array of class names and the full server paths to those files. Required.
+	 * 		@type string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
+	 * 		@type string module_paths 		an array of full server paths to any EED_Modules used by the addon
+	 * 		@type string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
+	 * 		@type string widgets 					an array of full server paths to folders that contain WP_Widgets
+	 * 		@type array message_types { 		an array of message types with the key as the message type name and the values as below:
+	 * 			@type string $mtfilename 			The filename of the message type being registered.
+	 * 																	This will be the main EE_{Messagetype_Name}_message_type class.
+	 * 																	( eg. EE_Declined_Registration_message_type. class.php). Required.
+	 * 			@type array $autoloadpaths 		An array of paths to add to the messages autoloader for the new message type. Required.
+	 * 			@type array $messengers_to_activate_with
+	 * 																	An array of messengers that this message type should activate with.
+	 * 																	Each value in the array should match the name property of a EE_messenger. Optional.
+	 * 		}
 	 * 	}
 	 * @return void
 	 */
