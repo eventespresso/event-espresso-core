@@ -221,7 +221,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			// Your own invoice or tracking number
 			'invnum' => wp_generate_password(12,false),//$transaction->ID(),
 			// URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
-			'notifyurl' => ''
+			'notifyurl' => '',
+			'buttonsource' => 'EventEspresso_SP',//EE will blow up if you change this
 		);
 		// Wrap all data arrays into a single, "master" array which will be passed into the class function.
 		$PayPalRequestData = array(
