@@ -120,6 +120,31 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_name($item) {
+		$edit_query_args = array(
+				'action' => 'edit',
+				'post' => $item->ID()
+			);
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+		$actions = $this->_column_name_action_setup( $item );
+		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
+		$content .= $this->row_actions($actions);
+		return $content;
+
+	}
+
+
+
+
+
+	/**
+	 * Just a method for setting up the actions for the name column
+	 *
+	 * @param EE_Event $item
+	 *
+	 * @return array array of actions
+	 */
+	protected function _column_name_action_setup( EE_Event $item ) {
 		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
@@ -136,11 +161,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 
-		$export_query_args = array(
-				'action' => 'export_events',
-				'EVT_ID' => $item->ID()
-			);
-		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
+
 
 		$trash_event_query_args = array(
 				'action' => 'trash_event',
@@ -166,7 +187,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
 			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>',
-			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
 			);
 
 		switch ( $item->get( 'status' ) ) {
@@ -178,16 +198,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			default :
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
-
-		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
-		$content .= $this->row_actions($actions);
-		return $content;
-
+		return $actions;
 	}
-
-
-
 
 
 
