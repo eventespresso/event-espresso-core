@@ -322,6 +322,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t->update_extra_meta( 'work', 'yes' );
 		$this->assertEquals( 'yes', $t->get_extra_meta( 'work', TRUE ) );
 	}
+
+	public function test_delete_permanently_with_extra_meta(){
+		$attendee = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob', 'ATT_lname' => 'deleteme', 'ATT_email' => 'ef@ew.dw'));
+		$attendee->save();
+		$attendee->add_extra_meta('shouldnt_prevent_deletion', 'no_sirry' );
+		$this->assertEquals( 'no_sirry', $attendee->get_extra_meta('shouldnt_prevent_deletion', TRUE ) );
+		$attendee->delete_permanently();
+		//if that didn't throw an error, we're good
+	}
 }
 
 // End of file EE_Base_Class_Test.php
