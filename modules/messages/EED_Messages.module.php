@@ -394,9 +394,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 
-		$do_send = self::_verify_registration_notification_send( $registration, $extra_details );
-
-		if ( ! $do_send ) {
+		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
 			//no messages please
 			return;
 		}
@@ -404,10 +402,7 @@ class EED_Messages  extends EED_Module {
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
 		$message_type = self::_get_reg_status_array( $registration->status_ID() );
-//		printr( $message_type, '$message_type', __FILE__, __LINE__ );
-//		printr( $extra_details, '$extra_details', __FILE__, __LINE__ );
-//		printr( $registration, '$registration', __FILE__, __LINE__ );
-//		die();
+		// verify message type is active
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
 			self::$_EEMSG->send_message(
@@ -432,15 +427,15 @@ class EED_Messages  extends EED_Module {
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 		// currently only using this to send messages for the primary registrant
 		if ( ! $registration->is_primary_registrant() ) {
-			return false;
+			return FALSE;
 		}
 		// let's NOT send out notifications if the registration was NOT finalized.
 		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
-			return false;
+			return FALSE;
 		}
 		// and only send messages during revisit if the reg status changes
 		if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
-			return false;
+			return FALSE;
 		}
 		// make sure appropriate admin params are set for sending messages
 		if (
@@ -451,9 +446,9 @@ class EED_Messages  extends EED_Module {
 			)
 		) {
 			//no messages sent please.
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 
 
