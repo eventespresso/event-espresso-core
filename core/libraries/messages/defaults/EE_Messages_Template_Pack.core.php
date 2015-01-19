@@ -264,9 +264,17 @@ abstract class  EE_Messages_Template_Pack {
 	protected function _get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
 		$templates = array();
 
-		//we get all the templates for the DEFAULT template pack to have fallbacks in case this template pack does not have templates for this messenger and message type.
-		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
-		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
+		/**
+		 * Retrieving the default pack for later usage of default templates for template packs that
+		 * are NOT the default pack ( or an extension of the default pack ).
+		 * We ONLY set this variable to be the default pack IF the loaded class is NOT the default
+		 * pack.  This prevents recursion in _get_specific_template().  The intention is that for
+		 * template packs that are NOT default packs, we use the default template pack to provide
+		 * the final fallback templates if there aren't any defined for the called template pack.
+		 *
+		 * @var EE_Messages_Template_Pack | null
+		 */
+		$default_pack = ! $this instanceof EE_Messages_Template_Pack_Default ? new EE_Messages_Template_Pack_Default() : null;
 
 		$fields = $messenger->get_template_fields();
 		$contexts = $message_type->get_contexts();
@@ -303,7 +311,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Utility method for retrieving a specific template matching the given parameters
 	 *
-	 * @param mixed (null|EE_Messages_Template_Pack_Default)          $default_pack either the default template pack or null
+	 * @param null | EE_Messages_Template_Pack_Default          $default_pack  å
 	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @param string          $field          The field reference for the specific template being looked up.
@@ -312,6 +320,9 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return string          The template contents.
 	 */
 	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
+
+		//default templates
+		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
 
 		//first we allow for the $_base_path to be filtered.  However, we assign this to a new variable so that we have the original base_path as a fallback.
 		$filtered_base_path = apply_filters( 'FHEE__EE_Template_Pack___get_specific_template__filtered_base_path', $this->_base_path, $messenger, $message_type, $field, $context, $this );
