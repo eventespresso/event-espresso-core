@@ -22,24 +22,36 @@ class EEM_Transaction extends EEM_Base {
 //	const open_status_code = 'TPN';
 
 	/**
-	 * Status ID(STS_ID on esp_status table) to indicate the transaction failed, either due to a technical reason (server or computer crash during registration),
-	 *  or due to an abandoned cart after registrant was forwarded to an off-site gateway ie: got to PayPal, then bailed
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction failed,
+	 * either due to a technical reason (server or computer crash during registration),
+	 *  or some other reason that prevent the collection of any useful contact information from any of the registrants
 	 */
 	const failed_status_code = 'TFL';
 
 	/**
-	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction  TXN_paid < TXN_total
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction was abandoned,
+	 * either due to a technical reason (server or computer crash during registration),
+	 * or due to an abandoned cart after registrant chose not to complete the registration process
+	 * HOWEVER...
+	 * an abandoned TXN differs from a failed TXN in that it was able to capture contact information for at least one registrant
+	 */
+	const abandoned_status_code = 'TAB';
+
+	/**
+	 * Status ID(STS_ID on esp_status table) to indicate an incomplete transaction,
+	 * meaning that monies are still owing: TXN_paid < TXN_total
 	 */
 	const incomplete_status_code = 'TIN';
 
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction. TXN_paid == TXN_total
+	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
+	 * meaning that NO monies are owing: TXN_paid == TXN_total
 	 */
 	const complete_status_code = 'TCM';
 
 	/**
-	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.  TXN_paid > TXN_total
-	 *  This is the same as complete, but site admins actually owe clients the moneys!
+	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
+	 *  This is the same as complete, but site admins actually owe clients the moneys!  TXN_paid > TXN_total
 	 */
 	const overpaid_status_code = 'TOP';
 
