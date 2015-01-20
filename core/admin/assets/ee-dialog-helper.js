@@ -50,6 +50,8 @@ jQuery(document).ready(function($) {
 
 	var dialogHelper = {
 
+		dialogContentContainer : $('.ee-admin-dialog-container-inner-content'),
+
 		displayModal: function(overlaystick, draggable) {
 			overlaystick = typeof(overlaystick) === 'undefined' ? false : overlaystick;
 			draggable = typeof(draggable) === 'undefined' ? false : draggable
