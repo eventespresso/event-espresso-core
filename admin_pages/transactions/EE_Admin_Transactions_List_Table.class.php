@@ -45,6 +45,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_data = $this->_admin_page->get_transactions( $this->_per_page );
+		$status = ! empty( $this->_req_data['status'] )? $this->_req_data['status'] : 'all';
+		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE, $status );
 	}
 
 
