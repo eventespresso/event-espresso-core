@@ -887,7 +887,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// i18n
 		$this->translate_js_strings();
 		// load JS
-		wp_enqueue_script( 'underscore' );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
