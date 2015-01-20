@@ -21,13 +21,11 @@ abstract class EE_PMT_Base{
 	const offline = 'off-line';
 
 	/**
-	 *
 	 * @var EE_Payment_Method
 	 */
 	protected $_pm_instance = NULL;
 
 	/**
-	 **
 	 * @var boolean
 	 */
 	protected $_requires_https = FALSE;
@@ -46,6 +44,11 @@ abstract class EE_PMT_Base{
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_billing_form = NULL;
+
+	/**
+	 * @var boolean
+	 */
+	protected $_cache_billing_form = TRUE;
 
 	/**
 	 * String of the absolute path to the folder containing this file, with a trailing slash.
@@ -222,14 +225,17 @@ abstract class EE_PMT_Base{
 	}
 
 
+
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
+	 *
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+	 * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
-		if( ! $this->_billing_form ){
+		// has billing form already been regenerated ? or overwrite cache?
+		if( ! $this->_billing_form || ! $this->_cache_billing_form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
