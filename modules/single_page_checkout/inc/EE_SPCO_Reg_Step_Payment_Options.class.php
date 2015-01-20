@@ -991,10 +991,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} catch( Exception $e ) {
 			EE_Error::add_error(
 				sprintf(
-					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||%3$s', 'event_espresso' ),
+					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||The following Exception was thrown in %4$s on line %5$s:%1$s%3$s', 'event_espresso' ),
 					'<br/>',
 					EE_Registry::instance()->CFG->organization->get_pretty( 'email' ),
-					$e->getMessage()
+					$e->getMessage(),
+					$e->getFile(),
+					$e->getLine()
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 		}
