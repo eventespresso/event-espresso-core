@@ -425,30 +425,42 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
-		// currently only using this to send messages for the primary registrant
-		if ( ! $registration->is_primary_registrant() ) {
-			return FALSE;
-		}
-		// let's NOT send out notifications if the registration was NOT finalized.
-		if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
-			return FALSE;
-		}
-		// and only send messages during revisit if the reg status changes
-		if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
-			return FALSE;
-		}
+
+		$verified = TRUE;
+
+		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (
 			(
-				is_admin() && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
+				is_admin() && ! EE_FRONT_AJAX && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
 			) && (
 				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
 			)
 		) {
 			//no messages sent please.
+			$verified = FALSE;
+		}
+
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
 			return FALSE;
 		}
-		return TRUE;
+
+		if ( $verified && ( ! is_admin() || EE_FRONT_AJAX ) ) {
+
+			// let's NOT send out notifications if the registration was NOT finalized.
+			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+				return FALSE;
+			}
+
+
+			// and only send messages during revisit if the reg status changes
+			if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+				return FALSE;
+			}
+		}
+
+		return $verified;
 	}
 
 
