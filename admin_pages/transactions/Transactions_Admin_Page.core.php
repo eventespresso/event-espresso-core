@@ -343,6 +343,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'slug' 		=> 'abandoned',
 				'label' 		=> __('Abandoned Transactions', 'event_espresso'),
 				'count' 	=> 0
+			),
+			'failed' => array(
+				'slug' 		=> 'failed',
+				'label' 		=> __('Failed Transactions', 'event_espresso'),
+				'count' 	=> 0
 			)
 		);
 	}
@@ -439,11 +444,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			 'abandoned' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
 				'desc' => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
-			 )
-//			 'failed' => array(
-//				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
-//				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
-//				)
+			 ),
+			 'failed' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+			)
 		);
 
 		return array_merge( $items, $more_items);
