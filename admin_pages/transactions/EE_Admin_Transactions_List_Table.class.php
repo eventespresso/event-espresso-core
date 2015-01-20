@@ -45,7 +45,6 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_data = $this->_admin_page->get_transactions( $this->_per_page );
-		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE );
 	}
 
 
@@ -115,7 +114,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_all_data_count;
+		$this->_views['all']['count'] = $this->_admin_page->get_transactions( $this->_per_page, TRUE, 'all' );
+		$this->_views['abandoned']['count'] = $this->_admin_page->get_transactions( $this->_per_page, TRUE, 'abandoned' );
 	}
 
 
