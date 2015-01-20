@@ -859,6 +859,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// because saving an object clears it's cache, we need to do the chevy shuffle
 			// grab the primary_registration object
 			$primary_registration = $this->checkout->transaction->primary_registration();
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// at this point we'll consider a TXN to not have been failed
+			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
 			// save the TXN ( which clears cached copy of primary_registration)
 			$this->checkout->transaction->save();
 			// grab TXN ID and save it to the primary_registration
