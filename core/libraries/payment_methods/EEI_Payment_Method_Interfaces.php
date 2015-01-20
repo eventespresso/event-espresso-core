@@ -43,9 +43,15 @@ interface EEI_Payment extends EEI_Base{
 	/**
 	 * Sets the response details, usually the entire contents of an IPN request,
 	 * or data about the direct payment data sent
-	 * @param array $response_details
+	 * @param mixed $response_details
 	 */
 	function set_details($response_details);
+
+	/**
+	 * Returns whatever the details were set to be, which could be an array, object, string, integer, whatever.
+	 * @return mixed
+	 */
+	function details();
 
 	/**
 	 * Sets the URl to redirect to, to process payment
@@ -58,6 +64,13 @@ interface EEI_Payment extends EEI_Base{
 	 * @param array $args
 	 */
 	function set_redirect_args($args);
+
+	/**
+	 * Gets redirect_args
+	 * @return array
+	 */
+	function redirect_args();
+
 	/**
 	 *
 	 * @return EEI_Transaction
