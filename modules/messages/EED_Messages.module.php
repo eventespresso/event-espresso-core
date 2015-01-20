@@ -432,13 +432,13 @@ class EED_Messages  extends EED_Module {
 		// make sure appropriate admin params are set for sending messages
 		if (
 			(
-				is_admin() && ! EE_FRONT_AJAX && isset( $extra_details['manually_updated'] ) && $extra_details['manually_updated']
+				is_admin() && ! EE_FRONT_AJAX
 			) && (
 				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
 			)
 		) {
 			//no messages sent please.
-			$verified = FALSE;
+			$verified = false;
 		}
 
 		// currently only using this to send messages for the primary registrant
