@@ -24,15 +24,15 @@
  *
  * ------------------------------------------------------------------------
  */
+// defined some new constants related to caffeinated folder
+define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
+define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
+define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
+define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
 class EE_Brewing_Regular extends EE_Base {
 
 	public function __construct() {
-		// defined some new constants related to caffeinated folder
 		if ( defined( 'EE_CAFF_PATH' )) {
-			define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
-			define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
-			define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
-			define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
 			// activation
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
 			// load caff init
