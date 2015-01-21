@@ -277,9 +277,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	private function _show_datetime( $date_or_time = NULL, $start_or_end = 'start', $dt_frmt = '', $tm_frmt = '', $echo = FALSE ) {
 		$field_name = "DTT_EVT_{$start_or_end}";
 		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
-		if ( !$echo ) {
+		if ( ! $echo ) {
 			return $dtt;
 		}
+		return '';
 	}
 
 
@@ -289,8 +290,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * last-used format, or '' to use the default date format
 	 *
 	 * @access        public
-	 * @param null $dt_frmt
-	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @param null $dt_frmt - string representation of date format defaults to 'F j, Y'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
 	public function start_date( $dt_frmt = NULL ) {
@@ -314,8 +314,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * last-used format, or '' to use the default date format
 	 *
 	 * @access        public
-	 * @param null $dt_frmt
-	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @param null $dt_frmt - string representation of date format defaults to 'F j, Y'
 	 * @return        mixed        string on success, FALSE on fail
 	 */
 	public function end_date( $dt_frmt = NULL ) {
@@ -338,9 +337,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *        get date_range - meaning the start AND end date
 	 *
 	 * @access        public
-	 * @param null          $dt_frmt
+	 * @param null          $dt_frmt - string representation of date format defaults to WP settings
 	 * @param        string $conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
-	 * @internal      param string $dt_format - string representation of date format defaults to WP settings
 	 * @return        mixed        string on success, FALSE on fail
 	 */
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
@@ -471,12 +469,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		$end = $this->get_raw( 'DTT_EVT_end' );
 		$length_in_units = $end - $start;
 		switch ( $units ) {
-			//NOTE: We purposefully don't use "break;"
-			//in order to chain the divisions
+			//NOTE: We purposefully don't use "break;" in order to chain the divisions
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case 'days':
 				$length_in_units /= 24;
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case 'hours':
 				$length_in_units /= 60;
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case 'minutes':
 				$length_in_units /= 60;
 			case 'seconds':
@@ -495,10 +495,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *        get end date and time
 	 *
 	 * @access        public
-	 * @param bool        $dt_frmt
-	 * @param bool|string $tm_format - string representation of time format defaults to 'g:i a'
-	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
-	 * @return        mixed        string on success, FALSE on fail
+	 * @param bool | string 	$dt_frmt- string representation of date format defaults to 'F j, Y'
+	 * @param bool | string 	$tm_format - string representation of time format defaults to 'g:i a'
+	 * @return 	mixed        		string on success, FALSE on fail
 	 */
 	public function end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
 		return $this->_show_datetime( '', 'end', $dt_frmt, $tm_format );
@@ -585,7 +584,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return        int
 	 */
 	public function spaces_remaining( $consider_tickets = FALSE ) {
-		// tickets remaining availalbe for purchase
+		// tickets remaining available for purchase
 		//no need for special checks for infinite, because if DTT_reg_limit == INF, then INF - x = INF
 		$dtt_remaining = $this->get( 'DTT_reg_limit' ) - $this->get( 'DTT_sold' );
 		if ( !$consider_tickets ) {
@@ -682,6 +681,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		if ( $this->is_active() ) {
 			return EE_Datetime::active;
 		}
+		return NULL;
 	}
 
 
@@ -694,25 +694,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function get_dtt_display_name( $use_dtt_name = FALSE ) {
 		if ( $use_dtt_name ) {
-			$dttname = $this->name();
-			if ( !empty( $dttname ) ) {
-				return $dttname;
+			$dtt_name = $this->name();
+			if ( !empty( $dtt_name ) ) {
+				return $dtt_name;
 			}
 		}
 		//first condition is to see if the months are different
 		if ( date( 'm', $this->get_raw( 'DTT_EVT_start' ) ) != date( 'm', $this->get_raw( 'DTT_EVT_end' ) ) ) {
-			$displaydate = $this->start_date( 'M j\, Y g:i a' ) . ' - ' . $this->end_date( 'M j\, Y g:i a' );
+			$display_date = $this->start_date( 'M j\, Y g:i a' ) . ' - ' . $this->end_date( 'M j\, Y g:i a' );
 			//next condition is if its the same month but different day
 		}
 		else {
 			if ( date( 'm', $this->get_raw( 'DTT_EVT_start' ) ) == date( 'm', $this->get_raw( 'DTT_EVT_end' ) ) && date( 'd', $this->get_raw( 'DTT_EVT_start' ) ) != date( 'd', $this->get_raw( 'DTT_EVT_end' ) ) ) {
-				$displaydate = $this->start_date( 'M j\, g:i a' ) . ' - ' . $this->end_date( 'M j\, g:i a Y' );
+				$display_date = $this->start_date( 'M j\, g:i a' ) . ' - ' . $this->end_date( 'M j\, g:i a Y' );
 			}
 			else {
-				$displaydate = $this->start_date( 'F j\, Y' ) . ' @ ' . $this->start_date( 'g:i a' ) . ' - ' . $this->end_date( 'g:i a' );
+				$display_date = $this->start_date( 'F j\, Y' ) . ' @ ' . $this->start_date( 'g:i a' ) . ' - ' . $this->end_date( 'g:i a' );
 			}
 		}
-		return $displaydate;
+		return $display_date;
 	}
 
 
