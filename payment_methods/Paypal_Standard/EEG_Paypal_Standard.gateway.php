@@ -23,9 +23,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 	protected $_shipping_details = NULL;
 
-	protected $_paypal_shipping = FALSE;
+	protected $_paypal_shipping = NULL;
 
-	protected $_paypal_taxes = FALSE;
+	protected $_paypal_taxes = NULL;
 
 	protected $_gateway_url = NULL;
 
