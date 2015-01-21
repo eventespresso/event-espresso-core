@@ -114,6 +114,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if( ! $this->_paypal_taxes ){
 				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 			}
+			//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
+			$payment->update_extra_meta( 'itemized_payment', TRUE );
 		}else{
 			//this is a partial payment, so we can't really show all the line items
 			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
@@ -125,9 +127,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['tax_cart'] = '0';
 
 			$item_num++;
-
-
-
+			//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
+			$payment->update_extra_meta( 'itemized_payment', FALSE );
 		}
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
@@ -311,15 +312,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 //		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
 
 		$grand_total_needs_resaving = FALSE;
-
+		$itemized_payment = $payment->get_extra_meta( 'itemized_payment', TRUE, FALSE );
 		//might paypal have added shipping?
-		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
+		if( $this->_paypal_shipping && $itemized_payment ){
 			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
 			$grand_total_needs_resaving = TRUE;
 
 		}
 		//might paypal have changed the taxes?
-		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $redirect_args[ 'tax_cart' ] ){
+		if( $this->_paypal_taxes && $itemized_payment ){
 			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			$grand_total_needs_resaving = TRUE;
 		}
