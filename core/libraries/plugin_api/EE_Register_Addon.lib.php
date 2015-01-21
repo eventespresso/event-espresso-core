@@ -163,7 +163,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' 			=> isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
 			// an array of  "full server paths" for any folders containing classes that might be invoked by the addon
-			'autoloader_folders' 			=> isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
+			'autoloader_folders' 			=> isset( $setup_args['autoloader_folders'] ) ? (array)$setup_args['autoloader_folders'] : array(),
 			// array of full server paths to any EE_DMS data migration scripts used by the addon
 			'dms_paths' 						=> isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array(),
 			// array of full server paths to any EED_Modules used by the addon
