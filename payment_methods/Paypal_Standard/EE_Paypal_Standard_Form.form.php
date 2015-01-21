@@ -17,19 +17,6 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 	protected function _normalize( $req_data ) {
 		parent::_normalize( $req_data );
-		$paypal_calculates_shipping = $this->get_input_value( 'paypal_shipping' );
-		$paypal_calculates_taxes = $this->get_input_value( 'paypal_taxes' );
-		$paypal_requests_address_info = $this->get_input_value( 'shipping_details' );
-		if( ( $paypal_calculates_shipping ||
-				$paypal_calculates_taxes ) &&
-				$paypal_requests_address_info == EE_PMT_Paypal_Standard::shipping_info_none ){
-			//they want paypal to calculate taxes or shipping. They need to ask for
-			//address info, otherwise paypal can't calculate taxese or shipping
-			$shipping_details_input = $this->get_input( 'shipping_details' );
-			$shipping_details_input->set_default( EE_PMT_Paypal_Standard::shipping_info_optional );
-			$shipping_details_input_options = $shipping_details_input->options();
-			EE_Error::add_attention( sprintf( __( 'Automatically set "%s" to "%s" because Paypal requires address info in order to calculate shipping or taxes.', 'event_espresso' ), strip_tags( $shipping_details_input->html_label_text() ), isset( $shipping_details_input_options[ EE_PMT_Paypal_Standard::shipping_info_optional ] ) ? $shipping_details_input_options[ EE_PMT_Paypal_Standard::shipping_info_optional ] : __( 'Unknown', 'event_espresso' ) ), __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 	/**
@@ -46,16 +33,6 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
 					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
-				)),
-				'paypal_taxes' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $payment_method_type->get_help_tab_link() ),
-					'html_help_text' => __('Whether Paypal should calculate order taxes on taxable tickets', 'event_espresso'),
-					'default' => FALSE
-				)),
-				'paypal_shipping' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Paypal Calculates Shipping %s', 'event_espresso' ), $payment_method_type->get_help_tab_link() ),
-					'html_help_text' => __('Whether Paypal should add shipping surcharges', 'event_espresso'),
-					'default' => FALSE
 				)),
 				'shipping_details'=>new EE_Select_Input(array(
 					EE_PMT_Paypal_Standard::shipping_info_none => __("Do not prompt for an address", 'event_espresso'),
