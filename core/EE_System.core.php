@@ -1092,10 +1092,10 @@ final class EE_System {
 		//Top Level
 		$admin_bar->add_menu(array(
 				'id' => 'espresso-toolbar',
-				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
+				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label', 'event_espresso') . '</span>',
 				'href' => $events_admin_url,
 				'meta' => array(
-						'title' => __('Event Espresso'),
+						'title' => __('Event Espresso', 'event_espresso'),
 						'class' => $menu_class . 'first'
 				),
 		));
@@ -1105,10 +1105,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events',
 					'parent' => 'espresso-toolbar',
-					'title' => 'Events',
+					'title' => __( 'Events', 'event_espresso' ),
 					'href' => $events_admin_url,
 					'meta' => array(
-							'title' => __('Events'),
+							'title' => __('Events', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1121,10 +1121,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events-new',
 					'parent' => 'espresso-toolbar-events',
-					'title' => 'Add New',
+					'title' => __('Add New', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'create_new' ), $events_admin_url ),
 					'meta' => array(
-							'title' => __('Add New'),
+							'title' => __('Add New', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1136,10 +1136,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events-view',
 					'parent' => 'espresso-toolbar-events',
-					'title' => 'View',
+					'title' => __( 'View', 'event_espresso' ),
 					'href' => $events_admin_url,
 					'meta' => array(
-							'title' => __('View'),
+							'title' => __('View', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1151,10 +1151,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events-all',
 					'parent' => 'espresso-toolbar-events-view',
-					'title' => 'All',
+					'title' => __( 'All', 'event_espresso' ),
 					'href' => $events_admin_url,
 					'meta' => array(
-							'title' => __('All'),
+							'title' => __('All', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1167,10 +1167,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events-today',
 					'parent' => 'espresso-toolbar-events-view',
-					'title' => 'Today',
+					'title' => __('Today', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $events_admin_url ),
 					'meta' => array(
-							'title' => __('Today'),
+							'title' => __('Today', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1183,10 +1183,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-events-month',
 					'parent' => 'espresso-toolbar-events-view',
-					'title' => 'This Month',
+					'title' => __( 'This Month', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $events_admin_url ),
 					'meta' => array(
-							'title' => __('This Month'),
+							'title' => __('This Month', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1198,10 +1198,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations',
 					'parent' => 'espresso-toolbar',
-					'title' => 'Registrations',
+					'title' => __( 'Registrations', 'event_espresso' ),
 					'href' => $reg_admin_url,
 					'meta' => array(
-							'title' => __('Registrations'),
+							'title' => __('Registrations', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1213,10 +1213,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-today',
 					'parent' => 'espresso-toolbar-registrations',
-					'title' => 'Today',
+					'title' => __( 'Today', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Today'),
+							'title' => __('Today', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1228,10 +1228,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-today-approved',
 					'parent' => 'espresso-toolbar-registrations-today',
-					'title' => 'Approved',
+					'title' => __( 'Approved', 'event_espresso' ),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Approved'),
+							'title' => __('Approved', 'event_espresso' ),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1243,10 +1243,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-today-pending',
 					'parent' => 'espresso-toolbar-registrations-today',
-					'title' => 'Pending',
+					'title' => __( 'Pending', 'event_espresso' ),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Pending Payment'),
+							'title' => __('Pending Payment', 'event_espresso' ),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1258,10 +1258,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-today-not-approved',
 					'parent' => 'espresso-toolbar-registrations-today',
-					'title' => 'Not Approved',
+					'title' => __( 'Not Approved', 'event_espresso' ),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Not Approved'),
+							'title' => __('Not Approved', 'event_espresso' ),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1273,10 +1273,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-today-cancelled',
 					'parent' => 'espresso-toolbar-registrations-today',
-					'title' => 'Cancelled',
+					'title' => __( 'Cancelled', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Cancelled'),
+							'title' => __('Cancelled', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1288,10 +1288,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-month',
 					'parent' => 'espresso-toolbar-registrations',
-					'title' => 'This Month',
+					'title' => __( 'This Month', 'event_espresso' ),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('This Month'),
+							'title' => __('This Month', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1303,10 +1303,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-month-approved',
 					'parent' => 'espresso-toolbar-registrations-month',
-					'title' => 'Approved',
+					'title' => __( 'Approved', 'event_espresso' ),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Approved'),
+							'title' => __('Approved', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1318,10 +1318,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-month-pending',
 					'parent' => 'espresso-toolbar-registrations-month',
-					'title' => 'Pending',
+					'title' => __( 'Pending', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Pending'),
+							'title' => __('Pending', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
@@ -1333,7 +1333,7 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-month-not-approved',
 					'parent' => 'espresso-toolbar-registrations-month',
-					'title' => 'Not Approved',
+					'title' => __( 'Not Approved', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
 					'meta' => array(
 							'title' => __('Not Approved', 'event_espresso' ),
@@ -1349,10 +1349,10 @@ final class EE_System {
 			$admin_bar->add_menu(array(
 					'id' => 'espresso-toolbar-registrations-month-cancelled',
 					'parent' => 'espresso-toolbar-registrations-month',
-					'title' => 'Cancelled',
+					'title' => __('Cancelled', 'event_espresso'),
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
 					'meta' => array(
-							'title' => __('Cancelled'),
+							'title' => __('Cancelled', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
