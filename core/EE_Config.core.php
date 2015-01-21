@@ -1332,24 +1332,21 @@ final class EE_Config {
  */
 class EE_Config_Base{
 
-
 	/**
 	 * Utility function for escaping the value of a property and returning.
 	 *
 	 * @param string $property property name (checks to see if exists).
-	 *
 	 * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
+	 * @throws \EE_Error
 	 */
 	public function get_pretty( $property ) {
 		if ( ! property_exists( $this, $property ) ) {
 			throw new EE_Error( sprintf( __('%1$s::get_pretty() has been called with the property %2$s which does not exist on the %1$s config class.', 'event_espresso' ), get_class( $this ), $property ) );
 		}
-
 		//just handling escaping of strings for now.
 		if ( is_string( $this->$property ) ) {
 			return stripslashes( $this->$property );
 		}
-
 		return $this->$property;
 	}
 
