@@ -245,7 +245,10 @@ abstract class EEM_Base extends EE_Base{
 
 		// everything is related to Extra_Meta
 		if( get_class($this) != 'EEM_Extra_Meta'){
-			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
+			//make extra metas related to everything, but don't block deleting things just
+			//because they have related extra meta info. For now just orphan those extra metas
+			//in the future we should automatically delete them
+			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation( FALSE );
 		}
 		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
@@ -1456,6 +1459,19 @@ abstract class EEM_Base extends EE_Base{
 		// grab second table from tables array
 		$second_table = end( $this->_tables );
 		return $second_table instanceof EE_Secondary_Table ? $second_table->get_table_name() : NULL;
+	}
+
+
+
+	/**
+	 * get_table_obj_by_alias
+	 * returns table name given it's alias
+	 *
+	 * @param string $table_alias
+	 * @return EE_Primary_Table | EE_Secondary_Table
+	 */
+	public function get_table_obj_by_alias( $table_alias = '' ) {
+		return isset( $this->_tables[ $table_alias ] ) ? $this->_tables[ $table_alias ] : NULL;
 	}
 
 

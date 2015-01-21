@@ -165,7 +165,7 @@ class EE_Event_List_Query extends WP_Query {
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
 			// if the arg is a property of this class, then it's an EE shortcode arg
-			if ( EEH_Class_Tools::has_property( $this, $property )) {
+			if ( property_exists( $this, $property )) {
 				// set the property value
 				$this->$property = $value;
 				// then remove it from the array of args that will later be passed to WP_Query()
@@ -174,10 +174,10 @@ class EE_Event_List_Query extends WP_Query {
 		}
 		// setup the events list query
 		EE_Registry::instance()->load_helper( 'Event_Query' );
+		//add query filters
+		EEH_Event_Query::add_query_filters();
 		// set params that will get used by the filters
 		EEH_Event_Query::set_query_params( $this->_month, $this->_category_slug, $this->_show_expired, $this->_order_by, $this->_sort );
-		//add query filters
-		add_action( 'pre_get_posts', array( 'EEH_Event_Query', 'filter_query_parts' ), 10, 1 );
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
 		remove_all_filters( 'FHEE__content_espresso_events__event_class' );
