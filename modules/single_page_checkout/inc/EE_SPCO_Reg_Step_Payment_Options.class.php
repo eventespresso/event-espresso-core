@@ -773,10 +773,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
 		// process results
 		$payment = $this->_post_payment_processing( $this->_validate_payment( $payment ));
+		// verify payment
+		if ( $payment instanceof EE_Payment ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
+			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
+			return true;
+		}
 		// please note that offline payment methods will NOT make a payment,
-		// but instead just mark themselves as the PMD_ID on the transaction, and return TRUE
-		// so for either on-site / off-site payments OR off-line payment methods
-		return $payment instanceof EE_Payment || $payment === TRUE ? TRUE : FALSE;
+		// but instead just mark themselves as the PMD_ID on the transaction, and return true
+		return $payment === true ? true : false;
 
 	}
 
