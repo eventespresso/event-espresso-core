@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
 		var scrllTp = $('html').scrollTop();
 		var parOff = eedialog.parent().offset();
 		var dialogTop =  ( wndwHeight / 10 ) - parOff.top + scrllTp;
-		var dialogLeft =  ( (wndwWidth - ( wndwWidth/dialogWidthFraction ) ) /2 );
+		var dialogLeft =  ( (wndwWidth - ( wndwWidth/dialogWidthFraction ) ) /2 ) - parOff.left;
 		var dialogWidth = wndwWidth / dialogWidthFraction;
 		eedialog.css({ 'top' : dialogTop, 'left' : dialogLeft, 'width' : dialogWidth }).fadeIn('fast');
 	};
