@@ -100,10 +100,13 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				$payment,
 				$this->checkout->reg_cache_where_params
 			);
+			// now that any payments made have been finalized and the reg steps are completed, let's make sure the TXN status is correct
+			if ( ! $transaction_processor->toggle_transaction_status_based_on_payments( $this->checkout->transaction, $this->checkout->reg_cache_where_params )) {
+				// if the above method didn't save the TXN, then make sure any final TXN changes make it to the db
+				$this->checkout->transaction->save();
+			}
 			// this will result in the base session properties getting saved to the TXN_Session_data field
 			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( NULL, TRUE ));
-			// make sure any final TXN changes make it to the db
-			$this->checkout->transaction->save();
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = TRUE;
 			// check if transaction has a primary registrant and that it has a related Attendee object
