@@ -32,6 +32,12 @@ class EE_PMT_Mijireh_Live_Test extends EE_UnitTestCase{
 			'access_key' => '789a0b32d3d20d20514791a4',
 		);
 	}
+	public function setUp(){
+		parent::setUp();
+		//make sure caf payment methods are registered
+		new EE_Brewing_Regular();
+		EE_Payment_Method_Manager::reset();
+	}
 	public function test_set_redirect_info__success(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mijireh' ) );
 		$ppg = $ppm->type_obj()->get_gateway();

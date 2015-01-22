@@ -80,6 +80,8 @@ class EE_Payment_Method_Manager {
 		}
 		do_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods' );
 		// filter list of installed modules
+		//keep them organized alphabetically by the payment method type's name
+		ksort( $this->_payment_method_types );
 		return apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', $this->_payment_method_types );
 	}
 

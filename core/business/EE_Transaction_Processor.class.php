@@ -280,17 +280,73 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 	/**
 	 * 	toggle_failed_transaction_status
-	 * 	changes TXN status based on monies owing
+	 * upgrades a TXNs status from failed to abandoned,
+	 * meaning that contact information has been captured for at least one registrant
 	 *
 	 * 	@access public
 	 * @param EE_Transaction $transaction
 	 * 	@return 	boolean
 	 */
 	public function toggle_failed_transaction_status( EE_Transaction $transaction ) {
-		// if TXN status has not been updated already due to a payment, and is still set as "failed"...
+		// if TXN status is still set as "failed"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code ) {
+			$transaction->set_status( EEM_Transaction::abandoned_status_code );
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 * toggle_abandoned_transaction_status
+	 * upgrades a TXNs status from failed or abandoned to incomplete
+
+	 * 	@access public
+	 * @param EE_Transaction $transaction
+	 * 	@return 	boolean
+	 */
+	public function toggle_abandoned_transaction_status( EE_Transaction $transaction ) {
+		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
+		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
 			$transaction->set_status( EEM_Transaction::incomplete_status_code );
 			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 * possibly toggles TXN status based on monies owing
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @return boolean
+	 */
+	public function toggle_transaction_status_based_on_payments( EE_Transaction $transaction, $registration_query_params = array() ) {
+		$this->_set_registration_query_params( $registration_query_params );
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		if ( $transaction->paid() > $transaction->total() ){
+			// this payment was too much
+			$new_txn_status = EEM_Transaction::overpaid_status_code;
+			// update registrations too
+			$this->toggle_registration_statuses_if_no_monies_owing( $transaction, $this->_registration_query_params );
+		} else if ( $transaction->paid() == $transaction->total() ) {
+			// this payment was just right
+			$new_txn_status = EEM_Transaction::complete_status_code;
+			// update registrations too
+			$this->toggle_registration_statuses_if_no_monies_owing( $transaction, $this->_registration_query_params );
+		} else if ( $transaction->paid() < $transaction->total() ) {
+			// this payment was too little
+			$new_txn_status = EEM_Transaction::incomplete_status_code;
+		} else {
+			// this transaction is corrupt
+			return FALSE;
+		}
+		if ( $new_txn_status !== $transaction->status_ID() ) {
+			$transaction->set_status( $new_txn_status );
+			return $transaction->save() ? TRUE : FALSE;
 		}
 		return FALSE;
 	}

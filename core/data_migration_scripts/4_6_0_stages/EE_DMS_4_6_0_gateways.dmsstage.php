@@ -172,7 +172,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'shipping_details' => isset( $old_gateway_settings[ 'no_shipping' ] ) ? $old_gateway_settings[ 'no_shipping' ] : false,
 
 				);
-				$desc = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration.', 'event_espresso' );
+				$desc = sprintf( __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration.', 'event_espresso' ), '<strong>','</strong>' );
 				break;
 			default:
 				//if we don't recognize the payment method, just put everything in it into extra meta. At least this way its preserved somewhere

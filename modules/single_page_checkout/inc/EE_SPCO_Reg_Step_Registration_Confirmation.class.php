@@ -88,8 +88,6 @@ class EE_SPCO_Reg_Step_Registration_Confirmation extends EE_SPCO_Reg_Step {
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$additional_attendee_forms = FALSE;
 
-		d($this->checkout);
-
 		$registrations  =  $this->checkout->transaction->registrations( array(), TRUE );
 		// grab the saved registrations from the transaction
 		if ( $this->checkout->transaction instanceof EE_Transaction && $registrations !== NULL ) {

@@ -676,14 +676,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_delete_registration' ) ) {
-			/**$this->_views['incomplete'] = array(
+			$this->_views['incomplete'] = array(
 				'slug' => 'incomplete',
 				'label' => __('Incomplete', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 				)
-			);/**/
+			);
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -764,10 +764,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' )
 				),
-			/**'incomplete_status' => array(
+			'incomplete_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_incomplete,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_incomplete, FALSE, 'sentence' )
-			),/**/
+			),
 			'not_approved' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' )
