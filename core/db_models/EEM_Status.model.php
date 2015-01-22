@@ -116,6 +116,10 @@ class EEM_Status extends EEM_Base {
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
 	  			),
+	  		EEM_Transaction::abandoned_status_code => array(
+	  			__('abandoned', 'event_espresso'),
+	  			__('abandoned', 'event_espresso')
+	  			),
 	  		EEM_Payment::status_id_approved => array(
 	  			__('accepted', 'event_espresso'),
 	  			__('accepted', 'event_espresso')

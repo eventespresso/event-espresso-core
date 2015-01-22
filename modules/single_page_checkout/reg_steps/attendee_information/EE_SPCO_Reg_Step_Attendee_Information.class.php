@@ -729,6 +729,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					}
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
+					/** @type EE_Transaction_Processor $transaction_processor */
+					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+					// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
+					$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					$this->_associate_registration_with_transaction( $registration );

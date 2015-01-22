@@ -842,7 +842,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment_method_billing_info = $this->_payment_method_billing_info( $this->_get_payment_method_for_selected_method_of_payment() );
 		$html = $payment_method_billing_info->get_html_and_js();
 		$html .= $this->checkout->redirect_form;
-//		return $html;
 		EE_Registry::instance()->REQ->add_output( $html );
 		return TRUE;
 	}
@@ -910,6 +909,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// because saving an object clears it's cache, we need to do the chevy shuffle
 			// grab the primary_registration object
 			$primary_registration = $this->checkout->transaction->primary_registration();
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// at this point we'll consider a TXN to not have been failed
+			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
 			// save the TXN ( which clears cached copy of primary_registration)
 			$this->checkout->transaction->save();
 			// grab TXN ID and save it to the primary_registration
@@ -928,6 +931,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 		private function _capture_primary_registration_data_from_billing_form() {
+			// convert billing form data into an attendee
 			$this->checkout->primary_attendee_obj = $this->checkout->billing_form->create_attendee_from_billing_form_data();
 			if ( ! $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 				EE_Error::add_error(
@@ -1049,10 +1053,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} catch( Exception $e ) {
 			EE_Error::add_error(
 				sprintf(
-					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||%3$s', 'event_espresso' ),
+					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||The following Exception was thrown in %4$s on line %5$s:%1$s%3$s', 'event_espresso' ),
 					'<br/>',
 					EE_Registry::instance()->CFG->organization->get_pretty( 'email' ),
-					$e->getMessage()
+					$e->getMessage(),
+					$e->getFile(),
+					$e->getLine()
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 		}

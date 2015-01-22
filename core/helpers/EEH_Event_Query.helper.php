@@ -79,6 +79,17 @@ class EEH_Event_Query {
 
 
 	/**
+	 * add_query_filters
+	 *
+	 * @access    public
+	 */
+	public static function add_query_filters() {
+		//add query filters
+		add_action( 'pre_get_posts', array( 'EEH_Event_Query', 'filter_query_parts' ), 10, 1 );
+	}
+
+
+	/**
 	 * filter_query_parts
 	 *
 	 * @access    public
@@ -153,17 +164,7 @@ class EEH_Event_Query {
 	private static function _show_expired( $show_expired = FALSE ) {
 		// override default expired option if set via filter
 		$_event_query_show_expired =EE_Registry::instance()->REQ->is_set( 'event_query_show_expired' ) ? EE_Registry::instance()->REQ->get( 'event_query_show_expired' ) : $show_expired;
-		// ensure field is set correctly as boolean
-		switch( (string)$_event_query_show_expired  ) {
-			case 'TRUE' :
-			case 'true' :
-			case '1' :
-				$_event_query_show_expired = TRUE;
-				break;
-			default :
-				$_event_query_show_expired = FALSE;
-		}
-		return $_event_query_show_expired;
+		return filter_var( $_event_query_show_expired, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -177,8 +178,9 @@ class EEH_Event_Query {
 	 */
 	private static function _orderby( $orderby = 'start_date' ) {
 		$event_query_orderby = EE_Registry::instance()->REQ->is_set( 'event_query_orderby' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'event_query_orderby' ) ) : $orderby;
-		$_event_query_orderby = explode( ',', $event_query_orderby );
-		return array_map( 'trim', $_event_query_orderby );
+		$event_query_orderby = is_array( $event_query_orderby ) ? $event_query_orderby : explode( ',', $event_query_orderby );
+		$event_query_orderby = array_map( 'trim', $event_query_orderby );
+		return $event_query_orderby;
 	}
 
 
@@ -562,7 +564,7 @@ class EEH_Event_Query {
 	 * @access    public
 	 * @param array|bool $orderby_params
 	 * @param string     $sort
-	 * @return    string
+	 * @return string
 	 */
 	public static function posts_orderby_sql( $orderby_params = array(), $sort = 'ASC' ) {
 		global $wpdb;

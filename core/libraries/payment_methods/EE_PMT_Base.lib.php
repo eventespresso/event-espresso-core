@@ -51,6 +51,11 @@ abstract class EE_PMT_Base{
 	protected $_billing_form = NULL;
 
 	/**
+	 * @var boolean
+	 */
+	protected $_cache_billing_form = TRUE;
+
+	/**
 	 * String of the absolute path to the folder containing this file, with a trailing slash.
 	 * eg '/public_html/wp-site/wp-content/plugins/event-espresso/payment_methods/Invoice/'
 	 * @var string
@@ -238,12 +243,13 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
+	 *
 	 * @param \EE_Transaction $transaction
 	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form | NULL
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
 		// ensure billing form is generated
-		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form ){
+		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form || ! $this->_cache_billing_form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
@@ -649,6 +655,20 @@ abstract class EE_PMT_Base{
 		return 'ee_payment_method_' . strtolower( $this->system_name() );
 	}
 
+	/**
+	 * Called by client code to tell the gateway that if it wants to change
+	 * the transaction or line items or registrations related to teh payment it already
+	 * processed (we think, but possibly not) that now's the time to do it.
+	 * It is expected that gateways will store any info they need for this on the PAY_details,
+	 * or maybe an extra meta value
+	 * @param EE_Payment $payment
+	 * @return void
+	 */
+	public function update_txn_based_on_payment( $payment ){
+		if( $this->_gateway instanceof EE_Gateway ){
+			$this->_gateway->update_txn_based_on_payment( $payment );
+		}
+	}
 
 
 }

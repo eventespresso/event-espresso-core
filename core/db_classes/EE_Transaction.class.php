@@ -327,6 +327,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 			case EEM_Transaction::incomplete_status_code:
 				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 lt-blue-text"></span>' : '';
 				break;
+			case EEM_Transaction::abandoned_status_code:
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 red-text"></span>' : '';
+				break;
 			case EEM_Transaction::failed_status_code:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
@@ -393,8 +396,21 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
+	 * Returns whether this transaction was abandoned
+	 * meaning that the transaction/registration process was somehow interrupted and never completed
+	 * but that contact information exists for at least one registrant
+	 * @return boolean
+	 */
+	public function is_abandoned() {
+		return $this->status_ID() == EEM_Transaction::abandoned_status_code ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * Returns whether this transaction failed
 	 * meaning that the transaction/registration process was somehow interrupted and never completed
+	 * and that NO contact information exists for any registrants
 	 * @return boolean
 	 */
 	public function failed() {

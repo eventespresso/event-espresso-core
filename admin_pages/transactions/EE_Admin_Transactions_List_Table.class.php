@@ -45,7 +45,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_data = $this->_admin_page->get_transactions( $this->_per_page );
-		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE );
+		$status = ! empty( $this->_req_data['status'] )? $this->_req_data['status'] : 'all';
+		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE, $status );
 	}
 
 
@@ -115,7 +116,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_all_data_count;
+		$this->_views['all']['count'] = $this->_admin_page->get_transactions( $this->_per_page, TRUE, 'all' );
+		$this->_views['abandoned']['count'] = $this->_admin_page->get_transactions( $this->_per_page, TRUE, 'abandoned' );
+		$this->_views['failed']['count'] = $this->_admin_page->get_transactions( $this->_per_page, TRUE, 'failed' );
 	}
 
 
@@ -157,7 +160,12 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 */
 	function column_TXN_timestamp( EE_Transaction $item ){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
-		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_datetime('TXN_timestamp', 'D M j, Y', 'g:i:s a') .  '</a>';
+		// is TXN less than 2 hours old ?
+		if ((( current_time( 'timestamp' ) - ( 2 * HOUR_IN_SECONDS ) ) < strtotime( $item->datetime() )) && ( $item->failed() || $item->is_abandoned() )) {
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) .  '</a>';
+		} else {
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime() .  '</a>';
+		}
 		return $txn_date;
 	}
 
@@ -219,7 +227,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
 			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
 		}
-		return __('The transaction was abandoned or the registration process failed and so there is no contact record.', 'event_espresso');
+		return $item->failed() || $item->is_abandoned() ? __('no contact record.', 'event_espresso') : __('No contact record, because the transaction was abandoned or the registration process failed.', 'event_espresso');
 	}
 
 
@@ -233,7 +241,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		if ( !empty( $attendee ) )
 			return '<a href="mailto:' . $attendee->get('ATT_email') . '">' . $attendee->get('ATT_email') . '</a>';
 		else
-			return __('The transaction was abandoned or the registration process failed and so there is no contact record.', 'event_espresso');
+			return $item->failed() || $item->is_abandoned() ? __('no contact record.', 'event_espresso') : __('No contact record, because the transaction was abandoned or the registration process failed.', 'event_espresso');
+		;
 	}
 
 
@@ -333,11 +342,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				</a>
 			</li>' : '';
 
-		return '
-		<ul class="txn-overview-actions-ul">' .
-		$view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $send_pay_lnk . $view_reg_lnk . '
-		</ul>';
-
+	return $this->_action_string( $view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $send_pay_lnk . $view_reg_lnk, $item, 'ul', 'txn-overview-actions-ul' );
     }
 
 
