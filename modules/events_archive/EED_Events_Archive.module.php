@@ -353,7 +353,7 @@ class EED_Events_Archive  extends EED_Module {
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
-		// don't diplay entry meta because the existing theme will take care of that
+		// don't display entry meta because the existing theme will take care of that
 		remove_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 	}
 
