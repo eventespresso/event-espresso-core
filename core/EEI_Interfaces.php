@@ -16,6 +16,12 @@ interface EEI_Base{
 	 * @return array
 	 */
 	function model_field_array();
+
+	/**
+	 * Saves the thing to the database and returns success (or an ID)
+	 * @return boolean success on insert; or int on update (ID of newly inserted thing)
+	 */
+	function save();
 }
 
 

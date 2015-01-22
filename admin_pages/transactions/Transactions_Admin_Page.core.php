@@ -333,13 +333,23 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *	@return void
 	 */
 	protected function _set_list_table_views_default() {
-		$this->_views = array(
-			'all' => array(
-				'slug' => 'all',
-				'label' => __('View All Transactions', 'event_espresso'),
-				'count' => 0
-				)
-			);
+		$this->_views = array (
+			'all' => array (
+				'slug' 		=> 'all',
+				'label' 		=> __('View All Transactions', 'event_espresso'),
+				'count' 	=> 0
+				),
+			'abandoned' => array(
+				'slug' 		=> 'abandoned',
+				'label' 		=> __('Abandoned Transactions', 'event_espresso'),
+				'count' 	=> 0
+			),
+			'failed' => array(
+				'slug' 		=> 'failed',
+				'label' 		=> __('Failed Transactions', 'event_espresso'),
+				'count' 	=> 0
+			)
+		);
 	}
 
 
@@ -436,10 +446,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
 					'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
-				/**'failed' => array(
-					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
-					'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
-				)**/
+			 'abandoned' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
+			 ),
+			 'failed' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
 			)
 		);
 
@@ -472,6 +485,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*	@return void
 	*/
 	protected function _transaction_details() {
+		do_action( 'AHEE__Transactions_Admin_Page__transaction_details__start', $this->_transaction );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		$this->_set_transaction_status_array();
@@ -985,14 +999,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 *  get_transactions
-	 * 	get transactions for given parameters (used by list table)
+	 *    get transactions for given parameters (used by list table)
 	 *
-	 * @param  int  $perpage how many transactions displayed per page
-	 * @param  boolean $count   return the count or objects
-	 * @return mixed (int|array)           int = count || array of transaction objects
+	 * @param  int     $perpage how many transactions displayed per page
+	 * @param  boolean $count return the count or objects
+	 * @param string   $view
+	 * @return mixed int = count || array of transaction objects
 	 */
-	public function get_transactions( $perpage, $count = FALSE ) {
-	    $TXN = EEM_Transaction::instance();
+	public function get_transactions( $perpage, $count = FALSE, $view = '' ) {
+
+		$TXN = EEM_Transaction::instance();
 
 	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
 	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
@@ -1010,8 +1026,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $start_date = min( $start_date, $end_date );
 	    $end_date = max( $start_date, $end_date );
 
-	    //failed transactions
-	    $failed = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'failed' ? TRUE: FALSE;
 
 	    //set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -1072,10 +1086,17 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
+		//failed transactions
+		$failed = ( ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'failed' && ! $count ) || ( $count && $view == 'failed' ) ? TRUE: FALSE;
+		$abandoned = ( ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'abandoned' && ! $count ) || ( $count && $view == 'abandoned' ) ? TRUE: FALSE;
+
 		if ( $failed ) {
-			$_where['STS_ID'] = EEM_Transaction::failed_status_code;
+			$_where[ 'STS_ID' ] = EEM_Transaction::failed_status_code;
+		} else if ( $abandoned ) {
+				$_where['STS_ID'] = EEM_Transaction::abandoned_status_code;
 		} else {
-			$_where['STS_ID'] = array( '!=', EEM_Transaction::failed_status_code );
+				$_where['STS_ID'] = array( '!=', EEM_Transaction::failed_status_code );
+				$_where['STS_ID*'] = array( '!=', EEM_Transaction::abandoned_status_code );
 		}
 
 		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );

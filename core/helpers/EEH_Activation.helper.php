@@ -846,7 +846,7 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -869,8 +869,9 @@ class EEH_Activation {
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
 					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
-					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
+					('TAB', 'ABANDONED', 'transaction', 0, NULL, 0),
+					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
 					('TCM', 'COMPLETE', 'transaction', 0, NULL, 1),
 					('TOP',	'OVERPAID', 'transaction', 0, NULL, 1),
 					('PAP', 'APPROVED', 'payment', 0, NULL, 1),

@@ -57,6 +57,12 @@ class EE_PMT_Aim_Test extends EE_UnitTestCase{
 			'exp_year' => '2024'
 		);
 	}
+	public function setUp(){
+		parent::setUp();
+		//make sure caf payment methods are registered
+		new EE_Brewing_Regular();
+		EE_Payment_Method_Manager::reset();
+	}
 	public function test_do_direct_payment__success(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Aim' ) );
 		$ppg = $ppm->type_obj()->get_gateway();

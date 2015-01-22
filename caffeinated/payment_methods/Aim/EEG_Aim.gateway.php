@@ -132,6 +132,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
 			//in which case, we need to generate teh invoice num per request right here...
 			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
+			//tell AIM that any duplicates sent in the next 5 minutes are to be ignored
+            $this->setField('duplicate_window', 5 * MINUTE_IN_SECONDS );
 
 
 			if ($this->_test_transactions) {

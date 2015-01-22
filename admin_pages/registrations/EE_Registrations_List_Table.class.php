@@ -171,10 +171,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_total_registrations();
 		$this->_views['month']['count'] = $this->_total_registrations_this_month();
 		$this->_views['today']['count'] = $this->_total_registrations_today();
-		/*if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_trash_registrations' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_trash_registrations' ) ) {
 			$this->_views['incomplete']['count'] = $this->_total_registrations( 'incomplete' );
 			$this->_views['trash']['count'] = $this->_total_registrations( 'trash' );
-		}/**/
+		}
 	}
 
 
@@ -563,13 +563,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 			</li>' : '';
 
-		$actions = '
-			<ul class="reg-overview-actions-ul">' .
-			$view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . '
-			</ul>';
-
-		return $actions;
-
+			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk, $item, 'ul', 'reg-overview-actions-ul' );
 	}
 
 }

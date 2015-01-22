@@ -903,12 +903,15 @@ class EEH_Form_Fields {
 			return NULL;
 		}
 		$answer = maybe_unserialize( $answer );
+
 		// prep the answer(s)
 		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
+
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
 			$answer[$key] = self::prep_answer( $value );
 		}
+
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -1063,10 +1066,14 @@ class EEH_Form_Fields {
 
 	/**
 	 * 	prep_answer
-	 * @param string $answer
+	 * @param mixed $answer
 	 * @return string
 	 */
 	static function prep_answer( $answer, $use_html_entities = TRUE ){
+		//make sure we convert bools first.  Otherwise (bool) false becomes an empty string which is NOT desired, we want "0".
+		if ( is_bool( $answer ) ) {
+			$answer = $answer ? 1 : 0;
+		}
 		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
 		return $use_html_entities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}

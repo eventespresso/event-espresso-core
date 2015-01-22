@@ -75,8 +75,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			//set revisit flag in txn processor
 			$transaction_processor->set_revisit( $this->checkout->revisit );
-			// at this point we'll consider a TXN to not have failed
-			if ( $transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction )) {
+			// at this point we'll consider a TXN to not have been abandoned
+			if ( $transaction_processor->toggle_abandoned_transaction_status( $this->checkout->transaction )) {
 				$this->checkout->transaction->save();
 			}
 			// save TXN data to the cart
