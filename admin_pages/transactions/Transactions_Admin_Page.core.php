@@ -430,29 +430,29 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'desc' => ''
 				);
 		}
-
 		$more_items = apply_filters(
 			'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
 			array(
-				 'overpaid' => array(
+				'overpaid'   => array(
 					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
-					'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
 				),
-				'complete' => array(
+				'complete'   => array(
 					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
-					'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
 				),
 				'incomplete' => array(
 					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
-					'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
-			 'abandoned' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
-			 ),
-			 'failed' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				'abandoned'  => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
+				),
+				'failed'     => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				)
 			)
 		);
 
