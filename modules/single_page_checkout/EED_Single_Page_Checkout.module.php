@@ -74,6 +74,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::set_definitions();
 		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
 		// add powered by EE msg
 		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
@@ -105,6 +111,33 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_ajax_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 		add_action( 'wp_ajax_nopriv_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
+	}
+
 
 
 	/**
