@@ -464,7 +464,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * Gets the string which represents the URL trigger for the receipt template in the message template system.
-	 * @param string $type 'pdf' or 'html'.  Default 'html'.
+	 * @param string $messenger 'pdf' or 'html'.  Default 'html'.
 	 * @return string
 	 */
 	public function receipt_url( $messenger = 'html' ) {
@@ -489,7 +489,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * Gets the string which represents the URL trigger for the invoice template in the message template system.
-	 * @param string $type 'pdf' or 'html'.  Default 'html'.
+	 * @param string $messenger 'pdf' or 'html'.  Default 'html'.
 	 * @return string
 	 */
 	public function invoice_url( $messenger = 'html' ) {
@@ -503,13 +503,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
 		if ( $has_custom ) {
-			if ( $type == 'html' ) {
+			if ( $messenger == 'html' ) {
 				return $this->invoice_url( 'launch' );
 			}
-			$route = $type == 'download' || $type == 'pdf' ? 'download_invoice' : 'launch_invoice';
+			$route = $messenger == 'download' || $messenger == 'pdf' ? 'download_invoice' : 'launch_invoice';
 
 			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
-			if ( $type == 'html' ) {
+			if ( $messenger == 'html' ) {
 				$query_args['html'] = TRUE;
 			}
 			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
