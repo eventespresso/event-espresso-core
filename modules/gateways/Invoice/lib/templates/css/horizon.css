@@ -1,0 +1,46 @@
+/*
+Horizon Invoice Template
+Created by Roan Lavery
+31/08/08 */
+
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice p, #invoice h2, #invoice h3{margin:0}
+#invoice {font-family: Verdana, Tahoma,  sans-serif; color: #888;line-height:1.5}
+#invoice h1 {margin: 0;color: #000;text-transform: uppercase;}
+#invoice h2, #invoice h3 {color:#000; text-transform: none; line-height:1.2;margin-top:10px}
+
+#invoice-info h2 {margin:0; color:#67A30F; opacity:1; font-size:24pt; font-weight:bold; line-height:30pt; }
+#invoice h2 {font-size:12pt}
+#invoice-info h3 {margin:0; font-size:9pt; font-weight:normal; font-style:italic; color:#888;  line-height:15pt;}
+
+#company-address, #client-details, #payment-details, #invoice-other, .invoice-amount td, th,  #invoice-info {font-size:9pt}
+#company-address{text-align:right}
+#invoice .fn, #invoice .org{color:#000}
+
+#invoice #invoice-terms h2{margin-bottom:3px}
+#invoice #invoice-terms h3{margin-top:0;margin-bottom:5px;font-weight:normal;font-style:italic; color:#666; font-size:9pt}
+
+#invoice .total{font-size:12pt;}
+#comments {font-style:italic;margin-top:15px;line-height:1.2; color:#646464; font-size:10pt;}
+
+#invoice-other{text-align:right}
+#payment-details strong, #invoice-other strong{font-weight:normal}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice{padding:0 1cm 1cm 1cm;background:#fff url(../images/horizon-greenbar.gif) left top repeat-x}
+#invoice-header{ padding-top:1cm; margin-top:10px; }
+#company-address { padding:40px 20px 20px; }
+#invoice-info { padding:20px; margin:20px; background-color:#F1FAE3; border:1px solid #BECEA5; z-index:10 }
+#invoice-info th{text-align:right}
+
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+
+.invoice-amount {margin: 2em 0 2em 0; clear: both;}
+
+#payment-details{margin-bottom:5mm   }
+#invoice-other{margin-bottom:5mm   }
+#invoice-other h2, #payment-details h2 {margin-bottom: 1mm;}
+
+#comments .wrapper{ padding:9px 0.4cm 9px 0.4cm; margin:0; background-color:#F2F2F2; border:1px solid #ccc; vertical-align:bottom; line-height:1.2;zoom:1}
