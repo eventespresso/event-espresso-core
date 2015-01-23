@@ -231,10 +231,10 @@ abstract class EE_Gateway{
 		$total_line_item = $transaction->total_line_item();
 		$total = 0;
 		foreach($total_line_item->get_items() as $item_line_item ){
-			$total += $item_line_item->total();
+			$total += max( $item_line_item->total(), 0 );
 		}
 		foreach($total_line_item->tax_descendants() as $tax_line_item ){
-			$total += $tax_line_item->total();
+			$total += max( $tax_line_item->total(), 0 );
 		}
 		return $total;
 	}
