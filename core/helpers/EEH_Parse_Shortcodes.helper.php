@@ -213,7 +213,8 @@ class EEH_Parse_Shortcodes {
 				}
 
 
-				if ( $parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] ) ) {
+				$parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] );
+				if ( is_string( $parsed ) ) {
 					$matched_code[] = $shortcode;
 					$sc_values[] = $parsed;
 				} else {
