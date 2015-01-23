@@ -468,8 +468,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return string
 	 */
 	public function receipt_url( $messenger = 'html' ) {
+
+		/**
+		 * The below will be deprecated one version after this.  We check first if there is a custom receipt template already in use on old system.  If there is then we just return the standard url for it.
+		 *
+		 * @since 4.5.0
+		 */
+		EE_Registry::instance()->load_helper('Template');
+		$template_relative_path = 'modules/gateways/Invoice/lib/templates/receipt_body.template.php';
+		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
+
+		if ( $has_custom ) {
+			return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( 'launch' ) );
+		}
 		return apply_filters( 'FHEE__EE_Registration__receipt_url__receipt_url', '', $this, $messenger, 'receipt' );
 	}
+
 
 
 
@@ -479,6 +493,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return string
 	 */
 	public function invoice_url( $messenger = 'html' ) {
+		/**
+		 * The below will be deprecated one version after this.  We check first if there is a custom invoice template already in use on old system.  If there is then we just return the standard url for it.
+		 *
+		 * @since 4.5.0
+		 */
+		EE_Registry::instance()->load_helper('Template');
+		$template_relative_path = 'modules/gateways/Invoice/lib/templates/invoice_body.template.php';
+		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
+
+		if ( $has_custom ) {
+			if ( $messenger == 'html' ) {
+				return $this->invoice_url( 'launch' );
+			}
+			$route = $messenger == 'download' || $messenger == 'pdf' ? 'download_invoice' : 'launch_invoice';
+
+			$query_args = array( 'ee' => $route, 'id' => $this->reg_url_link() );
+			if ( $messenger == 'html' ) {
+				$query_args['html'] = TRUE;
+			}
+			return add_query_arg( $query_args, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ) );
+		}
 		return apply_filters( 'FHEE__EE_Registration__invoice_url__invoice_url', '', $this, $messenger, 'invoice' );
 	}
 
