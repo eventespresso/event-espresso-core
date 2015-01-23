@@ -122,6 +122,31 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_name($item) {
+		$edit_query_args = array(
+				'action' => 'edit',
+				'post' => $item->ID()
+			);
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+		$actions = $this->_column_name_action_setup( $item );
+		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
+		$content .= $this->row_actions($actions);
+		return $content;
+
+	}
+
+
+
+
+
+	/**
+	 * Just a method for setting up the actions for the name column
+	 *
+	 * @param EE_Event $item
+	 *
+	 * @return array array of actions
+	 */
+	protected function _column_name_action_setup( EE_Event $item ) {
 		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
@@ -145,15 +170,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				);
 			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
-		}
-
-		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export_events', $item->ID() ) ) {
-			$export_query_args = array(
-					'action' => 'export_events',
-					'EVT_ID' => $item->ID()
-				);
-			$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
-			$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
 		}
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
@@ -198,16 +214,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 					}
 		}
-
-		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
-		$content .= $this->row_actions($actions);
-		return $content;
-
+		return $actions;
 	}
-
-
-
 
 
 

@@ -462,12 +462,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			$valid_data['return_url'] = esc_url_raw( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id ));
 			// array of other form names
 			$inputs_to_clean = array(
-				'event' => 'tkt-slctr-event-',
+				'event_id' => 'tkt-slctr-event-id',
 				'max_atndz' => 'tkt-slctr-max-atndz-',
 				'rows' => 'tkt-slctr-rows-',
 				'qty' => 'tkt-slctr-qty-',
 				'ticket_id' => 'tkt-slctr-ticket-id-',
-				'ticket_obj' => 'tkt-slctr-ticket-obj-',
 				'return_url' => 'tkt-slctr-return-url-',
 			);
 			// let's track the total number of tickets ordered.'
@@ -481,6 +480,11 @@ class EED_Ticket_Selector extends  EED_Module {
 					switch ($what) {
 
 						// integers
+						case 'event_id':
+							$valid_data[$what] = absint( $input_value );
+							// get event via the event id we put in the form
+							$valid_data['event'] = EE_Registry::instance()->load_model( 'Event' )->get_one_by_ID( $valid_data['event_id'] );
+							break;
 						case 'rows':
 						case 'max_atndz':
 							$valid_data[$what] = absint( $input_value );
@@ -518,37 +522,18 @@ class EED_Ticket_Selector extends  EED_Module {
 							}
 							break;
 
-						// array of serialized and encoded objects
+						// array of integers
 						case 'ticket_id':
 							$value_array = array();
 							// cycle thru values
 							foreach ( $input_value as $key=>$value ) {
 								// allow only numbers, letters,  spaces, commas and dashes
-								$value_array[$key] = wp_strip_all_tags($value);
+								$value_array[ $key ] = wp_strip_all_tags( $value );
+								// get ticket via the ticket id we put in the form
+								$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $value );
+								$valid_data['ticket_obj'][ $key ] = $ticket_obj;
 							}
-							$valid_data[$what] = $value_array;
-							break;
-
-						case 'event':
-							// grab the array
-							// allow only numbers, letters,  spaces, commas and dashes
-							$valid_data[$what] = unserialize( base64_decode( $input_value ));
-							break;
-
-						case 'ticket_obj':
-							// ensure that $input_value is an array
-							$input_value = is_array( $input_value ) ? $input_value : array( $input_value );
-							// cycle thru values
-							foreach ( $input_value as $row=>$value ) {
-								// decode and unserialize the ticket object
-								$ticket_obj = unserialize( base64_decode( $value ));
-								// vat is dis? i ask for TICKET !!!
-								if ( ! $ticket_obj instanceof EE_Ticket ) {
-									// get ticket via the ticket id we put in the form
-									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid_data['ticket_id'][$key] );
-								}
-								$valid_data[$what][] = $ticket_obj;
-							}
+							$valid_data[ $what ] = $value_array;
 							break;
 
 						case 'return_url' :

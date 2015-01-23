@@ -104,6 +104,8 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		$attributes = array_merge( $default_espresso_events_shortcode_atts, $attributes );
 		// make sure we use the_excerpt()
 		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
+		// apply query filters
+		add_filter( 'FHEE__EEH_Event_Query__apply_query_filters', '__return_true' );
 		// run the query
 		global $wp_query;
 		$wp_query = new EE_Event_List_Query( $attributes );
@@ -115,6 +117,8 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		wp_reset_query();
 		wp_reset_postdata();
 		EED_Events_Archive::remove_all_events_archive_filters();
+		// remove query filters
+		remove_filter( 'FHEE__EEH_Event_Query__apply_query_filters', '__return_true' );
 		// pull our content from the output buffer and return it
 		return $event_list;
 	}
