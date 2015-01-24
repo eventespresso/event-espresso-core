@@ -2944,7 +2944,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param array $data array that will be assigned to template args.
 	 */
 	public function set_template_args( $data ) {
-		$this->_template_args = (array) $data;
+		$this->_template_args = array_merge( $this->_template_args, (array) $data );
 	}
 
 
