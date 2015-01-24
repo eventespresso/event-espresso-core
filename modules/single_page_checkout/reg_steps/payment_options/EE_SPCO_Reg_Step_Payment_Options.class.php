@@ -772,10 +772,23 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			'ATT_zip' 				=> ! empty( $_REQUEST['zip'] ) ? sanitize_text_field( $_REQUEST['zip'] ) : '',
 			'ATT_phone' 		=> ! empty( $_REQUEST['phone'] ) ? sanitize_text_field( $_REQUEST['phone'] ) : '',
 		);
+		// validate the email address since it is the most important piece of info
 		if ( empty( $attendee_data['ATT_email'] ) || $attendee_data['ATT_email'] != $_REQUEST['email'] ) {
 			EE_Error::add_error( __( 'An invalid email address was submitted.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		// kinda lame, but we need a first and last name to create an attendee...
+		// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+		if ( ! empty( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_lname'] ) && ! empty( $attendee_data['ATT_email'] ) ) {
+			$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
+				'ATT_fname' => $attendee_data['ATT_fname'],
+				'ATT_lname' => $attendee_data['ATT_lname'],
+				'ATT_email' => $attendee_data['ATT_email']
+			));
+			if ( $existing_attendee instanceof EE_Attendee ) {
+				return $existing_attendee;
+			}
+		}
+		// no existing attendee? kk let's create a new one
+		// kinda lame, but we need a first and last name to create an attendee, so use the email address if those don't exist
 		$attendee_data['ATT_fname'] = ! empty( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : $attendee_data['ATT_email'];
 		$attendee_data['ATT_lname'] = ! empty( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : $attendee_data['ATT_email'];
 		return EE_Attendee::new_instance( $attendee_data );
