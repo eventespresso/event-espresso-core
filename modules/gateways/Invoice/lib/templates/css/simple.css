@@ -1,0 +1,35 @@
+/*
+Invoice Simple Template
+Created by Ed Molyneux
+
+*/
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice{font-family: Helvetica, Arial, Verdana, sans-serif !important } 
+#Main  #invoice h1 {margin: 0;color: #555;font-size: 24px;text-transform: uppercase;}
+#Main #invoice h2, #Main #invoice h3 {color:#000; text-transform: none;font-family: Helvetica, Arial, Verdana, sans-serif !important}
+#invoice h2 {margin: 10px 0;font-size: 14pt;}
+.invoice-amount td, th {font-size: 9pt;}
+#invoice-header #company-address {text-align: left; font-size: 11pt; line-height: 13pt;}
+#bill-to-ship-to, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 9pt; line-height: 12pt;}
+#invoice-info h2{ margin:18px 0; text-transform:uppercase}
+#invoice-info h3 {margin: 0;font-weight: normal;font-size:12pt;}
+#invoice #invoice-info p {text-align:right;margin-top:0}
+#comments {font-weight:bold;margin-top:15px; font-size:10pt}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice{padding:.5cm 1cm 1cm 1cm; }
+/*#invoice-header { border-bottom:4px solid #000; overflow:hidden}*/
+#invoice-header td {padding-bottom:10px;}
+/** html #invoice-header {height:1%}*/
+#company-address {padding:20px;}
+#invoice-info{ text-align:right; line-height:1.5em;}
+#invoice-info span { margin-left:20px;}
+
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+
+#invoice-other {text-align: right; }
+#invoice #payment-details{}
+
+#comments{margin-top:0.5cm}

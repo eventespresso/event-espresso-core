@@ -143,6 +143,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'pdf_logo_image' => $old_gateway_settings[ 'invoice_logo_url' ],
 					'page_confirmation_text' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
 					'page_extra_info' => isset( $old_gateway_settings[ 'payment_address' ] ) ? $old_gateway_settings[ 'payment_address' ] : '',
+					'legacy_invoice_css' => $old_gateway_settings['invoice_css']
 				);
 				//if they didnt want the invoiec gateway to show, pretend it was inactive
 				if( ! $old_gateway_settings['show'] ){
