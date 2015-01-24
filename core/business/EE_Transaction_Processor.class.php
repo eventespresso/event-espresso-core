@@ -309,7 +309,13 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	public function toggle_abandoned_transaction_status( EE_Transaction $transaction ) {
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
-			$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			// if a contact record for the primary registrant has been created
+			if ( $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			} else {
+				// no contact record? yer abandoned!
+				$transaction->set_status( EEM_Transaction::abandoned_status_code );
+			}
 			return TRUE;
 		}
 		return FALSE;
