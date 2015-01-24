@@ -2649,6 +2649,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
+	 *
+	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @since 4.6.0
+	 *
+	 */
+	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
+		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
+	}
+
+
 
 	/**
 	 * set form open and close tags on add/edit pages.
