@@ -743,6 +743,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Attendee
 	 */
 	protected function _create_attendee_from_request_data(){
+		// get State ID
+		$STA_ID = ! empty( $_REQUEST['state'] ) ? sanitize_text_field( $_REQUEST['state'] ) : '';
+		if ( ! empty( $STA_ID )) {
+			// can we get state object from name ?
+			EE_Registry::instance()->load_model( 'State' );
+			$state = EEM_State::instance()->get_col( array( array( 'STA_name' => $STA_ID ), 'limit' => 1), 'STA_ID' );
+			$STA_ID = is_array( $state ) && ! empty( $state ) ? reset( $state ) : $STA_ID;
+		}
+		// get Country ISO
+		$CNT_ISO = ! empty( $_REQUEST['country'] ) ? sanitize_text_field( $_REQUEST['country'] ) : '';
+		if ( ! empty( $CNT_ISO )) {
+			// can we get country object from name ?
+			EE_Registry::instance()->load_model( 'Country' );
+			$country = EEM_Country::instance()->get_col( array( array( 'CNT_name' => $CNT_ISO ), 'limit' => 1), 'CNT_ISO' );
+			$CNT_ISO = is_array( $country ) && ! empty( $country ) ? reset( $country ) : $CNT_ISO;
+		}
 		// grab attendee data
 		$attendee_data = array(
 			'ATT_fname' 		=> ! empty( $_REQUEST['first_name'] ) ? sanitize_text_field( $_REQUEST['first_name'] ) : '',
@@ -751,14 +767,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			'ATT_address' 		=> ! empty( $_REQUEST['address'] ) ? sanitize_text_field( $_REQUEST['address'] ) : '',
 			'ATT_address2' 	=> ! empty( $_REQUEST['address2'] ) ? sanitize_text_field( $_REQUEST['address2'] ) : '',
 			'ATT_city' 			=> ! empty( $_REQUEST['city'] ) ? sanitize_text_field( $_REQUEST['city'] ) : '',
-			'STA_ID' 				=> ! empty( $_REQUEST['state'] ) ? sanitize_text_field( $_REQUEST['state'] ) : '',
-			'CNT_ISO' 			=> ! empty( $_REQUEST['country'] ) ? sanitize_text_field( $_REQUEST['country'] ) : '',
+			'STA_ID' 				=> $STA_ID,
+			'CNT_ISO' 			=> $CNT_ISO,
 			'ATT_zip' 				=> ! empty( $_REQUEST['zip'] ) ? sanitize_text_field( $_REQUEST['zip'] ) : '',
 			'ATT_phone' 		=> ! empty( $_REQUEST['phone'] ) ? sanitize_text_field( $_REQUEST['phone'] ) : '',
 		);
 		if ( empty( $attendee_data['ATT_email'] ) || $attendee_data['ATT_email'] != $_REQUEST['email'] ) {
 			EE_Error::add_error( __( 'An invalid email address was submitted.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
+		// kinda lame, but we need a first and last name to create an attendee...
 		$attendee_data['ATT_fname'] = ! empty( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : $attendee_data['ATT_email'];
 		$attendee_data['ATT_lname'] = ! empty( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : $attendee_data['ATT_email'];
 		return EE_Attendee::new_instance( $attendee_data );
