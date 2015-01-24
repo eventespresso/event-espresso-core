@@ -56,8 +56,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 	 * @return EE_Attendee
 	 */
 	public static function new_instance( $props_n_values = array() ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
 		return $has_object ? $has_object : new self( $props_n_values );
 	}
 
