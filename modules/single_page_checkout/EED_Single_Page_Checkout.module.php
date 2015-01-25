@@ -435,16 +435,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return 	void
 	 */
 	private function _get_request_vars() {
-
-		//let's grab the first reg step off of the array so we use that as the default step for $this->checkout->step
-		$default_step = reset( self::$_reg_steps_array );
-
 		// load classes
 		EED_Single_Page_Checkout::load_request_handler();
 		//make sure this request is marked as belonging to EE
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 		// which step is being requested ?
-		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', $default_step['slug'] );
+		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
 		// which step is being edited ?
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
