@@ -43,27 +43,39 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 
 	/**
-	 * _core_version()
-	 * 	we only want the basic #.#.#.XXX version string like "4.6.0.rc" as opposed to 4.6.0.rc.027"
-	 * so remove any additional "micro" version data, then cache result on object
-	 * @return string
+	 * We should always be comparing core to a version like '4.3.0.rc.000',
+	 * not just '4.3.0'.
+	 * So if the addon developer doesn't provide that full version string,
+	 * fill in the blanks for them
+	 *
+	 * @param string $min_core_version
+	 * @return string always like '4.3.0.rc.000'
 	 */
-	protected static function _core_version() {
-		if ( empty( self::$_core_version )) {
-			self::$_core_version = explode( '.', EVENT_ESPRESSO_VERSION );
-			$x = 1;
-			foreach( self::$_core_version as $key => $value ) {
-				if ( $x > 4 ) {
-					unset( self::$_core_version[ $key ] );
-				}
-				$x++;
-			}
-			self::$_core_version = implode( '.', self::$_core_version );
-
+	protected static function _effective_version( $min_core_version ) {
+		// 4 . 3 . 1 . p . 123
+		// offsets 0 . 1 . 2 . 3 . 4
+		$version_parts = explode( '.', $min_core_version );
+		//they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
+		//soon we can assume that's 'rc', but this current version is 'alpha'
+		if( ! isset( $version_parts[ 3 ] ) ) {
+				$version_parts[ 3 ] = 'dev';
 		}
-		return self::$_core_version;
+		if( ! isset( $version_parts[ 4 ] ) ) {
+			$version_parts[ 4 ] = '000';
+		}
+		return implode( '.', $version_parts );
+
 	}
 
+	/**
+	 * Returns whether or not the min core version requirement of the addon is met
+	 * @param string $min_core_version the minimum core version required by the addon
+	 * @param string $actual_core_version the actual core version, optional
+	 * @return boolean
+	 */
+	public static  function _meets_min_core_version_requirement( $min_core_version, $actual_core_version = ESPRESSO_VERSION ) {
+		return version_compare( self::_effective_version( $actual_core_version ), self::_effective_version( $min_core_version ), '>=' );
+	}
 
 
 	/**
@@ -186,7 +198,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		);
 
 		//check whether this addon version is compatible with EE core
-		if ( version_compare( self::_core_version(), $setup_args[ 'min_core_version'], '<' ) ){
+		if ( ! self::_meets_min_core_version_requirement( $setup_args['min_core_version'], espresso_version() ) ){
 			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
 			//plugin activated fine when it didn't
 			if( isset( $_GET[ 'activate' ]) ) {
@@ -452,6 +464,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}
+
+
 
 
 
