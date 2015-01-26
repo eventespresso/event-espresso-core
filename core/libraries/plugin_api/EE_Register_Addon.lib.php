@@ -55,10 +55,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// 4 . 3 . 1 . p . 123
 		// offsets 0 . 1 . 2 . 3 . 4
 		$version_parts = explode( '.', $min_core_version );
-		//they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
+		//check they specified the micro version (after 2nd period)
+		if( ! isset( $version_parts[ 2 ] ) ) {
+			$version_parts[ 2] = '0';
+		}
+		//if they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
 		//soon we can assume that's 'rc', but this current version is 'alpha'
 		if( ! isset( $version_parts[ 3 ] ) ) {
-				$version_parts[ 3 ] = 'dev';
+			$version_parts[ 3 ] = 'dev';
 		}
 		if( ! isset( $version_parts[ 4 ] ) ) {
 			$version_parts[ 4 ] = '000';
