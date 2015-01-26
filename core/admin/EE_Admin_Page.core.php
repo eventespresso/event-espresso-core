@@ -2048,6 +2048,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$box_label = __('Publish', 'event_espresso');
 		}
 
+		$box_label = apply_filters( 'FHEE__EE_Admin_Page___publish_post_box__box_label', $box_label, $this->_req_action, $this );
+
 		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high' );
 
 	}
