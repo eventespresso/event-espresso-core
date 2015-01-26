@@ -770,7 +770,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if( $req_data === NULL ){
 			$req_data = $_POST;
 		}
-		if( $this->find_form_data_for_this_section( $req_data ) ){
+		$checked_value = $this->find_form_data_for_this_section( $req_data );
+		if( $checked_value !== null ){
 			return TRUE;
 		}else{
 			return FALSE;
