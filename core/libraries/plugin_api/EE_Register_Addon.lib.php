@@ -216,8 +216,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				sprintf(
 					__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
 					$addon_name,
-					$setup_args[ 'min_core_version' ],
-					self::_core_version(),
+					self::_effective_version( $setup_args[ 'min_core_version' ] ),
+					self::_effective_version( espresso_version() ),
 					'<br />'
 				),
 				__FILE__, __FUNCTION__, __LINE__
@@ -344,7 +344,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_name( $addon_name );
 		$addon->set_main_plugin_file( self::$_settings[ $addon_name ]['main_file_path'] );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
-		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
+		$addon->set_min_core_version( self::_effective_version( self::$_settings[ $addon_name ]['min_core_version'] ) );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
