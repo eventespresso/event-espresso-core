@@ -440,10 +440,6 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//if that didn't throw an error, we're good
 	}
 
-	public function test_get_raw(){
-		$a = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob' ) );
-		$this->
-	}
 }
 
 // End of file EE_Base_Class_Test.php
