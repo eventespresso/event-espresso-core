@@ -696,6 +696,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//d( $this->_transaction );
 			$event_queue['has_items'] = TRUE;
 			$prev_event = NULL;
+			// wrap form elements with div containers
+			add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+			add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 
 			foreach ( $registrations as $registration ) {
 
@@ -716,11 +719,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 				$event_queue['items'][ $line_item_ID ]['reg_count'] = $registration->count();
 
-				// add these filters here, as we don't need attendee info on payment options(retry payment) page
-				
-				add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-				add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
-					
 				// do we need to generate data regarding attendees and reg form questions?
 				if ( strpos( $this->_current_step, 'attendee_information' ) !== FALSE ) {
 
@@ -775,7 +773,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							}
 						}
 					}
-					//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					// printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, $from_admin, 'div' );
 
