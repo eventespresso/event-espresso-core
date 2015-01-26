@@ -52,8 +52,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return string always like '4.3.0.rc.000'
 	 */
 	protected static function _effective_version( $min_core_version ) {
-		// 4 . 3 . 1 . p . 123
-		// offsets 0 . 1 . 2 . 3 . 4
+		// versions: 4 . 3 . 1 . p . 123
+		// offsets:    0 . 1 . 2 . 3 . 4
 		$version_parts = explode( '.', $min_core_version );
 		//check they specified the micro version (after 2nd period)
 		if( ! isset( $version_parts[ 2 ] ) ) {
@@ -77,7 +77,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @param string $actual_core_version the actual core version, optional
 	 * @return boolean
 	 */
-	public static  function _meets_min_core_version_requirement( $min_core_version, $actual_core_version = ESPRESSO_VERSION ) {
+	public static  function _meets_min_core_version_requirement( $min_core_version, $actual_core_version = EVENT_ESPRESSO_VERSION ) {
 		return version_compare( self::_effective_version( $actual_core_version ), self::_effective_version( $min_core_version ), '>=' );
 	}
 
