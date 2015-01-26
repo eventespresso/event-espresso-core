@@ -18,6 +18,7 @@ class EE_Password extends EE_Form_Input_Base{
 		$this->_set_display_strategy(new EE_Text_Input_Display_Strategy('password'));
 		$this->_set_normalization_strategy(new EE_Text_Normalization());
 		parent::__construct($options);
+		$this->set_html_class( $this->html_class() . 'password' );
 	}
 
 

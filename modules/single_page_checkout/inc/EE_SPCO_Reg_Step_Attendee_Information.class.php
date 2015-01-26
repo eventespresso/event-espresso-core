@@ -489,7 +489,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			// Text
 			case EEM_Question::QST_type_text :
 				if( $identifier == 'email' ){
-					$input_constructor_args[ 'html_class' ] .= ' email';
 					return new EE_Email_Input( $input_constructor_args );
 				}else{
 					return new EE_Text_Input( $input_constructor_args );
