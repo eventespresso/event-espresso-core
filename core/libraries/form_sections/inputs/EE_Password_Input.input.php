@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Password
+ * Class EE_Password_Input
  *
  * @package 			Event Espresso
  * @subpackage    core
@@ -8,7 +8,7 @@
  * @since               	4.6
  *
  */
-class EE_Password extends EE_Form_Input_Base{
+class EE_Password_Input extends EE_Form_Input_Base{
 
 
 	/**
