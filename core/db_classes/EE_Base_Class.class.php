@@ -127,18 +127,9 @@ abstract class EE_Base_Class{
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		//if db model is instantiating
-		if( $bydb ){
-			//client code has indicated these field values are from the database
-			foreach($fieldValues as $field_name => $field_value_from_db){
-				$this->set_from_db($field_name,$field_value_from_db);
-			}
-		}else{
-			//we're constructing a brand
-			//new instance of the model object. Generally, this means we'll need to do more field validation
-			foreach($model_fields as $fieldName => $field_obj){
-				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
-			}
+		//if db model is instantiating from the DB, don't use defaults
+		foreach( array_keys( $model_fields ) as $fieldName ){
+			$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null, ! $bydb );
 		}
 
 
@@ -207,8 +198,13 @@ abstract class EE_Base_Class{
 				$field_obj->set_timezone( $this->_timezone );
 			}
 			$holder_of_value = $field_obj->prepare_for_set($field_value);
-			if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
+			//should the value be null?
+			if( $field_value === null && ! $use_default && $field_obj->is_nullable() ){
+				$this->_fields[ $field_name ] = null;
+			//should we use the default?
+			}elseif( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 				$this->_fields[$field_name] = $field_obj->get_default_value();
+			//should we use the value as prepared by the field object?
 			}else{
 				$this->_fields[$field_name] = $holder_of_value;
 			}
