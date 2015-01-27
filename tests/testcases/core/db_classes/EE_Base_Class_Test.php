@@ -454,7 +454,18 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertTrue( null === $qty_col_in_db );
 		//and now verify get_raw is returning that same value
 		$this->assertTrue( null === $l2_from_db->get_raw( 'LIN_quantity' ) );
-		}
+	}
+	/**
+	 * Tests when we set a field to INIFINITY, it stays that way even after we re-fetch it from the db
+	 * @group 7358
+	 */
+	public function test_infinite_fields_stay_that_way() {
+		$dtt = $this->new_model_obj_with_dependencies( 'Datetime' );
+		$dtt->set_reg_limit( INF );
+		$dtt->save();
+		$dtt_from_db = EEM_Datetime::reset()->get_one_by_ID( $dtt->ID() );
+		$this->assertEquals( $dtt->reg_limit(), $dtt_from_db->reg_limit() );
+	}
 }
 
 // End of file EE_Base_Class_Test.php

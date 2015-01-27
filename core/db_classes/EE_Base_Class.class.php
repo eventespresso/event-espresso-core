@@ -127,9 +127,17 @@ abstract class EE_Base_Class{
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		//if db model is instantiating from the DB, don't use defaults
-		foreach( array_keys( $model_fields ) as $fieldName ){
-			$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null, ! $bydb );
+		if( $bydb ){
+			//client code has indicated these field values are from the database
+			foreach( array_keys( $model_fields ) as $fieldName ){
+				$this->set_from_db($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null);
+			}
+		}else{
+			//we're constructing a brand
+			//new instance of the model object. Generally, this means we'll need to do more field validation
+			foreach( array_keys( $model_fields ) as $fieldName ){
+				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
+			}
 		}
 
 
@@ -199,12 +207,8 @@ abstract class EE_Base_Class{
 			}
 			$holder_of_value = $field_obj->prepare_for_set($field_value);
 			//should the value be null?
-			if( $field_value === null && ! $use_default && $field_obj->is_nullable() ){
-				$this->_fields[ $field_name ] = null;
-			//should we use the default?
-			}elseif( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
+			if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 				$this->_fields[$field_name] = $field_obj->get_default_value();
-			//should we use the value as prepared by the field object?
 			}else{
 				$this->_fields[$field_name] = $holder_of_value;
 			}
@@ -625,12 +629,17 @@ abstract class EE_Base_Class{
 			//eg, a CPT model object could have an entry in the posts table, but no
 			//entry in the meta table. Meaning that all its columns in the meta table
 			//are null! yikes! so when we find one like that, use defaults for its meta columns
-			if($field_value_from_db === NULL && ! $field_obj->is_nullable()){
-				$field_value = $field_obj->get_default_value();
+			if($field_value_from_db === NULL ){
+				if( $field_obj->is_nullable()){
+					//if the field allows nulls, then let it be null
+					$field_value = NULL;
+				}else{
+					$field_value = $field_obj->get_default_value();
+				}
 			}else{
-				$field_value = $field_value_from_db;
+				$field_value = $field_obj->prepare_for_set_from_db( $field_value_from_db );
 			}
-			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_fields[$field_name] = $field_value;
 		}
 	}
 
