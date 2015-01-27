@@ -67,7 +67,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_attendee_meta';
 		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
-						ATT_ID int(10) unsigned NOT NULL,
+						ATT_ID bigint(20) unsigned NOT NULL,
 						ATT_fname varchar(45) NOT NULL,
 						ATT_lname varchar(45) NOT	NULL,
 						ATT_address varchar(45) DEFAULT	NULL,
@@ -106,7 +106,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				  EVT_ID INT UNSIGNED NOT NULL ,
+				  EVT_ID bigint(20) UNSIGNED NOT NULL ,
 				  DTT_name VARCHAR(255) NOT NULL default '',
 				  DTT_description TEXT NOT NULL,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
@@ -127,7 +127,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_event_meta';
 		$sql = "
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
-			EVT_ID int(11) unsigned NOT NULL,
+			EVT_ID bigint(20) unsigned NOT NULL,
 			EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_display_ticket_selector TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',
@@ -146,7 +146,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					EVT_ID INT UNSIGNED NOT NULL ,
+					EVT_ID bigint(20) UNSIGNED NOT NULL ,
 					QSG_ID INT UNSIGNED NOT NULL ,
 					EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
@@ -156,8 +156,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_event_venue';
 		$sql="EVV_ID INT(11) NOT NULL AUTO_INCREMENT ,
-				EVT_ID INT(11) NOT NULL ,
-				VNU_ID INT(11) NOT NULL ,
+				EVT_ID bigint(20) unsigned NOT NULL ,
+				VNU_ID bigint(20) unsigned NOT NULL ,
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EVV_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
@@ -316,8 +316,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_registration';
 		$sql = "REG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-					  EVT_ID int(10) unsigned NOT NULL,
-					  ATT_ID int(10) unsigned NOT NULL,
+					  EVT_ID bigint(20) unsigned NOT NULL,
+					  ATT_ID bigint(20) unsigned NOT NULL,
 					  TXN_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
 					  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPP',
@@ -399,7 +399,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_venue_meta';
 		$sql = "VNUM_ID int(11) NOT NULL AUTO_INCREMENT,
-			VNU_ID int(11) DEFAULT NULL,
+			VNU_ID bigint(20) unsigned DEFAULT NULL,
 			VNU_address varchar(100) DEFAULT NULL,
 			VNU_address2 varchar(100) DEFAULT NULL,
 			VNU_city varchar(100) DEFAULT NULL,
