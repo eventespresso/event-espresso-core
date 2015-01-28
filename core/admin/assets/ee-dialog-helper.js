@@ -16,14 +16,15 @@ jQuery(document).ready(function($) {
 	};
 
 
-	window.position_dialog = function position_dialog() {
+	window.position_dialog = function position_dialog(dialogWidthFraction) {
+		dialogWidthFraction = typeof dialogWidthFraction === 'undefined' ? 2 : dialogWidthFraction;
 		var wndwWidth = parseInt( $(window).width(), 10 );
 		var wndwHeight = parseInt( $(window).height(), 10 );
 		var scrllTp = $('html').scrollTop();
 		var parOff = eedialog.parent().offset();
 		var dialogTop =  ( wndwHeight / 10 ) - parOff.top + scrllTp;
-		var dialogLeft = ( wndwWidth / 4 - parOff.left );
-		var dialogWidth = wndwWidth / 2;
+		var dialogLeft =  ( (wndwWidth - ( wndwWidth/dialogWidthFraction ) ) /2 ) - parOff.left;
+		var dialogWidth = wndwWidth / dialogWidthFraction;
 		eedialog.css({ 'top' : dialogTop, 'left' : dialogLeft, 'width' : dialogWidth }).fadeIn('fast');
 	};
 
@@ -49,6 +50,8 @@ jQuery(document).ready(function($) {
 	var eeDialog = $('.ee-admin-dialog-container').draggable( { disabled: true } );
 
 	var dialogHelper = {
+
+		dialogContentContainer : $('.ee-admin-dialog-container-inner-content'),
 
 		displayModal: function(overlaystick, draggable) {
 			overlaystick = typeof(overlaystick) === 'undefined' ? false : overlaystick;

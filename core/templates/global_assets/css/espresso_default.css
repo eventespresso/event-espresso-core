@@ -578,6 +578,21 @@ input.ee-register-button {
 	color:#666;
 }
 
+
+
+/************* DIALOG HELPER ***************/
+.ee-admin-dialog-container {
+	position   : absolute; top : 50px; left : 25%; width : 75%; height : auto; padding : 3em 4em 2em; z-index : 9999991;
+	background : #FFFFFF; border : 1px solid #DDDDDD; border-radius : 5px;
+}
+
+#espresso-admin-page-overlay-dv {
+	position   : absolute; top : 0; left : 0;
+	background : rgba(0, 0, 0, 0.6) !important; z-index : 9999990;
+}
+
+
+
 /*#espresso-notices-success .close-espresso-notice,
 #espresso-ajax-notices-success .close-espresso-notice,
 #espresso-notices-error .close-espresso-notice,

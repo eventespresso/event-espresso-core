@@ -2048,6 +2048,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$box_label = __('Publish', 'event_espresso');
 		}
 
+		$box_label = apply_filters( 'FHEE__EE_Admin_Page___publish_post_box__box_label', $box_label, $this->_req_action, $this );
+
 		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high' );
 
 	}
@@ -2067,6 +2069,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * Public wrapper for the protected method.  Allows plugins/addons to externally call the
+	 * protected method.
+	 *
+	 * @see $this->_set_publish_post_box_vars for param details
+	 * @since 4.6.0
+	 */
+	public function set_publish_post_box_vars( $name = null, $id = false, $delete = false, $save_close_redirect_URL = null, $both_btns = true ) {
+		$this->_set_publish_post_box_vars( $name, $id, $delete, $save_close_redirect_URL, $both_btns );
+	}
 
 
 	/**
@@ -2649,6 +2661,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
+	 *
+	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @since 4.6.0
+	 *
+	 */
+	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
+		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
+	}
+
+
 
 	/**
 	 * set form open and close tags on add/edit pages.
@@ -2944,7 +2968,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param array $data array that will be assigned to template args.
 	 */
 	public function set_template_args( $data ) {
-		$this->_template_args = (array) $data;
+		$this->_template_args = array_merge( $this->_template_args, (array) $data );
 	}
 
 
