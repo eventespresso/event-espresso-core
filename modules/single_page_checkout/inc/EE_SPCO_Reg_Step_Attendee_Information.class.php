@@ -249,7 +249,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			)
 		);
 		// filter for additional content before questions
-		$form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '', $registration, $question_group, $this ));
 		// loop thru questions
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
@@ -257,8 +257,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_args['subsections'][ $identifier ] = $this->reg_form_question( $registration, $question );
 			}
 		}
+		$form_args['subsections'] = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__question_group_reg_form__subsections_array', $form_args['subsections'], $registration, $question_group, $this );
+
 		// filter for additional content after questions
-		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '', $registration, $question_group, $this ));
 //		d( $form_args );
 		return new EE_Form_Section_Proper( $form_args );
 	}
@@ -488,7 +490,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		switch ( $question->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				return new EE_Text_Input( $input_constructor_args );
+				if( $identifier == 'email' ){
+					return new EE_Email_Input( $input_constructor_args );
+				}else{
+					return new EE_Text_Input( $input_constructor_args );
+				}
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
@@ -654,6 +660,20 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					if ( ! $this->checkout->revisit ) {
 						$registration->save();
 					}
+
+					/**
+					 * This allows plugins to trigger a fail on processing of a
+					 * registration for any conditions they may have for it to pass.
+					 *
+					 * @var bool   if TRUE is returned by the plugin then the
+					 *      		registration processing is halted.
+					 */
+					$allstop = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this );
+
+					if ( $allstop ) {
+						return FALSE;
+					}
+
 					// Houston, we have a registration!
 					$att_nmbr++;
 					$this->_attendee_data[ $reg_url_link ] = array();
@@ -757,6 +777,19 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
+
+		/**
+		 * allow for plugins to hook in and do their own processing of the form input. For
+		 * plugins to bypass normal processing here, they just need to return a truthy value.
+		 *
+		 * @var bool
+		 */
+		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this );
+
+		if ( $has_processed ) {
+			return TRUE;
+		}
+
 		// grab related answer objects
 		$answers = $registration->answers();
 		// $answer_cache_id is the key used to find the EE_Answer we want
@@ -883,7 +916,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} else {
 			$existing_attendee = NULL;
 		}
-		return apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
+		return apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration, $attendee_data );
 	}
 
 
