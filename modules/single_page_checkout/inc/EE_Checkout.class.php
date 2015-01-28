@@ -406,6 +406,8 @@ class EE_Checkout {
 		$this->sort_reg_steps();
 		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
 		$this->set_next_step();
+		// the text that appears on the reg step form submit button
+		$this->current_step->set_submit_button_text();
 		$this->set_reg_step_JSON_info();
 	}
 
