@@ -158,7 +158,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
-		$table_name = 'esp_DATETIME';
+		$table_name = 'esp_datetime';
 		$sql = "DTT_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				  EVT_ID BIGINT(20) UNSIGNED NOT NULL,
 				  DTT_name VARCHAR(255) NOT NULL DEFAULT '',
@@ -343,7 +343,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_DATETIME_ticket";
+		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  DTT_ID INT(10) UNSIGNED NOT NULL,
 					  TKT_ID INT(10) UNSIGNED NOT NULL,
