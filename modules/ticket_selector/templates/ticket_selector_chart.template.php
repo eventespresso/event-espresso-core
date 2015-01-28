@@ -94,8 +94,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if ( false !== ( $row = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
-			echo $row;
+		if ( false !== ( $new_row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_content;
 			continue;
 		}
 	?>
@@ -111,8 +111,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if ( false !== ( $row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_inside_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
-			echo $row_content;
+		if ( false !== ( $new_row_cells_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_inside_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_cells_content;
 			echo '</tr>';
 			continue;
 		}
