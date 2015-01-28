@@ -37,6 +37,13 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 		add_filter( 'pre_http_request', array( $this, 'pre_http_request' ), 10, 3 );
 	}
 
+	public function setUp(){
+		parent::setUp();
+		//make sure caf payment methods are registered
+		new EE_Brewing_Regular();
+		EE_Payment_Method_Manager::reset();
+	}
+
 	/**
 	 * Verifies our fake responses actually match mijireh's live ones
 	 * @group live

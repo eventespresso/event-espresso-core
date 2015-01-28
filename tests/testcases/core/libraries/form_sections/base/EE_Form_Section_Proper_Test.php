@@ -216,6 +216,33 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Float_Input', $error3->get_form_section() );
 		$this->assertEquals( 'input3', $error3->get_form_section()->name() );
 	}
+
+	/**
+	 * Tests the form was submitted functionality.
+	 *
+	 * @group 7431
+	 */
+	public function test_form_was_submitted() {
+		$form = new EE_Form_Section_Proper( array(
+				'name' => 'test_form',
+				'html_id' => 'test_form',
+				'subsections' => array(
+					'yes_no' => new EE_Yes_No_Input(
+						array(
+							'html_label_text' => 'testing',
+							'default' => false
+							)
+						)
+					)
+			)
+			);
+		$post_data = array(
+			'test_form' => array(
+				'yes_no' => '0'
+				)
+			);
+		$this->assertTrue( $form->was_submitted( $post_data ) );
+	}
 }
 
 // End of file EE_Form_Section_Proper_Test.php

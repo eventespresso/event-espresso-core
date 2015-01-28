@@ -637,12 +637,16 @@ class EEH_HTML {
 
 	/**
 	 * sanitize_id
+	 *
+	 * functionally does the same as the wp_core function sanitize_key except it does NOT use
+	 * strtolower and allows capitals.
+	 *
 	 * @param string $id
 	 * @return string
 	 */
 	public static function sanitize_id( $id = '' ) {
-		return sanitize_key( str_replace( ' ', '-', trim( $id )));
-
+		$key = str_replace( ' ', '-', trim( $id ) );
+		return preg_replace( '/[^a-zA-Z0-9_\-]/', '', $key );
 	}
 
 
@@ -679,7 +683,7 @@ class EEH_HTML {
 			$default_indentation = TRUE;
 		}
 		if ( ! isset( EEH_HTML::$_indent[ $tag ] )) {
-			EEH_HTML::$_indent[ $tag ] = 1;
+			EEH_HTML::$_indent[ $tag ] = 0;
 		}
 		EEH_HTML::$_indent[ $tag ] += intval( $indent );
 		EEH_HTML::$_indent[ $tag ] = EEH_HTML::$_indent[ $tag ] >= 0 ? EEH_HTML::$_indent[ $tag ] : 0;
@@ -696,8 +700,11 @@ class EEH_HTML {
 		EEH_HTML::$_indent = array(
 			'none' 	=> 0,
 			'form' 	=> 0,
-			'checkbox' 	=> 1,
-			'select' 	=> 1,
+			'radio' 	=> 0,
+			'checkbox' 	=> 0,
+			'select' 	=> 0,
+			'option' => 0,
+			'optgroup' => 0,
 			'table' 	=> 1,
 			'thead' => 2,
 			'tbody' => 2,
@@ -713,9 +720,7 @@ class EEH_HTML {
 			'h6' 	=> 0,
 			'p' 	=> 0,
 			'ul' 	=> 0,
-			'li' 	=> 1,
-			'option' => 1,
-			'optgroup' => 1
+			'li' 	=> 1
 		);
 	}
 

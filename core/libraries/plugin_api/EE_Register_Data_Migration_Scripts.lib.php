@@ -52,6 +52,11 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register Data Migration Scripts with EE_Register_Data_Migration_Scripts::register(), you must include a "dms_id" (a unique identifier for this set of data migration scripts), and  an array containing the following keys: "dms_paths" (an array of full server paths to folders that contain data migration scripts)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_settings[ $dms_id ] ) ){
+			return;
+		}
+
 		//make sure this was called in the right place!
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' )) {
 			EE_Error::doing_it_wrong(

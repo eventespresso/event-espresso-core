@@ -13,8 +13,8 @@
 <?php _e('This is the name of the price type.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?></strong><br />
-<?php _e('Whether this price type should be applied as a percentage (%) or a dollar amount.', 'event_espresso'); ?>
+<strong><?php _e('Percentage or Fixed Amount?', 'event_espresso'); ?></strong><br />
+<?php _e('Whether this price type should be applied as a percentage (%) or a fixed amount.', 'event_espresso'); ?>
 </li>
 <li>
 <strong><?php _e('Order of Application', 'event_espresso'); ?></strong><br />

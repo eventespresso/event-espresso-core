@@ -406,6 +406,8 @@ class EE_Checkout {
 		$this->sort_reg_steps();
 		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
 		$this->set_next_step();
+		// the text that appears on the reg step form submit button
+		$this->current_step->set_submit_button_text();
 		$this->set_reg_step_JSON_info();
 	}
 
@@ -526,7 +528,7 @@ class EE_Checkout {
 	public function save_all_data( $show_errors = TRUE ) {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			// save so that TXN has ID
+			// save to ensure that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
@@ -676,6 +678,7 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+		$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
 		return TRUE;
 	}
 

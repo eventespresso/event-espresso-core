@@ -100,7 +100,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return string
 	 */
 	function name() {
-		return $this->get( 'LIN_name' );
+		$name =  $this->get( 'LIN_name' );
+		if( ! $name ){
+			$name = ucwords( str_replace( '-', ' ', $this->type() ) );
+		}
+		return $name;
 	}
 
 
@@ -471,12 +475,18 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
-	 * Adds the line item as a child to this line item
+	 * Adds the line item as a child to this line item. If there is another child line
+	 * item with the same LIN_code, it is overwriten by this new one
 	 * @param EE_Line_Item $line_item
 	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
 		if ( $this->ID() ) {
+			//check for any duplicate line items (with the same code), if so, thsi replaces it
+			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
+			if( $line_item_with_same_code instanceof EE_Line_Item ) {
+				$this->delete_child_line_item( $line_item_with_same_code->code() );
+			}
 			$line_item->set_parent_ID( $this->ID() );
 			if( $this->TXN_ID() ){
 				$line_item->set_TXN_ID( $this->TXN_ID() );

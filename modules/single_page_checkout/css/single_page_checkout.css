@@ -286,22 +286,22 @@
 }
 
 #ee-single-page-checkout-dv .nano-lbl {
-	width: 3.1%; min-width:50px; max-width:100%;
+	width: 3.1%; min-width:60px; max-width:100%;
 }
 #ee-single-page-checkout-dv .micro-lbl {
-	width: 6.2%; min-width:100px; max-width:100%;
+	width: 6.2%; min-width:120px; max-width:100%;
 }
 #ee-single-page-checkout-dv .tiny-lbl {
-	width: 12.4%; min-width:150px; max-width:100%;
+	width: 12.4%; min-width:180px; max-width:100%;
 }
 #ee-single-page-checkout-dv .small-lbl {
-	width: 24.4%; min-width:200px; max-width:100%;
+	width: 24.4%; min-width:240px; max-width:100%;
 }
 #ee-single-page-checkout-dv .medium-lbl {
-	width: 49%; min-width:300px; max-width:100%;
+	width: 49%; min-width:360px; max-width:100%;
 }
 #ee-single-page-checkout-dv .big-lbl {
-	width:99%; min-width:300px; max-width:100%;
+	width:99%; min-width:360px; max-width:100%;
 }
 
 .ee-question-option-desc {

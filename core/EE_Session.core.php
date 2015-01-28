@@ -43,10 +43,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 private $_session_data = array();
 
 	 /**
-	  * default session expiration 2 days (for not so instant IPNs)
+	  * default session expiration 2 hours (for not so instant IPNs)
 	  * @var int
 	  */
-	 private $_expiration = 172800;
+	 private $_expiration = 7200;
 
 	 /**
 	  * current time as Unix timestamp with GMT offset
@@ -133,6 +133,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
+		// default session expiration 2 hours (for not so instant IPNs)
+		$this->_expiration = 2 * HOUR_IN_SECONDS;
 		// retrieve session options from db
 		$session_settings = get_option( 'ee_session_settings' );
 		if ( $session_settings !== FALSE ) {
@@ -186,8 +188,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			}
 		}
 	}
-
-
 
 
 
@@ -295,9 +295,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * retrieve session data
 	  * @access    public
 	  * @param null $key
+	  * @param bool $reset_cache
 	  * @return    array
 	  */
-	public function get_session_data( $key = NULL ) {
+	public function get_session_data( $key = NULL, $reset_cache = FALSE ) {
+		if ( $reset_cache ) {
+			$this->reset_cart();
+			$this->reset_checkout();
+			$this->reset_transaction();
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;

@@ -77,6 +77,9 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		//just set a random address
 		$_SERVER[ 'REMOTE_ADDR' ] = '192.0.0.1';
 		add_filter('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', '__return_false' );
+		//make sure caf payment methods are registered
+		new EE_Brewing_Regular();
+		EE_Payment_Method_Manager::reset();
 		return $return_value;
 	}
 

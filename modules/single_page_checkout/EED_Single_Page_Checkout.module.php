@@ -73,6 +73,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::set_definitions();
 		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
 		// add powered by EE msg
 		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
@@ -102,6 +108,33 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_ajax_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 		add_action( 'wp_ajax_nopriv_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
+	}
+
 
 
 	/**
@@ -407,7 +440,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//make sure this request is marked as belonging to EE
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 		// which step is being requested ?
-		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', 'attendee_information' );
+		$this->checkout->step = EE_Registry::instance()->REQ->get( 'step', $this->_get_first_step() );
 		// which step is being edited ?
 		$this->checkout->edit_step = EE_Registry::instance()->REQ->get( 'edit_step', '' );
 		// and what we're doing on the current step
@@ -421,6 +454,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+	}
+
+
+
+	/**
+	 *    _get_first_step
+	 *  gets slug for first step in $_reg_steps_array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	private function _get_first_step() {
+		$first_step = reset( EED_Single_Page_Checkout::$_reg_steps_array );
+		return isset( $first_step['slug'] ) ? $first_step['slug'] : 'attendee_information';
 	}
 
 
@@ -749,7 +797,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// the text that appears on the reg step form submit button
 			$reg_step->set_submit_button_text();
 		}
-
+		// dynamically creates hook point like: AHEE__Single_Page_Checkout___initialize_reg_step__attendee_information
+		do_action( "AHEE__Single_Page_Checkout___initialize_reg_step__{$this->checkout->current_step->slug()}", $this->checkout->current_step );
 	}
 
 
@@ -860,6 +909,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['revisit'] = $this->checkout->revisit;
 		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->checkout->reg_url_link;
 		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['invalid_json_response'] = __( 'An invalid response was returned from the server while attempting to process your request. Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['validation_error'] = __( 'There appears to be a problem with the form validation configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['invalid_payment_method'] = __( 'There appears to be a problem with the payment method configuration! Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
@@ -885,10 +935,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// i18n
 		$this->translate_js_strings();
 		// load JS
-		wp_enqueue_script( 'underscore' );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
+
+		/**
+		 * global action hook for enqueueing styles and scripts with
+		 * spco calls.
+		 */
+		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts', $this );
+
+		/**
+		 * dynamic action hook for enqueueing styles and scripts with spco calls.
+		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_sytles_and_scripts__attendee_information
+		 */
+		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
+
 		// add css and JS for current step
 		$this->checkout->current_step->enqueue_styles_and_scripts();
 	}
