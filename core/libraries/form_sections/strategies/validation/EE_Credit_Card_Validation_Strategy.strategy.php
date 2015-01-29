@@ -42,7 +42,7 @@ class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array('creditcard'=>true, array( 'messages' => array( 'creditcard' => $this->get_validation_error_message() ) ) );
+		return array('creditcard'=>true, 'messages' => array( 'creditcard' => $this->get_validation_error_message() ) );
 	}
 
 	/**

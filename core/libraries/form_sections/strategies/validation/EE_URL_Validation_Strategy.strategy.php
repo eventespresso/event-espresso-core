@@ -48,7 +48,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array( 'validUrl'=>true, array( 'messages' => array( 'validUrl' => $this->get_validation_error_message() ) ) );
+		return array( 'validUrl'=>true, 'messages' => array( 'validUrl' => $this->get_validation_error_message() ) );
 	}
 }
 

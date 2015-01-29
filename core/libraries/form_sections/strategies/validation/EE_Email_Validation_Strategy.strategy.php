@@ -30,7 +30,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
     * @throws \EE_Validation_Error
     */
 	function validate($normalized_value) {
-		if( $normalized_value && ! $this->_validate_email($normalized_value)){
+		if( $normalized_value && ! $this->_validate_email($normalized_value) ){
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'required');
 		}
 	}
@@ -41,7 +41,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
      * @return array
      */
    function get_jquery_validation_rule_array(){
-		return array( 'email'=>true, array( 'messages' => array( 'email' => $this->get_validation_error_message() ) ) );
+		return array( 'email'=>true, 'messages' => array( 'email' => $this->get_validation_error_message() ) );
 	}
 
 

@@ -37,7 +37,7 @@ class EE_Float_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array('number'=>true);
+		return array('number'=>true, 'messages' => array( 'number' => $this->get_validation_error_message() ) );
 	}
 }
 

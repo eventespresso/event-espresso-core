@@ -553,9 +553,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
-			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
+			$jquery_validation_rules = array_replace_recursive( $jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
-//		$jquery_validation_rules['messages']['required'] = 'monkeys will eat you';
+
 		if(! empty($jquery_validation_rules)){
 			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
 		}else{
