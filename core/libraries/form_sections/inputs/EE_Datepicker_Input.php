@@ -1,23 +1,39 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
+
 /**
- * Class EE_Datepicker_Input
+ * Event Espresso
  *
- * @package            Event Espresso
- * @subpackage    core
- * @author                Mike Nelson
- * @since                4.6
+ * Event Registration and Management Plugin for WordPress
  *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.6
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EE_Datepicker_Input
+ *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
+ *
+ * ------------------------------------------------------------------------
  */
 class EE_Datepicker_Input extends EE_Text_Input{
 
 	/**
-	 * @param array $options
+	 * @param array $input_settings
 	 */
-	function __construct( $options = array() ){
-		$options['html_class'] = isset( $options['html_class'] ) ? $options['html_class'] . ' datepicker' : 'datepicker';
+	function __construct( $input_settings = array() ){
+		$input_settings['html_class'] = isset( $input_settings['html_class'] ) ? $input_settings['html_class'] . ' datepicker' : 'datepicker';
 		$this->_set_display_strategy( new EE_Text_Input_Display_Strategy() );
 		$this->_set_normalization_strategy( new EE_Text_Normalization() );
-		parent::__construct( $options );
+		parent::__construct( $input_settings );
 		// add some style and make it dance
 		add_action( 'wp_enqueue_scripts', array( 'EE_Datepicker_Input', 'enqueue_styles_and_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Datepicker_Input', 'enqueue_styles_and_scripts' ));

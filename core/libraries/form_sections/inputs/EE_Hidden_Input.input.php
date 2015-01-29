@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -13,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	4.3
+ * @ version		 	4.6
  *
  * ------------------------------------------------------------------------
  *
@@ -26,15 +25,15 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Hidden_Input extends EE_Form_Input_Base{
-	function __construct($options = array()){
+	function __construct($input_settings = array()){
 		//require_once('strategies/display_strategies/EE_Text_Input_Display_Strategy.strategy.php');
 		$this->_set_display_strategy(new EE_Hidden_Display_Strategy());
-		if ( isset( $options['normalization_strategy'] ) && $options['normalization_strategy'] instanceof EE_Normalization_Strategy_Base ) {
-			$this->_set_normalization_strategy( $options['normalization_strategy'] );
+		if ( isset( $input_settings['normalization_strategy'] ) && $input_settings['normalization_strategy'] instanceof EE_Normalization_Strategy_Base ) {
+			$this->_set_normalization_strategy( $input_settings['normalization_strategy'] );
 		} else {
 			$this->_set_normalization_strategy( new EE_Text_Normalization() );
 		}
-		parent::__construct( $options );
+		parent::__construct( $input_settings );
 	}
 	public function get_html_for_label() {
 		return '';

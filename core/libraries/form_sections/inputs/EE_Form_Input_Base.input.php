@@ -1,16 +1,30 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
+
 /**
+ * Event Espresso
  *
- * Class EE_Form_Input_Base
+ * Event Registration and Management Plugin for WordPress
  *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.6
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EE_Form_Input_Base
  * For representing a single form input. Extends EE_Form_Section_Base because
  * it is a part of a form and shares a surprisingly large amount of functionality
  *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Mike Nelson
- * @since 				$VID:$
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
  *
+ * ------------------------------------------------------------------------
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -165,7 +179,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 		// ensure that "required" is set correctly
-		$this->set_required( $this->_required );
+		$this->set_required( $this->_required, isset( $input_args[ 'required_validation_error_message' ] ) ? $input_args[ 'required_validation_error_message' ] : NULL );
 
 		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 
@@ -559,6 +573,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
+//		$jquery_validation_rules['messages']['required'] = 'monkeys will eat you';
 		if(! empty($jquery_validation_rules)){
 			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
 		}else{
@@ -591,10 +606,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * Sets whether or not this field is required, and adjusts the validation strategy
 	 * @param boolean $required
 	 */
-	function set_required($required = true){
+	function set_required($required = true, $required_text = NULL ){
 		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN );
 		if ( $required ) {
-			$this->_add_validation_strategy( new EE_Required_Validation_Strategy() );
+			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
 			unset( $this->_validation_strategies[ get_class( new EE_Required_Validation_Strategy() ) ] );
 		}

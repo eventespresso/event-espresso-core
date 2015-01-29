@@ -26,12 +26,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Int_Validation_Strategy extends EE_Validation_Strategy_Base{
-	
+	public function __construct( $validation_error_message = NULL ) {
+		if( ! $validation_error_message ){
+			$validation_error_message = __("Only digits are allowed.", "event_espresso");
+		}
+		parent::__construct( $validation_error_message );
+	}
+
 	public function validate($normalized_value) {
 		//this should have already been detected by the normalization strategy
 	}
 	function get_jquery_validation_rule_array(){
-		return array('digits'=>true);
+		return array('digits'=>true, 'messages' => array( 'digits' => $this->get_validation_error_message() ) );
 	}
 }
 

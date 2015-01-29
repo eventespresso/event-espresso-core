@@ -1,21 +1,27 @@
 <?php
 
 class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
+	public function __construct( $validation_error_message = NULL ) {
+		if( ! $validation_error_message ){
+			$validation_error_message = __("Please enter a valid email address.", "event_espresso");
+		}
+		parent::__construct( $validation_error_message );
+	}
 	/**
 	 * just checks the field isn't blank
 	 * @return boolean
 	 */
 	function validate($normalized_value) {
 		if( $normalized_value && ! $this->_validate_email($normalized_value)){
-			throw new EE_Validation_Error(__("Please enter a valid email address", "event_espresso"), 'required');
+			throw new EE_Validation_Error( $this->get_validation_error_message(), 'required');
 		}
 	}
-	
+
 	function get_jquery_validation_rule_array(){
-		return array('email'=>true);
+		return array( 'email'=>true, array( 'messages' => array( 'email' => $this->get_validation_error_message() ) ) );
 	}
-	
-	
+
+
 	/**
 	*	Validate an email address.
 	*	Provide email address (raw input)
@@ -69,7 +75,7 @@ private function _validate_email($email)
 (!preg_match('/^(\\\\.|[A-Za-z0-9!#%&`_=\\/$\'*+?^{}|~.-])+$/',
                  str_replace("\\\\","",$local)))
       {
-         // character not valid in local part unless 
+         // character not valid in local part unless
          // local part is quoted
          if (!preg_match('/^"(\\\\"|[^"])+"$/',
              str_replace("\\\\","",$local)))

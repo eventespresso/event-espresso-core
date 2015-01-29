@@ -39,7 +39,21 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 			$normalized_value = preg_replace( "/[^0-9,. ]/", "", $normalized_value);
 		}
 		if(strlen($value_to_normalize) > strlen($normalized_value)){
-			throw new EE_Validation_Error(sprintf(__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso")), 'float_only');
+			//find if this input has a float validation strategy
+			//in which case, use its message
+			$validation_error_message = NULL;
+			foreach( $this->_input->get_validation_strategies() as $validation_strategy ){
+				if( $validation_strategy instanceof EE_Float_Validation_Strategy ){
+					$validation_error_message = $validation_strategy->get_validation_error_message();
+				}
+			}
+			//this really shouldn't ever happen because fields with a float normalization strategy
+			//should also have a float validation strategy, but in case it doesnt use the default
+			if( ! $validation_error_message ){
+				$default_validation_strategy = new EE_Float_Validation_Strategy();
+				$validation_error_message = $default_validation_strategy->get_validation_error_message();
+			}
+			throw new EE_Validation_Error( $validation_error_message, 'float_only' );
 		}else{
 			return floatval($normalized_value);
 		}

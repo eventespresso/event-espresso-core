@@ -1,13 +1,37 @@
 <?php
+if (!defined('EVENT_ESPRESSO_VERSION'))
+	exit('No direct script access allowed');
 
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.6
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EE_Currency_Input
+ *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
+ *
+ * ------------------------------------------------------------------------
+ */
 class EE_Currency_Input extends EE_Select_Input{
 
 	/**
 	 *
 	 * @param array $only_specific_currency_codes numerically-indexed array of allowed currency codes. By default, all are allowed
-	 * @param array $options
+	 * @param array $input_settings
 	 */
-	function __construct( $only_specific_currency_codes = array(), $options = array()){
+	function __construct( $only_specific_currency_codes = array(), $input_settings = array()){
 		$query_params = array('order_by'=>array('CNT_name'=>'asc'));
 		if($only_specific_currency_codes){
 			$query_params[0]['CNT_cur_code'] = array('IN',$only_specific_currency_codes);
@@ -18,6 +42,6 @@ class EE_Currency_Input extends EE_Select_Input{
 			/* @var $country EE_Country */
 			$country_options[$country->currency_code()] = $country->name().": ".$country->currency_name_single() ." (".$country->currency_sign().")";
 		}
-		parent::__construct($country_options,'int',$options);
+		parent::__construct($country_options,'int',$input_settings);
 	}
 }

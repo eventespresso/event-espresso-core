@@ -8,4 +8,15 @@ class EE_All_Caps_Normalization extends EE_Normalization_Strategy_Base{
 	function normalize($value_to_normalize) {
 		return strtoupper($value_to_normalize);
 	}
+
+	/**
+	 * It's kinda hard to unnormalize this- we can't determine which parts used to be lowercase
+	 * so just return it as-is.
+	 * @param string $normalized_value
+	 * @return string
+	 */
+	public function unnormalize( $normalized_value ) {
+		return $normalized_value;
+	}
+
 }

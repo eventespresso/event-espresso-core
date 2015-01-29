@@ -40,7 +40,21 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 		if ( preg_match( '/^\d+$/', $value_to_normalize )) {
 			return intval( $value_to_normalize );
 		} else {
-			throw new EE_Validation_Error( sprintf( __( "Only numeric characters, please!", "event_espresso" ) ), 'numeric_only' );
+			//find if this input has a int validation strategy
+			//in which case, use its message
+			$validation_error_message = NULL;
+			foreach( $this->_input->get_validation_strategies() as $validation_strategy ){
+				if( $validation_strategy instanceof EE_Int_Validation_Strategy ){
+					$validation_error_message = $validation_strategy->get_validation_error_message();
+				}
+			}
+			//this really shouldn't ever happen because fields with a int normalization strategy
+			//should also have a int validation strategy, but in case it doesnt use the default
+			if( ! $validation_error_message ){
+				$default_validation_strategy = new EE_Int_Validation_Strategy();
+				$validation_error_message = $default_validation_strategy->get_validation_error_message();
+			}
+			throw new EE_Validation_Error( $validation_error_message, 'numeric_only' );
 		}
 	}
 

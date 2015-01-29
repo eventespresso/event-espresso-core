@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -13,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * @ version		 	4.3
+ * @ version		 	4.6
  *
  * ------------------------------------------------------------------------
  *
@@ -38,7 +37,7 @@ class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
 	 *     example: 	if the class were an EE_Event, this could be slug(), description(), name() (default)
 	 * }
 	 */
-	public function __construct( $answer_options = array(), $input_settings ) {
+	public function __construct( $answer_options = array(), $input_settings = array() ) {
 		if( isset( $input_settings['naming_method'] )){
 			$this->set_option_naming_method( $input_settings['naming_method'] );
 		}

@@ -12,6 +12,13 @@
  */
 class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 
+	public function __construct( $validation_error_message = NULL ) {
+		if( ! $validation_error_message ){
+			$validation_error_message = __("Please enter a valid credit card number", "event_espresso");
+		}
+		parent::__construct( $validation_error_message );
+	}
+
 	/**
 	 * just checks the field isn't blank
 	 * @param $normalized_value
@@ -20,7 +27,7 @@ class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 	 */
 	function validate($normalized_value) {
 		if( $normalized_value && ! $this->verify_is_credit_card($normalized_value)){
-			throw new EE_Validation_Error(__("Please enter a valid credit card number", "event_espresso"), 'required');
+			throw new EE_Validation_Error( $this->get_validation_error_message(), 'required');
 		}
 	}
 
@@ -32,7 +39,7 @@ class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array('creditcard'=>true);
+		return array('creditcard'=>true, array( 'messages' => array( 'creditcard' => $this->get_validation_error_message() ) ) );
 	}
 
 	/**

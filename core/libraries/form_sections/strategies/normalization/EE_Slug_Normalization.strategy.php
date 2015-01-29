@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Simply converts the string into a slug. DOes not add any errors if its bad.
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -30,6 +30,16 @@ class EE_Slug_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
 		return sanitize_title($value_to_normalize);
 	}
+
+	/**
+	 * It's hard to unnormalize this- let's just take a guess
+	 * @param string $normalized_value
+	 * @return string
+	 */
+	public function unnormalize( $normalized_value ) {
+		return str_replace( "-", " ", $normalized_value );
+	}
+
 }
 
 // End of file EE_Slug_Normalization.strategy.php
