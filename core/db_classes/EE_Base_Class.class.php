@@ -127,16 +127,16 @@ abstract class EE_Base_Class{
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		if( $bydb ){
+		if ( $bydb ){
 			//client code has indicated these field values are from the database
-			foreach( array_keys( $model_fields ) as $fieldName ){
-				$this->set_from_db($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null);
+			foreach( $model_fields as $fieldName => $field ){
+				$this->set_from_db( $fieldName, isset( $fieldValues[ $fieldName] ) ? $fieldValues[ $fieldName ] : null );
 			}
-		}else{
+		} else {
 			//we're constructing a brand
 			//new instance of the model object. Generally, this means we'll need to do more field validation
-			foreach( array_keys( $model_fields ) as $fieldName ){
-				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
+			foreach( $model_fields as $fieldName => $field ){
+				$this->set( $fieldName, isset( $fieldValues[ $fieldName ] ) ? $fieldValues[ $fieldName ] : null, true );
 			}
 		}
 
