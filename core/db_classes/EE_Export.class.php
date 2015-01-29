@@ -32,18 +32,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 	private $_req_data = array();
 
-	/**
-	 *
-	 * @var EE_Registry
-	 */
-	//protected $EE;
 
-	/**
-	 *		private constructor to prevent direct creation
-	 *		@Constructor
-	 *		@access private
-	 *		@return void
-	 */
+
+	 /**
+	  *        private constructor to prevent direct creation
+	  *
+	  * @Constructor
+	  * @access private
+	  * @param array $request_data
+	  */
  	private function __construct( $request_data = array() ) {
 		$this->_req_data = $request_data;
 		$this->today = date("Y-m-d",time());
@@ -52,11 +49,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 
-	/**
-	 *		@ singleton method used to instantiate class object
-	 *		@ access public
-	 *		@return EE_Export
-	 */
+
+	 /**
+	  *        @ singleton method used to instantiate class object
+	  *        @ access public
+	  *
+	  * @param array $request_data
+	  * @return \EE_Export
+	  */
 	public static function instance( $request_data = array() ) {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Export )) {
@@ -69,7 +69,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	/**
 	 *			@Export Event Espresso data - routes export requests
 	 *		  @access public
-	 *			@return void
+	 *			@return void | bool
 	 */
 	public function export() {
 
@@ -163,11 +163,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 
-	/**
-	 *	@Export data for one event ? dunno
-	 *	@access public
-	 *	@return void
-	 */
+
+	 /**
+	  * @Export data for one event ? dunno
+	  * @access public
+	  * @throws \EE_Error
+	  */
 	function export_event() {
 		if ( ! isset( $this->_req_data['event_id'] )) {
 			throw new EE_Error(__('We need an event_id to export events.', 'event_espresso'));
@@ -175,6 +176,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$event_ids = is_array($this->_req_data['event_id']) ? $this->_req_data['event_id'] : (array) $this->_req_data['event_id'];
 		$filename = sanitize_title_with_dashes($this->_event_name);
+		$table_data = array();
 		foreach ( $event_ids as $this->_event_id ) {
 			$table_data[] = $this->espresso_event_export();
 		}
@@ -195,8 +197,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 *			@return void
 	 */
 	function export_all_event_data() {
-		global $wpdb;
-		//printr( $this->_req_data, 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// are any Event IDs set?
 		$event_query_params = array();
 		$related_models_query_params = array();
@@ -221,7 +221,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$value_to_equal = $EVT_ID;
 				$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($EVT_ID);
 
-				$filename = 'event-' . ($event ? $event->slug() : 'unknown');
+				$filename = 'event-' . ( $event instanceof EE_Event ? $event->slug() : __( 'unknown', 'event_espresso' ) );
 
 			}
 			$event_query_params[0]['EVT_ID'] =$value_to_equal;
@@ -307,7 +307,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	/**
 	 * Export a custom CSV of registration info including: A bunch of the reg fields, the time of the event, the price name,
 	 * and the questions associated with the registrations
-	 * @param type $event_id
+	 * @param int $event_id
 	 */
 	function report_registrations_for_event( $event_id = NULL ){
 		$reg_fields_to_include = array(
@@ -333,10 +333,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$registrations_csv_ready_array = array();
 		$reg_model = EE_Registry::instance()->load_model('Registration');
-		$query_params = apply_filters( 'FHEE__EE_Export__report_registration_for_event', array(
-			array( 'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ) ),
-			'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-			'force_join' => array( 'Transaction', 'Ticket' ) ), $event_id );
+		$query_params = apply_filters(
+			'FHEE__EE_Export__report_registration_for_event',
+			array(
+				array( 'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ) ),
+				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
+				'force_join' => array( 'Transaction', 'Ticket' )
+			),
+			$event_id
+		);
 		if( $event_id ){
 			$query_params[0]['EVT_ID'] =  $event_id;
 		}else{
@@ -349,103 +354,107 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		EEM_Question::instance()->show_next_x_db_queries();
 		$questions_for_these_registrations = EEM_Question::instance()->get_all(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
 		foreach($registrations as $registration){
-			$reg_csv_array = array();
-			if( ! $event_id ){
-				//get the event's name and Id
-				$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '(' . $registration->event_ID() . ')';
-			}
-			/*@var $registration EE_Registration */
-			foreach($reg_fields_to_include as $field_name){
-				$field = $reg_model->field_settings_for($field_name);
-				if($field_name == 'REG_final_price'){
-					$value = $registration->get_pretty($field_name,'localized_float');
-				}else{
-					$value = $registration->get_pretty($field->get_name());
+			if ( $registration instanceof EE_Registration ) {
+				$reg_csv_array = array();
+				if( ! $event_id ){
+					//get the event's name and Id
+					$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '(' . $registration->event_ID() . ')';
 				}
-				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
-				if($field_name == 'REG_final_price'){
-					//add a column named Currency after the final price
-					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
+				/*@var $registration EE_Registration */
+				foreach($reg_fields_to_include as $field_name){
+					$field = $reg_model->field_settings_for($field_name);
+					if($field_name == 'REG_final_price'){
+						$value = $registration->get_pretty($field_name,'localized_float');
+					}else{
+						$value = $registration->get_pretty($field->get_name());
+					}
+					$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
+					if($field_name == 'REG_final_price'){
+						//add a column named Currency after the final price
+						$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
+					}
 				}
-			}
-			//get pretty status
-			$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
-			//get pretty trnasaction status
-			$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
-			$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
-			$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
-			//just get all the payment methods used for this transaction (if primary registrant and something has been paid)
-			$reg_csv_array[ __( 'Payment Method', 'event_espresso' )] = $registration->is_primary_registrant() && $registration->transaction()->paid() ? implode(", ",EEM_Payment_Method::instance()->get_col(
-					array(
+				//get pretty status
+				$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
+				//get pretty trnasaction status
+				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
+				//just get all the payment methods used for this transaction (if primary registrant and something has been paid)
+				$reg_csv_array[ __( 'Payment Method', 'event_espresso' )] = $registration->is_primary_registrant() && $registration->transaction()->paid() ? implode(", ",EEM_Payment_Method::instance()->get_col(
 						array(
-							'Payment.TXN_ID' => $registration->transaction_ID(),
-							'Payment.STS_ID' => EEM_Payment::status_id_approved
-						)
-					), 'PMD_admin_name')) : '' ;
-			//get whether or not the user has checked in
-			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
-			//get ticket of registration and its price
-			$ticket_model = EE_Registry::instance()->load_model('Ticket');
-			if( $registration->ticket() ) {
-				$ticket_name = $registration->ticket()->name();
-				$datetimes_strings = array();
-				foreach($registration->ticket()->datetimes() as $datetime){
-					$datetimes_strings[] = $datetime->start_date_and_time();
+							array(
+								'Payment.TXN_ID' => $registration->transaction_ID(),
+								'Payment.STS_ID' => EEM_Payment::status_id_approved
+							)
+						), 'PMD_admin_name')) : '' ;
+				//get whether or not the user has checked in
+				$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
+				//get ticket of registration and its price
+				$ticket_model = EE_Registry::instance()->load_model('Ticket');
+				if( $registration->ticket() ) {
+					$ticket_name = $registration->ticket()->name();
+					$datetimes_strings = array();
+					foreach($registration->ticket()->datetimes() as $datetime){
+						$datetimes_strings[] = $datetime->start_date_and_time();
+					}
+
+				} else {
+					$ticket_name = __( 'Unknown', 'event_espresso' );
+					$datetimes_strings = array( __( 'Unknown', 'event_espresso' ) );
 				}
+				$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket_name;
+				$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
+				//get datetime(s) of registration
 
-			} else {
-				$ticket_name = __( 'Unknown', 'event_espresso' );
-				$datetimes_strings = array( __( 'Unknown', 'event_espresso' ) );
-			}
-			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket_name;
-			$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
-			//get datetime(s) of registration
-
-			//add attendee columns
-			$attendee = $registration->attendee();
-			foreach($att_fields_to_include as $att_field_name){
-				if($attendee){
-					if($att_field_name == 'STA_ID'){
-						$state = $attendee->state_obj();
-						if($state){
-							$value = $state->name();
+				//add attendee columns
+				$attendee = $registration->attendee();
+				foreach($att_fields_to_include as $att_field_name){
+					if($attendee){
+						if($att_field_name == 'STA_ID'){
+							$state = $attendee->state_obj();
+							if($state){
+								$value = $state->name();
+							}else{
+								$value = '';
+							}
+						}elseif($att_field_name == 'CNT_ISO'){
+							$country = $attendee->country_obj();
+							if($country){
+								$value = $country->name();
+							}else{
+								$value = '';
+							}
 						}else{
-							$value = '';
-						}
-					}elseif($att_field_name == 'CNT_ISO'){
-						$country = $attendee->country_obj();
-						if($country){
-							$value = $country->name();
-						}else{
-							$value = '';
+							$value = $attendee->get_pretty($att_field_name);
 						}
 					}else{
-						$value = $attendee->get_pretty($att_field_name);
+						$value = '';
 					}
-				}else{
-					$value = '';
+					$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+					$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
 				}
-				$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
-				$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
-			}
 
-			//make sure each registration has the same questions in the same order
-			foreach($questions_for_these_registrations as $question){
-				if( ! isset($reg_csv_array[$question->admin_label()])){
-					$reg_csv_array[$question->admin_label()] = null;
+				//make sure each registration has the same questions in the same order
+				foreach($questions_for_these_registrations as $question){
+					if ( $question instanceof EE_Question ) {
+						if( ! isset($reg_csv_array[$question->admin_label()])){
+							$reg_csv_array[$question->admin_label()] = null;
+						}
+					}
 				}
-			}
-			//now fill out the questions THEY answered
-			foreach($registration->answers() as $answer){
-				/* @var $answer EE_Answer */
-				if( $answer->question() instanceof EE_Question ){
-					$question_label = $answer->question()->admin_label();
-				}else{
-					$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer->question_ID() );
+				//now fill out the questions THEY answered
+				foreach($registration->answers() as $answer){
+					/* @var $answer EE_Answer */
+					if( $answer->question() instanceof EE_Question ){
+						$question_label = $answer->question()->admin_label();
+					}else{
+						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer->question_ID() );
+					}
+					$reg_csv_array[ $question_label ] = $answer->pretty_value();
 				}
-				$reg_csv_array[ $question_label ] = $answer->pretty_value();
+				$registrations_csv_ready_array[] = $reg_csv_array;
 			}
-			$registrations_csv_ready_array[] = $reg_csv_array;
 		}
 
 		//if we couldn't export anything, we want to at least show the column headers
@@ -462,7 +471,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 		if( $event_id ){
 			$event = EEM_Event::instance()->get_one_by_ID($event_id);
-			$event_slug = $event->slug();
+			$event_slug =  $event instanceof EE_Event ? $event->slug() : __( 'unknown', 'event_espresso' );
 		}else{
 			$event_slug = __( 'all', 'event_espresso' );
 		}
@@ -505,8 +514,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$query_params[0]['term_taxonomy_id'] = $EVT_CAT_ID;
 			}
 		} else {
-			// no IDs mena we will d/l the entire table
-			$filename = 'all-event-categories';
+			// no IDs means we will d/l the entire table
+			$filename = 'all-categories';
 		}
 
 		$tables_to_export = array(
@@ -514,7 +523,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			);
 
 		$table_data = $this->_get_export_data_for_models( $tables_to_export );
-		$filename = $this->generate_filename ( 'all-categories' );
+		$filename = $this->generate_filename ( $filename );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
 			EE_Error::add_error(__('An error occurred and the Category details could not be exported from the database.','event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -528,14 +537,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 *		  @param string - export_name
 	 *			@return string on success, FALSE on fail
 	 */
-	private function generate_filename ( $export_name = FALSE ) {
-		if ( $export_name ) {
+	private function generate_filename ( $export_name = '' ) {
+		if ( $export_name != '' ) {
 			$filename = get_bloginfo('name') . '-' . $export_name;
 			$filename = sanitize_key( $filename ) . '-' . $this->today;
 			return $filename;
 		}	 else {
 			EE_Error::add_error(__("No filename was provided", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
 		}
+		return false;
 	}
 
 
@@ -543,10 +553,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	/**
 	 *	@recursive function for exporting table data and merging the results with the next results
 	 *	@access private
-	 *	@param array keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of query params like on EEM_Base::get_all
+	 *	@param array $models_to_export keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of query params like on EEM_Base::get_all
 	 *	@return array on success, FALSE on fail
 	 */
-	private function _get_export_data_for_models( $models_to_export = FALSE ) {
+	private function _get_export_data_for_models( $models_to_export = array() ) {
 		$table_data = FALSE;
 		if ( is_array( $models_to_export ) ) {
 			foreach ( $models_to_export as $model_name => $query_params ) {
