@@ -1,23 +1,41 @@
-<?php
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+/**
+ * Class EE_Validation_Strategy_Base
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				4.6
+ *
+ */
 abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
+
+
 	protected $_validation_error_message = '';
+
+
+
+	/**
+	 * @param null $validation_error_message
+	 */
 	public function __construct( $validation_error_message = NULL ) {
 		$this->_validation_error_message = $validation_error_message === NULL ? __( 'Input invalid', 'event_espresso' ) : $validation_error_message ;
 		parent::__construct();
 	}
 
+
+
 	/**
 	 * Performs validation on the request data that corresponds to this field.
 	 * If validation fails, should throw an EE_Validation_Error.
 	 * Note: most validate() functions should allow $normalized_value to be empty,
-	 * as its the job of the EE_Required_Validation_STrategy to ensure that the field isn't empty.
-	 * @parameter mixed $normalized_value ready for validation. May very well be NULL (which, unless
+	 * as its the job of the EE_Required_Validation_Strategy to ensure that the field isn't empty.
+	 *
+	 * @param mixed $normalized_value ready for validation. May very well be NULL (which, unless
 	 * this validation strategy is the 'required' validation strategy, most should be OK with a null, empty string, etc)
-	 * @return void if the input isn't valid, it should just add a validation error using $this->_input->add_validation_error($msg,$code)
 	 */
 	function validate($normalized_value){
-		//by default, the validation strategy does no validation. this hsould be implemented
+		//by default, the validation strategy does no validation. this should be implemented
 	}
 
 	/**
@@ -34,7 +52,7 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
 		}
 	  });
 	 * </code>
-	 * this function should return array('required'=>true,'minlength'=>3,'equalto'=>'"#password"' ).
+	 * this function should return array('required'=>true,'minlength'=>3,'equalTo'=>'"#password"' ).
 	 * This is done so that if we are applying multiple sanitization strategies to a field,
 	 * we can easily combine them.
 	 *
