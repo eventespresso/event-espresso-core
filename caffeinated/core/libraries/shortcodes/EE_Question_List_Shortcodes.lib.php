@@ -64,9 +64,11 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
-		//note this shortcode can only be used within the attendee list field so we'll only have an attendee object for parsing with.
-		if ( $this->_data['data'] instanceof EE_Registration )
+		//for when [QUESTION_LIST] is used in the [attendee_list] field.
+		if ( $this->_data['data'] instanceof EE_Registration ) {
 			return $this->_get_question_answer_list_for_attendee();
+		}
+		//for when [QUESTION_LIST] is used in the main content field.
 		else if ( $this->_data['data'] instanceof EE_Messages_Addressee && $this->_data['data']->reg_obj instanceof EE_Registration ) {
 			return $this->_get_question_answer_list_for_attendee( $this->_data['data']->reg_obj );
 		} else {
