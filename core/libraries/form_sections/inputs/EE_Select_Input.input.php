@@ -7,7 +7,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * @since 				4.6
  *
  */
 class EE_Select_Input extends EE_Form_Input_With_Options_Base{

@@ -1,21 +1,5 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.6
- *
- * ------------------------------------------------------------------------
- *
  * EE_Form_Input_Base
  * For representing a single form input. Extends EE_Form_Section_Base because
  * it is a part of a form and shares a surprisingly large amount of functionality
@@ -23,8 +7,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -602,9 +584,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_html_label_text = $label;
 	}
 
+
+
 	/**
 	 * Sets whether or not this field is required, and adjusts the validation strategy
+	 *
 	 * @param boolean $required
+	 * @param null    $required_text
 	 */
 	function set_required($required = true, $required_text = NULL ){
 		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN );
