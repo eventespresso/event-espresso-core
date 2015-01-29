@@ -828,7 +828,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						// any form validation errors?
 						if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
 							// bad, bad, bad registrant
-							EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+							foreach( $this->checkout->current_step->reg_form->get_validation_errors_accumulated() as $validation_error ){
+								EE_Error::add_error( sprintf( __( '%s : %s', 'event_espresso' ), $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+							}
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
