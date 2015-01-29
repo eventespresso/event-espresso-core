@@ -333,11 +333,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$registrations_csv_ready_array = array();
 		$reg_model = EE_Registry::instance()->load_model('Registration');
-		$query_params = array(
+		$query_params = apply_filters( 'FHEE__EE_Export__report_registration_for_event', array(
+			array( 'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ) ),
 			'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-			'force_join' => array( 'Transaction', 'Ticket' ) );
+			'force_join' => array( 'Transaction', 'Ticket' ) ), $event_id );
 		if( $event_id ){
-			$query_params[0] = array( 'EVT_ID' => $event_id );
+			$query_params[0]['EVT_ID'] =  $event_id;
 		}else{
 			$query_params[ 'force_join' ][] = 'Event';
 		}
