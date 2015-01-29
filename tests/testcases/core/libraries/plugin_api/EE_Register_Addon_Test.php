@@ -338,6 +338,31 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			return FALSE;
 		}
 	}
+
+	public function test_effective_version(){
+		//use reflection to test this protected method
+		$method = new ReflectionMethod('EE_Register_Addon', '_effective_version');
+		$method->setAccessible(true);
+		$this->assertEquals( '4.3.0.dev.000', $method->invoke( null, '4.3.0' ) );
+		$this->assertEquals( '4.3.0.p.000', $method->invoke( null, '4.3.0.p' ) );
+		$this->assertEquals( '4.3.0.rc.123', $method->invoke( null, '4.3.0.rc.123' ) );
+	}
+
+	public function test_meets_min_core_version_requirement(){
+		//use reflection to test this protected method
+		$method = new ReflectionMethod('EE_Register_Addon', '_meets_min_core_version_requirement');
+		$method->setAccessible(true);
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.rc.032' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.4.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.rc.000', '4.3.0.p' ) );
+
+		$this->assertFalse( $method->invoke( null, '4.4.0', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.4.0.p', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.3.0.rc.123', '4.3.0.rc.001' ) );
+	}
+
 }
 
 // End of file EE_Register_Addon_Test.php
