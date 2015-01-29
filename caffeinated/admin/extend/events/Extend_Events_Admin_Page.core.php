@@ -150,8 +150,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 		//filters for event list table
-		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
