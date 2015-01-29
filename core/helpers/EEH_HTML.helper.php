@@ -637,12 +637,16 @@ class EEH_HTML {
 
 	/**
 	 * sanitize_id
+	 *
+	 * functionally does the same as the wp_core function sanitize_key except it does NOT use
+	 * strtolower and allows capitals.
+	 *
 	 * @param string $id
 	 * @return string
 	 */
 	public static function sanitize_id( $id = '' ) {
-		return sanitize_key( str_replace( ' ', '-', trim( $id )));
-
+		$key = str_replace( ' ', '-', trim( $id ) );
+		return preg_replace( '/[^a-zA-Z0-9_\-]/', '', $key );
 	}
 
 

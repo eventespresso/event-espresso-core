@@ -127,17 +127,16 @@ abstract class EE_Base_Class{
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		//if db model is instantiating
-		if( $bydb ){
+		if ( $bydb ){
 			//client code has indicated these field values are from the database
-			foreach($fieldValues as $field_name => $field_value_from_db){
-				$this->set_from_db($field_name,$field_value_from_db);
+			foreach( $model_fields as $fieldName => $field ){
+				$this->set_from_db( $fieldName, isset( $fieldValues[ $fieldName] ) ? $fieldValues[ $fieldName ] : null );
 			}
-		}else{
+		} else {
 			//we're constructing a brand
 			//new instance of the model object. Generally, this means we'll need to do more field validation
-			foreach($model_fields as $fieldName => $field_obj){
-				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
+			foreach( $model_fields as $fieldName => $field ){
+				$this->set( $fieldName, isset( $fieldValues[ $fieldName ] ) ? $fieldValues[ $fieldName ] : null, true );
 			}
 		}
 
@@ -207,6 +206,7 @@ abstract class EE_Base_Class{
 				$field_obj->set_timezone( $this->_timezone );
 			}
 			$holder_of_value = $field_obj->prepare_for_set($field_value);
+			//should the value be null?
 			if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 				$this->_fields[$field_name] = $field_obj->get_default_value();
 			}else{
@@ -629,12 +629,17 @@ abstract class EE_Base_Class{
 			//eg, a CPT model object could have an entry in the posts table, but no
 			//entry in the meta table. Meaning that all its columns in the meta table
 			//are null! yikes! so when we find one like that, use defaults for its meta columns
-			if($field_value_from_db === NULL && ! $field_obj->is_nullable()){
-				$field_value = $field_obj->get_default_value();
+			if($field_value_from_db === NULL ){
+				if( $field_obj->is_nullable()){
+					//if the field allows nulls, then let it be null
+					$field_value = NULL;
+				}else{
+					$field_value = $field_obj->get_default_value();
+				}
 			}else{
-				$field_value = $field_value_from_db;
+				$field_value = $field_obj->prepare_for_set_from_db( $field_value_from_db );
 			}
-			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_fields[$field_name] = $field_value;
 		}
 	}
 

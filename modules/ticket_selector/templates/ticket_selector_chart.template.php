@@ -87,8 +87,39 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			break;
 		}
 
+		/**
+		 * Allow plugins to hook in and abort the generation and display of this row to do
+		 * something else if they want.
+		 * For an addon to abort things, all they have to do is register a filter with this hook, and
+		 * return a value that is NOT false.  Whatever is returned gets echoed instead of the
+		 * current row.
+		 *
+		 *
+		 * @var string|bool
+		 */
+		if ( false !== ( $new_row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_content;
+			continue;
+		}
 	?>
 				<tr class="tckt-slctr-tbl-tr <?php echo $status_class . ' ' . espresso_get_object_css_class( $ticket ); ?>">
+		<?php
+		/**
+		 * Allow plugins to hook in and abort the generation and display of the contents of this
+		 * row to do something else if they want.
+		 * For an addon to abort things, all they have to do is register a filter with this hook, and
+		 * return a value that is NOT false.  Whatever is returned gets echoed instead of the
+		 * current row.
+		 *
+		 *
+		 * @var string|bool
+		 */
+		if ( false !== ( $new_row_cells_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_inside_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_cells_content;
+			echo '</tr>';
+			continue;
+		}
+		?>
 					<td class="tckt-slctr-tbl-td-name">
 						<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 						<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )); ?>">

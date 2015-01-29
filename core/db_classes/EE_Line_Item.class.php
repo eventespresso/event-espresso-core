@@ -100,7 +100,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return string
 	 */
 	function name() {
-		return $this->get( 'LIN_name' );
+		$name =  $this->get( 'LIN_name' );
+		if( ! $name ){
+			$name = ucwords( str_replace( '-', ' ', $this->type() ) );
+		}
+		return $name;
 	}
 
 
