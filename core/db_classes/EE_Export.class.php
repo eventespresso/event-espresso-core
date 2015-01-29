@@ -106,10 +106,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 						$this->export_attendees();
 					break;
 
-					case 'payment':
-						$this->export_payment();
-					break;
-
 					case 'categories':
 						$this->export_categories();
 					break;
@@ -141,9 +137,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	function export_freakin_everything() {
 
-		$models_to_export = EE_Registry::instance()->all_model_names();
+		$models_to_export = EE_Registry::instance()->non_abstract_db_models;
 
-		$table_data = $this->_get_export_data_for_models( $models_to_export );
+		$table_data = $this->_get_export_data_for_models( array_keys( $models_to_export ) );
 
 		$filename = $this->generate_filename ( 'full-db-export' );
 
@@ -160,32 +156,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$event = EEM_Event::instance()->get_one();
 		$this->_req_data['EVT_ID'] = $event->ID();
 		$this->export_all_event_data();
-	}
-
-
-
-	 /**
-	  * @Export data for one event ? dunno
-	  * @access public
-	  * @throws \EE_Error
-	  */
-	function export_event() {
-		if ( ! isset( $this->_req_data['event_id'] )) {
-			throw new EE_Error(__('We need an event_id to export events.', 'event_espresso'));
-		}
-
-		$event_ids = is_array($this->_req_data['event_id']) ? $this->_req_data['event_id'] : (array) $this->_req_data['event_id'];
-		$filename = sanitize_title_with_dashes($this->_event_name);
-		$table_data = array();
-		foreach ( $event_ids as $this->_event_id ) {
-			$table_data[] = $this->espresso_event_export();
-		}
-
-		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
-		$filename .= "-" . $this->today ;
-		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
-			EE_Error::add_error(__('An error occurred and the Event details could not be exported from the database.', "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 
