@@ -115,8 +115,10 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		if ( $transaction_processor->toggle_abandoned_transaction_status( $this->checkout->transaction )) {
 			$this->checkout->transaction->save();
 		}
-		// save TXN data to the cart
-		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+		if ( $this->checkout->cart instanceof EE_Cart ) {
+			// save TXN data to the cart
+			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+		}
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
