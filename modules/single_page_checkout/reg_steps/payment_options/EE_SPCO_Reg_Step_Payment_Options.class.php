@@ -25,8 +25,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public static function set_hooks() {
 		add_action( 'wp_ajax_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
 		add_action( 'wp_ajax_nopriv_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
+		add_action( 'wp_ajax_save_payer_details', array( 'EE_SPCO_Reg_Step_Payment_Options', 'save_payer_details' ));
+		add_action( 'wp_ajax_nopriv_save_payer_details', array( 'EE_SPCO_Reg_Step_Payment_Options', 'save_payer_details' ));
 	}
-
 
 
 
@@ -34,11 +35,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	ajax switch_spco_billing_form
 	 */
 	public static function switch_spco_billing_form() {
-//		printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__ );
 		EED_Single_Page_Checkout::process_ajax_request( 'switch_payment_method' );
 	}
 
 
+
+	/**
+	 * 	ajax save_payer_details
+	 */
+	public static function save_payer_details() {
+		EED_Single_Page_Checkout::process_ajax_request( 'save_payer_details_via_ajax' );
+	}
 
 
 
@@ -638,17 +645,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function switch_payment_method() {
-		// generate billing form for selected method of payment if it hasn't been done already
-		if ( empty( $this->checkout->selected_method_of_payment )) {
-			// how have they chosen to pay?
-			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
-		}
-		// verify payment method
-		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
-			// get payment method for selected method of payment
-			$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
-		}
-		if ( ! $this->checkout->payment_method ) {
+		if ( ! $this->_verify_payment_method_is_set() ) {
 			return FALSE;
 		}
 		EE_Error::add_success(
@@ -681,6 +678,120 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		//prevents advancement to next step
 		$this->checkout->continue_reg = FALSE;
 		return TRUE;
+	}
+
+
+
+	/**
+	 * _verify_payment_method_is_set
+	 * @return boolean
+	 */
+	protected function _verify_payment_method_is_set() {
+		// generate billing form for selected method of payment if it hasn't been done already
+		if ( empty( $this->checkout->selected_method_of_payment )) {
+			// how have they chosen to pay?
+			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		}
+		// verify payment method
+		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
+			// get payment method for selected method of payment
+			$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
+		}
+		return $this->checkout->payment_method instanceof EE_Payment_Method ? true : false;
+	}
+
+
+
+	/********************************************************************************************************/
+	/***************************************  SAVE PAYER DETAILS  ****************************************/
+	/********************************************************************************************************/
+
+
+
+	/**
+	 * save_payer_details_via_ajax
+	 * @return boolean
+	 */
+	public function save_payer_details_via_ajax() {
+		if ( ! $this->_verify_payment_method_is_set() ) {
+			return FALSE;
+		}
+		// generate billing form for selected method of payment if it hasn't been done already
+		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
+			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
+		}
+		// generate primary attendee from payer info if applicable
+		if ( ! $this->checkout->transaction_has_primary_registrant()) {
+			$attendee = $this->_create_attendee_from_request_data();
+			if ( $attendee instanceof EE_Attendee ) {
+				foreach ( $this->checkout->transaction->registrations() as $registration ) {
+					if ( $registration->is_primary_registrant() ) {
+						$this->checkout->primary_attendee_obj = $attendee;
+						$registration->_add_relation_to( $attendee, 'Attendee' );
+						$registration->set_attendee_id( $attendee->ID() );
+						$registration->update_cache_after_object_save( 'Attendee', $attendee );
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * create_attendee_from_request_data
+	 * uses info from alternate GET or POST data (such as AJAX) to create a new attendee
+	 * @return \EE_Attendee
+	 */
+	protected function _create_attendee_from_request_data(){
+		// get State ID
+		$STA_ID = ! empty( $_REQUEST['state'] ) ? sanitize_text_field( $_REQUEST['state'] ) : '';
+		if ( ! empty( $STA_ID )) {
+			// can we get state object from name ?
+			EE_Registry::instance()->load_model( 'State' );
+			$state = EEM_State::instance()->get_col( array( array( 'STA_name' => $STA_ID ), 'limit' => 1), 'STA_ID' );
+			$STA_ID = is_array( $state ) && ! empty( $state ) ? reset( $state ) : $STA_ID;
+		}
+		// get Country ISO
+		$CNT_ISO = ! empty( $_REQUEST['country'] ) ? sanitize_text_field( $_REQUEST['country'] ) : '';
+		if ( ! empty( $CNT_ISO )) {
+			// can we get country object from name ?
+			EE_Registry::instance()->load_model( 'Country' );
+			$country = EEM_Country::instance()->get_col( array( array( 'CNT_name' => $CNT_ISO ), 'limit' => 1), 'CNT_ISO' );
+			$CNT_ISO = is_array( $country ) && ! empty( $country ) ? reset( $country ) : $CNT_ISO;
+		}
+		// grab attendee data
+		$attendee_data = array(
+			'ATT_fname' 		=> ! empty( $_REQUEST['first_name'] ) ? sanitize_text_field( $_REQUEST['first_name'] ) : '',
+			'ATT_lname' 		=> ! empty( $_REQUEST['last_name'] ) ? sanitize_text_field( $_REQUEST['last_name'] ) : '',
+			'ATT_email' 		=> ! empty( $_REQUEST['email'] ) ? sanitize_email( $_REQUEST['email'] ) : '',
+			'ATT_address' 		=> ! empty( $_REQUEST['address'] ) ? sanitize_text_field( $_REQUEST['address'] ) : '',
+			'ATT_address2' 	=> ! empty( $_REQUEST['address2'] ) ? sanitize_text_field( $_REQUEST['address2'] ) : '',
+			'ATT_city' 			=> ! empty( $_REQUEST['city'] ) ? sanitize_text_field( $_REQUEST['city'] ) : '',
+			'STA_ID' 				=> $STA_ID,
+			'CNT_ISO' 			=> $CNT_ISO,
+			'ATT_zip' 				=> ! empty( $_REQUEST['zip'] ) ? sanitize_text_field( $_REQUEST['zip'] ) : '',
+			'ATT_phone' 		=> ! empty( $_REQUEST['phone'] ) ? sanitize_text_field( $_REQUEST['phone'] ) : '',
+		);
+		// validate the email address since it is the most important piece of info
+		if ( empty( $attendee_data['ATT_email'] ) || $attendee_data['ATT_email'] != $_REQUEST['email'] ) {
+			EE_Error::add_error( __( 'An invalid email address was submitted.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+		if ( ! empty( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_lname'] ) && ! empty( $attendee_data['ATT_email'] ) ) {
+			$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
+				'ATT_fname' => $attendee_data['ATT_fname'],
+				'ATT_lname' => $attendee_data['ATT_lname'],
+				'ATT_email' => $attendee_data['ATT_email']
+			));
+			if ( $existing_attendee instanceof EE_Attendee ) {
+				return $existing_attendee;
+			}
+		}
+		// no existing attendee? kk let's create a new one
+		// kinda lame, but we need a first and last name to create an attendee, so use the email address if those don't exist
+		$attendee_data['ATT_fname'] = ! empty( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : $attendee_data['ATT_email'];
+		$attendee_data['ATT_lname'] = ! empty( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : $attendee_data['ATT_email'];
+		return EE_Attendee::new_instance( $attendee_data );
 	}
 
 

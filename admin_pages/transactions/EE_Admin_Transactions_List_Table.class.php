@@ -342,7 +342,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				</a>
 			</li>' : '';
 
-	return $this->_action_string( $view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $send_pay_lnk . $view_reg_lnk, $item, 'ul', 'txn-overview-actions-ul' );
+	return $this->_action_string( $view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $view_reg_lnk . $send_pay_lnk, $item, 'ul', 'txn-overview-actions-ul' );
     }
 
 

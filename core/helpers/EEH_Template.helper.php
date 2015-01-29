@@ -621,23 +621,25 @@ class EEH_Template {
 	 * @return  string
 	 */
 	public static function get_paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+
 		$page_links = array();
 		$disable_first = $disable_last = '';
 		$total_items = (int) $total_items;
 		$per_page = (int) $per_page;
 		$current = (int) $current;
 
-		$total_pages = round( ceil( $total_items ) / $per_page );
+		$total_pages = ceil( $total_items / $per_page );
 
-		if ( $total_pages <= 1)
+		if ( $total_pages <= 1 )
 			return '';
 
 		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
-
-		if ( $current == 1 )
+		if ( $current == 1 ) {
 			$disable_first = ' disabled';
-		if ( $current == $total_pages )
+		}
+		if ( $current == $total_pages ) {
 			$disable_last = ' disabled';
+		}
 
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'first-page' . $disable_first,
@@ -646,48 +648,62 @@ class EEH_Template {
 			'&laquo;'
 		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'prev-page' . $disable_first,
 			esc_attr__( 'Go to the previous page' ),
 			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $url ) ),
 			'&lsaquo;'
 		);
 
-		if ( ! $show_num_field )
+		if ( ! $show_num_field ) {
 			$html_current_page = $current;
-		else
-			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='paged' value='%s' size='%d' />",
+		} else {
+			$html_current_page = sprintf(
+				'<input class="current-page" title="%s" type="text" name="paged" value="%s" size="%d" />',
 				esc_attr__( 'Current page' ),
 				$current,
 				strlen( $total_pages )
 			);
+		}
 
-		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
-		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
+		$html_total_pages = sprintf(
+			'<span class="total-pages">%s</span>',
+			number_format_i18n( $total_pages )
+		);
+		$page_links[] = sprintf(
+			_x( '%3$s%1$s of %2$s%4$s', 'paging' ),
+			$html_current_page,
+			$html_total_pages,
+			'<span class="paging-input">',
+			'</span>'
+		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'next-page' . $disable_last,
 			esc_attr__( 'Go to the next page' ),
 			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $url ) ),
 			'&rsaquo;'
 		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'last-page' . $disable_last,
 			esc_attr__( 'Go to the last page' ),
 			esc_url( add_query_arg( 'paged', $total_pages, $url ) ),
 			'&raquo;'
 		);
 
-		$pagination_links_class = 'pagination-links';
-		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
-
-		if ( $total_pages )
+		$output .= "\n" . '<span class="pagination-links">' . join( "\n", $page_links ) . '</span>';
+		// set page class
+		if ( $total_pages ) {
 			$page_class = $total_pages < 2 ? ' one-page' : '';
-		else
+		} else {
 			$page_class = ' no-pages';
+		}
 
-		return "<div class='tablenav-pages{$page_class}'>$output</div>";
+		return '<div class="tablenav"><div class="tablenav-pages' . $page_class . '">' . $output . '</div></div>';
 	}
 
 
