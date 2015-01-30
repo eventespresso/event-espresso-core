@@ -816,7 +816,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			try {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
-				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
+				if ( $this->checkout->process_form_submission && $this->checkout->current_step->reg_form->was_submitted() ) {
 					// clear out any old data in case this step is being run again
 					$this->checkout->current_step->set_valid_data( array() );
 					// capture submitted form data
