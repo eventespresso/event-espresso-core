@@ -148,6 +148,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				|| (
 					$_event_active_status != EE_Datetime::active
 					&& $_event_active_status != EE_Datetime::upcoming
+					&& $_event_active_status != EE_Datetime::sold_out
 					&& ! (
 						$_event_active_status == EE_Datetime::inactive
 						&& is_user_logged_in()
