@@ -23,6 +23,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	public function display_line_item( EE_Line_Item $line_item, $options = array() ) {
 
+		EE_Registry::instance()->load_helper( 'Template' );
 		EE_Registry::instance()->load_helper( 'HTML' );
 
 		$html = '';
@@ -49,12 +50,17 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_sub_total:
+				static $sub_total = 0;
+				$child_line_items = $line_item->children();
 				// loop thru children
-				foreach( $line_item->children() as $child_line_item ) {
+				foreach( $child_line_items as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
-				$html .= $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
+				if ( $line_item->total() != $sub_total && count( $child_line_items ) > 1 ) {
+					$html .= $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
+					$sub_total = $line_item->total();
+				}
 				break;
 
 			case EEM_Line_Item::type_tax:
@@ -81,6 +87,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
 				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
+				$html .= $this->_payments_and_amount_owing_rows( $line_item );
 				break;
 
 		}
@@ -103,7 +110,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', '', $row_class );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
 		// quantity td
@@ -111,7 +118,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// price td
 		$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		// total td
-		$total = $line_item->is_taxable() ? $line_item->total_no_code() . '*' : $line_item->total_no_code();
+		$total = EEH_Template::format_currency( $line_item->total(), false, false );
+		$total .= $line_item->is_taxable() ? '*' : '';
 		$this->_show_taxes = $line_item->is_taxable() ? TRUE : $this->_show_taxes;
 		$html .= EEH_HTML::td( $total, '',  'item_r jst-rght' );
 		// end of row
@@ -133,7 +141,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item-row' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
@@ -143,7 +151,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		}
 		// total td
-		$html .= EEH_HTML::td( $line_item->total_no_code(), '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
@@ -163,13 +171,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item tax-total' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
 		// percent td
 		$html .= EEH_HTML::td( $line_item->percent() . '%', '',  'item_c', '' );
 		// total td
-		$html .= EEH_HTML::td( $line_item->total_no_code(), '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
@@ -207,14 +215,60 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		if ( $line_item->total() ) {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
-			// empty td
-			$html .= EEH_HTML::td( EEH_HTML::nbsp(), '',  '',  '',  ' colspan="2"' );
 			// total td
-			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght' );
+			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
 			// total td
-			$html .= EEH_HTML::td( $line_item->total_no_code(), '',  'total jst-rght' );
+			$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'total jst-rght' );
 			// end of row
 			$html .= EEH_HTML::trx();
+		}
+		return $html;
+	}
+
+
+
+	/**
+	 * 	_payments_and_amount_owing_rows
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @return mixed
+	 */
+	private function _payments_and_amount_owing_rows( EE_Line_Item $line_item ) {
+		$html = '';
+		$transaction = EEM_Transaction::instance()->get_one_by_ID( $line_item->TXN_ID() );
+		if ( $transaction instanceof EE_Transaction ) {
+			$payments = $transaction->approved_payments();
+			if ( ! empty( $payments )) {
+				$owing = $line_item->total();
+				foreach ( $payments as $payment ) {
+					if ( $payment instanceof EE_Payment ) {
+						$owing = $owing - $payment->amount();
+						$payment_desc = sprintf(
+							__('Payment%1$s Received: %2$s', 'event_espresso'),
+							$payment->txn_id_chq_nmbr() != '' ? ' ' . $payment->txn_id_chq_nmbr() : '',
+							$payment->timestamp()
+						);
+						// start of row
+						$html = EEH_HTML::tr( '', '', 'total_tr odd' );
+						// payment desc
+						$html .= EEH_HTML::td( $payment_desc, '',  '',  '',  ' colspan="3"' );
+						// total td
+						$html .= EEH_HTML::td( EEH_Template::format_currency( $payment->amount(), false, false ), '',  'total jst-rght' );
+						// end of row
+						$html .= EEH_HTML::trx();
+					}
+				}
+				if ( $line_item->total() ) {
+					// start of row
+					$html .= EEH_HTML::tr( '', '', 'total_tr odd' );
+					// total td
+					$html .= EEH_HTML::td( __('Amount Owing', 'event_espresso'), '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
+					// total td
+					$html .= EEH_HTML::td( EEH_Template::format_currency( $owing, false, false ), '',  'total jst-rght' );
+					// end of row
+					$html .= EEH_HTML::trx();
+				}
+			}
 		}
 		return $html;
 	}
