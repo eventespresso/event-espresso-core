@@ -378,6 +378,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
 			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_cart_for_current_session_and_setup_new_transaction();
+			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				// add some style and make it dance
+				$this->checkout->transaction = EE_Transaction::new_instance();
+				$this->add_styles_and_scripts();
+				// $this->_display_spco_reg_form();
+				return;
+			}
 			// and the registrations for the transaction
 			$this->_get_registrations( $this->checkout->transaction );
 		}
@@ -390,11 +398,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// checkout the action!!!
 		$this->_process_form_action();
 		// add some style and make it dance
-		if ( $this->checkout->admin_request ) {
-			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
-		} else {
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
-		}
+		$this->add_styles_and_scripts();
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
 	}
@@ -906,6 +910,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 		add_styles_and_scripts
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function add_styles_and_scripts() {
+		if ( $this->checkout->admin_request ) {
+			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
+		} else {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
+		}
+	}
+
+
+
+	/**
 	 * 		translate_js_strings
 	 *
 	 * 		@access 		public
@@ -1092,7 +1112,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			die();
 		}
 		// going somewhere ?
-		if ( $this->checkout->redirect ) {
+		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 			wp_safe_redirect( $this->checkout->redirect_url );
