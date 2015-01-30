@@ -164,10 +164,14 @@ jQuery(document).ready( function($) {
 				},
 
 				highlight: function( element ) {
-						$(element).addClass('ee-needs-value').removeClass('ee-has-value');
+					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
+						$( element ).addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+					}
 				},
 				unhighlight: function( element ) {
+					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
 						$(element).removeClass('ee-needs-value').addClass('ee-has-value');
+					}
 				},
 
 				invalidHandler: function( event, validator ) {
@@ -622,7 +626,7 @@ jQuery(document).ready( function($) {
 		 */
 		enable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).removeClass( 'disabled spco-disabled-submit-btn' );
+				$(this).removeAttr('disabled').removeClass( 'disabled spco-disabled-submit-btn' );
 			});
 		},
 
@@ -633,7 +637,7 @@ jQuery(document).ready( function($) {
 		 */
 		disable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).addClass('disabled spco-disabled-submit-btn');
+				$(this).attr('disabled','disabled').addClass('disabled spco-disabled-submit-btn');
 			});
 		},
 
@@ -849,6 +853,7 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		process_response : function( next_step, response ) {
+			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
 			// alert( 'next_step = ' + next_step );
@@ -1235,7 +1240,7 @@ jQuery(document).ready( function($) {
 					if ( spacer === true ) {
 						console.log( ' ' );
 					}
-					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' ) {
+					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
 						console.log( item_name + ' = ' + value );
 					} else if ( SPCO.display_debug && typeof item_name !== 'undefined' ) {
 						console.log( item_name );
