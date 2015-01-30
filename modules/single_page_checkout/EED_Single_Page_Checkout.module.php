@@ -816,7 +816,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			try {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
-				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
+				if ( $this->checkout->process_form_submission && $this->checkout->current_step->reg_form->was_submitted() ) {
 					// clear out any old data in case this step is being run again
 					$this->checkout->current_step->set_valid_data( array() );
 					// capture submitted form data
@@ -827,10 +827,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$this->checkout->continue_reg = FALSE;
 						// any form validation errors?
 						if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
+							$submission_error_messages = array();
 							// bad, bad, bad registrant
 							foreach( $this->checkout->current_step->reg_form->get_validation_errors_accumulated() as $validation_error ){
-								EE_Error::add_error( sprintf( __( '%s : %s', 'event_espresso' ), $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
+								if ( $validation_error instanceof EE_Validation_Error ) {
+									$submission_error_messages[] = sprintf( __( '%s : %s', 'event_espresso' ), $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() );
+								}
 							}
+							EE_Error::add_error( join( '<br />', $submission_error_messages ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
