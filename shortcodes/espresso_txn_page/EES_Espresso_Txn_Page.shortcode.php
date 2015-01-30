@@ -88,6 +88,10 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
 			$payment_processor->process_ipn( $_REQUEST, $this->_current_txn, $payment_method_slug );
+			//allow gateways to add a filter to stop rendering the page
+			if( apply_filters( 'FHEE__EES_Espresso_Txn_Page__run__exit', FALSE ) ){
+				exit;
+			}
 		}
 
 	}
