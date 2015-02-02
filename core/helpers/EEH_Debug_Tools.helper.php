@@ -4,7 +4,8 @@
  *
  * @package 			Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
+ * @author 				Brent Christensen, Michael Nelson
+ * @since 				4.0
  *
  */
 class EEH_Debug_Tools{
@@ -17,9 +18,9 @@ class EEH_Debug_Tools{
 	private static $_instance = NULL;
 
 	/**
-	 * float containing the start time for the timer
+	 * array containing the start time for the timers
 	 */
-	private $_starttime;
+	private $_start_times;
 	/**
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
@@ -43,10 +44,10 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  	@access 	private
-	 *  	@return 	EEH_Debug_Tools
+	 * @access    private
+	 * @return \EEH_Debug_Tools
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
@@ -61,7 +62,21 @@ class EEH_Debug_Tools{
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
-		add_action( 'activated_plugin',array($this,'ee_plugin_activation_errors') );
+		add_action( 'activated_plugin', array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
+		add_action( 'shutdown', array( 'EEH_Debug_Tools', 'show_db_name' ));
+	}
+
+
+
+	/**
+	 * 	show_db_name
+	 *
+	 * 	@return void
+	 */
+	public static function show_db_name() {
+		if ( ! defined( 'DOING_AJAX' ) && ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS )) {
+			echo '<p style="font-size:10px;font-weight:normal;color:#E76700;margin: 1em 2em; text-align: right;">DB_NAME: '. DB_NAME .'</p>';
+		}
 	}
 
 
@@ -120,29 +135,56 @@ class EEH_Debug_Tools{
 	}
 
 
+
 	/**
 	 * 	start_timer
+	 * @param null $timer_name
 	 */
-	public function start_timer(){
-		$mtime = microtime();
-		$mtime = explode(" ",$mtime);
-		$mtime = $mtime[1] + $mtime[0];
-		$this->_starttime = $mtime;
+	public function start_timer( $timer_name = NULL ){
+		$this->_start_times[$timer_name] = microtime( TRUE );
 	}
 
 
 
 	/**
 	 * stop_timer
-	 * @param $string_to_display
+	 * @param string $timer_name
 	 */
-	public function stop_timer($string_to_display){
-		$mtime = microtime();
-		$mtime = explode(" ",$mtime);
-		$mtime = $mtime[1] + $mtime[0];
-		$endtime = $mtime;
-		$totaltime = ($endtime - $this->_starttime);
-		$this->_times[] = $string_to_display.": $totaltime<br>";
+	public function stop_timer($timer_name = 'default'){
+		if( isset( $this->_start_times[ $timer_name ] ) ){
+			$start_time = $this->_start_times[ $timer_name ];
+			unset( $this->_start_times[ $timer_name ] );
+		}else{
+			$start_time = array_pop( $this->_start_times );
+		}
+		$total_time = microtime( TRUE ) - $start_time;
+		switch ( $total_time ) {
+			case $total_time < 0.00001 :
+				$color = '#8A549A';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.0001 :
+				$color = '#00B1CA';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.001 :
+				$color = '#70CC50';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.01 :
+				$color = '#FCC600';
+				$bold = 'bold';
+				break;
+			case $total_time < 0.1 :
+				$color = '#E76700';
+				$bold = 'bold';
+				break;
+			default :
+				$color = '#E44064';
+				$bold = 'bold';
+				break;
+		}
+		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
 	 }
 
 
@@ -156,9 +198,8 @@ class EEH_Debug_Tools{
 		 if($output_now){
 			 echo implode("<br>",$this->_times);
 			 return '';
-		 }else{
-			 return implode("<br>",$this->_times);
 		 }
+		return implode("<br>",$this->_times);
 	 }
 
 
@@ -168,22 +209,28 @@ class EEH_Debug_Tools{
 	 *
 	 * 	@return void
 	 */
-	public function ee_plugin_activation_errors() {
+	public static function ee_plugin_activation_errors() {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
-			$errors = ob_get_contents();
-			if ( include_once( EE_HELPERS . 'EEH_File.helper.php' )) {
+			$activation_errors = ob_get_contents();
+			if ( class_exists( 'EE_Registry' )) {
+				EE_Registry::instance()->load_helper( 'File' );
+			} else {
+				include_once( EE_HELPERS . 'EEH_File.helper.php' );
+			}
+			if ( class_exists( 'EEH_File' )) {
 				try {
 					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
 					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
-					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 				} catch( EE_Error $e ){
 					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
 				}
 			} else {
 				// old school attempt
-				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $errors );
+				file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 			}
-			update_option( 'ee_plugin_activation_errors', $errors );
+			$activation_errors = get_option( 'ee_plugin_activation_errors', '' ) . $activation_errors;
+			update_option( 'ee_plugin_activation_errors', $activation_errors );
 		}
 	}
 
@@ -196,7 +243,7 @@ class EEH_Debug_Tools{
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
 	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @return void - trigger_error()
+	 * @uses trigger_error()
 	 */
 	public function doing_it_wrong( $function, $message, $version ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
@@ -247,36 +294,39 @@ if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
  *    @ access public
  *    @ return void
  *
- * @param mixed $var
+ * @param mixed  $var
  * @param bool   $var_name
+ * @param string $file
+ * @param int    $line
  * @param string $height
  * @param bool   $die
  */
-function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
-
-	if( ! $var_name ) {
-		if ( is_object( $var )) {
-			$var_name = 'object';
-		} else if ( is_array( $var )) {
-			$var_name = 'array';
-		} else if ( is_numeric( $var )) {
-			$var_name = 'numeric';
-		} else {
-			$var_name = 'string';
-		}
+function printr( $var, $var_name = FALSE, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
+	$print_r = FALSE;
+	if ( is_object( $var )) {
+		$var_name = ! $var_name ? 'object' : $var_name;
+		$print_r = TRUE;
+	} else if ( is_array( $var )) {
+		$var_name = ! $var_name ? 'array' : $var_name;
+		$print_r = TRUE;
+	} else if ( is_numeric( $var )) {
+		$var_name = ! $var_name ? 'numeric' : $var_name;
+	} else if ( is_string( $var )) {
+		$var_name = ! $var_name ? 'string' : $var_name;
+	} else if ( is_null( $var )) {
+		$var_name = ! $var_name ? 'null' : $var_name;
 	}
+	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
+	ob_start();
+	echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
+	echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
+	$print_r ? print_r($var) : var_dump($var);
+	echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+	$result = ob_get_clean();
 
-	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
-	$var_name = ucwords( $var_name );
-
-
-	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
-	echo '<h3><b>' . $var_name . '</b></h3>';
-	echo print_r($var);
-	echo '</pre>';
-
-
-	if( $die ) {
-		die();
+	if ( $die ) {
+		die( $result );
+	} else {
+		echo $result;
 	}
 }

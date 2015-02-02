@@ -57,7 +57,8 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_PINTEREST_URL]' => __('Link to organization Pinterest page', 'event_espresso'),
 			'[CO_GOOGLE_URL]' => __('Link to organization Google page', 'event_espresso'),
 			'[CO_LINKEDIN_URL]' => __('Link to organization Linkedin page', 'event_espresso'),
-			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso')
+			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso'),
+			'[CO_TAX_NUMBER_*]' => __('This is the shortcode used for displaying any tax number for the company.  <strong>Note: This is a special dynamic shortcode.</strong> You can use the "prefix" parameter to indicate what the prefix for this tax number is.  It defaults to "VAT/Tax Number:".  To change this prefix you do the following format for this shortcode:  [CO_TAX_NUMBER_* prefix="GST: "] and that will output: GST: 12345t56.  Also take note that if you have NO number in your settings, the prefix is not output either.', 'event_espresso')
 			);
 	}
 
@@ -131,6 +132,22 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				return EE_Registry::instance()->CFG->organization->get_pretty( 'instagram' );
 				break;
 
+		}
+
+		//also allow for parameter shortcode
+		if ( strpos( $shortcode, '[CO_TAX_NUMBER_*' ) !== FALSE ) {
+			//first see if there is any company tax number set and bail early if not
+			$tax_number = EE_Registry::instance()->CFG->organization->vat;
+			if ( empty( $tax_number ) ) {
+				return '';
+			}
+
+			//see if there are any attributes.
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
+
+			//set custom attrs if present (or default)
+			$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __('VAT/Tax Number: ', 'event_espresso');
+			return $prefix . $tax_number;
 		}
 
 		return '';

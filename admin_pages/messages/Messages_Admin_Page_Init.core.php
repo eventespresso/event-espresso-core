@@ -60,11 +60,11 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
 			'menu_group' => 'management',
 			'menu_order' => 10,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_MSG_PG_SLUG,
 			'menu_label' => __('Messages', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'ee_read_global_messages',
 			'admin_init_page' => $this
 			));
 	}

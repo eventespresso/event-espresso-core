@@ -43,7 +43,18 @@ class EEH_File extends EEH_Base {
 		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			// if some eager beaver's just trying to get in there too early...
-			if ( ! did_action( 'wp_loaded' )) {
+			// let them do it, because we are one of those eager beavers! :P
+			/**
+			 * more explanations are probably merited. http://codex.wordpress.org/Filesystem_API#Initializing_WP_Filesystem_Base
+			 * says WP_Filesystem should be used after 'wp_loaded', but currently EE's activation process
+			 * is setup to mostly happen on 'init', and refactoring to have it happen on
+			 * 'wp_loaded' is too much work on a BETA milestone.
+			 * So this fix is expected to work if the WP files are owned by the server user,
+			 * but probably not if the user needs to enter their FTP credentials to modify files
+			 * and there may be troubles if the WP files are owned by a different user
+			 * than the server user. But both of these issues should exist in 4.4 and earlier too
+			 */
+			if ( FALSE && ! did_action( 'wp_loaded' )) {
 				$msg = __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso');
 				if ( WP_DEBUG ) {
 					$msg .= '<br />' .  __('The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.', 'event_espresso');
@@ -53,6 +64,7 @@ class EEH_File extends EEH_Base {
 				// should be loaded if we are past the wp_loaded hook...
 				if ( ! function_exists( 'WP_Filesystem' )) {
 					require_once( ABSPATH . 'wp-admin/includes/file.php' );
+					require_once( ABSPATH . 'wp-admin/includes/template.php' );
 				}
 				// basically check for direct or previously configured access
 				if ( ! WP_Filesystem() ) {
@@ -442,10 +454,15 @@ class EEH_File extends EEH_Base {
 	 * takes the folder name (with or without trailing slash) and finds the files it in,
 	 * and what the class's name inside of each should be.
 	 * @param array $folder_paths
+	 * @param boolean $index_numerically if TRUE, the returned array will be indexed numerically;
+	 *		if FALSE (Default), returned array will be indexed by the filenames minus extensions.
+	 *		Set it TRUE if you know there are files in the directory with the same name but different extensions
 	 * @throws \EE_Error
-	 * @return array where keys are what the class names SHOULD be, and values are their filepaths
+	 * @return array if $index_numerically == TRUE keys are numeric ,
+	 *		if $index_numerically == FALSE (Default) keys are what the class names SHOULD be;
+	 *		 and values are their filepaths
 	 */
-	public static function get_contents_of_folders( $folder_paths = array() ){
+	public static function get_contents_of_folders( $folder_paths = array(), $index_numerically = FALSE ){
 		$class_to_folder_path = array();
 		foreach( $folder_paths as $folder_path ){
 			$folder_path = self::standardise_and_end_with_directory_separator( $folder_path );
@@ -455,9 +472,13 @@ class EEH_File extends EEH_Base {
 			if ( $files_in_folder ) {
 				foreach( $files_in_folder as $file_path ){
 					//only add files, not folders
-					if ( ! is_dir( $file_path )){
-						$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
-						$class_to_folder_path[$classname] = $file_path;
+					if ( ! is_dir( $file_path )) {
+						if ( $index_numerically ) {
+							$class_to_folder_path[] = $file_path;
+						} else {
+							$classname = self::get_classname_from_filepath_with_standard_filename( $file_path );
+							$class_to_folder_path[$classname] = $file_path;
+						}
 					}
 				}
 			}
@@ -465,6 +486,51 @@ class EEH_File extends EEH_Base {
 		return $class_to_folder_path;
 	}
 
+
+
+	/**
+	 * Copies a file. Mostly a wrapper of WP_Filesystem::copy
+	 * @param string $source_file
+	 * @param string $destination_file
+	 * @param boolean $overwrite
+	 * @return boolean success
+	 * @throws EE_Error
+	 */
+	public static function copy( $source_file, $destination_file, $overwrite = FALSE ){
+		$full_source_path = EEH_File::standardise_directory_separators( $source_file );
+		if( ! EEH_File::exists( $full_source_path ) ){
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				$msg = sprintf( __( 'The file located at "%2$s" is not readable or doesn\'t exist.', 'event_espresso' ), $full_source_path );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_source_path );
+				throw new EE_Error( $msg );
+			}
+			return FALSE;
+		}
+
+		$full_dest_path = EEH_File::standardise_directory_separators( $destination_file );
+		$folder = EEH_File::remove_filename_from_filepath( $full_dest_path );
+		if ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				$msg = sprintf( __( 'The file located at "%2$s" is not writable.', 'event_espresso' ), $full_dest_path );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_dest_path );
+				throw new EE_Error( $msg );
+			}
+			return FALSE;
+		}
+
+		// load WP_Filesystem and set file permissions
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		// write the file
+		if ( ! $wp_filesystem->copy( $full_source_path, $full_dest_path, $overwrite )) {
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				$msg = sprintf( __( 'Attempted writing to file %1$s, but could not, probably because of permissions issues', 'event_espresso' ), $full_source_path );
+				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_source_path, 'f' );
+				throw new EE_Error( $msg );
+			}
+			return FALSE;
+		}
+		return TRUE;
+	}
 }
 // End of file EEH_File.helper.php
 // Location: /helpers/EEH_File.helper.php

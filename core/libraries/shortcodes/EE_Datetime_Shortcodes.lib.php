@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Datetime_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Datetime_Shortcodes lists all shortcodes related to ticket specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Datetime_Shortcodes lists all shortcodes related to ticket specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Datetime_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -37,7 +37,8 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes specific to datetime related data', 'event_espresso');
 		$this->_shortcodes = array(
 			'[DATETIME_START]' => __('The start date and time.', 'event_espresso'),
-			'[DATETIME_END]' => __('The end date and time.', 'event_espresso')
+			'[DATETIME_END]' => __('The end date and time.', 'event_espresso'),
+			'[DATETIME_TIMEZONE]' => __('The timezone for the date and time', 'event_espresso')
 			);
 	}
 
@@ -56,7 +57,13 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 			case '[DATETIME_END]' :
 				return $this->_data->get_datetime('DTT_EVT_end');
 				break;
+
+			case '[DATETIME_TIMEZONE]' :
+				return $this->_data->get_timezone();
+				break;
 		}
+
+		return '';
 
 	}
 

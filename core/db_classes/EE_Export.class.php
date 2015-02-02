@@ -99,7 +99,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					break;
 
 					case 'registrations_report_for_event':
-						$this->report_registrations_for_event();
+						$this->report_registrations_for_event( $this->_req_data['EVT_ID'] );
 					break;
 
 					case 'attendees':
@@ -309,8 +309,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 * and the questions associated with the registrations
 	 * @param type $event_id
 	 */
-	function report_registrations_for_event(){
-		$event_id = $this->_req_data['EVT_ID'];
+	function report_registrations_for_event( $event_id = NULL ){
 		$reg_fields_to_include = array(
 				'REG_ID',
 				'REG_date',
@@ -334,7 +333,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$registrations_csv_ready_array = array();
 		$reg_model = EE_Registry::instance()->load_model('Registration');
-		$registrations = $reg_model->get_all(array(array('EVT_ID'=>$event_id),'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc')));
+		$query_params = array(
+			'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
+			'force_join' => array( 'Transaction', 'Ticket' ) );
+		if( $event_id ){
+			$query_params[0] = array( 'EVT_ID' => $event_id );
+		}else{
+			$query_params[ 'force_join' ][] = 'Event';
+		}
+		$registrations = $reg_model->get_all( $query_params );
 
 		//get all questions which relate to someone in this group
 		$registration_ids = array_keys($registrations);
@@ -342,6 +349,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$questions_for_these_registrations = EEM_Question::instance()->get_all(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
 		foreach($registrations as $registration){
 			$reg_csv_array = array();
+			if( ! $event_id ){
+				//get the event's name and Id
+				$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '(' . $registration->event_ID() . ')';
+			}
 			/*@var $registration EE_Registration */
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
@@ -360,18 +371,35 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
 			//get pretty trnasaction status
 			$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
+			$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
+			$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
+			//just get all the payment methods used for this transaction (if primary registrant and something has been paid)
+			$reg_csv_array[ __( 'Payment Method', 'event_espresso' )] = $registration->is_primary_registrant() && $registration->transaction()->paid() ? implode(", ",EEM_Payment_Method::instance()->get_col(
+					array(
+						array(
+							'Payment.TXN_ID' => $registration->transaction_ID(),
+							'Payment.STS_ID' => EEM_Payment::status_id_approved
+						)
+					), 'PMD_admin_name')) : '' ;
 			//get whether or not the user has checked in
 			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 			//get ticket of registration and its price
 			$ticket_model = EE_Registry::instance()->load_model('Ticket');
-			$ticket = $registration->ticket();
-			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket->name();
-			//get datetime(s) of registration
-			$datetimes_strings = array();
-			foreach($ticket->datetimes() as $datetime){
-				$datetimes_strings[] = $datetime->start_date_and_time();
+			if( $registration->ticket() ) {
+				$ticket_name = $registration->ticket()->name();
+				$datetimes_strings = array();
+				foreach($registration->ticket()->datetimes() as $datetime){
+					$datetimes_strings[] = $datetime->start_date_and_time();
+				}
+
+			} else {
+				$ticket_name = __( 'Unknown', 'event_espresso' );
+				$datetimes_strings = array( __( 'Unknown', 'event_espresso' ) );
 			}
+			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket_name;
 			$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
+			//get datetime(s) of registration
+
 			//add attendee columns
 			$attendee = $registration->attendee();
 			foreach($att_fields_to_include as $att_field_name){
@@ -409,7 +437,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			//now fill out the questions THEY answered
 			foreach($registration->answers() as $answer){
 				/* @var $answer EE_Answer */
-				$reg_csv_array[$answer->question()->admin_label()] = $answer->pretty_value();
+				if( $answer->question() instanceof EE_Question ){
+					$question_label = $answer->question()->admin_label();
+				}else{
+					$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer->question_ID() );
+				}
+				$reg_csv_array[ $question_label ] = $answer->pretty_value();
 			}
 			$registrations_csv_ready_array[] = $reg_csv_array;
 		}
@@ -426,8 +459,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			}
 			$registrations_csv_ready_array [] = $reg_csv_array;
 		}
-		$event = EEM_Event::instance()->get_one_by_ID($event_id);
-		$filename = sprintf("registrations-for-%s",$event->slug());
+		if( $event_id ){
+			$event = EEM_Event::instance()->get_one_by_ID($event_id);
+			$event_slug = $event->slug();
+		}else{
+			$event_slug = __( 'all', 'event_espresso' );
+		}
+		$filename = sprintf( "registrations-for-%s", $event_slug );
 
 		$handle = $this->EE_CSV->begin_sending_csv( $filename);
 		$this->EE_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);

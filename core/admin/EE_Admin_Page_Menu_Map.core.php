@@ -114,6 +114,11 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+	const NONE = 0;
+	const BLOG_ADMIN_ONLY = 1;
+	const BLOG_AND_NETWORK_ADMIN = 2;
+	const NETWORK_ADMIN_ONLY = 3;
+
 
 	/**
 	 * Whether this item is displayed in the menu or not.
@@ -121,11 +126,9 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * admin menu.
 	 *
 	 * @since 4.4.0
-	 * @var boolean
+	 * @var int
 	 */
-	public $show_on_menu = TRUE;
-
-
+	public $show_on_menu = self::BLOG_ADMIN_ONLY;
 
 
 	/**
@@ -153,6 +156,10 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * @return void
 	 */
 	public function __construct( $menu_args, $required ) {
+		//filter all args before processing so plugins can manipulate various settings for menus.
+		$menu_args = apply_filters( 'FHEE__EE_Admin_Page_Menu_Map__construct__menu_args', $menu_args, $required, get_class( $this ) );
+
+
 		//verify that required keys are present in the incoming array.
 		$missing = array_diff( (array) $required, array_keys( (array) $menu_args ) );
 
@@ -165,7 +172,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 			switch ( $prop ) {
 				case 'show_on_menu' :
-					$value = (bool) $value;
+					$value = (int) $value;
 					break;
 				case 'admin_init_page' :
 					if ( in_array( 'admin_init_page', $required ) && ! $value instanceof EE_Admin_Page_Init ) {
@@ -216,10 +223,20 @@ abstract class EE_Admin_Page_Menu_Map  {
 	/**
 	 * Called by client code to use this menu map for registering a WordPress admin page
 	 *
+	 * @param boolean $network_admin whether this is being added to the network admin page or not
 	 * @since  4.4.0
 	 */
-	public function add_menu_page() {
-		$wp_page_slug = $this->_add_menu_page();
+	public function add_menu_page( $network_admin = FALSE ) {
+
+		$show_on_menu_int = (int) $this->show_on_menu;
+		if( ( $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY ), TRUE ) )
+				||
+			( ! $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY ), TRUE )) ){
+			$wp_page_slug = $this->_add_menu_page();
+		}else{
+			$wp_page_slug = '';
+		}
+
 		if ( !empty( $wp_page_slug ) && $this->admin_init_page instanceof EE_Admin_Page_Init ) {
 			try {
 				$this->admin_init_page->set_page_dependencies( $wp_page_slug );
@@ -242,7 +259,6 @@ abstract class EE_Admin_Page_Menu_Map  {
  * @subpackage  admin
  */
 class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
-
 
 	/**
 	 * If included int incoming params, then this class will also register a Sub Menue Admin page with a different subtitle than the main menu item.
@@ -281,6 +297,8 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
 
 		parent::__construct( $menu_args, $required );
+
+		$this->position = ! empty( $this->position ) ? (int) $this->position : $this->position;
 	}
 
 
@@ -288,8 +306,8 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		$main =  $this->show_on_menu ? add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback ) : '';
-		if ( !empty( $this->subtitle ) && $this->show_on_menu ) {
+		$main =  add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback, $this->icon_url, $this->position );
+		if ( ! empty( $this->subtitle ) ) {
 			add_submenu_page( $this->parent_slug, $this->subtitle, $this->subtitle, $this->capability, $this->menu_slug, $this->menu_callback );
 		}
 		return $main;
@@ -313,7 +331,7 @@ class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu {
 
 
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback ) : '';
+		return add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback );
 	}
 
 } //end class EE_Admin_Page_Menu_Map
@@ -341,7 +359,7 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, '__return_false' ): '';
+		return add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, '__return_false' );
 	}
 
 

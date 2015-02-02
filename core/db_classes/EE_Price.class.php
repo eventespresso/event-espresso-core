@@ -177,6 +177,19 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * get the author of the price
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('PRC_wp_user');
+	}
+
+
+
+	/**
 	 *    get deleted
 	 * @access        public
 	 * @return        bool
@@ -207,7 +220,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	}
 
 
-	
+
 	/**
 	 *
 	 * @return EE_Price_Type

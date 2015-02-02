@@ -53,6 +53,11 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register an Admin Page with EE_Register_Admin_Page::register(), you must include the "page_basename" (the class name of the page), and an array containing the following keys: "page_path" (the path where the registered admin pages reside)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_admin_page_registry[ $page_basename ] ) ){
+			return;
+		}
+
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded' )) {
             EE_Error::doing_it_wrong(
 				__METHOD__,
