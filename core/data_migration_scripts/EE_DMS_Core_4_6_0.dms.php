@@ -200,7 +200,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					EVT_ID INT UNSIGNED NOT NULL,
+					EVT_ID BIGINT(20) UNSIGNED NOT NULL,
 					QSG_ID INT UNSIGNED NOT NULL,
 					EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
