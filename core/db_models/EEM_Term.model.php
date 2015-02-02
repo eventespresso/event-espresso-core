@@ -1,19 +1,9 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+
 /**
- * Event Espresso
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Attendee Model
+ * class EEM_Term
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -21,8 +11,6 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
-
 class EEM_Term extends EEM_Base {
 
   	// private instance of the Attendee object
@@ -32,7 +20,7 @@ class EEM_Term extends EEM_Base {
 	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return EEM_Term instance
 	 */
 	public static function instance(){
 
@@ -140,7 +128,10 @@ class EEM_Term extends EEM_Base {
 			'force_join' => array( 'Term_Taxonomy.Event' )
 		));
 		foreach ( $post_tags as $key => $post_tag ) {
-			$post_tags[ $key ]->post_type = 'espresso_events';
+			if ( ! isset( $post_tags[ $key ]->post_type )) {
+				$post_tags[ $key ]->post_type = array();
+			}
+			$post_tags[ $key ]->post_type[] = 'espresso_events';
 		}
 		return $post_tags;
 //		return array( 'espresso_events' => $post_tags );
@@ -163,7 +154,10 @@ class EEM_Term extends EEM_Base {
 			'force_join' => array( 'Term_Taxonomy' )
 		));
 		foreach ( $post_tags as $key => $post_tag ) {
-			$post_tags[ $key ]->post_type = 'espresso_venues';
+			if ( ! isset( $post_tags[ $key ]->post_type )) {
+				$post_tags[ $key ]->post_type = array();
+			}
+			$post_tags[ $key ]->post_type[] = 'espresso_venues';
 		}
 		return $post_tags;
 //		return array( 'espresso_venues' => $post_tags );
