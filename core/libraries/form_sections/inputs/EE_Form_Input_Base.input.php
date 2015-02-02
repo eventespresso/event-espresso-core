@@ -1,16 +1,12 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- *
- * Class EE_Form_Input_Base
- *
+ * EE_Form_Input_Base
  * For representing a single form input. Extends EE_Form_Section_Base because
  * it is a part of a form and shares a surprisingly large amount of functionality
  *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Mike Nelson
- * @since 				$VID:$
- *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -165,7 +161,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 		// ensure that "required" is set correctly
-		$this->set_required( $this->_required );
+		$this->set_required( $this->_required, isset( $input_args[ 'required_validation_error_message' ] ) ? $input_args[ 'required_validation_error_message' ] : NULL );
 
 		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 
@@ -557,8 +553,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
-			$jquery_validation_rules = array_merge($jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
+			$jquery_validation_rules = array_replace_recursive( $jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
 		}
+
 		if(! empty($jquery_validation_rules)){
 			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
 		}else{
@@ -587,14 +584,18 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_html_label_text = $label;
 	}
 
+
+
 	/**
 	 * Sets whether or not this field is required, and adjusts the validation strategy
+	 *
 	 * @param boolean $required
+	 * @param null    $required_text
 	 */
-	function set_required($required = true){
+	function set_required($required = true, $required_text = NULL ){
 		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN );
 		if ( $required ) {
-			$this->_add_validation_strategy( new EE_Required_Validation_Strategy() );
+			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
 			unset( $this->_validation_strategies[ get_class( new EE_Required_Validation_Strategy() ) ] );
 		}

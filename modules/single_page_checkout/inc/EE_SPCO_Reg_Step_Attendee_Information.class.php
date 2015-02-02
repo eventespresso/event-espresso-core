@@ -473,7 +473,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
-			'html_label_text'		=> $question->display_text()
+			'html_label_text'		=> $question->display_text(),
+			'required_validation_error_message' => $question->required_text()
 		);
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {

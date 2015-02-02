@@ -70,7 +70,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( $payment_method->type_obj() instanceof EE_PMT_Base ){
 			$payment = $payment_method->type_obj()->process_payment(
 				$transaction,
-				$amount,
+				min( $amount, $transaction->remaining() ),//make sure we don't overcharge
 				$billing_form,
 				$return_url,
 				EE_Registry::instance()->CFG->core->cancel_page_url(),

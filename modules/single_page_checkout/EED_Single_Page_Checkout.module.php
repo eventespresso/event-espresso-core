@@ -378,6 +378,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
 			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_cart_for_current_session_and_setup_new_transaction();
+			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				// add some style and make it dance
+				$this->checkout->transaction = EE_Transaction::new_instance();
+				$this->add_styles_and_scripts();
+				// $this->_display_spco_reg_form();
+				return;
+			}
 			// and the registrations for the transaction
 			$this->_get_registrations( $this->checkout->transaction );
 		}
@@ -390,11 +398,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// checkout the action!!!
 		$this->_process_form_action();
 		// add some style and make it dance
-		if ( $this->checkout->admin_request ) {
-			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
-		} else {
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
-		}
+		$this->add_styles_and_scripts();
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
 	}
@@ -816,7 +820,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			try {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
-				if ( $this->checkout->action != 'display_spco_reg_step' && $this->checkout->current_step->reg_form->was_submitted() ) {
+				if ( $this->checkout->process_form_submission && $this->checkout->current_step->reg_form->was_submitted() ) {
 					// clear out any old data in case this step is being run again
 					$this->checkout->current_step->set_valid_data( array() );
 					// capture submitted form data
@@ -827,8 +831,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$this->checkout->continue_reg = FALSE;
 						// any form validation errors?
 						if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
+							$submission_error_messages = array();
 							// bad, bad, bad registrant
-							EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+							foreach( $this->checkout->current_step->reg_form->get_validation_errors_accumulated() as $validation_error ){
+								if ( $validation_error instanceof EE_Validation_Error ) {
+									$submission_error_messages[] = sprintf( __( '%s : %s', 'event_espresso' ), $validation_error->get_form_section()->html_label_text(), $validation_error->getMessage() );
+								}
+							}
+							EE_Error::add_error( join( '<br />', $submission_error_messages ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 						// well not really... what will happen is we'll just get redirected back to redo the current step
 						$this->go_to_next_step();
@@ -894,6 +904,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					);
 				}
 			// end default
+		}
+	}
+
+
+
+	/**
+	 * 		add_styles_and_scripts
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function add_styles_and_scripts() {
+		if ( $this->checkout->admin_request ) {
+			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
+		} else {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
 		}
 	}
 
@@ -1086,7 +1112,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			die();
 		}
 		// going somewhere ?
-		if ( $this->checkout->redirect ) {
+		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 			wp_safe_redirect( $this->checkout->redirect_url );
