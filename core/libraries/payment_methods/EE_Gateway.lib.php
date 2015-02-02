@@ -30,7 +30,7 @@ abstract class EE_Gateway{
 	 */
 	const all_currencies_supported = 'all_currencies_supported';
 	/**
-	 * Where keys currency codes, values i18n strings for the currency
+	 * Where values are 3-letter currency codes
 	 * @var array
 	 */
 	protected $_currencies_supported = array();
