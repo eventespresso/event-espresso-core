@@ -367,12 +367,12 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_TEXT TEXT NOT NULL,
+					QST_display_text TEXT NOT NULL,
 					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system VARCHAR(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-					QST_required_TEXT VARCHAR(100) NULL,
+					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
 					QST_wp_user BIGINT UNSIGNED NULL,
@@ -1624,10 +1624,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		add_filter('FHEE__ee_migration_page__header',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
 		add_filter('FHEE__ee_migration_page__p_after_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
 		add_filter('FHEE__ee_migration_page__option_1_main',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
-		add_filter('FHEE__ee_migration_page__option_1_button_TEXT',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
+		add_filter('FHEE__ee_migration_page__option_1_button_text',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
 		add_action('AHEE__ee_migration_page__option_1_extra_details',array($this,'_migration_page_hook_option_1_extra_details'),10,3);
 		add_filter('FHEE__ee_migration_page__option_2_main',array($this,'_migrate_page_hook_simplify_version_strings'),10,4);
-		add_filter('FHEE__ee_migration_page__option_2_button_TEXT',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+		add_filter('FHEE__ee_migration_page__option_2_button_text',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
 		add_filter('FHEE__ee_migration_page__option_2_details',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
 		add_action('AHEE__ee_migration_page__after_migration_options_table',array($this,'_migration_page_hook_after_migration_options_table'));
 		add_filter('FHEE__ee_migration_page__done_migration_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
