@@ -25,6 +25,10 @@
  */
 class EEH_Venue_View extends EEH_Base {
 
+	/**
+	 * @access    private
+	 * @var EE_Venue
+	 */
 	private static $_venue = NULL;
 
 
@@ -34,14 +38,15 @@ class EEH_Venue_View extends EEH_Base {
 	 *    attempts to retrieve an EE_Venue object any way it can
 	 *
 	 * @access    public
-	 * @param int $VNU_ID
-	 * @return    object
+	 * @param int  $VNU_ID
+	 * @param bool $look_in_event
+	 * @return object | null
 	 */
 	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
-			return EEH_Venue_View::$_venue;
+			return EEH_Venue_View::_get_venue();
 		}
 		// international newspaper?
 		global $post;
@@ -99,6 +104,22 @@ class EEH_Venue_View extends EEH_Base {
 		if ( ! EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ) {
 			// sigh... pull it from the db
 			EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+		}
+		return EEH_Venue_View::_get_venue();
+	}
+
+
+
+	/**
+	 * 	edit_event_link
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	protected static function _get_venue() {
+		// check for private venues.
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+			return 'private_venue';
 		}
 		return EEH_Venue_View::$_venue;
 	}
@@ -250,6 +271,8 @@ class EEH_Venue_View extends EEH_Base {
 				default :
 					return $venue_name;
 			}
+		} elseif ( $venue == 'private_venue' ) {
+			return $venue;
 		}
 		return NULL;
 	}
