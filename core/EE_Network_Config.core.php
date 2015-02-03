@@ -76,11 +76,11 @@ final class EE_Network_Config {
 	private function __construct() {
 		do_action( 'AHEE__EE_Network_Config__construct__begin',$this );
 		//set defaults
-		$this->core = new EE_Network_Core_Config();
+		$this->core = apply_filters( 'FHEE__EE_Network_Config___construct__core', new EE_Network_Core_Config() );
 		$this->addons = array();
-		
+
 		$this->_load_config();
-		
+
 		// construct__end hook
 		do_action( 'AHEE__EE_Network_Config__construct__end',$this );
 	}
@@ -125,7 +125,7 @@ final class EE_Network_Config {
 	 * 	update_config'
 	 *
 	 *  @access 	public
-	 *  @return 	boolean success 
+	 *  @return 	boolean success
 	 */
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
@@ -179,7 +179,7 @@ class EE_Network_Core_Config extends EE_Config_Base {
 	public $site_license_key;
 
 
-	
+
 	public function __construct() {
 		$this->site_license_key = NULL;
 	}

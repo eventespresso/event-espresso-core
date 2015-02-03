@@ -1,0 +1,50 @@
+/*
+Lola Invoice Template
+Created by Olly Headey
+18/02/08
+*/
+
+
+/*=========================== INVOICE LOLA =========================*/
+#invoice a.add {color: #fff;}
+
+#invoice img { border: none; }
+
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice {font-family: "Gill Sans", "Gill Sans MT", Helvetica, Arial, Verdana, sans-serif; color:#000; text-transform: none; color: #699}
+#invoice h2 {margin: 10px 0;font-size: 14pt; }
+.invoice-amount td, th {font-size: 11pt;}
+#invoice-header #company-address { text-align: left; font-size: 11pt; line-height: 14pt; padding-top: 2em;}
+#invoice-header #company-address div.org {font-size: 13pt}
+#invoice #client-details, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 11pt; line-height: 14pt;}
+h1,h2,h3,h4,h5,h6  {color: #699}
+#invoice-info h2, #invoice-info h3 {margin: 0; font-weight: normal; }
+#invoice-info h3 em { font-style: normal; font-size: 16pt; font-weight: normal; color: #699}
+#invoice-info h2 {font-weight: normal; font-size:24pt; text-transform: lowercase; color: #699}
+#invoice-info h3 {font-size:15pt;}
+#invoice-info #payment-total{display:none}
+#invoice #invoice-info p {text-align:right;margin-top:0; color: #B8B885}
+#invoice-info p#payment-terms {display:none}
+#payment-details h2, #invoice-other h2 {color: #699; font-weight: bold}
+#payment-details {color: #699}
+#payment-details strong {font-weight: normal; width: 10em;}
+#invoice-other #company-reg-number, #invoice-other #vat-reg-number, #invoice-other #contract-number {color: #699;}
+#invoice-other strong {font-weight: normal; width: 15em; }
+#comments { font-weight: bold; font-size:10pt}
+#invoice-other #contract-number{margin-bottom:3em}
+
+/*=========================== LAYOUT =========================*/
+
+#logo-dv { padding:0 20px 0 0;}
+#invoice-header{margin:0; padding-bottom:10px}
+#invoice-info{ margin: 0em 0 20px 0; text-align:right; }
+#company-address {margin: 0; padding: 0;}
+
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+
+.invoice-amount {margin: 2em 0; clear: both; }
+#invoice #payment-details{width:50%; margin-top:0;}
+#invoice-other {text-align: right;width:50%; }
+
+#comments{ padding-top:20px}

@@ -7,10 +7,10 @@ class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 	/**
 	 * Strategy for setting default soft delete where conditions. This strategy will find
 	 * the field of type 'EE_Trashed_Flag_Field', and add a condition that it be FALSE on all queries involving
-	 * the model. 
+	 * the model.
 	 * If you want to override these default where conditions, you may explicitly in the query you send to the model.
-	 * Eg, 
-	 * 
+	 * Eg,
+	 *
 	 */
 	function __construct(){}
 	/**
@@ -23,7 +23,7 @@ class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 		if($model_relation_chain != '' && $model_relation_chain[strlen($model_relation_chain)-1] !='.'){
 			$model_relation_chain=$model_relation_chain.".";
 		}
-		
+
 		$trashed_field_name = $this->deleted_field_name();
 		return array(
 			$model_relation_chain.$trashed_field_name => false,

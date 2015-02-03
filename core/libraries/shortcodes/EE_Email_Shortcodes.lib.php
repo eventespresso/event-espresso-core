@@ -71,12 +71,12 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 			case '[CO_FORMATTED_EMAIL]' :
 			case '[ESPRESSO_ADMIN_FORMATTED_EMAIL]' :
-				return EE_Registry::instance()->CFG->organization->name . ' <' . EE_Registry::instance()->CFG->organization->email . '>';
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) . ' <' . EE_Registry::instance()->CFG->organization->get_pretty( 'email' ) . '>';
 				break;
 
 			case '[CO_EMAIL]' :
 			case '[ESPRESSO_ADMIN_EMAIL]' :
-				return EE_Registry::instance()->CFG->organization->email;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'email' );
 				break;
 
 			default :
@@ -103,7 +103,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		if ( !empty( $this->_data->admin_email ) ) {
 			if ( ! $fancy_headers )
 				return $this->_data->admin_email;
-			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $this->_data->admin_email . '>';
+			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) . ' <' . $this->_data->admin_email . '>';
 		}
 
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
@@ -149,7 +149,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				continue;
 			}
 
-			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $admin->email . '>';
+			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) . ' <' . $admin->email . '>';
 		}
 
 		$admin_email = implode( ',', $admin_email );

@@ -7,7 +7,7 @@
 </li>
 <li>
 <strong><?php _e('Price Type', 'event_espresso'); ?></strong><br />
-<?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax.', 'event_espresso'); ?>
+<?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Fixed Discount, Percent Surcharge, Fixed Surcharge, Regional Tax, and Federal Tax.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
 <strong><?php _e('Base Price', 'event_espresso'); ?></strong><br />
@@ -18,7 +18,7 @@
 <?php _e('This discount is applied as a percentage (%).', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Dollar Discount', 'event_espresso'); ?></strong><br />
+<strong><?php _e('Fixed Discount', 'event_espresso'); ?></strong><br />
 <?php _e('This discount is applied as a flat amount.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
@@ -26,7 +26,7 @@
 <?php _e('This surcharge is applied as a percentage (%). It is useful for helping with administrative costs.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Dollar Surcharge', 'event_espresso'); ?></strong><br />
+<strong><?php _e('Fixed Surcharge', 'event_espresso'); ?></strong><br />
 <?php _e('This surcharge is applied as flat amount. It is also useful for helping with administrative costs.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
