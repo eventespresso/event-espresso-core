@@ -96,14 +96,14 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dms41 = new EE_DMS_Core_4_1_0();
 		$dms41->set_completed();
 		$dms42 = new EE_DMS_Core_4_2_0();
-		$dms42->set_borked();
+		$dms42->set_broken();
 		$this->_pretend_ran_dms($dms41);
 		$this->_pretend_ran_dms($dms42);
 		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
 		$this->assertEquals($dms42,$last_ran_script);
-		$this->assertTrue( $last_ran_script->is_borked() );
+		$this->assertTrue( $last_ran_script->is_broken() );
 		EE_Data_Migration_Manager::instance()->reattempt();
-		$this->assertFalse( $last_ran_script->is_borked() );
+		$this->assertFalse( $last_ran_script->is_broken() );
 
 
 	}
@@ -118,7 +118,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertEquals($dms42,$last_ran_script);
 
 		//now if it's borked, we still should have found dms42
-		$dms42->set_borked();
+		$dms42->set_broken();
 		$this->_pretend_ran_dms($dms42);
 		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
 		$this->assertEquals($dms42,$last_ran_script);
