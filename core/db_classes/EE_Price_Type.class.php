@@ -152,6 +152,19 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * get the author of the price type.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('PRT_wp_user');
+	}
+
+
+
+	/**
 	 *        get Price Type order
 	 * @access        public
 	 */

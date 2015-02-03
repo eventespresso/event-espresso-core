@@ -71,6 +71,8 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		}
 	}
 
+
+
 	/**
 	 * 	process_shortcode - ESPRESSO_CHECKOUT
 	 *

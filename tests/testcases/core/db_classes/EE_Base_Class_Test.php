@@ -70,6 +70,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t->ID(),$id);
 		$t2 = EEM_Transaction::instance()->get_one_by_ID($id);
 		$this->assertEquals($id,$t2->ID());
+
+		//and check that its correctly saved to the model's entity map
+		$existing_t_in_entity_map = EEM_Transaction::instance()->get_from_entity_map( $id );
+		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
 
 //	function test_save_no_pk(){
@@ -89,6 +93,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t->_add_relation_to($r, 'Registration');
 		$this->assertEquals($r->get('TXN_ID'),$t->ID());
+	}
+	/**
+	 * @group 7084
+	 */
+	function test_set_defaults_on_unspecified_fields(){
+		$r = EE_Registration::new_instance( array( 'TXN_ID' => 99 ) );
+		$this->assertEquals( 99, $r->transaction_ID() );
+		//the STS_ID should have been set to the default, not left NULL
+		$this->assertEquals( EEM_Registration::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $r->status_ID() );
 	}
 	function test_get_first_related(){
 		$t = EE_Transaction::new_instance();
@@ -311,17 +324,122 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t_null = $r->get_one_from_cache('Transaction');
 		$this->assertNull($t_null);
 	}
-	/**
-	 * @group current_bug
-	 */
-	function test_update_extra_meta(){
-		$t = EE_Transaction::new_instance( array( 'TXN_total' => 39 ) );
-		$t->save();
-		$t->update_extra_meta( 'work', 'maybe' );
-		$this->assertEquals( 'maybe', $t->get_extra_meta( 'work ', TRUE ) );
-		$t->update_extra_meta( 'work', 'yes' );
-		$this->assertEquals( 'yes', $t->get_extra_meta( 'work', TRUE ) );
+
+	function test_set_and_get_extra_meta(){
+		$e = EE_Event::new_instance();
+		$e->save();
+		$e->update_extra_meta('monkey', 'baboon');
+		$this->assertEquals('baboon', $e->get_extra_meta('monkey', TRUE)  );
+		$e->update_extra_meta('monkey', 'chimp');
+		$this->assertEquals('chimp', $e->get_extra_meta('monkey', TRUE)  );
 	}
+
+
+
+
+	/**
+	 * Created to attempt to reproduce a bug found when fixing https://events.codebasehq.com/projects/event-espresso/tickets/6373
+	 *
+	 * @since 4.5.0
+	 *
+	 */
+	function test_set_primary_key_clear_relations() {
+		$event = $this->factory->event->create();
+		$datetime = $this->factory->datetime->create();
+		$event->_add_relation_to( $datetime, 'Datetime' );
+		$event->save();
+
+		//now to reproduce we grab the event from the db.
+		$evt_from_db = EEM_Event::instance()->get_one_by_ID( $event->ID() );
+
+		//clone event
+		$new_event = clone $evt_from_db;
+		//set pk to zero so we save new event and save.
+		$new_event->set( 'EVT_ID', 0 );
+		$new_event->save();
+
+		//now let's set the a clone of the dtt relation manually to the new event by cloning the dtt (which should work)
+		$orig_dtts = $evt_from_db->get_many_related('Datetime');
+		$this->assertEquals( 1, count( $orig_dtts ) );
+		foreach ( $orig_dtts as $orig_dtt ) {
+			$new_datetime = clone $orig_dtt;
+			$new_datetime->set('DTT_ID', 0);
+			$new_datetime->set('EVT_ID', $new_event->ID() );
+			$new_datetime->save();
+		}
+
+		//k now for the tests. first $new_event should NOT have the original datetime as a relation by default.  When an object's id is set to 0 its relations should be cleared.
+		//get from db
+		$test_cloned_event_from_db = EEM_Event::instance()->get_one_by_ID( $new_event->ID() );
+		$dtt_relation_on_clone = $test_cloned_event_from_db->first_datetime();
+
+		$this->assertInstanceOf( 'EE_Datetime', $dtt_relation_on_clone );
+		$this->assertEquals( $new_datetime->ID(), $dtt_relation_on_clone->ID() );
+
+		//test that the original event still has its relation to original EE_Datetime
+		$orig_evt = EEM_Event::instance()->get_one_by_ID( $evt_from_db->ID() );
+		$dtt_relation_on_orig = $orig_evt->first_datetime();
+		$this->assertInstanceOf( 'EE_Datetime', $dtt_relation_on_orig );
+		$this->assertEquals( $dtt_relation_on_orig->ID(), $datetime->ID() );
+	}
+
+
+	/**
+	 * @group 7151
+	 */
+	public function test_in_entity_map(){
+		$att = EE_Attendee::new_instance( array( 'ATT_fname' => 'mike' ) );
+		$this->assertFalse( $att->in_entity_map() );
+		$att->save();
+		$this->assertTrue( $att->in_entity_map() );
+		EE_Registry::instance()->reset_model( 'Attendee' );
+		//when we serialized it, it forgot if it was in the entity map or not
+		$this->assertFalse( $att->in_entity_map() );
+		try{
+			//should throw an exception because we hate saving
+			//a model object that's not in the entity mapper
+			$att->save();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+		EEM_Attendee::instance()->add_to_entity_map( $att );
+		//we should all acknowledge it's in the entity map now
+		$this->assertTrue( $att->in_entity_map() );
+		//we shouldn't complain at saving it now, it's in the entity map and so we're allowed
+		$att->save();
+		//also, when we clone an item in the entity map, it shouldn't be considered in the entity map
+		$att2 = clone $att;
+		$this->assertFalse( $att2->in_entity_map() );
+	}
+
+	/**
+	 * @group 7151
+	 */
+	public function test_refresh_from_db(){
+		$att = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob' ) );
+		try{
+			$att->refresh_from_db();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+		$att->save();
+		$att->refresh_from_db();
+		EE_Registry::instance()->reset_model( 'Attendee' );
+		try{
+			$att->refresh_from_db();
+		}catch( EE_Error $e ){
+			$this->assertTrue( TRUE );
+		}
+	}
+	public function test_delete_permanently_with_extra_meta(){
+		$attendee = EE_Attendee::new_instance( array( 'ATT_fname' => 'bob', 'ATT_lname' => 'deleteme', 'ATT_email' => 'ef@ew.dw'));
+		$attendee->save();
+		$attendee->add_extra_meta('shouldnt_prevent_deletion', 'no_sirry' );
+		$this->assertEquals( 'no_sirry', $attendee->get_extra_meta('shouldnt_prevent_deletion', TRUE ) );
+		$attendee->delete_permanently();
+		//if that didn't throw an error, we're good
+	}
+
 }
 
 // End of file EE_Base_Class_Test.php

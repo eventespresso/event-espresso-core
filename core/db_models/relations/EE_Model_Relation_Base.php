@@ -92,7 +92,7 @@ abstract class EE_Model_Relation_Base{
 	 * @return EEM_Base
 	 */
 	protected function _get_model($model_name){
-		$modelInstance=call_user_func("EEM_".$model_name."::instance");
+		$modelInstance = EE_Registry::instance()->load_model( $model_name );
 		$modelInstance->set_timezone( $this->_timezone );
 		return $modelInstance;
 	}
@@ -251,10 +251,10 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * Gets the SQL string for performing the join between this model and the other model.
+	 * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
 	 * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk = other_model_primary_table.fk" etc
 	 */
-	abstract function get_join_statement();
-
+	abstract function get_join_statement($model_relation_chain);
 
 
 	/**
@@ -282,8 +282,7 @@ abstract class EE_Model_Relation_Base{
 	/**
 	 * Removes ALL relation instances for this relation obj
 	 * @param EE_Base_Class|int $this_obj_or_id
-	 * @param array             $where_query_param
-	 * @internal param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+	 * @param array $where_query_param  like EEM_Base::get_all's $query_params[0] (where conditions)
 	 * @return EE_Base_Class[]
 	 */
 	public function remove_relations($this_obj_or_id,$where_query_param = array()){
@@ -323,6 +322,5 @@ abstract class EE_Model_Relation_Base{
 				$this->get_other_model()->item_name(2)
 			);
 		}
-
 	}
 }

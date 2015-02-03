@@ -1,0 +1,33 @@
+/* Base CSS styles DO NOT CHANGE OR REMOVE */
+@page { min-height:27cm!important; height:100%!important; width:100%!important; }
+@page :first { margin: 0; }
+@page :right { margin: 30px 0 0 0; }
+@page :left { margin: 30px 0 0 0; }
+html, body { height : 100% !important; width : 100% !important; margin : 0; padding : 0; }
+body { font : 82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color : #FFFFFF; }
+.noPrint { display : none !important; height : 0 !important; width : 0 !important; margin : 0 !important; padding : 0 !important; }
+ul, ul li, p, div, ol { margin : 0; padding : 0; list-style : none; }
+#invoice-header, .ticket-details, .ticket-time-and-place-details { page-break-inside : avoid; }
+#invoice { background-color : #FFFFFF; }
+.invoice-amount, .venue-list { width :98.5%; }
+.taxes .invoice-amount, .payment-dv .invoice-amount { width :100% !important; }
+td { vertical-align : top !important; }
+.not-really-a-table { border : none !important; }
+.section-title { margin:.5cm 0 0; }
+#logo-dv img { max-width : 200px !important; border : none; }
+.aln-left { text-align : left; }
+.aln-cntr { text-align : center; }
+.aln-rght { text-align : right; }
+.small-text { font-size : .8em; }
+.small-text.link { font-weight : normal; }
+.plain-text { font-weight : normal; }
+.float-left { float : left; }
+.float-right { float : right; }
+.clear { clear : both; }
+#invoice > div, #invoice > table, #invoice > .taxes, .tickets-per-event > li, .ticket-registration, .tickets-per-event > .event-ticket { margin-bottom : 0 !important; }
+
+.icon { margin:0 1em 0 0 !important; }
+.registration-details,
+.registration-details tr th { margin: 0; vertical-align: middle; }
+.no-bottom-margin { margin-bottom : 0; }
+

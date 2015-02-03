@@ -145,16 +145,21 @@ class EEH_Template {
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
-	 * @param array    $templates
+	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @internal param array|string $mixed $templates  the template file name including extension
+	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.
+	 * 				Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
 	 * @return mixed
 	 */
-	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE ) {
+	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE, $check_if_custom = FALSE ) {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
+
+		if ( $check_if_custom && !empty( $template_path ) )
+			return TRUE;
+
 		// not in the theme
 		if ( empty( $template_path )) {
 			// not even a template to look for ?
@@ -172,23 +177,34 @@ class EEH_Template {
 			}
 			// currently active EE template theme
 			$current_theme = EE_Config::get_current_theme();
+
 			// array of paths to folders that may contain templates
 			$template_folder_paths = array(
 				// first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
-				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
-				EE_PUBLIC . $current_theme,
-				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
-				EE_TEMPLATES . $current_theme,
-				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
-				EE_PLUGIN_DIR_PATH
+				EVENT_ESPRESSO_TEMPLATE_DIR
 			);
+
+			//add core plugin folders for checking only if we're not $check_if_custom
+			if ( ! $check_if_custom ) {
+				$core_paths = array(
+					// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+					EE_PUBLIC . $current_theme,
+					// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
+					EE_TEMPLATES . $current_theme,
+					// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
+					EE_PLUGIN_DIR_PATH
+					);
+				$template_folder_paths = array_merge( $template_folder_paths, $core_paths );
+			}
+
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
+
 			// array to hold all possible template paths
 			$full_template_paths = array();
+
 			// loop through $templates
 			foreach ( (array)$templates as $template ) {
 				// while looping through all template folder paths
@@ -201,6 +217,8 @@ class EEH_Template {
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+
+
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
@@ -210,14 +228,14 @@ class EEH_Template {
 			}
 		}
 		// if we got it and you want to see it...
-		if ( $template_path && $load ) {
+		if ( $template_path && $load && ! $check_if_custom  ) {
 			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, TRUE );
 			} else {
 				EEH_Template::display_template( $template_path, $template_args, FALSE );
 			}
 		}
-		return $template_path;
+		return $check_if_custom && ! empty( $template_path ) ? TRUE : $template_path;
 	}
 
 
@@ -227,14 +245,27 @@ class EEH_Template {
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return mixed boolean | string
+	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		/**
+		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
+		 * modifications.  NOTE... modifying these things can cause breakage as most templates running through
+		 * the display_template method are templates we DON'T want modified (usually because of js
+		 * dependencies etc).  So unless you know what you are doing, do NOT filter templates or template args
+		 * using this.
+		 *
+		 * @since 4.6.0
+		 */
+		$template_path = apply_filters( 'FHEE__EEH_Template__display_template__template_path', $template_path );
+		$template_args = apply_filters( 'FHEE__EEH_Template__display_template__template_args', $template_args );
+
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
-			return FALSE;
+			return '';
 		}
 		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
@@ -250,7 +281,7 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
-		return FALSE;
+		return '';
 	}
 
 
@@ -298,11 +329,11 @@ class EEH_Template {
 	 * @param  float      $amount       raw money value
 	 * @param  boolean    $return_raw   whether to return the formatted float value only with no currency sign or code
 	 * @param  boolean    $display_code whether to display the country code (USD). Default = TRUE
-	 * @param bool|string $CNT_ISO      2 letter ISO code for a country
+	 * @param string $CNT_ISO      2 letter ISO code for a country
 	 * @param string      $cur_code_span_class
 	 * @return string        the html output for the formatted money value
 	 */
-	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' ) {
+	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = '', $cur_code_span_class = 'currency-code' ) {
 		// ensure amount was received
 		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
@@ -315,8 +346,8 @@ class EEH_Template {
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
 		if ( is_float( $amount_formatted )) {
-			// was a country ISO code passed ? if so generate currency cofing object for that country
-			$mny = $CNT_ISO !== FALSE ? new EE_Currency_Config( $CNT_ISO ) : NULL;
+			// was a country ISO code passed ? if so generate currency config object for that country
+			$mny = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : NULL;
 			// verify results
 			if ( ! $mny instanceof EE_Currency_Config ) {
 				// set default config country currency settings
@@ -355,26 +386,27 @@ class EEH_Template {
 
 	/**
 	 * This function is used for outputting the localized label for a given status id in the schema requested (and possibly plural).  The intended use of this function is only for cases where wanting a label outside of a related status model or model object (i.e. in documentation etc.)
-	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unkown' will be returned.
+	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unknown' will be returned.
 	 * @param  boolean $plural    Whether to return plural or not
 	 * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
 	 * @return string             The localized label for the status id.
 	 */
 	public static function pretty_status( $status_id, $plural = FALSE, $schema = 'upper' ) {
-		$status = EE_Registry::instance()->load_model( 'Status' )->localized_status( array( $status_id => __( 'unknown', 'event_espresso' )), $plural, $schema );
+		/** @type EEM_Status $EEM_Status */
+		$EEM_Status = EE_Registry::instance()->load_model( 'Status' );
+		$status = $EEM_Status->localized_status( array( $status_id => __( 'unknown', 'event_espresso' )), $plural, $schema );
 		return $status[ $status_id ];
 	}
-
-
 
 
 
 	/**
 	 * This helper just returns a button or link for the given parameters
 	 * @param  string $url   the url for the link
-	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param  string $label What is the label you want displayed for the button
-	 * @return string        the html output for the button
+	 * @param  string $class what class is used for the button (defaults to 'button-primary')
+	 * @param string  $icon
+	 * @return string 	the html output for the button
 	 */
 	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
 		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
@@ -439,7 +471,7 @@ class EEH_Template {
 
 			$custom_class = !empty( $stop['custom_class'] ) ? ' class="' . $stop['custom_class'] . '"' : '';
 			$button_text = !empty( $stop['button_text'] ) ? ' data-button="' . $stop['button_text'] . '"' : '';
-			$innercontent = isset($stop['content']) ? $stop['content'] : '';
+			$inner_content = isset($stop['content']) ? $stop['content'] : '';
 
 			//options
 			if ( isset( $stop['options'] ) && is_array( $stop['options'] ) ) {
@@ -453,7 +485,7 @@ class EEH_Template {
 			}
 
 			//let's put all together
-			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $innercontent . '</li>';
+			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $inner_content . '</li>';
 		}
 
 		$content .= '</ol>';
@@ -505,10 +537,69 @@ class EEH_Template {
 
 
 	/**
+	 * Gets HTML for laying out a deeply-nested array (and objects) in a format
+	 * that's nice for presenting in the wp admin
+	 * @param mixed $data
+	 * @return string
+	 */
+	public static function layout_array_as_table($data) {
+	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
+		$data = (array)$data;
+	}
+	EE_Registry::instance()->load_helper('Array');
+	ob_start();
+	if (is_array($data)) {
+		if (EEH_Array::is_associative_array($data)) {
+			?>
+			<table class="widefat">
+				<tbody>
+					<?php
+					foreach ($data as $data_key => $data_values) {
+						?>
+						<tr>
+							<td>
+								<?php echo $data_key;?>
+							</td>
+							<td>
+								<?php echo self::layout_array_as_table($data_values);?>
+							</td>
+						</tr>
+						<?php
+					}?>
+				</tbody>
+			</table>
+			<?php
+		}
+		else {
+			?>
+			<ul>
+				<?php
+				foreach ($data as $datum) {
+					echo "<li>"; echo self::layout_array_as_table($datum);echo "</li>";
+				}?>
+			</ul>
+			<?php
+		}
+	}
+	else {
+		//simple value
+		echo $data;
+	}
+	return ob_get_clean();
+}
+
+
+
+	/**
 	 * wrapper for self::get_paging_html() that simply echos the generated paging html
 	 *
 	 * @since 4.4.0
 	 * @see   self:get_paging_html() for argument docs.
+	 * @param      $total_items
+	 * @param      $current
+	 * @param      $per_page
+	 * @param      $url
+	 * @param bool $show_num_field
 	 */
 	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
 		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field );

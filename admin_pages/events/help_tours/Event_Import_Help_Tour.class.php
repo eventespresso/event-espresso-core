@@ -61,7 +61,7 @@ class Event_Import_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_two() {
-		return '<p>' . __('A sample CSV file can be downloaded by clicking on the Download Sample File button below.', 'event_espresso') . '</p>';
+		return '<p>' . __('A sample CSV file can be downloaded by creating an event through the Event Editor and then saving that event. Then return to the Event Overview screen and hover of the name of the event and click on Export.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_three() {

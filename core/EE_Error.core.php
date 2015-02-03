@@ -238,6 +238,9 @@ class EE_Error extends Exception {
 	*/
     public function get_error() {
 
+		if( apply_filters( 'FHEE__EE_Error__get_error__show_normal_exceptions', FALSE ) ){
+			throw $this;
+		}
 		// get separate user and developer messages if they exist
 		$msg = explode( '||', $this->getMessage() );
 		$user_msg = $msg[0];
@@ -609,12 +612,24 @@ class EE_Error extends Exception {
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
 		if ( empty( $msg )) {
-			EE_Error::doing_it_wrong( 'EE_Error::add_' . $type . '()', 'Notifications are not much use without a message! Please add a message.', EVENT_ESPRESSO_VERSION );
+			EE_Error::doing_it_wrong(
+				'EE_Error::add_' . $type . '()',
+				sprintf(
+					__( 'Notifications are not much use without a message! Please add a message to the EE_Error::add_%s() call made in %s on line %d', 'event_espresso' ),
+					$type,
+					$file,
+					$line
+				),
+				EVENT_ESPRESSO_VERSION
+			);
 		}
-		// todo: reimplement  the following in 4.5+
-//		if ( $type == 'errors' && ( empty( $file ) || empty( $func ) || empty( $line ))) {
-//			EE_Error::doing_it_wrong( 'EE_Error::add_error()', 'You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.', EVENT_ESPRESSO_VERSION );
-//		}
+		if ( $type == 'errors' && ( empty( $file ) || empty( $func ) || empty( $line ))) {
+			EE_Error::doing_it_wrong(
+				'EE_Error::add_error()',
+				__('You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.', 'event_espresso' ),
+				EVENT_ESPRESSO_VERSION
+			);
+		}
 		// get separate user and developer messages if they exist
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
@@ -950,14 +965,13 @@ class EE_Error extends Exception {
 
 
 
-
-
 	/**
-	* 	_print_scripts
-	*
-	*	@access public
-	* 	@return 		void
-	*/
+	 *    _print_scripts
+	 *
+	 * @access 	public
+	 * @param 	bool $force_print
+	 * @return 	void
+	 */
 	private static function _print_scripts( $force_print = FALSE ) {
 		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {

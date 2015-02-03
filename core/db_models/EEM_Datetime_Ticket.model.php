@@ -28,8 +28,8 @@ class EEM_Datetime_Ticket extends EEM_Base {
 
 
 	// private instance of the EEM_Datetime_Ticket object
-	private static $_instance = NULL;
-	
+	protected static $_instance = NULL;
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -39,7 +39,7 @@ class EEM_Datetime_Ticket extends EEM_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Datetime Ticket','event_espresso');
-		$this->plural_item = __('Datetime Tickets','event_espresso');		
+		$this->plural_item = __('Datetime Tickets','event_espresso');
 
 		$this->_tables = array(
 			'Datetime_Ticket'=> new EE_Primary_Table('esp_datetime_ticket', 'DTK_ID')
@@ -57,33 +57,4 @@ class EEM_Datetime_Ticket extends EEM_Base {
 
 		parent::__construct( $timezone );
 	}
-
-
-
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the Espresso_model object
-	 *
-	 *		@access public
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Datetime_Ticket instance
-	 */
-	public static function instance( $timezone = NULL ){
-
-		// check if instance of Espresso_model already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
-		
-		// Espresso_model object
-		return self::$_instance;
-	}
-
-
 } //end EEM_Datetime_Ticket class
