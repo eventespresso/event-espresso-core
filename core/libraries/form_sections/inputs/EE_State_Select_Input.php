@@ -1,15 +1,10 @@
-<?php  if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit( 'No direct script access allowed' ); }
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_State_Select_Input
+ * EE_State_Select_Input
  *
- * Generates an HTML <select> form input
- * and populates it with a list of States from the wp_esp_state table
- *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
- *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
  */
 class EE_State_Select_Input extends EE_Select_Input{
 
