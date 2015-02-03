@@ -837,7 +837,7 @@ input.ee-register-button {
 	color: #70CC50;
 }
 
-/*  txn abandoned, txn failed,  payment declined, reg declined, dtt cancelled*/
+/*  txn failed,  payment declined, reg declined, dtt cancelled*/
 .ee-status-color-TFL,
 .ee-status-color-PDC,
 .ee-status-color-RDC,
@@ -868,7 +868,7 @@ input.ee-register-button {
 }
 
 
-/* reg incomplete, dtt sold out */
+/* txn abandoned, reg incomplete, dtt sold out */
 .ee-status-color-TAB,
 .ee-status-color-RIC,
 .ee-status-color-DTS {
