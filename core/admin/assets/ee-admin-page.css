@@ -715,8 +715,7 @@ div.updated.ee-notices-attention {
 	position: relative;
 	top: -2px;
 	margin: 0 0 1em;
-	background-color: #00B1CA;
-	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
+	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA );
 	border: 1px solid rgba(0,0,0,0.01) !important;
 	border-top: 1px solid rgba(255,255,255,0.5) !important;
 	border-bottom: 1px solid rgba(0,0,0,0.25) !important;
@@ -797,29 +796,94 @@ input.ee-register-button {
 }
 
 /* BUTTON COLOURS */
-.ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; background-image: -moz-linear-gradient( center top , #F65077, #E44064 ); }
+.ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; background-image: -moz-linear-gradient( #F65077, #E44064 ); }
 .ee-pink.ee-button:hover { background-color: #F65077; background-image: none; }
 
-.ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; background-image: -moz-linear-gradient( center top , #80DD5E, #70CC50 ); }
+.ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; background-image: -moz-linear-gradient( #80DD5E, #70CC50 ); }
 .ee-green.ee-button:hover { background-color: #80DD5E; background-image: none; }
 
-.ee-red.ee-button, .ee-red.ee-button:visited { background-color: #B4113F; background-image: -moz-linear-gradient( center top , #C8194E, #B4113F ); }
+.ee-red.ee-button, .ee-red.ee-button:visited { background-color: #B4113F; background-image: -moz-linear-gradient( #C8194E, #B4113F ); }
 .ee-red.ee-button:hover { 	background-color: #C8194E; background-image: none; }
 
-.ee-orange.ee-button, .ee-orange.ee-button:visited { background-color: #E76700; background-image: -moz-linear-gradient( center top , #FA730B, #E76700 ); }
+.ee-orange.ee-button, .ee-orange.ee-button:visited { background-color: #E76700; background-image: -moz-linear-gradient( #FA730B, #E76700 ); }
 .ee-orange.ee-button:hover { background-color: #FA730B; background-image: none; }
 
-.ee-blue.ee-button, .ee-blue.ee-button:visited { background-color: #005B9E; background-image: -moz-linear-gradient( center top , #066DB1, #005B9E ); }
+.ee-blue.ee-button, .ee-blue.ee-button:visited { background-color: #005B9E; background-image: -moz-linear-gradient( #066DB1, #005B9E ); }
 .ee-blue.ee-button:hover { background-color: #066DB1; background-image: none; }
 
-.ee-yellow.ee-button, .ee-yellow.ee-button:visited { background-color: #F8D755; background-image: -moz-linear-gradient( center top , #FEDF6C, #F8D755 ); }
+.ee-yellow.ee-button, .ee-yellow.ee-button:visited { background-color: #F8D755; background-image: -moz-linear-gradient( #FEDF6C, #F8D755 ); }
 .ee-yellow.ee-button:hover { background-color: #FEDF6C; background-image: none; }
 
-.ee-grey.ee-button, .ee-grey.ee-button:visited { background-color: #A39D9C; background-image: -moz-linear-gradient( center top , #B5B3B3, #A39D9C ); }
+.ee-grey.ee-button, .ee-grey.ee-button:visited { background-color: #A39D9C; background-image: -moz-linear-gradient( #B5B3B3, #A39D9C ); }
 .ee-grey.ee-button:hover { background-color: #B5B3B3; background-image: none; }
 
-.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited { background-color: #464549; background-image: -moz-linear-gradient( center top , #59595B, #464549 ); }
+.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited { background-color: #464549; background-image: -moz-linear-gradient( #59595B, #464549 ); }
 .ee-dark-grey.ee-button:hover { background-color: #59595B; background-image: none; }
 
-.ee-black.ee-button, .ee-black.ee-button:visited { background-color: #2F3334; background-image: -moz-linear-gradient( center top , #424646, #2F3334 ); }
+.ee-black.ee-button, .ee-black.ee-button:visited { background-color: #2F3334; background-image: -moz-linear-gradient( #424646, #2F3334 ); }
 .ee-black.ee-button:hover { background-color: #424646; background-image: none; }
+
+
+
+/**
+ * All status colors for various EE related elements
+ */
+
+/* txn complete, payment approved, reg approved, dtt active*/
+.ee-status-color-TCM,
+.ee-status-color-PAP,
+.ee-status-color-RAP,
+.ee-status-color-DTA {
+	color: #70CC50;
+}
+
+/*  txn failed,  payment declined, reg declined, dtt cancelled*/
+.ee-status-color-TFL,
+.ee-status-color-PDC,
+.ee-status-color-RDC,
+.ee-status-color-DTC {
+	color: #E44064;
+}
+
+/* txn open, payment pending, reg pending payment, dtt upcoming */
+.ee-status-color-TIN,
+.ee-status-color-PPN,
+.ee-status-color-RPP,
+.ee-status-color-DTU {
+	color: #00B1CA;
+}
+
+/* txn overpaid, payment fail, reg not approved */
+.ee-status-color-TOP,
+.ee-status-color-PFL,
+.ee-status-color-RNA {
+	color: #E76700;
+}
+
+/* payment cancelled, reg cancelled, dtt expired */
+.ee-status-color-PCN,
+.ee-status-color-RCN,
+.ee-status-color-DTE {
+	color: #AC9D9C;
+}
+
+
+/* txn abandoned, reg incomplete, dtt sold out */
+.ee-status-color-TAB,
+.ee-status-color-RIC,
+.ee-status-color-DTS {
+	color: #FCB93C;
+}
+
+
+/* dtt inactive */
+.ee-status-color-DTI {
+	color: #403A3A;
+}
+
+
+/* dtt postponed */
+.ee-status-color-DTP {
+	color: #8A549A;
+}
+
