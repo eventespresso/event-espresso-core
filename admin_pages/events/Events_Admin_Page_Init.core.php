@@ -48,11 +48,11 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 			'menu_group' => 'main',
 			'menu_order' => 10,
 			'subtitle' => __('Events', 'event_espresso'),
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_events',
 			'menu_label' => __('Event Espresso', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'ee_read_events',
 			'admin_init_page' => $this
 			));
 	}

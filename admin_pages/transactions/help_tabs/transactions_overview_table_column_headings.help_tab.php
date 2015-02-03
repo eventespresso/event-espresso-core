@@ -54,20 +54,24 @@
 <?php _e('There are several actions that can be done by clicking the icons. These are explained below.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-<strong><?php _e('View Transaction Details <span class="dashicons dashicons-search"></span>', 'event_espresso'); ?></strong><br />
+<strong><?php _e('View Transaction Details <span class="dashicons dashicons-cart"></span>', 'event_espresso'); ?></strong><br />
 <?php _e('Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Download Invoice for Transaction <span class="ee-icon ee-icon-PDF-file-type"></span>', 'event_espresso'); ?></strong><br />
-<?php _e('Downloads the invoice PDF.', 'event_espresso'); ?>
+<strong><?php _e('View Invoice for Transaction <span class="dashicons dashicons-media-spreadsheet"></span>', 'event_espresso'); ?></strong><br />
+<?php _e('Takes you to the invoice for the transaction.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('Send Payment Reminder <span class="ee-icon ee-icon-payment-reminder"></span>', 'event_espresso'); ?></strong><br />
-<?php echo sprintf(__('Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?>
+<strong><?php _e('View Receipt for Transaction <span class="dashicons dashicons-media-default"></span>', 'event_espresso'); ?></strong><br />
+<?php _e('Takes you to the receipt for the transaction.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong><?php _e('View Registration Details <span class="ee-icon ee-icon-user-edit"></span>', 'event_espresso'); ?></strong><br />
+<strong><?php _e('View Registration Details <span class="dashicons dashicons-clipboard"></span>', 'event_espresso'); ?></strong><br />
 <?php echo sprintf(__('Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?>
+</li>
+<li style="list-style-type: none;">
+<strong><?php _e('Send Payment Reminder <span class="dashicons dashicons-email-alt"></span>', 'event_espresso'); ?></strong><br />
+<?php echo sprintf(__('Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?>
 </li>
 </ul>
 </li>
