@@ -30,7 +30,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @package 		Event Espresso
- * @author 			Seth Shoultes
+ * @author 		Seth Shoultes
  * @copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
  * @license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @link 				{@link http://www.eventespresso.com}
