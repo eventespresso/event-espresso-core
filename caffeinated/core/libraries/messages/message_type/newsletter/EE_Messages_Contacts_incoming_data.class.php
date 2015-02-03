@@ -72,7 +72,7 @@ class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data {
             $id = $contact->ID();
             $reg = $contact->get_first_related('Registration');
             $this->attendees[$id]['att_obj'] = $contact;
-            $this->attendees[$id]['reg_obj'][$reg->ID()] = $reg;
+            $this->attendees[$id]['reg_objs'][$reg->ID()] = $reg;
             $this->attendees[$id]['attendee_email'] = $contact->email();
             $this->attendees[$id]['tkt_objs'] = array();
             $this->attendees[$id]['evt_objs'] = array();

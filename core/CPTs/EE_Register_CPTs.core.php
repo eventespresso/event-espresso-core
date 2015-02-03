@@ -1,25 +1,12 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Event List
+ * EE_Register_CPTs
  *
  * @package			Event Espresso
- * @subpackage	includes/core/
+ * @subpackage		includes/core/
  * @author				Darren Ethier
  *
- * ------------------------------------------------------------------------
  */
 class EE_Register_CPTs {
 
@@ -38,12 +25,12 @@ class EE_Register_CPTs {
 	 */
 	function __construct(){
 		// register taxonomies
-		$taxonomies = apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', self::get_taxonomies() );
+		$taxonomies = self::get_taxonomies();
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
 		// register CPTs
-		$CPTs = apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', self::get_CPTs() );
+		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
@@ -62,7 +49,7 @@ class EE_Register_CPTs {
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-
+		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
 	}
 
 
@@ -93,13 +80,19 @@ class EE_Register_CPTs {
 	 */
 	public static function get_taxonomies(){
 		// define taxonomies
-		return array(
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array(
 			'espresso_event_categories' => array(
 				'singular_name' => __("Event Category", "event_espresso"),
 				'plural_name' => __("Event Categories", "event_espresso"),
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => true,
+					'capabilities' => array(
+						'manage_terms' => 'ee_manage_event_categories',
+						'edit_terms' => 'ee_edit_event_category',
+						'delete_terms' => 'ee_delete_event_category',
+						'assign_terms' => 'ee_assign_event_category'
+						),
 					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
 				)),
 			'espresso_venue_categories' => array(
@@ -108,6 +101,12 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
+					'capabilities' => array(
+						'manage_terms' => 'ee_manage_venue_categories',
+						'edit_terms' => 'ee_edit_venue_category',
+						'delete_terms' => 'ee_delete_venue_category',
+						'assign_terms' => 'ee_assign_venue_category'
+						),
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
 			'espresso_event_type' => array(
@@ -116,10 +115,16 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_ui'=>false,
+					'capabilities' => array(
+						'manage_terms' => 'ee_read_event_type',
+						'edit_terms' => 'ee_edit_event_type',
+						'delete_terms' => 'ee_delete_event_type',
+						'assign_terms' => 'ee_assign_event_type'
+						),
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
 				))
-			);
+			) );
 	}
 
 
@@ -134,7 +139,8 @@ class EE_Register_CPTs {
 	 */
 	public static function get_CPTs(){
 		// define CPTs
-		return array(
+		// NOTE the ['args']['page_templates'] array index is something specific to our CPTs and not part of the WP custom post type api.
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
@@ -144,11 +150,28 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=> TRUE,
 					'show_in_nav_menus' => TRUE,
+					'capability_type' => 'event',
+					'capabilities' => array(
+						'edit_post' => 'ee_edit_event',
+						'read_post' => 'ee_read_event',
+						'delete_post' => 'ee_delete_event',
+						'edit_posts' => 'ee_edit_events',
+						'edit_others_posts' => 'ee_edit_others_events',
+						'publish_posts' => 'ee_publish_events',
+						'read_private_posts' => 'ee_read_private_events',
+						'delete_posts' => 'ee_delete_events',
+						'delete_private_posts' => 'ee_delete_private_events',
+						'delete_published_posts' => 'ee_delete_published_events',
+						'delete_others_posts' => 'ee_delete_others_events',
+						'edit_private_posts' => 'ee_edit_private_events',
+						'edit_published_posts' => 'ee_edit_published_events'
+						),
 					'taxonomies'=> array(
 						'espresso_event_categories',
 						'espresso_event_type',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
@@ -158,19 +181,29 @@ class EE_Register_CPTs {
 				'class_name' => 'EE_Venue',
 				'args' => array(
 					'public'=> TRUE,
-					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf
+					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf,
+					'capability_type' => 'venue',
+					'capabilities' => array(
+						'edit_post' => 'ee_edit_venue',
+						'read_post' => 'ee_read_venue',
+						'delete_post' => 'ee_delete_venue',
+						'edit_posts' => 'ee_edit_venues',
+						'edit_others_posts' => 'ee_edit_others_venues',
+						'publish_posts' => 'ee_publish_venues',
+						'read_private_posts' => 'ee_read_private_venues',
+						'delete_posts' => 'ee_delete_venues',
+						'delete_private_posts' => 'ee_delete_private_venues',
+						'delete_published_posts' => 'ee_delete_published_venues',
+						'delete_others_posts' => 'ee_edit_others_venues',
+						'edit_private_posts' => 'ee_edit_private_venues',
+						'edit_published_posts' => 'ee_edit_published_venues'
+						),
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
-			/*'espresso_persons' => array(
-				'singular_name' => __("Person", "event_espresso"),
-				'plural_name' => __("People", "event_espresso"),
-				'singular_slug' => __("person", "event_espresso"),
-				'plural_slug' => __("people", "event_espresso"),
-				'args' => array()
-				),/**/ //temporarily disable personsCPT because not in use.
 			'espresso_attendees' => array(
 				'singular_name' => __("Contact", "event_espresso"),
 				'plural_name' => __("Contacts", "event_espresso"),
@@ -183,9 +216,25 @@ class EE_Register_CPTs {
 					'hierarchical'=> FALSE,
 					'has_archive' => FALSE,
 					'taxonomies' => array( 'post_tag' ),
+					'capability_type' => 'contact',
+					'capabilities' => array(
+						'edit_post' => 'ee_edit_contact',
+						'read_post' => 'ee_read_contact',
+						'delete_post' => 'ee_delete_contact',
+						'edit_posts' => 'ee_edit_contacts',
+						'edit_others_posts' => 'ee_edit_contacts',
+						'publish_posts' => 'ee_edit_contacts',
+						'read_private_posts' => 'ee_edit_contacts',
+						'delete_posts' => 'ee_delete_contacts',
+						'delete_private_posts' => 'ee_delete_contacts',
+						'delete_published_posts' => 'ee_delete_contacts',
+						'delete_others_posts' => 'ee_delete_contacts',
+						'edit_private_posts' => 'ee_edit_contacts',
+						'edit_published_posts' => 'ee_edit_contacts'
+						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
-			);
+			) );
 	}
 
 
@@ -196,13 +245,13 @@ class EE_Register_CPTs {
 	 * @return array
 	 */
 	public static function get_private_CPTs() {
-		$cpts = self::get_CPTs();
-		$private_cpts = array();
-		foreach ( $cpts as $cpt => $details ) {
+		$CPTs = self::get_CPTs();
+		$private_CPTs = array();
+		foreach ( $CPTs as $CPT => $details ) {
 			if ( empty( $details['args']['public'] ) )
-				$private_cpts[$cpt] = $details;
+				$private_CPTs[ $CPT ] = $details;
 		}
-		return $private_cpts;
+		return $private_CPTs;
 	}
 
 
@@ -218,7 +267,7 @@ class EE_Register_CPTs {
 	 * @param string $plural_name internationalized plural name
 	 * @param array $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
 	 */
-	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
+	function register_taxonomy( $taxonomy_name, $singular_name, $plural_name, $override_args = array() ){
 
 		$args = array(
 		'hierarchical'      => true,
@@ -229,7 +278,8 @@ class EE_Register_CPTs {
 		'show_ui'           => true,
 		'show_admin_column' => true,
 		'query_var'         => true,
-		'show_in_nav_menus' => false
+		'show_in_nav_menus' => false,
+		'map_meta_cap' => true
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
 
@@ -273,6 +323,8 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+
+	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesn't actually have that in their register_post_type api.
 	  $args = array(
 		'labels' => $labels,
 		'public' => true,
@@ -283,6 +335,7 @@ class EE_Register_CPTs {
 		'query_var' => true,
 		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
 		'capability_type' => 'post',
+		'map_meta_cap' => true,
 		'has_archive' => true,
 		'hierarchical' => true,
 		'menu_position' => null,
@@ -376,7 +429,7 @@ class EE_Register_CPTs {
 			return; //no default terms set so lets just exit.
 
 		foreach ( $this->_default_terms as $defaults ) {
-			foreach ( $defaults as $term_slug => $default_obj ) {
+			foreach ( $defaults as $default_obj ) {
 				if ( $post->post_status == 'publish' && in_array( $post->post_type, $default_obj->cpt_slugs ) ) {
 
 					//note some error proofing going on here to save unnecessary db queries
@@ -391,10 +444,6 @@ class EE_Register_CPTs {
 			}
 		}
 	}
-
-
-
-
 
 }
 

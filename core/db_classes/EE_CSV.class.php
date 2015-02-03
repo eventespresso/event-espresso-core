@@ -598,7 +598,7 @@
 //		header("Content-Type: application/octet-stream");
 //		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
-		header("Content-Type: text/html; charset=utf-8");
+		header("Content-Type: text/csv; charset=utf-8");
 		echo "\xEF\xBB\xBF"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
 		$fh = fopen('php://output', 'w');
 		return $fh;
@@ -741,7 +741,7 @@
 	 * and dies (in order to avoid other plugins from messing up the csv output)
 	 * @param string $filename the filename you want to give the file
 	 * @param array $model_data_array 3d array, as described in EE_CSV::write_model_data_to_csv()
-	 * @return void writes CSV file to output and dies
+	 * @return bool | void writes CSV file to output and dies
 	 */
 	public function export_multiple_model_data_to_csv($filename,$model_data_array){
 		$filehandle = $this->begin_sending_csv($filename);

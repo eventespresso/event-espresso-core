@@ -91,7 +91,9 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
-		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( -1, $this->_current_page, TRUE);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_questions', 'espresso_registration_form_trash_question' ) ) {
+			$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( -1, $this->_current_page, TRUE);
+		}
 	}
 
 
@@ -123,15 +125,16 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 				'QST_ID' => $item->ID()
 			);
 
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ) {
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
 
-		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
+			$actions = array(
+				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+				);
+		}
 
-		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
-			);
 
-
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>' : $item->display_text();
 		$content .= $this->row_actions($actions);
 		return $content;
 	}

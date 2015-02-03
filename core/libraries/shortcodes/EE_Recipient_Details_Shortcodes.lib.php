@@ -31,9 +31,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
-	public function __construct() {
-		parent::__construct();
-	}
+	protected $_recipient;
 
 
 	protected function _init_props() {
@@ -60,14 +58,14 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 
 		//make sure we end up with a copy of the EE_Messages_Addressee object
-		$recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
-		$recipient = ! $recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $recipient;
-		$recipient = ! $recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $recipient;
+		$this->_recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
+		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $this->_recipient;
+		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $this->_recipient;
 
-		if ( ! $recipient instanceof EE_Messages_Addressee )
+		if ( ! $this->_recipient instanceof EE_Messages_Addressee )
 			return '';
 
-		$attendee = $recipient->att_obj;
+		$attendee = $this->_recipient->att_obj;
 		if ( ! $attendee instanceof EE_Attendee )
 			return '';
 
@@ -85,15 +83,15 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[RECIPIENT_REGISTRATION_CODE]' :
-				if ( ! $recipient->reg_obj instanceof EE_Registration )
+				if ( ! $this->_recipient->reg_obj instanceof EE_Registration )
 					return '';
-				return $recipient->reg_obj->reg_code();
+				return $this->_recipient->reg_obj->reg_code();
 				break;
 
 			case '[RECIPIENT_EDIT_REGISTRATION_LINK]' :
-				if ( ! $recipient->reg_obj instanceof EE_Registration )
+				if ( ! $this->_recipient->reg_obj instanceof EE_Registration )
 					return '';
-				return $recipient->reg_obj->edit_attendee_information_url();
+				return $this->_recipient->reg_obj->edit_attendee_information_url();
 				break;
 
 			case '[RECIPIENT_PHONE_NUMBER]' :
@@ -130,6 +128,18 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				return '';
 				break;
 		}
+	}
+
+
+	/**
+	 * Returns the EE_Messages_Addressee object for the recipient.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_Messages_Addressee
+	 */
+	public function get_recipient() {
+		return $this->_recipient;
 	}
 
 

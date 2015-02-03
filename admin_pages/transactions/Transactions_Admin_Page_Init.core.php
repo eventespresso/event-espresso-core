@@ -25,12 +25,10 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 
-
-
 	/**
 	 * 		@Constructor
 	 * 		@access public
-	 * 		@return void
+	 * 		@return Transactions_Admin_Page_Init
 	 */
 	public function __construct() {
 
@@ -50,30 +48,34 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 
-
-
-
+	/**
+	 * 	_set_init_properties
+	 * @return void
+	 */
 	protected function _set_init_properties() {
 		$this->label = __('Transactions Overview', 'event_espresso');
 	}
 
 
 
-
+	/**
+	 * 	_set_menu_map
+	 * @return void
+	 */
 	protected function _set_menu_map() {
 		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
 			'menu_group' => 'main',
 			'menu_order' => 50,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => TXN_PG_SLUG,
 			'menu_label' => __('Transactions', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'ee_read_transactions',
 			'admin_init_page' => $this
 			));
 	}
+
+
+
 }
-
-
-
-// end of file:	includes/core/admin/transactions/Transactions_Admin_Page_Init.class.php
+// end of file:	/core/admin/transactions/Transactions_Admin_Page_Init.class.php

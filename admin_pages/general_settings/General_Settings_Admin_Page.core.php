@@ -80,51 +80,80 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 
-			'critical_pages' => '_espresso_page_settings',
+			'critical_pages' => array(
+				'func' => '_espresso_page_settings',
+				'capability' => 'manage_options'
+				),
 			'update_espresso_page_settings' => array(
 				'func' => '_update_espresso_page_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'template_settings' => '_template_settings',
+			'template_settings' => array(
+				'func' => '_template_settings',
+				'capability' => 'manage_options'
+				),
+
+			'update_template_settings' => array(
+				'func' => '_update_template_settings',
+				'capability' => 'manage_options',
+				'noheader' => TRUE,
+				),
 
 			'copy_templates' => array(
 				'func' => '_copy_templates',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
-			'default' => '_your_organization_settings',
+			'default' => array(
+				'func' => '_your_organization_settings',
+				'capability' => 'manage_options',
+				),
 
 			'update_your_organization_settings' => array(
 				'func' => '_update_your_organization_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'admin_option_settings' => '_admin_option_settings',
+			'admin_option_settings' => array(
+				'func' => '_admin_option_settings',
+				'capability' => 'manage_options',
+				),
 
 			'update_admin_option_settings' => array(
 				'func' => '_update_admin_option_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
-			'country_settings' => '_country_settings',
+			'country_settings' => array(
+				'func' => '_country_settings',
+				'capability' => 'manage_options'
+				),
 
 			'update_country_settings' => array(
 				'func' => '_update_country_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'display_country_settings' => array(
 				'func' => 'display_country_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'add_new_state' => array(
 				'func' => 'add_new_state',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 
 			'delete_state' => array(
 				'func' => 'delete_state',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				)
 			);
@@ -159,7 +188,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 				),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'
@@ -427,7 +456,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 
 		//PUE verification stuff
-		$verify_fail = get_option( 'pue_verification_error_' . EE_PLUGIN_BASENAME );
+		$ver_option_key = 'puvererr_' . basename( EE_PLUGIN_BASENAME );
+		$verify_fail = get_option( $ver_option_key );
 		$this->_template_args['site_license_key_verified'] = $verify_fail || !empty( $verify_fail ) || ( empty( $this->_template_args['site_license_key'] ) && empty( $verify_fail ) )? '<span class="dashicons dashicons-admin-network ee-icon-color-ee-red ee-icon-size-20"></span>' : '<span class="dashicons dashicons-admin-network ee-icon-color-ee-green ee-icon-size-20"></span>';
 
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
@@ -582,7 +612,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
 		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
-			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE  ),
+			'CNT_active' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE  ),
 			'CNT_ISO' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
 			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
 			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
@@ -591,12 +621,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
 			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
 			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text', 'htmlentities' => FALSE ),
-			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE ),
-			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '' ), array( 'id' => 1, 'text' => '' ), array( 'id' => 2, 'text' => '' ), array( 'id' => 3, 'text' => '' ))),
-			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso'))), 'use_desc_4_label' => TRUE ),
-			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso'))), 'use_desc_4_label' => TRUE ),
+			'CNT_cur_sign_b4' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE ),
+			'CNT_cur_dec_plc' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '' ), array( 'id' => 1, 'text' => '' ), array( 'id' => 2, 'text' => '' ), array( 'id' => 3, 'text' => '' ))),
+			'CNT_cur_dec_mrk' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso'))), 'use_desc_4_label' => TRUE ),
+			'CNT_cur_thsnds' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso'))), 'use_desc_4_label' => TRUE ),
 			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE  )
+			'CNT_is_EU' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE  )
 		);
 		$this->_template_args['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $country, $country_input_types );
 		$country_details_settings = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php', $this->_template_args, TRUE );
@@ -647,7 +677,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				$state_input_types = array(
 					'STA_abbrev' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'small-text' ),
 					'STA_name' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'regular-text' ),
-					'STA_active' => array( 'type' => 'SINGLE', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE )
+					'STA_active' => array( 'type' => 'RADIO_BTN', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE )
 				);
 				$this->_template_args['states'][ $STA_ID ]['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $state, $state_input_types );
 				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO, 'STA_abbrev' => $state->abbrev() );
