@@ -240,9 +240,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<tbody>
 									<?php if ( $ticket->base_price() instanceof EE_Price ) { ?>
 												<tr>
-													<td class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
-													<td class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
-													<td class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
+													<td data-th="<?php _e( 'Name', 'event_espresso' ); ?>" class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
+													<td data-th="<?php _e( 'Amount', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
 												</tr>
 												<?php
 														$running_total = $ticket->base_price()->amount();
@@ -286,8 +286,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												<?php } ?>
 											<?php } ?>
 												<tr>
-													<td colspan="2" class="jst-rght small-text"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?></b></td>
-													<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
+													<td colspan="2" class="jst-rght small-text ttl-lbl-td"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?></b></td>
+													<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?>" class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
 												</tr>
 											</tbody>
 										</table>
@@ -373,25 +373,25 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										?>
 
 											<tr>
-												<td class="small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date', __( 'Event Date ', 'event_espresso' )); ?>" class="small-text">
 													<?php $datetime_name = $datetime->name(); ?>
 													<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
 													<?php echo $datetime->date_range( $date_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php _e( 'Time ', 'event_espresso' ); ?>" class="cntr small-text">
 													<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold', __( 'This Ticket Sold', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $ticket->sold(); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', __( 'This Ticket Left', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', __( 'Total Tickets Sold', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $datetime->sold(); ?>
 												</td>
 										<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left', __( 'Total Spaces Left', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 												</td>
 											</tr>
