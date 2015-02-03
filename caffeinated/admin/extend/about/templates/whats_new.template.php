@@ -1,9 +1,9 @@
 <div class="changelog point-releases">
-	<h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>
-	<!-- <h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3> -->
-	<?php $type = 'minor'; ?>
-	<?php //$type = 'major'; ?>
-	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
+	<!-- <h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3> -->
+	<h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>
+	<?php //$type = 'minor'; ?>
+	<?php $type = 'major'; ?>
+	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
 		<?php
 			$ver = explode( '.', EVENT_ESPRESSO_VERSION );
 			array_pop( $ver );
@@ -57,6 +57,34 @@
 	<hr>
 	*/
 	?>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.6</h2>
+	<p>This release brought many improvements to existing core features and many new features, such as a new payments system, refactored Single Page Checkout, user capabilities system, and customizable invoices/receipts.</p>
+	<p><strong>New Features</strong></p>
+		<ul>
+			<li>New payments system</li>
+				<ul>
+					<li>Open one payment method by default</li>
+					<li>Add compatiblity for gateway add-ons like Stripe</li>
+					<li>Developers: Mock payment method add-on</li>
+				</ul>
+			<li>Customizable receipt and invoice templates</li>
+			<li>More modular Single Page Checkout</li>
+			<li>Free event registrations are now a one step checkout</li>
+			<li>New forms system</li>
+			<li>User capabilities system</li>
+			<li>Compatibility with the new Ticketing and Barcode scanner add-ons</li>
+			<li>Event page template selector</li>
+			<li>Message pack template system</li>
+			<li>Support for UTF-8 invoices and receipts</li>
+			<li>Developers: New API for registering new Custom Post types and taxonomies with Event Espresso</li>
+			<li>Registrations CSV report for all events</li>
+			<li><strong>This is the first release of Event Espresso that also powers Event Smart</strong></li>
+		</ul>
+	<p><strong>Enhancements/Fixes</strong></p>
+		<ul>
+			<li>Tag archives</li>
+			<li>Upcoming events widget now uses WordPress defined date and time settings</li>
+		</ul>
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.4</h2>
 	<p>This release brings a few improvements to existing core features.</p>
 	<p><strong>Enhancements/Fixes</strong></p>
