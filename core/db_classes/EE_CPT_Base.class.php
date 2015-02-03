@@ -37,6 +37,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	protected $_feature_image = array();
 
 
+	abstract public function wp_user();
+
 
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.

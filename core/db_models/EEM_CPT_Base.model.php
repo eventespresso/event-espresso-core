@@ -38,13 +38,14 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 
 
-
-
 	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
+	 *
 	 * @param string $timezone
+	 * @throws \EE_Error
 	 */
-	protected function __construct($timezone = null){
+	protected function __construct( $timezone = NULL ){
+
 		//adds a relationship to Term_Taxonomy for all these models. For this to work
 		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
 		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
@@ -61,6 +62,16 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		//set default wp post statuses if child has not already set.
 		if ( ! isset( $this->_fields[$primary_table_name]['status'] )) {
 			$this->_fields[$primary_table_name]['status'] = new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft');
+		}
+		if( ! isset( $this->_fields[$primary_table_name]['to_ping'])){
+			$this->_fields[$primary_table_name]['to_ping'] = new EE_DB_Only_Text_Field('to_ping', __( 'To Ping', 'event_espresso' ), FALSE, '');
+		}
+		if( ! isset( $this->_fields[$primary_table_name]['pinged'])){
+			$this->_fields[$primary_table_name]['pinged'] = new EE_DB_Only_Text_Field('pinged', __( 'Pinged', 'event_espresso' ), FALSE, '');
+		}
+
+		if( ! isset( $this->_fields[$primary_table_name]['post_content_filtered'])){
+			$this->_fields[$primary_table_name]['post_content_filtered'] = new EE_DB_Only_Text_Field('post_content_filtered', __( 'Post Content Filtered', 'event_espresso' ), FALSE, '');
 		}
 		parent::__construct($timezone);
 
@@ -379,7 +390,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well that's not too hard to query for
 				$table_to_query = reset($tables_needing_to_be_queried);
-				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . '=' . $post['ID'], ARRAY_A ));
+				$missing_data = $this->_do_wpdb_query( 'get_row', array( 'SELECT * FROM ' . $table_to_query->get_table_name() . ' WHERE ' . $table_to_query->get_fk_on_table() . ' = ' . $post['ID'], ARRAY_A ));
 				if ( ! empty( $missing_data )) {
 					$post = array_merge( $post, $missing_data );
 				}

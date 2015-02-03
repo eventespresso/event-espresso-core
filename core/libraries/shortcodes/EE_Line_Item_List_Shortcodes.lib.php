@@ -34,6 +34,7 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[TICKET_LINE_ITEM_LIST]' => __('Outputs a list of ticket line items.', 'event_espresso'),
 			'[TAX_LINE_ITEM_LIST]' => __('Outputs a list of tax line items.', 'event_espresso'),
+			'[ADDITIONAL_LINE_ITEM_LIST]' => __( 'Outputs a list of additional line items (other charges or discounts)', 'event_espresso' ),
 			'[PRICE_MODIFIER_LINE_ITEM_LIST]' => __('Outputs a list of price modifier line items', 'event_espresso')
 			);
 	}
@@ -53,6 +54,10 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 
 			case '[PRICE_MODIFIER_LINE_ITEM_LIST]' :
 				return $this->_get_price_mod_line_item_list();
+				break;
+
+			case '[ADDITIONAL_LINE_ITEM_LIST]':
+				return $this->_get_additional_line_item_list();
 				break;
 
 			default :
@@ -119,11 +124,40 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 		$templates = $this->_data['template'];
 
 		$tax_line_items = $this->_data['data']->tax_line_items;
-
 		$line_item_list = '';
 		foreach ( $tax_line_items as $line_item ) {
 			$line_item_list .= $this->_shortcode_helper->parse_line_item_list_template( $templates['tax_line_item_list'], $line_item, $valid_shortcodes, $this->_extra_data );
 		}
+
+		return $line_item_list;
+	}
+
+	/**
+	 * Verify incoming data contains what is needed for retrieving and parsing each other line item for a transaction.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string  parsed other line item list.
+	 */
+	private function _get_additional_line_item_list() {
+
+		$this->_validate_list_requirements();
+		$this->_set_shortcode_helper();
+
+		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {
+			return '';
+		}
+
+		//made it here so we're good to go.
+		$valid_shortcodes = array( 'line_item' );
+		$templates = $this->_data['template'];
+
+		$additional_line_items = $this->_data['data']->additional_line_items;
+		$line_item_list = '';
+		foreach ( $additional_line_items as $line_item ) {
+			$line_item_list .= $this->_shortcode_helper->parse_line_item_list_template( $templates['additional_line_item_list'], $line_item, $valid_shortcodes, $this->_extra_data );
+		}
+
 
 		return $line_item_list;
 	}

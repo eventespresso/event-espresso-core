@@ -410,21 +410,16 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$classname = get_class($this);
 		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this, $this->_screen );
 
-		if ( empty($filters) )
+		if ( empty( $filters )) {
 			return;
-
+		}
 		foreach ( $filters as $filter ) {
 			echo $filter;
 		}
-
-		if ( !empty( $filters ) ) {
-
-			//add filter button at end
-			echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
-
-			//add reset filters button at end
-			echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
-		}
+		//add filter button at end
+		echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
+		//add reset filters button at end
+		echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
 	}
 
 
@@ -493,6 +488,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
+		$assembled_views = '';
 
 		if ( empty( $views )) {
 			return;
@@ -500,10 +496,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $view ) {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;
-			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+			if ( isset( $view['slug'] ) && isset( $view['class'] ) && isset( $view['url'] ) && isset( $view['label']) ) {
+				$assembled_views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
+			}
 		}
 
-		echo implode( " |</li>\n", $views ) . "</li>\n";
+		echo is_array( $assembled_views) && ! empty( $assembled_views ) ? implode( " |</li>\n", $assembled_views ) . "</li>\n" : '';
 		echo "</ul>";
 	}
 
@@ -553,21 +551,66 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 	public function get_hidden_columns() {
-		$has_default = get_user_option('default'. $this->screen->id . 'columnshidden');
+		$user_id = get_current_user_id();
+		$has_default = get_user_option('default'. $this->screen->id . 'columnshidden', $user_id);
 		if ( empty( $has_default ) && !empty($this->_hidden_columns ) ) {
-			$user_id = get_current_user_id();
-			update_option($user_id, 'default'.$this->screen->id . 'columnshidden', TRUE);
-			update_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns );
+			update_user_option($user_id, 'default'.$this->screen->id . 'columnshidden', TRUE);
+			update_user_option($user_id, 'manage' . $this->screen->id . 'columnshidden', $this->_hidden_columns, TRUE );
 		}
-		$saved_columns = (array) get_user_option( 'manage' . $this->screen->id . 'columnshidden' );
+		$ref = 'manage' . $this->screen->id . 'columnshidden';
+		$saved_columns = (array) get_user_option( $ref, $user_id );
 		return $saved_columns;
 	}
+
+
+
+	/**
+	 * Generates the columns for a single row of the table.
+	 * Overridden from wp_list_table so as to allow us to filter the column content for a given
+	 * column.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 *
+	 * @param object $item The current item
+	 */
+	protected function single_row_columns( $item ) {
+		list( $columns, $hidden ) = $this->get_column_info();
+
+		foreach ( $columns as $column_name => $column_display_name ) {
+			$class = "class='$column_name column-$column_name'";
+
+			$style = '';
+			if ( in_array( $column_name, $hidden ) )
+				$style = ' style="display:none;"';
+
+			$attributes = "$class$style";
+
+			if ( 'cb' == $column_name ) {
+				echo '<th scope="row" class="check-column">';
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content', $this->column_cb( $item ), $item, $this );
+				echo '</th>';
+			}
+			elseif ( method_exists( $this, 'column_' . $column_name ) ) {
+				echo "<td $attributes>";
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content', call_user_func( array( $this, 'column_' . $column_name ), $item ), $item, $this );
+				echo "</td>";
+			}
+			else {
+				echo "<td $attributes>";
+				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content', $this->column_default( $item, $column_name ), $item, $column_name, $this );
+				echo "</td>";
+			}
+		}
+	}
+
+
 
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
 			$this->_filters();
-			echo "\n";
 			echo $this->_get_hidden_fields();
+			echo '<br class="clear">';
 		}else{
 			echo '<div class="list-table-bottom-buttons alignleft actions">';
 			foreach($this->_bottom_buttons as $type => $action){
@@ -601,5 +644,37 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	public function get_admin_page() {
 		return $this->_admin_page;
+	}
+
+
+
+	/**
+	 * A "helper" function for all children to provide an html string of
+	 * actions to output in their content.  It is preferable for child classes
+	 * to use this method for generating their actions content so that it's
+	 * filterable by plugins
+	 *
+	 * @param string $action_container what are the html container
+	 *                                 		          elements for this actions string?
+	 * @param string $action_class     What class is for the container
+	 *                                 		       element.
+	 * @param string $action_items     The contents for the action items
+	 *                                 		       container.  This is filtered before
+	 *                                 		       returned.
+	 * @param string $action_id           What id (optional) is used for the
+	 *                                    	        container element.
+	 * @param object $item                 The object for the column displaying
+	 *                                     	       the actions.
+	 *
+	 * @return string The assembled action elements container.
+	 */
+	protected function _action_string( $action_items, $item, $action_container = 'ul', $action_class = '', $action_id = '' ) {
+		$content = '';
+		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
+		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
+		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
+		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $item, $this );
+		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
+		return $content;
 	}
 }

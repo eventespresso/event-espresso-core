@@ -959,14 +959,13 @@ class EE_Error extends Exception {
 
 
 
-
-
 	/**
-	* 	_print_scripts
-	*
-	*	@access public
-	* 	@return 		void
-	*/
+	 *    _print_scripts
+	 *
+	 * @access 	public
+	 * @param 	bool $force_print
+	 * @return 	void
+	 */
 	private static function _print_scripts( $force_print = FALSE ) {
 		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {

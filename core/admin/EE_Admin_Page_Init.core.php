@@ -44,6 +44,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	protected $_menu_map;
 
+	/**
+	 * deprecated
+	 */
+	public $menu_label;
+	public $menu_slug;
+
 
 
 	//set in _set_defaults

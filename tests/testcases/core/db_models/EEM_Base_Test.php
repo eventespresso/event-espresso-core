@@ -108,6 +108,18 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e3->ID() ), $e3 );
 	}
 
+	/**
+	 *
+	 * @throws EE_Error
+	 */
+	public function test_distanced_HABTM_join(){
+		try{
+			EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>1,'TXN_ID'=>1)));
+			$this->assertTrue( TRUE );
+		}catch( EE_Error $e){
+			throw $e;
+		}
+	}
 	public function test_get_col(){
 		$att1 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'one' ) );
 		$att2 = EEM_Attendee::instance()->insert( array( 'ATT_fname' => 'two' ) );
@@ -129,7 +141,6 @@ class EEM_Base_Test extends EE_UnitTestCase{
 
 	/**
 	 *
-	 * @group current
 	 */
 	public function test_update__keeps_model_objs_in_sync(){
 		$att1 = EE_Attendee::new_instance( array( 'ATT_fname' => 'one' ) );
@@ -165,6 +176,66 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//and that there are no errors when nothing at all is updated
 		EEM_Attendee::instance()->update( array( 'ATT_fname' => 'lose_again'), array( array( 'ATT_fname' => 'nonexistent' ) ) );
 		$this->assertEmpty( $wpdb->last_error );
+	}
+
+	/**
+	 * @group 6767
+	 */
+	function test_two_joins(){
+		EEM_Attendee::instance()->get_all( array( array( 'Registration.Event.EVT_name' => 'bob' ) ) );
+		$this->assertTrue(TRUE, 'No exception thrown' );
+	}
+
+	/**
+	 *
+	 * @group 7151
+	 */
+	function test_refresh_entity_map_from_db(){
+		//get an object purposefully out-of-sync with the DB
+		//call this and make sure it's wiped clean and
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array ( 'PAY_amount' => 25 ) );
+		$p->save();
+		$this->assertEquals( $p,  EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+
+		//now manually update it in teh DB, but not the model object
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "update {$wpdb->prefix}esp_payment SET PAY_amount = 100, TXN_ID = 0 WHERE PAY_ID = %d", $p->ID() ) );
+		$this->assertEquals( 1, $affected );
+
+		//and when it's refreshed, its PAY_amount should be updated too and it should no longer have any transaction cached or evenfindable
+		EEM_Payment::instance()->refresh_entity_map_from_db( $p->ID() );
+		$this->assertEquals( 100, $p->get( 'PAY_amount' ) );
+		$this->assertEquals( 0, $p->get ('TXN_ID' ) );
+		$this->assertEquals( array(), $p->get_all_from_cache( 'Transaction' ) );
+		$this->assertEquals( NULL, $p->transaction() );
+	}
+
+	/**
+	 * @group 7151
+	 */
+	function test_fresh_entity_map_with(){
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array ( 'PAY_amount' => 25 ) );
+		$p->save();
+		$this->assertEquals( $p,  EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+		//now purposefully make a naughty payment which isn't in the entity map
+		$p2 = clone $p;
+		$this->assertFalse( $p2->in_entity_map() );
+		//make the two EE_Payments diverge
+		$p2->set( 'PAY_amount', 99 );
+		$t = EE_Transaction::new_instance();
+		$p2->cache( 'Transaction', $t );
+		$this->assertEquals( 25, $p->get( 'PAY_amount' ) );
+		$this->assertEquals( 99, $p2->get( 'PAY_amount' ) );
+		$this->assertNotEquals( $p->get_all_from_cache( 'Transaction' ), $p2->get_all_from_cache( 'Transaction' ) );
+		//now update the payment in the entity map with the other
+		EEM_Payment::instance()->refresh_entity_map_with( $p->ID(), $p2 );
+		$this->assertEquals( 99, $p->get ('PAY_amount' ) );
+		//make sure p hasn't changed into p2. that's not what we wanted to do...
+		$this->assertFalse( $p2 === $p );
+		//We wanted to just UPDATE p with p2's values
+		$this->assertEquals( $p, EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+		//and make sure p's cache was updated to be the same as p2's
+		$this->assertEquals( $p2->get_all_from_cache( 'Transaction' ), $p->get_all_from_cache( 'Transaction' ) );
 	}
 }
 

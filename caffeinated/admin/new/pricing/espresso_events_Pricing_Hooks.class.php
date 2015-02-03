@@ -242,6 +242,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_tickets = $dtts_on_existing = array();
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
+		//load money helper
+		EE_Registry::instance()->load_helper( 'Money' );
+
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
 			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
@@ -254,8 +257,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
-			$base_price = isset( $tkt['TKT_base_price'] ) ? (float) $tkt['TKT_base_price'] : 0;
+			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
+			//note incoming ['TKT_price'] value is already in standard notation (via js).
+			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
+
+			//note incoming base price needs converted from localized value.
+			$base_price = isset( $tkt['TKT_base_price'] ) ? EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_base_price'] ) : 0;
 			//if ticket price == 0 and $base_price != 0 then ticket price == base_price
 			$ticket_price = $ticket_price === 0 && $base_price !== 0 ? $base_price : $ticket_price;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;
@@ -836,7 +843,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
-			'TKT_registrations' => $default ? 0 : $ticket->count_registrations(),
+			'TKT_registrations' => $default ? 0 : $ticket->count_registrations( array( array( 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) ) ) ),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
@@ -936,10 +943,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'tax_added_display' => EEH_Template::format_currency($tax_added, FALSE, FALSE ),
 				'tax_amount' => $tax->get('PRC_amount')
 				);
+			$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
 
-		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 
 		return $tax_rows;
 	}

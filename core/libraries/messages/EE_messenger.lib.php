@@ -264,7 +264,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.
-	 * @return void
+	 * @return bool | WP_Error
 	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
 	abstract protected function _send_message();
@@ -321,7 +321,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	private function _set_supports_labels_defaults() {
 		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
 		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
-		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundled structural changes for templates.', 'event_espresso');
 
 		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
 
@@ -575,11 +575,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * Sets up the message for sending.
 	 * @param  stdClass $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
+	 * @return bool | WP_Error
 	 */
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
 		$this->_incoming_message_type = $message_type;
-		$this->_send_message();
+		return $this->_send_message();
 	}
 
 

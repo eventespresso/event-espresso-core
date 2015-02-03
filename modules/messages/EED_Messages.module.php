@@ -73,11 +73,11 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		//actions
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( 'EED_Messages', 'payment' ), 10, 2 );
-		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
-
+		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
+		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 2 );
 		//filters
-
+		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
+		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		//register routes
 		self::_register_routes();
 	}
@@ -90,15 +90,16 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		//actions
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( 'EED_Messages', 'payment' ), 10, 2 );
+		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
-		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
+		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
-
 		//filters
 		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( 'EED_Messages', 'process_resend' ), 10, 2 );
 		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( 'EED_Messages', 'process_admin_payment'), 10, 2 );
+		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
+		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 	}
 
 
@@ -127,6 +128,7 @@ class EED_Messages  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP ) {
+
 		$sending_messenger = EE_Registry::instance()->REQ->is_set('snd_msgr') ? EE_Registry::instance()->REQ->get('snd_msgr') : '';
 		$generating_messenger = EE_Registry::instance()->REQ->is_set('gen_msgr') ? EE_Registry::instance()->REQ->get('gen_msgr') : '';
 		$message_type = EE_Registry::instance()->REQ->is_set('message_type') ? EE_Registry::instance()->REQ->get('message_type') : '';
@@ -136,22 +138,34 @@ class EED_Messages  extends EED_Module {
 
 		//verify the needed params are present.
 		if ( empty( $sending_messenger ) || empty( $generating_messenger ) || empty( $message_type ) || empty( $context ) || empty( $token ) ) {
-			throw new EE_Error( __('The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso') );
+			EE_Error::add_error( __( 'The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return;
 		}
-
+		//get the registration: the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.
+		$registration = EEM_Registration::instance()->get_one( array( array( 'REG_url_link' => $token ) ) );
+		//if no registration then bail early.
+		if ( ! $registration instanceof EE_Registration ) {
+			EE_Error::add_error( __( 'Unable to complete the request because the token is invalid.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return;
+		}
 		//ensure controller is loaded
 		self::_load_controller();
-
-		//retrieve the data via the handler
-		//How we do this is the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages (i.e. a specific payment or specific refund).
-
-		$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context );
-
-		//make sure we drop generating messenger if both sending and generating are the same.
-		$generating_messenger = $sending_messenger != $generating_messenger ? $generating_messenger : NULL;
-
-		//now we can trigger the actual sending of the message via the message type.
-		self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
+		// attempt to process message
+		try {
+			// retrieve the data via the handler
+			//  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages
+			// (i.e. a specific payment or specific refund).
+			$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $registration, $data_id, $context );
+			//make sure we drop generating messenger if both sending and generating are the same.
+			$generating_messenger = $sending_messenger != $generating_messenger ? $generating_messenger : NULL;
+			//now we can trigger the actual sending of the message via the message type.
+			self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
+		} catch ( EE_Error $e ) {
+			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
+			// add specific message for developers if WP_DEBUG in on
+			$error_msg .= '||' . $e->getMessage();
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 	}
 
 
@@ -231,31 +245,19 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @param string $generating_messenger The messenger that is used for generating templates for this message type.
 	 * @param string $message_type Used to figure out what data handler is used (which in turn enables us to know what data type is required)
-	 * @param string $token   the REG_url_link - this is the base for retrieving the related data.
+	 * @param EE_Registration $registration
 	 * @param int      $data_id Some data handlers require a specific object.  The id is used to provide that specific object.
 	 * @param string $context what context is being requested.
 	 *
 	 * @return mixed  (EE_Base_Class||EE_Base_Class[])
 	 */
-	protected function _get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context ) {
-
-		//get the registration.
-		$registration = EEM_Registration::instance()->get_one( array( array( 'REG_url_link' => $token ) ) );
-
-		//if no registration then bail early.
-		if ( ! $registration instanceof EE_Registration ) {
-			throw new EE_Error( __('Unable to complete the request because the token is invalid.', 'event_espresso' ) );
-		}
-
+	protected function _get_messages_data_from_url( $generating_messenger, $message_type, EE_Registration $registration, $data_id, $context ) {
 		//get message type object then get the correct data setup for that message type.
 		$message_type = self::$_EEMSG->get_active_message_type( $generating_messenger, $message_type );
-
-
 		//if no message type then it likely isn't active for this messenger.
 		if ( ! $message_type instanceof EE_message_type ) {
 			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $generating_messenger ) );
 		}
-
 		//get data according to data handler requirements
 		return $message_type->get_data_for_context( $context, $registration, $data_id );
 	}
@@ -385,56 +387,99 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * Trigger for Registration messages
 	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
-	 * @param  EE_Transaction $transaction
-	 * @param  array $reg_msg
-	 * @param  bool $from_admin
+	 *
+	 * @param EE_Registration $registration
+	 * @param array $extra_details
 	 * @return void
 	 */
-	public static function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
-		self::_load_controller();
+	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 
-		//for now we're ONLY doing this from frontend UNLESS we have the toggle to send.
-		if ( $from_admin ) {
-			$messages_toggle = !empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) && $_REQUEST['txn_reg_status_change']['send_notifications'] ? TRUE : FALSE;
-			if ( ! $messages_toggle )
-				return; //no messages sent please.
-		}
-		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
-		if ( ! $reg_msg['new_reg'] && ! $reg_msg['to_approved'] )
+		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
+			//no messages please
 			return;
+		}
 
-		$data = array( $transaction, NULL );
+		EE_Registry::instance()->load_helper('MSG_Template');
+		// send the message type matching the status if that message type is active.
+		$message_type = self::_get_reg_status_array( $registration->status_ID() );
+		// verify message type is active
+		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
+			self::_load_controller();
+			self::$_EEMSG->send_message(
+				$message_type,
+				array( $registration->transaction(), NULL )
+			);
+		}
 
-		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
-		$registration = $transaction->get_first_related('Registration');
-		$reg_status = $registration instanceof EE_Registration ? $registration->status_ID() : '';
+	}
 
-		//send the message type matching the status if that message type is active.
-		//first an array to match for class name
-		$status_match_array = self::_get_reg_status_array();
 
-		$active_mts = self::$_EEMSG->get_active_message_types();
 
-		if ( in_array( $status_match_array[$reg_status], $active_mts ) )
-			self::$_EEMSG->send_message( $status_match_array[$reg_status], $data );
+	/**
+	 * This is a helper method used to very whether a registration notification should be sent or
+	 * not.  Prevents duplicate notifications going out for registration context notifications.
+	 *
+	 * @param EE_Registration $registration  [description]
+	 * @param array           $extra_details [description]
+	 *
+	 * @return bool          true = send away, false = nope halt the presses.
+	 */
+	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		return; //if we get here then there is no active message type for this status.
+		$verified = TRUE;
+
+		//first we check if we're in admin and not doing front ajax and if we
+		// make sure appropriate admin params are set for sending messages
+		if (
+			(
+				is_admin() && ! EE_FRONT_AJAX
+			) && (
+				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
+			)
+		) {
+			//no messages sent please.
+			$verified = false;
+		}
+
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return FALSE;
+		}
+
+		if ( $verified && ( ! is_admin() || EE_FRONT_AJAX ) ) {
+
+			// let's NOT send out notifications if the registration was NOT finalized.
+			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+				return FALSE;
+			}
+
+
+			// and only send messages during revisit if the reg status changes
+			if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+				return FALSE;
+			}
+		}
+
+		return $verified;
 	}
 
 
 
 	/**
 	 * Simply returns an array indexed by Registration Status ID and the related message_type name associated with that status id.
+	 *
+	 * @param string $reg_status
 	 * @return array
 	 */
-	protected static function _get_reg_status_array() {
-		return array(
+	protected static function _get_reg_status_array( $reg_status = '' ) {
+		$reg_status_array = array(
 			EEM_Registration::status_id_approved => 'registration',
 			EEM_Registration::status_id_pending_payment => 'pending_approval',
 			EEM_Registration::status_id_not_approved => 'not_approved_registration',
 			EEM_Registration::status_id_cancelled => 'cancelled_registration',
 			EEM_Registration::status_id_declined => 'declined_registration'
-			);
+		);
+		return isset( $reg_status_array[ $reg_status ] ) ? $reg_status_array[ $reg_status ] : $reg_status_array;
 	}
 
 
@@ -444,52 +489,52 @@ class EED_Messages  extends EED_Module {
 	 * Message triggers for a resend registration confirmation (in admin)
 	 *
 	 * @access public
-	 * @param  bool $success incoming success value (we return true or false on success/fail)
 	 * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
 	 * @return bool          success/fail
 	 */
-	public static function process_resend( $success = TRUE, $req_data ) {
+	public static function process_resend( $req_data ) {
 
 		//first let's make sure we have the reg id (needed for resending!);
-		if ( !isset( $req_data['_REG_ID'] ) ) {
+		if ( ! isset( $req_data['_REG_ID'] ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			$success = FALSE;
+			return FALSE;
 		}
 
 		//get reg object from reg_id
-		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
+		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID( $req_data['_REG_ID'] );
 
 		//if no reg object then send error
 		if ( ! $reg instanceof EE_Registration ) {
 			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
-			$success = FALSE;
+			return FALSE;
 		}
 
+		self::_load_controller();
 
-		if ( $success ) {
-			self::_load_controller();
-
-			//get status_match_array
-			$status_match_array = self::_get_reg_status_array();
-			$active_mts = self::$_EEMSG->get_active_message_types();
-
-			if ( ! in_array( $status_match_array[$reg->status_ID()], $active_mts ) ) {
-				$success = FALSE;
-				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ) );
-				return $success;
-			}
-
-			$success = self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg );
+		//get status_match_array
+		$status_match_array = self::_get_reg_status_array();
+		$active_mts = self::$_EEMSG->get_active_message_types();
+		if ( ! in_array( $status_match_array[ $reg->status_ID() ], $active_mts ) ) {
+			EE_Error::add_error(
+				sprintf(
+					__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
+					$status_match_array[ $reg->status_ID() ],
+					'<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
+					'</a>'
+				)
+			);
+			return FALSE;
 		}
 
-		if ( $success ) {
+		if ( self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) ) {
 			EE_Error::overwrite_success();
 			EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
+			return TRUE;
 		} else {
 			EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		return $success;
+		return FALSE;
 	}
 
 
@@ -503,21 +548,17 @@ class EED_Messages  extends EED_Module {
 	 * @return bool              success/fail
 	 */
 	public static function process_admin_payment( $success = TRUE, EE_Payment $payment ) {
-
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
-
-		$data = array( $transaction, $payment );
-
-		$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
-
-		self::_load_controller();
-		$success = self::$_EEMSG->send_message( $message_type_name, $data );
-
-		if ( ! $success ) {
-			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( $transaction instanceof EE_Transaction ) {
+			$data = array( $transaction, $payment );
+			$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+			self::_load_controller();
+			$success = self::$_EEMSG->send_message( $message_type_name, $data );
+			if ( ! $success ) {
+				EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			}
 		}
-
 		return $success;
 	}
 
@@ -533,12 +574,89 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function send_newsletter_message( $contacts, $grp_id ) {
-		//make sure mtp is id and set it in the $_POST global for later messages setup.
-		$_POST['GRP_ID'] = (int) $grp_id;
+		//make sure mtp is id and set it in the EE_Request Handler later messages setup.
+		EE_Registry::instance()->REQ->set( 'GRP_ID', (int) $grp_id );
 
 		self::_load_controller();
 		self::$_EEMSG->send_message('newsletter', $contacts);
 	}
+
+
+	/**
+	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 *
+	 * @since   4.3.0
+	 *
+	 * @param 	string 	$registration_message_trigger_url
+	 * @param 	EE_Registration $registration
+	 * @param string 	$messenger
+	 * @param string 	$message_type
+	 * @return 	string
+	 */
+	public static function registration_message_trigger_url( $registration_message_trigger_url, EE_Registration $registration, $messenger = 'html', $message_type = 'invoice' ) {
+		EE_Registry::instance()->load_helper('MSG_Template');
+		// whitelist $messenger
+		switch ( $messenger ) {
+			case 'pdf' :
+				$sending_messenger = 'pdf';
+				$generating_messenger = 'html';
+				break;
+			case 'html' :
+			default :
+				$sending_messenger = 'html';
+				$generating_messenger = 'html';
+				break;
+		}
+		// whitelist $message_type
+		switch ( $message_type ) {
+			case 'receipt' :
+				$message_type = 'receipt';
+				break;
+			case 'invoice' :
+			default :
+				$message_type = 'invoice';
+				break;
+		}
+		// verify that both the messenger AND the message type are active
+		if ( EEH_MSG_Template::is_messenger_active( $sending_messenger ) && EEH_MSG_Template::is_mt_active( $message_type )) {
+			//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
+			$template_query_params = array(
+				'MTP_is_active' => TRUE,
+				'MTP_messenger' => $generating_messenger,
+				'MTP_message_type' => $message_type,
+				'Event.EVT_ID' => $registration->event_ID()
+			);
+			//get the message template group.
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ));
+			//if we don't have an EE_Message_Template_Group then return
+			if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+				// remove EVT_ID from query params so that global templates get picked up
+				unset( $template_query_params[ 'Event.EVT_ID' ] );
+				//get global template as the fallback
+				$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ));
+			}
+			//if we don't have an EE_Message_Template_Group then return
+			if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
+				return '';
+			}
+			// generate the URL
+			$registration_message_trigger_url = EEH_MSG_Template::generate_url_trigger(
+				$sending_messenger,
+				$generating_messenger,
+				'purchaser',
+				$message_type,
+				$registration,
+				$msg_template_group->ID(),
+				$registration->transaction_ID()
+			);
+
+		}
+		return $registration_message_trigger_url;
+	}
+
+
+
+
 
 }
 // End of file EED_Messages.module.php

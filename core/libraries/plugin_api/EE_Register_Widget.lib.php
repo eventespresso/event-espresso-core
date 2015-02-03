@@ -51,6 +51,11 @@ class EE_Register_Widget implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register Widgets with EE_Register_Widget::register(), you must include a "widget_id" (a unique identifier for this set of widgets), and an array containing the following keys: "widget_paths" (an array of full server paths to folders that contain widgets, or to the widget files themselves)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_settings[ $widget_id ] ) ){
+			return;
+		}
+
 
 		//make sure this was called in the right place!
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' )) {

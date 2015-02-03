@@ -27,13 +27,16 @@
 <!-- Primary Style Sheet -->
 <link rel="stylesheet" type="text/css" href="<?php echo $main_css; ?>" />
 <!-- Make sure the buttons don't print -->
+<?php if ( isset( $extra_css )) : ?>
+<!-- Additional Style Sheet -->
+<link rel="stylesheet" type="text/css" href="<?php echo $extra_css; ?>" />
+<?php endif; ?>
 <style type="text/css">
-@media print{ .noPrint{display:none !important;height:0!important; width:0!important;} }
-@page { width:100%; margin-left:0px; margin-right:0px}
+@media print{ .noPrint{ display:none !important;height:0!important; width:0!important; margin:0!important; padding:0!important; }}
 </style>
 </head>
 <body>
-	<?php echo $main_body; ?>
+<?php echo $main_body; ?>
 </body>
 <?php wp_footer(); ?>
 </html>

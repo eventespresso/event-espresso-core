@@ -136,6 +136,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['default']['list_table'] = 'Extend_Events_Admin_List_Table';
 
 		//add tickets tab but only if there are more than one default ticket!
 		$tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(array( array('TKT_is_default' => 1 ) ), 'TKT_ID', TRUE );
@@ -177,8 +178,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 		//filters for event list table
-		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
@@ -661,7 +662,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined, EEM_Registration::status_id_incomplete ), TRUE);
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
@@ -887,119 +888,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
 		return $count;
-	}
-
-
-
-
-	/**
-	 * _get_events()
-	 * This method simply returns all the events (for the given _view and paging)
-	 *
-	 * @access public
-	 *
-	 * @param int $per_page count of items per page (20 default);
-	 * @param int $current_page what is the current page being viewed.
-	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
-	 * @return array an array of event objects.
-	 */
-	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
-		global $wpdb;
-
-		$EEME = $this->_event_model;
-
-		$offset = ($current_page - 1) * $per_page;
-		$limit = $count ? NULL : $offset . ',' . $per_page;
-		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
-		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
-
-		if (isset($this->_req_data['month_range'])) {
-			$pieces = explode(' ', $this->_req_data['month_range'], 3);
-			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
-			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
-		}
-
-		$where = array(
-		);
-
-		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
-		//determine what post_status our condition will have for the query.
-		switch ( $status ) {
-			case 'month' :
-			case 'today' :
-			case NULL :
-			case 'all' :
-				break;
-
-			case 'draft' :
-				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
-				break;
-
-			default :
-				$where['status'] = $status;
-		}
-
-		//categories?
-		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
-
-		if ( !empty ( $category ) ) {
-			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-			$where['Term_Taxonomy.term_id'] = $category;
-		}
-
-		//date where conditions
-		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
-		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
-		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
-			$this_year_r = date('Y');
-			$this_month_r = date('m');
-			$days_this_month = date('t');
-			$start = ' 00:00:00';
-			$end = ' 23:59:59';
-			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
-		}
-
-		//search query handling
-		if ( isset( $this->_req_data['s'] ) ) {
-			$search_string = '%' . $this->_req_data['s'] . '%';
-			$where['OR'] = array(
-				'EVT_name' => array('LIKE', $search_string),
-				'EVT_desc' => array('LIKE', $search_string),
-				'EVT_short_desc' => array('LIKE', $search_string)
-				);
-		}
-
-		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
-		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
-
-
-
-		//let's first check if we have special requests coming in.
-		if ( isset( $this->_req_data['active_status'] ) ) {
-			switch ( $this->_req_data['active_status'] ) {
-				case 'upcoming' :
-					return $EEME->get_upcoming_events( $query_params, $count );
-					break;
-
-				case 'expired' :
-					return $EEME->get_expired_events( $query_params, $count );
-					break;
-
-				case 'active' :
-					return $EEME->get_active_events( $query_params, $count );
-					break;
-
-				case 'inactive' :
-					return $EEME->get_inactive_events( $query_params, $count );
-					break;
-			}
-		}
-
-		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
-
-		return $events;
 	}
 
 

@@ -48,9 +48,14 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 			);
 		}
 
-		//make sure this is not registered too late
-		if ( did_action( 'AHEE__EE_Capabilities__init_role_caps__complete' ) ) {
-			EE_Error::doing_it_wrong( __METHOD__, sprintf( __('%s has been registered too late.  Please ensure that EE_Register_Capabilities::register has been called at some point before the "AHEE__EE_Capabilities__init_role_caps__complete" action hook has been called.', 'event_espresso'), $cap_reference ), '4.5.0' );
+		//make sure we don't register twice
+		if( isset( self::$_registry[ $cap_reference ] ) ){
+			return;
+		}
+
+		//make sure this is not registered too late or too early.
+		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' ) ) {
+			EE_Error::doing_it_wrong( __METHOD__, sprintf( __('%s has been registered too late.  Please ensure that EE_Register_Capabilities::register has been called at some point before the "AHEE__EE_System___detect_if_activation_or_upgrade__begin" action hook has been called.', 'event_espresso'), $cap_reference ), '4.5.0' );
 		}
 
 		//some preliminary sanitization and setting to the $_registry property
@@ -65,6 +70,12 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 
 		//add filter for cap maps
 		add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( 'EE_Register_Capabilities', 'register_cap_maps' ), 10 );
+
+		//init_role_caps to register new capabilities
+		if ( is_admin() ) {
+			EE_Registry::instance()->load('Capabilities');
+			EE_Capabilities::instance()->init_caps();
+		}
 	}
 
 

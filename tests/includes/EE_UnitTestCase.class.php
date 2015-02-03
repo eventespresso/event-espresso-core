@@ -69,7 +69,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
-
+		EE_Registry::reset();
 	}
 
 
@@ -98,8 +98,18 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
 		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
 		$current_user = $this->_orig_current_user;
+		$this->_detect_accidental_txn_commit();
 	}
 
+	/**
+	 * Detects whether or not a MYSQL query was issued which caused an implicit commit
+	 * (or an explicit one). Basically, we can't do a commit mid-test because it messes
+	 * up the test's state (which means the database state at the time of the commit will
+	 * become the new starting state for all future tests, which will likely cause hard-to-find
+	 * bugs, and makes test results dependent on order of execution)
+	 * @global WPDB $wpdb
+	 * @throws EE_Error
+	 */
 	protected function _detect_accidental_txn_commit(){
 		//for some reason WP waits until the start of the next test to do this. but
 		//we prefer to do it now so that we can check for implicit commits
@@ -108,7 +118,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if( ! self::$accidental_txn_commit_noted && get_option( 'accidental_txn_commit_indicator', FALSE ) ){
 			global $wpdb;
 			self::$accidental_txn_commit_noted = TRUE;
-			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s", 'event_espresso' ),print_r( $wpdb->queries, TRUE) ) );
+			throw new EE_Error(sprintf( __( "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso' ),print_r( $wpdb->queries, TRUE), $this->getName() ) );
 		}
 	}
 
@@ -371,6 +381,21 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		foreach($model->relation_settings() as $related_model_name => $relation){
 			if($relation instanceof EE_Belongs_To_Any_Relation){
 				continue;
+			}elseif( $related_model_name == 'Country' ){
+				//we already have lots of countries. lets not make any more
+				//what's more making them is tricky: the primary key needs to be a unique
+				//2-character string but not an integer (else it confuses the country
+				//form input validation)
+				if( ! isset( $args['CNT_ISO' ] )){
+					$args[ 'CNT_ISO' ] = 'US';
+				}
+			}
+			elseif( $related_model_name == 'Status' ){
+				$fk = $model->get_foreign_key_to($related_model_name);
+				if( ! isset( $args[ $fk->get_name() ] ) ){
+					//only set the default if they haven't specified anything
+					$args[ $fk->get_name() ] = $fk->get_default_value();
+				}
 			}elseif($relation instanceof EE_Belongs_To_Relation) {
 				$obj = $this->new_model_obj_with_dependencies($related_model_name);
 				$fk = $model->get_foreign_key_to($related_model_name);
@@ -384,17 +409,30 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		//set any other fields which haven't yet been set
 		foreach($model->field_settings() as $field_name => $field){
 			$value = NULL;
-			if($field_name == 'EVT_timezone_string'){
+			if(in_array( $field_name, array(
+				'EVT_timezone_string',
+				'PAY_redirect_url',
+				'PAY_redirect_args',
+				'parent') ) ){
 				$value = NULL;
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
-					$field instanceof EE_Boolean_Field){
+					$field instanceof EE_Boolean_Field ||
+					$field_name == 'PMD_type' ||
+					$field->get_name() == 'CNT_cur_dec_mrk' ||
+					$field->get_name() == 'CNT_cur_thsnds' ||
+					$field->get_name() == 'CNT_tel_code'){
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||
 					$field instanceof EE_Foreign_Key_Field_Base ||
-					$field instanceof EE_Primary_Key_String_Field){
+					$field instanceof EE_Primary_Key_String_Field ||
+					$field->get_name() == 'STA_abbrev' ||
+					$field->get_name() == 'CNT_ISO3' ||
+					$field->get_name() == 'CNT_cur_code'){
 				$value = $auto_made_thing_seed;
+			}elseif( $field instanceof EE_Primary_Key_String_Field ){
+				$value = "$auto_made_thing_seed";
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}
@@ -473,6 +511,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		unset($wp_actions['FHEE__EE_System__parse_model_names']);
 		unset($wp_actions['FHEE__EE_System__parse_implemented_model_names']);
 		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+		unset($wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
 	}
 	/**
 	 * Restores the $wp_actions global to how ti should have been before we
@@ -490,8 +529,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Makes a complete transaction record with all associated data (ie, its line items,
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
-	 * Resets EE_Cart in the process though, FYI
-	 * @param array $options
+	 *
+	 * @param array $options {
+	 *	@type int $ticket_types the number of different ticket types in this transaction. Deafult 1
+	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
@@ -504,9 +545,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$ticket_types = 1;
 		}
+		if( isset( $options[ 'taxable_tickets' ] ) ){
+			$taxable_tickets = $options[ 'taxable_tickets' ];
+		}else{
+			$taxable_tickets = INF;
+		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
-			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
 			foreach($taxes as $taxes_at_priority){

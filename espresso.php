@@ -3,13 +3,12 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.5.0.beta.024
-  Author: 				Event Espresso
+  Version: 		4.6.0.alpha.155
+  Author: 		Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: 			GPLv2
+  License: 		GPLv2
   TextDomain: 		event_espresso
-
-  Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
+  Copyright 		(c) 2008-2014 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -46,7 +45,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.5.0.beta.024';
+		return '4.6.0.alpha.155';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -68,8 +67,11 @@ if ( ! defined( 'DS' )) {
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
-if( ! defined( 'SP' ) ){
-	define('SP',' ');
+if( ! defined( 'SP' )){
+	define( 'SP', ' ' );
+}
+if( ! defined( 'EENL' )){
+	define( 'EENL', "\n" );
 }
 
 
@@ -85,17 +87,20 @@ define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
 define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
+define( 'EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods' . DS);
 define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
 define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
+define( 'EE_BUSINESS', EE_CORE . 'business' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
 define( 'EE_TEMPLATES', EE_CORE . 'templates' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
 define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
+define( 'EE_FORM_SECTIONS', EE_LIBRARIES  .'form_sections' . DS );
 // gateways
 define( 'EE_GATEWAYS', EE_MODULES . 'gateways' . DS );
 define( 'EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules' . DS . 'gateways' . DS );
@@ -213,3 +218,12 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
+
+
+
+
+
+
+
+
+

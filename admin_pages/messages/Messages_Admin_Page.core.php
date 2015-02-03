@@ -750,7 +750,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _get_installed_message_objects() {
 		//get all installed messengers and message_types
 		$EE_MSG = new EE_messages();
-		$installed_message_objects = $EE_MSG->get_installed();
+		$installed_message_objects = array(
+			'messengers' => $EE_MSG->get_installed_messengers(),
+			'message_types' => $EE_MSG->get_installed_message_types()
+			);
 		return $installed_message_objects;
 	}
 
@@ -1358,7 +1361,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$_POST['GRP_ID'] = $this->_req_data['GRP_ID']; //make sure post global has the GRP_ID param for later use.
+		EE_Registry::instance()->REQ->set( 'GRP_ID', $this->_req_data['GRP_ID'] );
 
 		$MSG = new EE_messages();
 
@@ -2556,7 +2559,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _activate_messenger($messenger, $deactivate = FALSE, $message_type = FALSE) {
 		global $espresso_wp_user;
-		$success_msg = array();
 		$templates = TRUE;
 		$this->_set_m_mt_settings();
 
@@ -2621,7 +2623,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
 			} else {
 				//all is good let's do a success message
-				$success_msg = $message_type ? sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) :sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) );
+				if ( $message_type ) {
+					EE_Error::add_success( sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) );
+
+					//if message type was invoice then let's make sure we activate the invoice payment method.
+					if ( $message_type == 'invoice' ) {
+						EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+						$pm = EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+						if ( $pm instanceof EE_Payment_Method ) {
+							EE_Error::add_attention( __('Activating the invoice message type also automatically activates the invoice payment method.  If you do not wish the invoice payment method to be active, or to change its settings, visit the payment method admin page.', 'event_espresso' ) );
+						}
+					}
+				} else {
+					EE_Error::add_success( sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) );
+				}
 			}
 
 			$this->_template_args['data']['active_mts'] = $default_types;
@@ -2652,12 +2667,25 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
+			EE_Error::overwrite_success();
+			if ( $message_type ) {
+				EE_Error::add_success( sprintf( __('%s message type has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) );
+			} else {
+				EE_Error::add_success( sprintf( __('%s messenger has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) ) );
+			}
 
-			$success_msg = $message_type ? sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']), __('Message Type', 'event_espresso') ) : sprintf( __('%s %s has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) , __('Messenger', 'event_espresso') );
+			//if messenger was html or message type was invoice then let's make sure we deactivate invoice payment method.
+			if ( $messenger == 'html'  || $message_type == 'invoice') {
+				EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+				$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( 'invoice' );
+				if ( $count_updated > 0 ) {
+					$msg = $message_type == 'invoice' ? __('Deactivating the invoice message type also automatically deactivates the invoice payment method. In order for invoices to be generated the invoice message type must be active. If you completed this action by mistake, simply reactivate the invoice message type and then vist the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' ) : __('Deactivating the html messenger also automatically deactivates the invoice payment method.  In order for invoices to be generated the html messenger must be be active.  If you completed this action by mistake, simply reactivate the html messenger, then visit the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' );
+					EE_Error::add_attention( $msg );
+				}
+			}
 
 		}
-		EE_Error::overwrite_success();
-		if ( $templates ) EE_Error::add_success($success_msg);
+
 		return true;
 	}
 
