@@ -213,7 +213,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}catch(EE_Error $e){
 
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
-			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//now, just so we can display the page correctly, make a error migration script stage object
 			//and also put the error on it. It only persists for the duration of this request
 			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
@@ -223,7 +223,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		if($exception_thrown ||
 				(	$most_recent_migration &&
 					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
-					$most_recent_migration->is_borked()
+					$most_recent_migration->is_broken()
 				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
 			$this->_template_args[ 'support_url' ] = 'http://eventespresso.com/support/forums/';
@@ -396,7 +396,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}catch(EE_Error $e){
 
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
-			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//now, just so we can display the page correctly, make a error migration script stage object
 			//and also put the error on it. It only persists for the duration of this request
 			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
