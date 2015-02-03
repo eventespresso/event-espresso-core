@@ -572,7 +572,7 @@ class EE_Data_Migration_Manager{
 			//double-check we have a real script
 			if($currently_executing_script instanceof EE_Data_Migration_Script_Base){
 				$script_name = $currently_executing_script->pretty_name();
-				$currently_executing_script->set_borked();
+				$currently_executing_script->set_broken();
 				$currently_executing_script->add_error($e->getMessage());
 			}else{
 				$script_name = __("Error getting Migration Script", "event_espresso");
@@ -721,7 +721,7 @@ class EE_Data_Migration_Manager{
 			//use the data migration error stub, which is designed specifically for this type of thing
 			$general_migration_error = new EE_DMS_Unknown_1_0_0();
 			$general_migration_error->add_error($error_message);
-			$general_migration_error->set_borked();
+			$general_migration_error->set_broken();
 			$last_ran_migration_script_properties = $general_migration_error->properties_as_array();
 			$versions_migrated_to = 'Unknown.1.0.0';
 			//now just to make sure appears as last (in case the were previously a fatal error like this)
@@ -851,10 +851,14 @@ class EE_Data_Migration_Manager{
 		}
 	}
 
+
+
 	/**
 	 * Resets the borked data migration scripts so they're no longer borked
 	 * so we can again attempt to migrate
-	 * @return success
+	 *
+	 * @return bool
+	 * @throws \EE_Error
 	 */
 	public function reattempt(){
 		//find if the last-ran script was borked
@@ -869,7 +873,7 @@ class EE_Data_Migration_Manager{
 		}elseif( $last_ran_script instanceof EE_Data_Migration_Script_Base ) {
 			$last_ran_script->reattempt();
 		}else{
-			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it wasnt a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script ) ) );
+			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script ) ) );
 		}
 		return $this->_save_migrations_ran();
 	}
