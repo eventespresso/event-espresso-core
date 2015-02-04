@@ -99,15 +99,28 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * Finishes construction given the parent form section and this form section's name
+	 *
 	 * @param EE_Form_Section_Proper $parent_form_section
-	 * @param string $name
+	 * @param string                 $name
+	 * @throws \EE_Error
 	 */
-	public function _construct_finalize($parent_form_section, $name) {
+	public function _construct_finalize( $parent_form_section, $name ) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_name_if_empty();
 		$this->_set_default_html_id_if_empty();
-		foreach($this->_subsections as $subsection_name => $subsection){
-			$subsection->_construct_finalize($this, $subsection_name);
+		foreach( $this->_subsections as $subsection_name => $subsection ){
+			if ( $subsection instanceof EE_Form_Section_Base ) {
+				$subsection->_construct_finalize( $this, $subsection_name );
+			} else {
+				throw new EE_Error(
+					sprintf(
+						__( 'Subsection "%s" is not an instanceof EE_Form_Section_Base on form "%s". It is a "%s"', 'event_espresso' ),
+						$subsection_name,
+						get_class($this),
+						$subsection ? get_class($subsection) : __( 'NULL', 'event_espresso' )
+					)
+				);
+			}
 		}
 	}
 
