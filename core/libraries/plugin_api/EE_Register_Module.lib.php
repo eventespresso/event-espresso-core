@@ -51,6 +51,10 @@ class EE_Register_Module implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register Modules with EE_Register_Module::register(), you must include a "module_id" (a unique identifier for this set of modules), and an array containing the following keys: "module_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_settings[ $module_id ] ) ){
+			return;
+		}
 
 		//make sure this was called in the right place!
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' )) {

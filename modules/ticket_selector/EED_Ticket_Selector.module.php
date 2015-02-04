@@ -148,6 +148,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				|| (
 					$_event_active_status != EE_Datetime::active
 					&& $_event_active_status != EE_Datetime::upcoming
+					&& $_event_active_status != EE_Datetime::sold_out
 					&& ! (
 						$_event_active_status == EE_Datetime::inactive
 						&& is_user_logged_in()
@@ -336,7 +337,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		//d( EE_Registry::instance()->SSN );
@@ -399,8 +400,9 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
+
 					} else {
 						// nothing added to cart
 						$error_msg = __( 'No tickets were added for the event.', 'event_espresso' );
@@ -706,7 +708,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			// make it dance
 			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
-			// loco grande
 			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
