@@ -107,11 +107,7 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		if ( $this->_current_txn ) {
-			return sprintf( __( 'IPN successfully received for Transaction with ID "%d"', 'event_espresso' ),$this->_current_txn->ID() );
-		} else {
-			return __( 'No IPN (or incomplete IPN) received', 'event_espresso' );
-		}
+		return __( 'This is the Event Espresso Transactions page. This page receives IPN requests and should be publicly accessible, but shouldn\'t be easily accessible by site visitors either (ie, dont\'t have it on your menu or any links to it, but don\'t delete it or make it private either).', 'event_espresso' );
 	}
 
 
