@@ -384,8 +384,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		$this->localize_validation_rules();
-		add_action( 'get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
-		add_action( 'admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+		add_action( 'wp_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ), -999 );
+		add_action( 'admin_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ) );
 	}
 
 
