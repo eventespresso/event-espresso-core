@@ -29,7 +29,7 @@ class EED_Add_New_State  extends EED_Module {
 	public static function set_hooks() {
 		add_action( 'wp_loaded', array( 'EED_Add_New_State', 'set_definitions' ), 2 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'translate_js_strings' ), 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__question_group_reg_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
 	}
 
