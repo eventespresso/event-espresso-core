@@ -33,10 +33,12 @@
 /**
  * A ReCaptchaResponse is returned from checkAnswer().
  */
-class ReCaptchaResponse
-{
-	public $success;
-	public $errorCodes;
+if ( ! class_exists( 'ReCaptchaResponse' )) {
+	class ReCaptchaResponse
+	{
+		public $success;
+		public $errorCodes;
+	}
 }
 
 class ReCaptcha
