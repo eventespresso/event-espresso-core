@@ -159,27 +159,24 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Registration $registration
 	 */
 	protected function _set_related_details( EE_Registration $registration ) {
-		if ( empty( $this->_transaction_details ) ) {
-			$transaction = $registration->get_first_related( 'Transaction' );
-			$status = $transaction instanceof EE_Transaction ? $transaction->status_ID() : EEM_Transaction::failed_status_code;
-			$this->_transaction_details = array(
-				'transaction' => $transaction,
-				'status' => $status,
-				'id' => $transaction instanceof EE_Transaction ? $transaction->ID() : 0,
-				'title_attr' => sprintf( __('View Transaction Details (%s)', 'event_espresso'), EEH_Template::pretty_status( $status, false, 'sentence' ) )
-				);
-		}
 
-		if ( empty( $this->_event_details ) ) {
-			$event = $registration->event();
-			$status = $event instanceof EE_Event ? $event->get_active_status() : EE_Datetime::inactive;
-			$this->_event_details = array(
-				'event' => $event,
-				'status' => $status,
-				'id' => $event instanceof EE_Event ? $event->ID() : 0,
-				'title_attr' => sprintf( __('Edit Event (%s)', 'event_espresso'), EEH_Template::pretty_status( $status, false, 'sentence' ) )
-				);
-		}
+		$transaction = $registration->get_first_related( 'Transaction' );
+		$status = $transaction instanceof EE_Transaction ? $transaction->status_ID() : EEM_Transaction::failed_status_code;
+		$this->_transaction_details = array(
+			'transaction' => $transaction,
+			'status' => $status,
+			'id' => $transaction instanceof EE_Transaction ? $transaction->ID() : 0,
+			'title_attr' => sprintf( __('View Transaction Details (%s)', 'event_espresso'), EEH_Template::pretty_status( $status, false, 'sentence' ) )
+			);
+
+		$event = $registration->event();
+		$status = $event instanceof EE_Event ? $event->get_active_status() : EE_Datetime::inactive;
+		$this->_event_details = array(
+			'event' => $event,
+			'status' => $status,
+			'id' => $event instanceof EE_Event ? $event->ID() : 0,
+			'title_attr' => sprintf( __('Edit Event (%s)', 'event_espresso'), EEH_Template::pretty_status( $status, false, 'sentence' ) )
+			);
 	}
 
 
