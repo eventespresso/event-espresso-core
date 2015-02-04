@@ -102,7 +102,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = 'esp_DATETIME';
+		$table_name = 'esp_datetime';
 		$sql = "DTT_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				  EVT_ID BIGINT(20) UNSIGNED NOT NULL,
 				  DTT_name VARCHAR(255) NOT NULL DEFAULT '',
@@ -283,7 +283,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_DATETIME_ticket";
+		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  DTT_ID INT(10) UNSIGNED NOT NULL,
 					  TKT_ID INT(10) UNSIGNED NOT NULL,
@@ -335,12 +335,12 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_TEXT TEXT NOT NULL,
+					QST_display_text TEXT NOT NULL,
 					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system VARCHAR(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-					QST_required_TEXT VARCHAR(100) NULL,
+					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
 					QST_wp_user BIGINT UNSIGNED NULL,

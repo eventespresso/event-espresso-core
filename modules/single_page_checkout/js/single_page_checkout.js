@@ -92,6 +92,8 @@ jQuery(document).ready( function($) {
 		success_msgs : [],
 		// error message array
 		error_msgs : [],
+		// form system custom error message array
+		invalid_input_errors : [],
 		// pixel position from top of form to scroll to after errors
 		offset_from_top : 0,
 		// modifier for offset_from_top
@@ -161,24 +163,23 @@ jQuery(document).ready( function($) {
 
 				errorPlacement: function( error, element ) {
 					$(element).before( error );
+					SPCO.invalid_input_errors.push( error.text() );
+					SPCO.track_validation_error( element.attr('id') );
 				},
 
 				highlight: function( element ) {
-						$(element).addClass('ee-needs-value').removeClass('ee-has-value');
+					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
+						$( element ).addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+					}
 				},
 				unhighlight: function( element ) {
+					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
 						$(element).removeClass('ee-needs-value').addClass('ee-has-value');
+					}
 				},
 
 				invalidHandler: function( event, validator ) {
 					SPCO.reset_validation_vars();
-					// validator.errorList contains an array of objects, where each object has properties "element" and "message".  element is the actual HTML Input.
-					for ( var i=0; i<validator.errorList.length; i++ ){
-						// input object
-						var invalid_input = $( validator.errorList[i].element.id );
-						SPCO.track_validation_error( $( invalid_input ).selector );
-					}
-					SPCO.display_validation_errors();
 				}
 
 			});
@@ -203,15 +204,12 @@ jQuery(document).ready( function($) {
 		 * @param {string} invalid_input_id
 		 */
 		track_validation_error : function( invalid_input_id ) {
-//			SPCO.console_log( 'track_validation_error : invalid_input_id', invalid_input_id, true );
 			// convert to jQuery object
 			var invalid_input = $( '#' + invalid_input_id );
 			var invalid_input_label = $( '#' + invalid_input_id + '-lbl' );
 			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null ? $( invalid_input_label ) : SPCO.invalid_input_to_scroll_to;
 			// grab input label && remove "required" asterisk
 			var input_label_text = $( invalid_input_label ).text().replace( '*', '' );
-//			SPCO.console_log( 'track_validation_error : input_label_text: ', input_label_text, false );
-//			SPCO.console_log_object( 'track_validation_error : SPCO.invalid_input_to_scroll_to: ', SPCO.invalid_input_to_scroll_to );
 			// add to invalid input array
 			SPCO.require_values.push( input_label_text );
 			// add to list of validation errors
@@ -234,17 +232,27 @@ jQuery(document).ready( function($) {
 			SPCO.require_values = _.unique( SPCO.require_values );
 			// no empty or invalid fields that need values ?
 			if ( SPCO.require_values.length > 0 ) {
-//				SPCO.console_log( 'display_validation_errors : require_values', SPCO.require_values.join(), false );
-//				SPCO.console_log( 'validation_errors : multi_inputs_that_do_not_require_values', SPCO.multi_inputs_that_do_not_require_values.join() );
+				// array to hold our final processed error messages
+				var error_msgs = [];
 				// add required questions call to action
-				SPCO.error_msgs.push( eei18n.answer_required_questions );
+				error_msgs.push( eei18n.answer_required_questions );
 				//remove duplicates
 				SPCO.error_msgs = _.unique( SPCO.error_msgs );
+				// loop thru tracked errors
+				$.each( SPCO.error_msgs, function( index, error_msg ){
+					// is a custom message from the form system actually set ?
+					if ( typeof SPCO.invalid_input_errors[ index ] !== 'undefined' && SPCO.invalid_input_errors[ index ].substring(0, 22) !== "This field is required" ) {
+						// use custom form system error
+						error_msgs.push( SPCO.invalid_input_errors[ index ] );
+					} else {
+						// use SPCO error message cuz they are nicer than the system defaults
+						error_msgs.push( error_msg );
+					}
+				});
 				// concatenate and tag error messages
-				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', SPCO.error_msgs.join( '<br/>' ));
+				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', error_msgs.join( '<br/>' ));
 				// scroll to top of form or to the first invalid input?
 				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to.length === 0 ? SPCO.main_container : SPCO.invalid_input_to_scroll_to;
-//				SPCO.console_log_object( 'display_validation_errors : SPCO.invalid_input_to_scroll_to: ', SPCO.invalid_input_to_scroll_to );
 				// display error_msg
 				SPCO.scroll_to_top_and_display_messages( SPCO.invalid_input_to_scroll_to, SPCO.generate_message_object( '', error_msg, '' ), true );
 			}
@@ -345,8 +353,11 @@ jQuery(document).ready( function($) {
 		set_listener_for_process_next_reg_step_button : function() {
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
 				SPCO.current_form_to_validate = $(this).parents('form:first');
-				if ( SPCO.current_form_to_validate.valid() ){
+				var form_is_valid = SPCO.current_form_to_validate.valid();
+				if ( form_is_valid ){
 					SPCO.process_next_step( this );
+				} else {
+					SPCO.display_validation_errors();
 				}
 				e.preventDefault();
 				e.stopPropagation();
@@ -580,15 +591,11 @@ jQuery(document).ready( function($) {
 		display_step : function( step_to_show, response ){
 			SPCO.hide_steps();
 			var step_to_show_div = $('#spco-' + step_to_show + '-dv' );
-//			SPCO.console_log( 'display_step -> step_to_show', step_to_show, true );
-//			SPCO.console_log( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $( step_to_show_link ).attr('class'), false );
-//			SPCO.console_log_object( 'display_step -> response.return_data.reg_step_html', response.return_data.reg_step_html );
 			if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
 				$( step_to_show_div ).html( response.return_data.reg_step_html );
 			}
 			$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');
 			$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
-//			var step_to_show_link = $('#spco-edit-'+step_to_show+'-lnk');
 			$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');
 			// bye bye spinner
 			SPCO.end_ajax();
@@ -622,7 +629,7 @@ jQuery(document).ready( function($) {
 		 */
 		enable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).removeClass( 'disabled spco-disabled-submit-btn' );
+				$(this).removeAttr('disabled').removeClass( 'disabled spco-disabled-submit-btn' );
 			});
 		},
 
@@ -633,7 +640,7 @@ jQuery(document).ready( function($) {
 		 */
 		disable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
-				$(this).addClass('disabled spco-disabled-submit-btn');
+				$(this).attr('disabled','disabled').addClass('disabled spco-disabled-submit-btn');
 			});
 		},
 
@@ -849,6 +856,7 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		process_response : function( next_step, response ) {
+			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
 			// alert( 'next_step = ' + next_step );
@@ -1235,7 +1243,7 @@ jQuery(document).ready( function($) {
 					if ( spacer === true ) {
 						console.log( ' ' );
 					}
-					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' ) {
+					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
 						console.log( item_name + ' = ' + value );
 					} else if ( SPCO.display_debug && typeof item_name !== 'undefined' ) {
 						console.log( item_name );

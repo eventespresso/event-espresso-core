@@ -1,8 +1,18 @@
-<?php
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+/**
+ * EE_Month_Input
+ *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
+ */
 class EE_Month_Input extends EE_Select_Input{
-	
-	function __construct( $leading_zero = false, $options = array()){
+
+	/**
+	 * @param bool  $leading_zero
+	 * @param array $input_settings
+	 */
+	function __construct( $leading_zero = false, $input_settings = array()){
 		if($leading_zero){
 			$select_options = array(
 			'01'=>'01',
@@ -34,6 +44,6 @@ class EE_Month_Input extends EE_Select_Input{
 				12=>'12'
 			);
 		}
-		parent::__construct($select_options,$options);
+		parent::__construct($select_options,$input_settings);
 	}
 }

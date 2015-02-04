@@ -627,7 +627,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->timestamp() . '
 					</td>
 					<td>
-						' . $payment->payment_method()->name() . '
+						' . ( $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method()->name() : __( 'Unknown', 'event_espresso' ) ) . '
 					</td>
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '

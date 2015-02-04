@@ -1,12 +1,11 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- *
  * Class EE_Enum_Validation_Strategy
  *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * @since 				4.6
  *
  */
 class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base {
@@ -30,17 +29,30 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base {
 			$normalized_value = 0;
 		}
 		if( $normalized_value !== NULL && ! array_key_exists( $normalized_value, $enum_options )){
-			throw new EE_Validation_Error(
-				sprintf(
-					__("'%s' is not allowed option. Allowed options are %s", "event_espresso"),
-					$normalized_value,
-					implode( ', ', $enum_options )
-				),
+			throw new EE_Validation_Error( $this->get_validation_error_message(),
 				'invalid_enum_value'
 			);
-			return false;
 		}else{
 			return true;
 		}
 	}
+
+	/**
+	 * If we are using the default validation error message, make it dynamic based
+	 * on the allowed options.
+	 * @return string
+	 */
+	public function get_validation_error_message(){
+		$parent_validation_error_message = parent::get_validation_error_message();
+		if( ! $parent_validation_error_message ) {
+			$enum_options = $this->_input instanceof EE_Form_Input_With_Options_Base ? $this->_input->flat_options() : '';
+			return sprintf(
+					__("This is not allowed option. Allowed options are %s.", "event_espresso"),
+					implode( ', ', $enum_options )
+				);
+		}else{
+			return $parent_validation_error_message;
+		}
+	}
+
 }

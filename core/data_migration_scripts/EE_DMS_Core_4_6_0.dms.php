@@ -200,7 +200,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					EVT_ID INT UNSIGNED NOT NULL,
+					EVT_ID BIGINT(20) UNSIGNED NOT NULL,
 					QSG_ID INT UNSIGNED NOT NULL,
 					EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
@@ -361,12 +361,12 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_TEXT TEXT NOT NULL,
+					QST_display_text TEXT NOT NULL,
 					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system VARCHAR(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-					QST_required_TEXT VARCHAR(100) NULL,
+					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
 					QST_wp_user BIGINT UNSIGNED NULL,
