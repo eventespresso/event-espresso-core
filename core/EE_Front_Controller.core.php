@@ -89,7 +89,7 @@ final class EE_Front_Controller {
 		// process any content shortcodes
 		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 		// process request with module factory
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10, 1 );
 		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		// load css and js
@@ -245,7 +245,7 @@ final class EE_Front_Controller {
 			if ( $page_on_front ) {
 				// k now we need to find the post_name for this page
 				global $wpdb;
-				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+				$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d";
 				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
 				// set the current post slug to what it actually is
 				$current_post = $page_on_front ? $page_on_front : $current_post;
