@@ -1824,10 +1824,13 @@ abstract class EEM_Base extends EE_Base{
 			$query_params = array();
 		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
-		if(array_key_exists(0,$query_params)){
+		if( isset( $query_params[0] )){
 			$where_query_params = $query_params[0];
 		}else{
 			$where_query_params = array();
+		}
+		if( ! is_array( $where_query_params ) ) {
+			throw new EE_Error( sprintf( __( 'Where query params must be an array, but you provided %s when using model %s', 'event_espresso' ), print_r( $where_query_params, TRUE ), get_class( $this ) ) );
 		}
 		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
 		foreach($where_query_params as $key => $value){
