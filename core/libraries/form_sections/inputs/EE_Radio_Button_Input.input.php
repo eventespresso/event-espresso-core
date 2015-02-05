@@ -19,7 +19,7 @@ class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base{
 	 */
 	function __construct( $answer_options, $input_settings = array() ){
 		$this->_set_display_strategy( new EE_Radio_Button_Display_Strategy() );
-		$this->_add_validation_strategy( new EE_Enum_Validation_Strategy() );
+		$this->_add_validation_strategy( new EE_Enum_Validation_Strategy( isset( $input_settings[ 'validation_error_message' ] ) ? $input_settings[ 'validation_error_message' ] : NULL ) );
 		$this->_multiple_selections = FALSE;
 		parent::__construct( $answer_options, $input_settings );
 	}

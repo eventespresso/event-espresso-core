@@ -1160,7 +1160,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$payment = $payment_processor->process_payment(
 				$payment_method,
 				$this->checkout->transaction,
-				$this->checkout->cart->get_cart_grand_total(),
+				$this->checkout->transaction->remaining(),
 				$this->checkout->billing_form,
 				$this->_get_return_url( $payment_method ),
 				'CART',

@@ -104,7 +104,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-		$table_name = 'esp_DATETIME';
+		$table_name = 'esp_datetime';
 		$sql = "DTT_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				  EVT_ID BIGINT(20) UNSIGNED NOT NULL,
 				  DTT_name VARCHAR(255) NOT NULL DEFAULT '',
@@ -234,16 +234,15 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					TXN_ID INT(10) UNSIGNED DEFAULT NULL,
 					STS_ID VARCHAR(3) COLLATE utf8_bin DEFAULT NULL,
 					PAY_timestamp DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-					PAY_source VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_method VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount DECIMAL(10,3) DEFAULT NULL,
-					PMD_ID INT(11) DEFAULT NULL,
+					PAY_gateway VARCHAR(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_gateway_response TEXT COLLATE utf8_bin,
 					PAY_txn_id_chq_nmbr VARCHAR(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_po_number VARCHAR(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_extra_accntng VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_via_admin TINYINT(1) NOT NULL DEFAULT '0',
 					PAY_details TEXT COLLATE utf8_bin,
-					PAY_redirect_url VARCHAR(300),
-					PAY_redirect_args TEXT,
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
@@ -261,7 +260,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_DATETIME_ticket";
+		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  DTT_ID INT(10) UNSIGNED NOT NULL,
 					  TKT_ID INT(10) UNSIGNED NOT NULL,
@@ -279,12 +278,12 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_TEXT TEXT NOT NULL,
+					QST_display_text TEXT NOT NULL,
 					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system VARCHAR(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-					QST_required_TEXT VARCHAR(100) NULL,
+					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
 					QST_wp_user BIGINT UNSIGNED NULL,

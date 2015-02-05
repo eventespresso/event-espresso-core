@@ -300,7 +300,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		//ok so no errors general to this entire form section. so let's check the subsections
 		foreach( $this->get_validatable_subsections() as $subsection ){
-			if( ! $subsection->is_valid() && $subsection->get_validation_error_string() != '' ){
+			if( ! $subsection->is_valid() || $subsection->get_validation_error_string() != '' ){
 				$this->set_submission_error_message( $subsection->get_validation_error_string() );
 				return false;
 			}

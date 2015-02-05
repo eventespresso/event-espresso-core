@@ -591,7 +591,30 @@ input.ee-register-button {
 	background : rgba(0, 0, 0, 0.6) !important; z-index : 9999990;
 }
 
+.ui-datepicker {
+	padding: 1em;
+	border-radius: 3px;
+	background-color: #fff;
+	border: 1px solid #e8e8e8;
+	box-shadow: 0 1px 3px -1px rgba(0,0,0,.4), 3px 9px 9px -3px rgba(0,0,0,.2), -3px -3px 20px -3px rgba(0,0,0,.1);
+}
 
+.ui-datepicker-header .ui-datepicker-prev:hover,
+.ui-datepicker-header .ui-datepicker-prev:hover {
+	cursor: pointer;
+}
+
+.ui-datepicker-header .ui-datepicker-prev + .ui-datepicker-next {
+	float: right;
+}
+
+.ui-datepicker-title {
+	margin:.5em 0;
+}
+
+.ui-datepicker table {
+	margin:0;
+}
 
 /*#espresso-notices-success .close-espresso-notice,
 #espresso-ajax-notices-success .close-espresso-notice,
