@@ -591,6 +591,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script( 'ee-spco-for-admin', REG_ASSETS_URL . 'spco_for_admin.js', array('underscore', 'jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('ee-spco-for-admin');
 		add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
+		EE_Form_Section_Proper::wp_enqueue_scripts();
 		EED_Ticket_Selector::load_tckt_slctr_assets();
 		EE_Datepicker_Input::enqueue_styles_and_scripts();
 	}
@@ -1946,7 +1947,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function new_registration() {
-
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
