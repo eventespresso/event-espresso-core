@@ -95,8 +95,8 @@
 					<th class="jst-cntr"></th>
 					<th class="jst-cntr"><?php _e( 'ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Date', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Source', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway Response', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'P.O. / S.O.&nbsp;#', 'event_espresso' );?></th>
@@ -135,7 +135,9 @@
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
 					</td>
 					<td class=" jst-cntr">
-						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo $payment->source();?></div>
+						<div id="payment-method-<?php echo $PAY_ID;?>">
+							<?php echo $payment->source();?>
+						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">
@@ -319,9 +321,9 @@
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-method-inp" class=""><?php _e( 'Method of Payment', 'event_espresso' );?></label>
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
-							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
 						<?php foreach ( $payment_methods as $method ) : ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
+							<?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>

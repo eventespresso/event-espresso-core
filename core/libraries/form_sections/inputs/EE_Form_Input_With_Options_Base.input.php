@@ -1,13 +1,11 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * EE_Form_Input_With_Options_Base
- *
  * For form inputs which are meant to only have a limit set of options that can be used
  * (like for checkboxes or select dropdowns, etc; as opposed to more open-ended text boxes etc)
- *
  * @package			Event Espresso
  * @subpackage
- * @author				Mike Nelson, Brent Christensen
+ * @author				Mike Nelson
  */
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 

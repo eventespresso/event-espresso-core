@@ -671,7 +671,7 @@ class EE_Checkout {
 	 */
 	public function refresh_all_entities() {
 		// verify the transaction
-		if ( $this->transaction instanceof EE_Transaction ) {
+		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
 				$this->_refresh_registration( $reg_cache_ID, $registration );
@@ -682,7 +682,9 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
+		if ( $this->cart instanceof EE_Cart ) {
+			$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
+		}
 		return TRUE;
 	}
 
