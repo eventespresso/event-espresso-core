@@ -326,7 +326,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$hook_paths = array();
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
 			if ( empty( $hook_files ) ) {
-				return;
+				return array();
 			}
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
