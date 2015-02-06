@@ -689,9 +689,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					 * @var bool   if TRUE is returned by the plugin then the
 					 *      		registration processing is halted.
 					 */
-					$allstop = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this );
-
-					if ( $allstop ) {
+					if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this ) ) {
 						return FALSE;
 					}
 
@@ -799,15 +797,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
 
-		/**
-		 * allow for plugins to hook in and do their own processing of the form input. For
-		 * plugins to bypass normal processing here, they just need to return a truthy value.
-		 *
-		 * @var bool
-		 */
-		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this );
-
-		if ( $has_processed ) {
+		// allow for plugins to hook in and do their own processing of the form input.
+		// For plugins to bypass normal processing here, they just need to return a boolean value.
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this ) ) {
 			return TRUE;
 		}
 

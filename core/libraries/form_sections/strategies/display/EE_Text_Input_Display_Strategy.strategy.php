@@ -18,6 +18,11 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	 */
 	protected $_type;
 
+
+
+	/**
+	 * @param string $type
+	 */
 	function __construct( $type = 'text' ) {
 		$this->_type = $type;
 		parent::__construct();
