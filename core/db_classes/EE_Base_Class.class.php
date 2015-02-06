@@ -834,8 +834,7 @@ abstract class EE_Base_Class{
 	 * Get the i8ln value for a date using the WordPress @see date_i18n function.
 	 *
 	 * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
-	 * @param string $format     PHP valid date/time string format.  If none is provided then the
-	 *                           	          internal set fromat on the object will be used.
+	 * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format on the object will be used.
 	 *
 	 * @return string Date and time string in set locale.
 	 */
