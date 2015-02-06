@@ -68,22 +68,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 		if ( $input->display_html_label_text() != '' ) {
 			$class = $input->required() ? 'ee-required-label ' . $input->html_label_class() : $input->html_label_class();
 			$label_text = $input->required() ? $input->html_label_text() . '<span class="ee-asterisk">*</span>' : $input->html_label_text();
-			switch ( true ) {
-
-				case ( $input instanceof EE_Radio_Button_Input ) :
-					$type = 'radio';
-					break;
-
-				case ( $input instanceof EE_Checkbox_Multi_Input ) :
-					$type = 'checkbox';
-					break;
-
-				default :
-					$type = '';
-
-			}
-			$html = EEH_HTML::nl( 0, $type );
-			$html .= '<div id="' . $input->html_label_id() . '"';
+			$html = '<div id="' . $input->html_label_id() . '"';
 			$html .= ' class="' . $class . '"';
 			$html .= ' style="' . $input->html_label_style() . '">';
 			$html .= $label_text . '</div>';
