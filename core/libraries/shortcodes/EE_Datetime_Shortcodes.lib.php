@@ -51,11 +51,11 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 		switch ( $shortcode ) {
 
 			case '[DATETIME_START]' :
-				return $this->_data->get_datetime('DTT_EVT_start');
+				return $this->_data->get_i18n_datetime('DTT_EVT_start');
 				break;
 
 			case '[DATETIME_END]' :
-				return $this->_data->get_datetime('DTT_EVT_end');
+				return $this->_data->get_i18n_datetime('DTT_EVT_end');
 				break;
 
 			case '[DATETIME_TIMEZONE]' :
