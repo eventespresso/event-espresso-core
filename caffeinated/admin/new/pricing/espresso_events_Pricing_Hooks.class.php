@@ -38,6 +38,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
+
+		//capability check
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_default_prices', 'advanced_ticket_datetime_metabox' ) ) {
+			return;
+		}
+
 		//if we were going to add our own metaboxes we'd use the below.
 		$this->_metaboxes = array(
 			0 => array(
@@ -66,7 +72,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-dtt-ticket-metabox' => array(
 					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
-					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore', 'heartbeat')
+					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore')
 					)
 				),
 			'deregisters' => array(
@@ -102,29 +108,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		add_action('AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__after_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
 		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
-		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
-	}
-
-
-
-	/**
-	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle accordingly.
-	 *
-	 * @param array  $response The existing heartbeat response array.
-	 * @param array  $data        The incoming data package.
-	 *
-	 * @return array  possibly appended response.
-	 */
-	public function heartbeat_response( $response, $data ) {
-		/**
-		 * check whether count of tickets is approaching the potential
-		 * limits for the server.
-		 */
-		if ( ! empty( $data['input_count'] ) ) {
-			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check($data['input_count']);
-		}
-
-		return $response;
 	}
 
 
@@ -259,6 +242,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_tickets = $dtts_on_existing = array();
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
+		//load money helper
+		EE_Registry::instance()->load_helper( 'Money' );
+
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
 			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
@@ -271,8 +257,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
-			$base_price = isset( $tkt['TKT_base_price'] ) ? $tkt['TKT_base_price'] : 0;
+			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
+			//note incoming ['TKT_price'] value is already in standard notation (via js).
+			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
+
+			//note incoming base price needs converted from localized value.
+			$base_price = isset( $tkt['TKT_base_price'] ) ? EEH_Money::convert_to_float_from_localized_money( $tkt['TKT_base_price'] ) : 0;
+			//if ticket price == 0 and $base_price != 0 then ticket price == base_price
+			$ticket_price = $ticket_price === 0 && $base_price !== 0 ? $base_price : $ticket_price;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;
 
 			$price_rows = is_array($data['edit_prices']) && isset($data['edit_prices'][$row]) ? $data['edit_prices'][$row] : array();
@@ -291,7 +283,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
-				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0
+				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0,
+				'TKT_price' => $ticket_price
 				);
 
 
@@ -300,7 +293,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
 				$TKT_values['TKT_ID'] = 0;
 				$TKT_values['TKT_is_default'] = 0;
-				$TKT_values['TKT_price'] = $ticket_price;
 				$update_prices = TRUE;
 			}
 
@@ -314,7 +306,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+				$orig_price = $TKT->price();
+				$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -378,9 +371,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//let's make sure the base price is handled
 			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( array(), $TKT, $update_prices, $base_price, $base_price_id ) : $TKT;
 
-			//add price modifiers to ticket if any
-			if ( !empty( $price_rows ) )
-				$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
+			//add/update price_modifiers
+			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
 
 
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
@@ -523,18 +515,19 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param array  	$prices  	Array of prices from the form.
 	 * @param EE_Ticket $ticket  	EE_Ticket object that prices are being attached to.
 	 * @param bool 		$new_prices Whether attach existing incoming prices or create new ones.
-	 * @param int  		$base_price when empty($prices) assume we're doing a base price add.
+	 * @param int|bool 		$base_price if FALSE then NOT doing a base price add.
+	 * @param int|bool 		$base_price_id  if present then this is the base_price_id being updated.
 	 * @return  void
 	 */
-	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = 0, $base_price_id = 0 ) {
+	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = FALSE, $base_price_id = FALSE ) {
 
 		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
-		$current_prices_on_ticket = empty($prices) ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
+		$current_prices_on_ticket = $base_price !== FALSE ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
 
 		$updated_prices = array();
 
-		// if empty prices then we're dealing with a base price
-		if ( empty( $prices ) ) {
+		// if $base_price ! FALSE then updating a base price.
+		if ( $base_price !== FALSE ) {
 			$prices[1] = array(
 				'PRC_ID' => $new_prices || $base_price_id === 1 ? NULL : $base_price_id,
 				'PRT_ID' => 1,
@@ -645,8 +638,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ee_collapsible_status' => ' ee-collapsible-open'//$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
 			);
 
-		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
-		$timezone = is_object( $evtobj ) ? $evtobj->timezone_string() : NULL;
+		$timezone = $evtobj instanceof EE_Event ? $evtobj->timezone_string() : NULL;
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -657,7 +649,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 */
 
 		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
-		$times = $DTM->get_all_event_dates( $event_id );
+		$times = $DTM->get_all_event_dates( $evtID );
 
 
 
@@ -670,8 +662,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
-			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
-			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
+			//if there are no related tickets this is likely a new event OR autodraft event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
+			if ( empty ( $related_tickets ) ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
@@ -834,14 +826,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'TKT_order' => $default ? 'TICKETNUM' : $tktrow, //on initial page load this will always be the correct order.
-			'tkt_status_class' => $default ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_status_class' => $default ? ' tkt-status-' . EE_Ticket::onsale : $ticket->is_default() ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			'display_edit_tkt_row' => ' style="display:none;"', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
 			'edit_tkt_expanded' => '', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
-			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
-			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
-			'TKT_status' => $default ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : $ticket->ticket_status(TRUE),
+			'TKT_start_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_start_date', 'Y-m-d h:i a') : '',
+			'TKT_end_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ) : '',
+			'TKT_status' => $default ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : $ticket->is_default() ? EEH_Template::pretty_status( EE_Ticket::onsale, FALSE, 'sentence') : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes(), FALSE, FALSE),
 			'TKT_price_code' => EE_Registry::instance()->CFG->currency->code,
 			'TKT_price_amount' => $default ? 0 : $ticket_subtotal,
@@ -851,7 +843,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
-			'TKT_registrations' => $default ? 0 : $ticket->count_registrations(),
+			'TKT_registrations' => $default ? 0 : $ticket->count_registrations( array( array( 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) ) ) ),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
@@ -883,20 +875,23 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args['trash_hidden'] = count( $all_tickets ) === 1 && $template_args['trash_icon'] != 'ee-lock-icon' ? ' style="display:none"' : '';
 
 		//handle rows that should NOT be empty
-		if ( empty( $template_args['TKT_start_date'] ) || $default_dtt ) {
+		if ( empty( $template_args['TKT_start_date'] ) ) {
 			//if empty then the start date will be now.
 			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
 			$template_args['tkt_status_class'] = ' tkt-status-' . EE_Ticket::onsale;
 		}
 
-		if ( empty( $template_args['TKT_end_date'] ) || $default_dtt ) {
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+
 			//get the earliest datetime (if present);
 			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
 
-			if ( !empty( $earliest_dtt ) )
+			if ( !empty( $earliest_dtt ) ) {
 				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
-			else
-				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+			} else {
+				//default so let's just use what's been set for the default date-time which is 30 days from now.
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(24, 0, 0, date("m"), date("d") + 29, date("Y") )  );
+			}
 			$template_args['tkt_status_class'] = ' tkt-status-' . EE_Ticket::onsale;
 		}
 
@@ -948,10 +943,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'tax_added_display' => EEH_Template::format_currency($tax_added, FALSE, FALSE ),
 				'tax_amount' => $tax->get('PRC_amount')
 				);
+			$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
 
-		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 
 		return $tax_rows;
 	}

@@ -1,0 +1,3 @@
+body {  background:#fff url(../images/horizon-greenbar.gif) left top repeat-x;  }
+#invoice { width:100%!important;  padding-bottom:0; background:none; }
+table.invoice-amount td, table.invoice-amount th, div{border-width:0.05mm !important}

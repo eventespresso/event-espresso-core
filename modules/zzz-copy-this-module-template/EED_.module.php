@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/modules/MODULE_NAME/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -54,49 +54,7 @@ class EED_MODULE_NAME  extends EED_Module {
 //		add_filter( 'FHEE_load_ee_config', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-//		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-//		add_action( 'wp', array( $this, 'wp' ));
-//		add_filter( 'the_content', array( $this, 'the_content' ));
 	}
-
-
-
-
-	/**
-	 * 	wp_loaded
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_loaded() {
-	}
-
-
-
-	/**
-	 * 	wp
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp() {
-	}
-
-
-
-	/**
-	 * 	the_content
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function the_content( $content ) {
-		$content .= $this->ouput;
-		return $content;
-	}
-	
-	
-
 
 }
 // End of file EED_MODULE_NAME.module.php

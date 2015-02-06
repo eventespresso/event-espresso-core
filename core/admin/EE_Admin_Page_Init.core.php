@@ -44,6 +44,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	protected $_menu_map;
 
+	/**
+	 * deprecated
+	 */
+	public $menu_label;
+	public $menu_slug;
+
 
 
 	//set in _set_defaults
@@ -319,6 +325,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected function _register_hook_files( $hook_files_glob_path, $extend = FALSE ) {
 		$hook_paths = array();
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
+			if ( empty( $hook_files ) ) {
+				return array();
+			}
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
 				$hook_file = $extend ? str_replace( EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS, '', $file ) : str_replace($this->_folder_path, '', $file );
@@ -422,13 +431,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @return bool|die true if pass (or admin) wp_die if fail
 	 */
 	private function _check_user_access() {
-		//note we want to make sure we never lock out administrators.
-		if ( current_user_can( 'administrator' ) ) {
-			return true;
-		} elseif (!current_user_can( $this->capability ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( $this->_menu_map->capability, $this->_menu_map->menu_slug ) ) {
 			wp_die( __('You don\'t have access to this page.'), '', array( 'back_link' => true ) );
 		}
-
 		return true;
 	}
 

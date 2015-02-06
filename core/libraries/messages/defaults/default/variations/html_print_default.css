@@ -1,0 +1,10 @@
+/*
+Invoice Simple Template
+Created by Ed Molyneux
+*/
+
+body {background-color:#fff; }
+#invoice { width:100%!important; padding-bottom:0;}
+#invoice + #invoice { margin-top:0 !important;}
+
+table.invoice-amount td, table.invoice-amount th, div{border-width:0.05mm !important}

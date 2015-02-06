@@ -7,7 +7,7 @@ class EE_Money_Field extends EE_Float_Field{
 		return '%f';
 	}
 	/**
-	 * Schemas: 
+	 * Schemas:
 	 *	'localized_float': "3,023.00"
 	 *	'no_currency_code': "$3,023.00"
 	 *	null: "$3,023.00<span>USD</span>"
@@ -31,10 +31,12 @@ class EE_Money_Field extends EE_Float_Field{
 		//we don't use the $pretty_float because format_currency will take care of it.
 		return EEH_Template::format_currency( $value_on_field_to_be_outputted, false, $display_code );
 	}
-	
+
 	/**
 	 * If provided witha string, strips out money-related formatting to turn it into a proper float.
 	 * Rounds the float to the correct number of decimal places for this country's currency.
+	 * Also, interprets periods and commas according to the country's currency settings.
+	 * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
 	 * @param type $value_inputted_for_field_on_model_object
 	 * @return float
 	 */
@@ -49,7 +51,7 @@ class EE_Money_Field extends EE_Float_Field{
 		$rounded_value = round($float_val,  EE_Registry::instance()->CFG->currency->dec_plc);
 		return $rounded_value;
 	}
-	
+
 	function prepare_for_get($value_of_field_on_model_object) {
 		$c = EE_Registry::instance()->CFG->currency;
 		return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);

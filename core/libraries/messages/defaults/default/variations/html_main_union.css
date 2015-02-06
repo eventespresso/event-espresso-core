@@ -1,0 +1,41 @@
+/*
+Union Template
+Created by Olly Headey
+
+*/
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice{font-family: "Century Gothic", Helvetica, Arial, Verdana, sans-serif !important }
+
+#Main #invoice h2, #Main #invoice h3 {color:#000; text-transform: none;}
+#invoice h2 {margin: 10px 0;font-size: 14pt;}
+.invoice-amount td, th {font-size: 10pt;}
+#invoice-header #company-address {text-align: right; font-size: 11pt; line-height: 14pt;}
+#invoice #client-details, #invoice-info p {font-size: 10pt; line-height: 14pt;}
+#bill-to-ship-to, #invoice #invoice-other, #invoice #payment-details {font-size: 10pt; line-height: 14pt;}
+#invoice-info h2, #invoice-info h3 {margin: 0; font-weight: normal;}
+#invoice #invoice-info h2{text-transform:uppercase; font-size: 18pt;}
+#invoice #invoice-info h3 {font-size:12pt;}
+#invoice #invoice-info p {text-align:right;margin-top:0}
+#invoice-info #payment-total{display:none}
+#comments {font-weight:bold;margin-top:0; font-size:10pt}
+#invoice #invoice-info h2, #invoice #company-address div.email, #invoice #invoice-other h2, #invoice #payment-details h2 {color: #a10000;}
+#invoice #invoice-other h2, #invoice #payment-details h2 {font-weight: normal; text-transform: uppercase;}
+
+/*=========================== LAYOUT =========================*/
+
+@page { height: 100%; background: #ffffff url(../images/red-bg.gif) top left repeat-y !important; }
+#invoice { padding:1cm 1cm 1cm 2.5cm; background: #fff url(../images/red-bg.gif) top left repeat-y; width:684px; }
+#invoice-header{margin-top:0cm; border-bottom:1px solid #a10000;padding-bottom:10px; overflow:hidden}
+#invoice-info{ margin:0 0 20px 0; text-align:right;}
+#company-address {margin: 0; padding: 0; }
+
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+
+#payment-details{width:50%;margin-top:0 }
+#payment-details strong {font-weight: normal; width: 12em;}
+
+#invoice-other {text-align: right;width:50%;margin-top:0}
+#invoice-other strong {font-weight: normal; width: 16em; }
+#invoice-other #comments {clear: both; margin-top: 0em; font-weight: normal; color: #a10000;}
+#invoice-other #contract-number{margin-bottom:3em}

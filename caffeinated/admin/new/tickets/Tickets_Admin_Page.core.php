@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');		
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -16,7 +16,7 @@
  * Tickets_Admin_Page class
  *
  * @package			Event Espresso
- * @subpackage		caffeinated/admin/new/tickets/Tickets_Admin_Page.core.php 
+ * @subpackage		caffeinated/admin/new/tickets/Tickets_Admin_Page.core.php
  * @author			Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -51,33 +51,48 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
+
+		$tkt_id = ! empty( $this->_req_data['TKT_ID'] )  && ! is_array( $this->_req_data['TKT_ID'] ) ? $this->_req_data['TKT_ID'] : 0;
+
 		$this->_page_routes = array(
-			'default' => '_tickets_overview_list_table',
+			'default' => array(
+				'func' => '_tickets_overview_list_table',
+				'capability' => 'ee_read_default_tickets'
+				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
-				'args' => array( 'trash' => TRUE )
+				'args' => array( 'trash' => TRUE ),
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
 				'noheader' => TRUE,
-				'args' => array( 'trash' => TRUE )
+				'args' => array( 'trash' => TRUE ),
+				'capability' => 'ee_delete_default_tickets'
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'ee_delete_default_tickets'
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'ee_delete_default_ticket',
+				'obj_id' => $tkt_id
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'ee_delete_default_tickets'
 				),
 			);
 	}
@@ -249,12 +264,12 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 		}
 
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, array() ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, array() );
 	}
 
 
 
-	
+
 
 	protected function _delete_ticket() {
 		$success = 1;
@@ -268,7 +283,7 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 
 			//cycle thru the boxes
 			while ( list( $TKT_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
-				//delete 
+				//delete
 				if ( ! $this->_delete_the_ticket( $TKT_ID ) ) {
 					$success = 0;
 				}
@@ -282,7 +297,7 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 		}
 
 		$action_desc = 'deleted';
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, array() ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, array() );
 	}
 
 
