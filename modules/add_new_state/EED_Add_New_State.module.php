@@ -355,7 +355,8 @@ class EED_Add_New_State  extends EED_Module {
 			// if not non-ajax admin
 			$new_state_key = $new_state->country_iso() . '-' . $new_state->abbrev();
 			$new_state_notice = sprintf(
-					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%$5sTo verify, edit, and/or delete this new State, please go to the %$4s and update the States / Provinces section.%$5sCheck "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
+					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State
+					 added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
