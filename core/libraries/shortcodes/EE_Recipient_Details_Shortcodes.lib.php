@@ -50,7 +50,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			'[RECIPIENT_ZIP_PC]' => __('The ZIP (or Postal) Code for the recipient of the message.', 'event_espresso'),
 			'[RECIPIENT_ADDRESS_STATE]' => __('The state/province for the recipient of the message.', 'event_espresso' ),
 			'[RECIPIENT_COUNTRY]' => __('The country for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  Rith after the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' )
+			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' )
 			);
 	}
 
