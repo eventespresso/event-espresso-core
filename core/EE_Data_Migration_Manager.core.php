@@ -436,7 +436,7 @@ class EE_Data_Migration_Manager{
 			}
 		}
 
-		do_action( 'AHEE__EE_Data_Migration_Manager__check_for_applicable_data_migration_scripts', $scripts_that_should_run );
+		do_action( 'AHEE__EE_Data_Migration_Manager__check_for_applicable_data_migration_scripts__scripts_that_should_run', $scripts_that_should_run );
 		return $scripts_that_should_run;
 	}
 
