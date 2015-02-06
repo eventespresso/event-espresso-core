@@ -33,6 +33,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 			);
 		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
 			$html .= EEH_HTML::div(
+				EEH_HTML::nl() . $this->_display_label_for_option_type_question( $input ) .
 				EEH_HTML::nl() . $input->get_html_for_errors() .
 				EEH_HTML::nl() . $input->get_html_for_input() .
 				EEH_HTML::nl() . $input->get_html_for_help(),
@@ -50,6 +51,31 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 			);
 		}
 		return $html;
+	}
+
+
+
+	/**
+	 *
+	 * _display_label_for_option_type_question
+	 * Gets the HTML for the 'label', which is just text for this (because labels
+	 * should be for each input)
+	 *
+	 * @param EE_Form_Input_With_Options_Base $input
+	 * @return string
+	 */
+	protected function _display_label_for_option_type_question( EE_Form_Input_With_Options_Base $input ){
+		if ( $input->display_html_label_text() != '' ) {
+			$class = $input->required() ? 'ee-required-label ' . $input->html_label_class() : $input->html_label_class();
+			$label_text = $input->required() ? $input->html_label_text() . '<span class="ee-asterisk">*</span>' : $input->html_label_text();
+			$html = '<div id="' . $input->html_label_id() . '"';
+			$html .= ' class="' . $class . '"';
+			$html .= ' style="' . $input->html_label_style() . '">';
+			$html .= $label_text . '</div>';
+			return $html;
+		} else {
+			return '';
+		}
 	}
 
 
