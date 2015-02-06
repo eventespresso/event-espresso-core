@@ -49,7 +49,8 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			'[RECIPIENT_CITY]' => __('The city for the recipient of the message.', 'event_espresso'),
 			'[RECIPIENT_ZIP_PC]' => __('The ZIP (or Postal) Code for the recipient of the message.', 'event_espresso'),
 			'[RECIPIENT_ADDRESS_STATE]' => __('The state/province for the recipient of the message.', 'event_espresso' ),
-			'[RECIPIENT_COUNTRY]' => __('The country for the recipient of the message.', 'event_espresso')
+			'[RECIPIENT_COUNTRY]' => __('The country for the recipient of the message.', 'event_espresso'),
+			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  Rith after the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' )
 			);
 	}
 
@@ -123,11 +124,26 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				$country_obj = $attendee->country_obj();
 				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
 				break;
-
-			default :
-				return '';
-				break;
 		}
+
+		if ( strpos( $shortcode, '[RECIPIENT_ANSWER_*' ) !== false ) {
+			$shortcode = str_replace( '[RECIPIENT_ANSWER_*', '', $shortcode );
+			$shortcode = trim( str_replace( ']', '', $shortcode ) );
+
+
+			//now let's figure out what question has this text
+			if ( empty( $this->_recipient->questions ) || ! $this->_recipient->reg_obj instanceof EE_Registration ) {
+				return '';
+			}
+
+			foreach ( $this->_recipient->questions as $ansid => $question ) {
+				if ( $question->get('QST_display_text') == $shortcode && isset( $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid] ) ) {
+					return $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid]->get_pretty( 'ANS_value', 'no_wpautop' );
+				}
+			}
+		}
+
+		return '';
 	}
 
 
