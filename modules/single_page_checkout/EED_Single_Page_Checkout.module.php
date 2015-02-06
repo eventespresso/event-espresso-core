@@ -310,7 +310,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_reg_steps();
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_step' );
-		EE_Registry::instance()->REQ->set( 'process_form_submission', FALSE );
+		EE_Registry::instance()->REQ->set( 'process_form_submission', false );
 		EED_Single_Page_Checkout::instance()->_initialize();
 		EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
 		return EE_Registry::instance()->REQ->get_output();
@@ -328,6 +328,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_reg_steps();
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'process_reg_step' );
+		EE_Registry::instance()->REQ->set( 'process_form_submission', true );
 		EED_Single_Page_Checkout::instance()->_initialize();
 		if ( EED_Single_Page_Checkout::instance()->checkout->current_step->completed() ) {
 			$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
@@ -495,6 +496,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+//		$this->_display_request_vars();
+	}
+
+
+
+	/**
+	 *    _get_first_step
+	 *  gets slug for first step in $_reg_steps_array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	protected function _display_request_vars() {
+		printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+		printr( $this->checkout->step, '$this->checkout->step', __FILE__, __LINE__ );
+		printr( $this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__ );
+		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
+		printr( $this->checkout->reg_url_link, '$this->checkout->reg_url_link', __FILE__, __LINE__ );
+		printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
+		printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
+		printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
 	}
 
 

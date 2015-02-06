@@ -278,6 +278,9 @@ final class EE_Config {
 	private function _load_calendar_config() {
 		// grab array of all plugin folders and loop thru it
 		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		if ( empty( $plugins ) ) {
+				return;
+			}
 		foreach ( $plugins as $plugin_path ) {
 			// grab plugin folder name from path
 			$plugin = basename( $plugin_path );
@@ -838,6 +841,11 @@ final class EE_Config {
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
 			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+
+			if ( empty( $widgets_to_register ) ) {
+				return;
+			}
+
 			// cycle thru widget folders
 			foreach ( $widgets_to_register as $widget_path ) {
 				// add to list of installed widget modules
@@ -920,6 +928,11 @@ final class EE_Config {
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+
+		if ( empty( $shortcodes_to_register ) )  {
+			return;
+		}
+
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
@@ -1005,6 +1018,9 @@ final class EE_Config {
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
+		if ( empty( $modules_to_register ) ) {
+			return;
+		}
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
