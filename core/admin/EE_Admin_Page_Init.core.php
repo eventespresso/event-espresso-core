@@ -44,6 +44,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	protected $_menu_map;
 
+	/**
+	 * deprecated
+	 */
+	public $menu_label;
+	public $menu_slug;
+
 
 
 	//set in _set_defaults
@@ -319,6 +325,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected function _register_hook_files( $hook_files_glob_path, $extend = FALSE ) {
 		$hook_paths = array();
 		if ( $hook_files = glob( $hook_files_glob_path ) ) {
+			if ( empty( $hook_files ) ) {
+				return array();
+			}
 			foreach ( $hook_files as $file ) {
 				//lets get the linked admin.
 				$hook_file = $extend ? str_replace( EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS, '', $file ) : str_replace($this->_folder_path, '', $file );

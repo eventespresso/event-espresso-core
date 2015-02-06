@@ -7,6 +7,7 @@ jQuery(document).ready(function($){
 	 *
 	 * @namespace EEFV
 	 * @type {{
+	 *     validation_rules_array: object,
 	 *     validation_rules_per_html_form: object,
 	 *     form_validators: object,
 	 * }}
@@ -20,6 +21,8 @@ jQuery(document).ready(function($){
 	 */
 	EEFV = {
 
+		// validation rules from the eei18n localized JSON array
+		validation_rules_array : ee_form_section_vars.form_data,
 		//foreach ee form section, compile an array of what validation rules apply to which html form
 		validation_rules_per_html_form : {},
 		// current form to be validated
@@ -31,16 +34,12 @@ jQuery(document).ready(function($){
 		 *	@function initialize
 		 */
 		initialize : function( form_data ) {
-//			console.log( ' ' );
-//			console.log( JSON.stringify( 'EEFV.initialize > ee_form_section_vars.form_data: ', null, 4 ));
-//			console.log( ee_form_section_vars.form_data );
             // reset previous form validation rules
             EEFV.reset_validation_rules();
+			EEFV.initialize_datepicker_inputs();
+			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
-			EEFV.apply_rules();
 			EEFV.add_url_validator();
-			//console.log( EEFV.validation_rules_per_html_form );
-			//console.log( EEFV.form_validators );
 		},
 
 
@@ -49,49 +48,95 @@ jQuery(document).ready(function($){
          *	@function reset_validation_rules
          */
         reset_validation_rules : function() {
-            EEFV.validation_rules_per_html_form = {};
+			EEFV.remove_previous_validation_rules();
+			EEFV.validation_rules_per_html_form = {};
             EEFV.form_validators = {};
         },
 
 
 
 		/**
+		 * @function initialize_datepicker_inputs
+		 */
+		initialize_datepicker_inputs : function() {
+			// if datepicker function exists
+			if ( $.fn.datepicker ) {
+				// activate datepicker fields
+				$( '.datepicker' ).datepicker({
+					changeMonth: true,
+					changeYear: true,
+					yearRange: eei18n.datepicker_yearRange
+					// yearRange: "-150:+20"
+				});
+			}
+			// to internationalize the datepicker, copy the following to somewhere safe,
+			// then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key.
+			// Multiple languages can be added this way
+			/*
+			$.datepicker.regional['fr_FR'] = {
+				closeText: 'Fermer',
+				prevText: 'Précédent',
+				nextText: 'Suivant',
+				currentText: 'Aujourd\'hui',
+				monthNames: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+				'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+				monthNamesShort: ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
+				'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+				dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+				dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+				dayNamesMin: ['D','L','M','M','J','V','S'],
+				weekHeader: 'Sem.',
+				dateFormat: 'dd/mm/yy',
+				firstDay: 1,
+				isRTL: false,
+				showMonthAfterYear: false,
+				yearSuffix: ''
+			};
+			$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);
+			//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
+			 */
+		},
+
+
+		/**
 		 *	@function setup_validation_rules
 		 */
 		setup_validation_rules : function( form_sections_to_validate ) {
-//			console.log( ' ' );
-//			console.log( JSON.stringify( 'EEFV.setup_validation_rules', null, 4 ));
+			//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
 			// loop through all form sections
 			$.each( form_sections_to_validate, function( index, form_data ){
-				// grab the actual html form from the DOM
-				var html_form = $( form_data.form_section_id ).closest('form');
-				// IF one exists, that is ...
-				if ( html_form.length ) {
-					//make sure the form tag has an id
-					var form_id = html_form.attr('id');
-					if ( typeof form_id === 'undefined' || form_id === '' ) {
-						form_id = EEFV.generate_random_string(15);
-						html_form.attr( 'id', form_id );
-					}
-//					console.log( JSON.stringify( 'EEFV.setup_validation_rules > form_id: ' + form_id, null, 4 ));
-					// remove the non-js-generated server-side validation errors
-					// because we will allow jquery validate to populate them
-					$( form_data.form_section_id ).find('.error').remove();
-					// now add form section's validation rules
-					if ( typeof( EEFV.validation_rules_per_html_form[ form_id ] ) === 'undefined' ){
-						EEFV.validation_rules_per_html_form[ form_id ] = {
-							'rules' : form_data.validation_rules,
-							'errors' : form_data.errors
-						};
-					} else {
-						$.extend( EEFV.validation_rules_per_html_form[ form_id ].rules, form_data.validation_rules );
-						$.extend( EEFV.validation_rules_per_html_form[ form_id ].errors, form_data.errors );
+				//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > index', index, true );
+				//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > form_data', form_data, false );
+				if ( typeof form_data.form_section_id !== 'undefined' && typeof form_data.validation_rules !== 'undefined' ) {
+
+					// grab the actual html form from the DOM
+					var html_form = $( form_data.form_section_id ).closest('form');
+					// IF one exists, that is ...
+					if ( html_form.length ) {
+						//make sure the form tag has an id
+						var form_id = html_form.attr('id');
+						if ( typeof form_id === 'undefined' || form_id === '' ) {
+							form_id = EEFV.generate_random_string(15);
+							html_form.attr( 'id', form_id );
+						}
+						// if the form already exists, then let's reset it
+						if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
+							EEFV.form_validators[ form_id ].resetForm();
+						}
+						// remove the non-js-generated server-side validation errors
+						// because we will allow jquery validate to populate them
+						html_form.find( '.ee-error-label' ).remove();
+						// need to call validate() before doing anything else, i know, seems counter intuitive...
+						EEFV.form_validators[ form_id ] = html_form.validate();
+						// now add form section's validation rules
+						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
+						// and cache incoming form sections and rules so that they can be later removed if necessary
+						EEFV.validation_rules_per_html_form[ form_data.form_section_id ] = form_data.validation_rules;
 					}
 				}
 
 			});
-//			console.log( JSON.stringify( 'EEFV.setup_validation_rules > EEFV.validation_rules_per_html_form: ', null, 4 ));
-//			console.log( EEFV.validation_rules_per_html_form );
+
 		},
 
 
@@ -99,67 +144,50 @@ jQuery(document).ready(function($){
 		/**
 		 *	@function apply_rules
 		 */
-		apply_rules : function() {
-//			console.log( ' ' );
-//			console.log( JSON.stringify( 'EEFV.apply_rules', null, 4 ));
-//			console.log( JSON.stringify( 'EEFV.apply_rules > EEFV.validation_rules_per_html_form: ', null, 4 ));
-//			console.log( EEFV.validation_rules_per_html_form );
-
+		add_rules : function( form_id, form_data ) {
+			//EEFV.console_log( 'EEFV.apply_rules', '', true );
+			//console.log( form_data );
 			//now apply those validation rules to each html form, and show the server-side errors properly
-			$.each( EEFV.validation_rules_per_html_form, function( form_id, form_validation ){
-				//console.log( JSON.stringify( 'EEFV.apply_rules > form_id: ' + form_id, null, 4 ));
-                if ( typeof form_validation.rules !== 'undefined' ) {
-
-                    EEFV.form_validators[ form_id ] = $( '#'+form_id ).validate();
-                    //console.log( JSON.stringify( 'EEFV.apply_rules > form_validation.errors: ', null, 4 ));
-                    //console.log( form_validation.errors );
-                    if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-                        EEFV.form_validators[ form_id ].showErrors( form_validation.errors );
-                    }
-
-                    $.each( form_validation.rules, function ( input_name, validation_rules ) {
-                        //console.log(JSON.stringify( 'apply_rules > EEFV.form_validators > input_name: ' + input_name, null, 4));
-                        //console.log(JSON.stringify( 'apply_rules > EEFV.form_validators > validation_rules: ', null, 4));
-                        //console.log(validation_rules );
-                        var form_input = $("input[name='" + input_name + "']");
-                        if ( ! form_input.length ) {
-                            form_input = $("select[name='" + input_name + "']");
-                        }
-                        if ( form_input.length ) {
-                            form_input.rules( 'add', validation_rules );
-                        }
-                    });
-
-                }
+			$.each( form_data, function( input_id, validation_rules ){
+				var form_input = $( input_id );
+				//EEFV.console_log( 'EEFV.apply_rules > input_id', input_id, false );
+				//alert( 'form_input ID = ' + form_input.attr('id') );
+				if ( typeof form_input !== 'undefined' && form_input.length ) {
+					form_input.rules( 'add', validation_rules );
+				}
 			});
-//			console.log( JSON.stringify( 'apply_rules > EEFV.form_validators: ', null, 4 ));
-//			console.log( EEFV.form_validators );
 		},
 
 
 
 		/**
-		 *	@function remove_rules
+		 *	@function remove_previous_validation_rules
 		 */
-		remove_rules : function() {
+		remove_previous_validation_rules : function() {
 			// remove any previously applied validation rules for each html form
-			$.each( EEFV.form_validators, function( form_id ){
-				if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' && typeof EEFV.form_validators[ form_id ].settings !== 'undefined' ) {
-                    //console.log( JSON.stringify( 'remove_rules > EEFV.form_validators > form_id: ' + form_id, null, 4 ));
-                    $.each( EEFV.form_validators[ form_id ].settings.rules, function( input_name, validation_rules ){
-                        var form_input = $("input[name='" + input_name + "']");
-                        if ( ! form_input.length ) {
-                            form_input = $("select[name='" + input_name + "']");
-                        }
-                        if ( form_input.length ) {
-                            form_input.rules('remove');
-                            //console.log( JSON.stringify( 'remove_rules > EEFV.form_validators > input_name: ' + input_name, null, 4 ));
-                        }
-                    });
+			$.each( EEFV.validation_rules_per_html_form, function( form_section_id, form_data ){
+				if ( typeof form_section_id !== 'undefined' && typeof $( form_section_id ).attr('id') !== 'undefined' && typeof form_data !== 'undefined' ) {
+					EEFV.remove_rules( form_data );
 				}
 			});
-			//console.log( JSON.stringify( 'remove_rules > EEFV.form_validators: ', null, 4 ));
-			//console.log( EEFV.form_validators );
+		},
+
+
+
+		/**
+		 *	@function apply_rules
+		 */
+		remove_rules : function( form_data ) {
+			//EEFV.console_log( 'EEFV.remove_rules', '', true );
+			//console.log( form_data );
+			//now apply those validation rules to each html form, and show the server-side errors properly
+			$.each( form_data, function( input_id ){
+				var form_input = $( input_id );
+				if ( typeof form_input !== 'undefined' && form_input.length ) {
+					//alert( 'remove_rules input_id = ' + input_id + '\n' + 'form_input ID = ' + form_input.attr('id') );
+					form_input.rules( 'remove' );
+				}
+			});
 		},
 
 
@@ -198,19 +226,108 @@ jQuery(document).ready(function($){
 				text += possible.charAt(Math.floor(Math.random() * possible.length));
 			}
 			return text;
-		}
+		},
 
+
+
+		/**
+		 *  @function console_log
+		 *  print to the browser console
+		 * @param  {string} item_name
+		 * @param  {*} value
+		 * @param  {boolean} spacer
+		 */
+		console_log: function ( item_name, value, spacer ) {
+			if ( eei18n.wp_debug ) {
+				if ( typeof spacer !== 'undefined' && spacer === true ) {
+					console.log( ' ' );
+				}
+				if ( typeof value === 'object' ) {
+					EEFV.console_log_object( item_name, value, 0 );
+				} else {
+					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
+						console.log( item_name + ' = ' + value );
+					} else if ( typeof item_name !== 'undefined' ) {
+						console.log( item_name );
+					}
+				}
+			}
+		},
+
+		/**
+		 * @function console_log_object
+		 * print object to the browser console
+		 * @param  {string} obj_name
+		 * @param  {object} obj
+		 * @param  {number} depth
+		 */
+		console_log_object: function ( obj_name, obj, depth ) {
+			if ( eei18n.wp_debug ) {
+				depth = typeof depth !== 'undefined' ? depth : 0;
+				var spacer = '';
+				for ( var i = 0; i < depth; i++ ) {
+					spacer = spacer + '. ';
+				}
+				if ( typeof obj === 'object' ) {
+					if ( typeof obj_name !== 'undefined' ) {
+						//console.log( obj_name );
+						EEFV.console_log( spacer + obj_name );
+					} else {
+						//console.log( 'console_log_object : ' );
+						EEFV.console_log( spacer + 'console_log_object : ' );
+					}
+					spacer = spacer + '. ';
+					depth++;
+					$.each( obj, function( index, value ){
+						if ( typeof value === 'object' ) {
+							if ( depth < 4 ) {
+								EEFV.console_log_object( index, value, depth );
+							}
+						} else {
+							EEFV.console_log( spacer + index, value, depth );
+							depth++;
+						}
+					});
+				} else {
+					EEFV.console_log( spacer + obj_name, obj, true );
+				}
+			}
+		}
 
 
 	};
 	// end of EEFV object
 
-	/**
-	 *	run EEFV
-	 */
-	EEFV.initialize( ee_form_section_vars.form_data );
-
 });
 
-
-
+// example  ee_form_section_vars
+//var ee_form_section_vars = {
+//	"form_data":{
+//		"ee-single-page-checkout-dv":{
+//			"form_section_id":"#ee-single-page-checkout-dv",
+//			"validation_rules":[],
+//			"errors":[]
+//		},
+//		"ee-spco-attendee_information-reg-step-form":{
+//			"form_section_id":"#ee-spco-attendee_information-reg-step-form",
+//			"validation_rules":{
+//				"#ee_reg_qstn-1-9694e9fa065278f0aca66280b6be7f7a-fname":{
+//					"required":true
+//				},
+//				"#ee_reg_qstn-1-9694e9fa065278f0aca66280b6be7f7a-lname":{
+//					"required":true
+//				},
+//				"#ee_reg_qstn-1-9694e9fa065278f0aca66280b6be7f7a-email":{
+//					"required":true
+//				},
+//				"#ee_reg_qstn-1-9694e9fa065278f0aca66280b6be7f7a-country":{
+//					"required":true
+//				}
+//			},
+//			"errors":[]
+//		}
+//	},
+//	"localized_error_messages":{
+//		"validUrl":"This is not a valid absolute URL. Eg, http:\/\/domain.com\/monkey.jpg"
+//	}
+//};

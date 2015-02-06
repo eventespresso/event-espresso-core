@@ -68,7 +68,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( sprintf( '%s for %s', $second_item->ticket()->name(), $second_item->ticket_event_name() ), $rargs[ 'item_name_2' ] );
 		$this->assertEquals( $second_item->ticket()->price(), $rargs[ 'amount_2' ] );
 		$this->assertEquals( 1, $rargs[ 'quantity_1' ] );
-		$this->assertEquals( $t->tax_total(), $rargs[ 'tax' ] );
+		$this->assertEquals( $t->tax_total(), $rargs[ 'tax_cart' ] );
 		$this->assertEquals( $this->_paypal_id, $rargs[ 'business' ] );
 		$this->assertEquals( self::return_url, $rargs[ 'return' ] );
 		$this->assertEquals( self::cancel_url, $rargs[ 'cancel_return' ] );
@@ -235,6 +235,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 			'auth' => 'A7v0XCv0MTRMLTC3ib4B4zYtTI7Wt-pU5StpnoQBIGsiMj5pXBoOr8z8kiKzYdNkeTmwiWW3xlus4rZhBUOqj6g',
 		  );
 		$ppg->handle_payment_update( $ipn_args, $t );
+		$ppg->update_txn_based_on_payment( $p );
 		//check the new tax is correct
 		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
 		$this->assertEquals( floatval( $ipn_args[ 'tax' ] ), $t->tax_total() );

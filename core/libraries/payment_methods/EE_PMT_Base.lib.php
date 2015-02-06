@@ -21,13 +21,11 @@ abstract class EE_PMT_Base{
 	const offline = 'off-line';
 
 	/**
-	 *
 	 * @var EE_Payment_Method
 	 */
 	protected $_pm_instance = NULL;
 
 	/**
-	 **
 	 * @var boolean
 	 */
 	protected $_requires_https = FALSE;
@@ -46,6 +44,11 @@ abstract class EE_PMT_Base{
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_billing_form = NULL;
+
+	/**
+	 * @var boolean
+	 */
+	protected $_cache_billing_form = TRUE;
 
 	/**
 	 * String of the absolute path to the folder containing this file, with a trailing slash.
@@ -222,14 +225,17 @@ abstract class EE_PMT_Base{
 	}
 
 
+
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
+	 *
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+	 * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL ){
-		if( ! $this->_billing_form ){
+		// has billing form already been regenerated ? or overwrite cache?
+		if( ! $this->_billing_form || ! $this->_cache_billing_form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction );
 		}
 		//if we know who the attendee is, and this is a billing form
@@ -247,9 +253,22 @@ abstract class EE_PMT_Base{
 	/**
 	 * Creates the billing form for this payment method type
 	 * @param \EE_Transaction $transaction
-	 * @return EE_Billing_Info_Form
+	 * @return \EE_Billing_Info_Form
 	 */
 	abstract function generate_new_billing_form( EE_Transaction $transaction = NULL );
+
+
+
+	/**
+	 * apply_billing_form_debug_settings
+	 * applies debug data to the form
+	 *
+	 * @param \EE_Billing_Info_Form $billing_form
+	 * @return \EE_Billing_Info_Form
+	 */
+	public function apply_billing_form_debug_settings( EE_Billing_Info_Form $billing_form ) {
+		return $billing_form;
+	}
 
 
 
@@ -295,7 +314,7 @@ abstract class EE_PMT_Base{
 				'TXN_ID' => $transaction->ID(),
 				'STS_ID' => EEM_Payment::status_id_failed,
 				'PAY_source' => $method,
-				'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
+				'PAY_amount' => $amount !== NULL ? $amount : $transaction->remaining(),
 				'PMD_ID' => $this->_pm_instance->ID(),
 				'PAY_gateway_response'=>NULL,
 			);
@@ -597,6 +616,7 @@ abstract class EE_PMT_Base{
 	 * @return string html for the link to a help tab
 	 */
 	public function get_help_tab_link(){
+		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
 	}
 
@@ -619,6 +639,20 @@ abstract class EE_PMT_Base{
 		return 'ee_payment_method_' . strtolower( $this->system_name() );
 	}
 
+	/**
+	 * Called by client code to tell the gateway that if it wants to change
+	 * the transaction or line items or registrations related to teh payment it already
+	 * processed (we think, but possibly not) that now's the time to do it.
+	 * It is expected that gateways will store any info they need for this on the PAY_details,
+	 * or maybe an extra meta value
+	 * @param EE_Payment $payment
+	 * @return void
+	 */
+	public function update_txn_based_on_payment( $payment ){
+		if( $this->_gateway instanceof EE_Gateway ){
+			$this->_gateway->update_txn_based_on_payment( $payment );
+		}
+	}
 
 
 }

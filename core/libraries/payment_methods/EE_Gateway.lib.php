@@ -30,7 +30,7 @@ abstract class EE_Gateway{
 	 */
 	const all_currencies_supported = 'all_currencies_supported';
 	/**
-	 * Where keys currency codes, values i18n strings for the currency
+	 * Where values are 3-letter currency codes
 	 * @var array
 	 */
 	protected $_currencies_supported = array();
@@ -206,7 +206,8 @@ abstract class EE_Gateway{
 	 * @return string
 	 */
 	public function format_currency($amount){
-		return $this->_template->format_currency($amount, true);
+		return number_format( $amount, 2, '.', '' );
+//		return $this->_template->format_currency($amount, true);
 	}
 
 	/**
@@ -230,10 +231,10 @@ abstract class EE_Gateway{
 		$total_line_item = $transaction->total_line_item();
 		$total = 0;
 		foreach($total_line_item->get_items() as $item_line_item ){
-			$total += $item_line_item->total();
+			$total += max( $item_line_item->total(), 0 );
 		}
 		foreach($total_line_item->tax_descendants() as $tax_line_item ){
-			$total += $tax_line_item->total();
+			$total += max( $tax_line_item->total(), 0 );
 		}
 		return $total;
 	}
@@ -247,6 +248,22 @@ abstract class EE_Gateway{
 	protected function _can_easily_itemize_transaction_for( EEI_Payment $payment ){
 		return  $this->_sum_items_and_taxes( $payment->transaction() ) == $payment->transaction()->total() &&
 					$payment->amount() == $payment->transaction()->total();
+	}
+
+	/**
+	 * Handles updating the transaction and any other related data based on the payment.
+	 * You may be tempted to do this as part of do_direct_payment or handle_payment_update,
+	 * but doing so on those functions might be too early. It's possibel that the changes
+	 * you make to teh transaction or registration or line items may just get overwritten
+	 * at that point. Instead, you should store any info you need on the payment during those
+	 * functions, and use that information at this step, which client code will decide
+	 * for you when it should be called.
+	 * @param EE_Payment $payment
+	 * @return void
+	 */
+	public function update_txn_based_on_payment( $payment ){
+		//maybe update the trasnaction or line items or registrations
+		//but most gateways don't need to do this, because they only update the payment
 	}
 
 

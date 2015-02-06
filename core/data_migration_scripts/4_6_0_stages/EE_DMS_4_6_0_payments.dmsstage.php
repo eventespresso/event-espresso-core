@@ -24,9 +24,9 @@ class EE_DMS_4_6_0_payments extends EE_Data_Migration_Script_Stage_Table{
 	protected function _migrate_old_row( $payment_row ) {
 		global $wpdb;
 		//get the payment method's ID
-		$PMD_ID = $this->_get_payment_method_id_by_gateway_name( $payment_row[ 'PAY_gateway' ], $payment_row[ 'PAY_method'] );
+		$PMD_ID = apply_filters( 'FHEE__EE_DMS_4_6_0_payments__migrate_old_row__PMD_ID', $this->_get_payment_method_id_by_gateway_name( $payment_row[ 'PAY_gateway' ], $payment_row[ 'PAY_method'] ) );
 		if( ! $PMD_ID ){
-			$this->add_error( sprintf( __( 'Could not find payment method with PMD_type = \'%1$s\' when migrating payment row %2$s', 'event_espresso' ), $payment_row[ 'PAY_gateway' ], $this->_json_encode( $payment_row ) ) );
+			$this->add_error( sprintf( __( 'Could not find payment method with PMD_type = \'%1$s\' when migrating payment row %2$s so just assigned it an unknown payment method', 'event_espresso' ), $payment_row[ 'PAY_gateway' ], $this->_json_encode( $payment_row ) ) );
 			$PMD_ID = 0;
 		}
 		$new_values = array(

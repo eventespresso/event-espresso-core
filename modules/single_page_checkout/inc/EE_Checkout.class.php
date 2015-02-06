@@ -50,10 +50,17 @@ class EE_Checkout {
 	public $generate_reg_form = TRUE;
 
 	/**
+	 * process a reg form submission or not ?
+	 * @type bool
+	 */
+	public $process_form_submission = FALSE;
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
 	public $total_ticket_count = 0;
+
 	/**
 	 * the reg step slug from the incoming request
 	 * @type string
@@ -195,13 +202,26 @@ class EE_Checkout {
 	 * @return    \EE_Checkout
 	 */
 	public function __construct(  ) {
-		$this->json_response = new EE_SPCO_JSON_Response();
 		$this->reg_page_base_url = EE_Registry::instance()->CFG->core->reg_page_url();
 		$this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		$this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
 		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', TRUE );
 		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
 		$this->reg_cache_where_params = array( 'order_by' => array( 'REG_count' => 'ASC' ));
+	}
+
+
+
+	/**
+	 *    reset_for_current_request
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public function reset_for_current_request() {
+		$this->redirect = FALSE;
+		$this->json_response = new EE_SPCO_JSON_Response();
+		EE_Form_Section_Proper::reset_js_localization();
 	}
 
 
@@ -370,6 +390,8 @@ class EE_Checkout {
 		foreach ( $this->reg_steps as $reg_step ) {
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step->slug();
 		}
+		// reset reg step html
+//		$this->json_response->set_reg_step_html( '' );
 	}
 
 
@@ -384,6 +406,8 @@ class EE_Checkout {
 		$this->sort_reg_steps();
 		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
 		$this->set_next_step();
+		// the text that appears on the reg step form submit button
+		$this->current_step->set_submit_button_text();
 		$this->set_reg_step_JSON_info();
 	}
 
@@ -453,8 +477,10 @@ class EE_Checkout {
 		if ( ! $this->revisit ) {
 			$this->update_txn_reg_steps_array();
 		}
+		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
-		EE_Registry::instance()->SSN->set_transaction( $this->transaction );
+		// save all data to the db, but suppress errors
+//		$this->save_all_data( FALSE );
 	}
 
 
@@ -487,29 +513,31 @@ class EE_Checkout {
 	 */
 	public function transaction_has_primary_registrant() {
 		return $this->primary_attendee_obj instanceof EE_Attendee ? TRUE : FALSE;
-		//		return $this->checkout->transaction->primary_registration() instanceof EE_Registration && $this->checkout->transaction->primary_registration()->attendee() instanceof EE_Attendee ? TRUE : FALSE;
 	}
 
 
 
 	/**
-	 * 	save_all_data
-	 * 	simply loops through the current transaction and saves all data for each registration
+	 *    save_all_data
+	 *    simply loops through the current transaction and saves all data for each registration
 	 *
-	 * 	@access public
-	 * 	@return 	bool
+	 * @access public
+	 * @param bool $show_errors
+	 * @return bool
 	 */
-	public function save_all_data() {
+	public function save_all_data( $show_errors = TRUE ) {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			// save so that TXN has ID
+			// save to ensure that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
-				$this->_save_registration( $reg_cache_ID, $registration );
+				$this->_save_registration( $reg_cache_ID, $registration, $show_errors );
 			}
 		} else {
-			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			if ( $show_errors ) {
+				EE_Error::add_error( __( 'A valid Transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			}
 			return FALSE;
 		}
 		return TRUE;
@@ -521,9 +549,10 @@ class EE_Checkout {
 	 *
  	 * @param 	string | int 	$reg_cache_ID
 	 * @param 	EE_Registration 	$registration
+	 * @param bool $show_errors
 	 * @return void
 	 */
-	private function _save_registration( $reg_cache_ID, $registration ) {
+	private function _save_registration( $reg_cache_ID, $registration, $show_errors = TRUE  ) {
 		// verify object
 		if ( $registration instanceof EE_Registration ) {
 			// should this registration be processed during this visit ?
@@ -533,19 +562,148 @@ class EE_Checkout {
 					$registration->set_transaction_id( $this->transaction->ID() );
 				}
 				// verify and save the attendee
-				$this->_save_registration_attendee( $registration );
+				$this->_save_registration_attendee( $registration, $show_errors );
 				// save answers to reg form questions
-				$this->_save_registration_answers( $registration );
+				$this->_save_registration_answers( $registration, $show_errors );
 				// save changes
 				$registration->save();
 				// update txn cache
 				if ( ! $this->transaction->update_cache_after_object_save( 'Registration', $registration, $reg_cache_ID )) {
-					EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					if ( $show_errors ) {
+						EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					}
 				}
 			}
 		} else {
+			if ( $show_errors ) {
+				EE_Error::add_error(
+					__( 'An invalid Registration object was discovered when attempting to save your registration information.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+		}
+	}
+
+
+
+	/**
+	 * _save_registration_attendee
+	 *
+	 * @param 	EE_Registration 	$registration
+	 * @param bool $show_errors
+	 * @return void
+	 */
+	private function _save_registration_attendee( $registration, $show_errors = TRUE ) {
+		if ( $registration->attendee() instanceof EE_Attendee ) {
+			// save so that ATT has ID
+			$registration->attendee()->save();
+			if ( ! $registration->update_cache_after_object_save( 'Attendee', $registration->attendee() )) {
+				if ( $show_errors ) {
+					EE_Error::add_error(
+						__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+				}
+			}
+		} else {
+			if ( $show_errors ) {
+				ob_start();
+				var_dump( $registration->attendee() );
+				EE_Error::add_error(
+					sprintf(
+						'%1$s||%1$s $attendee = %2$s',
+						__( 'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
+						ob_get_clean()
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+		}
+	}
+
+
+
+	/**
+	 * _save_question_answers
+	 *
+	 * @param 	EE_Registration 	$registration
+	 * @param bool $show_errors
+	 * @return void
+	 */
+	private function _save_registration_answers( $registration, $show_errors = TRUE ) {
+		// now save the answers
+		foreach ( $registration->answers() as $cache_key => $answer ) {
+			// verify object
+			if ( $answer instanceof EE_Answer ) {
+				$answer->set_registration( $registration->ID() );
+				$answer->save();
+				if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
+					if ( $show_errors ) {
+						EE_Error::add_error(
+							__( 'The newly saved Answer object could not be cached on the registration.', 'event_espresso' ),
+							__FILE__, __FUNCTION__, __LINE__
+						);
+					}
+				}
+			} else {
+				if ( $show_errors ) {
+					EE_Error::add_error(
+						__( 'An invalid Answer object was discovered when attempting to save your registration information.', 'event_espresso' ),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 *    refresh_all_entities
+	 *    simply loops through the current transaction calling EEM_Base::refresh_entity_map_with() on each object (including the TXN)
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function refresh_all_entities() {
+		// verify the transaction
+		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
+			// grab the saved registrations from the transaction
+			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
+				$this->_refresh_registration( $reg_cache_ID, $registration );
+			}
+			// make sure our cached TXN is added to the model entity mapper
+			$this->transaction = $this->transaction->get_model()->refresh_entity_map_with( $this->transaction->ID(), $this->transaction );
+		} else {
+			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
+		}
+		if ( $this->cart instanceof EE_Cart ) {
+			$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
+		}
+		return TRUE;
+	}
+
+
+	/**
+	 * _refresh_registration
+	 *
+	 * @param 	string | int 	$reg_cache_ID
+	 * @param 	EE_Registration 	$registration
+	 * @return void
+	 */
+	private function _refresh_registration( $reg_cache_ID, $registration ) {
+		// verify object
+		if ( $registration instanceof EE_Registration ) {
+			// update the entity mapper attendee
+			$this->_refresh_registration_attendee( $registration );
+			// update the entity mapper answers for reg form questions
+			$this->_refresh_registration_answers( $registration );
+			// make sure the cached registration is added to the model entity mapper
+			$registration->get_model()->refresh_entity_map_with( $reg_cache_ID, $registration );
+		} else {
 			EE_Error::add_error(
-				__( 'An invalid Registration object was discovered when attempting to save your registration information.', 'event_espresso' ),
+				__( 'An invalid Registration object was discovered when attempting to update the model entity mapper.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
@@ -559,55 +717,39 @@ class EE_Checkout {
 	 * @param 	EE_Registration 	$registration
 	 * @return void
 	 */
-	private function _save_registration_attendee( $registration ) {
-		if ( $registration->attendee() instanceof EE_Attendee ) {
-			// save so that ATT has ID
-			$registration->attendee()->save();
-			if ( ! $registration->update_cache_after_object_save( 'Attendee', $registration->attendee() )) {
-				EE_Error::add_error(
-					__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
-					__FILE__, __FUNCTION__, __LINE__
-				);
+	private function _refresh_registration_attendee( $registration ) {
+		$attendee = $registration->attendee();
+		// verify object
+		if ( $attendee instanceof EE_Attendee && $attendee->ID() ) {
+			// make sure the cached attendee is added to the model entity mapper
+			$registration->attendee()->get_model()->refresh_entity_map_with( $attendee->ID(), $attendee );
+			// maybe cache primary_attendee_obj ?
+			if ( $registration->is_primary_registrant() ) {
+				$this->primary_attendee_obj = $attendee;
 			}
-		} else {
-			ob_start();
-			var_dump( $registration->attendee() );
-//			$attendee = ob_get_clean();
-			EE_Error::add_error(
-				sprintf(
-					'%1$s||%1$s $attendee = %2$s',
-					__( 'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
-					ob_get_clean()
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
 		}
 	}
 
 
 
 	/**
-	 * _save_question_answers
+	 * _refresh_registration_answers
 	 *
 	 * @param 	EE_Registration 	$registration
 	 * @return void
 	 */
-	private function _save_registration_answers( $registration ) {
-		// now save the answers
+	private function _refresh_registration_answers( $registration ) {
+		// now update the answers
 		foreach ( $registration->answers() as $cache_key => $answer ) {
 			// verify object
 			if ( $answer instanceof EE_Answer ) {
-				$answer->set_registration( $registration->ID() );
-				$answer->save();
-				if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
-					EE_Error::add_error(
-						__( 'The newly saved Answer object could not be cached on the registration.', 'event_espresso' ),
-						__FILE__, __FUNCTION__, __LINE__
-					);
+				if ( $answer->ID() ) {
+					// make sure the cached answer is added to the model entity mapper
+					$answer->get_model()->refresh_entity_map_with( $answer->ID(), $answer );
 				}
 			} else {
 				EE_Error::add_error(
-					__( 'An invalid Answer object was discovered when attempting to save your registration information.', 'event_espresso' ),
+					__( 'An invalid Answer object was discovered when attempting to update the model entity mapper.', 'event_espresso' ),
 					__FILE__, __FUNCTION__, __LINE__
 				);
 			}
@@ -632,6 +774,19 @@ class EE_Checkout {
 			echo '<br/><span style="color:#2EA2CC;">' . $class . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . $func . '()</span><br/>';
 			echo $extra ? $extra . ' <br/>' : '';
 			echo '<span style="font-size:9px;font-weight:normal;color:#666">' . $file . '</span>    <b style="font-size:10px;color:#333">  ' . $line . ' </b><br/>';
+		}
+	}
+
+
+
+	/**
+	 * 	__wakeup
+	 * to conserve db space, we are removing the EE_Checkout object from EE_SPCO_Reg_Step objects upon serialization
+	 * this will reinstate the EE_Checkout object on each EE_SPCO_Reg_Step object
+	 */
+	function __wakeup() {
+		foreach ( $this->reg_steps as $reg_step ) {
+			$reg_step->checkout = $this;
 		}
 	}
 

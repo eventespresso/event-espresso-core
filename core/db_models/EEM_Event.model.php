@@ -111,9 +111,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
 				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Description', 'event_espresso' ), FALSE,'' ),
-				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
+				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_wp_user'=>new EE_Integer_Field( 'post_author', __( 'Wordpress User ID', 'event_espresso'), FALSE, get_current_user_id() ),
-				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), TRUE ),
+				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), FALSE, 0 ),
 				'EVT_order'=>new EE_Integer_Field( 'menu_order', __( 'Event Menu Order', 'event_espresso' ), FALSE, 1 ),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_events'),// EE_Plain_Text_Field( 'post_type', __( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
 				'status' => new EE_WP_Post_Status_Field( 'post_status', __( 'Event Status', 'event_espresso' ), FALSE, 'draft', $this->_custom_stati )

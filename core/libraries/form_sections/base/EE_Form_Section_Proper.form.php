@@ -90,7 +90,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ));
+		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 
 
 	}
@@ -114,7 +115,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Gets the layotu strategy for this form section
+	 * Gets the layout strategy for this form section
 	 * @return EE_Form_Section_Layout_Base
 	 */
 	public function get_layout_strategy(){
@@ -300,7 +301,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		//ok so no errors general to this entire form section. so let's check the subsections
 		foreach( $this->get_validatable_subsections() as $subsection ){
-			if( ! $subsection->is_valid() && $subsection->get_validation_error_string() != '' ){
+			if( ! $subsection->is_valid() || $subsection->get_validation_error_string() != '' ){
 				$this->set_submission_error_message( $subsection->get_validation_error_string() );
 				return false;
 			}
@@ -366,9 +367,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * could change until it's actually outputted)
 	 * @return void
 	 */
-	public function wp_enqueue_scripts(){
+	public static function wp_enqueue_scripts(){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -384,8 +385,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		$this->localize_validation_rules();
-		add_action( 'get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
-		add_action( 'admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+		add_action( 'wp_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ), -999 );
+		add_action( 'admin_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ) );
 	}
 
 
@@ -395,11 +396,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function localize_validation_rules(){
-		EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
-			'form_section_id'=> $this->html_id( TRUE ),
-			'validation_rules'=>$this->get_jquery_validation_rules(),
-			'errors'=> $this->subsection_validation_errors_by_html_name()
-		);
+		// we only want to localize vars ONCE for the entire form, so if the form section doesn't have a parent, then it must be the top dog
+		if ( ! $this->parent_section() ) {
+			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
+				'form_section_id'=> $this->html_id( TRUE ),
+				'validation_rules'=> $this->get_jquery_validation_rules(),
+				'errors'=> $this->subsection_validation_errors_by_html_name()
+			);
+		}
 	}
 
 
@@ -461,7 +465,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	private static function _get_localized_error_messages(){
 		return array(
-			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
+			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso")
 		);
 	}
 
@@ -477,13 +481,22 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * @return array
+	 */
+	public static function reset_js_localization() {
+		self::$_js_localization = array();
+	}
+
+
+
+	/**
 	 * Gets the JS to put inside the jquery validation rules for subsection of this form section. See parent function for more...
 	 * @return array
 	 */
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->get_validatable_subsections() as $subsection){
-			$jquery_validation_rules = array_merge($jquery_validation_rules,  $subsection->get_jquery_validation_rules());
+			$jquery_validation_rules = array_merge( $jquery_validation_rules,  $subsection->get_jquery_validation_rules() );
 		}
 		return $jquery_validation_rules;
 	}

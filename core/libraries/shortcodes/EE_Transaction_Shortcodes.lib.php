@@ -66,7 +66,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
 			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso'),
-			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso')
+			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_URL]' => __( 'This parses to the url that will switch to the receipt if an invoice is displayed, and switch to the invoice if receipt is displayed. If a message type OTHER than invoice or receipt is displayed then this will just return the url for the invoice. If the related message type is not active  then will parse to an empty string.', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_BUTTON]' => sprintf( __( 'The same as %1$s[INVOICE_RECEIPT_SWITCHER_URL]%2$s except this returns the html for a button linked to the invoice or receipt.', 'event_espresso' ), '<code>', '</code>' )
 			);
 	}
 
@@ -191,6 +193,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return $reg->receipt_url();
 				break;
 
+			case "[INVOICE_RECEIPT_SWITCHER_URL]" :
+				return $this->_get_invoice_receipt_switcher( FALSE );
+				break;
+
+			case "[INVOICE_RECEIPT_SWITCHER_BUTTON]" :
+				return $this->_get_invoice_receipt_switcher();
+				break;
+
+
 		}
 
 		if ( strpos( $shortcode, '[OWING_STATUS_MESSAGE_*' ) !== FALSE ) {
@@ -296,7 +307,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		if( $pm instanceof EE_Payment_Method ){
 			$payee_name = $pm->get_extra_meta( 'pdf_payee_name', TRUE );
 		}
-		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) : $payee_name;
 		return $payee_name;
 	}
 
@@ -328,7 +339,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		if( $pm instanceof EE_Payment_Method ){
 			$payee_email = $pm->get_extra_meta( 'pdf_payee_email', TRUE );
 		}
-		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'email' ) : $payee_email;
 		return $payee_email;
 	}
 
@@ -383,9 +394,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
-			$payee_address = $organization->address_1 . '<br>';
-			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
-			$payee_address .= $organization->city . '<br>';
+			$payee_address = $organization->get_pretty( 'address_1' ) . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->get_pretty( 'address_2' ) . '<br>' : '';
+			$payee_address .= $organization->get_pretty( 'city' ) . '<br>';
 
 			//state
 			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
@@ -412,6 +423,44 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$instructions = NULL;
 		$pm = $this->_get_payment_method();
 		return ( $pm instanceof EE_Payment_Method ) ? $pm->get_extra_meta( 'pdf_instructions', TRUE) : '';
+	}
+
+
+
+
+
+	/**
+	 * get invoice/receipt switch button or url.
+	 *
+	 * @param bool $button true (default) returns the html for a button, false just returns the url.
+	 *
+	 * @return string
+	 */
+	protected function _get_invoice_receipt_switcher( $button = TRUE ) {
+		$reg = $this->_data->primary_reg_obj;
+		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
+		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
+			return'';
+		}
+
+		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
+		$switch_to_label = $switch_to_invoice && ! $message_type instanceof EE_Receipt_message_type ? __('View Invoice', 'event_espresso' ) : __( 'Switch to Invoice', 'event_espresso' );
+		$switch_to_label = ! $switch_to_invoice ? __( 'Switch to Receipt', 'event_espresso' ) : $switch_to_label;
+		$switch_to_url = $switch_to_invoice ? $reg->invoice_url() : $reg->receipt_url();
+
+		if ( ! $button ) {
+			return $switch_to_url;
+		}
+
+		if ( ! empty( $switch_to_url ) ) {
+
+		return  '
+<form method="post" action="' . $switch_to_url . '" >
+	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
+</form>
+		';
+		}
+		return '';
 	}
 
 

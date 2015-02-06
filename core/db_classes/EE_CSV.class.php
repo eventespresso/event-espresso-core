@@ -741,7 +741,7 @@
 	 * and dies (in order to avoid other plugins from messing up the csv output)
 	 * @param string $filename the filename you want to give the file
 	 * @param array $model_data_array 3d array, as described in EE_CSV::write_model_data_to_csv()
-	 * @return void writes CSV file to output and dies
+	 * @return bool | void writes CSV file to output and dies
 	 */
 	public function export_multiple_model_data_to_csv($filename,$model_data_array){
 		$filehandle = $this->begin_sending_csv($filename);

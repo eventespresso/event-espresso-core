@@ -216,6 +216,7 @@ class EEH_Parse_Shortcodes {
 			'[PRIMARY_REGISTRANT_DATETIME_LIST]',
 			'[TICKET_LINE_ITEM_LIST]',
 			'[TAX_LINE_ITEM_LIST]',
+			'[ADDITIONAL_LINE_ITEM_LIST]',
 			'[PRICE_MODIFIER_LINE_ITEM_LIST]',
 			'[PAYMENT_LIST_*]'
 			);
@@ -244,14 +245,10 @@ class EEH_Parse_Shortcodes {
 				}
 
 
-				if ( $parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] ) ) {
-					$matched_code[] = $shortcode;
-					$sc_values[] = $parsed;
-				} else {
-					//let's just strip the ugly code. (usually in the case of list templates)
-					$matched_code[] = $shortcode;
-					$sc_values[] = '';
-				}
+				$parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] );
+
+				$matched_code[] = $shortcode;
+				$sc_values[] = $parsed;
 			}
 		}
 

@@ -289,6 +289,20 @@ class EE_Payment_Method extends EE_Base_Class{
 		$this->set('PMD_wp_user', $wp_user_id);
 	}
 
+	/**
+	 * Overrides parent so when PMD_type is changed we refresh the _type_obj
+	 * @param type $field_name
+	 * @param type $field_value
+	 * @param type $use_default
+	 */
+	function set( $field_name, $field_value, $use_default = FALSE ){
+		if( $field_name == 'PMD_type' ){
+			//the type has probably changed, so forget about its old type object
+			$this->_type_obj = NULL;
+		}
+		parent::set($field_name, $field_value, $use_default);
+	}
+
 
 
 	/**
@@ -367,7 +381,7 @@ class EE_Payment_Method extends EE_Base_Class{
 				$r = new ReflectionClass( $class_name );
 					$this->_type_obj = $r->newInstanceArgs( array( $this ));
 			} else {
-				throw new EE_Error( sprintf( __( 'A payment method of type "%s" does not exist', 'event_espresso' ), $this->type() ));
+				throw new EE_Error( sprintf( __( 'A payment method of type "%1$s" does not exist. Only ones existing are: %2$s', 'event_espresso' ), $this->type(), implode(',', EE_Payment_Method_Manager::instance()->payment_method_type_names() ) ) );
 			}
 		}
 		return $this->_type_obj;

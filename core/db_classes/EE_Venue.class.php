@@ -26,7 +26,7 @@
  * @subpackage 	includes/classes/EE_Venue.class.php
  * @author 				Mike Nelson
  */
-class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
+class EE_Venue extends EE_CPT_Base implements EEI_Address {
 
 	/**
 	 *
@@ -147,6 +147,13 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function state_name() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  __( 'Unknown', 'event_espresso' );
+	}
+
+	/**
 	 * Gets the state for this venue
 	 * @return EE_State
 	 */
@@ -162,6 +169,13 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	 */
 	function country_ID() {
 		return $this->get( 'CNT_ISO' );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function country_name() {
+		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  __( 'Unknown', 'event_espresso' );
 	}
 
 	/**

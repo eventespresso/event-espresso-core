@@ -875,8 +875,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		if ( ! empty( $func )) {
+			$base_call = $addon_call = FALSE;
 			//try to access page route via this class
-			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
+			if ( ! is_array( $func ) && method_exists( $this, $func ) && ( $base_call = call_user_func_array( array( $this, &$func  ), $args ) ) === FALSE ) {
 				// user error msg
 				$error_msg =  __( 'An error occurred. The  requested page route could not be found.', 'event_espresso' );
 				// developer error msg
@@ -885,19 +886,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			//for pluggability by addons first let's see if just the function exists (this will also work in the case where $func is an array indicating class/method)
 			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
-			if ( !empty( $error_msg ) && call_user_func_array( $func, $args ) === FALSE ) {
+
+			if ( $base_call === FALSE && ( $addon_call = call_user_func_array( $func, $args ) )=== FALSE ) {
 				$error_msg = __('An error occurred. The requested page route could not be found', 'event_espresso' );
 				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $func );
 			}
 
 
-			if ( !empty( $error_msg ) )
+			if ( !empty( $error_msg ) && $base_call === FALSE && $addon_call === FALSE )
 				throw new EE_Error( $error_msg );
 		}
 
 		//if we've routed and this route has a no headers route AND a sent_headers_route, then we need to reset the routing properties to the new route.
 		//now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
-		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_route'] ) ) {
+		if ( $this->_is_UI_request === FALSE && is_array( $this->_route) && ! empty( $this->_route['headers_sent_route'] ) ) {
 			$this->_reset_routing_properties( $this->_route['headers_sent_route'] );
 		}
 	}
@@ -1247,15 +1249,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
-		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
+		$capability = ! empty( $route_to_check ) && isset( $this->_page_routes[$route_to_check] ) && is_array( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
 		if ( empty( $capability ) && empty( $route_to_check )  ) {
-			$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+			$capability = is_array( $this->_route ) && empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
 		} else {
 			$capability = empty( $capability ) ? 'manage_options' : $capability;
 		}
 
-		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+		$id = is_array( $this->_route ) && ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+
 		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $route_to_check, $id ) ) && ! defined( 'DOING_AJAX')) {
 			if ( $verify_only ) {
 				return FALSE;
@@ -2045,6 +2048,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$box_label = __('Publish', 'event_espresso');
 		}
 
+		$box_label = apply_filters( 'FHEE__EE_Admin_Page___publish_post_box__box_label', $box_label, $this->_req_action, $this );
+
 		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high' );
 
 	}
@@ -2064,6 +2069,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * Public wrapper for the protected method.  Allows plugins/addons to externally call the
+	 * protected method.
+	 *
+	 * @see $this->_set_publish_post_box_vars for param details
+	 * @since 4.6.0
+	 */
+	public function set_publish_post_box_vars( $name = null, $id = false, $delete = false, $save_close_redirect_URL = null, $both_btns = true ) {
+		$this->_set_publish_post_box_vars( $name, $id, $delete, $save_close_redirect_URL, $both_btns );
+	}
 
 
 	/**
@@ -2646,6 +2661,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
+	 *
+	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @since 4.6.0
+	 *
+	 */
+	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
+		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
+	}
+
+
 
 	/**
 	 * set form open and close tags on add/edit pages.
@@ -2684,6 +2711,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// close form
 		$this->_template_args['after_admin_page_content'] = '</form>';
 
+	}
+
+
+
+	/**
+	 * Public Wrapper for _redirect_after_action() method since its
+	 * discovered it would be useful for external code to have access.
+	 *
+	 * @see EE_Admin_Page::_redirect_after_action() for params.
+	 * @since 4.5.0
+	 */
+	public function redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+		$this->_redirect_after_action( $success, $what, $action_desc, $query_args, $override_overwrite );
 	}
 
 
@@ -2928,7 +2968,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param array $data array that will be assigned to template args.
 	 */
 	public function set_template_args( $data ) {
-		$this->_template_args = (array) $data;
+		$this->_template_args = array_merge( $this->_template_args, (array) $data );
 	}
 
 
@@ -3098,20 +3138,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_req_action;
 	}
 
-
-
-
-
-	/**
-	 * correct variable display
-	 *
-	 * @access protected
-	 * @param array $var
-	 * @return string
-	 */
-	protected function _display_nice( $var ) {
-		return htmlentities( stripslashes( $var ), ENT_QUOTES, 'UTF-8' );
-	}
 
 
 

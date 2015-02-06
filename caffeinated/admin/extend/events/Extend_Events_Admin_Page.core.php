@@ -136,6 +136,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['default']['list_table'] = 'Extend_Events_Admin_List_Table';
 
 		//add tickets tab but only if there are more than one default ticket!
 		$tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(array( array('TKT_is_default' => 1 ) ), 'TKT_ID', TRUE );
@@ -177,8 +178,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 		//filters for event list table
-		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
@@ -661,7 +662,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined, EEM_Registration::status_id_incomplete ), TRUE);
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();

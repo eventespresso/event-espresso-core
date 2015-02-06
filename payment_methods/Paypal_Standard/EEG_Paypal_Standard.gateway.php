@@ -3,6 +3,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
 /**
  * EEG_Paypal_Standard
  *
+ * Note: one important feature of the Paypal Standard Gateway is that it can allow
+ * Paypal itself to calculate taxes and shipping on an order, and then when the IPN
+ * for the payment is received from Paypal, this class will update the line items
+ * accordingly (also bearing in mind that this could be a payment re-attempt, in
+ * which case Paypal shouldn't add shipping or taxes twice).
+ *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
@@ -17,9 +23,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 	protected $_shipping_details = NULL;
 
-	protected $_paypal_shipping = NULL;
+	protected $_paypal_shipping = FALSE;
 
-	protected $_paypal_taxes = NULL;
+	protected $_paypal_taxes = FALSE;
 
 	protected $_gateway_url = NULL;
 
@@ -86,20 +92,41 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the entire transaction,
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
+				//if this is a re-attempt at paying, don't re-add paypal's shipping
+				if( $line_item->code() == 'paypal_shipping' ) {
+					continue;
+				}
 				$redirect_args['item_name_' . $item_num] = substr(
 						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
-				if( $this->_paypal_shipping ){
-					$redirect_args['shipping_' . $item_num ] = '0.00';
+				if( ! $line_item->is_taxable() ) {
+					$redirect_args['tax_' . $item_num] = 0;
+				}
+				//if we're not letting paypal calculate shipping, tell them its 0
+				if( ! $this->_paypal_shipping ){
+					$redirect_args['shipping_' . $item_num ] = '0';
+					$redirect_args['shipping2_' . $item_num ] = '0';
 				}
 				$item_num++;
+			}
+			//add our taxes to the order if we're NOT using paypal's
+			if( ! $this->_paypal_taxes ){
+				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 			}
 		}else{
 			//this is a partial payment, so we can't really show all the line items
 			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
+			//if we aren't allowing paypal to calculate shipping, set it to 0
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
+			//paypal can't calculate taxes because we don't know what parts of it are taxable
+			$redirect_args['tax_cart'] = '0';
+
 			$item_num++;
+
+
 
 		}
 		if($this->_debug_mode){
@@ -107,10 +134,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = 0;
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
-		}
-		//add our taxes to the order if we're NOT using paypal's
-		if( ! $this->_paypal_taxes ){
-			$redirect_args['tax'] = $total_line_item->get_total_tax();
+			$redirect_args['on1_'.$item_num] = 'RETURN URL';
+			$redirect_args['os1_' . $item_num] = $return_url;
+//			$redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
 		}
 
 		$redirect_args['business'] = $this->_paypal_id;
@@ -125,7 +153,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['image_url'] = $this->_image_url;
 		}
 		$redirect_args['no_shipping'] = $this->_shipping_details;
-		
+		$redirect_args['bn'] = 'EventEspresso_SP';//EE will blow up if you change this
+
 		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args );
 
 		$payment->set_redirect_url($this->_gateway_url);
@@ -141,7 +170,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * the payment method passes in.
 	 * @param array $update_info like $_POST
 	 * @param EEI_Transaction $transaction
-	 * @return EE_Payment updated
+	 * @return EEI_Payment updated
 	 */
 	public function handle_payment_update( $update_info, $transaction ){
 		//verify there's payment data that's been sent
@@ -159,10 +188,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
 		}
-		//verify the transaction exists
-		if(empty($transaction)){
-			return false;
-		}
 
 
 		//ok, well let's process this payment then!
@@ -176,39 +201,28 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$status = $this->_pay_model->declined_status();//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
 		}
-		$grand_total_needs_resaving = FALSE;
-//		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
-		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso') );
-			$grand_total_needs_resaving = TRUE;
-
-		}
-		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
-			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
-			$grand_total_needs_resaving = TRUE;
-		}
-
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
 				//echo "duplicated ipn! dont bother updating transaction foo!";
-//				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
+				$this->log( array(
+					'message' => sprintf( __( 'It appears we have received a duplicate IPN from paypal for payment %d', 'event_espresso' ), $payment->ID()),
+					'payment' => $payment->model_field_array(),
+					'IPN data' => $update_info ),
+						$payment );
 			}else{
 //				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
-				$payment->set_amount($update_info['mc_gross']);
+				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
-				$payment->set_details($update_info);
+				$payment->set_details( $update_info );
+				$this->log( array(
+					'message' => sprintf( __( 'Updated payment either from IPN or as part of POST from paypal', 'event_espresso' )),
+					'payment' => $payment->model_field_array(),
+					'IPN_data' => $update_info ),
+						$payment);
 			}
-		}
-		$this->log( array(
-			'IPN Data' => $update_info,
-			'transaction (not yet updated)' => $transaction->model_field_array(),
-			'payment (updated)' => $payment->model_field_array()),
-				$payment);
-		if( $grand_total_needs_resaving ){
-			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
 		}
 		return $payment;
 	}
@@ -268,6 +282,60 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$payment->set_status(EEM_Payment::status_id_failed);
 			return false;
 		}
+	}
+
+	/**
+	 * Updates the transaction and line items based on the payment IPN data from paypal,
+	 * like the taxes or shipping
+	 * @param EEI_Payment $payment
+	 */
+	public function update_txn_based_on_payment( $payment ) {
+		$update_info = $payment->details();
+		$redirect_args = $payment->redirect_args();
+		$transaction = $payment->transaction();
+		if( ! $transaction ){
+			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldnt be executed properly', 'event_espresso' ), $payment );
+			return;
+		}
+		if( ! is_array( $update_info ) || ! isset( $update_info[ 'mc_shipping' ] ) || ! isset( $update_info[ 'tax' ] ) ) {
+			$this->log(
+					array( 'message' => __( 'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from paypal', 'event_espresso' ),
+				'payment' => $payment->model_field_array() ),
+					$payment );
+			return;
+		}
+		//take note of whether or not we COULD have allowed paypal to add taxes and shipping
+		//when we sent the customer to paypal (because if we couldn't itemize the transaction, we
+		//wouldn't have known what parts were taxable, meaning we would have had to tell paypal
+		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
+//		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
+
+		$grand_total_needs_resaving = FALSE;
+
+		//might paypal have added shipping?
+		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
+			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
+			$grand_total_needs_resaving = TRUE;
+
+		}
+		//might paypal have changed the taxes?
+		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $redirect_args[ 'tax_cart' ] ){
+			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
+			$grand_total_needs_resaving = TRUE;
+		}
+
+		if( $grand_total_needs_resaving ){
+			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
+		}
+		$this->log( array(
+			'message' => __( 'Updated transaction related to payment', 'event_espresso' ),
+			'transaction (updated)' => $transaction->model_field_array(),
+			'payment (updated)' => $payment->model_field_array(),
+			'use_paypal_shipping' => $this->_paypal_shipping,
+			'use_paypal_tax' => $this->_paypal_taxes,
+			'grand_total_needed_resaving' => $grand_total_needs_resaving,),
+
+				$payment);
 	}
 
 

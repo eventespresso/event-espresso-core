@@ -547,6 +547,9 @@ class EEH_Form_Fields {
 		}
 
 		$QFI = self::_load_system_dropdowns( $QFI );
+		$QFI = self::_load_specialized_dropdowns( $QFI );
+
+		//we also need to verify
 
 		$display_text = $QFI->get('QST_display_text');
 		$input_name = $QFI->get('QST_input_name');
@@ -568,6 +571,7 @@ class EEH_Form_Fields {
 		$label_b4 = $QFI->get_meta( 'label_b4' );
 		$use_desc_4_label = $QFI->get_meta( 'use_desc_4_label' );
 
+
 		switch ( $QFI->get('QST_type') ){
 
 			case 'TEXTAREA' :
@@ -577,6 +581,7 @@ class EEH_Form_Fields {
 			case 'DROPDOWN' :
 					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, TRUE );
 				break;
+
 
 			case 'RADIO_BTN' :
 					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, $label_b4, $use_desc_4_label );
@@ -898,12 +903,15 @@ class EEH_Form_Fields {
 			return NULL;
 		}
 		$answer = maybe_unserialize( $answer );
+
 		// prep the answer(s)
 		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
+
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
 			$answer[$key] = self::prep_answer( $value );
 		}
+
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -1058,10 +1066,14 @@ class EEH_Form_Fields {
 
 	/**
 	 * 	prep_answer
-	 * @param string $answer
+	 * @param mixed $answer
 	 * @return string
 	 */
 	static function prep_answer( $answer, $use_html_entities = TRUE ){
+		//make sure we convert bools first.  Otherwise (bool) false becomes an empty string which is NOT desired, we want "0".
+		if ( is_bool( $answer ) ) {
+			$answer = $answer ? 1 : 0;
+		}
 		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
 		return $use_html_entities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}
@@ -1178,6 +1190,29 @@ class EEH_Form_Fields {
 				break;
 			case 'admin-country' :
 				$QFI = self::generate_country_dropdown( $QFI, TRUE );
+				break;
+		}
+		return $QFI;
+	}
+
+
+
+	/**
+	 * This preps dropdowns that are specialized.
+	 *
+	 * @since  4.6.0
+	 *
+	 * @param EE_Question_Form_Input $QFI
+	 *
+	 * @return EE_Question_Form_Input
+	 */
+	protected static function _load_specialized_dropdowns( $QFI ) {
+		switch( $QFI->get( 'QST_type' ) ) {
+			case 'STATE' :
+				$QFI = self::generate_state_dropdown( $QFI );
+				break;
+			case 'COUNTRY' :
+				$QFI = self::generate_country_dropdown( $QFI );
 				break;
 		}
 		return $QFI;

@@ -490,7 +490,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['SPCO_attendee_information_url'] = $this->_SPCO_attendee_information_url;
 
 		$template_args['resend_reg_confirmation_url'] = add_query_arg(
-			array( 'e_reg_url_link'=>$this->_reg_url_link, 'resend' => 'reg_confirmation' ),
+			array( 'token'=>$this->_reg_url_link, 'resend_reg_confirmation' => 'true' ),
 			EE_Registry::instance()->CFG->core->thank_you_page_url()
 		);
 		// verify template arguments
@@ -506,10 +506,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function resend_reg_confirmation_email() {
 		EE_Registry::instance()->load_core( 'Request_Handler' );
-		$reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+		$reg_url_link = EE_Registry::instance()->REQ->get( 'token' );
+
 		// was a REG_ID passed ?
 		if ( $reg_url_link ) {
-			// get registration from reg_url_link
 			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => $reg_url_link )));
 			if ( $registration instanceof EE_Registration ) {
 				// resend email
@@ -522,7 +522,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 		} else {
 			EE_Error::add_error(
-				__( 'The Registration Confirmation email could not be sent because a registration URL link is missing or invalid.', 'event_espresso' ),
+				__( 'The Registration Confirmation email could not be sent because a registration token is missing or invalid.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
@@ -552,6 +552,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
+		if ( ! $this->_primary_registrant->is_not_approved() ) {
 ?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
@@ -570,6 +571,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		<div class="clear"></div>
 	</div>
 <?php
+		} else {
+?>
+	<div id="espresso-thank-you-page-not-approved-message-dv">
+		<h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
+		<p id="events-requiring-pre-approval-pg" class="small-text">
+			<?php echo apply_filters( 'AHEE__EES_Espresso_Thank_You__get_ajax_content__not_approved_message', __('The Event you have registered for does not require payment at this time and was not billed for during this transaction. Billing will only occur after all attendees have been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso') ); ?>
+		</p>
+		<div class="clear"></div>
+	</div>
+		<?php
+		}
 	}
 
 
@@ -615,7 +627,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->timestamp() . '
 					</td>
 					<td>
-						' . $payment->payment_method()->name() . '
+						' . ( $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method()->name() : __( 'Unknown', 'event_espresso' ) ) . '
 					</td>
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '

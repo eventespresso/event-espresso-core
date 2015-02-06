@@ -634,6 +634,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'billing' => $this->_data->billing,
 			'taxes' => $this->_data->taxes,
 			'tax_line_items' => $this->_data->tax_line_items,
+			'additional_line_items' => $this->_data->additional_line_items,
 			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
 			'payments' => $this->_data->payments,

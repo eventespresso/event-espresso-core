@@ -278,6 +278,9 @@ final class EE_Config {
 	private function _load_calendar_config() {
 		// grab array of all plugin folders and loop thru it
 		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		if ( empty( $plugins ) ) {
+				return;
+			}
 		foreach ( $plugins as $plugin_path ) {
 			// grab plugin folder name from path
 			$plugin = basename( $plugin_path );
@@ -801,6 +804,11 @@ final class EE_Config {
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
 			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+
+			if ( empty( $widgets_to_register ) ) {
+				return;
+			}
+
 			// cycle thru widget folders
 			foreach ( $widgets_to_register as $widget_path ) {
 				// add to list of installed widget modules
@@ -883,6 +891,11 @@ final class EE_Config {
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+
+		if ( empty( $shortcodes_to_register ) )  {
+			return;
+		}
+
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
@@ -968,6 +981,9 @@ final class EE_Config {
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
+		if ( empty( $modules_to_register ) ) {
+			return;
+		}
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -1294,6 +1310,29 @@ final class EE_Config {
  * basically, they should just be well-defined stdClasses
  */
 class EE_Config_Base{
+
+
+	/**
+	 * Utility function for escaping the value of a property and returning.
+	 *
+	 * @param string $property property name (checks to see if exists).
+	 *
+	 * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
+	 */
+	public function get_pretty( $property ) {
+		if ( ! property_exists( $this, $property ) ) {
+			throw new EE_Error( sprintf( __('%1$s::get_pretty() has been called with the property %2$s which does not exist on the %1$s config class.', 'event_espresso' ), get_class( $this ), $property ) );
+		}
+
+		//just handling escaping of strings for now.
+		if ( is_string( $this->$property ) ) {
+			return stripslashes( $this->$property );
+		}
+
+		return $this->$property;
+	}
+
+
 	/**
 	 *		@ override magic methods
 	 *		@ return void
@@ -2282,7 +2321,7 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3', '>=' ) ) {
+		if ( ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
 			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
 		} else {
 			return '';

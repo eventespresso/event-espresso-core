@@ -72,7 +72,31 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[ANSWER]' :
-				return $this->_data->get_pretty('ANS_value', 'no_wpautop');
+				//need to get the question to determine the type of question (some questions require translation of the answer).
+				$question = isset( $this->_extra_data['data']->questions[$this->_data->ID()] ) ? $this->_extra_data['data']->questions[$this->_data->ID()] : $this->_data->question();
+				if ( ! $question instanceof EE_Question ) {
+					return ''; //get out cause we can't figure out what the question type is!
+				}
+
+				//what we show for the answer depends on the question type!
+				switch ( $question->get( 'QST_type' ) ) {
+
+					case 'STATE' :
+						$state = EEM_State::instance()->get_one_by_ID( $this->_data->get('ANS_value') );
+						$answer = $state instanceof EE_State ? $state->name() : '';
+						break;
+
+					case 'COUNTRY' :
+						$country = EEM_Country::instance()->get_one_by_ID( $this->_data->get( 'ANS_value') );
+						$answer = $country instanceof EE_Country ? $country->name() : '';
+						break;
+
+					default :
+						$answer = $this->_data->get_pretty('ANS_value', 'no_wpautop');
+						break;
+				}
+
+				return $answer;
 				break;
 
 		}

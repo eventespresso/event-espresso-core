@@ -116,14 +116,14 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'transaction_key'=>$old_gateway_settings['authnet_aim_transaction_key'],
 					'test_transactions'=>$old_gateway_settings['test_transactions']
 				);
-				$desc = __( 'Please provide the following billing information', 'event_espresso' );
+				$desc = __( 'Please provide the following billing information.', 'event_espresso' );
 				break;
 			case 'Bank':
 				$extra_meta_key_values = array(
 					'page_title'=>$old_gateway_settings['page_title'],
 					'payment_instructions'=>
 					sprintf( __('%1$s<br/>Name on Bank Account: %2$s<br/>Bank Account Number: %3$s<br/>Bank Name: %4$s<br/>Bank Address:%5$s', 'event_espresso'), $old_gateway_settings['bank_instructions'] , $old_gateway_settings['account_name'], $old_gateway_settings['account_number'], $old_gateway_settings['bank_name'], $old_gateway_settings['bank_address'] ) );
-				$desc = __( 'Make payment using an electronic funds transfer from your bank', 'event_espresso' );
+				$desc = __( 'Make payment using an electronic funds transfer from your bank.', 'event_espresso' );
 				break;
 			case 'Check':
 				$extra_meta_key_values = array(
@@ -131,7 +131,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'payment_instructions'=>$old_gateway_settings['check_instructions'],
 					'address_to_send_payment'=>$old_gateway_settings['payment_address']
 				);
-				$desc = __( 'On the next page you will be given instructions on how to make a payment by check', 'event_espresso' );
+				$desc = __( 'On the next page you will be given instructions on how to make a payment by check.', 'event_espresso' );
 				break;
 			case 'Invoice':
 				$extra_meta_key_values = array(
@@ -143,18 +143,19 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'pdf_logo_image' => $old_gateway_settings[ 'invoice_logo_url' ],
 					'page_confirmation_text' => isset( $old_gateway_settings[ 'page_instructions' ] ) ? $old_gateway_settings[ 'page_instructions' ] : '',
 					'page_extra_info' => isset( $old_gateway_settings[ 'payment_address' ] ) ? $old_gateway_settings[ 'payment_address' ] : '',
+					'legacy_invoice_css' => $old_gateway_settings['invoice_css']
 				);
 				//if they didnt want the invoiec gateway to show, pretend it was inactive
 				if( ! $old_gateway_settings['show'] ){
 					$active = FALSE;
 				}
-				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it', 'event_espresso' );
+				$desc = __( 'On the next page you will be able to access your invoice and instructions on how to pay it.', 'event_espresso' );
 				break;
 			case 'Mijireh':
 				$extra_meta_key_values = array(
 					'access_key' => $old_gateway_settings[ 'access_key' ]
 				);
-				$desc =  __( 'On the next page you will be able to enter your billing information to make the payment', 'event_espresso' );
+				$desc =  __( 'On the next page you will be able to enter your billing information to make the payment.', 'event_espresso' );
 				break;
 			case 'Paypal_Pro':
 				$extra_meta_key_values = array(
@@ -163,7 +164,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'signature'=>$old_gateway_settings['signature'],
 					'credit_card_types'=>$old_gateway_settings['credit_cards'],
 				);
-				$desc = __( 'Please provide the following billing information', 'event_espresso' );
+				$desc = __( 'Please provide the following billing information.', 'event_espresso' );
 				break;
 			case 'Paypal_Standard':
 				$extra_meta_key_values = array(
@@ -172,7 +173,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage{
 					'shipping_details' => isset( $old_gateway_settings[ 'no_shipping' ] ) ? $old_gateway_settings[ 'no_shipping' ] : false,
 
 				);
-				$desc = __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration', 'event_espresso' );
+				$desc = sprintf( __( 'After clicking \'Finalize Registration\', you will be forwarded to PayPal to make your payment. Make sure you return to this site in order to properly finalize your registration.', 'event_espresso' ), '<strong>','</strong>' );
 				break;
 			default:
 				//if we don't recognize the payment method, just put everything in it into extra meta. At least this way its preserved somewhere

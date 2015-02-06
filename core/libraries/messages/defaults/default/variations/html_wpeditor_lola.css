@@ -20,6 +20,11 @@
 	margin:0 0 0 1em;
 }
 
+.mceContentBody input.print_button {
+	padding: 8px;
+	background-color: white;
+}
+
 .mceContentBody table { border-collapse:collapse!important; width:100%!important; }
 .mceContentBody td { vertical-align:top!important; }
 .mceContentBody .not-really-a-table  { border:none!important; }

@@ -1,4 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+EE_Registry::instance()->load_class( 'Processor_Base' );
+
 /**
  * Class EE_Transaction_Payments
  *
@@ -13,12 +15,33 @@
 
 class EE_Transaction_Payments {
 
+	/**
+	 * 	@var EE_Transaction_Payments $_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
+
+
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 *@return EE_Transaction_Payments instance
+	 */
+	public static function instance() {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_Transaction_Payments ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
 
 
 	/**
 	 * @return EE_Transaction_Payments
 	 */
-	function __construct() {
+	private function __construct() {
 	}
 
 
@@ -27,9 +50,10 @@ class EE_Transaction_Payments {
 	 * Updates the provided EE_Transaction with all the applicable payments
 	 * (or fetch the EE_Transaction from its ID)
 	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @param bool           $update_txn
 	 * @return boolean
 	 */
-	public function calculate_total_payments_and_update_status( EE_Transaction $transaction ){
+	public function calculate_total_payments_and_update_status( EE_Transaction $transaction, $update_txn = TRUE ){
 		// verify transaction
 		if ( ! $transaction instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -41,10 +65,12 @@ class EE_Transaction_Payments {
 		if ( $total_paid != $transaction->paid() ) {
 			$transaction->set_paid( $total_paid );
 			// maybe update status, and make sure to save transaction if not done already
-			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction )) {
-				$transaction->save();
+			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
+				if ( $update_txn ) {
+					$transaction->save();
+					return TRUE;
+				}
 			}
-			return TRUE;
 		}
 		return FALSE;
 	}
@@ -81,9 +107,11 @@ class EE_Transaction_Payments {
 	 * possibly toggles TXN status
 	 *
 	 * @param EE_Transaction $transaction
-	 * @return boolean
+	 * @param bool           $update_txn
+	 * @return bool
+	 * @throws \EE_Error
 	 */
-	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction ) {
+	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction, $update_txn = TRUE ) {
 		// verify transaction
 		if ( ! $transaction instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -102,7 +130,9 @@ class EE_Transaction_Payments {
 		}
 		if ( $new_txn_status !== $transaction->status_ID() ) {
 			$transaction->set_status( $new_txn_status );
-			return $transaction->save() ? TRUE : FALSE;
+			if ( $update_txn ) {
+				return $transaction->save() ? TRUE : FALSE;
+			}
 		}
 		return FALSE;
 	}

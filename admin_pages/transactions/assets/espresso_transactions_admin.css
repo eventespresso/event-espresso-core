@@ -26,27 +26,36 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .txn-overview-no-payment-spn { color:#E76700; font-weight:bold; }
 /* red text */
 .status-TFL { color:#E44064; font-size:.85em; }
+/* yellow text */
+.status-TAB { color:#FCB93C; font-size:.85em; }
 
 /**
  * status strips
  */
  /*txn complete, pymt approved*/
-.txn-status-TCM, .pymt-status-PAP {
+.txn-status-TCM,
+.pymt-status-PAP {
     border-left-color: #70CC50;
 }
 
+.txn-status-TAB  {
+    border-left-color: #FCB93C;
+}
 /*txn incomplete, pymt declined*/
-.txn-status-TFL, .pymt-status-PDC {
+.txn-status-TFL,
+.pymt-status-PDC {
     border-left-color: #E44064;
 }
 
 /*txn open, pymt pending*/
-.txn-status-TIN, .pymt-status-PPN {
+.txn-status-TIN,
+.pymt-status-PPN {
     border-left-color: #00B1CA;
 }
 
 /*txn overpaid, pymt fail*/
-.txn-status-TOP, .pymt-status-PFL {
+.txn-status-TOP,
+.pymt-status-PFL {
     border-left-color: #E76700;
 }
 
@@ -63,26 +72,35 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 	margin: 0 0 -5px;
 }
 
-.widefat td.column-STS_ID, .widefat th.column-STS_ID {
+.widefat td.column-STS_ID,
+.widefat th.column-STS_ID {
     width: 2%;
     padding: 0;
     margin: 0;
 }
 
-/** txn & pymt status legend **/
-.ee-status-legend-TCM, .ee-status-legend-PAP {
+/** txn & payment status legend **/
+.ee-status-legend-TCM,
+.ee-status-legend-PAP {
     background-color: #70CC50;
 }
 
-.ee-status-legend-TFL, .ee-status-legend-PDC {
+.ee-status-legend-TAB  {
+    background-color: #FCB93C;
+}
+
+.ee-status-legend-TFL,
+.ee-status-legend-PDC {
     background-color: #E44064;
 }
 
-.ee-status-legend-TIN, .ee-status-legend-PPN {
+.ee-status-legend-TIN,
+.ee-status-legend-PPN {
     background-color: #00B1CA;
 }
 
-.ee-status-legend-TOP, .ee-status-legend-PFL {
+.ee-status-legend-TOP,
+.ee-status-legend-PFL {
     background-color: #E76700;
 }
 

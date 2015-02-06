@@ -34,7 +34,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		?>
 		<p>
 			<a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button" target="_blank">
-				<?php _e('Download PDF Invoice', 'event_espresso'); ?>
+				<?php _e('View Invoice', 'event_espresso'); ?>
 			</a>
 		</p>
 		<?php

@@ -88,7 +88,7 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_definitions() {
-		EED_Recaptcha::$_not_a_robot = FALSE;
+		EED_Recaptcha::$_not_a_robot = is_user_logged_in();
 		define( 'RECAPTCHA_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'RECAPTCHA_BASE_URL', plugin_dir_url( __FILE__ ));
 	}
@@ -103,7 +103,9 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function enqueue_styles_and_scripts() {
 		wp_register_script( 'espresso_recaptcha', RECAPTCHA_BASE_URL . 'scripts' . DS . 'espresso_recaptcha.js', array( 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'google_recaptcha', 'https://www.google.com/recaptcha/api.js?hl=' . EE_Registry::instance()->CFG->registration->recaptcha_language, array( 'espresso_recaptcha' ), EVENT_ESPRESSO_VERSION, TRUE );
 		EE_Registry::$i18n_js_strings['no_SPCO_error'] = __( 'It appears the Single Page Checkout javascript was not loaded properly! Please refresh the page and try again or contact support.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['no_recaptcha_error'] = __( 'There appears to be a problem with the reCAPTCHA configuration! Please check the admin settings or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['recaptcha_fail'] = __( 'Please complete the anti-spam test before proceeding.', 'event_espresso' );
 	}
 
@@ -142,13 +144,12 @@ class EED_Recaptcha  extends EED_Module {
 				EEH_Template::display_template(
 					RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
 					array(
-						'recaptcha_language' 	=> EE_Registry::instance()->CFG->registration->recaptcha_language,
-						'recaptcha_publickey' 		=> EE_Registry::instance()->CFG->registration->recaptcha_publickey,
+						'recaptcha_publickey' 	=> EE_Registry::instance()->CFG->registration->recaptcha_publickey,
 						'recaptcha_theme' 		=> EE_Registry::instance()->CFG->registration->recaptcha_theme,
 						'recaptcha_type' 			=> EE_Registry::instance()->CFG->registration->recaptcha_type
 					)
 				);
-				wp_enqueue_script( 'espresso_recaptcha' );
+				wp_enqueue_script( 'google_recaptcha' );
 			}
 		}
 	}
@@ -166,7 +167,7 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function recaptcha_passed() {
 		// logged in means you have already passed a turing test of sorts
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() || EED_Recaptcha::_bypass_recaptcha() ) {
 			return TRUE;
 		}
 		// was test already passed?
@@ -192,8 +193,38 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_response( $recaptcha_response = array() ) {
-		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::$_not_a_robot;
+		if ( EED_Recaptcha::_bypass_recaptcha() ) {
+			$recaptcha_response['bypass_recaptcha'] = TRUE;
+			$recaptcha_response['recaptcha_passed'] = TRUE;
+		} else {
+			$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::$_not_a_robot;
+		}
 		return $recaptcha_response;
+	}
+
+
+
+
+	/**
+	 * 	_bypass_recaptcha
+	 *
+	 * 	@access private
+	 * 	@return 	boolean
+	 */
+	private static function _bypass_recaptcha() {
+		// an array of key value pairs that must match exactly with the incoming request, in order to bypass recaptcha for the current request ONLY
+		$bypass_request_params_array = apply_filters( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array() );
+		// does $bypass_request_params_array have any values ?
+		if ( empty( $bypass_request_params_array )) {
+			return FALSE;
+		}
+		// initially set bypass to TRUE
+		$bypass_recaptcha = TRUE;
+		foreach ( $bypass_request_params_array as $key => $value ) {
+			// if $key is not found or value doesn't match exactly, then toggle bypass to FALSE, otherwise carry over it's value. This way, one missed setting results in no bypass
+			$bypass_recaptcha = isset( $_REQUEST[ $key ] ) && $_REQUEST[ $key ] === $value ? $bypass_recaptcha : FALSE;
+		}
+		return $bypass_recaptcha;
 	}
 
 
@@ -209,7 +240,7 @@ class EED_Recaptcha  extends EED_Module {
 
 		// verify library is loaded
 		if ( ! class_exists( 'ReCaptcha' )) {
-			require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
+			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );
 		}
 		// The response from reCAPTCHA
 		$recaptcha_response = EE_Registry::instance()->REQ->get( 'g-recaptcha-response', FALSE );
@@ -299,10 +330,6 @@ class EED_Recaptcha  extends EED_Module {
 					array(
 						'use_captcha' 				=> new EE_Yes_No_Input(
 							array(
-								TRUE => __( 'Yes', 'event_espresso' ),
-								FALSE => __( 'No', 'event_espresso' )
-							),
-							array(
 								'html_label_text'	 	=> __( 'Use reCAPTCHA', 'event_espresso' ),
 								'html_help_text' 		=> sprintf(
 									__( 'reCAPTCHA is a free service that  protects your website from spam and abuse. It employs advanced risk analysis technology to separate humans from abusive actors. Sign up %1$shere%2$s to receive your Public and Private keys.', 'event_espresso' ),
@@ -317,7 +344,6 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Site Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The site key is used to display the widget on your site.', 'event_espresso' ),
-								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : ''
 							)
 						),
@@ -325,7 +351,6 @@ class EED_Recaptcha  extends EED_Module {
 							array(
 								'html_label_text'	 	=> __( 'Secret Key', 'event_espresso' ),
 								'html_help_text' 		=> __( 'The secret key authorizes communication between your application backend and the reCAPTCHA server to verify the user\'s response. The secret key needs to be kept safe for security purposes.', 'event_espresso' ),
-								'required' 				=> TRUE,
 								'default' 					=> isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : ''
 							)
 						)
@@ -493,7 +518,7 @@ class EED_Recaptcha  extends EED_Module {
 					$valid_data = $recaptcha_settings_form->valid_data();
 					// user proofing recaptcha:  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
 					if (
-						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', $EE_Registration_Config->use_captcha )
+						apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page__check_for_recaptcha_keys', TRUE, $EE_Registration_Config )
 						&& $valid_data['main_settings']['use_captcha']
 						&& ( ! $EE_Registration_Config->use_captcha && ( empty( $valid_data['main_settings']['recaptcha_publickey'] ) || empty( $valid_data['main_settings']['recaptcha_privatekey'] )))
 					) {

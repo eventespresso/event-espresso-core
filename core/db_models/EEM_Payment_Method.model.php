@@ -49,7 +49,8 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
 				'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ),
 				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
-				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ), 'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
+				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ),
+				'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
 				'PMD_wp_user' => new EE_Integer_Field( 'PMD_wp_user', __( "User ID", 'event_espresso' ), FALSE, 1 ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
@@ -86,7 +87,7 @@ class EEM_Payment_Method extends EEM_Base {
 			'FHEE__EEM_Payment_Method__scopes',
 			array(
 				self::scope_cart 		=> __( "Front-end Registration Page", 'event_espresso' ),
-				self::scope_admin 	=> __( "Admin Registration Page", 'event_espresso' )
+				self::scope_admin 	=> __( "Admin Registration Page (no online processing)", 'event_espresso' )
 			)
 		);
 	}
@@ -190,18 +191,21 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @throws EE_Error
 	 */
 	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ) {
+		//first: check if it's a slug
+		if( is_string( $base_class_obj_or_id ) ) {
+			$obj = $this->get_one_by_slug( $base_class_obj_or_id );
+			if( $obj ) {
+				return $obj;
+			}
+		}
+		//ok so it wasn't a slug we were passed. try the usual then (ie, it's an object or an ID)
 		try {
 			return parent::ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db );
 		}
 		catch ( EE_Error $e ) {
-			//last ditch-try to find one by the slug
-			$obj = $this->get_one_by_slug( $base_class_obj_or_id );
-			if ( $obj ) {
-				return $obj;
-			} else {
-				throw new EE_Error( sprintf( __( "'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso" ), $base_class_obj_or_id ) );
-			}
+			//handle it outside the catch
 		}
+		throw new EE_Error( sprintf( __( "'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso" ), $base_class_obj_or_id ) );
 	}
 
 
@@ -232,7 +236,9 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				//send an HTTP HEAD request to quickly verify the file exists
-				if ( ! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
+				if ( $payment_method->type_obj() instanceof EE_PMT_Base &&
+						$payment_method->type_obj()->default_button_url() &&
+						! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
 					EE_Error::add_attention( sprintf( __( "Payment Method '%s' had a broken button url, so it was reset", "event_espresso" ), $payment_method->name() ) );
 					$payment_method->save( array( 'PMD_button_url' => $payment_method->type_obj()->default_button_url() ) );
 				}

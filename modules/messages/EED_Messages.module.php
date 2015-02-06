@@ -393,25 +393,74 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-		self::_load_controller();
-		// make sure appropriate admin params are set for sending messages
-		if (( is_admin() && $extra_details['manually_updated'] ) && ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ))) {
-			return; //no messages sent please.
-		}
-		//next let's only send out notifications if a registration was just created OR if the registration status was actually updated
-		if ( ! is_numeric( $extra_details['finalized'] ) || $extra_details['new_reg_status'] == $extra_details['old_reg_status'] ) {
+
+		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
+			//no messages please
 			return;
 		}
+
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
 		$message_type = self::_get_reg_status_array( $registration->status_ID() );
+		// verify message type is active
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
+			self::_load_controller();
 			self::$_EEMSG->send_message(
 				$message_type,
 				array( $registration->transaction(), NULL )
 			);
 		}
 
+	}
+
+
+
+	/**
+	 * This is a helper method used to very whether a registration notification should be sent or
+	 * not.  Prevents duplicate notifications going out for registration context notifications.
+	 *
+	 * @param EE_Registration $registration  [description]
+	 * @param array           $extra_details [description]
+	 *
+	 * @return bool          true = send away, false = nope halt the presses.
+	 */
+	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
+
+		$verified = TRUE;
+
+		//first we check if we're in admin and not doing front ajax and if we
+		// make sure appropriate admin params are set for sending messages
+		if (
+			(
+				is_admin() && ! EE_FRONT_AJAX
+			) && (
+				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
+			)
+		) {
+			//no messages sent please.
+			$verified = false;
+		}
+
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return FALSE;
+		}
+
+		if ( $verified && ( ! is_admin() || EE_FRONT_AJAX ) ) {
+
+			// let's NOT send out notifications if the registration was NOT finalized.
+			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+				return FALSE;
+			}
+
+
+			// and only send messages during revisit if the reg status changes
+			if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+				return FALSE;
+			}
+		}
+
+		return $verified;
 	}
 
 
@@ -525,8 +574,8 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function send_newsletter_message( $contacts, $grp_id ) {
-		//make sure mtp is id and set it in the $_POST global for later messages setup.
-		$_POST['GRP_ID'] = (int) $grp_id;
+		//make sure mtp is id and set it in the EE_Request Handler later messages setup.
+		EE_Registry::instance()->REQ->set( 'GRP_ID', (int) $grp_id );
 
 		self::_load_controller();
 		self::$_EEMSG->send_message('newsletter', $contacts);
