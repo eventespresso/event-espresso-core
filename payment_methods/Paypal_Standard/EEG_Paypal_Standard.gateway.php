@@ -170,7 +170,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * the payment method passes in.
 	 * @param array $update_info like $_POST
 	 * @param EEI_Transaction $transaction
-	 * @return EE_Payment updated
+	 * @return EEI_Payment updated
 	 */
 	public function handle_payment_update( $update_info, $transaction ){
 		//verify there's payment data that's been sent

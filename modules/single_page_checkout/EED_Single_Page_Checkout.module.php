@@ -71,16 +71,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EED_Single_Page_Checkout::set_definitions();
-		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
-		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
-		// add no cache headers
-		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
-		// plus a little extra for nginx
-		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
-		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
-		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
-		// add powered by EE msg
-		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
 
 
@@ -92,14 +82,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-
 		EED_Single_Page_Checkout::set_definitions();
 		if ( defined( 'DOING_AJAX' )) {
 			EED_Single_Page_Checkout::load_request_handler();
 			EED_Single_Page_Checkout::load_reg_steps();
+		} else {
+			// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
+			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 		}
-		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
-		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 		// set ajax hooks
 		add_action( 'wp_ajax_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
 		add_action( 'wp_ajax_nopriv_process_reg_step', array( 'EED_Single_Page_Checkout', 'process_reg_step' ));
@@ -230,7 +220,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// loop through folders
 		foreach ( $reg_steps_to_load as $order => $reg_step ) {
 			// we need a
-			if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
+			if ( isset( $reg_step['file_path'], $reg_step['class_name'], $reg_step['slug'] )) {
 				// copy over to the reg_steps_array
 				EED_Single_Page_Checkout::$_reg_steps_array[ $order ] = $reg_step;
 				// register custom key route for each reg step ( ie: step=>"slug" - this is the entire reason we load the reg steps array now )
@@ -304,7 +294,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_reg_steps();
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'display_spco_reg_step' );
-		EE_Registry::instance()->REQ->set( 'process_form_submission', FALSE );
+		EE_Registry::instance()->REQ->set( 'process_form_submission', false );
 		EED_Single_Page_Checkout::instance()->_initialize();
 		EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
 		return EE_Registry::instance()->REQ->get_output();
@@ -322,6 +312,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::load_reg_steps();
 		EE_Registry::instance()->REQ->set( 'step', 'attendee_information' );
 		EE_Registry::instance()->REQ->set( 'action', 'process_reg_step' );
+		EE_Registry::instance()->REQ->set( 'process_form_submission', true );
 		EED_Single_Page_Checkout::instance()->_initialize();
 		if ( EED_Single_Page_Checkout::instance()->checkout->current_step->completed() ) {
 			$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
@@ -341,11 +332,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *    run
 	 *
 	 * @access    public
-	 * @param WP $WP
+	 * @param WP_Query $WP_Query
 	 * @return    void
 	 */
-	public function run( $WP ) {
-		$this->_initialize();
+	public function run( $WP_Query ) {
+		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
+			$this->_initialize();
+		}
+	}
+
+
+
+
+	/**
+	 *    run
+	 *
+	 * @access    public
+	 * @param WP_Query $WP_Query
+	 * @return    void
+	 */
+	public static function init( $WP_Query ) {
+		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
+			EED_Single_Page_Checkout::instance()->_initialize();
+		}
 	}
 
 
@@ -369,7 +378,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
-		$this->_load_and_instantiate_reg_steps();
+		if ( ! $this->_load_and_instantiate_reg_steps() ) {
+			return;
+		}
 		// set the current step
 		$this->checkout->set_current_step( $this->checkout->step );
 		// and the next step
@@ -383,11 +394,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// add some style and make it dance
 				$this->checkout->transaction = EE_Transaction::new_instance();
 				$this->add_styles_and_scripts();
-				// $this->_display_spco_reg_form();
 				return;
 			}
 			// and the registrations for the transaction
 			$this->_get_registrations( $this->checkout->transaction );
+		}
+		// verify that everything has been setup correctly
+		if ( ! $this->_final_verifications() ) {
+			return;
 		}
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
@@ -401,6 +415,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->add_styles_and_scripts();
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+		// add powered by EE msg
+		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
 
 
@@ -458,6 +480,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+//		$this->_display_request_vars();
+	}
+
+
+
+	/**
+	 *    _get_first_step
+	 *  gets slug for first step in $_reg_steps_array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	protected function _display_request_vars() {
+		printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+		printr( $this->checkout->step, '$this->checkout->step', __FILE__, __LINE__ );
+		printr( $this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__ );
+		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
+		printr( $this->checkout->reg_url_link, '$this->checkout->reg_url_link', __FILE__, __LINE__ );
+		printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
+		printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
+		printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
 	}
 
 
@@ -483,14 +527,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access    private
 	 * @throws EE_Error
-	 * @return    array
+	 * @return    bool
 	 */
 	private function _load_and_instantiate_reg_steps() {
 		// have reg_steps already been instantiated ?
 		if ( empty( $this->checkout->reg_steps )) {
 			// if not, then loop through raw reg steps array
 			foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
-				$this->_load_and_instantiate_reg_step( $reg_step, $order );
+				if ( ! $this->_load_and_instantiate_reg_step( $reg_step, $order )) {
+					return false;
+				}
 			}
 			EE_Registry::instance()->CFG->registration->skip_reg_confirmation = TRUE;
 			EE_Registry::instance()->CFG->registration->reg_confirmation_last = TRUE;
@@ -512,26 +558,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$reg_step->set_is_current_step( FALSE );
 			}
 		}
-		// make reg step details available to JS
+		if ( empty( $this->checkout->reg_steps )) {
+			EE_Error::add_error( __( 'No Reg Steps were loaded..', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+			// make reg step details available to JS
 		$this->checkout->set_reg_step_JSON_info();
+		return true;
 	}
 
 
 
 	/**
-	 * 	 _load_and_instantiate_reg_step
+	 *     _load_and_instantiate_reg_step
 	 *
 	 * @access    private
 	 * @param array $reg_step
 	 * @param int   $order
-	 * @return    void
+	 * @return bool
 	 */
-	private function _load_and_instantiate_reg_step( $reg_step= array(), $order = 0 ) {
+	private function _load_and_instantiate_reg_step( $reg_step = array(), $order = 0 ) {
+
 		// we need a file_path, class_name, and slug to add a reg step
-		if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
+		if ( isset( $reg_step['file_path'], $reg_step['class_name'], $reg_step['slug'] )) {
 			// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
 			if ( $this->checkout->reg_url_link && $this->checkout->step !== $reg_step['slug'] && $reg_step['slug'] !== 'finalize_registration' ) {
-				return;
+				return true;
 			}
 			// instantiate step class using file path and class name
 			$reg_step_obj = EE_Registry::instance()->load_file( $reg_step['file_path'], $reg_step['class_name'], 'class', $this->checkout, FALSE  );
@@ -541,8 +593,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$reg_step_obj->set_order( $order );
 				// add instantiated reg step object to the master reg steps array
 				$this->checkout->add_reg_step( $reg_step_obj );
+			} else {
+				EE_Error::add_error( __( 'The current step could not be set.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
 			}
+		} else {
+			if ( WP_DEBUG ) {
+				EE_Error::add_error(
+					sprintf(
+						__( 'A registration step could not be loaded. One or more of the following data points is invalid:%4$s%5$sFile Path: %1$s%6$s%5$sClass Name: %2$s%6$s%5$sSlug: %3$s%6$s%7$s', 'event_espresso' ),
+						isset( $reg_step['file_path'] ) ? $reg_step['file_path'] : '',
+						isset( $reg_step['class_name'] ) ? $reg_step['class_name'] : '',
+						isset( $reg_step['slug'] ) ? $reg_step['slug'] : '',
+						'<ul>',
+						'<li>',
+						'</li>',
+						'</ul>'
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+			return false;
 		}
+		return true;
 	}
 
 
@@ -756,6 +829,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return 0;
 		}
 		return ( $reg_A->count() > $reg_B->count() ) ? 1 : -1;
+	}
+
+
+
+	/**
+	 * 	_final_verifications
+	 *
+	 * just makes sure that everything is set up correctly before proceeding
+	 *
+	 *  @access 	private
+	 *  @return 	bool
+	 */
+	private function _final_verifications() {
+		if ( ! $this->checkout->current_step instanceof EE_SPCO_Reg_Step ) {
+			EE_Error::add_error( __( 'We\'re sorry but the registration process can not proceed because one or more registration steps were not setup correctly. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+		return true;
 	}
 
 

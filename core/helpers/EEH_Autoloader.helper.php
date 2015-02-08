@@ -180,6 +180,11 @@ class EEH_Autoloader {
 		$exclude = array( 'index' );
 		//get all the files in that folder that end in php
 		$filepaths = glob( $folder.'*');
+
+		if ( empty( $filepaths ) ) {
+			return;
+		}
+
 		foreach( $filepaths as $filepath ) {
 			if ( substr( $filepath, -4, 4 ) == '.php' ) {
 				$class_name = EEH_File::get_classname_from_filepath_with_standard_filename( $filepath );
