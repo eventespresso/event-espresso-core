@@ -63,6 +63,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks() {
 		// routing
+		EE_Config::register_route( 'iframe', 'EED_Ticket_Selector', 'ticket_selector_iframe', 'ticket_selector' );
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
@@ -106,6 +107,22 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	@return 	void
 	 */
 	public function run( $WP ) {}
+
+
+	/**
+	 * ticket_selector_iframe
+	 *
+	 *	@access 	public
+	 * 	@return 	void
+	 */
+	public function ticket_selector_iframe() {
+		/** @type EEM_Event $EEM_Event */
+		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
+		$event = $EEM_Event->get_one_by_ID( EE_Registry::instance()->REQ->get(
+			'event', 0 ));
+		echo EED_Ticket_Selector::display_ticket_selector( $event );
+		exit;
+	}
 
 
 
@@ -203,6 +220,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		$ticket_selector = ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url ) : '';
 		// if not redirecting to another site for registration
 		if ( ! $external_url ) {
+			EE_Registry::instance()->load_helper( 'Template' );
 			// then display the ticket selector
 			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
 		} else {
