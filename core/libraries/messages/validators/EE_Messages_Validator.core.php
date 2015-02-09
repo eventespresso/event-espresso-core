@@ -456,7 +456,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		foreach ( $diff as $ind => $code ) {
 			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) ) {
 				//strip the shortcode so we just have the BASE string (i.e. [ANSWER_*] )
-				$dynamic_sc = preg_replace('/([_\*]+[A-Za-z0-9\ \]]+)/', '_*]', $code);
+				$dynamic_sc = preg_replace('/([_\*]+.+)/', '_*]', $code);
 				//does this exist in the $valid_shortcodes?  If so then unset.
 				if ( isset( $valid_shortcodes[$dynamic_sc] ) ) {
 					unset( $diff[$ind] );
