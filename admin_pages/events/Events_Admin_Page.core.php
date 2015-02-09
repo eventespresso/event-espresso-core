@@ -67,8 +67,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'espresso_events' => 'edit'
 			);
 
-		$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
-
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -105,78 +103,120 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
+		//is there a evt_id in the request?
+		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
+		$evt_id = ! empty( $this->_req_data['post'] ) ? $this->_req_data['post'] : $evt_id;
+
+
 		$this->_page_routes = array(
-			'default' => '_events_overview_list_table',
+			'default' => array(
+				'func' => '_events_overview_list_table',
+				'capability' => 'ee_read_events'
+				),
+			'create_new' => array(
+				'func' => '_create_new_cpt_item',
+				'capability' => 'ee_edit_events'
+				),
+			'edit' => array(
+				'func' => '_edit_cpt_item',
+				'capability' => 'ee_edit_event',
+				'obj_id' => $evt_id
+				),
 			'copy_event' => array(
 				'func' => '_copy_events',
+				'capability' => 'ee_edit_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'trash'),
+				'capability' => 'ee_delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'trash'),
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'draft'),
+				'capability' => 'ee_delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'draft'),
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'delete_event' => array(
 				'func' => '_delete_event',
+				'capability' => 'ee_delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'delete_events' => array(
 				'func' => '_delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
-			'view_report' => '_view_report',
-			'default_event_settings' => '_default_event_settings',
+			'view_report' => array(
+				'func' => '_view_report',
+				'capablity' => 'ee_edit_events'
+				),
+			'default_event_settings' => array(
+				'func' => '_default_event_settings',
+				'capability' => 'manage_options'
+				),
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 			//event category tab related
 			'add_category' => array(
 				'func' => '_category_details',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('add'),
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('edit')
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 			'category_list' => array(
-				'func' => '_category_list_table'
+				'func' => '_category_list_table',
+				'capability' => 'ee_manage_event_categories'
 				)
 		);
 	}
@@ -477,9 +517,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('event-editor-css');
 
 		//scripts
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_script('event_editor_js');
 		wp_enqueue_script('event-datetime-metabox');
 
 		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
@@ -598,15 +636,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'trash_events' => __('Move to Trash', 'event_espresso'),
 					)
 			),
-			'trash' => array(
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					'restore_events' => __('Restore From Trash', 'event_espresso'),
+					'delete_events' => __('Delete Permanently', 'event_espresso')
 					)
-				)
-		);
+				);
+		}
 	}
 
 
@@ -659,6 +701,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$statuses = apply_filters( 'FHEE__Events_Admin_Page__event_legend_items__statuses', $statuses );
 		return array_merge( $items, $statuses );
+	}
+
+
+
+
+
+	/**
+	 * _event_model
+	 * @return EEM_Event
+	 */
+	private function _event_model() {
+		if ( ! $this->_event_model instanceof EEM_Event ) {
+			$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
+		}
+		return $this->_event_model;
 	}
 
 
@@ -730,12 +787,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
+		$success = $this->_event_model()->update_by_ID( $event_values, $post_id );
 
 
-		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'status' => $post->post_status );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
@@ -764,7 +821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _restore_cpt_item( $post_id, $revision_id ) {
 		//copy existing event meta to new post
-		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		$post_evt = $this->_event_model()->get_one_by_ID($post_id);
 
 		//meta revision restore
 		$post_evt->restore_revision($revision_id);
@@ -868,8 +925,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
+			//load DTT helper
+			EE_Registry::instance()->load_helper('DTT_Helper');
+
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
@@ -968,7 +1028,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$TKT->save();
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
+			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
@@ -1078,8 +1138,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//handle datetime saves
 		$items = array();
 
-		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
@@ -1334,7 +1394,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined, EEM_Registration::status_id_incomplete ), TRUE);
 
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
@@ -1414,20 +1474,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 
-		$EEME = $this->_event_model;
+		$EEME = $this->_event_model();
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
-		$where = array(
-				//todo add event categories
-		);
+		if (isset($this->_req_data['month_range'])) {
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
+		}
+
+		$where = array();
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
 		//determine what post_status our condition will have for the query.
 		switch ( $status ) {
+			case 'month' :
+			case 'today' :
 			case NULL :
 			case 'all' :
 				break;
@@ -1440,6 +1506,44 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$where['status'] = $status;
 		}
 
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
+
+		//date where conditions
+		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
+			$this_year_r = date('Y');
+			$this_month_r = date('m');
+			$days_this_month = date('t');
+			$start = ' 00:00:00';
+			$end = ' 23:59:59';
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
+		}
+
+		//possible conditions for capability checks
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
+			$where['status**'] = array( '!=', 'private' );
+		}
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
+			$where['EVT_wp_user'] =  get_current_user_id();
+		}
+
+		if ( isset( $this->_req_data['EVT_wp_user'] ) ) {
+			if ( $this->_req_data['EVT_wp_user'] != get_current_user_id() && EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
+				$where['EVT_wp_user'] = $this->_req_data['EVT_wp_user'];
+			}
+		}
+
+
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {
 			$search_string = '%' . $this->_req_data['s'] . '%';
@@ -1451,7 +1555,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 
-		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
+		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
+
+
+		//let's first check if we have special requests coming in.
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'upcoming' :
+					return $EEME->get_upcoming_events( $query_params, $count );
+					break;
+
+				case 'expired' :
+					return $EEME->get_expired_events( $query_params, $count );
+					break;
+
+				case 'active' :
+					return $EEME->get_active_events( $query_params, $count );
+					break;
+
+				case 'inactive' :
+					return $EEME->get_inactive_events( $query_params, $count );
+					break;
+			}
+		}
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 
@@ -1721,17 +1848,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 
-		//any promotion objects
-		$promotion_objects = $this->_cpt_model_obj->get_many_related('Promotion_Object');
-		if ( !empty( $promotion_objects ) ) {
-			foreach ( $promotion_objects as $promotion_object ) {
-				$this->_cpt_model_obj->_remove_relation_to($promotion_object, 'Promotion_Object');
-			}
-		}
 
 
 		//Message Template Groups
-		$this->_cpt_model_obj->delete_related_permanently('Message_Template_Group');
+		$this->_cpt_model_obj->_remove_relations( 'Message_Template_Group' );
 
 
 		//term taxonomies
@@ -1823,7 +1943,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(
+			// exclude array
+			array(
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
+				EEM_Registration::status_id_incomplete
+			),
+			// translated
+			TRUE
+		);
 		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : EEM_Registration::status_id_pending_payment;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
@@ -1876,6 +2005,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_category->category_identifier = $term->slug;
 			$this->_category->category_desc = $term->description;
 			$this->_category->id = $term->term_id;
+			$this->_category->parent = $term->parent;
 		}
 	}
 
@@ -1884,7 +2014,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	private function _set_empty_category_object() {
 		$this->_category = new stdClass();
-		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
+		$this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc  = '';
+		$this->_category->id = $this->_category->parent = 0;
 	}
 
 
@@ -1909,7 +2040,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_category_object();
 		$id = !empty($this->_category->id) ? $this->_category->id : '';
 
-		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+		$delete_action = 'delete_category';
 
 		//custom redirect
 		$redirect = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'category_list'), $this->_admin_base_url );
@@ -1927,15 +2058,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
 			'value' => EEH_Formatter::admin_format_content($this->_category->category_desc),
-			'class' => 'my_editor_custom'
+			'class' => 'my_editor_custom',
+			'wpeditor_args' => array('media_buttons' => FALSE )
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
+
+		$all_terms = get_terms( array('espresso_event_categories' ), array( 'hide_empty' => 0, 'exclude' => array( $this->_category->id ) ) );
+
+		//setup category select for term parents.
+		$category_select_values[] = array(
+			'text' => __('No Parent', 'event_espresso'),
+			'id' => 0
+			);
+		foreach ( $all_terms as $term ) {
+			$category_select_values[] = array(
+				'text' => $term->name,
+				'id' => $term->term_id
+				);
+		}
+
+		$category_select = EEH_Form_Fields::select_input( 'category_parent', $category_select_values, $this->_category->parent );
+
 		$template_args = array(
 			'category' => $this->_category,
+			'category_select' => $category_select,
 			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
 			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
-			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
-			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
+			'disable' => '',
+			'disabled_message' => FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
 		return EEH_Template::display_template($template, $template_args, TRUE );
@@ -1984,16 +2134,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	private function _insert_category( $update = FALSE ) {
-		global $wpdb;
 		$cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
-		$category_name= $this->_req_data['category_name'];
-		$category_desc= $this->_req_data['category_desc'];
-
+		$category_name= isset( $this->_req_data['category_name'] ) ? $this->_req_data['category_name'] : '';
+		$category_desc= isset( $this->_req_data['category_desc'] ) ? $this->_req_data['category_desc'] : '';
+		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
 
 		$term_args=array(
 			'name'=>$category_name,
 			'description'=>$category_desc,
-			//'parent'=>$espresso_wp_user //eventually this will be added.
+			'parent'=>$category_parent
 		);
 		//was the category_identifier input disabled?
 		if(isset($this->_req_data['category_identifier'])){

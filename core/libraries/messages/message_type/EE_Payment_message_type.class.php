@@ -28,86 +28,26 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-class EE_Payment_message_type extends EE_message_type {
+class EE_Payment_message_type extends EE_Payment_Base_message_type {
 
 	public function __construct() {
 
 		//setup type details for reference
 		$this->name = 'payment';
-		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
+		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('payment received', 'event_espresso'),
 			'plural' => __('payments received', 'event_espresso')
 			);
 
 		parent::__construct();
-	
-	}
 
-	
-	/**
-	 * see abstract declaration in parent class for details.
-	 */
-	protected function _set_admin_pages() {
-		$this->admin_registered_pages = array(
-			'events_edit' => true
-			); 
-	}
-
-
-
-	protected function _set_data_handler() {
-		$this->_data_handler = 'Gateways';
-	}
-
-
-
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
-		//this is just a test
-		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
-	}
-
-	/**
-	 * This message type doesn't need any settings so we are just setting to empty array.
-	 */
-	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array();
-	}
-
-	protected function _set_default_field_content() {
-
-		$this->_default_field_content = array(
-			'subject' => $this->_default_template_field_subject(),
-			'content' => $this->_default_template_field_content(),
-		);
-	}
-
-
-
-
-	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Payment Details';
-		};
-		return $content;
-	}
-
-	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-content.template.php');
-
-		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
-		}
-
-		return $tcontent;
 	}
 
 	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
-	 * 
+	 *
 	 * @access  protected
 	 * @return  void
 	 */
@@ -128,11 +68,8 @@ class EE_Payment_message_type extends EE_message_type {
 				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful payment', 'event_espresso')
 				)
 			);
-
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
-	
+
 }
 
 // end of file:	includes/core/messages/types/EE_Onsite Payment_message.class.php

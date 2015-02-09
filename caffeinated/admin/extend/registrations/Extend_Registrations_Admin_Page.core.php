@@ -43,22 +43,46 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'registrations';
+
+		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) ? ! is_array( $this->_req_data['ATT_ID'] ) : 0;
+		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
+
 		$new_page_routes = array(
-			'reports' => '_registration_reports',
-			'registration_checkins' => '_registration_checkin_list_table',
+			'reports' => array(
+				'func' => '_registration_reports',
+				'capability' => 'ee_read_registrations'
+				),
+			'registration_checkins' => array(
+				'func' => '_registration_checkin_list_table',
+				'capability' => 'ee_read_checkins'
+				),
+			'newsletter_selected_send' => array(
+				'func' => '_newsletter_selected_send',
+				'noheader' => TRUE,
+				'capability' => 'ee_send_message'
+				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'ee_delete_checkins'
 				),
 			'delete_checkin_row' => array(
 					'func' => '_delete_checkin_row',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'ee_delete_checkin',
+					'obj_id' => $reg_id
 				),
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'ee_edit_checkin',
+					'obj_id' => $reg_id
 				),
-			'event_registrations'=> '_event_registrations_list_table',
+			'event_registrations'=> array(
+				'func' => '_event_registrations_list_table',
+				'capability' => 'ee_read_checkins',
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -69,7 +93,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					),
-                'help_tabs' => array(
+				 'help_tabs' => array(
 					'registrations_reports_help_tab' => array(
 						'title' => __('Registration Reports', 'event_espresso'),
 						'filename' => 'registrations_reports'
@@ -84,7 +108,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'order' => 10,
 					'persistent' => true
 					),
-                'help_tabs' => array(
+					'help_tabs' => array(
 					'registrations_event_checkin_help_tab' => array(
 						'title' => __('Registrations Event Check-In', 'event_espresso'),
 						'filename' => 'registrations_event_checkin'
@@ -135,6 +159,28 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 
+	protected function _ajax_hooks() {
+		parent::_ajax_hooks();
+		add_action('wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content') );
+	}
+
+
+
+	public function load_scripts_styles() {
+		parent::load_scripts_styles();
+
+		//if newsletter message type is active then let's add filter and load js for it.
+		EE_Registry::instance()->load_helper('MSG_Template');
+		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
+			//enqueue newsletter js
+			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_style( 'ee-newsletter-trigger-css', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.css', array(), EVENT_ESPRESSO_VERSION );
+			//hook in buttons for newsletter message type trigger.
+			add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
+		}
+	}
+
+
 
 	public function load_scripts_styles_reports() {
 		//styles
@@ -183,15 +229,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					//'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
-			/*'trash' => array(
-				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
-					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
-					)
-				)/**/
 			);
 	}
 
@@ -208,6 +245,201 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'bulk_action' => array( 'delete_checkin_rows' => __('Delete Check-In Rows', 'event_espresso') )
 				),
 			);
+	}
+
+
+
+	/**
+	 * callback for ajax action.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @return json
+	 */
+	public function get_newsletter_form_content() {
+		//do a nonce check cause we're not coming in from an normal route here.
+		$nonce = isset( $this->_req_data['get_newsletter_form_content_nonce'] ) ? sanitize_text_field( $this->_req_data['get_newsletter_form_content_nonce'] ) : '';
+		$nonce_ref = 'get_newsletter_form_content_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+		//let's get the mtp for the incoming MTP_ ID
+		if ( !isset( $this->_req_data['GRP_ID'] ) ) {
+			EE_Error::add_error( __('There must be something broken with the js or html structure because the required data for getting a message template group is not present (need an GRP_ID).', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		}
+		$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['GRP_ID'] );
+		if ( ! $MTPG instanceof EE_Message_Template_Group ) {
+			EE_Error::add_error( sprintf( __('The GRP_ID given (%d) does not appear to have a corresponding row in the database.', 'event_espresso'), $this->_req_data['GRP_ID'] ), __FILE__, __FUNCTION__, __LINE__  );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		}
+
+		$MTPs = $MTPG->context_templates();
+		$MTPs = $MTPs['attendee'];
+		$template_fields = array();
+		foreach ( $MTPs as $MTP ) {
+			$field = $MTP->get('MTP_template_field');
+			if ( $field == 'content'  ) {
+				$content = $MTP->get('MTP_content');
+				if ( !empty( $content['newsletter_content'] ) ) {
+					$template_fields['newsletter_content'] = $content['newsletter_content'];
+					}
+				continue;
+			}
+			$template_fields[$MTP->get('MTP_template_field')] = $MTP->get('MTP_content');
+		}
+
+		$this->_template_args['success'] = TRUE;
+		$this->_template_args['error'] = FALSE;
+		$this->_template_args['data'] = array(
+			'batch_message_from' => isset($template_fields['from']) ? $template_fields['from'] : '',
+			'batch_message_subject' => isset($template_fields['subject']) ? $template_fields['subject'] : '',
+			'batch_message_content' => isset( $template_fields['newsletter_content'] ) ? $template_fields['newsletter_content'] : ''
+			);
+		$this->_return_json();
+	}
+
+
+
+
+	/**
+	 * callback for AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons action
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param EE_Admin_List_Table $list_table
+	 * @return string html string for extra buttons
+	 */
+	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
+			return '';
+		}
+
+		$routes_to_add_to = array(
+			'contact_list',
+			'event_registrations',
+			'default'
+			);
+		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to )  ) {
+			if ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) {
+				echo '';
+			} else {
+				$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
+				echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+				add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+			}
+		}
+	}
+
+
+
+
+	public function newsletter_send_form_skeleton() {
+		$list_table = $this->_list_table_object;
+		$codes = array();
+		//need to templates for the newsletter message type for the template selector.
+		$values[] = array( 'text' => __('Select Template to Use', 'event_espresso'), 'id' => 0 );
+		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
+		foreach ( $mtps as $mtp ) {
+			$name = $mtp->name();
+			$values[] = array(
+				'text' => empty( $name ) ? __('Global', 'event_espresso') : $name,
+				'id' => $mtp->ID()
+				);
+		}
+
+		//need to get a list of shortcodes that are available for the newsletter message type.
+		EE_Registry::instance()->load_helper('MSG_Template');
+		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', FALSE );
+		foreach ( $shortcodes as $field => $shortcode_array ) {
+			$codes[$field] = implode(', ', array_keys($shortcode_array ) );
+		}
+
+		$shortcodes = $codes;
+
+		$form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
+		$form_template_args = array(
+			'form_action' => admin_url('admin.php?page=espresso_registrations'),
+			'form_route' => 'newsletter_selected_send',
+			'form_nonce_name' => 'newsletter_selected_send_nonce',
+			'form_nonce' => wp_create_nonce( 'newsletter_selected_send_nonce' ),
+			'redirect_back_to' => $this->_req_action,
+			'ajax_nonce' => wp_create_nonce( 'get_newsletter_form_content_nonce'),
+			'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values ),
+			'shortcodes' => $shortcodes,
+			'id_type' => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration'
+			);
+		EEH_Template::display_template( $form_template, $form_template_args );
+	}
+
+
+
+	/**
+	 * Handles sending selected registrations/contacts a newsletter.
+	 *
+	 * @since  4.3.0
+	 *
+	 * @return void
+	 */
+	protected function _newsletter_selected_send() {
+		$success = TRUE;
+		//first we need to make sure we have a GRP_ID so we know what template we're sending and updating!
+		if ( empty( $this->_req_data['newsletter_mtp_selected'] ) ) {
+			EE_Error::add_error( __('In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
+		}
+
+		if ( $success ) {
+			//update Message template in case there are any changes
+			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['newsletter_mtp_selected'] );
+			$MTPs = $MTPG instanceof EE_Message_Template_Group ? $MTPG->context_templates() : array();
+			if ( empty( $MTPs ) ) {
+				EE_Error::add_error( __('Unable to retrieve message template fields from the db. Messages not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				$success = FALSE;
+			}
+
+			//let's just update the specific fields
+			foreach ( $MTPs['attendee'] as $MTP ) {
+				$field = $MTP->get('MTP_template_field');
+				$content = $MTP->get('MTP_content');
+				$new_content = $content;
+				switch( $field ) {
+					case 'from' :
+						$new_content = !empty( $this->_req_data['batch_message']['from'] ) ? $this->_req_data['batch_message']['from'] : $content;
+						break;
+					case 'subject' :
+						$new_content = !empty( $this->_req_data['batch_message']['subject'] ) ? $this->_req_data['batch_message']['subject'] : $content;
+						break;
+					case 'content' :
+						$new_content = $content;
+						$new_content['newsletter_content'] = !empty( $this->_req_data['batch_message']['content'] ) ? $this->_req_data['batch_message']['content'] : $content['newsletter_content'];
+						break;
+					default :
+						continue;
+						break;
+				}
+				$MTP->set('MTP_content', $new_content);
+				$MTP->save();
+			}
+
+			//great fields are updated!  now let's make sure we just have contact objects (EE_Attendee).
+			$id_type = !empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
+
+			//id_type will affect how we assemble the ids.
+			$ids = !empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
+
+			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+
+			//we do _action because ALL triggers are handled in EED_Messages.
+			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
+		}
+		$query_args = array(
+			'action' => !empty( $this->_req_data['redirect_back_to'] ) ? $this->_req_data['redirect_back_to'] : 'default'
+			);
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}
 
 
@@ -256,9 +488,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_day_report( $period );
+		$results = $REG->get_registrations_per_day_report( $period );
 
 		//printr( $results, '$registrations_per_day' );
 		$regs = array();
@@ -314,9 +546,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_event_report( $period );
+		$results = $REG->get_registrations_per_event_report( $period );
 		//printr( $results, '$registrations_per_event' );
 		$regs = array();
 		$ymax = 0;
@@ -390,7 +622,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	public function toggle_checkin_status() {
 		//first make sure we have the necessary data
 		if ( !isset( $this->_req_data['_regid'] ) ) {
-			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('There must be something broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();
@@ -445,7 +677,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$query_args['DTT_ID'] = $DTT_ID;
 			$new_status = $this->_toggle_checkin($this->_req_data['_regid'], $DTT_ID);
 		} else {
-			EE_Error::add_error(__('Missing some required data to toggle the Check-in', 'event_espresso') );
+			EE_Error::add_error(__('Missing some required data to toggle the Check-in', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__  );
 		}
 
 		if ( defined('DOING_AJAX' ) )
@@ -488,7 +720,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_args = array(
 			'action' => 'registration_checkins',
 			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
-			'_REGID' => isset( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0
+			'_REGID' => isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : 0
 			);
 		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
 			while ( list( $CHK_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
@@ -551,7 +783,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$legend_items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This Registrant is the Primary Registrant', 'event_espresso')
 				),
 			'checkin' => array(

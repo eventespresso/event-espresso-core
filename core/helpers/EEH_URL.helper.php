@@ -17,11 +17,11 @@ class EEH_URL{
 	 *
 	 * @access public
 	 * @param array       $args
-	 * @param bool|string $url
+	 * @param string $url
 	 * @return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
-		if ( ! $url ) {
+	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {
+		if ( empty( $url )) {
 			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf(
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
@@ -41,6 +41,30 @@ class EEH_URL{
 
 		return add_query_arg( $args, $url );
 
+	}
+
+
+
+	/**
+	 * Returns whether not the remote file exists.
+	 * (Sends a HEAD curl request. It would probably be better to use wp_remote_get,
+	 * but its nice
+	 * @param string $url
+	 * @return boolean
+	 */
+	public static function remote_file_exists($url){
+		$results = wp_remote_request($url,array(
+			'method'=>'HEAD',
+			'redirection'=>1,
+		));
+		if( ! $results instanceof WP_Error &&
+				isset($results['response']) &&
+				isset($results['response']['code']) &&
+				$results['response']['code'] == '200'){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 
@@ -118,7 +142,27 @@ class EEH_URL{
 
 
 
+	/**
+	 * prevent_prefetching
+	 * @return void
+	 */
+	public static function prevent_prefetching(){
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+	}
+
+
+
+	/**
+	 * add_nocache_headers
+	 * @return void
+	 */
+	public static function add_nocache_headers(){
+		// add no cache headers
+//		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+//		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
+	}
 
 }
 // End of file EEH_URL.helper.php
-// Location: /core/helpers/EEH_URL.helper.php

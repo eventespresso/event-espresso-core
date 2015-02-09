@@ -15,34 +15,32 @@
 			<tbody>
 			<?php foreach( $registrations as $registration ) : ?>
 				<tr>
-					<th class="jst-left">
-					<?php 
+					<td class="jst-left">
+					<?php
 						$event_url = add_query_arg( array( 'action' => 'edit', 'post' => $registration->event_ID() ), admin_url( 'admin.php?page=espresso_events' ));
-						echo '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>';
+						echo EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $registration->event_ID() ) ?  '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>' : $registration->event_name();
 					?>
-					</th>
-					<th class="jst-left">
-					<?php 
-							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );	
-							echo '
-							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-								View Registration ' . $registration->ID() . '  
-								<!--<img width="13" height="13" alt="View Registration" src="'. EE_GLOBAL_ASSETS_URL .'/images/edit.png">-->
-							</a>';
+					</td>
+					<td class="jst-left">
+					<?php
+							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
+							echo EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
+							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . sprintf( __( '
+								View Registration ', 'event_espresso'), $registration->ID() ) .
+							'</a>' : '';
 					?>
-					</th>
-					<th class="jst-left">
-					<?php 
+					</td>
+					<td class="jst-left">
+					<?php
 						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
-						echo '
+						echo EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ? '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
-							View Transaction ' . $registration->transaction_ID() . '  
-							<!--<img width="16" height="16" alt="' . __( 'View Transaction', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/money.png">-->
-						</a>';						
+							View Transaction ' . $registration->transaction_ID() . '
+						</a>' : '';
 					?>
-					</th>
-					<th class="jst-left"><?php echo $registration->reg_code();?></th>
-					<th class="jst-rght"><?php echo EEH_Template::format_currency( $registration->price_paid() );?></th>
+					</td>
+					<td class="jst-left"><?php echo $registration->reg_code();?></td>
+					<td class="jst-rght"><?php echo EEH_Template::format_currency( $registration->price_paid() );?></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

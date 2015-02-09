@@ -1,7 +1,7 @@
 <?php 
 /**
  * migrates 3.1 attendee rows into 4.1 line items.
- * THis is done seperately from migrating transaction and registrations, because
+ * THis is done separately from migrating transaction and registrations, because
  * we wanted to use that completed 4.1 data in creating the line items
 
 4.1 Line Item table fields

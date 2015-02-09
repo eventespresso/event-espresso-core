@@ -24,7 +24,7 @@
 class EEM_Country extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
   	// array of all countries
 	private static $_all_countries = FALSE;
   	// array of all active countries
@@ -33,27 +33,20 @@ class EEM_Country extends EEM_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Country object
-	 *
-	 *		@access public
-	 *		@return EEM_Country instance
-	 */	
-	public static function instance(){
-	
-		// check if instance of EEM_Country already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
-			self::$_instance = new self();
-		}
-		// EEM_Country object
-		return self::$_instance;
+	 * Resets the country
+	 * @return EEM_Country
+	 */
+	public static function reset( $timezone = NULL ){
+		self::$_active_countries = NULL;
+		self::$_all_countries = NULL;
+		return parent::reset( $timezone );
 	}
 
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
-		
-		
+
+
 		$this->_tables = array(
 			'Country'=> new EE_Primary_Table('esp_country', 'CNT_ISO')
 		);
@@ -62,7 +55,7 @@ class EEM_Country extends EEM_Base {
 				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Dropdown Select Lists','event_espresso'), false, true),
 				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso')),
 				'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
-				'RGN_ID'=>new EE_All_Caps_Text_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
+				'RGN_ID'=>new EE_Integer_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
 				'CNT_name'=>new EE_Plain_Text_Field('CNT_name', __('Country Name','event_espresso'), false,''),
 				'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', __('Country Currency Code','event_espresso'), false),
 				'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', __('Currency Name Singular','event_espresso'), false),
@@ -80,8 +73,8 @@ class EEM_Country extends EEM_Base {
 			'State'=>new EE_Has_Many_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
-		
-		parent::__construct();
+
+		parent::__construct( $timezone );
 	}
 
 
@@ -89,10 +82,10 @@ class EEM_Country extends EEM_Base {
 
 	/**
 	*		_get_countries
-	* 
-	* 		@access		private
-	*		@return 		void
-	*/	
+	*
+	* 		@access		public
+	*		@return 		array
+	*/
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
 			self::$_all_countries = $this->get_all( array( 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=> array( 0,99999 )));
@@ -102,17 +95,36 @@ class EEM_Country extends EEM_Base {
 
 	/**
 	*		_get_countries
-	* 
-	* 		@access		private
-	*		@return 		void
-	*/	
+	*		Gets and caches the list of active countries. If you know the list of active countries
+	*		has changed during this request, first use EEM_Country::reset() to flush the cache
+	* 		@access		public
+	*		@return 		array
+	*/
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {
 			self::$_active_countries =  $this->get_all( array( array( 'CNT_active' => TRUE ), 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_countries;
 	}
-	
+
+	/**
+	 * Gets the country's name by its ISO
+	 * @param string $country_ISO
+	 * @return string
+	 */
+	public function get_country_name_by_ISO( $country_ISO ){
+		if( isset( self::$_all_countries[ $country_ISO ] ) &&
+				self::$_all_countries[ $country_ISO ] instanceof EE_Country ){
+			return self::$_all_countries[ $country_ISO ]->name();
+		}
+		$names = $this->get_col( array( array( 'CNT_ISO' => $country_ISO ), 'limit' => 1), 'CNT_name' );
+		if( is_array( $names ) && ! empty( $names ) ){
+			return reset( $names );
+		}else{
+			return '';
+		}
+	}
+
 }
 // End of file EEM_Country.model.php
 // Location: /includes/models/EEM_Country.model.php

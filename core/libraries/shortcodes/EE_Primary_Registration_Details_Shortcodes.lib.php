@@ -46,7 +46,9 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			'[PRIMARY_REGISTRANT_CITY]' => __('The city for the primary registrant for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_ZIP_PC]' => __('The ZIP (or Postal) Code for the primary registrant for the transaction.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_ADDRESS_STATE]' => __('The state/province for the primary registrant for the transaction.', 'event_espresso' ),
-			'[PRIMARY_REGISTRANT_COUNTRY]' => __('The country for the primary registrant for the transaction.', 'event_espresso')
+			'[PRIMARY_REGISTRANT_COUNTRY]' => __('The country for the primary registrant for the transaction.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_REGISTRATION_DATE]' => __('The date the registration occured for the primary registration.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso')
 			);
 	}
 
@@ -113,6 +115,18 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			case '[PRIMARY_REGISTRANT_COUNTRY]' :
 				$country_obj = $attendee->country_obj();
 				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
+				break;
+
+			case '[PRIMARY_REGISTRANT_REGISTRATION_DATE]' :
+				if ( ! $primary_registration->primary_reg_obj instanceof EE_Registration )
+					return '';
+				return date_i18n( get_option( 'date_format'), strtotime( $primary_registration->primary_reg_obj->date() ) );
+				break;
+
+			case '[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]' :
+				if ( ! $primary_registration->primary_reg_obj instanceof EE_Registration )
+					return '';
+				return $primary_registration->primary_reg_obj->edit_attendee_information_url();
 				break;
 
 			default :

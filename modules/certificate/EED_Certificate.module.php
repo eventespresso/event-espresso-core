@@ -17,11 +17,22 @@
  *
  * @package			Event Espresso
  * @subpackage	/modules/certificate/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Certificate  extends EED_Module {
+
+
+
+	/**
+	 * @return EED_Module
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -107,8 +118,8 @@ class EED_Certificate  extends EED_Module {
 		$content .= $this->ouput;
 		return $content;
 	}
-	
-	
+
+
 
 
 }

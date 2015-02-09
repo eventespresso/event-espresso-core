@@ -5,11 +5,11 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>All</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('All', 'event_espresso'); ?></strong><br />
 <?php _e('Show all registrations for event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Trashed</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Trashed', 'event_espresso'); ?></strong><br />
 <?php _e('Show registrations that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>

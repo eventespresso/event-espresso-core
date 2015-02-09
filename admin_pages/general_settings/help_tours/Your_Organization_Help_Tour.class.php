@@ -84,6 +84,15 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => 15
 					)
+				),
+			70 => array(
+				'id' => 'espresso_major_buttons_wrapper',
+				'content' => $this->_end_tour_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 185
+					)
 				)
 			);
 	}
@@ -113,5 +122,9 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _ueip_option_stop() {
 		return '<p>' . __('Help us to help you! Sign up to the User eXperience Improvement Program and send us anonymous data that will help us improve Event Espresso.', 'event_espresso') . '</p>';
+	}
+
+	protected function _end_tour_stop() {
+		return '<p>' . __('You are almost done updating Your Organization information. Click on the Save button to save changes and then go to the Payment Methods screen so you can setup a payment gateway.', 'event_espresso') . '</p>';
 	}
 }

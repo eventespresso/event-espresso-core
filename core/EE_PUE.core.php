@@ -193,12 +193,13 @@ class EE_PUE {
 	 * @return string html.
 	 */
 	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
-		 echo '<h4 '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
-		 $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
-		 $settings_url = $settings_url . '#UXIP_settings';
-		 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
-		 if ( $extra ) {
-		 	echo sprintf( __( 'You can choose to not be part of the solution and opt-out of this program by changing the %sEvent Espresso > General Settings > Your Organization > UXIP Settings%s within your WordPress Admin', 'event_espresso' ), '<a href="' . $settings_url . '">','</a>' );
+	 	if ( ! $extra ) {
+			 echo '<h4 '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
+			 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
+		} else {
+			$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
+			$settings_url .= '#UXIP_settings';
+			echo sprintf( __( 'The Event Espresso UXIP feature is active on your site. For %smore info%s and to opt-out %sclick here%s.', 'event_espresso' ), '<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" traget="_blank">', '</a>', '<a href="' . $settings_url . '" target="_blank">', '</a>' );
 		}
 	}
 
@@ -212,14 +213,10 @@ class EE_PUE {
 		$settings_url = $settings_url . '#UXIP_settings';
 		?>
 		<div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
-			<p><?php echo EE_PUE::espresso_data_collection_optin_text(); ?></p>
 			<div id="data-collect-optin-options-container">
+				<span class="dashicons dashicons-admin-site"></span>
+				<span class="data-optin-text"><?php echo EE_PUE::espresso_data_collection_optin_text(); ?></span>
 				<span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
-				<?php
-				if ( empty($ueip_has_notified) ) {
-					echo '<a href="' . $settings_url . '">'.__('Opt-out now?', 'event_espresso').'</a>';
-				}
-				?>
 				<button class="button-secondary data-optin-button" value="no"><?php _e('Dismiss', 'event_espresso'); ?></button>
 				<!--<button class="button-primary data-optin-button" value="yes"><?php _e('Yes! I\'m In', 'event_espresso'); ?></button>-->
 				<div style="clear:both"></div>

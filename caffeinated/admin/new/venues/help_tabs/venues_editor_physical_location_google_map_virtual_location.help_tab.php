@@ -10,5 +10,5 @@
 </p>
 <h3><?php _e('Virtual Location', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Enter the URL (website address) for the venue and a provide a call in number. This field is optional and is typically uses for virtual events such as webinars.', 'event_espresso'); ?>
+<?php _e('Enter the URL (website address) for the venue and a provide a call-in number. This field is optional and is typically uses for virtual events such as webinars.', 'event_espresso'); ?>
 </p>

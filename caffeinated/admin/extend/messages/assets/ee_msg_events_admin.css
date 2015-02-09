@@ -1,12 +1,29 @@
-#messages-change-edit-templates-dv {
-	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
-	background:#fff; border:1px solid #ddd; border-radius:5px;
+.messages-custom-template-switcher {
+    width: 100%;
 }
 
-#ee-msg-context-switcher-frm {
-    display: inline-block;
+.messages-custom-template-switcher td:first {
+    width: 25%;
 }
 
-.messages-preview-button {
-    display: inline-block;
+.messages-custom-template-switcher td:nth-child(2) {
+    width: 25%;
+    padding-right: 10px;
+}
+
+.messages-custom-template-switcher td:last-child {
+    width: 50%;
+}
+
+.messages-custom-template-switcher thead {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.messages-custom-template-switcher select {
+    width: 100%;
+}
+
+.messages-custom-template-switcher .button-small {
+    margin-right: 20px;
 }

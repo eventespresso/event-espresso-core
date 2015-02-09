@@ -17,12 +17,18 @@
  *
  * @package		Event Espresso
  * @subpackage	/modules/venue_single/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Venue_Single  extends EED_Module {
 
+	/**
+	 * @return EED_Venue_Single
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -90,9 +96,9 @@ class EED_Venue_Single  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function the_title( $title = '', $id = '' ) {
-		return $title; 
+		return $title;
 //		global $post;
-//		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title; 
+//		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title;
 	}
 
 
@@ -161,7 +167,7 @@ class EED_Venue_Single  extends EED_Module {
 	}
 
 
-	
+
 
 
 }

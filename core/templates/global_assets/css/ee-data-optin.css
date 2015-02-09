@@ -1,0 +1,23 @@
+#espresso-data-collect-optin-container {
+    padding: 10px;
+}
+
+#espresso-data-collect-optin-container ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+#espresso-data-collect-optin-container button.data-optin-button {
+    float: right;
+    margin-right: 8px;
+}
+
+#espresso-data-collect-optin-container .dashicons {
+    font-size: 22px;
+    margin-top: 4px;
+}
+
+#espresso-data-collect-optin-container .data-optin-text {
+    display: inline-block;
+    vertical-align: middle;
+}

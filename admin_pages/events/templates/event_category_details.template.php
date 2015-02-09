@@ -20,12 +20,19 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2"><h4>
-				<?php _e('Category Description', 'event_espresso'); ?>
-			</h4></td>
+			<th><label for="category_parent">
+					<?php _e('Category Parent', 'event_espresso'); ?>
+				</label></th>
+			<td><?php echo $category_select; ?>
+					<br />
+					<p class="description"><?php _e('Categories are hierarchical.  You can change the parent for this category here.', 'event_espresso'); ?></p>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
+				<h4 class="category_description_label">
+					<?php _e('Category Description', 'event_espresso'); ?>
+				</h4>
 				<?php echo $category_desc_editor; ?>
 				<table id="cat-descr-add-form" cellspacing="0">
 					<tbody>

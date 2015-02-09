@@ -18,11 +18,6 @@
  <p>
 	<label><?php _e('Display Ticket Selector', 'event_espresso'); ?></label>
 	<?php echo $display_ticket_selector; ?>
-</p> 
-
-<p>
-	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
-	<input name="externalURL" size="20" type="text" value="<?php echo $_event->external_url(); ?>">
 </p>
 
 <p>

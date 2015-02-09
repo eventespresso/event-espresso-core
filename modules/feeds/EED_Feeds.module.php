@@ -17,11 +17,21 @@
  *
  * @package		Event Espresso
  * @subpackage	/modules/feeds/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Feeds  extends EED_Module {
+
+
+
+	/**
+	 * @return EED_Feeds
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
 
 
 	/**
@@ -83,10 +93,10 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function parse_request() {
 		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {
-			// define path to templates	
+			// define path to templates
 			define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 			// what kinda post_type are we dealing with ?
-			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {			
+			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {
 				case 'espresso_events' :
 					// for rss2, atom, rss, rdf
 					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
@@ -120,7 +130,7 @@ class EED_Feeds  extends EED_Module {
 	public static function comment_feed_join( $SQL ) {
 		global $wpdb;
 		// check for wp_posts table in JOIN clause
-		if ( strpos( $SQL, $wpdb->posts ) !== FALSE ) {	
+		if ( strpos( $SQL, $wpdb->posts ) !== FALSE ) {
 			add_filter( 'EED_Feeds__comment_feed_where__espresso_attendees', '__return_true' );
 		}
 		return $SQL;
@@ -140,8 +150,8 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function comment_feed_where( $SQL ) {
 		global $wp_query, $wpdb;
-		if ( $wp_query->is_comment_feed && apply_filters( 'EED_Feeds__comment_feed_where__espresso_attendees', FALSE )) {	
-			$SQL .= " AND $wpdb->posts.post_type != 'espresso_attendees'";	
+		if ( $wp_query->is_comment_feed && apply_filters( 'EED_Feeds__comment_feed_where__espresso_attendees', FALSE )) {
+			$SQL .= " AND $wpdb->posts.post_type != 'espresso_attendees'";
 		}
 		return $SQL;
 	}
@@ -161,12 +171,12 @@ class EED_Feeds  extends EED_Module {
 			EE_Registry::instance()->load_helper( 'Event_View' );
 			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
-			$template_args = array( 
+			$template_args = array(
 				'EVT_ID' => $post->ID,
 				'event_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php', $template_args, TRUE );
-		}  
+		}
 		return  $content;
 	}
 
@@ -202,12 +212,12 @@ class EED_Feeds  extends EED_Module {
 			EE_Registry::instance()->load_helper( 'Event_View' );
 			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
-			$template_args = array( 
+			$template_args = array(
 				'VNU_ID' => $post->ID,
 				'venue_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php', $template_args, TRUE );
-		}  
+		}
 		return $content;
 	}
 
@@ -227,7 +237,7 @@ class EED_Feeds  extends EED_Module {
 		}
 		return $item;
 	}
-	
+
 
 
 }

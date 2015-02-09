@@ -33,56 +33,68 @@
 		<?php
 	}
 	?>
-	<h2 class="about-headline-callout">Two New Major Features Added</h2>
-	<h3>Support for Mijireh Checkout</h3>
-	<img class="alignright " alt="mijireh-checkout-large" src="http://ee-screenshots.s3.amazonaws.com/ee4/mijireh-checkout-large.png" width="131" height="147" /><p>Announcing the ability to integrate Event Espresso with <strong>over 90 different gateways and payment providers</strong>, using the Mijireh Checkout system! <a href="http://www.mijireh.com/" target="_blank">Mijireh Checkout</a> is a PCI compliant checkout page that looks exactly like your site, with support for over 90 gateways and payment providers to use on Mijireh's <a href="http://www.mijireh.com/docs/payment-gateways/" target="_blank">secure PCI compliant servers</a>.</p>
-	<p>Mijireh Checkout helps increase your conversion rates by using your existing website design. Your checkout process remains seamless to your customers while Mijireh Checkout securely handles collecting and transmitting of the credit card data for you.</p>
-	<h3>Support for the Calendar Add-on in EE 4.2+</h3>
-	<a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg"><img class="alignright size-medium wp-image-132" alt="ee4-calendar-3-0-01" src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg" width="265" height="300" /></a>
-	<p>The calendar add-on for EE 4.2 is now available for purchase on the <a target="_blank" href="http://eventespresso.com/product/ee4-events-calendar/">Event Espresso</a> website. The events calendar allows you to display your events in a way that your attendees/registrants are familiar with. It is another way for customers to find your events and even allows you to invite your attendees/registrants to add the events to their own calendars.</p>
-	<p>The EE4 Calendar add-on includes:</p>
-	<ul>
-		<li>Inline calendar images</li>
-		<li>Category filtering</li>
-		<li>Venue filtering</li>
-		<li>Featured images</li>
-		<li>Datetime and format settings</li>
-		<li>Tooltips</li>
-		<li>Color coded categories</li>
-		<li>Better compatibility with themes</li>
-		<li>and much more</li>
-	</ul>
+	
+	
+	<h2 class="about-headline-callout">Initial EE4 Decaf (free) Release</h2>
+	<p>This is the inital release of EE4 Decaf. This is the free version of our very powerful event registration and management plugin for WordPress.</p>
+	
 	<hr>
-	<h2 class="about-headline-callout">Additional Features &amp; Enhancements in EE 4.2</h2>
-	<p>In addition to better out of the box support for themes and plugins, we have added an array of new features such as drag and drop ordering of tickets in the event editor, ordering of questions within question groups, datetime names and descriptions, and the option to turn off the ticket selector in the event details page, and much more:</p>
-	<ul>
-		<li>Added support for Mijireh Checkout</li>
-		<li>Added support for the Calendar add-on</li>
-		<li>Added drag and drop ordering of tickets in the event editor</li>
-		<li>Order Questions by Question Group (replaces ordering questions by question order)</li>
-		<li>Added option to turn ff the Ticket Selector in the Event Details page for events without tickets/registrations</li>
-		<li>Ability to add/Edit Event Datetime Names</li>
-		<li>Ability to add/Edit Event Datetime Descriptions</li>
-		<li>Added Event Datetime Name messages shortcode</li>
-		<li>Event Datetime Description messages shortcode</li>
-		<li>Added datetime titles and descriptions to the order confirmation</li>
-		<li>Added front-end "Maintenance Mode" option</li>
-		<li>Added "Register Now" or "View Details" button in the event list when the Ticket Selector is turned off</li>
-	</ul>
+	
+	
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
+	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
+<p><strong>New Features</strong></p>
+<ul>
+	<li>Duplicate Event (Caffeinated Only)</li>
+	<li>Ticket Required Option (Caffeinated Only)</li>
+	<li>Added iCal Integration</li>
+	<li>Drag-n-drop Answer Values (Caffeinated Only)</li>
+	<li>Order Questions by Question Group (Caffeinated Only)</li>
+	<li>Question Editor Style Changes (Caffeinated Only)</li>
+	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout (Caffeinated Only)</li>
+	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
+</ul>
+<strong>Fixes</strong>
+<ul>
+	<li>Gateways</li>
+	<li>Messages System</li>
+	<li>Migration Issues</li>
+	<li>Miscellaneous Spelling Errors</li>
+</ul>
+
+<p><a href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong></a><br>
+Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
+<ul>
+	<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">Ticket Bundles</a>
+Starting with Event Espresso 4.3 you can offer discount pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">This article</a> shows how to create a ticket bundle where you can set a lower price per ticket when purchased in a bundle.</li>
+	<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">Graduated Ticket Pricing</a>
+Starting with Event Espresso 4.3 you can offer graduated pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">This article</a> shows how to set graduated ticket pricing where you can set a lower price per ticket for larger quantity ticket purchases.</li>
+</ul>
+<p><strong>Messages System Changes/Fixes</strong><br />
+	We’ve improved the Custom Template System, added a “Newsletter” Message Type for sending batch emails, and made a couple of minor updates.</p>
+<ul>
+<li>Messages Admin – Updated to implement a new Custom Template creation/edit process</li>
+<li>Event Editor – Modify Messages metabox in event editor to use new custom template system</li>
+<li>Messages System – Default ‘From’ Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
+<li>Message Type – Newsletter message type</li>
+</ul>
+<p><a href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><strong>Advanced Custom Fields Integration</strong></a><br>
+Fully customize WordPress edit screens with powerful custom fields.</p>
+<ul>
+<li><a href="http://eventespresso.com/2014/05/developers-corner-using-advanced-custom-fields-extend-ee4/" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
+<li><a href="http://eventespresso.com/wiki/add-course-curriculum-events-using-advanced-custom-fields/" target="_blank">Add a Course Curriculum Section to the “Thank You” Page Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/add-sponsors-section-events-using-advanced-custom-fields/" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-thank-page-actions-filters-hooks/" target="_blank">EE4 “Thank You” Page Actions &amp; Filters</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-single-page-checkout-page-actions-filters/" target="_blank">EE4 “Single Page Checkout” Page Actions &amp; Filters</a></li>
+</ul>
+<p><strong>Payment Gateway Fixes</strong></p>
+<ul>
+<li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
+<li>Show failed payments in payment response</li>
+<li>Fix for Single Page Checkout so it displays the correct amount owed based on when a payment has already been entered into the system</li>
+<li>Send address fields to Mijireh</li>
+</ul>
+
 	<hr>
-	<h2 class="about-headline-callout">New Hooks, Filters, and Stuff for Developers</h2>
-	<p>Here are a few more of the new features and cool stuff for developers available in 4.2 and we'd like to invite you to take a look and offer feedback (praises, report bugs, etc.):</p>
-	<ul>
-		<li>Hook/Filter to Set No-cost events as "Free"</li>
-		<li>Add filter so the email messenger CSS file can be swapped out by developers for another CSS file</li>
-		<li>Added a hook in the Admin panel after each ticket row description</li>
-		<li>Added a hook in the Admin panel after each ticket create and update model</li>
-		<li>Added hook in the Front-end after each ticket date on a single event</li>
-		<li>Made Single Page Check Out (SPCO) button text filterable</li>
-		<li>Models make acceptance of empty strings more consistent</li>
-		<li>Simplified the EE_System Constructor and Hook point's to allow for external module/add-on/plugin development</li>
-		<li>EEH_Template::locate_template() to accept full paths as well as relatives paths (from plugin root)</li>
-		<li>Filter for adding caffeinated modules to EE_Config $modules_to_register array</li>
-		<li>Make Single Page Check Out (SPCO) button text filterable</li>
-	</ul>
-	<hr>
+

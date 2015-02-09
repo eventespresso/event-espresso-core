@@ -26,26 +26,10 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Term_Taxonomy extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */	
-	public static function instance(){
-	
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
 
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Term Taxonomy','event_espresso');
 		$this->plural_item = __('Term Taxonomy','event_espresso');
 		$this->_tables = array(
@@ -70,8 +54,8 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		$this->_indexes = array(
 			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
 		);
-		
-		parent::__construct();
+
+		parent::__construct( $timezone );
 	}
 
 

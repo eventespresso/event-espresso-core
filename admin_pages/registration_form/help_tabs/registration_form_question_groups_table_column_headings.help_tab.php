@@ -2,23 +2,23 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>ID</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('ID', 'event_espresso'); ?></strong><br />
 <?php _e('This is the numerical ID of the question group. This is used internally for Event Espresso.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Group Name</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Group Name', 'event_espresso'); ?></strong><br />
 <?php _e('This shows the name of the question group as it will be displayed on the registration form.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Description</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Description', 'event_espresso'); ?></strong><br />
 <?php _e('This shows the description for the question group as it will be shown on the registration form.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Show Name</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Show Name', 'event_espresso'); ?></strong><br />
 <?php _e('Shows if the group name will be displayed on the registration form.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Show Desc</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Show Desc', 'event_espresso'); ?></strong><br />
 <?php _e('Shows if the description for the question group be will displayed on the registration form.', 'event_espresso'); ?>
 </li>
 </ul>

@@ -14,7 +14,7 @@ Created by Olly Headey
 
 #invoice {font-family: "Gill Sans", "Gill Sans MT", Helvetica, Arial, Verdana, sans-serif; color:#000; text-transform: none; color: #699}
 #invoice h2 {margin: 10px 0;font-size: 14pt; }
-#invoice-amount td, th {font-size: 11pt;}
+.invoice-amount td, th {font-size: 11pt;}
 #invoice-header #company-address { text-align: left; font-size: 11pt; line-height: 14pt; padding-top: 2em;}
 #invoice-header #company-address div.org {font-size: 13pt}
 #invoice #client-details, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 11pt; line-height: 14pt;}
@@ -42,9 +42,9 @@ h1,h2,h3,h4,h5,h6  {color: #699}
 #invoice-info{ margin: 0em 0 20px 0; text-align:right; }
 #company-address {margin: 0; padding: 0;}
 
-#bill-to-ship-to, #invoice-amount { margin:20px 0; }
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
 
-#invoice-amount {margin: 2em 0; clear: both; }
+.invoice-amount {margin: 2em 0; clear: both; }
 #invoice #payment-details{width:50%; margin-top:0;}
 #invoice-other {text-align: right;width:50%; }
 

@@ -100,7 +100,7 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_desc'=>new EE_Simple_HTML_Field('post_content', __("Event Description", "event_espresso"), false, ''),
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
 				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
-				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
+				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Description", "event_espresso"), false,''),
 				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
@@ -261,9 +261,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 * @param string $event_name
 	 * @return string
 	 */
-	private function _find_unique_slug($event_name){
+	private function _find_unique_slug($event_name, $old_identifier = ''){
 		$count = 0;
-		$original_name = sanitize_title($event_name);
+		$original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
 		$event_slug = $original_name;
 		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
 			$event_slug = sanitize_title($original_name."-".++$count);
@@ -288,7 +288,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//convert 3.1 event status to 4.1 CPT status
 		//for refrence, 3.1 event stati available for setting are:
 //		$status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
-//		and the json api uses teh following to convert from 3.1 to 4.0
+//		and the json api uses the following to convert from 3.1 to 4.0
 //		'S'=>'secondary/waitlist',
 //		'A'=>'active',
 //		'X'=>'denied',
@@ -358,7 +358,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 
 	/**
-	 * Counts all the registrations for the event in teh 3.1 DB. (takes into account attendee rows which represent various registrations)
+	 * Counts all the registrations for the event in the 3.1 DB. (takes into account attendee rows which represent various registrations)
 	 * @global type $wpdb
 	 * @param type $event_id
 	 * @return int
@@ -489,9 +489,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_venue_into_posts($old_event){
 		global $wpdb;
 		$insertion_array = array(
-					'post_title'=>stripslashes($old_event['venue_title']),//VNU_name
+					'post_title'=>$old_event['venue_title'] ? stripslashes($old_event['venue_title']) : stripslashes( sprintf( __( 'Venue of %s', 'event_espresso' ), $old_event['event_name'])),//VNU_name
 					'post_content'=>'',//VNU_desc
-					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
+					'post_name'=> $this->_find_unique_slug( $old_event['venue_title'], sanitize_title( 'venue-of-' . $old_event['event_name'] ) ),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_excerpt'=>'',//VNU_short_desc arbitraty only 50 characters

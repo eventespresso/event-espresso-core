@@ -3,7 +3,6 @@
 .espresso-admin .regular-text { max-width:99%!important; min-width:40%!important; }
 textarea { width:25em; }
 .espresso-admin textarea { max-width:99%!important; min-width:40%!important; }
-#icon-options-event { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 #entries-per-page-dv { display:inline; }
 
 .wrap .nav-tab-wrapper { margin-bottom:1em; }
@@ -19,7 +18,7 @@ textarea { width:25em; }
 
 /* TABLE COLUMNS */
 
-.wp-list-table #ATT_name .primary-registrant-spn { float: none !important; } 
+.wp-list-table #ATT_name .primary-registrant-spn { float: none !important; }
 /*.wp-list-table .column-ATT_ID { width:50px; text-align:right; }*/
 .wp-list-table .column-ATT_ID { width:3%; }
 .wp-list-table .column-ATT_ID div { min-width:30px; }
@@ -50,9 +49,9 @@ textarea { width:25em; }
 .att-action-lnk { cursor:pointer; }
 
 .admin-primary-mbox-tbl-wrap {
-	padding:3px; margin:0em 0 2em;
+	padding:3px; margin:0 0 2em;
 	background:#fff; border:1px solid #dfdfdf;
-	border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+	border-radius:3px;
 }
 .admin-primary-mbox-tbl {
     width:100%; border-spacing: 0; border-collapse:collapse;
@@ -72,8 +71,8 @@ textarea { width:25em; }
 
 .admin-primary-mbox-total-tr { font-size:1.1em; }
 
-.display-the-hidden { float:right; padding-left:16px; /*background: url("../../../images/additional_info-10x10.png") no-repeat scroll left center transparent; */cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; /*background: url("../../../images/close_additional_info-10x10.png") no-repeat scroll left center transparent;*/ cursor:pointer; }
+.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
+.hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }
 
 .lt-grey-txt  { color:#999;  text-shadow:none; }
 .float-left { float:left; }

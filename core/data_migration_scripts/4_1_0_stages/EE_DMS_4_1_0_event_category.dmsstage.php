@@ -26,7 +26,7 @@ in 4.1, the model's Term_Relationship tables and fields are:
 			));
 
 
- * 
+ *
  */
 class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -60,7 +60,7 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 		$this->_pretty_name = __("Event to Cateogry (4.1 Term Relationships)", "event_espresso");
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Attempts to insert a new question group inthe new format given an old one
 	 * @global type $wpdb
@@ -93,6 +93,12 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 		if ( ! $success){
 			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event_cat_relation, $this->_new_table, $cols_n_values, $datatypes));
 			return 0;
+		}else{
+			//increment the term-taxonomie's count
+			$success = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->term_taxonomy} SET count = count +1 WHERE term_taxonomy_id=%d", $new_term_taxonomy_id ) );
+			if( ! $success ){
+				$this->add_error(sprintf( __( 'Could not increment term_taxonomy\'s count because %s', 'event_espresso' ),$wpdb->last_error));
+			}
 		}
 		return $wpdb->insert_id;
 	}

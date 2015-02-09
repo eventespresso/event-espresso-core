@@ -9,11 +9,11 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>View All Venues</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('View All Venues', 'event_espresso'); ?></strong><br />
 <?php _e('Show all venues.', 'event_espresso'); ?>
 </li>
 <!--<li>
-<?php _e('Trash', 'event_espresso'); ?><br />
+<strong><?php _e('Trash', 'event_espresso'); ?></strong><br />
 <?php _e('Show venues that have been moved to the trash.', 'event_espresso'); ?>
 </li>-->
 </ul>

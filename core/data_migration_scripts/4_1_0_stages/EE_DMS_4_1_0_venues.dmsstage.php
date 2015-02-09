@@ -3,9 +3,9 @@
 /**
  * Converts old venues to Venue Custom Post Types.
  * Must be run after state and country default values have been added
- * Does NOT add relation to Events, but does ensure the state and countries 
- * indicated on teh venue exist
- * //		for reference, this is teh 3.1 table we're expecting
+ * Does NOT add relation to Events, but does ensure the state and countries
+ * indicated on the venue exist
+ * //		for reference, this is the 3.1 table we're expecting
 //CREATE TABLE `wp_events_venue` (
 //  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 //  `name` varchar(250) DEFAULT NULL,
@@ -57,9 +57,9 @@
 //				'VNU_virtual_url'=>new EE_Plain_Text_Field('VNU_virtual_url', __('Virtual URL', 'event_espresso'), true ),
 //				'VNU_google_map_link'=>new EE_Plain_Text_Field('VNU_google_map_link', __('Google Map Link', 'event_espresso'), true ),
 //				'VNU_enable_for_gmap'=>new EE_Boolean_Field('VNU_enable_for_gmap', __('Show Google Map?', 'event_espresso'), false, false )
-//				
+//
 //			));
- * 
+ *
  */
 class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -93,7 +93,7 @@ function _migration_step($num_items=50){
 		}
 		$items_actually_migrated++;
 		if($guid){
-			//if there was an image, we may have had to download it etc and it may have taken 
+			//if there was an image, we may have had to download it etc and it may have taken
 			//longer, then let's not bother migrating anymore on this step
 			break;
 		}
@@ -125,10 +125,11 @@ function __construct() {
 	private function _insert_into_posts($old_venue){
 		global $wpdb;
 		$meta = maybe_unserialize($old_venue['meta']);
+		$slug = $this->_find_unique_slug( $old_venue[ 'name' ], $old_venue[ 'identifier' ] );
 		$insertion_array = array(
 					'post_title'=>stripslashes($old_venue['name']),//VNU_name
 					'post_content'=>isset($meta['description']) ? stripslashes(strip_tags($meta['description'])) : '',//VNU_desc
-					'post_name'=>$old_venue['identifier'],//VNU_identifier
+					'post_name'=> $slug,//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>  current_time('mysql',true),
 					'post_excerpt'=>'',//wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
@@ -161,6 +162,36 @@ function __construct() {
 			return 0;
 		}
 		return $wpdb->insert_id;
+	}
+
+	/**
+	 * Finds a unique slug for this venue, given its name (we could have simply used
+	 * the old unique_identifier column, but it added a long string of seemingly random characters onto the end
+	 * and really wasn't that pretty for a slug, so we decided we'd make our own slug again)
+	 * @param string $post_name
+	 * @return string
+	 */
+	private function _find_unique_slug($post_name, $old_identifier = '' ){
+		$count = 0;
+		$original_name = $post_name ? sanitize_title( $post_name ) : $old_identifier;
+		$event_slug = $original_name;
+		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
+			$event_slug = sanitize_title($original_name."-".++$count);
+		}
+		return $event_slug;
+	}
+
+	/**
+	 * returns whether or not there is a post that has this same slug (post_title)
+	 * @global type $wpdb
+	 * @param type $slug
+	 * @return boolean
+	 */
+	private function _other_post_exists_with_that_slug($slug){
+		global $wpdb;
+		$query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s",$slug);
+		$count = $wpdb->get_var($query);
+		return (boolean)intval($count);
 	}
 
 	/**

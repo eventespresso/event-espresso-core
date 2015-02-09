@@ -3,9 +3,9 @@
 /**
  * Converts 3.1 checkins to 4.1 checkins. It's true that in 3.1 there WAS a table named
  * event_attendee_checkin, which recorded the time of registrations' checkins. HOWEVER, it was inconsistently used
- * (if at all), and its data is basically junk. The checked_in_quantity and checked_in values on teh attendee table
+ * (if at all), and its data is basically junk. The checked_in_quantity and checked_in values on the attendee table
  * are the important records to convert. 
- * So, in converting we use those numbers to decide how many cehckins to add in 4.1, and jsut assume that
+ * So, in converting we use those numbers to decide how many checkins to add in 4.1, and just assume that
  * they checked in at the time of the event (which is quite reasonable). We COULD try to hunt for the actual time
  * of their checkin from the events_attendee_checkin table, but that'd be very difficult and problematic.
  * 
@@ -121,7 +121,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		
 		
-		//ok we can actually do what we set out to do: add a cehckin/checkout record
+		//ok we can actually do what we set out to do: add a checkin/checkout record
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
 			'DTT_ID'=>$new_datetime['DTT_ID'],

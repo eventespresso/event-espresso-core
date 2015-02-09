@@ -3,7 +3,6 @@
 //Returns an array of available template files
 function espresso_invoice_template_files($class_file) {
 	// read our template dir and build an array of files
-	//if (file_exists(dirname($class_file) .'/lib/templates/index.php')) {
 	$dhandle = opendir(dirname($class_file) . '/lib/templates/css/'); //If the template files have been moved to the uploads folder
 	//} else return FALSE;
 

@@ -12,40 +12,27 @@
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
- *
- * STatus Model
- *
- * @package			Event Espresso
- * @subpackage		includes/models/
- * @author				Michael Nelson
- *
- * ------------------------------------------------------------------------
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
-
+/**
+ *
+ * Class EEM_Status
+ *
+ * @package 			Event Espresso
+ * @subpackage		includes/models/
+ * @author 				Michael Nelson
+ * @since                EE4
+ */
 class EEM_Status extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
+
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */	
-	public static function instance(){
-	
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	protected function __construct(){
+	 * @return EEM_Status
+	 */
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
@@ -55,7 +42,7 @@ class EEM_Status extends EEM_Base {
 			'Status'=>array(
 				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso')),
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
-				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event', 
+				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event',
 						array(
 							'event'=> __("Event", "event_espresso"),//deprecated
 							'registration'=>  __("Registration", "event_espresso"),
@@ -72,16 +59,18 @@ class EEM_Status extends EEM_Base {
 			'Transaction'=>new EE_Has_Many_Relation(),
 			'Payment'=>new EE_Has_Many_Relation()
 		);
-		
-		parent::__construct();
+
+		parent::__construct( $timezone );
 	}
+
 
 
 	/**
 	 * This method provides the localized singular or plural string for a given status id
-	 * @param  array   $statuses  This should be an array of statuses in the format array( $status_id, $status_code ).  That way if there isn't a translation in the index we'll return the default code.
-	 * @param  boolean $plural    Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
-	 * @param  string  $schema    This can be either 'upper', 'lower', or 'sentence'.  Basically indicates how we want the status string returned ( UPPER, lower, Sentence)
+	 * @param  array   $statuses This should be an array of statuses in the format array( $status_id, $status_code ).  That way if there isn't a translation in the index we'll return the default code.
+	 * @param  boolean $plural   Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
+	 * @param  string  $schema   This can be either 'upper', 'lower', or 'sentence'.  Basically indicates how we want the status string returned ( UPPER, lower, Sentence)
+	 * @throws EE_Error
 	 * @return array             an array of translated strings for the incoming status id.
 	 */
 	public function localized_status(  $statuses, $plural = FALSE, $schema = 'upper' ) {
@@ -103,6 +92,10 @@ class EEM_Status extends EEM_Base {
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
 	  			),
+	  		EEM_Registration::status_id_incomplete => array(
+	  			__('incomplete', 'event_espresso'),
+	  			__('incomplete', 'event_espresso')
+	  			),
 	  		EEM_Registration::status_id_declined => array(
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
@@ -122,6 +115,10 @@ class EEM_Status extends EEM_Base {
 	  		EEM_Transaction::failed_status_code => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
+	  			),
+	  		EEM_Transaction::abandoned_status_code => array(
+	  			__('abandoned', 'event_espresso'),
+	  			__('abandoned', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
 	  			__('accepted', 'event_espresso'),

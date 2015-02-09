@@ -178,12 +178,12 @@ if ( $show_backup_db_text ) { ?>
 		<div id='progress-area'>
 			<h3 class="espresso-header">
 				<?php
-				echo  _n(
+				echo  sprintf( _n(
 					"In order to import all of your existing Event Espresso data, the following upgrade task needs to be performed:",
 					"In order to import all of your existing Event Espresso data, the following %s upgrade tasks need to be performed:",
 					count($script_names),
 					"event_espresso"
-				);?>
+				), count( $script_names ) );?>
 			</h3>
 			<ul style="list-style: inside;">
 				<?php foreach($script_names as $script_name){?>

@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 		
 		// ------------------------------------------
 		// get_country_details
-		// retreives country details form based on country selected from main dropdown
+		// retrieves country details form based on country selected from main dropdown
 		// ------------------------------------------
 		get_country_details : function ( CNT_ISO ) {
 			// post data to be sent
@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
 	
 		// ------------------------------------------
 		// get_country_states
-		// retreives list of states as a form based on country selected from main dropdown
+		// retrieves list of states as a form based on country selected from main dropdown
 		// ------------------------------------------
 		get_country_states : function( CNT_ISO ) {
 			// post data to be sent
@@ -103,7 +103,7 @@ jQuery(document).ready(function($) {
 		
 		// ------------------------------------------
 		// add_new_state
-		// adds new state to currently selected country then re-retreives list of states
+		// adds new state to currently selected country then re-retrieves list of states
 		// ------------------------------------------
 		add_new_state : function () {
 			// post data to be sent
@@ -148,7 +148,7 @@ jQuery(document).ready(function($) {
 		
 		// ------------------------------------------
 		// delete_state
-		// adds new state to currently selected country then re-retreives list of states
+		// adds new state to currently selected country then re-retrieves list of states
 		// ------------------------------------------
 		delete_state : function( CNT_ISO, STA_ID, STA_abbrev ) {
 			

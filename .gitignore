@@ -1,3 +1,2 @@
-/tests/
-/phpunit.xml
-.DS_Store
+core/third_party_libs/dompdf/lib/fonts/log.htm
+languages/event_espresso-de_DE.mo

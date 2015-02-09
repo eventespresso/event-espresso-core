@@ -131,6 +131,7 @@ $has_answers = $question->has_answers();
 						<tbody>
 							<tr class="question-option sample">
 								<td class="option-value-cell">
+									<input type="hidden" class="QSO_order" name="question_options[xxcountxx][QSO_order]" value="0"/>
 									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
 								</td>
 								<td class="option-desc-cell">
@@ -138,18 +139,21 @@ $has_answers = $question->has_answers();
 								</td>
 								<td>
 									<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+									<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 								</td>
 							</tr>
 
 							<?php
 							$count=0;
-							if ( $question_options = $question->options() ) {
+							$question_options = $question->options();
+							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
 									$disabled =  $has_answers ? ' disabled="disabled"' : '';
 									$id = $has_answers ? '_disabled' : '';
 							?>
-								<tr class="question-option">
+								<tr class="question-option ee-options-sortable">
 									<td class="option-value-cell">
+										<input type="hidden" class="QSO_order" name="question_options<?php echo $id;?>[<?php echo $count; ?>][QSO_order]" value="<?php $count; ?>">
 										<input type="text" class="option-value regular-text" name="question_options<?php echo $id; ?>[<?php echo $count?>][QSO_value]" value="<?php  $option->f('QSO_value')?>"<?php echo $disabled; ?>>
 										<?php if ( $has_answers ) : ?>
 											<input type="hidden" name="question_options[<?php echo $count; ?>][QSO_value]" value="<?php echo $option->f('QSO_value'); ?>" >
@@ -158,11 +162,10 @@ $has_answers = $question->has_answers();
 									<td class="option-desc-cell">
 										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php $option->f('QSO_desc')?>">
 									</td>
-									<?php if( $count > 0 ){ ?>
 									<td>
 										<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+										<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 									</td>
-									<?php } ?>
 									<?php
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QST_ID])", $option->question_ID());
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QSO_ID])", $option->ID());
@@ -173,8 +176,9 @@ $has_answers = $question->has_answers();
 								}
 							} else {
 							?>
-							<tr class="question-option">
+							<tr class="question-option ee-options-sortable">
 								<td class="option-value-cell">
+									<input type="hidden" class="QSO_order" name="question_options[0][QSO_order]" value="0"/>
 									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
 								</td>
 								<td class="option-desc-cell">
@@ -200,7 +204,7 @@ $has_answers = $question->has_answers();
 					</a><br/>
 
 					<p class="description">
-						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
+						<?php _e('Answer Options are the choices that you give people to select from for RADIO_BTN, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
 					</p>
 					<?php if ( $has_answers ) : ?>
 					<p class="description" style="color:#D54E21;">
@@ -221,7 +225,7 @@ $has_answers = $question->has_answers();
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';
-					$disabled = $required_on ? ' disabled="disabled"' : '';
+					$disabled = $required_on || ! empty( $disabled ) ? ' disabled="disabled"' : '';
 					$id =  ! empty( $disabled ) && in_array( $QST_system, $system_required) ? '_disabled' : '';
 					$requiredOptions=array(
 						array('text'=>'Optional','id'=>0),
@@ -231,15 +235,15 @@ $has_answers = $question->has_answers();
 					?>
 						<p><span id="required_toggled_on" class="description" style="color:#D54E21;<?php echo $show_required_msg; ?>">
 						<?php _e('Required is set to optional, and this field is disabled, because the question is Admin-Only.','event_espresso')?>
-					</span></p>
-					<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
-						<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
-					</span></p>
+						</span></p>
+						<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
+							<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
+						</span></p>
 					<?php if ( ! empty( $disabled ) && in_array( $QST_system, $system_required ) ) { ?>
 						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 						<p><span class="description" style="color:#D54E21;">
 						<?php _e('System question! This field cannot be changed.','event_espresso')?>
-						</span></p>
+					</span></p>
 					<?php } ?>
 
 				</td>
