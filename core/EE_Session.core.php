@@ -750,7 +750,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
-			 $expiration = current_time( 'timestamp' );
+			 $expiration = time();
 			 // filter the query limit. Set to 0 to turn off garbage collection
 			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
 			 // non-zero LIMIT means take out the trash

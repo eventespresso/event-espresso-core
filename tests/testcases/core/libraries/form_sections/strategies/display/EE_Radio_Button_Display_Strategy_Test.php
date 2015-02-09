@@ -37,7 +37,6 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( 1, $form->get_input( 'use_captcha' )->normalized_value() );
 		$this->assertEquals( '1', $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals('
-<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-1" id="test-use-captcha-1-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1" checked="checked">&nbsp;Yes
 </label>
@@ -51,7 +50,6 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( 0, $form->get_input ( 'use_captcha' )->normalized_value() );
 		$this->assertEquals( '0', $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals( '
-<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-1" id="test-use-captcha-1-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-1" name="test[use_captcha]" class="" style="" type="radio" value="1">&nbsp;Yes
 </label>
@@ -83,7 +81,6 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "yes ma'am", $form->get_input( 'use_captcha' )->normalized_value() );
 		$this->assertEquals( "yes ma'am", $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals( '
-<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-yesmaam" id="test-use-captcha-yesmaam-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-yesmaam" name="test[use_captcha]" class="" style="" type="radio" value="yes ma&#039;am" checked="checked">&nbsp;Yes
 </label>
@@ -97,7 +94,6 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "no ma'am", $form->get_input ( 'use_captcha' )->normalized_value() );
 		$this->assertEquals( "no ma'am", $form->get_input( 'use_captcha' )->raw_value() );
 		$this->assertEquals( '
-<div id="test-use-captcha-lbl" class="" style="">Use reCAPTCHA</div>
 <label for="test-use-captcha-yesmaam" id="test-use-captcha-yesmaam-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-yesmaam" name="test[use_captcha]" class="" style="" type="radio" value="yes ma&#039;am">&nbsp;Yes
 </label>
