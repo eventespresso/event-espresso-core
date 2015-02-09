@@ -454,8 +454,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
 		foreach ( $diff as $ind => $code ) {
-			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) )
-				unset( $diff[$ind] );
+			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) ) {
+				//strip the shortcode so we just have the BASE string (i.e. [ANSWER_*] )
+				$dynamic_sc = preg_replace('/([_\*]+[A-Za-z0-9\ \]]+)/', '_*]', $code);
+				//does this exist in the $valid_shortcodes?  If so then unset.
+				if ( isset( $valid_shortcodes[$dynamic_sc] ) ) {
+					unset( $diff[$ind] );
+				}
+			}
 		}
 
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
