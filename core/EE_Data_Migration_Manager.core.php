@@ -481,6 +481,9 @@ class EE_Data_Migration_Manager{
 	 */
 	public function migration_step( $step_size = 0 ){
 
+		//bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
+		remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
 			if( ! $currently_executing_script){
