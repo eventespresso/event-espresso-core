@@ -107,7 +107,7 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		return __( 'This is the Event Espresso Transactions page. This page receives IPN requests and should be publicly accessible, but shouldn\'t be easily accessible by site visitors either (ie, dont\'t have it on your menu or any links to it, but don\'t delete it or make it private either).', 'event_espresso' );
+		return __( 'This is the Event Espresso Transactions page. This page receives instant payment notification (IPN) requests and should have a status of published, but should not be easily accessible by site visitors. Do not add it to your website\'s navigation menu or link to it from another page. Also, do not delete it or change its status to private.', 'event_espresso' );
 	}
 
 
