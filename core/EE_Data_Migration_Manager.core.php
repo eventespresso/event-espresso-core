@@ -665,7 +665,12 @@ class EE_Data_Migration_Manager{
 				if($folder_path[count($folder_path-1)] != DS ){
 					$folder_path.= DS;
 				}
-				$files = glob($folder_path."*.dms.php");
+				$files = glob( $folder_path. '*.dms.php' );
+
+				if ( empty( $files ) ) {
+					continue;
+				}
+
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));

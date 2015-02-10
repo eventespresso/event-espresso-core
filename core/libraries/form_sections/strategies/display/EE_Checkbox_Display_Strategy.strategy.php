@@ -23,10 +23,10 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			throw new EE_Error(sprintf(__("Cannot use Checkbox Display Strategy with an input that doesn't have options", "event_espresso")));
 		}
 		//d( $this->_input );
-		$html = $this->display_label();
 		$multi = count( $this->_input->options() ) > 1 ? TRUE : FALSE;
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
+		$html = '';
 		foreach( $this->_input->options() as $value => $display_text ){
 			$option_value_as_string = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $option_value_as_string ) : $this->_input->html_id();
@@ -48,27 +48,5 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 	}
 
 
-
-	/**
-	 * Gets the HTML for the 'label', which is just text for this (because labels should be for each option)
-	 *
-	 * @throws \EE_Error
-	 * @return string
-	 */
-	public function display_label(){
-		if( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
-			throw new EE_Error(sprintf(__("Cannot use Checkbox Display Strategy with an input that doesn't have options", "event_espresso")));
-		}
-		if ( $this->_input->display_html_label_text() ) {
-			$html = EEH_HTML::nl( 0, 'checkbox' );
-			$html .= '<div id="' . $this->_input->html_label_id() . '"';
-			$html .= ' class="' . $this->_input->html_label_class() . '"';
-			$html .= ' style="' . $this->_input->html_label_style() . '">';
-			$html .= $this->_input->html_label_text() . '</div>';
-			return $html;
-		} else {
-			return '';
-		}
-	}
 
 }
