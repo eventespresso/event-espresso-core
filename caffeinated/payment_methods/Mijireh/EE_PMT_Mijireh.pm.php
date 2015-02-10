@@ -69,7 +69,8 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'access_key'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  $this->get_help_tab_link())
+					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  $this->get_help_tab_link()),
+					'required' => true
 				)),
 			),
 			'exclude'=>array('PMD_debug_mode'),
