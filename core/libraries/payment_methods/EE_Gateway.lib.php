@@ -66,6 +66,12 @@ abstract class EE_Gateway{
 	protected $_template = NULL;
 
 	/**
+	 *
+	 * @var EEHI_Money
+	 */
+	protected $_money = NULL;
+
+	/**
 	 * Used for manipulating the line item tree
 	 * @var EEHI_Line_Item
 	 */
@@ -184,6 +190,13 @@ abstract class EE_Gateway{
 		$this->_line_item = $line_item_helper;
 	}
 
+	/**
+	 *
+	 * @param EEHI_Money $money_helper
+	 */
+	public function set_money_helper( $money_helper ){
+		$this->_money = $money_helper;
+	}
 
 
 	/**
@@ -246,23 +259,14 @@ abstract class EE_Gateway{
 	 * @return boolean
 	 */
 	protected function _can_easily_itemize_transaction_for( EEI_Payment $payment ){
-		return  $this->_floats_equal(
+		return  $this->_money->compare_floats(
 					$this->_sum_items_and_taxes( $payment->transaction() ),
 					$payment->transaction()->total() ) &&
-				$this->_floats_equal(
-					$payment->amount(), 
+				$this->_money->compare_floats(
+					$payment->amount(),
 					$payment->transaction()->total() );
 	}
 
-	/**
-	 * You can't compare floats with ==, see http://stackoverflow.com/questions/3148937/compare-floats-in-php
-	 * @param float $float1
-	 * @param float $float2
-	 * @return boolean
-	 */
-	protected function _floats_equal( $float1, $float2 ){
-		return abs( ( $float1 - $float2 ) / $float2 ) < 0.00001;
-	}
 	/**
 	 * Handles updating the transaction and any other related data based on the payment.
 	 * You may be tempted to do this as part of do_direct_payment or handle_payment_update,
