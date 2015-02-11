@@ -31,7 +31,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Datetime_Shortcodes extends EE_Shortcodes {
 
-
+	/**
+	 * _init_props
+	 *
+	 * @access protected
+	 * @return void
+	 */
 	protected function _init_props() {
 		$this->label = __('Datetime Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to datetime related data', 'event_espresso');
@@ -43,19 +48,28 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 	}
 
 
+
+	/**
+	 * _parser
+	 *
+	 * @access protected
+	 * @param string $shortcode
+	 * @return string
+	 */
 	protected function _parser( $shortcode ) {
 
-		if ( ! $this->_data instanceof EE_Datetime )
+		if ( ! $this->_data instanceof EE_Datetime ) {
 			return ''; //get out cause we can only parse with the datetime object.
+		}
 
 		switch ( $shortcode ) {
 
 			case '[DATETIME_START]' :
-				return $this->_data->get_datetime('DTT_EVT_start');
+				return $this->_data->get_i18n_datetime('DTT_EVT_start');
 				break;
 
 			case '[DATETIME_END]' :
-				return $this->_data->get_datetime('DTT_EVT_end');
+				return $this->_data->get_i18n_datetime('DTT_EVT_end');
 				break;
 
 			case '[DATETIME_TIMEZONE]' :
