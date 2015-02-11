@@ -146,6 +146,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			'FHEE__EE_Session__construct___lifespan',
 			2 * HOUR_IN_SECONDS
 		);
+		/*
+		 * do something like the following to adjust the session lifespan:
+		 * 		public static function session_lifespan() {
+		 * 			return 15 * MINUTE_IN_SECONDS;
+		 * 		}
+		 */
 		// retrieve session options from db
 		$session_settings = get_option( 'ee_session_settings' );
 		if ( $session_settings !== FALSE ) {
@@ -386,6 +392,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			session_start();
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;
+			// and the session expiration
+			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
 			// set referer
 			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 		}
@@ -411,11 +419,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		} else {
 			// set initial site access time
-			$session_data['init_access'] = $this->_time;
+			$this->_session_data['init_access'] = $this->_time;
 			// and the session expiration
-			$session_data['expiration'] = $this->_time + $this->_lifespan;
+			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
 			// set referer
-			$session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
+			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
@@ -435,11 +443,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
-			return FALSE;
+			// wipe out everything that isn't a default session datum
+			$this->reset_data( array_keys( $this->_session_data ));
+			// set initial site access time
+			$this->_session_data['init_access'] = $this->_time;
+			// and the session expiration
+			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
 		}
 
 		// make event espresso session data available to plugin
-		$this->_session_data = $session_data;
+		$this->_session_data = array_merge( $session_data, $this->_session_data );
 		return TRUE;
 
 	}
