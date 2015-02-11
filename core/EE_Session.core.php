@@ -43,13 +43,20 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 private $_session_data = array();
 
 	 /**
-	  * default session expiration 2 hours (for not so instant IPNs)
+	  * how long an EE session lasts
+	  * default session lifespan of 2 hours (for not so instant IPNs)
 	  * @var int
 	  */
-	 private $_expiration = 7200;
+	 private $_lifespan = 7200;
 
 	 /**
-	  * current time as Unix timestamp with GMT offset
+	  * session expiration time as Unix timestamp in GMT
+	  * @var int
+	  */
+	 private $_expiration;
+
+	 /**
+	  * current time as Unix timestamp in GMT
 	  * @var int
 	  */
 	 private $_time;
@@ -95,6 +102,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		'user_agent' => NULL,
 		'init_access' => NULL,
 		'last_access' => NULL,
+		'expiration' => NULL,
 		'pages_visited' => array()
 	);
 
@@ -133,9 +141,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
-		// default session expiration 2 hours (for not so instant IPNs)
-		$this->_expiration = apply_filters(
-			'FHEE__EE_Session__construct___expiration',
+		// default session lifespan 2 hours (for not so instant IPNs)
+		$this->_lifespan = apply_filters(
+			'FHEE__EE_Session__construct___lifespan',
 			2 * HOUR_IN_SECONDS
 		);
 		// retrieve session options from db
@@ -172,6 +180,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
 
 	}
+
+
+
+	 /**
+	  * @return int
+	  */
+	 public function expiration() {
+		 return $this->_expiration;
+	 }
 
 
 
@@ -394,12 +411,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		} else {
 			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
+			$session_data['init_access'] = $this->_time;
+			// and the session expiration
+			$session_data['expiration'] = $this->_time + $this->_lifespan;
 			// set referer
-			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
+			$session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
+		$this->_expiration = $session_data['expiration'];
 
 		// have we met before???
 		// let's compare our stored session details with the current visitor
@@ -413,9 +433,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 
 		// wait a minute... how old are you?
-		// if the last access time for the session is less than the current time subtract the session expiration time...
-		// ie: is 1pm less than 4pm minus (the default) 2 hours?
-		if ( $session_data['last_access'] < ( $this->_time - $this->_expiration ) ) {
+		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
 			return FALSE;
 		}
@@ -436,7 +454,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	public function update( $new_session = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
+		$this->_session_data = isset( $this->_session_data )
+			&& is_array( $this->_session_data )
+			&& isset( $this->_session_data['id'])
+			? $this->_session_data
+			: NULL;
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
@@ -467,6 +489,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				case 'last_access' :
 					// current access time
 					$session_data['last_access'] = $this->_time;
+				break;
+
+				case 'expiration' :
+					// when the session expires
+					$session_data['expiration'] = ! empty( $this->_expiration )
+						? $this->_expiration
+						: $session_data['init_access'] + $this->_lifespan;
 				break;
 
 				case 'user_id' :
@@ -560,7 +589,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	private function _visitor_ip() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$visitor_ip = '0.0.0.0';
-		$server_keys = array( 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' );
+		$server_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR'
+		);
 		foreach ( $server_keys as $key ){
 			if ( isset( $_SERVER[ $key ] )) {
 				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] )) as $ip ) {
