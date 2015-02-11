@@ -68,8 +68,11 @@ class EE_Transaction_Payments {
 			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
 				if ( $update_txn ) {
 					$transaction->save();
-					return TRUE;
+					return true;
 				}
+			} else {
+				//the status got updated and was saved by self::update_transaction_status_based_on_total_paid().
+				return TRUE;
 			}
 		}
 		return FALSE;
