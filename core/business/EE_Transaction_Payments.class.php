@@ -48,10 +48,17 @@ class EE_Transaction_Payments {
 
 	/**
 	 * Updates the provided EE_Transaction with all the applicable payments
-	 * (or fetch the EE_Transaction from its ID)
+	 * returns a boolean for whether the TXN was saved to the db
+	 * (meaning a status change occurred)
+	 * or not saved (which could **still** mean that
+	 * the TXN status changed, but just was not yet saved).
+	 * So if passing a value of false for the $update_txn param,
+	 * then client code needs to take responsibility for saving the TXN
+	 * regardless of what happens within EE_Transaction_Payments;
+	 *
 	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
-	 * @param bool           $update_txn
-	 * @return boolean
+	 * @param 	boolean $update_txn  	whether to save the TXN
+	 * @return 	boolean 	 	whether the TXN was saved
 	 */
 	public function calculate_total_payments_and_update_status( EE_Transaction $transaction, $update_txn = true ){
 		// verify transaction
@@ -67,12 +74,8 @@ class EE_Transaction_Payments {
 			// maybe update status, and make sure to save transaction if not done already
 			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
 				if ( $update_txn ) {
-					$transaction->save();
-					return true;
+					return $transaction->save() ? TRUE : FALSE;
 				}
-			} else {
-				//the status got updated and was saved by self::update_transaction_status_based_on_total_paid().
-				return true;
 			}
 		}
 		return false;
@@ -85,13 +88,13 @@ class EE_Transaction_Payments {
 	 * 		@access		public
 	 * 		@param EE_Transaction $transaction
 	 *		@param	string $payment_status, one of EEM_Payment's statuses, like 'PAP' (Approved). By default, searches for approved payments
-	 *		@return 		mixed		array on success, FALSE on fail
+	 *		@return 		mixed		float on success, false on fail
 	 */
 	public function recalculate_total_payments_for_transaction( EE_Transaction $transaction, $payment_status = EEM_Payment::status_id_approved ) {
 		// verify transaction
 		if ( ! $transaction instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return false;
 		}
 		// ensure Payment model is loaded
 		EE_Registry::instance()->load_model( 'Payment' );
@@ -110,8 +113,8 @@ class EE_Transaction_Payments {
 	 * possibly toggles TXN status
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param bool           $update_txn
-	 * @return bool
+	 * @param 	boolean $update_txn  	whether to save the TXN
+	 * @return 	boolean 	 	whether the TXN was saved
 	 * @throws \EE_Error
 	 */
 	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction, $update_txn = TRUE ) {
