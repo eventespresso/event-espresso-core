@@ -53,11 +53,11 @@ class EE_Transaction_Payments {
 	 * @param bool           $update_txn
 	 * @return boolean
 	 */
-	public function calculate_total_payments_and_update_status( EE_Transaction $transaction, $update_txn = TRUE ){
+	public function calculate_total_payments_and_update_status( EE_Transaction $transaction, $update_txn = true ){
 		// verify transaction
 		if ( ! $transaction instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return false;
 		}
 		// calculate total paid
 		$total_paid = $this->recalculate_total_payments_for_transaction( $transaction, EEM_Payment::status_id_approved );
@@ -72,10 +72,10 @@ class EE_Transaction_Payments {
 				}
 			} else {
 				//the status got updated and was saved by self::update_transaction_status_based_on_total_paid().
-				return TRUE;
+				return true;
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 
