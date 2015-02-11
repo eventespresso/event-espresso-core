@@ -1137,9 +1137,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
 				// set cron job for finalizing the TXN
 				// in case the user does not return from the off-site gateway
-				wp_schedule_single_event(
+				EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
 					EE_Registry::instance()->SSN->expiration() + 1,
-					'AHEE__EE_Cron_Tasks__espresso_finalize_abandoned_transactions',
 					$this->checkout->transaction->ID()
 				);
 			} else {
