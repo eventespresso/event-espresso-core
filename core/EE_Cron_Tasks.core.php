@@ -101,5 +101,5 @@ function espresso_finalize_abandoned_transactions() {
 
 
 
-// End of file EE_Cron_Tasks.php
-// Location: /EE_Cron_Tasks.php
+// End of file EE_Cron_Tasks.core.php
+// Location: /EE_Cron_Tasks.core.php
