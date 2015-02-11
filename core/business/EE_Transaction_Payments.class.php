@@ -76,6 +76,10 @@ class EE_Transaction_Payments {
 				if ( $update_txn ) {
 					return $transaction->save() ? TRUE : FALSE;
 				}
+			} else {
+				// the status got updated and was saved by
+				// update_transaction_status_based_on_total_paid()
+				return TRUE;
 			}
 		}
 		return false;
