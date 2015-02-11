@@ -152,6 +152,7 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		require_once EE_CORE . 'EE_Cron_Tasks.core.php';
 		require_once EE_CORE . 'EE_Deprecated.core.php';
 		// load interfaces
 		require_once EE_CORE . 'EEI_Interfaces.php';
