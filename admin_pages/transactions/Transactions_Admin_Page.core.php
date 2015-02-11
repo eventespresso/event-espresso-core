@@ -846,8 +846,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			if ( $transaction instanceof EE_Transaction ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-				//update the transaction with this payment
-				if ( $transaction_payments->calculate_total_payments_and_update_status( $transaction )) {
+				// update the transaction with this payment, but don't save it
+				$transaction_payments->calculate_total_payments_and_update_status(
+					$transaction,
+					false
+				);
+				if ( $transaction->save() ) {
 					$msg =__('The payment has been processed successfully.', 'event_espresso');
 					EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				} else {
