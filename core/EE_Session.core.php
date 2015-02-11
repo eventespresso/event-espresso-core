@@ -47,7 +47,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * default session lifespan of 2 hours (for not so instant IPNs)
 	  * @var int
 	  */
-	 private $_lifespan = 7200;
+	 private $_lifespan;
 
 	 /**
 	  * session expiration time as Unix timestamp in GMT
@@ -194,6 +194,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	 public function expiration() {
 		 return $this->_expiration;
+	 }
+
+
+
+	 /**
+	  * @return int
+	  */
+	 public function lifespan() {
+		 return $this->_lifespan;
 	 }
 
 
