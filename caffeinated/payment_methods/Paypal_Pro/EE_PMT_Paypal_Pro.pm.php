@@ -182,6 +182,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	protected function _get_billing_values_from_form( $billing_form ){
 		$billing_values = parent::_get_billing_values_from_form( $billing_form );
 		$billing_values[ 'country' ] = $billing_form->get_input_value( 'country' );
+		$billing_values[ 'credit_card_type' ] = $billing_form->get_input_value( 'credit_card_type' );
 		return $billing_values;
 	}
 
