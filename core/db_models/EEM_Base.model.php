@@ -1477,10 +1477,13 @@ abstract class EEM_Base extends EE_Base{
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
 	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
+	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
+	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
+	 * If true, it's also considered)
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
-	public function get_one_conflicting($obj_or_fields_array){
+	public function get_one_conflicting($obj_or_fields_array, $include_primary_key = true ){
 		if($obj_or_fields_array instanceof EE_Base_Class){
 			$fields_n_values = $obj_or_fields_array->model_field_array();
 		}elseif( is_array($obj_or_fields_array)){
@@ -1489,14 +1492,19 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("%s get_all_conflicting should be called with a model object or an array of field names and values, you provided %d", "event_espresso"),get_class($this),$obj_or_fields_array));
 		}
 		$query_params = array();
-		if($this->has_primary_key_field() && isset($fields_n_values[$this->primary_key_name()])){
+		if( $include_primary_key && $this->has_primary_key_field() && isset($fields_n_values[$this->primary_key_name()])){
 			$query_params[0]['OR'][$this->primary_key_name()] = $fields_n_values[$this->primary_key_name()];
 		}
 		foreach($this->unique_indexes() as $unique_index_name=>$unique_index){
 			$uniqueness_where_params = array_intersect_key($fields_n_values, $unique_index->fields());
 			$query_params[0]['OR']['AND*'.$unique_index_name] = $uniqueness_where_params;
 		}
-		return $this->get_one($query_params);
+		//if there is nothing to base this search on, then we shouldn't find anything
+		if( empty( $query_params ) ){
+			return array();
+		}else{
+			return $this->get_one($query_params);
+		}
 	}
 
 	/**

@@ -44,7 +44,11 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$other_db_datetime_ticket_props[ 'DTK_ID' ] = $original_datetime_ticket->ID();
 
 		//@todo: test STRING ids are treated as real FKs, not temp ids
-
+		//@todo: test we dont insert conflicting data
+		$event_count = EEM_Event::instance()->count();
+		$datetime_count = EEM_Datetime::instance()->count();
+		$ticket_count = EEM_Ticket::instance()->count();
+		$datetime_ticket_count = EEM_Datetime_Ticket::instance()->count();
 
 
 		$csv_data_rows = array(

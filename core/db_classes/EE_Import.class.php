@@ -408,7 +408,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $what_to_do == self::do_insert ) {
 					//we're supposed to be inserting. But wait, will this thing
 					//be acceptable if inserted?
-					$conflicting = $model->get_one_conflicting($model_object_data);
+					$conflicting = $model->get_one_conflicting( $model_object_data, false );
 					if($conflicting){
 						//ok, this item would conflict if inserted. Just update the item that it conflicts with.
 						$what_to_do = self::do_update;
@@ -441,12 +441,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 
 	/**
-	 *
-	 * @param type $id_in_csv
-	 * @param type $model_object_data
+	 * Decides whether or not to insert, given that this data is from another database.
+	 * So, if the primary key of this $model_object_data already exists in the database,
+	 * it's just a coincidence and we should still insert. The only time we should
+	 * update is when we know what it maps to, or there's something that would
+	 * conflict and we should instead just update that conflicting thing
+	 * @param string $id_in_csv
+	 * @param array $model_object_data by reference so it can be modified
 	 * @param EEM_Base $model
-	 * @param type $old_db_to_new_db_mapping
-	 * @return
+	 * @param array $old_db_to_new_db_mapping by reference so it can be modified
+	 * @return string one of the consts on this class that starts with do_*
 	 */
 	protected function _decide_whether_to_insert_or_update_given_data_from_other_db( $id_in_csv, $model_object_data, $model, $old_db_to_new_db_mapping ) {
 		$model_name = $model->get_this_model_name();
@@ -455,15 +459,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if( isset($old_db_to_new_db_mapping[$model_name][$id_in_csv]) ){
 			return self::do_update;
 		}else{
-			//check if this new DB has an exact copy of this model object (eg, a country or state that we don't want to duplicate)
-			$copy_in_db = $model->get_one_copy($model_object_data);
-			if( $copy_in_db ){
-				//so basically this already exists in the DB...
-				//remember the mapping
-				$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $copy_in_db->ID();
-				//and don't bother trying to update or insert, beceause
-				//we JUST asserted that it's the exact same as what's in the DB
-				return self::do_nothing;
+			//if this has a string primary key and it exists in teh db, we're going to update it instead
+			if( ! $model->get_primary_key_field()->is_auto_increment() && $model->count( array( array( $model->primary_key_name() => $id_in_csv ) ) ) ) {
+				return self::do_update;
 			}else{
 				return self::do_insert;
 			}
@@ -496,15 +494,22 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 * @return array updated model object data with temp IDs removed
 	 */
 	protected function _replace_temp_ids_with_mappings( $model_object_data, $model, $old_db_to_new_db_mapping ) {
+		//if this model object's primary key is in the mapping, replace it
+		if( $model->has_primary_key_field() &&
+				$model->get_primary_key_field()->is_auto_increment() &&
+				isset( $old_db_to_new_db_mapping[ $model->get_this_model_name() ] ) && 
+				isset( $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ] ) ) {
+			$model_object_data[ $model->primary_key_name() ] = $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ];
+		}
 		//loop through all its related models, and see if we can swap their OLD foreign keys
 		//(ie, idsin the OLD db) for  new foreign key (ie ids in the NEW db)
 		foreach($model->field_settings() as $field_name => $fk_field){
-			if($fk_field instanceof EE_Foreign_Key_Field_Base){
-				$fk_value = $model_object_data[$fk_field->get_name()];
-				//if the foreign key is 0 or blank, just ignore it and leave it as-is
-				if($fk_value == '0' || $fk_value == ''){
-					continue;
-				}
+			$fk_value = $model_object_data[$fk_field->get_name()];
+			//if the foreign key is 0 or blank, just ignore it and leave it as-is
+			if($fk_value == '0' || $fk_value == ''){
+				continue;
+			}
+			if( $fk_field instanceof EE_Foreign_Key_Field_Base ){
 				//now, is that value in the list of PKs that have been inserted?
 				if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. We want to try each
 					$model_names_pointed_to = $fk_field->get_model_name_pointed_to();
