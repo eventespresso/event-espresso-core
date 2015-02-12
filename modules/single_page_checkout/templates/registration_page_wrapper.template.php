@@ -1,5 +1,21 @@
 <div id="ee-single-page-checkout-dv" class="">
-<?php
+	<?php if ( apply_filters(
+			'FHEE__registration_page_wrapper_template__display_time_limit',
+			TRUE ) ) { ?>
+	<p id="spco-registration-time-limit-pg" class="spco-steps-pg important-notice">
+		<?php echo sprintf(
+			apply_filters(
+				'FHEE__registration_page_wrapper_template___time_limit',
+				__('Please note that due to demand, you have %1$s to complete your registration.', 'event_espresso')
+			),
+			'<span id="spco-registration-time-limit-spn" class="button button-primary button-lg">' . $registration_time_limit	. '</span>'
+		);
+		?>
+		<span id="spco-registration-expiration-spn" class=""
+			  style="display:none;"><?php echo $session_expiration; ?></span>
+	</p>
+	<?php } ?>
+	<?php
 if ( ! $empty_cart ) {
 	if ( ! $revisit && apply_filters( 'FHEE__registration_page_wrapper_template__steps_display', TRUE )) {
 ?>
@@ -30,6 +46,7 @@ if ( ! $empty_cart ) {
 		?>
 		<div class="clear-float"></div>
 	</div>
+
 	<?php
 	}
 
