@@ -31,7 +31,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 				'address2'		=> new EE_Text_Input( array( 'html_label_text'=> __( 'Address 2', 'event_espresso'), 'html_class' => 'ee-billing-qstn' )),
 				'city'					=> new EE_Text_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'state' 				=> apply_filters( 'FHEE__EE_Billing_Attendee_Info_Form__state_field', new EE_State_Select_Input( NULL, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )) ),
-				'country' 			=> new EE_Country_Select_Input( NULL, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'country' 			=> apply_filters( 'FHEE__EE_Billing_Attendee_Info_Form__country_field', new EE_Country_Select_Input( NULL, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )) ),
 				'zip'					=> new EE_Text_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 				'phone'			=> new EE_Text_Input( array( 'html_class' => 'ee-billing-qstn' )),
 			),
