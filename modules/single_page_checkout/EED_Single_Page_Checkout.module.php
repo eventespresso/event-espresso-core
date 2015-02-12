@@ -426,7 +426,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// add powered by EE msg
 		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 		// remove transaction lock
-		add_action( 'shutdown', array( $this, 'unlock_transaction' ));
+		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
 
 

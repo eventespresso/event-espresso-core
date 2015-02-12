@@ -126,7 +126,7 @@ class EE_Cron_Tasks extends EE_BASE {
 			add_action(
 				'shutdown',
 				array( 'EE_Cron_Tasks', 'update_transaction_with_payment' ),
-				1
+				5
 			);
 		}
 	}
@@ -254,7 +254,7 @@ class EE_Cron_Tasks extends EE_BASE {
 			add_action(
 				'shutdown',
 				array( 'EE_Cron_Tasks', 'finalize_abandoned_transactions' ),
-				1
+				5
 			);
 		}
 	}
