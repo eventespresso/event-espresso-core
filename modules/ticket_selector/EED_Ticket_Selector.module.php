@@ -44,6 +44,15 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+
+	/**
+	 * Used to flag when the ticket selector is being called from an external iframe.
+	 *
+	 * @var bool
+	 */
+	protected static $_in_iframe = false;
+
+
 	/**
 	 * @return EED_Ticket_Selector
 	 */
@@ -116,6 +125,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	@return 	void
 	 */
 	public function ticket_selector_iframe() {
+		self::$_in_iframe = true;
 		/** @type EEM_Event $EEM_Event */
 		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
 		$event = $EEM_Event->get_one_by_ID( EE_Registry::instance()->REQ->get(
@@ -265,7 +275,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
-		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
+		return '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
 
