@@ -44,6 +44,18 @@ jQuery(document).ready( function($) {
 		 *     datepicker_yearRange: string,
 		 *     revisit: string,
 		 *     e_reg_url_link: string
+		 *     years: string
+		 *     months: string
+		 *     weeks, eei18n.days: string
+		 *     hours: string
+		 *     minutes: string
+		 *     seconds: string
+		 *     year, eei18n.month: string
+		 *     week: string
+		 *     day: string
+		 *     hour: string
+		 *     minute: string
+		 *     second: string
 		 * }}
 	 * @namespace response
 	 * @type {{
@@ -131,6 +143,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
 				SPCO.set_listener_close_notifications();
+				SPCO.start_registration_time_limit_countdown();
 			}
 		},
 
@@ -402,6 +415,24 @@ jQuery(document).ready( function($) {
 				SPCO.hide_notices();
 			});
 		},
+
+
+
+		/**
+		 * @function start_registration_time_limit_countdown
+		 * closes any open notices simply by clicking anywhere on the screen
+		 */
+		start_registration_time_limit_countdown : function() {
+			var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
+			var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
+			$('#spco-registration-time-limit-spn').countdown({
+				labels: [ eei18n.years, eei18n.months, eei18n.weeks, eei18n.days, eei18n.hours, eei18n.minutes, eei18n.seconds ],
+				labels1: [ eei18n.year, eei18n.month, eei18n.week, eei18n.day, eei18n.hour, eei18n.minute, eei18n.second ],
+				until: expiration,
+				layout: layout
+			});
+		},
+
 
 
 		/**
