@@ -420,7 +420,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			// get the current time in UTC
 			$this->_time = isset( $this->_time ) ? $this->_time : time();
 			// and reset the session expiration
-			$this->_expiration = $session_data['expiration'];
+			$this->_expiration = isset( $session_data['expiration'] ) ?
+				$session_data['expiration'] : $this->_time + $this->_lifespan;
 
 		} else {
 			// set initial site access time and the session expiration
