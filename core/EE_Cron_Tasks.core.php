@@ -299,11 +299,6 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
-					// don't bother with TXNs that have had their status updated
-					if ( $transaction->status_ID() != EEM_Transaction::failed_status_code &&
-						$transaction->status_ID() != EEM_Transaction::abandoned_status_code ) {
-						continue;
-					}
 					// or have had all of their reg steps completed
 					if ( $transaction_processor->all_reg_steps_completed(	$transaction ) ) {
 						continue;
@@ -323,13 +318,14 @@ class EE_Cron_Tasks extends EE_BASE {
 					$payment = $payment_processor->finalize_payment_for( $transaction );
 					if ( $payment instanceof EE_Payment ) {
 						// at this point we'll consider a TXN to not have been abandoned
-						if ( $transaction_processor->toggle_abandoned_transaction_status( $transaction )) {
-							$transaction->save();
-							update_option(
-								'ee_cron_finalize_abandoned_transactions',
-								$transaction
-							);
-						}
+						$transaction_processor
+							->toggle_abandoned_transaction_status( $transaction );
+						$transaction_processor
+							->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
+						update_option(
+							'ee_cron_finalize_abandoned_transactions',
+							$transaction
+						);
 					}
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
