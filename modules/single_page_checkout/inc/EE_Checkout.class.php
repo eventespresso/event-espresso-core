@@ -412,6 +412,26 @@ class EE_Checkout {
 	}
 
 
+
+	/**
+	 *    get_registration_time_limit
+	 *
+	 * @access    public
+	 * @return        string
+	 */
+	public function get_registration_time_limit() {
+
+		$registration_time_limit = (float)( EE_Registry::instance()	->SSN->expiration() - time() );
+		$time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
+		$registration_time_limit = gmdate( $time_limit_format, $registration_time_limit );
+		return apply_filters(
+			'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
+			$registration_time_limit
+		);
+	}
+
+
+
 	/**
 	 * payment_required
 	 * @return boolean
