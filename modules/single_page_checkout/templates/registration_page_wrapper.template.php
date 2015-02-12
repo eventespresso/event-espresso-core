@@ -8,7 +8,7 @@
 				'FHEE__registration_page_wrapper_template___time_limit',
 				__('Please note that due to demand, you have %1$s to complete your registration.', 'event_espresso')
 			),
-			'<span id="spco-registration-time-limit-spn" class="button button-primary button-lg">' . $registration_time_limit	. '</span>'
+			'<span id="spco-registration-time-limit-spn" class="spco-registration-time-limit-spn">' . $registration_time_limit	. '</span>'
 		);
 		?>
 		<span id="spco-registration-expiration-spn" class=""
