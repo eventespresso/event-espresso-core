@@ -403,6 +403,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! $this->_final_verifications() ) {
 			return;
 		}
+		// lock the transaction
+		$this->checkout->transaction->lock();
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
 		// initialize each reg step, which gives them the chance to potentially alter the process
@@ -423,6 +425,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
 		// add powered by EE msg
 		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
+		// remove transaction lock
+		add_action( 'shutdown', array( $this, 'unlock_transaction' ));
 	}
 
 
@@ -1035,6 +1039,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
 		EE_Registry::$i18n_js_strings['datepicker_yearRange'] = '-150:+20';
+		EE_Registry::$i18n_js_strings['years'] = __( 'years', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['months'] = __( 'months', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['weeks'] = __( 'weeks', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['days'] = __( 'days', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['hours'] = __( 'hours', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['minutes'] = __( 'minutes', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['seconds'] = __( 'seconds', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['year'] = __( 'year', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['month'] = __( 'month', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['week'] = __( 'week', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['day'] = __( 'day', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['hour'] = __( 'hour', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['minute'] = __( 'minute', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['second'] = __( 'second', 'event_espresso' );
 	}
 
 
@@ -1052,7 +1070,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// i18n
 		$this->translate_js_strings();
 		// load JS
-		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array( 'jquery' ), '1.0.1', TRUE );
+		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 
@@ -1106,7 +1126,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 											'">',
 											'</a>'
 										)
-									)
+									),
+									'registration_time_limit' =>
+										$this->checkout->get_registration_time_limit(),
+									'session_expiration' =>
+										gmdate( 'M d, Y H:i:s',
+											EE_Registry::instance()
+											->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 								)
 							)
 						)
@@ -1167,6 +1193,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 	unlock_transaction
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function unlock_transaction() {
+		$this->checkout->transaction->unlock();
+	}
+
+
+
+
+	/**
 	 *        _setup_redirect
 	 *
 	 * @access 	private
@@ -1197,6 +1236,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax ) {
+			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			echo $json_response;
