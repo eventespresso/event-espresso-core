@@ -1239,6 +1239,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
+			$this->unlock_transaction();
 			echo $json_response;
 			die();
 		}
@@ -1246,6 +1247,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
+			$this->unlock_transaction();
 			wp_safe_redirect( $this->checkout->redirect_url );
 			exit();
 		}
