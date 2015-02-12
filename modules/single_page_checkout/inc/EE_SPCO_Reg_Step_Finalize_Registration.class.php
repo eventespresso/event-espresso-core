@@ -112,9 +112,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		//set revisit flag in txn processor
 		$transaction_processor->set_revisit( $this->checkout->revisit );
 		// at this point we'll consider a TXN to not have been abandoned
-		if ( $transaction_processor->toggle_abandoned_transaction_status( $this->checkout->transaction )) {
-			$this->checkout->transaction->save();
-		}
+		$transaction_processor->toggle_abandoned_transaction_status( $this->checkout->transaction );
 		if ( $this->checkout->cart instanceof EE_Cart ) {
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
