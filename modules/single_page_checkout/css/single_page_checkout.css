@@ -392,7 +392,7 @@
 	padding:0;
 	margin:auto;
 	box-shadow: none !important;
-	box-radius: 0 !important;
+	border-radius: 0 !important;
 	cursor:pointer;
 }
 
@@ -402,7 +402,7 @@
 	padding:0;
 	margin:auto;
 	box-shadow: none !important;
-	box-radius: 0 !important;
+	border-radius: 0 !important;
 }
 .spco-payment-method-dv:hover {
 	top:-1px;
@@ -411,10 +411,6 @@
 	-webkit-box-shadow: 4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
 	-moz-box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
 	box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
-}
-.spco-payment-method-dv .algn-vrt {
-	display: table !important;
-	height:30px;
 }
 .spco-payment-method-dv .vrt-cell {
 	display: table-cell !important;
