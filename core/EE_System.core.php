@@ -1007,33 +1007,8 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
-//		EEM_Change_Log::instance()->show_next_x_db_queries();
-//		$logs = EEM_Change_Log::instance()->get_all(array(array(
-//			'OR'=>array(
-//				'Payment.Payment_Method.PMD_ID'=>2,
-//				'Payment_Method.PMD_ID'=>2),
-//			'LOG_ID'=>15
-//		),'limit'=>10));
-//		d($logs);
-//		EEM_Change_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
-
-
-//		EEM_Answer::instance()->show_next_x_db_queries();
-//		EEM_Answer::instance()->get_all(array(array(
-//			'Question.Question_Group.QSG_ID'=>1
-//		)));
-
-
-//		EEM_Event::instance()->show_next_x_db_queries();
-//		EEM_Event::instance()->get_all();
-		//should produce no errors
-
-//		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
-		//should produce no error
-//		die;
-//		EEM_Price::instance()->get_all(array('order_by'=>array('PRC_ID'=>'asc','Price_Type.PRT_ID'=>'asc')));die;
 		do_action( 'AHEE__EE_System__initialize' );
-
+//		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
 
 
