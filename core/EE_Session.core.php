@@ -141,11 +141,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
-		// default session lifespan 2 hours (for not so instant IPNs)
+		// default session lifespan in seconds
 		$this->_lifespan = apply_filters(
 			'FHEE__EE_Session__construct___lifespan',
-			2 * HOUR_IN_SECONDS
-		);
+			30 * MINUTE_IN_SECONDS
+		) + 1;
 		/*
 		 * do something like the following to adjust the session lifespan:
 		 * 		public static function session_lifespan() {
@@ -161,8 +161,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_{$var_name} = $session_setting;
 			}
 		}
-		// get the current time in UTC
-		$this->_time = time();
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
@@ -399,12 +397,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( session_id() === '' ) {
 			//starts a new session if one doesn't already exist, or re-initiates an existing one
 			session_start();
-			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
-			// and the session expiration
-			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
-			// set referer
-			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 		}
 		// grab the session ID
 		$this->_sid = session_id();
@@ -425,18 +417,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				// no?!?! then something is wrong
 				return FALSE;
 			}
+			// get the current time in UTC
+			$this->_time = isset( $this->_time ) ? $this->_time : time();
+			// and reset the session expiration
+			$this->_expiration = $session_data['expiration'];
 
 		} else {
-			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
-			// and the session expiration
-			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
+			// set initial site access time and the session expiration
+			$this->_set_init_access_and_expiration();
 			// set referer
 			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
-		$this->_expiration = $session_data['expiration'];
 
 		// have we met before???
 		// let's compare our stored session details with the current visitor
@@ -453,17 +446,27 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
 			// wipe out everything that isn't a default session datum
-			$this->reset_data( array_keys( $this->_session_data ));
-			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
-			// and the session expiration
-			$this->_session_data['expiration'] = $this->_time + $this->_lifespan;
+			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
-
 		// make event espresso session data available to plugin
 		$this->_session_data = array_merge( $session_data, $this->_session_data );
 		return TRUE;
 
+	}
+
+
+
+	 /**
+	  * _set_init_access_and_expiration
+	  * @return void
+	  */
+	protected function _set_init_access_and_expiration() {
+		$this->_time = time();
+		$this->_expiration = $this->_time + $this->_lifespan;
+		// set initial site access time
+		$this->_session_data['init_access'] = $this->_time;
+		// and the session expiration
+		$this->_session_data['expiration'] = $this->_expiration;
 	}
 
 
@@ -713,10 +716,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return void
 	  */
 	public function clear_session( $class = '', $function = '' ) {
-//		echo '<h2 style="color:#E76700;">session cleared by : ' . $class . '::' .  $function . '()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
+		// reset initial site access time and the session expiration
+		$this->_set_init_access_and_expiration();
 	}
 
 
@@ -768,6 +772,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			}
 
 		} // end of foreach
+
 		return $return_value;
 
 	}
