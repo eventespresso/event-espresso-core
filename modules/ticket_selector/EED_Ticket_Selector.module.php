@@ -135,7 +135,22 @@ class EED_Ticket_Selector extends  EED_Module {
 		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
 		$event = $EEM_Event->get_one_by_ID( EE_Registry::instance()->REQ->get(
 			'event', 0 ));
-		echo EED_Ticket_Selector::display_ticket_selector( $event );
+		$template_args['ticket_selector'] = EED_Ticket_Selector::display_ticket_selector( $event );
+		$template_args['css'] = apply_filters( 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css', array(
+			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_embed.css?ver=' . EVENT_ESPRESSO_VERSION,
+			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css?ver=' . EVENT_ESPRESSO_VERSION,
+			includes_url( 'css/dashicons.min.css?ver=' . $GLOBALS['wp_version'] ),
+			EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
+			) );
+
+		$template_args['js'] = apply_filters( 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js', array(
+			includes_url( 'js/jquery/jquery.js?ver=' . $GLOBALS['wp_version'] ),
+			EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
+			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_iframe_embed.js?ver=' . EVENT_ESPRESSO_VERSION
+			) );
+
+		EE_Registry::instance()->load_helper('Template');
+		EEH_Template::display_template( TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart_iframe.template.php', $template_args );
 		exit;
 	}
 
