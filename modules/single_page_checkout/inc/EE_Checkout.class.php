@@ -164,10 +164,17 @@ class EE_Checkout {
 	public $primary_attendee_obj = NULL;
 
 	/**
-	 *	$_payment_method - the payment method object for the selected method of payment
+	 *	$payment_method - the payment method object for the selected method of payment
 	 *	@type EE_Payment_Method
 	 */
 	public $payment_method = NULL;
+
+	/**
+	 * 	$payment - if a payment was successfully made during the reg process,
+	 * 	then here it is !!!
+	 *	@type EE_Payment
+	 */
+	public $payment = NULL;
 
 	/**
 	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
