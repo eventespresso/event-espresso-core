@@ -675,7 +675,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $related_tickets as $ticket ) {
 				$tktid = $ticket->get('TKT_ID');
 				$tktrow = $ticket->get('TKT_row');
-				$ticket->set('TKT_order', $order);
 				//we only want unique tickets in our final display!!
 				if ( !in_array( $tktid, $existing_ticket_ids ) ) {
 					$existing_ticket_ids[] = $tktid;
@@ -694,6 +693,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 		$main_template_args['existing_ticket_ids'] = implode( ',', $existing_ticket_ids );
 		$main_template_args['existing_datetime_ids'] = implode( ',', $existing_datetime_ids );
+
+		//sort $all_tickets by order
+		usort( $all_tickets, function( $a, $b ) {
+			$a_order = (int) $a->get('TKT_order');
+			$b_order = (int) $b->get('TKT_order');
+			if ( $a_order == $b_order ) {
+				return 0;
+			}
+			return ( $a_order < $b_order ) ? -1 : 1;
+		});
 
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
 		$dttrow = 1;
