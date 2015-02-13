@@ -52,7 +52,7 @@ class EEH_Money extends EEH_Base  {
 	 * $param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
 	 * @return boolean whether the equation is true or false
 	 */
-function compare_floats( $float1, $float2, $operator='=' ) {
+static function compare_floats( $float1, $float2, $operator='=' ) {
     // Check numbers to 5 digits of precision
     $epsilon = 0.00001;
 

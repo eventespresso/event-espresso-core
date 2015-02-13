@@ -22,6 +22,13 @@
  * @author			Mike Nelson
  *
  * ------------------------------------------------------------------------
+ * Class for processing payments. This has been designed in a way so that other WP Plugins
+ * can use this class for processing payments, and theoreitcally any of its children, provided they implement the
+ * interfaces it uses.
+ * The necessary interfaces to be implemented are contained in core/libaries/payment_methods/EEI_Payment_Method_Interfaces.php and
+ * EEI_Interfaces. After constructing a gateway object, you need to set all the properties which reference many of the
+ * needed helpers and models (see all the methods starting with "set_", eg seg_line_item_helper which should be passed an object
+ * which implements EEHI_Line_Item_Helper; etc).
  */
 abstract class EE_Gateway{
 	/**
@@ -66,13 +73,13 @@ abstract class EE_Gateway{
 	protected $_template = NULL;
 
 	/**
-	 *
+	 * Concrete class that implements EEHI_Money, used by most gateways
 	 * @var EEHI_Money
 	 */
 	protected $_money = NULL;
 
 	/**
-	 * Used for manipulating the line item tree
+	 * Concrete class that implements EEHI_Line_Item, used for manipulating the line item tree
 	 * @var EEHI_Line_Item
 	 */
 	protected $_line_item;
@@ -160,14 +167,14 @@ abstract class EE_Gateway{
 		}
 	}
 	/**
-	 * Sets the model which is used for querying for existing payments
+	 * See this class description
 	 * @param EEMI_Payment $payment_model
 	 */
 	public function set_payment_model($payment_model){
 		$this->_pay_model = $payment_model;
 	}
 	/**
-	 * Sets the payment log
+	 * See this class description
 	 * @param EEMI_Payment_Log $payment_log_model
 	 */
 	public function set_payment_log($payment_log_model){
@@ -175,7 +182,7 @@ abstract class EE_Gateway{
 	}
 
 	/**
-	 *
+	 * See this class description
 	 * @param EEHI_Template $template_helper
 	 */
 	public function set_template_helper($template_helper){
@@ -183,7 +190,7 @@ abstract class EE_Gateway{
 	}
 
 	/**
-	 *
+	 * See this class description
 	 * @param EEHI_Line_Item $line_item_helper
 	 */
 	public function set_line_item_helper( $line_item_helper ){
@@ -191,7 +198,7 @@ abstract class EE_Gateway{
 	}
 
 	/**
-	 *
+	 * See this class description
 	 * @param EEHI_Money $money_helper
 	 */
 	public function set_money_helper( $money_helper ){
