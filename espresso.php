@@ -219,6 +219,17 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
 
+// set_session_lifespan to 3 minutes
+add_filter( 'FHEE__EE_Session__construct___lifespan', 'espresso_set_session_lifespan' );
+
+/**
+ * espresso_set_session_lifespan
+ * @return int
+ */
+function espresso_set_session_lifespan() {
+	return 5 * MINUTE_IN_SECONDS;
+}
+
 
 
 
