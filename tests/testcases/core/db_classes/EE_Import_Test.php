@@ -126,14 +126,14 @@ class EE_Import_Test extends EE_UnitTestCase {
 	}
 
 	//@todo: test we dont insert conflicting data (especially term-taxonomies)
-//	public function test_save_data_array_to_db__from_other_site__avoid_inserting_conflicting_data() {
-//		$term_taxonomy = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'taxonomy' => 'category', 'description' => 'original term-taxonomy' ) );
-//		$term_taxonomy_from_other_db = $this->new_model_obj_with_dependencies( 'Term_Taxonomy',
-//				array(
-//					'term_id' => $term_taxonomy->get('term_id'),
-//					'taxonomy' => 'category',
-//					'description' => 'in other db' ) );
-//	}
+	public function test_save_data_array_to_db__from_other_site__avoid_inserting_conflicting_data() {
+		$term_taxonomy = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'taxonomy' => 'category', 'description' => 'original term-taxonomy' ) );
+		$term_taxonomy_from_other_db = $this->new_model_obj_with_dependencies( 'Term_Taxonomy',
+				array(
+					'term_id' => $term_taxonomy->get('term_id'),
+					'taxonomy' => 'category',
+					'description' => 'in other db' ) );
+	}
 	//@todo: test if an INT fk doesn't exist -> set it to NULL!
 	//@todo: if a STRING fk exists -> leave it alone
 
