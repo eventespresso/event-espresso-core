@@ -2084,8 +2084,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * Sets the _template_args arguments used by the _publish_post_box shortcut
 	 *
+	 * Note: currently there is no validation for this.  However if you want the delete button, the
+	 * save, and save and close buttons to work properly, then you will want to include a
+	 * values for the name and id arguments.
+	 *
+	 * @todo  Add in validation for name/id arguments.
+	 *
 	 * @param	string	$name		key used for the action ID (i.e. event_id)
-	 * @param	int		$id			id attached to the item published
+	 * @param	int		$id	id attached to the item published
 	 * @param	string	$delete	page route callback for the delete action
 	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
 	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
@@ -2107,14 +2113,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
-		// create hidden id field for what is being saved
-		$hidden_field_arr[$name] = array(
-			'type' => 'hidden',
-			'value' => $id
-			);
-		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+		if ( ! empty( $name ) && ! empty( $id ) ) {
+			$hidden_field_arr[$name] = array(
+				'type' => 'hidden',
+				'value' => $id
+				);
+			$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+		} else {
+			$hf = '';
+		}
 		// add hidden field
-		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
+		$this->_template_args['publish_hidden_fields'] = ! empty( $hf ) ? $hf[$name]['field'] : $hf;
 
 	}
 
