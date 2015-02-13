@@ -117,40 +117,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
 		}
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		// maybe update status, but don't save transaction just yet
+		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
-			$this->_payment_details(),
+			$this->checkout->payment,
 			$this->checkout->reg_cache_where_params
 		);
-	}
-
-
-
-	/**
-	 * _payment_details
-	 * perform updates based on payments, if any
-	 * @return EE_Payment | null
-	 */
-	protected function _payment_details() {
-		// payment required ?
-		if ( $this->checkout->payment_required() ) {
-			/** @type EE_Payment_Processor $payment_processor */
-			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-			//have to do this because $transaction_processor is not a singleton and payment_processor instantiates a new transaction_processor.
-			$payment_processor->set_revisit( $this->checkout->revisit );
-			// try to finalize any payment that may have been attempted,
-			// but do NOT call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment(),
-			// we'll do that manually below
-			return $payment_processor->finalize_payment_for( $this->checkout->transaction, false );
-		} else {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			// maybe update status, and make sure to save transaction if not done already
-			$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-			// nothing to see here
-			return null;
-		}
 	}
 
 
