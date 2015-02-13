@@ -66,6 +66,27 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * Overriding the single_row method from parent to verify whether the $item has an accessible
+	 * message_type or messenger object before generating the row.
+	 *
+	 * @param EE_Message_Template_Group $item
+	 *
+	 * @return string
+	 */
+	public function single_row( $item ) {
+		$message_type = $item->message_type_obj();
+		$messenger = $item->messenger_obj();
+
+		if ( ! $message_type instanceof EE_message_type || ! $messenger instanceof EE_messenger ) {
+			echo '';
+		}
+
+		parent::single_row( $item );
+	}
+
+
+
 
 
 	protected function _get_table_filters() {

@@ -491,6 +491,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 		foreach ( $global_templates as $mtpgID => $mtpg ) {
 			//verify this message type is supposed to show on this page
 			$mtp_obj = $mtpg->message_type_obj();
+			if ( ! $mtp_obj instanceof EE_message_type ) {
+				continue;
+			}
 			$mtp_obj->admin_registered_pages = (array) $mtp_obj->admin_registered_pages;
 			if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) )
 				continue;

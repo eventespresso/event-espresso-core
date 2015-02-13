@@ -44,6 +44,15 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+
+	/**
+	 * Used to flag when the ticket selector is being called from an external iframe.
+	 *
+	 * @var bool
+	 */
+	protected static $_in_iframe = false;
+
+
 	/**
 	 * @return EED_Ticket_Selector
 	 */
@@ -63,6 +72,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks() {
 		// routing
+		EE_Config::register_route( 'iframe', 'EED_Ticket_Selector', 'ticket_selector_iframe', 'ticket_selector' );
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
@@ -82,6 +92,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
+
+		//add button for iframe code to event editor.
+		//add_filter( 'get_sample_permalink_html', array( 'EED_Ticket_Selector', 'iframe_code_button' ), 10, 4 );
+
+		//add_action( 'admin_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets_admin' ), 10 );
 	}
 
 
@@ -106,6 +121,62 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	@return 	void
 	 */
 	public function run( $WP ) {}
+
+
+	/**
+	 * ticket_selector_iframe
+	 *
+	 *	@access 	public
+	 * 	@return 	void
+	 */
+	public function ticket_selector_iframe() {
+		self::$_in_iframe = true;
+		/** @type EEM_Event $EEM_Event */
+		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
+		$event = $EEM_Event->get_one_by_ID( EE_Registry::instance()->REQ->get(
+			'event', 0 ));
+		echo EED_Ticket_Selector::display_ticket_selector( $event );
+		exit;
+	}
+
+
+
+
+	/**
+	 * Adds an iframe embed code button to the Event editor.
+	 *
+	 * @param string $permalink_string    The current html string for the permalink section.
+	 * @param int 	    $id           The post id for the event.
+	 * @param string $new_title The for the event
+	 * @param string $new_slug  The slug for the event.
+	 *
+	 * @return string The new html string for the permalink area.
+	 */
+	public static function iframe_code_button( $permalink_string, $id, $new_title, $new_slug ) {
+		//make sure this is ONLY when editing and the event id has been set.
+		if ( ! empty( $id ) )  {
+			$post = get_post( $id );
+
+			//if NOT event then let's get out.
+			if ( $post->post_type !== 'espresso_events' ) {
+				return $permalink_string;
+			}
+
+			$ticket_selector_url = add_query_arg( array( 'ticket_selector' => 'iframe', 'event' => $id ), site_url() );
+
+			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">' . __('Embed', 'event_espresso') . '</a> ';
+			$permalink_string .= '
+<div id="js-ts-iframe" style="display:none">
+	<div style="width:100%; height: 500px;">
+		<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>
+	</div>
+</div>';
+		}
+		return $permalink_string;
+	}
+
+
+
 
 
 
@@ -203,6 +274,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		$ticket_selector = ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url ) : '';
 		// if not redirecting to another site for registration
 		if ( ! $external_url ) {
+			EE_Registry::instance()->load_helper( 'Template' );
 			// then display the ticket selector
 			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
 		} else {
@@ -247,7 +319,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
-		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
+		return '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
 
@@ -709,6 +782,20 @@ class EED_Ticket_Selector extends  EED_Module {
 			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
 			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
+		}
+	}
+
+
+
+
+
+	public static function load_tckt_slctr_assets_admin() {
+		//iframe button js on admin event editor page
+		if ( EE_Registry::instance()->REQ->get('page') == 'espresso_events' && EE_Registry::instance()->REQ->get('action') == 'edit' ) {
+			wp_register_script( 'ticket_selector_embed', TICKET_SELECTOR_ASSETS_URL . 'ticket-selector-embed.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, true );
+			EE_Registry::$i18n_js_strings['ts_embed_iframe_title'] = __('Copy and Paste the following:', 'event_espresso' );
+			wp_enqueue_script( 'ticket_selector_embed' );
+			wp_localize_script( 'ticket_selector_embed', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
 
