@@ -19,10 +19,11 @@ class EE_Import_Test extends EE_UnitTestCase {
 	 * coincidentally has the same IDs as data in site B, that it DOES NOT overwrite it
 	 */
 	public function test_save_data_array_to_db__from_other_site__data_with_same_ids(){
-		$original_event1 = $this->new_model_obj_with_dependencies('Event');
-		$original_datetime1 = $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $original_event1->ID() ) );
-		$original_ticket1 = $this->new_model_obj_with_dependencies( 'Ticket' );
-		$original_datetime_ticket = $this->new_model_obj_with_dependencies( 'Datetime_Ticket', array( 'DTT_ID' => $original_datetime1->ID(), 'TKT_ID' => $original_ticket1->ID() ) );
+		//add some stuff to the db, but just keep references to their clones (which won't be affected by the entity mapper)
+		$original_event1 = clone $this->new_model_obj_with_dependencies('Event');
+		$original_datetime1 = clone $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $original_event1->ID() ) );
+		$original_ticket1 = clone $this->new_model_obj_with_dependencies( 'Ticket' );
+		$original_datetime_ticket = clone $this->new_model_obj_with_dependencies( 'Datetime_Ticket', array( 'DTT_ID' => $original_datetime1->ID(), 'TKT_ID' => $original_ticket1->ID() ) );
 
 
 		//now let's make some model objects that AREN'T in this database
@@ -35,7 +36,7 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$other_db_event2_props = $other_db_event2->model_field_array();
 		$other_db_event2_props[ 'EVT_ID' ] = 1000;
 
-		$other_db_datetime = $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $original_event1->ID(), 'DTT_ID' => $original_datetime1->ID() ), false );
+		$other_db_datetime = $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $original_event1->ID() ), false );
 		$other_db_datetime_props = $other_db_datetime->model_field_array();
 		$other_db_datetime_props[ 'DTT_ID' ] = $original_datetime1->ID();
 
@@ -119,10 +120,10 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$this->assertEquals( $datetime1_mapping, $inserted_datetime_ticket_from_other_db->get( 'DTT_ID' ) );
 		//the original event shouldn't be affected, nor should it have more than the original datetime on it
 		$updated_event1 = EEM_Event::instance()->refresh_entity_map_from_db( $original_event1->ID() );
-		$this->assertEEModelObjectsEquals( $updated_event1, $original_event1 );
+		$this->assertEEModelObjectsEquals( $original_event1, $updated_event1 );
 		//the original datetime shoudln't be affected, nor shoudl it have more than the original ticket associagted with it
 		$updated_datetime1 = EEM_Datetime::instance()->refresh_entity_map_from_db( $original_datetime1->ID() );
-		$this->assertEEModelObjectsEquals( $updated_datetime1, $original_datetime1 );
+		$this->assertEEModelObjectsEquals( $original_datetime1, $updated_datetime1 );
 	}
 
 	//@todo: test we dont insert conflicting data (especially term-taxonomies)
@@ -132,10 +133,39 @@ class EE_Import_Test extends EE_UnitTestCase {
 				array(
 					'term_id' => $term_taxonomy->get('term_id'),
 					'taxonomy' => 'category',
-					'description' => 'in other db' ) );
+					'description' => 'in other db' ), false );
+		$country_usa = EEM_Country::instance()->get_one_by_ID( 'US' );
+		//have the contry be slightly modified in the exporting site
+		$country_usa_props = $country_usa->model_field_array();
+		$country_usa_props[ 'CNT_is_EU' ] = true;
+		$csv_data_rows = array(
+			'Term_Taxonomy' => array(
+				$term_taxonomy_from_other_db->model_field_array()
+			),
+			'Country' => array(
+				$country_usa_props
+			)
+		);
+		$term_taxonomy_count = EEM_Term_Taxonomy::instance()->count();
+		$country_count = EEM_Country::instance()->count();
+		$this->assertEquals( 'original term-taxonomy', $term_taxonomy->get( 'description' ) );
+		$this->assertEquals( false, $country_usa->get( 'CNT_is_EU' ) );
+		EE_Import::instance()->save_data_rows_to_db($csv_data_rows, true, array() );
+		//there shouldn't be any new term taxonomies or countries
+		$this->assertEquals( $term_taxonomy_count, EEM_Term_Taxonomy::instance()->count() );
+		$this->assertEquals( $country_count, EEM_Country::instance()->count() );
+		//however, they should be updated
+		$updated_term_taxonomy = EEM_Term_Taxonomy::instance()->refresh_entity_map_from_db( $term_taxonomy->ID() );
+		$this->assertEquals( 'in other db', $updated_term_taxonomy->get( 'description' ) );
+		$updated_country = EEM_Country::instance()->refresh_entity_map_from_db( $country_usa->ID() );
+		$this->assertEquals( true, $updated_country->get( 'CNT_is_EU' ) );
 	}
 	//@todo: test if an INT fk doesn't exist -> set it to NULL!
 	//@todo: if a STRING fk exists -> leave it alone
+
+	public function test_save_data_array_to_db__from_other_site__fks_that_dont_exist() {
+		
+	}
 
 
 //	public function test_save_data_array_to_db__from_other_site_second_time(){
