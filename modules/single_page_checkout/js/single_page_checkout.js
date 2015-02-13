@@ -43,19 +43,20 @@ jQuery(document).ready( function($) {
 		 *     EESID: string,
 		 *     datepicker_yearRange: string,
 		 *     revisit: string,
-		 *     e_reg_url_link: string
-		 *     years: string
-		 *     months: string
-		 *     weeks, eei18n.days: string
-		 *     hours: string
-		 *     minutes: string
-		 *     seconds: string
-		 *     year, eei18n.month: string
-		 *     week: string
-		 *     day: string
-		 *     hour: string
-		 *     minute: string
-		 *     second: string
+		 *     e_reg_url_link: string,
+		 *     timer_years: string,
+		 *     timer_months: string,
+		 *     timer_weeks, eei18n.days: string,
+		 *     timer_hours: string,
+		 *     timer_minutes: string,
+		 *     timer_seconds: string,
+		 *     timer_year, eei18n.month: string,
+		 *     timer_week: string,
+		 *     timer_day: string,
+		 *     timer_hour: string,
+		 *     timer_minute: string,
+		 *     timer_second: string,
+		 *     registration_expiration_notice: string
 		 * }}
 	 * @namespace response
 	 * @type {{
@@ -419,18 +420,31 @@ jQuery(document).ready( function($) {
 
 
 		/**
+		 * @function display_registration_expiration_notice
+		 */
+		display_registration_expiration_notice : function() {
+			SPCO.main_container.slideUp().html( eei18n.registration_expiration_notice ).slideDown();
+		},
+
+
+
+		/**
 		 * @function start_registration_time_limit_countdown
-		 * closes any open notices simply by clicking anywhere on the screen
 		 */
 		start_registration_time_limit_countdown : function() {
-			var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
-			var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
-			$('#spco-registration-time-limit-spn').countdown({
-				labels: [ eei18n.years, eei18n.months, eei18n.weeks, eei18n.days, eei18n.hours, eei18n.minutes, eei18n.seconds ],
-				labels1: [ eei18n.year, eei18n.month, eei18n.week, eei18n.day, eei18n.hour, eei18n.minute, eei18n.second ],
-				until: expiration,
-				layout: layout
-			});
+			var $registration_time_limit = $('#spco-registration-time-limit-spn');
+			if ( $registration_time_limit.length > 0 ) {
+				var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
+				var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
+				//alert( '$registration_time_limit = ' + $registration_time_limit.html() + '\n' + 'expiration = ' + expiration );
+				$registration_time_limit.countdown({
+					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
+					labels1: [ eei18n.timer_year, eei18n.timer_month, eei18n.timer_week, eei18n.timer_day, eei18n.timer_hour, eei18n.timer_minute, eei18n.timer_second ],
+					until: expiration,
+					layout: layout,
+					//onExpiry: SPCO.display_registration_expiration_notice()
+				});
+			}
 		},
 
 
