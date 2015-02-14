@@ -280,13 +280,15 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Payment_Processor $payment_processor */
-			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-			// set revisit flag for payment processor
-			$payment_processor->set_revisit( false );
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
 			foreach ( self::$_abandoned_transactions as $TXN_ID ) {
+//				update_option(
+//					'ee_cron_finalize_abandoned_transactions',
+//					'$TXN_ID = ' . $TXN_ID
+//				);
 				// reschedule the cron if we can't hit the db right now
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for finalizing the TXN
@@ -297,36 +299,71 @@ class EE_Cron_Tasks extends EE_BASE {
 					continue;
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+//				update_option(
+//					'ee_cron_finalize_abandoned_transactions',
+//					$transaction
+//				);
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
 					// or have had all of their reg steps completed
-					if ( $transaction_processor->all_reg_steps_completed(	$transaction ) ) {
+					if ( $transaction_processor->all_reg_steps_completed(	$transaction ) === true ) {
+//						update_option(
+//							'ee_cron_finalize_abandoned_transactions',
+//							'all_reg_steps_completed'
+//						);
 						continue;
 					}
+//					update_option(
+//						'ee_cron_finalize_abandoned_transactions',
+//						'$transaction->ID() = ' . $transaction->ID() . ' &&
+//						$transaction->reg_steps() = '
+//						. serialize( $transaction->reg_steps() )
+//					);
 					// set the payment options step as completed
 					$transaction_processor->set_reg_step_completed(
 						$transaction,
 						'payment_options'
 					);
+//					update_option(
+//						'ee_cron_finalize_abandoned_transactions',
+//						'$transaction->ID() = ' . $transaction->ID() . ' &&
+//						$transaction->reg_steps( payment_options ) = '
+//						. serialize( $transaction->reg_steps() )
+//					);
 					// and if it hasn't already been set as being started...
 					$transaction_processor->set_reg_step_initiated(
 						$transaction,
 						'finalize_registration'
 					);
-					// now try to finalize any payment that may have been attempted
-					// this will also finalize the TXN and trigger notifications
-					$payment = $payment_processor->finalize_payment_for( $transaction );
-					if ( $payment instanceof EE_Payment ) {
-						// at this point we'll consider a TXN to not have been abandoned
-						$transaction_processor
-							->toggle_abandoned_transaction_status( $transaction );
-						$transaction_processor
-							->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
-						update_option(
-							'ee_cron_finalize_abandoned_transactions',
-							$transaction
+//					update_option(
+//						'ee_cron_finalize_abandoned_transactions',
+//						'$transaction->ID() = ' . $transaction->ID() . ' &&
+//						$transaction->reg_steps( finalize_registration ) = '
+//						. serialize( $transaction->reg_steps() )
+//					);
+//					$transaction->save();
+					// maybe update status, but don't save transaction just yet
+					$transaction_payments
+						->update_transaction_status_based_on_total_paid( $transaction, false );
+//					update_option(
+//						'ee_cron_finalize_abandoned_transactions',
+//						'$transaction->ID() = ' . $transaction->ID() . ' &&
+//						$transaction->reg_steps( finalize ) = '
+//						. serialize( $transaction->reg_steps() ) . ' &&
+//						$transaction->status_ID() = '
+//						. $transaction->status_ID()
+//					);
+					// now update the TXN and trigger notifications
+					$transaction_processor
+						->update_transaction_and_registrations_after_checkout_or_payment(
+							$transaction,
+							$transaction->last_payment()
 						);
-					}
+//					update_option(
+//						'ee_cron_finalize_abandoned_transactions',
+//						serialize(get_option(
+//							'ee_cron_finalize_abandoned_transactions'	)) . serialize($transaction)
+//					);
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
