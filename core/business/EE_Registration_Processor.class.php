@@ -265,30 +265,38 @@ class EE_Registration_Processor {
 	 * @return void
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
-		do_action(
-			'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
-			$registration,
-			apply_filters(
-				'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
-				array_merge(
+		try {
+			do_action(
+				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications__BLARGGG',
+				$registration,
+				apply_filters(
+					'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
+					array_merge(
 					// defaults
-					array(
-						'checkout_or_payment' => FALSE,
-						'manually_updated' 		=> FALSE,
-						'payment_updates' 		=> FALSE,
-						'status_updates' 			=> FALSE,
-						'finalized' 						=> FALSE,
-						'revisit' 							=> FALSE,
-						'reg_steps' 						=> array(),
-						'old_txn_status' 				=> NULL,
-						'last_payment'				=> NULL,
-						'old_reg_status' 				=> NULL,
-						'new_reg_status' 			=> NULL
-					),
-					$additional_details
+						array(
+							'checkout_or_payment' => FALSE,
+							'manually_updated' 		=> FALSE,
+							'payment_updates' 		=> FALSE,
+							'status_updates' 			=> FALSE,
+							'finalized' 						=> FALSE,
+							'revisit' 							=> FALSE,
+							'reg_steps' 						=> array(),
+							'old_txn_status' 				=> NULL,
+							'last_payment'				=> NULL,
+							'old_reg_status' 				=> NULL,
+							'new_reg_status' 			=> NULL
+						),
+						$additional_details
+					)
 				)
-			)
-		);
+			);
+		} catch( Exception $e ) {
+//			update_option(
+//				'ee_cron_finalize_abandoned_transactions',
+//				serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	)) . $e->getMessage()
+//			);
+			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
+		}
 	}
 
 
