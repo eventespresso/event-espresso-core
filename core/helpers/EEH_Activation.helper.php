@@ -1249,6 +1249,7 @@ class EEH_Activation {
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
+			'ee_has_activated_messenger' => TRUE,
 			'ee_flush_rewrite_rules' => TRUE,
 			'ee_config' => TRUE,
 			'ee_data_migration_current_db_state' => TRUE,
