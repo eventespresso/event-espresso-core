@@ -3072,6 +3072,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * getter for the protected $_views property
+	 *
+	 * @return array
+	 */
+	public function get_views() {
+		return $this->_views;
+	}
+
+
+
+
+	/**
 	 * get_current_page
 	 *
 	 * @access public
