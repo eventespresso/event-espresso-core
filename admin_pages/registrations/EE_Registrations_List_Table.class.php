@@ -58,6 +58,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return EE_Registrations_List_Table
 	 */
 	function __construct( $admin_page ){
+
+		if ( ! empty( $_GET['event_id'] ) ) {
+			$extra_query_args = array();
+			foreach ( $admin_page->get_views() as $key => $view_details ) {
+				$extra_query_args[$view_details['slug']] = array( 'event_id' => $_GET['event_id'] );
+			}
+			$this->_views = $admin_page->get_list_table_view_RLs( $extra_query_args );
+		}
+
 		parent::__construct($admin_page);
 		$this->_status = $this->_admin_page->get_registration_status_array();
 
