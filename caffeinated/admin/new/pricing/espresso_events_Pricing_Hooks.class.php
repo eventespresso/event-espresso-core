@@ -44,6 +44,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			return;
 		}
 
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+
 		//if we were going to add our own metaboxes we'd use the below.
 		$this->_metaboxes = array(
 			0 => array(
@@ -63,6 +65,22 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'context' => 'normal'
 				)
 			);
+
+		/**
+		 * Format strings for date and time.  Defaults are existing behaviour from 4.1.
+		 * Note, that if you return null as the value for 'date', and 'time' in the array, then
+		 * EE will automatically use the set wp_options, 'date_format', and 'time_format'.
+		 *
+		 * @var array  Expected an array returned with 'date' and 'time' keys.
+		 */
+		$date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__date_format_strings', array(
+				'date' => 'Y-m-d',
+				'time' => 'h:i a'
+			));
+
+		//validate
+		$date_format_strings['date'] = isset( $date_format_strings['date'] ) ? $date_format_strings['date'] : null;
+		$date_format_strings['time'] = isset( $date_format_strings['time'] ) ? $date_format_strings['time'] : null;
 
 		$this->_scripts_styles = array(
 			'registers' => array(
@@ -100,7 +118,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					'DTT_OVERSELL_WARNING' => array(
 						'datetime_ticket' => __('You cannot add this ticket to this datetime because it has a sold amount that is greater than the amount of spots remaining for this datetime.', 'event_espresso'),
 						'ticket_datetime' => __('You cannot add this datetime to this ticket because the ticket has a sold amount that is greater than the amount of spots remaining on the datetime.', 'event_espresso')
-						)
+						),
+					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $date_format_strings['date'], $date_format_strings['time'] )
 					)
 				)
 			);
