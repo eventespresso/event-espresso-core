@@ -271,16 +271,16 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<?php if ( $ticket->taxable() ) { ?>
 												<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
 												<tr>
-													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
-													<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
+													<td colspan="2" class="jst-rght small-text sbttl"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
+													<td data-th="<?php _e( 'subtotal', 'event_espresso' ); ?>" class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
 												</tr>
 
 												<?php foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
 												<tr>
-													<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
-													<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
+													<td data-th="<?php _e( 'Name', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $tax->name(); ?></td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
 													<?php $tax_amount = $running_total * ( $tax->amount() / 100 ); ?>
-													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
+													<td data-th="<?php _e( 'Amount', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
 													<?php $running_total += $tax_amount; ?>
 												</tr>
 												<?php } ?>

@@ -270,7 +270,8 @@
 		border-bottom: 1px solid #ddd;
 	}
 	.tckt-slctr-tkt-details-tbl th,
-	.tckt-slctr-tkt-details-tbl .ttl-lbl-td {
+	.tckt-slctr-tkt-details-tbl .ttl-lbl-td,
+	.tckt-slctr-tkt-details-tbl .sbttl {
 		display: none;
 	}
 	.tckt-slctr-tkt-details-tbl td {
@@ -285,11 +286,17 @@
 	.tckt-slctr-tkt-details-tbl td:before {
 		content: attr(data-th) ": ";
 		font-weight: bold;
-		width: 6.5em;
+		width: 8.5em;
 		display: inline-block;
+	}
+	.tckt-slctr-tkt-sale-dates-sctn .ticket-details-label-spn {
+		width: 100%;
 	}
 	.tckt-slctr-tkt-details-tbl th, .tckt-slctr-tkt-details-tbl td {
 		text-align: left;
 	}
-
+	.tckt-slctr-tkt-details-dv .smaller-text {
+		display: inline;
+		font-size: inherit; 
+	}
 }
