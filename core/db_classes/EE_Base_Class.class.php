@@ -860,11 +860,12 @@ abstract class EE_Base_Class{
 	 * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
 	 * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format on the object will be used.
 	 *
-	 * @return string Date and time string in set locale.
+	 * @return string Date and time string in set locale or false if no field exists for the given
+	 *                         field name.
 	 */
 	public function get_i18n_datetime( $field_name, $format = NULL ) {
 		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
-		return date_i18n( $format, strtotime( $this->_get_datetime( $field_name, NULL, NULL, NULL, false ) ) );
+		return date_i18n( $format, $this->get_strtotime( $field_name ) );
 	}
 
 
