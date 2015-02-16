@@ -331,7 +331,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction_payments->calculate_total_payments_and_update_status( $transaction );
 			// call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
 			if ( $update_txn ) {
-				$this->_post_payment_processing( $transaction, 	$payment, $update_txn );
+				$this->_post_payment_processing( $transaction, $payment );
 			}
 			// and set a hook point for others to use?
 			if ( $do_action ) {
@@ -355,7 +355,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction_processor->set_revisit( $this->_revisit );
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
-		$transaction->save();
 	}
 
 
