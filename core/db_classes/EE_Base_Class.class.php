@@ -285,23 +285,47 @@ abstract class EE_Base_Class{
 
 
 	/**
-	 * fix_date_format_for_use_with_strtotime
+	 * This gets the strtotime value of a given field.  Use this instead of php native strtotime
+	 * because we want to convert the date string from a possibly incompatible format first
+	 * before calling strtotime.
 	 *
 	 * From the PHP strtotime() function documentation:
-	 * "Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator between the various components: if the separator is a slash (/), then the American m/d/y is assumed; whereas if the separator is a dash (-) or a dot (.), then the European d-m-y format is assumed."
+	 * "Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator
+	 * between the various components: if the separator is a slash (/), then the American m/d/
+	 * y is assumed; whereas if the separator is a dash (-) or a dot (.), then the European d-m-
+	 * y format is assumed."
 	 *
-	 * @access public
-	 * @param string $dt_frmt
+	 * @param string $field_name   The field name of the field we're getting the strtotime
+	 *                             		   value from.
 	 * @return string
 	 */
-	public static function fix_date_format_for_use_with_strtotime( $dt_frmt ) {
-		// if the date format is d/m/y
-		if ( strpos( $dt_frmt, 'd/' )=== 0 ) {
+	public function get_strtotime( $field_name ) {
+
+		//now let's use strtotime to get the timestamp (note for now we're not caching the values on this object)
+		$field = $this->_get_dtt_field_settings( $field_name );
+
+		//temporarily cached what was set so that it can be returned to its value.
+		$orig_dt_format = $field->get_date_format();
+
+		// possibly correct date format if the date format is d/m/y
+		$dt_format = $orig_dt_format;
+		if ( strpos( $dt_format, 'd/' )=== 0 ) {
 			// change it to d-m-y, or else strtotime() will think it is m/d/y
-			$dt_frmt = str_replace( '/', '-', $dt_frmt );
+			$dt_format = str_replace( '/', '-', $dt_format );
 		}
-		return $dt_frmt;
+
+		$field->set_date_format( $dt_format );
+		$field->set_date_time_output();
+		$dtt = $field->prepare_for_get( $this->get_raw( $field_name ) );
+
+		//restore what was set on the field.
+		$field->set_date_format( $orig_dt_format );
+
+		//now we can do the strtotime on the $dtt
+		return strtotime( $dtt );
 	}
+
+
 
 
 
