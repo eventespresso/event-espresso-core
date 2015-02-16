@@ -30,11 +30,25 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	/**
-	 * This property is just used to hold the status of whether an event is currently being created (true) or edited (false)
+	 * This property is just used to hold the status of whether an event is currently being
+	 * created (true) or edited (false)
 	 * @access protected
 	 * @var bool
 	 */
 	protected $_is_creating_event;
+
+
+	/**
+	 * Used to contain the format strings for date and time that will be used for php date and
+	 * time.
+	 *
+	 * Is set in the _set_hooks_properties() method.
+	 *
+	 * @var array
+	 */
+	protected $_date_format_strings;
+
+
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
@@ -75,14 +89,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 *
 		 * @var array  Expected an array returned with 'date' and 'time' keys.
 		 */
-		$date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__date_format_strings', array(
+		$this->_date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__this->_date_format_strings', array(
 				'date' => 'Y-m-d',
 				'time' => 'h:i a'
 			));
 
 		//validate
-		$date_format_strings['date'] = isset( $date_format_strings['date'] ) ? $date_format_strings['date'] : null;
-		$date_format_strings['time'] = isset( $date_format_strings['time'] ) ? $date_format_strings['time'] : null;
+		$this->_date_format_strings['date'] = isset( $this->_date_format_strings['date'] ) ? $this->_date_format_strings['date'] : null;
+		$this->_date_format_strings['time'] = isset( $this->_date_format_strings['time'] ) ? $this->_date_format_strings['time'] : null;
 
 		$this->_scripts_styles = array(
 			'registers' => array(
@@ -121,7 +135,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'datetime_ticket' => __('You cannot add this ticket to this datetime because it has a sold amount that is greater than the amount of spots remaining for this datetime.', 'event_espresso'),
 						'ticket_datetime' => __('You cannot add this datetime to this ticket because the ticket has a sold amount that is greater than the amount of spots remaining on the datetime.', 'event_espresso')
 						),
-					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $date_format_strings['date'], $date_format_strings['time'] ),
+					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $this->_date_format_strings['date'], $this->_date_format_strings['time'] ),
 					'DTT_START_OF_WEEK' => get_option( 'start_of_week' )
 					)
 				)
