@@ -1175,12 +1175,4 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	/** experiemental box
-	public function pricing_metabox() {
-		$template = EVENTS_TEMPLATE_PATH . 'new_price_layout.template.php';
-		EEH_Template::display_template($template);
-	} /**/
-
-
-
 } //end class espresso_events_Pricing_Hooks
