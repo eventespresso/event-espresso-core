@@ -50,8 +50,8 @@ select {
 	color: #999;
 	font-size: 12px;
 	font-size: 1.2rem;
-	padding: 14px;
-	padding: 1.4rem;
+	margin-left: 10px;
+	margin-left: 1rem;
 }
 
 input[type="submit"] {
@@ -71,5 +71,5 @@ input[type="submit"] {
 }
 
 input:hover[type="submit"] {
-	background-color: #ff7a22;
+	opacity: 0.9;
 }
