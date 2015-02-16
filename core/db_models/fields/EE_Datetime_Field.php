@@ -63,14 +63,12 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 		parent::__construct($table_column, $nice_name, $nullable, $default_value);
 		$this->_date_format = empty($date_format) ? get_option('date_format') : $date_format;
-		$this->_date_format = EE_Base_Class::fix_date_format_for_use_with_strtotime( $this->_date_format );
 		$this->_time_format = empty($time_format) ? get_option('time_format') : $time_format;
 
 		$this->set_timezone( $timezone );
 
 
 		$this->_pretty_date_format = empty($pretty_date_format) ? get_option('date_format') : $pretty_date_format;
-		$this->_pretty_date_format = EE_Base_Class::fix_date_format_for_use_with_strtotime( $this->_pretty_date_format );
 		$this->_pretty_time_format = empty( $pretty_time_format ) ? get_option('time_format') : $pretty_time_format;
 	}
 

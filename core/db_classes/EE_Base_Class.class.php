@@ -109,7 +109,7 @@ abstract class EE_Base_Class{
 
 		$className=get_class($this);
 		//set default formats for date and time
-		$this->_dt_frmt = EE_Base_Class::fix_date_format_for_use_with_strtotime( get_option( 'date_format' ));
+		$this->_dt_frmt = get_option( 'date_format' );
 		$this->_tm_frmt = get_option( 'time_format' );
 
 
@@ -711,7 +711,7 @@ abstract class EE_Base_Class{
 	 */
 	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
 
-		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : EE_Base_Class::fix_date_format_for_use_with_strtotime( $dt_frmt );
+		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt :  $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
 
 
