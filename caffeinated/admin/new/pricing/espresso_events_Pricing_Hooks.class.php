@@ -775,8 +775,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_name' => $default ? '' : $dtt->name(),
 			'DTT_description' => $default ? '' : $dtt->description(),
-			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
-			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
+			'DTT_EVT_start' => $default ? '' : $dtt->start_date( $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] ),
+			'DTT_EVT_end' => $default ? '' : $dtt->end_date( $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] ),
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
 			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
@@ -867,8 +867,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'edit_tkt_expanded' => '', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
-			'TKT_start_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_start_date', 'Y-m-d h:i a') : '',
-			'TKT_end_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ) : '',
+			'TKT_start_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_start_date', $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] ) : '',
+			'TKT_end_date' => $ticket instanceof EE_Ticket ? $ticket->get_date('TKT_end_date', $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time']  ) : '',
 			'TKT_status' => $default ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : $ticket->is_default() ? EEH_Template::pretty_status( EE_Ticket::onsale, FALSE, 'sentence') : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes(), FALSE, FALSE),
 			'TKT_price_code' => EE_Registry::instance()->CFG->currency->code,
@@ -913,7 +913,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//handle rows that should NOT be empty
 		if ( empty( $template_args['TKT_start_date'] ) ) {
 			//if empty then the start date will be now.
-			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+			$template_args['TKT_start_date'] = date( $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] , current_time('timestamp'));
 			$template_args['tkt_status_class'] = ' tkt-status-' . EE_Ticket::onsale;
 		}
 
@@ -923,10 +923,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
 
 			if ( !empty( $earliest_dtt ) ) {
-				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] );
 			} else {
 				//default so let's just use what's been set for the default date-time which is 30 days from now.
-				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(24, 0, 0, date("m"), date("d") + 29, date("Y") )  );
+				$template_args['TKT_end_date'] = date( $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] , mktime(24, 0, 0, date("m"), date("d") + 29, date("Y") )  );
 			}
 			$template_args['tkt_status_class'] = ' tkt-status-' . EE_Ticket::onsale;
 		}
