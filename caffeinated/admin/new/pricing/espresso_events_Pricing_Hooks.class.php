@@ -303,7 +303,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
-				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
+				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$orig_price = $TKT->price();
