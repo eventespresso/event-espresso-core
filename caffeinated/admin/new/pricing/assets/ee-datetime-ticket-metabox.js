@@ -2304,7 +2304,7 @@ jQuery(document).ready(function($) {
 
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
 
-		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
+		dttPickerHelper.resetpicker().setDateFormat(DTT_CONVERTED_FORMATS.js.date).setTimeFormat(DTT_CONVERTED_FORMATS.js.time).setMomentFormat(DTT_CONVERTED_FORMATS.moment).setStartOfWeek(DTT_START_OF_WEEK.dayValue).picker(start, end, next, doingstart);
 	});
 
 	/**
