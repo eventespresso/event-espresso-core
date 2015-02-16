@@ -60,19 +60,16 @@ class EEH_DTT_Helper {
 	private static function _timezone_convert_to_string_from_offset( $offset ) {
 		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
 		$offset *= 3600; // convert hour offset to seconds
-        $abbrarray = timezone_abbreviations_list();
-        foreach ($abbrarray as $abbr)
-        {
-                foreach ($abbr as $city)
-                {
-                        if ($city['offset'] === $offset && $city['dst'] === FALSE)
-                        {
-                                return $city['timezone_id'];
-                        }
-                }
-        }
+		$abbrarray = timezone_abbreviations_list();
+		foreach ($abbrarray as $abbr) {
+			foreach ($abbr as $city) {
+				if ($city['offset'] === $offset && $city['dst'] === false) {
+					return $city['timezone_id'];
+				}
+			}
+		}
 
-        return FALSE;
+		return false;
 	}
 
 
