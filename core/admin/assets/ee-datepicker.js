@@ -5,6 +5,7 @@ var dttPickerHelper = {
 		timeFormat: 'h:mm tt',
 		ampm: true,
 		separator: '  ',
+		firstDay: 0,
 		stepHour: 1,
 		stepMinute: 5,
 		hourGrid: 2,
@@ -25,6 +26,8 @@ var dttPickerHelper = {
 		defaultDate: null,
 		showOn:'focus'
 	},
+
+	momentFormat : 'YYYY-MM-DD h:mm a',
 
 
 	//selector elements
@@ -50,14 +53,14 @@ var dttPickerHelper = {
 
 
 	setminDateTime: function(date, format) {
-		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
+		format = typeof(format) === 'undefined' ? this.momentFormat : format;
 		this.dttOptions.minDateTime = moment(date, format);
 		return this;
 	},
 
 
 	setmaxDateTime: function(date, format) {
-		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
+		format = typeof(format) === 'undefined' ? this.momentFormat : format;
 		this.dttOptions.maxDateTime = moment(date, format);
 		return this;
 	},
@@ -112,11 +115,11 @@ var dttPickerHelper = {
 
 		this.nextobj = next;
 
-		this.startDate = this.startobj.val() === '' ? dttPickerHelper.eemoment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
+		this.startDate = this.startobj.val() === '' ? dttPickerHelper.eemoment() : moment(this.startobj.val(), this.momentFormat );
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
 
-		this.endDate = this.endDate === '' ? this.startDate.clone().add(this.defaultRange.type, this.defaultRange.duration) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
+		this.endDate = this.endDate === '' ? this.startDate.clone().add(this.defaultRange.type, this.defaultRange.duration) : moment(this.endDate, this.momentFormat );
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
@@ -134,18 +137,18 @@ var dttPickerHelper = {
 		};
 
 		this.dttOptions.onClose = function(dateText, dpinst) {
-				var newDate = moment( dateText, 'YYYY-MM-DD h:mm a'),
-					lastVal = moment(dpinst.lastVal, 'YYYY-MM-DD h:mm a'),
+				var newDate = moment( dateText, this.momentFormat ),
+					lastVal = moment(dpinst.lastVal, this.momentFormat ),
 					diff = lastVal !== null ? lastVal.diff(newDate, 'minutes') : newDate;
 
 				if ( doingstart ) {
 					dttPickerHelper.startDate = newDate;
 					if ( dttPickerHelper.endobj instanceof jQuery )
-						dttPickerHelper.endobj.val(dttPickerHelper.endDate.format('YYYY-MM-DD h:mm a'));
+						dttPickerHelper.endobj.val(dttPickerHelper.endDate.format(dttPickerHelper.momentFormat ));
 					//dttPickerHelper.nextobj.focus();
 				} else {
 					dttPickerHelper.endDate = newDate;
-					dttPickerHelper.startobj.val(dttPickerHelper.startDate.format('YYYY-MM-DD h:mm a'));
+					dttPickerHelper.startobj.val(dttPickerHelper.startDate.format(dttPickerHelper.momentFormat ));
 					//dttPickerHelper.nextobj.focus();
 				}
 
@@ -154,9 +157,9 @@ var dttPickerHelper = {
 					if ( doingstart )
 						//use the already calculated diff to set the new endDate or startDate.
 						if ( dttPickerHelper.endobj instanceof jQuery )
-							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a'));
+							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format(dttPickerHelper.momentFormat ));
 					else
-						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a') );
+						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format(dttPickerHelper.momentFormat ) );
 				}
 				dttPickerHelper.resetpicker();
 				dttPickerHelper.pickerobj.datetimepicker('destroy');
@@ -184,6 +187,7 @@ var dttPickerHelper = {
 			timeFormat: 'h:mm tt',
 			ampm: true,
 			separator: '  ',
+			firstDay: 0,
 			stepHour: 1,
 			stepMinute: 5,
 			hourGrid: 2,
