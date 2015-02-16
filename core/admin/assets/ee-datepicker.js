@@ -66,6 +66,30 @@ var dttPickerHelper = {
 	},
 
 
+	setDateFormat: function( format ) {
+		this.dttOptions.dateFormat = format;
+		return this;
+	},
+
+
+	setTimeFormat: function( format ) {
+		this.dttOptions.timeFormat = format;
+		return this;
+	},
+
+
+	setMomentFormat: function( format ) {
+		this.momentFormat = format;
+		return this;
+	},
+
+
+	setStartOfWeek: function( weekStartValue ) {
+		this.dttOptions.firstDay = weekStartValue;
+		return this;
+	},
+
+
 
 	/**
 	 * This is used to set the range between start and end date by default when datepicker initialized with blank end date/time.
