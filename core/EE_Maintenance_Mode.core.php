@@ -172,6 +172,7 @@ class EE_Maintenance_Mode {
 	 * @return void
 	 */
 	public function set_maintenance_level($level){
+		do_action( 'AHEE__EE_Maintenance_Mode__set_maintenance_level', $level );
 		update_option(self::option_name_maintenance_mode, intval($level));
 	}
 

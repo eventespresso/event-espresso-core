@@ -159,8 +159,8 @@ ul.sidebar {
 	display:block;
 	list-style-type: none;
 }
-#ee-message-preview-container ul.sidebar li { display: block; margin:0; padding:10px 16px;}
-#ee-message-preview-container ul.sidebar li h5 {
+ul.sidebar li { display: block; margin:0; padding:10px 16px;}
+ul.sidebar li h5 {
 	text-decoration:none;
 	color: #000;
 	padding:10px 0 20px 0;

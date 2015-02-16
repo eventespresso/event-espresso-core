@@ -167,7 +167,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'critical_pages' => array(
 				'nav' => array(
-					'label' => __('Critical Pages'),
+					'label' => __('Critical Pages', 'event_espresso'),
 					'order' => 50
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
@@ -184,7 +184,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			//template settings
 			'template_settings' => array(
 				'nav' => array(
-					'label' => __('Templates'),
+					'label' => __('Templates', 'event_espresso'),
 					'order' => 30
 				),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
@@ -199,7 +199,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			),
 			'default' => array(
 				'nav' => array(
-					'label' => __('Your Organization'),
+					'label' => __('Your Organization', 'event_espresso'),
 					'order' => 20
 				),
                 			'help_tabs' => array(
@@ -214,7 +214,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				),
 			'admin_option_settings' => array(
 				'nav' => array(
-					'label' => __('Admin Options'),
+					'label' => __('Admin Options', 'event_espresso'),
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
@@ -229,7 +229,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				),
 			'country_settings' => array(
 				'nav' => array(
-					'label' => __('Countries'),
+					'label' => __('Countries', 'event_espresso'),
 					'order' => 70
 					),
                 'help_tabs' => array(
