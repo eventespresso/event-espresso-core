@@ -71,6 +71,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 * Note, that if you return null as the value for 'date', and 'time' in the array, then
 		 * EE will automatically use the set wp_options, 'date_format', and 'time_format'.
 		 *
+		 * @since 4.6.7
+		 *
 		 * @var array  Expected an array returned with 'date' and 'time' keys.
 		 */
 		$date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__date_format_strings', array(
@@ -119,7 +121,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'datetime_ticket' => __('You cannot add this ticket to this datetime because it has a sold amount that is greater than the amount of spots remaining for this datetime.', 'event_espresso'),
 						'ticket_datetime' => __('You cannot add this datetime to this ticket because the ticket has a sold amount that is greater than the amount of spots remaining on the datetime.', 'event_espresso')
 						),
-					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $date_format_strings['date'], $date_format_strings['time'] )
+					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $date_format_strings['date'], $date_format_strings['time'] ),
+					'DTT_START_OF_WEEK' => get_option( 'start_of_week' )
 					)
 				)
 			);
