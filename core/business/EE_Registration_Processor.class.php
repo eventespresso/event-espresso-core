@@ -267,7 +267,7 @@ class EE_Registration_Processor {
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
 		try {
 			do_action(
-				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications__BLARGGG',
+				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
 				apply_filters(
 					'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
