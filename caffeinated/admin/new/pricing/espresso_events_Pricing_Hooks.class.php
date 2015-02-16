@@ -136,7 +136,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'ticket_datetime' => __('You cannot add this datetime to this ticket because the ticket has a sold amount that is greater than the amount of spots remaining on the datetime.', 'event_espresso')
 						),
 					'DTT_CONVERTED_FORMATS' => EEH_DTT_Helper::convert_php_to_js_and_moment_date_formats( $this->_date_format_strings['date'], $this->_date_format_strings['time'] ),
-					'DTT_START_OF_WEEK' => (int) get_option( 'start_of_week' )
+					'DTT_START_OF_WEEK' => array( 'dayValue' => (int) get_option( 'start_of_week' ) )
 					)
 				)
 			);
