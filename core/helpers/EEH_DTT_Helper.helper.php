@@ -47,7 +47,7 @@ class EEH_DTT_Helper {
 		}
 		return $timezone;
 	}
-	
+
 
 
 
@@ -78,7 +78,7 @@ class EEH_DTT_Helper {
 
 
 	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
-		
+
 		$timezone = self::get_timezone();
 
 		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
@@ -195,7 +195,7 @@ class EEH_DTT_Helper {
 	 * helper for doing simple datetime calculations on a given datetime from EE_Base_Class and modifying it IN the EE_Base_Class so you don't have to do anything else.
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
 	 * @param  string        $dttfield What field in the class has the date to manipulate
-	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years	
+	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
 	 * @param  integer       $value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
@@ -262,6 +262,248 @@ class EEH_DTT_Helper {
 		}
 
 		return $newdtt;
+	}
+
+
+
+
+
+
+	/**
+	 * The purpose of this helper method is to receive an incoming format string in php date/time format
+	 * and spit out the js and moment.js equivalent formats.
+	 * Note, if no format string is given, then it is assumed the user wants what is set for WP.
+	 * Note, js date and time formats are those used by the jquery-ui datepicker and the jquery-ui date-
+	 * time picker.
+	 *
+	 * @see http://stackoverflow.com/posts/16725290/ for the code inspiration.
+	 *
+	 * @param string $format_string Incoming valid php date format string.
+	 *
+	 * @return array array(
+	 *         'js' => array (
+	 *         		'date' => //date format
+	 *         		'time' => //time format
+	 *         ),
+	 *         'moment' => //date and time format.
+	 * )
+	 */
+	public static function convert_php_to_js_and_moment_date_formats( $date_format_string = null, $time_format_string = null ) {
+		if ( $date_format_string === null ) {
+			$date_format_string = get_option( 'date_format' );
+		}
+
+		if ( $time_format_string === null ) {
+			$time_format_string = get_option( 'time_format' );
+		}
+
+		$date_format = self::_php_to_js_moment_converter( $date_format_string );
+		$time_format = self::_php_to_js_moment_converter( $time_format_string );
+
+		return array(
+			'js' => array(
+				'date' => $date_format['js'],
+				'time' => $time_format['js']
+				),
+			'moment' => $date_format['moment'] . ' ' . $time_format['moment' ]
+			);
+	}
+
+
+
+
+	/**
+	 * This converts incoming format string into js and moment variations.
+	 *
+	 * @param string $format_string incoming php format string
+	 *
+	 * @return array js and moment formats.
+	 */
+	protected static function _php_to_js_moment_converter( $format_string ) {
+		/**
+		 * This is a map of symbols for formats.
+		 * The index is the php symbol, the equivalent values are in the array.
+		 *
+		 * @var array
+		 */
+		$symbols_map = array(
+		// Day
+		//01
+		'd' => array(
+			'js' => 'dd',
+			'moment' => 'DD'
+			),
+		//Mon
+		'D' => array(
+			'js' => 'D',
+			'moment' => 'ddd'
+			),
+		//1,2,...31
+		'j' => array(
+			'js' => 'd',
+			'moment' => 'D'
+			),
+		//Monday
+		'l' => array(
+			'js' => 'DD',
+			'moment' => 'dddd'
+			),
+		//ISO numeric representation of the day of the week (1-6)
+		'N' => array(
+			'js' => '',
+			'moment' => 'E'
+			),
+		//st,nd.rd
+		'S' => array(
+			'js' => '',
+			'moment' => 'o'
+			),
+		//numeric representation of day of week (0-6)
+		'w' => array(
+			'js' => '',
+			'moment' => 'd'
+			),
+		//day of year starting from 0 (0-365)
+		'z' => array(
+			'js' => 'o',
+			'moment' => 'DDD' //note moment does not start with 0 so will need to modify by subtracting 1
+			),
+		// Week
+		//ISO-8601 week number of year (weeks starting on mond)
+		'W' => array(
+			'js' => '',
+			'moment' => 'w'
+			),
+		// Month
+		// January...December
+		'F' => array(
+			'js' => 'MM',
+			'moment' => 'MMMM'
+			),
+		//01...12
+		'm' => array(
+			'js' => 'mm',
+			'moment' => 'MM'
+			),
+		//Jan...Dec
+		'M' => array(
+			'js' => 'M',
+			'moment' => 'MMM'
+			),
+		//1-12
+		'n' => array(
+			'js' => 'm',
+			'moment' => 'M'
+			),
+		//number of days in given month
+		't' => array(
+			'js' => '',
+			'moment' => ''
+			),
+		// Year
+		//whether leap year or not 1/0
+		'L' => array(
+			'js' => '',
+			'moment' => ''
+			),
+		//ISO-8601 year number
+		'o' => array(
+			'js' => '',
+			'moment' => 'GGGG'
+			),
+		//1999...2003
+		'Y' => array(
+			'js' => 'yy',
+			'moment' => 'YYYY'
+			),
+		//99...03
+		'y' => array(
+			'js' => 'y',
+			'moment' => 'YY'
+			),
+		// Time
+		// am/pm
+		'a' => array(
+			'js' => 'tt',
+			'moment' => 'a'
+			),
+		// AM/PM
+		'A' => array(
+			'js' => 'TT',
+			'moment' => 'A'
+			),
+		// Swatch Internet Time?!?
+		'B' => array(
+			'js' => '',
+			'moment' => ''
+			),
+		//1...12
+		'g' => array(
+			'js' => 'h',
+			'moment' => 'h'
+			),
+		//0...23
+		'G' => array(
+			'js' => 'H',
+			'moment' => 'H'
+			),
+		//01...12
+		'h' => array(
+			'js' => 'hh',
+			'moment' => 'hh'
+			),
+		//00...23
+		'H' => array(
+			'js' => 'HH',
+			'moment' => 'HH'
+			),
+		//00..59
+		'i' => array(
+			'js' => 'mm',
+			'moment' => 'mm'
+			),
+		//seconds... 00...59
+		's' => array(
+			'js' => 'ss',
+			'moment' => 'ss'
+			),
+		//microseconds
+		'u' => array(
+			'js' => '',
+			'moment' => ''
+			)
+		);
+		$jqueryui_format = "";
+		$moment_format = "";
+		$escaping = false;
+		for ( $i = 0; $i < strlen($format_string); $i++ ) {
+			$char = $format_string[$i];
+			if ( $char === '\\' )  { // PHP date format escaping character
+				$i++;
+				if ( $escaping ) {
+					$jqueryui_format .= $format_string[$i];
+					$moment_format .= $format_string[$i];
+				} else {
+					$jqueryui_format .= '\'' . $format_string[$i];
+					$moment_format .= $format_string[$i];
+				}
+				$escaping = true;
+			} else {
+				if ($escaping) {
+					$jqueryui_format .= "'";
+					$mment_format .= "'";
+					 $escaping = false;
+				}
+				if (isset($symbols_map[$char])) {
+					$jqueryui_format .= $symbols_map[$char]['js'];
+					$moment_format .= $symbols_map[$char]['moment'];
+				} else {
+					$jqueryui_format .= $char;
+					$moment_format .= $char;
+				}
+			}
+		}
+		return array( 'js' => $jqueryui_format, 'moment' => $moment_format );
 	}
 
 
