@@ -202,6 +202,17 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 
+	/**
+	 * return the $_date_format property value.
+	 *
+	 * @return string
+	 */
+	public function get_date_format() {
+		return $this->_date_format;
+	}
+
+
+
 
 	/**
 	 * set the $_time_format property
@@ -212,6 +223,17 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	public function set_time_format( $format ) {
 		$this->_time_format = $format;
+	}
+
+
+
+	/**
+	 * return the $_time_format property value.
+	 *
+	 * @return string
+	 */
+	public function get_time_format() {
+		return $this->_time_format;
 	}
 
 
@@ -313,6 +335,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$format_string = $this->_get_date_time_output( TRUE );
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetime_value, $format_string ) . $timezone_string;
 	}
+
 
 
 
