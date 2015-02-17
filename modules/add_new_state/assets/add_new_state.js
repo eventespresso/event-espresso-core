@@ -61,6 +61,7 @@ jQuery(document).ready(function($) {
 
 			// disable state dropdown if adding a new state
 			$('.ee-form-add-new-state-submit').click(function(e) {
+				SPCO.enable_submit_buttons();
 				EE_ANS.submit_new_state( $(this) );
 				e.preventDefault();
 				e.stopPropagation();
@@ -68,6 +69,7 @@ jQuery(document).ready(function($) {
 
 			// disable state dropdown if adding a new state
 			$('.ee-form-cancel-new-state-lnk').click(function(e) {
+				SPCO.enable_submit_buttons();
 				EE_ANS.cancel_new_state( $(this) );
 				e.preventDefault();
 				e.stopPropagation();
@@ -75,6 +77,7 @@ jQuery(document).ready(function($) {
 
 			// display add new state microform
 			$('.ee-form-add-new-state-lnk').click(function(e) {
+				SPCO.disable_submit_buttons();
 				EE_ANS.display_add_new_state_form( $(this) );
 				e.preventDefault();
 				e.stopPropagation();
