@@ -80,6 +80,20 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		EE_Registry::instance()->load_helper( 'Activation' );
 
+		//let's clear out all active messengers to get an accurate test of initial generation of message templates.
+		global $wpdb;
+		$mtpg_table = $wpdb->prefix . 'esp_message_template_group';
+		$mtp_table = $wpdb->prefix . 'esp_message_template';
+		$evt_mtp_table = $wpdb->prefix . 'esp_event_message_template';
+		$query = "DELETE FROM  $mtpg_table WHERE 'GRP_ID' > 0";
+		$wpdb->query( $query );
+		$query = "DELETE FROM $mtp_table WHERE 'MTP_ID' > 0";
+		$wpdb->query($query);
+		$query = "DELETE FROM $evt_mtp_table WHERE 'EMT_ID' > 0";
+		$wpdb->query( $query );
+		$active_messengers = EEH_MSG_Template::update_active_messengers_in_db(array() );
+
+
 		//set a filter for the invalid message type
 		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', function( $default_types, $messenger ) {
 			$default_types[] = 'bogus_message_type';
