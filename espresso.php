@@ -218,12 +218,3 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
-
-
-
-
-
-
-
-
-
