@@ -1009,12 +1009,13 @@ class EEH_Activation {
 					//we need to setup any initial settings for message types
 					/** @var EE_message_type[] $installed_mts */
 					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+					$settings = array();
 					if ( is_array( $settings_fields ) ) {
 						foreach ( $settings_fields as $field => $values ) {
-							$settings[$field] = $values['default'];
+							if ( isset( $values['default'] ) ) {
+								$settings[$field] = $values['default'];
+							}
 						}
-					} else {
-						$settings = array();
 					}
 
 					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
@@ -1064,13 +1065,13 @@ class EEH_Activation {
 				}
 
 				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-
+				$settings = array();
 				if ( is_array( $settings_fields ) ) {
 					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
+						if ( isset( $values['default'] ) ) {
+							$settings[$field] = $values['default'];
+						}
 					}
-				} else {
-					$settings = array();
 				}
 
 				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
