@@ -89,7 +89,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 *
 		 * @var array  Expected an array returned with 'date' and 'time' keys.
 		 */
-		$this->_date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__this->_date_format_strings', array(
+		$this->_date_format_strings = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___set_hooks_properties__date_format_strings', array(
 				'date' => 'Y-m-d',
 				'time' => 'h:i a'
 			));
@@ -202,15 +202,29 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			if ( !empty( $dtt['DTT_ID'] ) ) {
 				$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
+
+				//set date and time format according to what is set in this class.
+				$DTM->set_date_format( $this->_date_format_strings['date'] );
+				$DTM->set_time_format( $this->_date_format_strings['time'] );
+
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
 
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
+
 			} else {
 				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
+
+				//reset date and times to match the format
+				$DTM->set_date_format( $this->_date_format_strings['date'] );
+				$DTM->set_time_format( $this->_date_format_strings['time'] );
+				foreach( $datetime_values as $field => $value ) {
+					$DTM->set( $field, $value );
+				}
 			}
+
 
 			$DTM->save();
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
@@ -339,6 +353,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
+				//set ticket formats
+				$TKT->set_date_format( $this->_date_format_strings['date'] );
+				$TKT->set_time_format( $this->_date_format_strings['time'] );
+
 				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
@@ -392,6 +410,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
 				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
+
+				//reset values so that new formats are correctly considered when converting date and time strings
+				$TKT->set_date_format( $this->_date_format_strings['date'] );
+				$TKT->set_time_format( $this->_date_format_strings['time'] );
+
+				//reset values
+				foreach ( $TKT_values as $field => $value ) {
+					$TKT->set( $field, $value );
+				}
+
 				$update_prices = TRUE;
 			}
 
