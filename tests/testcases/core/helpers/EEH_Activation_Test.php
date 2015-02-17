@@ -91,7 +91,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$wpdb->query($query);
 		$query = "DELETE FROM $evt_mtp_table WHERE 'EMT_ID' > 0";
 		$wpdb->query( $query );
-		$active_messengers = EEH_MSG_Template::update_active_messengers_in_db(array() );
+		EEH_MSG_Template::update_active_messengers_in_db(array() );
 
 
 		//set a filter for the invalid message type
