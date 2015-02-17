@@ -375,8 +375,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( $this->_nullable && empty( $datetime_value )) {
 			return NULL;
 		}
-		$datetime = date( 'Y-m-d H:i:s', (int)$datetime_value );
-		$this->_set_date_obj( $datetime, 'UTC' );
+
+		$this->_set_date_obj( (int) $datetime_value, 'UTC', 'U' );
 		if ( ! $this->_date instanceof DateTime ) {
 			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used on %s', 'event_espresso' ) , $this->get_model_name() ) );
 		}
@@ -621,28 +621,22 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * This is used to set the $_date property using the PHP DateTime object for internal calculations and timezone settings
 	 * @param string $date_string Incoming date/time string in an acceptable format
 	 * @param string $timezone    Valid Timezone for dates
+	 * @param string $format         Used to override the format properties that are set on this
+	 *                               		 object.
 	 * @throws Exception
 	 * @return void
 	 */
-	private function _set_date_obj( $date_string, $timezone ) {
+	private function _set_date_obj( $date_string, $timezone, $format = NULL ) {
 		if ( $this->_nullable && empty( $date_string ) ) {
 			$this->_date = NULL;
 			return;
 		}
-		try {
-			//start off assuming it's a wonky excel format
-			if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-				// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
-				$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
-			} else {
-				//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
-				$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
-			}
-		} catch( Exception $e ) {}
+
+		$format = $format !== NULL ? $format : $this->_date_format . ' ' . $this->_time_format;
 
 		if( ! $this->_date ){
 			try {
-				$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
+				$this->_date = DateTime::createFromFormat( $format, $date_string, new DateTimeZone( $timezone ) );
 			} catch( Exception $e ) {
 				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
 				if ( strtotime( $date_string ) == 0 ) {
