@@ -239,7 +239,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ? $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) :  '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime( 'DTT_EVT_start', $format ) :  '';
 	}
 
 
@@ -255,7 +256,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ? $datetime->end_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
 
 
@@ -271,7 +273,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_earliest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_earliest_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ?  $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_start', $format ) : '';
 	}
 
 
@@ -287,7 +290,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_latest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ?  $datetime->end_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
 
 
@@ -304,7 +308,7 @@ class EEH_Event_View extends EEH_Base {
 		if ( $datetime instanceof EE_Datetime ) {
 	?>
 		<div class="event-date-calendar-page-dv">
-			<div class="event-date-calendar-page-month-dv"><?php echo date_i18n( 'M', strtotime( $datetime->start_date()));?></div>
+			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->get_i18n_datetime( 'DTT_EVT_start', 'M' );?></div>
 			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date( 'd' );?></div>
 		</div>
 	<?php
