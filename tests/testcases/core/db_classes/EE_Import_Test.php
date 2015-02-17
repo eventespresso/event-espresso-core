@@ -127,14 +127,20 @@ class EE_Import_Test extends EE_UnitTestCase {
 	}
 
 	//@todo: test we dont insert conflicting data (especially term-taxonomies)
+	/**
+	 * @group uno
+	 */
 	public function test_save_data_array_to_db__from_other_site__avoid_inserting_conflicting_data() {
 		$term_taxonomy = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'taxonomy' => 'category', 'description' => 'original term-taxonomy' ) );
+		$this->assertEquals( 'original term-taxonomy', $term_taxonomy->get( 'description' ) );
 		$term_taxonomy_from_other_db = $this->new_model_obj_with_dependencies( 'Term_Taxonomy',
 				array(
 					'term_id' => $term_taxonomy->get('term_id'),
 					'taxonomy' => 'category',
 					'description' => 'in other db' ), false );
 		$country_usa = EEM_Country::instance()->get_one_by_ID( 'US' );
+		$this->assertEquals( false, $country_usa->get( 'CNT_is_EU' ) );
+
 		//have the contry be slightly modified in the exporting site
 		$country_usa_props = $country_usa->model_field_array();
 		$country_usa_props[ 'CNT_is_EU' ] = true;
@@ -148,9 +154,14 @@ class EE_Import_Test extends EE_UnitTestCase {
 		);
 		$term_taxonomy_count = EEM_Term_Taxonomy::instance()->count();
 		$country_count = EEM_Country::instance()->count();
-		$this->assertEquals( 'original term-taxonomy', $term_taxonomy->get( 'description' ) );
-		$this->assertEquals( false, $country_usa->get( 'CNT_is_EU' ) );
-		EE_Import::instance()->save_data_rows_to_db($csv_data_rows, true, array() );
+
+		//ok give it a whirl (keep the term-taxonomy's "term_id" the same by having it map to itself, obviously super unlikely but helps testing)
+		EE_Import::instance()->save_data_rows_to_db($csv_data_rows, true, array( 'Term' => array( $term_taxonomy->get( 'term_id' ) => $term_taxonomy->get( 'term_id' ) ) ) );
+
+		$this->assertEmpty( EE_Import::instance()->get_total_update_errors() );
+		$this->assertEmpty( EE_Import::instance()->get_total_inserts() );
+		$this->assertEmpty( EE_Import::instance()->get_total_insert_errors() );
+		$this->assertEquals( 2, EE_Import::instance()->get_total_updates() );
 		//there shouldn't be any new term taxonomies or countries
 		$this->assertEquals( $term_taxonomy_count, EEM_Term_Taxonomy::instance()->count() );
 		$this->assertEquals( $country_count, EEM_Country::instance()->count() );
@@ -160,13 +171,105 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$updated_country = EEM_Country::instance()->refresh_entity_map_from_db( $country_usa->ID() );
 		$this->assertEquals( true, $updated_country->get( 'CNT_is_EU' ) );
 	}
-	//@todo: test if an INT fk doesn't exist -> set it to NULL!
-	//@todo: if a STRING fk exists -> leave it alone
-
+	/**
+	 * test if an INT fk doesn't exist -> set it to NULL!
+	 * if a STRING fk exists -> leave it alone
+	 */
 	public function test_save_data_array_to_db__from_other_site__fks_that_dont_exist() {
-		
+		//model object with foreign key that's an INT (should be set to 0 or NULL)
+		$att = $this->new_model_obj_with_dependencies( 'Attendee', array( 'STA_ID' => 99999, 'CNT_ISO' => '77' ), false );
+		$att_props = $att->model_field_array();
+		$att_props[ 'ATT_ID' ] = 123;
+		$csv_data = array(
+			'Attendee' => array(
+				$att_props
+			)
+		);
+		$att_count = EEM_Attendee::instance()->count();
+		$mappings = EE_Import::instance()->save_data_rows_to_db($csv_data, true, array() );
+		$this->assertEquals( $att_count + 1, EEM_Attendee::instance()->count() );
+		//the STA_ID should ahve been set to 0, but teh CNT_ISO should have been left as-is
+		$att_id_in_db = $mappings[ 'Attendee' ][ 123 ];
+		$att_in_db = EEM_Attendee::instance()->get_one_by_ID( $att_id_in_db );
+		//model object with a foreign key that's a STRING (should be left as-is)
+		$this->assertEquals( 0, $att_in_db->get( 'STA_ID' ) );
+		$this->assertEquals( '77', $att_in_db->get( 'CNT_ISO' ) );
 	}
 
+	/**
+	 * @todo: if a foreign key can point to multiple models, only use mappings
+	 * that apply
+	 */
+	public function test_save_data_array_to_db__from_other_site__fks_that_point_to_multiple_models() {
+		//multiple types of fks that point ot multiple models: ones accompanied by a model name field and ones without
+		//using model name field: extra metas
+		//sans-model name field: term-relationships
+		$extra_meta_id = 1;
+		$extra_meta_id2 = 4;
+		$imaginary_txn_or_reg_id = 2;
+
+		$an_event_id = 3;
+
+		$csv_data = array(
+			'Extra_Meta' => array(
+				//two extra meta rows, attached to different model objects
+				//but each coincidentally has the same ID
+				array(
+					'EXM_ID' => $extra_meta_id,
+					'OBJ_ID' => $imaginary_txn_or_reg_id,
+					'EXM_type' => 'Transaction',
+					'EXM_key' => 'foo',
+					'EXM_value' => 'bar'
+				),
+				array(
+					'EXM_ID' => $extra_meta_id2,
+					'OBJ_ID' => $imaginary_txn_or_reg_id,
+					'EXM_type' => 'Registration',
+					'EXM_key' => 'foo',
+					'EXM_value' => 'bar'
+				)
+			),
+			'Term_Relationship' => array(
+				array(
+					'object_id' => $an_event_id,//an "event"
+					'term_taxonomy_id' => 0,
+					'term_order' => 1
+				)
+			)
+		);
+
+		$mapped_txn_id = 4;
+		$mapped_reg_id = 124;
+		$mapped_event_id = 322;
+		$mappings = array(
+			'Transaction' => array(
+				$imaginary_txn_or_reg_id => $mapped_txn_id
+			),
+			'Registration' => array(
+				$imaginary_txn_or_reg_id => $mapped_reg_id
+			),
+			'Event' => array(
+				$an_event_id => $mapped_event_id
+			)
+		);
+		//start test
+		$new_mappings = EE_Import::instance()->save_data_rows_to_db( $csv_data, true, $mappings );
+		//ok, so we should have inserted 3 things,
+		$this->assertEquals( 2, count( $new_mappings[ 'Extra_Meta' ] ) );
+		$this->assertEquals( 1, count( $new_mappings[ 'Term_Relationship' ] ) );
+		//check that they correctly used the mappings that previously existed
+		$inserted_extra_meta_1_id = $new_mappings[ 'Extra_Meta' ][ $extra_meta_id ];
+		$inserted_extra_meta_1 = EEM_Extra_Meta::instance()->get_one_by_ID( $inserted_extra_meta_1_id );
+		$this->assertEquals( 'Transaction', $inserted_extra_meta_1->get( 'EXM_type' ) );
+		$this->assertEquals( $mapped_txn_id, $inserted_extra_meta_1->get( 'OBJ_ID' ) );
+		$inserted_extra_meta_2_id = $new_mappings[ 'Extra_Meta' ][ $extra_meta_id2 ];
+		$inserted_extra_meta_2 = EEM_Extra_Meta::instance()->get_one_by_ID( $inserted_extra_meta_2_id );
+		$this->assertEquals( 'Registration', $inserted_extra_meta_2->get( 'EXM_type' ) );
+		$this->assertEquals( $mapped_reg_id, $inserted_extra_meta_2->get( 'OBJ_ID' ) );
+//		$inserted_term_r_id = $new_mappings[ 'Term_Relationship' ][ $]
+
+	}
+	//@todo: test more regarding things with NO pks
 
 //	public function test_save_data_array_to_db__from_other_site_second_time(){
 //		//test that things in the mapping are remembered
@@ -183,7 +286,7 @@ class EE_Import_Test extends EE_UnitTestCase {
 
 	public function setUp(){
 		parent::setUp();
-		EE_Import::instance();
+		EE_Import::reset();
 	}
 }
 

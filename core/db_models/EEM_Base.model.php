@@ -1479,7 +1479,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
 	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
 	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
-	 * If true, it's also considered)
+	 * If true, it's also considered). Only works for INT primary key- STRING primary keys cannot be ignored
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
@@ -1492,7 +1492,9 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("%s get_all_conflicting should be called with a model object or an array of field names and values, you provided %d", "event_espresso"),get_class($this),$obj_or_fields_array));
 		}
 		$query_params = array();
-		if( $include_primary_key && $this->has_primary_key_field() && isset($fields_n_values[$this->primary_key_name()])){
+		if( $this->has_primary_key_field() &&
+				( $include_primary_key || $this->get_primary_key_field() instanceof EE_Primary_Key_String_Field) &&
+				isset($fields_n_values[$this->primary_key_name()])){
 			$query_params[0]['OR'][$this->primary_key_name()] = $fields_n_values[$this->primary_key_name()];
 		}
 		foreach($this->unique_indexes() as $unique_index_name=>$unique_index){
@@ -2821,9 +2823,7 @@ abstract class EEM_Base extends EE_Base{
 			foreach($this->field_settings() as $field){
 //				if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
 				if( $field instanceof EE_Foreign_Key_Field_Base ){
-					if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
-						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
-					}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+					if (in_array($model_name,$field->get_model_names_pointed_to() ) ) {
 						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
 					}
 				}

@@ -390,6 +390,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					$id_in_csv = $model->get_index_primary_key_string($model_object_data);
 				}
 
+
+				$model_object_data = $this->_replace_temp_ids_with_mappings( $model_object_data, $model, $old_db_to_new_db_mapping, $export_from_site_a_to_b );
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
 				if($export_from_site_a_to_b){
@@ -400,8 +402,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $what_to_do == self::do_nothing ) {
 					continue;
 				}
-
-				$model_object_data = $this->_replace_temp_ids_with_mappings( $model_object_data, $model, $old_db_to_new_db_mapping );
 
 				//double-check we actually want to insert, if that's what we're planning
 				//based on whether this item would be unique in the DB or not
@@ -445,7 +445,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 * So, if the primary key of this $model_object_data already exists in the database,
 	 * it's just a coincidence and we should still insert. The only time we should
 	 * update is when we know what it maps to, or there's something that would
-	 * conflict and we should instead just update that conflicting thing
+	 * conflict (and we should instead just update that conflicting thing)
 	 * @param string $id_in_csv
 	 * @param array $model_object_data by reference so it can be modified
 	 * @param EEM_Base $model
@@ -459,17 +459,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if( isset($old_db_to_new_db_mapping[$model_name][$id_in_csv]) ){
 			return self::do_update;
 		}else{
-			//if this has a string primary key and it exists in teh db, we're going to update it instead
-			if( ! $model->get_primary_key_field()->is_auto_increment() && $model->count( array( array( $model->primary_key_name() => $id_in_csv ) ) ) ) {
-				return self::do_update;
-			}else{
-				return self::do_insert;
-			}
+			return self::do_insert;
 		}
 	}
 
 	/**
-	 *
+	 * If this thing basically already exists in the database, we want to update it;
+	 * otherwise insert it (ie, someone tweaked the CSV file, or the item was
+	 * deleted in the database so it should be re-inserted)
 	 * @param type $id_in_csv
 	 * @param type $model_object_data
 	 * @param EEM_Base $model
@@ -478,8 +475,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	protected function _decide_whether_to_insert_or_update_given_data_from_same_db( $id_in_csv, $model_object_data, $model ) {
 		//in this case, check if this thing ACTUALLY exists in the database
-		if(($model->has_primary_key_field() && $model->get_one_by_ID($id_in_csv)) ||
-			( ! $model->has_primary_key_field() && $model->get_one(array($model_object_data)))){
+		if( $model->get_one_conflicting( $model_object_data ) ){
 			return self::do_update;
 		}else{
 			return self::do_insert;
@@ -487,50 +483,102 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	/**
-	 *
+	 * Using the $old_db_to_new_db_mapping array, replaces all the temporary IDs
+	 * with their mapped real IDs. Eg, if importing from site A to B, the mapping
+	 * file may indicate that the ID "my_event_id" maps to an actual event ID of 123.
+	 * So this function searches for any event temp Ids called "my_event_id" and
+	 * replaces them with 123.
+	 * Also, if there is no temp ID for the INT foreign keys from another database,
+	 * replaces them with 0 or the field's default.
 	 * @param type $model_object_data
 	 * @param EEM_Base $model
 	 * @param type $old_db_to_new_db_mapping
+	 * @param boolean $export_from_site_a_to_b
 	 * @return array updated model object data with temp IDs removed
 	 */
-	protected function _replace_temp_ids_with_mappings( $model_object_data, $model, $old_db_to_new_db_mapping ) {
+	protected function _replace_temp_ids_with_mappings( $model_object_data, $model, $old_db_to_new_db_mapping, $export_from_site_a_to_b ) {
 		//if this model object's primary key is in the mapping, replace it
 		if( $model->has_primary_key_field() &&
 				$model->get_primary_key_field()->is_auto_increment() &&
-				isset( $old_db_to_new_db_mapping[ $model->get_this_model_name() ] ) && 
+				isset( $old_db_to_new_db_mapping[ $model->get_this_model_name() ] ) &&
 				isset( $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ] ) ) {
 			$model_object_data[ $model->primary_key_name() ] = $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ];
 		}
-		//loop through all its related models, and see if we can swap their OLD foreign keys
-		//(ie, idsin the OLD db) for  new foreign key (ie ids in the NEW db)
-		foreach($model->field_settings() as $field_name => $fk_field){
-			$fk_value = $model_object_data[$fk_field->get_name()];
-			//if the foreign key is 0 or blank, just ignore it and leave it as-is
-			if($fk_value == '0' || $fk_value == ''){
-				continue;
-			}
-			if( $fk_field instanceof EE_Foreign_Key_Field_Base ){
-				//now, is that value in the list of PKs that have been inserted?
-				if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. We want to try each
-					$model_names_pointed_to = $fk_field->get_model_name_pointed_to();
-				}else{
-					$model_names_pointed_to = array($fk_field->get_model_name_pointed_to());
+
+		try{
+			$model_name_field = $model->get_field_containing_related_model_name();
+			$models_pointed_to_by_model_name_field = $model_name_field->get_model_names_pointed_to();
+		}catch( EE_Error $e ){
+			$model_name_field = NULL;
+			$models_pointed_to_by_model_name_field = array();
+		}
+		foreach( $model->field_settings( true )  as $field_obj ){
+			if( $field_obj instanceof EE_Foreign_Key_Int_Field ) {
+				$models_pointed_to = $field_obj->get_model_names_pointed_to();
+				$found_a_mapping = false;
+				foreach( $models_pointed_to as $model_pointed_to_by_fk ) {
+
+					if( $model_name_field ){
+						$value_of_model_name_field = $model_object_data[ $model_name_field->get_name() ];
+						if( $value_of_model_name_field == $model_pointed_to_by_fk ) {
+							$model_object_data[ $field_obj->get_name() ] = $this->_find_mapping_in(
+									$model_object_data[ $field_obj->get_name() ],
+									$model_pointed_to_by_fk,
+									$old_db_to_new_db_mapping,
+									$export_from_site_a_to_b );
+								$found_a_mapping = true;
+								break;
+						}
+					}else{
+						$model_object_data[ $field_obj->get_name() ] = $this->_find_mapping_in(
+								$model_object_data[ $field_obj->get_name() ],
+								$model_pointed_to_by_fk,
+								$old_db_to_new_db_mapping,
+								$export_from_site_a_to_b );
+						$found_a_mapping = true;
+					}
+					//once we've found a mapping for this field no need to continue
+					if( $found_a_mapping ) {
+						break;
+					}
+
 
 				}
-				$found_new_id = false;
-				foreach($model_names_pointed_to as $model_pointed_to_by_fk){
-					if(isset($old_db_to_new_db_mapping[$model_pointed_to_by_fk][$fk_value])){
-						//and don't forget to replace the temporary id used in the csv with Id of the newly-added thing
-						$model_object_data[$fk_field->get_name()] = $old_db_to_new_db_mapping[$model_pointed_to_by_fk][$fk_value];
-						$found_new_id = true;
-					}
-				}
-				if( ! $found_new_id ){
-					EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model->get_this_model_name(),http_build_query($model_object_data)), __FILE__, __FUNCTION__, __LINE__ );
-				}
+			}else{
+				//it's a string foreign key (which we leave alone, because those are things
+				//like country names, which we'd really rather not make 2 USAs etc (we'd actually
+				//prefer to just update one)
+				//or it's just a regular value that ought to be replaced
 			}
 		}
 		return $model_object_data;
+	}
+
+	/**
+	 * Given the object's ID and its model's name, find it int he mapping data,
+	 * bearing in mind where it came from
+	 * @param type $object_id
+	 * @param string $model_name
+	 * @param array $old_db_to_new_db_mapping
+	 * @param type $export_from_site_a_to_b
+	 * @return int
+	 */
+	protected function _find_mapping_in( $object_id, $model_name, $old_db_to_new_db_mapping, $export_from_site_a_to_b) {
+		if(	isset( $old_db_to_new_db_mapping[ $model_name ][ $object_id ] ) ){
+
+				return $old_db_to_new_db_mapping[ $model_name ][ $object_id ];
+			}elseif( $object_id == '0' || $object_id == '' ) {
+				//leave as-is
+				return $object_id;
+			}elseif( $export_from_site_a_to_b ){
+				//we couldn't find a mapping for this, and it's from a different site,
+				//so blank it out
+				return NULL;
+			}elseif( ! $export_from_site_a_to_b ) {
+				//we coudln't find a mapping for this, but it's from thsi DB anyway
+				//so let's just leave it as-is
+				return $object_id;
+			}
 	}
 
 	/**
@@ -547,6 +595,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
 			$effective_id = $model_object_data[$model->primary_key_name()];
 			unset($model_object_data[$model->primary_key_name()]);
+		}else{
+			$effective_id = $model->get_index_primary_key_string( $model_object_data );
 		}
 		//the model takes care of validating the CSV's input
 		try{
@@ -574,7 +624,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	/**
-	 *
+	 * Given the model object data, finds the row to update and updates it
 	 * @param type $model_object_data
 	 * @param EEM_Base $model
 	 */
@@ -611,6 +661,35 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$this->_total_update_errors++;
 			EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+	/**
+	 * Gets the number of inserts performed since importer was instantiated or reset
+	 * @return int
+	 */
+	public function get_total_inserts(){
+		return $this->_total_inserts;
+	}
+	/**
+	 *  Gets the number of insert errors since importer was instantiated or reset
+	 * @return int
+	 */
+	public function get_total_insert_errors(){
+		return $this->_total_insert_errors;
+	}
+	/**
+	 *  Gets the number of updates performed since importer was instantiated or reset
+	 * @return int
+	 */
+	public function get_total_updates(){
+		return $this->_total_updates;
+	}
+	/**
+	 *  Gets the number of update errors since importer was instantiated or reset
+	 * @return int
+	 */
+	public function get_total_update_errors(){
+		return $this->_total_update_errors;
 	}
 
 
