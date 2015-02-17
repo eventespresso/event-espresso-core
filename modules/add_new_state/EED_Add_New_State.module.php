@@ -30,7 +30,10 @@ class EED_Add_New_State  extends EED_Module {
 		add_action( 'wp_loaded', array( 'EED_Add_New_State', 'set_definitions' ), 2 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'translate_js_strings' ), 1 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
+		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
+		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
 	}
 
 	/**
@@ -47,6 +50,8 @@ class EED_Add_New_State  extends EED_Module {
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
 		add_action( 'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
 		add_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
+		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
+		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
 	}
 
 
@@ -289,6 +294,7 @@ class EED_Add_New_State  extends EED_Module {
 					EE_Registry::instance()->REQ->un_set( 'new_state_name' );
 					EE_Registry::instance()->REQ->un_set( 'new_state_abbrv' );
 
+					EE_Registry::instance()->SSN->set_session_data( array( 'new_state' => $new_state ));
 
 					if ( EE_Registry::instance()->REQ->ajax ) {
 						echo json_encode( array(
@@ -398,6 +404,46 @@ class EED_Add_New_State  extends EED_Module {
 			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		EE_Error::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev, TRUE, TRUE );
+	}
+
+
+
+	/**
+	 * 	state_options
+	 *
+	 * @access        public
+	 * @param EE_State[]  $state_options
+	 * @return        boolean
+	 */
+	public static function state_options( $state_options = array() ) {
+		$new_state = EE_Registry::instance()->SSN->get_session_data( 'new_state' );
+		if (
+			$new_state instanceof EE_State
+			&& $new_state->country() instanceof EE_Country
+		) {
+			$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
+		}
+		return $state_options;
+	}
+
+
+
+	/**
+	 * 	country_options
+	 *
+	 * @access        public
+	 * @param EE_Country[]  $country_options
+	 * @return        boolean
+	 */
+	public static function country_options( $country_options = array() ) {
+		$new_state = EE_Registry::instance()->SSN->get_session_data( 'new_state' );
+		if (
+			$new_state instanceof EE_State
+			&& $new_state->country() instanceof EE_Country
+		) {
+			$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
+		}
+		return $country_options;
 	}
 
 
