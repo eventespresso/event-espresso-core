@@ -161,38 +161,43 @@ jQuery(document).ready(function($) {
 		 */
 		process_new_state : function( new_state, new_state_rel ) {
 			if ( typeof new_state.success !== 'undefined' && new_state.success === true ) {
-				SPCO.console_log( 'PROCESS_NEW_STATE', '', true );
+				//SPCO.console_log( 'PROCESS_NEW_STATE', '', true );
 				// TARGET INPUTS
 				var state_select_id  = new_state_rel.replace('new_state', 'state');
 				var state_select_dv = state_select_id +'-dv';
 				var country_select_id = new_state_rel.replace('new_state', 'country');
 
-				SPCO.console_log_object( 'new_state', new_state, 0 );
-				SPCO.console_log( 'state_select_id', state_select_id, false );
-				SPCO.console_log( 'country_select_id', country_select_id, false );
+				//SPCO.console_log( 'state_select_id', state_select_id, false );
+				//SPCO.console_log( 'country_select_id', country_select_id, false );
+				//SPCO.console_log_object( 'new_state', new_state, 0 );
 
 				// find all inputs with country in the ID
 				SPCO.main_container.find("select[id*='-country']").each( function() {
 					var country_select_id_to_set = $(this).attr('id');
 					var set_selected = country_select_id_to_set === country_select_id;
 
-					SPCO.console_log( 'country_select_id_to_set', country_select_id_to_set, false );
-					SPCO.console_log( 'set_selected', set_selected, false );
+					//SPCO.console_log( 'PROCESS COUNTRY', true, true );
+					//SPCO.console_log( 'country_select_id_to_set', country_select_id_to_set, false );
+					//SPCO.console_log( 'set_selected', set_selected, false );
 
 					// if country option already exists in Country dropdown
 					var existing_country_iso = $(this).find('option[value="' + new_state.country_iso + '"]');
-					if( existing_country_iso.size() > 0 && set_selected ) {
-						SPCO.console_log( 'EXISTING_COUNTRY_ISO', true, false );
-						$('#'+country_select_id).find(':selected').prop('selected', false);
-						existing_country_iso.prop('selected', true);
+					if( existing_country_iso.size() > 0 ) {
+						//SPCO.console_log( 'EXISTING_COUNTRY_ISO', existing_country_iso, false );
+						if( set_selected ) {
+							//SPCO.console_log( '>>> SET ' + new_state.country_iso + ' Country selected', country_select_id, false );
+							$( '#' + country_select_id ).find( ':selected' ).prop( 'selected', false );
+							existing_country_iso.prop( 'selected', true );
+						}
 					} else {
-						EE_ANS.add_option_to_dropdown( country_select_id_to_set, new_state.country_iso, new_state.country_name, true, '' );
+						EE_ANS.add_option_to_dropdown( country_select_id_to_set, new_state.country_iso, new_state.country_name, set_selected, '' );
 					}
 				});
 				// find all inputs with state in the ID
 				SPCO.main_container.find("select[id*='-state']").each( function() {
 					var select_id = $(this).attr('id');
-					SPCO.console_log( 'select_id', select_id, false );
+					//SPCO.console_log( 'PROCESS STATE', true, true );
+					//SPCO.console_log( 'select_id', select_id, false );
 					var set_selected = $(this).attr('id') === state_select_id;
 					// set target select's value to this input's value
 					EE_ANS.add_option_to_dropdown( select_id, new_state.id, new_state.name, set_selected, new_state.country_name );
@@ -224,22 +229,22 @@ jQuery(document).ready(function($) {
 			new_value = typeof new_value !== 'undefined' && new_value !== '' ? new_value : new_text;
 			opt_group = typeof opt_group !== 'undefined' && opt_group !== '' ? opt_group : '';
 
-			SPCO.console_log( 'ADD_OPTION_TO_DROPDOWN', '', true );
-			SPCO.console_log( 'new_text', new_text, false );
-			SPCO.console_log( 'new_value', new_value, false );
-			SPCO.console_log( 'target_id', target_id, false );
+			//SPCO.console_log( 'ADD_OPTION_TO_DROPDOWN', '', true );
+			//SPCO.console_log( 'new_text', new_text, false );
+			//SPCO.console_log( 'new_value', new_value, false );
+			//SPCO.console_log( 'target_id', target_id, false );
 
 			var target = $( '#' + target_id );
-			SPCO.console_log( 'found target', target.attr('id'), false );
+			//SPCO.console_log( 'found target', target.attr('id'), false );
 
 			if ( opt_group !== '' ) {
-				SPCO.console_log( 'opt_group', opt_group, false );
+				//SPCO.console_log( 'opt_group', opt_group, false );
 				var target_optgroup = target.find("optgroup[label='" + opt_group + "']" );
 				if ( target_optgroup.size() === 0 ) {
 					target.append( '<optgroup label="' + opt_group + '"></optgroup>' );
 					target_optgroup = target.find("optgroup[label='" + opt_group + "']" );
 				}
-				SPCO.console_log( 'found target_optgroup', target_optgroup.attr('id'), false );
+				//SPCO.console_log( 'found target_optgroup', target_optgroup.attr('id'), false );
 				if ( target_optgroup.find("option[value='" + new_value + "']" ).size() === 0 ) {
 					target_optgroup.prepend( '<option value="' + new_value + '">' + new_text + '</option>');
 				}
@@ -251,6 +256,7 @@ jQuery(document).ready(function($) {
 			}
 
 			if ( set_selected === true ) {
+				//SPCO.console_log( '>>> SET ' + new_text + ' selected', target_id, false );
 				target.children(':selected').prop('selected', false);
 				target.val( new_value );
 				target.find('option[value="' + new_value + '"]').prop('selected', true);
