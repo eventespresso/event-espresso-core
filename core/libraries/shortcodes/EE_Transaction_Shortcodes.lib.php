@@ -77,27 +77,36 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		EE_Registry::instance()->load_helper( 'Template' );
 
-		if ( !$this->_data->txn instanceof EE_Transaction )
+		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
+		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;
+		$transaction = ! $transaction instanceof EE_Transaction && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->txn: $transaction;
+
+		//payment
+		$payment = $this->_data->payment instanceof EE_Payment ? $this->_data->payment : null;
+		$payment = ! $payment instanceof EE_Payment && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->payment: $payment;
+
+
+		if ( ! $transaction instanceof EE_Transaction )
 			return '';
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
-				return $this->_data->txn->ID();
+				return $transaction->ID();
 				break;
 
 			case '[PAYMENT_URL]' :
-				$payment_url = $this->_data->txn->payment_overview_url();
+				$payment_url = $transaction->payment_overview_url();
 				return empty( $payment_url ) ? __( 'http://dummypaymenturlforpreview.com', 'event_espresso') : $payment_url;
 				break;
 
 			case '[INVOICE_LINK]' :
-				$invoice_url = $this->_data->txn->invoice_url();
+				$invoice_url = $transaction->invoice_url();
 				$invoice_url = empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
 				return sprintf( __('%sClick here for Invoice%s', 'event_espresso'), '<a href="' . $invoice_url . '">', '</a>' );
 				break; /**/
 
 			case '[INVOICE_URL]' :
-				$invoice_url = $this->_data->txn->invoice_url();
+				$invoice_url = $transaction->invoice_url();
 				return empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
 				break;
 
@@ -127,23 +136,23 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 			case "[TOTAL_COST]" :
-				$total = $this->_data->txn->total();
+				$total = $transaction->total();
 				return ! empty($total) ? EEH_Template::format_currency( $total ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :
-				$status = $this->_data->txn->pretty_status();
+				$status = $transaction->pretty_status();
 				return !empty($status) ? $status : __('Unknown', 'event_espresso');
 				break; /**/
 
 			// note the [payment_status] shortcode is kind of misleading because payment status might be different from txn status so I'm adding this here for clarity.
 			case "[TXN_STATUS]" :
-				$status = $this->_data->txn->pretty_status();
+				$status = $transaction->pretty_status();
 				return !empty( $status ) ? $status : __('Unknown', 'event_espresso');
 				break;
 
 			case "[TXN_STATUS_ID]" :
-				return $this->_data->txn->status_ID();
+				return $transaction->status_ID();
 				break;
 
 			case "[PAYMENT_GATEWAY]" :
@@ -151,16 +160,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[AMOUNT_PAID]" :
-				$amount = isset( $this->_data->payment ) && is_object( $this->_data->payment ) ? $this->_data->payment->amount() : 0;
+				$amount = $payment instanceof EE_Payment ? $payment->amount() : 0;
 				return EEH_Template::format_currency( $amount );
 				break;
 
 			case "[TOTAL_AMOUNT_PAID]" :
-				return EEH_Template::format_currency( $this->_data->txn->paid() );
+				return EEH_Template::format_currency( $transaction->paid() );
 				break;
 
 			case "[TOTAL_OWING]" :
-				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
+				$total_owing = isset( $transaction ) && is_object($transaction) ? $transaction->remaining() : $transaction->total();
 				return EEH_Template::format_currency( $total_owing );
 				break;
 
@@ -178,7 +187,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			case "[TRANSACTION_ADMIN_URL]" :
 				require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
-				$query_args = array( 'page' => 'espresso_transactions', 'action' => 'view_transaction', 'TXN_ID' => $this->_data->txn->ID() );
+				$query_args = array( 'page' => 'espresso_transactions', 'action' => 'view_transaction', 'TXN_ID' => $transaction->ID() );
 				$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
 				return $url;
 				break;
@@ -315,8 +324,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * gets the payment method for this transaction. Otherwise gets a default one.
 	 */
 	private function _get_payment_method(){
-		if( $this->_data->txn instanceof EE_Transaction ) {
-			return $this->_data->txn->payment_method();
+		if( $transaction instanceof EE_Transaction ) {
+			return $transaction->payment_method();
 		}else{
 			//get the first payment method we can find
 			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment::instance()->get_one_of_type('Invoice'));
