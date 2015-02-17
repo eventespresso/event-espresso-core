@@ -998,9 +998,10 @@ class EEH_Activation {
 				/** @var EE_messenger[] $installed_messengers  */
 				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
 				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-				foreach ( $default_mts as $mt ) {
+				foreach ( $default_mts as $index => $mt ) {
 					//is there an installed_mt matching the default string?  If not then nothing to do here.
 					if ( ! isset( $installed_mts[$mt] ) ) {
+						unset( $default_mts[$index] );
 						continue;
 					}
 
@@ -1050,7 +1051,7 @@ class EEH_Activation {
 			$new_default_mts = array();
 
 			//loop through each default mt reported by the messenger and make sure its set in its active db entry.
-			foreach( $all_default_mts as $mt ) {
+			foreach( $all_default_mts as $index => $mt ) {
 				//already active? already has generated templates? || has already been activated before (we dont' want to reactivate things users intentionally deactivated).
 				if ( ( isset( $has_activated[$messenger] ) && in_array($mt, $has_activated[$messenger]) ) || isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
 					continue;
@@ -1058,6 +1059,7 @@ class EEH_Activation {
 
 				//is there an installed_mt matching the default string?  If not then nothing to do here.
 				if ( ! isset( $installed_mts[$mt] ) ) {
+					unset( $all_default_mts[$mt] );
 					continue;
 				}
 
