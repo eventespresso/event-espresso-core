@@ -999,10 +999,16 @@ class EEH_Activation {
 				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
 				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
 				foreach ( $default_mts as $mt ) {
+					//is there an installed_mt matching the default string?  If not then nothing to do here.
+					if ( ! isset( $installed_mts[$mt] ) ) {
+						continue;
+					}
+
+
 					//we need to setup any initial settings for message types
 					/** @var EE_message_type[] $installed_mts */
 					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-					if ( !empty( $settings_fields ) ) {
+					if ( is_array( $settings_fields ) ) {
 						foreach ( $settings_fields as $field => $values ) {
 							$settings[$field] = $values['default'];
 						}
