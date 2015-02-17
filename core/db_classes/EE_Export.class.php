@@ -306,7 +306,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$query_params = apply_filters(
 			'FHEE__EE_Export__report_registration_for_event',
 			array(
-				array( 'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ) ),
+				array(
+					'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
+					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
 				'force_join' => array( 'Transaction', 'Ticket' )
 			),
@@ -430,7 +433,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//if we couldn't export anything, we want to at least show the column headers
 		if(empty($registrations_csv_ready_array)){
 			$reg_csv_array = array();
-			foreach($reg_fields_to_include as $model_name => $field_list){
+			$model_and_fields_to_include = array(
+				'Registration' => $reg_fields_to_include,
+				'Attendee' => $att_fields_to_include
+			);
+			foreach($model_and_fields_to_include as $model_name => $field_list){
 				$model = EE_Registry::instance()->load_model($model_name);
 				foreach($field_list as $field_name){
 					$field = $model->field_settings_for($field_name);
