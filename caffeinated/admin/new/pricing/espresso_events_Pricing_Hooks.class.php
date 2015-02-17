@@ -354,10 +354,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
 				//set ticket formats
+				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 				$TKT->set_date_format( $this->_date_format_strings['date'] );
 				$TKT->set_time_format( $this->_date_format_strings['time'] );
-
-				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$orig_price = $TKT->price();
@@ -739,7 +738,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $related_tickets as $ticket ) {
 				$tktid = $ticket->get('TKT_ID');
 				$tktrow = $ticket->get('TKT_row');
-				$ticket->set('TKT_order', $order);
 				//we only want unique tickets in our final display!!
 				if ( !in_array( $tktid, $existing_ticket_ids ) ) {
 					$existing_ticket_ids[] = $tktid;
@@ -758,6 +756,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 		$main_template_args['existing_ticket_ids'] = implode( ',', $existing_ticket_ids );
 		$main_template_args['existing_datetime_ids'] = implode( ',', $existing_datetime_ids );
+
+		//sort $all_tickets by order
+		usort( $all_tickets, function( $a, $b ) {
+			$a_order = (int) $a->get('TKT_order');
+			$b_order = (int) $b->get('TKT_order');
+			if ( $a_order == $b_order ) {
+				return 0;
+			}
+			return ( $a_order < $b_order ) ? -1 : 1;
+		});
 
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
 		$dttrow = 1;
