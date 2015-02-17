@@ -294,7 +294,12 @@ class EED_Add_New_State  extends EED_Module {
 					EE_Registry::instance()->REQ->un_set( 'new_state_name' );
 					EE_Registry::instance()->REQ->un_set( 'new_state_abbrv' );
 
-					EE_Registry::instance()->SSN->set_session_data( array( 'new_state' => $new_state ));
+					// get any existing new states
+					$new_states = EE_Registry::instance()->SSN->get_session_data(
+						'new_states'
+					);
+					$new_states[ $new_state->ID() ] = $new_state;
+					EE_Registry::instance()->SSN->set_session_data( array( 'new_states' => $new_states ));
 
 					if ( EE_Registry::instance()->REQ->ajax ) {
 						echo json_encode( array(
@@ -416,12 +421,18 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function state_options( $state_options = array() ) {
-		$new_state = EE_Registry::instance()->SSN->get_session_data( 'new_state' );
-		if (
-			$new_state instanceof EE_State
-			&& $new_state->country() instanceof EE_Country
-		) {
-			$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
+		$new_states = EE_Registry::instance()->SSN->get_session_data(
+			'new_states'
+		);
+		if ( is_array( $new_states ) && ! empty( $new_states )) {
+			foreach ( $new_states as $new_state ) {
+				if (
+					$new_state instanceof EE_State
+					&& $new_state->country() instanceof EE_Country
+				) {
+					$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
+				}
+			}
 		}
 		return $state_options;
 	}
@@ -436,12 +447,18 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function country_options( $country_options = array() ) {
-		$new_state = EE_Registry::instance()->SSN->get_session_data( 'new_state' );
-		if (
-			$new_state instanceof EE_State
-			&& $new_state->country() instanceof EE_Country
-		) {
-			$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
+		$new_states = EE_Registry::instance()->SSN->get_session_data(
+			'new_states'
+		);
+		if ( is_array( $new_states ) && ! empty( $new_states )) {
+			foreach ( $new_states as $new_state ) {
+				if (
+					$new_state instanceof EE_State
+					&& $new_state->country() instanceof EE_Country
+				) {
+					$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
+				}
+			}
 		}
 		return $country_options;
 	}
