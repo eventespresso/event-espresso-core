@@ -283,6 +283,7 @@ jQuery(document).ready(function($) {
 					new_state_country: state_country_iso,
 					new_state_name: state_name,
 					new_state_abbrv: state_abbrv,
+					EESID: eei18n.EESID,
 					noheader : 'true'
 				},
 
