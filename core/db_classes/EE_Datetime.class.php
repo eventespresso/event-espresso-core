@@ -344,9 +344,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return        mixed        string on success, FALSE on fail
 	 */
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
-		$dt_frmt = !empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
-		$start = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'start', NULL, NULL ) ) ) );
-		$end = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'end', NULL, NULL ) ) ) );
+		$dt_frmt = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
+		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $dt_frmt ) );
+		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end', $dt_frmt ) );
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 
