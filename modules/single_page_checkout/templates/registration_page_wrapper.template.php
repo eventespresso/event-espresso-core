@@ -1,7 +1,7 @@
 <div id="ee-single-page-checkout-dv" class="">
 	<?php if ( apply_filters(
 			'FHEE__registration_page_wrapper_template__display_time_limit',
-			TRUE ) ) { ?>
+			FALSE ) ) { ?>
 	<p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice">
 		<?php echo sprintf(
 			apply_filters(

@@ -144,7 +144,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// default session lifespan in seconds
 		$this->_lifespan = apply_filters(
 			'FHEE__EE_Session__construct___lifespan',
-			30 * MINUTE_IN_SECONDS
+			60 * MINUTE_IN_SECONDS
 		) + 1;
 		/*
 		 * do something like the following to adjust the session lifespan:
