@@ -1050,10 +1050,19 @@ class EEH_Activation {
 					continue;
 				}
 
-				$settings_fields = isset( $installed_mts[$mt] ) ? $installed_mts[$mt]->get_admin_settings_fields() : array();
+				//is there an installed_mt matching the default string?  If not then nothing to do here.
+				if ( ! isset( $installed_mts[$mt] ) ) {
+					continue;
+				}
 
-				foreach ( $settings_fields as $field => $values ) {
-					$settings[$field] = $values['default'];
+				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+
+				if ( is_array( $settings_fields ) ) {
+					foreach ( $settings_fields as $field => $values ) {
+						$settings[$field] = $values['default'];
+					}
+				} else {
+					$settings = array();
 				}
 
 				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
