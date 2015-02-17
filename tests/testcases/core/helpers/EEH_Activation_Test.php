@@ -66,6 +66,39 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 
 
 
+
+	/**
+	 * This tests the generate_default_message_templates method with using the
+	 * FHEE__EE_messenger__get_default_message_types__default_types filter to add a
+	 * bogus message_type string.  No errors should be triggered, and the invalid default mt
+	 * should NOT be added to the active array for the messenger.
+	 *
+	 * @since 4.6
+	 * @group 7595
+	 */
+	public function test_filtered_default_message_types_on_activation() {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		EE_Registry::instance()->load_helper( 'Activation' );
+
+		//set a filter for the invalid message type
+		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', function( $default_types, $messenger ) {
+			$default_types[] = 'bogus_message_type';
+			return $default_types;
+		}, 10, 2);
+
+		//activate messages... if there's any problems then errors will trigger a fail.
+		EEH_Activation::generate_default_message_templates();
+
+		//all went well so let's make sure the activated system does NOT have our invalid message type string.
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		foreach( $active_messengers as $messenger => $settings ) {
+			$this->assertFalse( isset( $settings['settings'][$messenger . '-message_types']['bogus_message_type'] ), sprintf( 'The %s messenger should not have "bogus_message_type" active on it but it does.', $messenger ) );
+		}
+	}
+
+
+
+
 	/**
 	 * Ensure getting default creator works as expected
 	 * @since 4.6.0
