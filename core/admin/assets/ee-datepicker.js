@@ -73,6 +73,9 @@ var dttPickerHelper = {
 
 
 	setTimeFormat: function( format ) {
+		if ( format.indexOf('H') > - 1 ) {
+			this.dttOptions.ampm = false;
+		}
 		this.dttOptions.timeFormat = format;
 		return this;
 	},
@@ -161,8 +164,8 @@ var dttPickerHelper = {
 		};
 
 		this.dttOptions.onClose = function(dateText, dpinst) {
-				var newDate = moment( dateText, this.momentFormat ),
-					lastVal = moment(dpinst.lastVal, this.momentFormat ),
+				var newDate = moment( dateText, dttPickerHelper.momentFormat ),
+					lastVal = moment(dpinst.lastVal, dttPickerHelper.momentFormat ),
 					diff = lastVal !== null ? lastVal.diff(newDate, 'minutes') : newDate;
 
 				if ( doingstart ) {
@@ -194,7 +197,6 @@ var dttPickerHelper = {
 				});
 				return false;
 			};
-
 			this.pickerobj.datetimepicker(this.dttOptions);
 
 	},
