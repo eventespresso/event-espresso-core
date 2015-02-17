@@ -205,7 +205,10 @@ abstract class EE_Base_Class{
 		if ( $field_obj instanceof EE_Model_Field_Base ) {
 			if ( method_exists( $field_obj, 'set_timezone' )) {
 				$field_obj->set_timezone( $this->_timezone );
+				$field_obj->set_date_format( $this->_dt_frmt );
+				$field_obj->set_time_format( $this->_tm_frmt );
 			}
+
 			$holder_of_value = $field_obj->prepare_for_set($field_value);
 			if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 				$this->_fields[$field_name] = $field_obj->get_default_value();
@@ -281,6 +284,35 @@ abstract class EE_Base_Class{
 	public function get_timezone() {
 		return $this->_timezone;
 	}
+
+
+
+	/**
+	 * This sets the internal date format to what is sent in to be used as the new default for the class
+	 * internally instead of wp set date format options
+	 *
+	 * @since 4.6
+	 *
+	 * @param string $format   should be a format recognizable by PHP date() functions.
+	 */
+	public function set_date_format( $format ) {
+		$this->_dt_frmt = $format;
+	}
+
+
+
+
+	/**
+	 * This sets the internal time format string to what is sent in to be used as the new default for the
+	 * class internally instead of wp set time format options.
+	 *
+	 * @since 4.6
+	 * @param string $format shoudl be a format recognizable by PHP date() functions.
+	 */
+	public function set_time_format( $format ) {
+		$this->_tm_frmt = $format;
+	}
+
 
 
 
