@@ -521,6 +521,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						}
 					}
 				}
+				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this );
 				return new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
@@ -535,6 +536,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						}
 					}
 				}
+				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this );
 				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
