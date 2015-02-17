@@ -64,7 +64,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[OWING_STATUS_MESSAGE_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
-			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
+			'[TXN_TOTAL_TICKETS]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
+			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction. <strong>NOTE: This shortcode is good to use in the "[TICKET_LIST]" field but has been deprecated from all other contexts in favor of the more explicit [TXN_TOTAL_TICKETS] shortcode.</strong>', 'event_espresso'),
 			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso'),
 			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso'),
 			'[INVOICE_RECEIPT_SWITCHER_URL]' => __( 'This parses to the url that will switch to the receipt if an invoice is displayed, and switch to the invoice if receipt is displayed. If a message type OTHER than invoice or receipt is displayed then this will just return the url for the invoice. If the related message type is not active  then will parse to an empty string.', 'event_espresso'),
@@ -156,7 +157,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[PAYMENT_GATEWAY]" :
-				return $this->_get_payment_gateway();
+				return $this->_get_payment_gateway( $transaction );
 				break;
 
 			case "[AMOUNT_PAID]" :
@@ -182,6 +183,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[TKT_QTY_PURCHASED]" :
+			case "[TXN_TOTAL_TICKETS]" :
 				return $this->_data->total_ticket_count;
 				break;
 
@@ -258,8 +260,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 
-	private function _get_payment_gateway() {
-		$pm = $this->_get_payment_method();
+	private function _get_payment_gateway( $transaction ) {
+		$pm = $this->_get_payment_method( $transaction );
 		return $pm instanceof EE_Payment_Method ? $pm->name() : '';
 	}
 
@@ -323,12 +325,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	/**
 	 * gets the payment method for this transaction. Otherwise gets a default one.
 	 */
-	private function _get_payment_method(){
+	private function _get_payment_method( $transaction ){
 		if( $transaction instanceof EE_Transaction ) {
-			return $transaction->payment_method();
+			$payment_method = $transaction->payment_method();
+			if ( empty( $payment_method ) ) {
+				return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
+			}
 		}else{
 			//get the first payment method we can find
-			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment::instance()->get_one_of_type('Invoice'));
+			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
 		}
 	}
 
