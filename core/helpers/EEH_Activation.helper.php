@@ -1049,14 +1049,13 @@ class EEH_Activation {
 				if ( ( isset( $has_activated[$messenger] ) && in_array($mt, $has_activated[$messenger]) ) || isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
 					continue;
 				}
-				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-				if ( !empty( $settings_fields ) ) {
-					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
-					}
-				} else {
-					$settings = array();
+
+				$settings_fields = isset( $installed_mts[$mt] ) ? $installed_mts[$mt]->get_admin_settings_fields() : array();
+
+				foreach ( $settings_fields as $field => $values ) {
+					$settings[$field] = $values['default'];
 				}
+
 				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
 				$new_default_mts[] = $mt;
 				$has_activated[$messenger][] = $mt;
