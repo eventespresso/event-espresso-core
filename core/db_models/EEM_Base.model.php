@@ -643,16 +643,39 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
+	 * If there is no primary key on this model, $id is treated as primary key string
 	 * @param mixed $id int or string, depending on the type of the model's primary key
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
-		}else{
+		}elseif( $this->has_primary_key_field ( ) ) {
 			$primary_key_name = $this->get_primary_key_field()->get_name();
 			return $this->get_one(array(array($primary_key_name => $id)));
+		}else{
+			//no primary key, so the $id must be from the get_index_primary_key_string()
+			return $this->get_one( array( $this->parse_index_primary_key_string( $id ) ) );
 		}
+	}
+
+	/**
+	 * Gets the field values from the primary key string
+	 * @see EEM_Base::get_combined_primary_key_fields() and EEM_Base::get_index_primary_key_string()
+	 * @param string $index_primary_key_string
+	 * @return null|array
+	 */
+	function parse_index_primary_key_string( $index_primary_key_string) {
+		$key_fields = $this->get_combined_primary_key_fields();
+		//check all of them are in the $id
+		$key_vals_in_combined_pk = array();
+		parse_str( $index_primary_key_string, $key_vals_in_combined_pk );
+		foreach( $key_fields as $key_field_name => $field_obj ) {
+			if( ! isset( $key_vals_in_combined_pk[ $key_field_name ] ) ){
+				return NULL;
+			}
+		}
+		return $key_vals_in_combined_pk;
 	}
 
 

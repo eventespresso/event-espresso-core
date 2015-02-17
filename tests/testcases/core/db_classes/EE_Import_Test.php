@@ -266,7 +266,10 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$inserted_extra_meta_2 = EEM_Extra_Meta::instance()->get_one_by_ID( $inserted_extra_meta_2_id );
 		$this->assertEquals( 'Registration', $inserted_extra_meta_2->get( 'EXM_type' ) );
 		$this->assertEquals( $mapped_reg_id, $inserted_extra_meta_2->get( 'OBJ_ID' ) );
-//		$inserted_term_r_id = $new_mappings[ 'Term_Relationship' ][ $]
+		$inserted_term_r_id = $new_mappings[ 'Term_Relationship' ][ EEM_Term_Relationship::instance()->get_index_primary_key_string( $csv_data[ 'Term_Relationship' ][ 0 ])];
+		$term_r = EEM_Term_Relationship::instance()->get_one_by_ID( $inserted_term_r_id );
+		$this->assertInstanceOf( 'EE_Term_Relationship', $term_r);
+		$this->assertEquals( $mapped_event_id, $term_r->get('object_id' ) );
 
 	}
 	//@todo: test more regarding things with NO pks

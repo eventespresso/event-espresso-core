@@ -1317,7 +1317,11 @@ abstract class EE_Base_Class{
 	 */
 	public function ID(){
 		//now that we know the name of the variable, use a variable variable to get its value and return its
-		return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		if( $this->get_model()->has_primary_key_field() ) {
+			return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		}else{
+			return $this->get_model()->get_index_primary_key_string( $this->_fields );
+		}
 	}
 
 
