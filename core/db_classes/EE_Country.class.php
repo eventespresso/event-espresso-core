@@ -71,16 +71,11 @@ class EE_Country extends EE_Base_Class {
 
 	/**
 	 * gets the country's currency sign/symbol
-	 * sets the filterable default to the "generic currency symbol"
-	 * see: http://en.wikipedia.org/wiki/Currency_sign_%28typography%29
 	 * @return string
 	 */
 	public function currency_sign() {
 		$CNT_cur_sign = $this->get( 'CNT_cur_sign' );
-		return $CNT_cur_sign ? $CNT_cur_sign : apply_filters(
-			'FHEE__EE_Country__currency_sign__default_currency_sign',
-			'&#164;'
-		);
+		return $CNT_cur_sign ? $CNT_cur_sign : '&#164;';
 	}
 
 
