@@ -185,7 +185,6 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		//now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
 
 		//testing [PRIMARY_REGISTRANT_FNAME], [PRIMARY_REGISTRANT_LNAME]
-		$expected = 'Luke';
 		$this->assertContains( 'Luke Skywalker', $parsed );
 
 		//testing [PAYMENT_STATUS]
