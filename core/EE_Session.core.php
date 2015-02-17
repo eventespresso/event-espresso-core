@@ -411,7 +411,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
 		}
-
 		// wait a minute... how old are you?
 		// if the last access time for the session is less than the current time subtract the session expiration time...
 		// ie: is 1pm less than 4pm minus (the default) 2 hours?
@@ -419,7 +418,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			// yer too old fer me!
 			return FALSE;
 		}
-
 		// make event espresso session data available to plugin
 		$this->_session_data = $session_data;
 		return TRUE;
@@ -535,7 +533,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	private function _save_session_to_db() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if ( ! EE_Registry::instance()->REQ instanceof EE_Request_Handler || ! EE_Registry::instance()->REQ->is_espresso_page() ) {
+		if (
+			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
+			|| ! (
+				EE_Registry::instance()->REQ->is_espresso_page()
+				|| EE_Registry::instance()->REQ->front_ajax
+			)
+		) {
 			return FALSE;
 		}
 		// first serialize all of our session data
