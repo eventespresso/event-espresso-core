@@ -131,24 +131,12 @@ class EE_Transaction_Payments {
 			return FALSE;
 		}
 		EE_Registry::instance()->load_helper( 'Money' );
-		$EEH_Money = new EEH_Money();
 		// set transaction status based on comparison of TXN_paid vs TXN_total
-		if ( $EEH_Money->compare_floats(
-				$transaction->paid(),
-				$transaction->total(),
-				'>'
-		) ){
+		if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '>' ) ){
 			$new_txn_status = EEM_Transaction::overpaid_status_code;
-		} else if ( $EEH_Money->compare_floats(
-			$transaction->paid(),
-			$transaction->total()
-		) ) {
+		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total() ) ) {
 			$new_txn_status = EEM_Transaction::complete_status_code;
-		} else if ( $EEH_Money->compare_floats(
-			$transaction->paid(),
-			$transaction->total(),
-			'<'
-		) ) {
+		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '<' ) ) {
 			$new_txn_status = EEM_Transaction::incomplete_status_code;
 		} else {
 			EE_Error::add_error(
