@@ -124,18 +124,37 @@ class EE_Transaction_Payments {
 	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction, $update_txn = TRUE ) {
 		// verify transaction
 		if ( ! $transaction instanceof EE_Transaction ) {
-			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__( 'Please provide a valid EE_Transaction object.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			return FALSE;
 		}
+		EE_Registry::instance()->load_helper( 'Money' );
+		$EEH_Money = new EEH_Money();
 		// set transaction status based on comparison of TXN_paid vs TXN_total
-		if ( $transaction->paid() > $transaction->total() ){
+		if ( $EEH_Money->compare_floats(
+				$transaction->paid(),
+				$transaction->total(),
+				'>'
+		) ){
 			$new_txn_status = EEM_Transaction::overpaid_status_code;
-		} else if ( $transaction->paid() == $transaction->total() ) {
+		} else if ( $EEH_Money->compare_floats(
+			$transaction->paid(),
+			$transaction->total()
+		) ) {
 			$new_txn_status = EEM_Transaction::complete_status_code;
-		} else if ( $transaction->paid() < $transaction->total() ) {
+		} else if ( $EEH_Money->compare_floats(
+			$transaction->paid(),
+			$transaction->total(),
+			'<'
+		) ) {
 			$new_txn_status = EEM_Transaction::incomplete_status_code;
 		} else {
-			EE_Error::add_error( __( 'The total paid calculation for this transaction is inaccurate.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__( 'The total paid calculation for this transaction is inaccurate.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			return FALSE;
 		}
 		if ( $new_txn_status !== $transaction->status_ID() ) {
