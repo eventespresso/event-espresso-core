@@ -6,6 +6,63 @@
  * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+/**
+ * ee_deprecated__registration_checkout__button_text
+ *
+ * @param string       $submit_button_text
+ * @param \EE_Checkout $checkout
+ * @return string
+ */
+function ee_deprecated__registration_checkout__button_text( $submit_button_text, EE_Checkout $checkout ) {
+	// list of old filters
+	$deprecated_filters = array(
+		'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__update_registration_details',
+		'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__process_payment',
+		'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__finalize_registration',
+		'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__and_proceed_to_payment',
+		'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__proceed_to',
+	);
+	// loop thru and call doing_it_wrong() or remove any that aren't being used
+	foreach ( $deprecated_filters as $key => $deprecated_filter ) {
+		if ( has_action( $deprecated_filter )) {
+			EE_Error::doing_it_wrong(
+				$deprecated_filter,
+				sprintf(
+					__( 'The %1$s filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new filter: %2$s"%3$s" found in "%4$s"', 'event_espresso' ),
+					$deprecated_filter,
+					'<br />',
+					'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text',
+					'/modules/single_page_checkout/inc/EE_SPCO_Reg_Step.class.php'
+				),
+				'4.6.10'
+			);
+		} else {
+			unset( $deprecated_filters[ $key ] );
+		}
+	}
+
+	if ( ! empty( $deprecated_filters )) {
+
+		if ( $checkout->current_step->slug() == 'attendee_information' && $checkout->revisit ) {
+			$submit_button_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__update_registration_details', $submit_button_text );
+		} else if ( $checkout->current_step->slug() == 'payment_options' && $checkout->revisit ) {
+			$submit_button_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__process_payment', $submit_button_text );
+		} else if ( $checkout->next_step instanceof EE_SPCO_Reg_Step && $checkout->next_step->slug() == 'finalize_registration' ) {
+			$submit_button_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__finalize_registration', $submit_button_text );
+		}
+		if ( $checkout->payment_required() && $checkout->next_step instanceof EE_SPCO_Reg_Step && $checkout->next_step->slug() == 'payment_options' ) {
+			$submit_button_text .= apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__and_proceed_to_payment', $submit_button_text );
+		}
+		if ( $checkout->next_step instanceof EE_SPCO_Reg_Step && $checkout->next_step->slug() != 'finalize_registration' && ! $checkout->revisit ) {
+			$submit_button_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__proceed_to', $submit_button_text ) . $checkout->next_step->name();
+		}
+
+	}
+	return $submit_button_text;
+
+}
+add_filter( 'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text', 'ee_deprecated__registration_checkout__button_text', 10, 2 );
+
 
 
 
