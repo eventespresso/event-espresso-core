@@ -406,8 +406,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 			}
 		}
 
-		exit;
-
 		//if we have ANY errors, then we want to make sure we return the values for ALL the fields so the user doesn't have to retype them all.
 		if ( !empty( $this->_errors ) ) {
 			foreach ( $this->_fields as $field => $value ) {
@@ -455,14 +453,11 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$diff = array_diff( $incoming_shortcodes, array_keys($valid_shortcodes) );
 
 		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
-		d( $valid_shortcodes );
 		foreach ( $diff as $ind => $code ) {
 			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) ) {
 				//strip the shortcode so we just have the BASE string (i.e. [ANSWER_*] )
 				$dynamic_sc = preg_replace('/(_\*+.+)/', '_*]', $code);
 				//does this exist in the $valid_shortcodes?  If so then unset.
-				d($code);
-				d($dynamic_sc);
 				if ( isset( $valid_shortcodes[$dynamic_sc] ) ) {
 					unset( $diff[$ind] );
 				}
