@@ -126,9 +126,8 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$this->assertEEModelObjectsEquals( $original_datetime1, $updated_datetime1 );
 	}
 
-	//@todo: test we dont insert conflicting data (especially term-taxonomies)
 	/**
-	 * @group uno
+	 * test we dont insert conflicting data (especially term-taxonomies)
 	 */
 	public function test_save_data_array_to_db__from_other_site__avoid_inserting_conflicting_data() {
 		$term_taxonomy = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'taxonomy' => 'category', 'description' => 'original term-taxonomy' ) );
@@ -272,7 +271,59 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$this->assertEquals( $mapped_event_id, $term_r->get('object_id' ) );
 
 	}
+
+	/**
+	 * test that term relationships are migrated ok if they would conflict with something already in the db
+	 * @group uno
+	 */
+	function test_save_data_array_to_db__from_other_site__no_duplicate_term_relationships() {
+		$event_id_from_other_db = 122;
+		$term_tax_from_other_db = 32;
+		$old_term_r_order = 3;
+		$new_term_r_order = 123;
+
+		$old_term_r_data = array(
+			'object_id' => $event_id_from_other_db,
+			'term_taxonomy_id' => $term_tax_from_other_db,
+			'term_order' => $old_term_r_order
+		);
+
+		$a_real_event = $this->new_model_obj_with_dependencies( 'Event' );
+		$a_real_term_taxonomy = $this->new_model_obj_with_dependencies( 'Term_Taxonomy' );
+		$a_real_term_r = $this->new_model_obj_with_dependencies( 'Term_Relationship', array( 'object_id' => $a_real_event->ID(), 'term_taxonomy_id' => $a_real_term_taxonomy->ID(), 'term_order' => $new_term_r_order ) );
+
+		$csv_data = array(
+			'Term_Relationship' => array(
+				$old_term_r_data
+			)
+		);
+		$mapping_data = array(
+			'Event' => array(
+				$event_id_from_other_db => $a_real_event->ID()
+			),
+			'Term_Taxonomy' => array(
+				$term_tax_from_other_db => $a_real_term_taxonomy->ID()
+			)
+		);
+		$old_term_r_count = EEM_Term_Relationship::instance()->count();
+		$new_mapping = EE_Import::instance()->save_data_rows_to_db( $csv_data, true, $mapping_data );
+		$this->_assertNoImportErrors();
+		//there should be NO new term relationships. it should have just been updated
+		$this->assertEquals( $old_term_r_count, EEM_Term_Relationship::instance()->count() );
+		$this->assertEquals( 1, count( $new_mapping[ 'Term_Relationship' ] ) );
+		$old_term_r_id = EEM_Term_Relationship::instance()->get_index_primary_key_string( $old_term_r_data );
+		$new_term_r_id = $new_mapping[ 'Term_Relationship' ][ $old_term_r_id ];
+		$new_term_r = EEM_Term_Relationship::instance()->get_one_by_ID( $new_term_r_id );
+		$this->assertInstanceOf( 'EE_Term_Relationship', $new_term_r );
+		$this->assertEquals( $old_term_r_order, $new_term_r->get('term_order' ) );
+
+	}
+	//@todo: account for wp 4.2 term splitting (https://developer.wordpress.org/plugins/taxonomy/working-with-split-terms-in-wp-4-2/)
+	//specifically, if we makek an export with a shared term, then have it split, when we re-import we need to use the correct term
+	//@todo: test state which have int PKs, but should haev an unique index according to state abbrev and country
 	//@todo: test more regarding things with NO pks
+	//@todo: I suspect people will want to avoid duplicate states. This could be achieved by having the state abbrev and country ISO be a unique key
+	//@todo: add unit tests for inserting and updating models with no pks
 
 //	public function test_save_data_array_to_db__from_other_site_second_time(){
 //		//test that things in the mapping are remembered
@@ -290,6 +341,11 @@ class EE_Import_Test extends EE_UnitTestCase {
 	public function setUp(){
 		parent::setUp();
 		EE_Import::reset();
+	}
+	protected function _assertNoImportErrors(){
+		$notices = EE_Error::get_notices(false, false, true);
+		$this->assertEmpty( EE_Import::instance()->get_total_update_errors(), isset( $notices['errors'] ) ? $notices['errors'] : '');
+		$this->assertEmpty( EE_Import::instance()->get_total_insert_errors(), isset( $notices['errors'] ) ? $notices['errors'] : '' );
 	}
 }
 

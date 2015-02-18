@@ -351,7 +351,21 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	/**
 	 * Processes the array of data, given the knowledge that it's from the same database or a different one,
 	 * and the mapping from temporary IDs to real IDs.
-	 * If the data is from a different database, we NEVER use
+	 * If the data is from a different database, we treat the primary keys and their corresponding
+	 * foreign keys as "temp Ids", basically identifiers that get mapped to real primary keys
+	 * in the real target database. As items are inserted, their temporary primary keys
+	 * are mapped to the real IDs in the target database. Also, before doing any update or
+	 * insert, we replace all the temp ID which are foreign keys with their mapped real IDs.
+	 * An exception: string primary keys are treated as real IDs, or else we'd need to
+	 * dynamically generate new string primary keys which would be very awkard for the country table etc.
+	 * Also, models with no primary key are strange too. We combine use their primar key INDEX (a
+	 * combination of fields) to create a unique string identifying the row and store
+	 * those in the mapping.
+	 *
+	 * If the data is from the same database, we usually treat primary keys as real IDs.
+	 * An exception is if there is nothing in the database for that ID. If that's the case,
+	 * we need to insert a new row for that ID, and then map from the non-existent ID
+	 * to the newly-inserted real ID.
 	 * @param type $csv_data_array
 	 * @param type $export_from_site_a_to_b
 	 * @param type $old_db_to_new_db_mapping
@@ -429,7 +443,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $what_to_do == self::do_insert ) {
 					$old_db_to_new_db_mapping = $this->_insert_from_data_array( $id_in_csv, $model_object_data, $model, $old_db_to_new_db_mapping );
 				}elseif( $what_to_do == self::do_update ) {
-					$this->_update_from_data_array( $model_object_data, $model );
+					$old_db_to_new_db_mapping = $this->_update_from_data_array( $id_in_csv, $model_object_data, $model, $old_db_to_new_db_mapping );
 				}else{
 					throw new EE_Error( sprintf( __( 'Programming error. We shoudl be inserting or updating, but instead we are being told to "%s", whifh is invalid', 'event_espresso' ), $what_to_do ) );
 				}
@@ -625,14 +639,21 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 	/**
 	 * Given the model object data, finds the row to update and updates it
-	 * @param type $model_object_data
+	 * @param string|int $id_in_csv
+	 * @param array $model_object_data
 	 * @param EEM_Base $model
+	 * @param array $old_db_to_new_db_mapping
+	 * @return array updated $old_db_to_new_db_mapping
 	 */
-	protected function _update_from_data_array( $model_object_data, $model ) {
+	protected function _update_from_data_array( $id_in_csv,  $model_object_data, $model, $old_db_to_new_db_mapping ) {
 		try{
+			//let's keep two copies of the model object data:
+			//one for performing an update, one for everthing else
+			$model_object_data_for_update = $model_object_data;
 			if($model->has_primary_key_field()){
 				$conditions = array($model->primary_key_name() => $model_object_data[$model->primary_key_name()]);
-				unset($model_object_data[$model->primary_key_name()]);
+				//remove the primary key because we shouldn't use it for updating
+				unset($model_object_data_for_update[$model->primary_key_name()]);
 			}elseif($model->get_combined_primary_key_fields() > 1 ){
 				$conditions = array();
 				foreach($model->get_combined_primary_key_fields() as $key_field){
@@ -642,10 +663,21 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$model->primary_key_name();//this shoudl just throw an exception, explaining that we dont have a primary key (or a combine dkey)
 			}
 
-			$success = $model->update($model_object_data,array($conditions));
+			$success = $model->update($model_object_data_for_update,array($conditions));
 			if($success){
 				$this->_total_updates++;
-				EE_Error::add_success( sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data)));
+				EE_Error::add_success( sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data_for_update)));
+				//we should still record the mapping even though it was an update
+				//because if we were going to insert somethign but it was going to conflict
+				//we would have last-minute decided to update. So we'd like to know what we updated
+				//and so we record what record ended up being updated using the mapping
+				if( $model->has_primary_key_field() ){
+					$new_key_for_mapping = $model_object_data[ $model->primary_key_name() ];
+				}else{
+					//no primary key just a combined key
+					$new_key_for_mapping = $model->get_index_primary_key_string( $model_object_data );
+				}
+				$old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $id_in_csv ] = $new_key_for_mapping;
 			}else{
 				$matched_items = $model->get_all(array($conditions));
 				if( ! $matched_items){
@@ -654,13 +686,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model->get_this_model_name(),http_build_query($model_object_data),http_build_query($conditions)), __FILE__, __FUNCTION__, __LINE__ );
 				}else{
 					$this->_total_updates++;
-					EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data)));
+					EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data)));
 				}
 			}
 		}catch(EE_Error $e){
 			$this->_total_update_errors++;
-			EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data),$e->getMessage()), __FILE__, __FUNCTION__, __LINE__ );
+			$basic_message = sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model->get_this_model_name(),implode(",",$model_object_data),$e->getMessage());
+			$debug_message = $basic_message . ' Stack trace: ' . $e->getTraceAsString();
+			EE_Error::add_error( "$basic_message | $debug_message", __FILE__, __FUNCTION__, __LINE__ );
 		}
+		return $old_db_to_new_db_mapping;
 	}
 
 	/**
