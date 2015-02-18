@@ -1,0 +1,75 @@
+/**
+ * Basic styling for the ticket selector for when it is embedded.
+ */
+
+body {
+	color: #666;
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #333;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	line-height: 2;
+	margin-bottom: 40px;
+	margin-bottom: 4rem;
+	width: 100%;
+}
+
+tbody {
+	border-bottom: 1px solid #ddd;
+}
+
+th,
+td {
+	text-align: left;
+}
+
+th {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+td {
+	border-top: 1px solid #ddd;
+	padding: 6px 0;
+	padding: 0.6rem 0;
+}
+
+select {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	box-shadow: 1px 1px 3px #eee inset;
+	color: #999;
+	font-size: 12px;
+	font-size: 1.2rem;
+	margin-left: 10px;
+	margin-left: 1rem;
+}
+
+input[type="submit"] {
+	background-color: #F60;
+	border: none;
+	box-shadow: none;
+	color: #fff;
+	cursor: pointer;
+	font-size: 10px;
+	font-size: 1.0rem;
+	padding: 12px 18px;
+	padding: 1.2rem 1.8rem;
+	text-transform: uppercase;
+	width: auto;
+	border-radius: 3px;
+	display: inline-block;
+}
+
+input:hover[type="submit"] {
+	opacity: 0.9;
+}
