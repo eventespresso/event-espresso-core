@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Class EE_Div_Per_Section_Layout
+ *
+ * Description
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				4.6.0
+ *
+ */
 class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 
 	/**
