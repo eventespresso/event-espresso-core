@@ -442,7 +442,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
 		}
-
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
@@ -590,7 +589,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	private function _save_session_to_db() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if ( ! EE_Registry::instance()->REQ instanceof EE_Request_Handler || ! EE_Registry::instance()->REQ->is_espresso_page() ) {
+		if (
+			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
+			|| ! (
+				EE_Registry::instance()->REQ->is_espresso_page()
+				|| EE_Registry::instance()->REQ->front_ajax
+			)
+		) {
 			return FALSE;
 		}
 		// first serialize all of our session data
