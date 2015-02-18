@@ -273,6 +273,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
+
+	public function loadMessagesMocks() {
+		require_once EE_TESTS_DIR . 'mocks/core/libraries/messages/validators/EE_Messages_Validator_mock.php';
+	}
+
+
+
 	/**
 	 * IT would be better to add a constraint and do this properly at some point
 	 * @param mixed $item
