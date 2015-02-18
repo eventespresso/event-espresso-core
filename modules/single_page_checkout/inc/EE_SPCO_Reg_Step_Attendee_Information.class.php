@@ -35,7 +35,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
+		$this->_template = SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please answer the following registration questions before proceeding.', 'event_espresso'));
@@ -81,8 +81,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		);
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
-			'registrations' =>array(),
-			'ticket_count' 	=>array()
+			'registrations' => array(),
+			'ticket_count' 	=> array()
 		);
 		// grab the saved registrations from the transaction
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
@@ -123,7 +123,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout(
 						array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'layout_template_file' 	=> $this->_template, // layout_template
 							'template_args' 				=> $template_args
 						)
 					),

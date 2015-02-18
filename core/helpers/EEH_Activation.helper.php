@@ -998,16 +998,24 @@ class EEH_Activation {
 				/** @var EE_messenger[] $installed_messengers  */
 				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
 				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-				foreach ( $default_mts as $mt ) {
+				foreach ( $default_mts as $index => $mt ) {
+					//is there an installed_mt matching the default string?  If not then nothing to do here.
+					if ( ! isset( $installed_mts[$mt] ) ) {
+						unset( $default_mts[$index] );
+						continue;
+					}
+
+
 					//we need to setup any initial settings for message types
 					/** @var EE_message_type[] $installed_mts */
 					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-					if ( !empty( $settings_fields ) ) {
+					$settings = array();
+					if ( is_array( $settings_fields ) ) {
 						foreach ( $settings_fields as $field => $values ) {
-							$settings[$field] = $values['default'];
+							if ( isset( $values['default'] ) ) {
+								$settings[$field] = $values['default'];
+							}
 						}
-					} else {
-						$settings = array();
 					}
 
 					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
@@ -1044,19 +1052,28 @@ class EEH_Activation {
 			$new_default_mts = array();
 
 			//loop through each default mt reported by the messenger and make sure its set in its active db entry.
-			foreach( $all_default_mts as $mt ) {
+			foreach( $all_default_mts as $index => $mt ) {
 				//already active? already has generated templates? || has already been activated before (we dont' want to reactivate things users intentionally deactivated).
 				if ( ( isset( $has_activated[$messenger] ) && in_array($mt, $has_activated[$messenger]) ) || isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
 					continue;
 				}
-				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-				if ( !empty( $settings_fields ) ) {
-					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
-					}
-				} else {
-					$settings = array();
+
+				//is there an installed_mt matching the default string?  If not then nothing to do here.
+				if ( ! isset( $installed_mts[$mt] ) ) {
+					unset( $all_default_mts[$mt] );
+					continue;
 				}
+
+				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
+				$settings = array();
+				if ( is_array( $settings_fields ) ) {
+					foreach ( $settings_fields as $field => $values ) {
+						if ( isset( $values['default'] ) ) {
+							$settings[$field] = $values['default'];
+						}
+					}
+				}
+
 				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
 				$new_default_mts[] = $mt;
 				$has_activated[$messenger][] = $mt;
@@ -1249,6 +1266,7 @@ class EEH_Activation {
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
+			'ee_has_activated_messenger' => TRUE,
 			'ee_flush_rewrite_rules' => TRUE,
 			'ee_config' => TRUE,
 			'ee_data_migration_current_db_state' => TRUE,
