@@ -659,26 +659,6 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
-	/**
-	 * Gets the field values from the primary key string
-	 * @see EEM_Base::get_combined_primary_key_fields() and EEM_Base::get_index_primary_key_string()
-	 * @param string $index_primary_key_string
-	 * @return null|array
-	 */
-	function parse_index_primary_key_string( $index_primary_key_string) {
-		$key_fields = $this->get_combined_primary_key_fields();
-		//check all of them are in the $id
-		$key_vals_in_combined_pk = array();
-		parse_str( $index_primary_key_string, $key_vals_in_combined_pk );
-		foreach( $key_fields as $key_field_name => $field_obj ) {
-			if( ! isset( $key_vals_in_combined_pk[ $key_field_name ] ) ){
-				return NULL;
-			}
-		}
-		return $key_vals_in_combined_pk;
-	}
-
-
 
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
@@ -789,8 +769,12 @@ abstract class EEM_Base extends EE_Base{
 				// type cast stdClass as array
 				$wpdb_result = (array)$wpdb_result;
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
-				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
-				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
+				if( $this->has_primary_key_field() ){
+					$main_table_pk_value = $wpdb_result[ $this->get_primary_key_field()->get_qualified_column() ];
+				}else{
+					//if there's no primary key, we basically can't support having a 2nd table on the model (we could but it woudl be lots of work)
+					$main_table_pk_value = null;
+				}
 				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
 				//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
 				if(count($tables) > 1){
@@ -820,7 +804,19 @@ abstract class EEM_Base extends EE_Base{
 		//then we want to make sure we keep all the existing
 		//model objects in sync with the db
 		if( $keep_model_objs_in_sync && ! $this->_values_already_prepared_by_model_object ){
-			$model_objs_affected_ids = $this->get_col( $query_params );
+			if( $this->has_primary_key_field() ){
+				$model_objs_affected_ids = $this->get_col( $query_params );
+			}else{
+				//we need to select a bunch of columns and then combine them into the the "index primary key string"s
+				$models_affected_key_columns = $this->_get_all_wpdb_results($query_params, ARRAY_A );
+				$model_objs_affected_ids = array();
+				foreach( $models_affected_key_columns as $row ){
+					$combined_index_key = $this->get_index_primary_key_string( $row );
+					$model_objs_affected_ids[ $combined_index_key ] = $combined_index_key;
+				}
+
+			}
+
 			if( ! $model_objs_affected_ids ){
 				//wait wait wait- if nothing was affected let's stop here
 				return 0;
@@ -833,10 +829,13 @@ abstract class EEM_Base extends EE_Base{
 					}
 				}
 			}
-			//we already know what we want to update. So let's make the query simpler so it's a little more efficient
-			$query_params = array(
-				array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
-				'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
+			//if there is a primary key on this model, we can now do a slight optimization
+			if( $this->has_primary_key_field() ){
+				//we already know what we want to update. So let's make the query simpler so it's a little more efficient
+				$query_params = array(
+					array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
+					'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
+			}
 		}
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
@@ -867,8 +866,11 @@ abstract class EEM_Base extends EE_Base{
 
 		if( $field_to_select ){
 			$field = $this->field_settings_for( $field_to_select );
-		}else{
+		}elseif( $this->has_primary_key_field ( ) ){
 			$field = $this->get_primary_key_field();
+		}else{
+			//no primary key, just grab the first column
+			$field = reset( $this->field_settings());
 		}
 
 
@@ -1628,16 +1630,6 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_prepare_value_for_use_in_db( $unprepared_value, $field_obj);
 	}
 
-	/**
-	 * Used to build a primary key string (when the model has no primary key),
-	 * which can be used a unique string to identify this model object.
-	 * @param array $cols_n_values keys are field names, values are their values
-	 * @return string
-	 */
-	public function get_index_primary_key_string($cols_n_values){
-		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
-		return http_build_query($cols_n_values_for_primary_key_index);
-	}
 
 	/**
 	 * Consolidates code for preparing  a value supplied to the model for use int eh db. Calls the field's prepare_for_use_in_db method on the value,
@@ -3374,6 +3366,52 @@ abstract class EEM_Base extends EE_Base{
 		return array($this->get_primary_key_field());
 	}
 
+	/**
+	 * Used to build a primary key string (when the model has no primary key),
+	 * which can be used a unique string to identify this model object.
+	 * @param array $cols_n_values keys are field names, values are their values
+	 * @return string
+	 */
+	public function get_index_primary_key_string($cols_n_values){
+		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
+		return http_build_query($cols_n_values_for_primary_key_index);
+	}
+
+
+	/**
+	 * Gets the field values from the primary key string
+	 * @see EEM_Base::get_combined_primary_key_fields() and EEM_Base::get_index_primary_key_string()
+	 * @param string $index_primary_key_string
+	 * @return null|array
+	 */
+	function parse_index_primary_key_string( $index_primary_key_string) {
+		$key_fields = $this->get_combined_primary_key_fields();
+		//check all of them are in the $id
+		$key_vals_in_combined_pk = array();
+		parse_str( $index_primary_key_string, $key_vals_in_combined_pk );
+		foreach( $key_fields as $key_field_name => $field_obj ) {
+			if( ! isset( $key_vals_in_combined_pk[ $key_field_name ] ) ){
+				return NULL;
+			}
+		}
+		return $key_vals_in_combined_pk;
+	}
+
+	/**
+	 * verifies that an array of key-value pairs for model fields has a key
+	 * for each field comprising the primary key index
+	 * @param array $key_vals
+	 * @return boolean
+	 */
+	function has_all_combined_primary_key_fields( $key_vals ) {
+		$keys_it_should_have = array_keys( $this->get_combined_primary_key_fields() );
+		foreach( $keys_it_should_have as $key ){
+			if( ! isset( $key_vals[ $key ] ) ){
+				return false;
+			}
+		}
+		return true;
+	}
 
 
 	/**

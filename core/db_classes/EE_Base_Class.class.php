@@ -1224,20 +1224,28 @@ abstract class EE_Base_Class{
 	 * @return mixed (EE_Base_Class|bool)
 	 */
 	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
-		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if( self::_get_model( $classname )->has_primary_key_field()){
+			$primary_id_ref = self::_get_primary_key_name( $classname );
 
-		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
-			if ( $existing ) {
-				foreach ( $props_n_values as $property => $field_value ) {
-					$existing->set( $property, $field_value );
-				}
-				return $existing;
-			} else {
-				return FALSE;
+			if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+				$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			}else{
+				$existing = null;
 			}
+		}elseif( self::_get_model( $classname, $timezone )->has_all_combined_primary_key_fields(  $props_n_values ) ){
+			//no primary key on this model, but there's still a matching item in the DB
+				$existing = self::_get_model($classname, $timezone)->get_one_by_ID( self::_get_model($classname, $timezone)->get_index_primary_key_string( $props_n_values ) );
+		}else{
+			$existing = null;
 		}
-		return FALSE;
+		if ( $existing ) {
+			foreach ( $props_n_values as $property => $field_value ) {
+				$existing->set( $property, $field_value );
+			}
+			return $existing;
+		} else {
+			return FALSE;
+		}
 	}
 
 
