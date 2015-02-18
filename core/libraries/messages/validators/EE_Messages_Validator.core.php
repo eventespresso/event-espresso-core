@@ -444,7 +444,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * @param  array  $valid_shortcodes array of shortcodes that are acceptable.
 	 * @return mixed (bool|string)  return either a list of invalid shortcodes OR false if the shortcodes validate.
 	 */
-	private function _invalid_shortcodes($value, $valid_shortcodes) {
+	protected function _invalid_shortcodes($value, $valid_shortcodes) {
 		//first we need to go through the string and get the shortcodes in the string
 		$sc = preg_match_all( '/(\[.+?\])/', $value, $matches );
 		$incoming_shortcodes = (array) $matches[0];
@@ -480,7 +480,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * @param  string $value incoming value to validate
 	 * @return bool        true if the string validates, false if it doesn't
 	 */
-	private function _validate_email( $value ) {
+	protected function _validate_email( $value ) {
 		$validate = TRUE;
 		$fail = FALSE;
 		$or_val = $value;
