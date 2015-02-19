@@ -1,6 +1,7 @@
 {
 	"versionFile" : "espresso.php",
 	"slug" : "event-espresso-core-reg",
+	"textDomain" : "event_espresso",
 	"wpOrgSlug" : "event-espresso-decaf",
 	"wpOrgUser" : "eventespresso",
 	"wpOrgRelease" : "4.4.10.p",
