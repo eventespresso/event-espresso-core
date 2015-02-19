@@ -554,7 +554,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$ymax = 0;
 		$results = (array) $results;
 		foreach ( $results as $result ) {
-			$regs[] = array( $result->event_name, (int)$result->total );
+			$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int)$result->total );
 			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
 
