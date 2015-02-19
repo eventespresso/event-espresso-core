@@ -25,17 +25,19 @@ function ee_deprecated__registration_checkout__button_text( $submit_button_text,
 	// loop thru and call doing_it_wrong() or remove any that aren't being used
 	foreach ( $deprecated_filters as $deprecated_filter => $on ) {
 		if ( has_action( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__' . $deprecated_filter )) {
-			EE_Error::doing_it_wrong(
-				'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__' . $deprecated_filter,
-				sprintf(
-					__( 'The %1$s filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new filter: %2$s"%3$s" found in "%4$s"', 'event_espresso' ),
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'hide_doing_it_wrong_for_deprecated_SPCO_filter' ) && ! defined( 'DOING_AJAX' ) ) {
+				EE_Error::doing_it_wrong(
 					'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__' . $deprecated_filter,
-					'<br />',
-					'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text',
-					'/modules/single_page_checkout/inc/EE_SPCO_Reg_Step.class.php'
-				),
-				'4.6.10'
-			);
+					sprintf(
+						__( 'The %1$s filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new filter: %2$s"%3$s" found in "%4$s"', 'event_espresso' ),
+						'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__' . $deprecated_filter,
+						'<br />',
+						'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text',
+						'/modules/single_page_checkout/inc/EE_SPCO_Reg_Step.class.php'
+					),
+					'4.6.10'
+				);
+			}
 		} else {
 			unset( $deprecated_filters[ $deprecated_filter ] );
 		}
