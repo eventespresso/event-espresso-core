@@ -143,14 +143,18 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 
+
 	/**
-	 * Tests parsing the message template for email messenger, payment received message
-	 * type.
+	 * This helper returns parsed content from the parser to be used for tests using the given params.
 	 *
-	 * @group 7585
-	 * @since 4.6
+	 * @param string $messenger      The slug for the messenger being tested.
+	 * @param string $message_type The slug for the message type being tested.
+	 * @param string $field                  The field being tested.
+	 * @param string $context             The context being tested.
+	 *
+	 * @return string The parsed content.
 	 */
-	public function test_parsing_email_payment_received() {
+	protected function _get_parsed_content( $messenger, $message_type, $field, $context ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => 'email',
@@ -166,21 +170,38 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		}
 
 		//instantiate messenger and message type objects
-		$messenger = new EE_Email_messenger();
-		$message_type = new EE_Payment_message_type();
+		$msg_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) ) . '_messenger';
+		$mt_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) ) . '_message_type';
+		$messenger = new $msg_class();
+		$message_type = new $mt_class();
+
+		$message_type->set_messages( array(), $messenger, $context, true );
 
 		//grab valid shortcodes and setup for parser.
 		$m_shortcodes = $messenger->get_valid_shortcodes();
 		$mt_shortcodes = $message_type->get_valid_shortcodes();
 
 		//just sending in the content field and primary_attendee context/data for testing.
-		$template = $templates['content']['primary_attendee'];
-		$valid_shortcodes = isset( $m_shortcodes['content'] ) ? $m_shortcodes['content'] : $mt_shortcodes['primary_attendee'];
+		$template = $templates[$field][$context];
+		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
 		$data = $this->_get_addressee();
 
 		EE_Registry::instance()->load_helper('Parse_Shortcodes');
 		$parser = new EEH_Parse_Shortcodes();
-		$parsed = $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, 'primary_attendee', $mtpg->ID() );
+		return $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, $context, $mtpg->ID() );
+	}
+
+
+
+	/**
+	 * Tests parsing the message template for email messenger, payment received message
+	 * type.
+	 *
+	 * @group 7585
+	 * @since 4.6
+	 */
+	public function test_parsing_email_payment_received() {
+		$parsed = $this->_get_parsed_content( 'email', 'payment', 'content', 'primary_attendee' );
 
 		//now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
 
@@ -218,6 +239,13 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		//testing [TKT_QTY_PURCHASED]
 		$expected = '<strong>Quantity Purchased:</strong> 3';
 		$this->assertContains( $expected, $parsed, '[TKT_QTY_PURCHASED] shortcode was not parsed correctly to the expected value which is 3' );
+
+	}
+
+
+
+
+	public function test_parsing_html_receipt() {
 
 	}
 
