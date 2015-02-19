@@ -538,8 +538,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
 		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . __('Active Email Tab', 'event_espresso') . '" />';
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
-		$args['img3'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'on-toggle.png' . '" alt="' . __('On Toggle Image', 'event_espresso') . '" />';
-		$args['img4'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'off-toggle.png' . '" alt="' . __('Off Toggle Image', 'event_espresso') . '" />';
+		$args['img3'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked"><label for="ee-on-off-toggle-on"></label>';
+		$args['img4'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox"><label for="ee-on-off-toggle-on"></label>';
 		EEH_Template::display_template( $templatepath, $args);
 	}
 
@@ -2425,7 +2425,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$settings_template_args['on_off_action'] = $active ? 'messenger-off' : 'messenger-on';
 		$settings_template_args['nonce'] = wp_create_nonce('activate_' . $messenger->name . '_toggle_nonce');
-		$settings_template_args['on_off_status'] = $active ? 'active' : 'inactive';
+		$settings_template_args['on_off_status'] = $active ? true : false;
 		$template = EE_MSG_TEMPLATE_PATH . 'ee_msg_m_settings_content.template.php';
 		$content = EEH_Template::display_template( $template, $settings_template_args, TRUE);
 		return $content;

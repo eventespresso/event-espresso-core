@@ -66,7 +66,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 		$this->_ticket = $this->_data instanceof EE_Ticket ? $this->_data : null;
 
 		$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-		$aee = ! $aee instanceof EE_Messages_Addressee && $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
+		$aee = ! $aee instanceof EE_Messages_Addressee && is_array( $this->_extra_data ) && isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $aee;
 
 
 		//possible EE_Line_Item may be incoming data
