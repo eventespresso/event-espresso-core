@@ -842,14 +842,12 @@ final class EE_Config {
 			// filter list of modules to register
 			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
 
-			if ( empty( $widgets_to_register ) ) {
-				return;
-			}
-
-			// cycle thru widget folders
-			foreach ( $widgets_to_register as $widget_path ) {
-				// add to list of installed widget modules
-				EE_Config::register_ee_widget( $widget_path );
+			if ( ! empty( $widgets_to_register ) ) {
+				// cycle thru widget folders
+				foreach ( $widgets_to_register as $widget_path ) {
+					// add to list of installed widget modules
+					EE_Config::register_ee_widget( $widget_path );
+				}
 			}
 			// filter list of installed modules
 			EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
@@ -929,14 +927,13 @@ final class EE_Config {
 		// filter list of modules to register
 		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 
-		if ( empty( $shortcodes_to_register ) )  {
-			return;
-		}
 
-		// cycle thru shortcode folders
-		foreach ( $shortcodes_to_register as $shortcode_path ) {
-			// add to list of installed shortcode modules
-			EE_Config::register_shortcode( $shortcode_path );
+		if ( ! empty( $shortcodes_to_register ) ) {
+			// cycle thru shortcode folders
+			foreach ( $shortcodes_to_register as $shortcode_path ) {
+				// add to list of installed shortcode modules
+				EE_Config::register_shortcode( $shortcode_path );
+			}
 		}
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
@@ -1018,15 +1015,16 @@ final class EE_Config {
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
 		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
-		if ( empty( $modules_to_register ) ) {
-			return;
-		}
-		// loop through folders
-		foreach ( $modules_to_register as $module_path ) {
-			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
-			if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' && $module_path != EE_MODULES . 'gateways' ) {
-				// add to list of installed modules
-				EE_Config::register_module( $module_path );
+
+
+		if ( ! empty( $modules_to_register ) ) {
+			// loop through folders
+			foreach ( $modules_to_register as $module_path ) {
+				/**TEMPORARILY EXCLUDE gateways from modules for time being**/
+				if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' && $module_path != EE_MODULES . 'gateways' ) {
+					// add to list of installed modules
+					EE_Config::register_module( $module_path );
+				}
 			}
 		}
 		// filter list of installed modules

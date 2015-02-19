@@ -23,13 +23,6 @@
     background: transparent url(images/sprocket_s_light.png) no-repeat left;
 }
 
-.on-off-inactive, .on-off-active {
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-}
-
-
 
 #active-message-types, #inactive-message-types {
     min-height: 10em;
@@ -39,11 +32,11 @@
     border: 1px solid #eee;
 }
 
-#active-message-types.custom-state-active, #inactive-message-types.ui-state-highlight { 
+#active-message-types.custom-state-active, #inactive-message-types.ui-state-highlight {
     background: #f8f8f8;
     border: 1px dashed #b2b2b2;
    }
-   
+
 
 li.mt-tab {
     float: left;
@@ -93,16 +86,4 @@ li.mt-tab:hover .mt-handlediv {
 
 .activate_messages_on_off_toggle_container {
     float:right;
-}
-
-.on-off-inactive, .on-off-active {
-    background-image: url('off-toggle.png');
-    display: block;
-    float: right;
-    width: 54px;
-    height: 24px;
-}
- 
-.on-off-active {
-    background-image: url('on-toggle.png');
 }

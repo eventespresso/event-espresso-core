@@ -1,6 +1,16 @@
 <?php
-
-class EE_No_Layout extends EE_Form_Section_Layout_Base{
+/**
+ * Class EE_No_Layout
+ *
+ * Description
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				4.6.0
+ *
+ */
+class EE_No_Layout extends EE_Div_Per_Section_Layout {
 
 	/**
 	 * opening div tag for a form
@@ -21,17 +31,22 @@ class EE_No_Layout extends EE_Form_Section_Layout_Base{
 		if ( $input instanceof EE_Hidden_Input  ) {
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Submit_Input  ) {
-			$html .= EEH_HTML::nl(1) . $input->get_html_for_input();
+			$html .= EEH_HTML::br();
+			$html .= $input->get_html_for_input();
 		} else if ( $input instanceof EE_Select_Input  ) {
+			$html .= EEH_HTML::br();
 			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
 			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 			$html .= EEH_HTML::nl() . $input->get_html_for_help();
+			$html .= EEH_HTML::br();
 		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
-			$html .= EEH_HTML::nl(1) . $input->get_html_for_errors();
+			$html .= EEH_HTML::br();
+			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		} else {
+			$html .= EEH_HTML::br();
 			$html .= EEH_HTML::nl(1) . $input->get_html_for_label();
 			$html .= EEH_HTML::nl() . $input->get_html_for_errors();
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();

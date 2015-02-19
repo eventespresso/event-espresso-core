@@ -269,7 +269,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// filter for additional content after questions
 		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '', $registration, $question_group, $this ));
 //		d( $form_args );
-		return new EE_Form_Section_Proper( $form_args );
+		$question_group_reg_form = new EE_Form_Section_Proper( $form_args );
+		return apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', $question_group_reg_form, $registration, $question_group, $this );
 	}
 
 
@@ -518,11 +519,32 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				return new EE_State_Select_Input( NULL, $input_constructor_args );
+				$state_options = array();
+				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
+				if ( ! empty( $states )) {
+					foreach( $states as $state ){
+						if ( $state instanceof EE_State ) {
+							$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
+						}
+					}
+				}
+				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this );
+				return new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				return new EE_Country_Select_Input( NULL, $input_constructor_args );
+				$country_options = array();
+				// get possibly cached list of countries
+				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
+				if ( ! empty( $countries )) {
+					foreach( $countries as $country ){
+						if ( $country instanceof EE_Country ) {
+							$country_options[ $country->ID() ] = $country->name();
+						}
+					}
+				}
+				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this );
+				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
 			case EEM_Question::QST_type_checkbox :

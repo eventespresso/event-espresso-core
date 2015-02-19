@@ -161,8 +161,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	function column_TXN_timestamp( EE_Transaction $item ){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 		// is TXN less than 2 hours old ?
-		if ((( current_time( 'timestamp' ) - ( 2 * HOUR_IN_SECONDS ) ) < strtotime( $item->datetime() )) && ( $item->failed() || $item->is_abandoned() )) {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) .  '</a>';
+		if (
+			(
+				( current_time( 'timestamp' ) - EE_Registry::instance()->SSN->lifespan() )
+				< strtotime( $item->datetime() )
+			) &&
+			( $item->failed() || $item->is_abandoned() )
+		) {
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) . '</a>';
 		} else {
 			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime() .  '</a>';
 		}
