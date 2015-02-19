@@ -13,7 +13,11 @@ class EE_State_Select_Input extends EE_Select_Input{
 	 * @param array $input_settings
 	 */
 	function __construct( $state_options, $input_settings = array() ){
-		$state_options = $this->get_state_answer_options( $state_options );
+		$state_options = apply_filters(
+			'FHEE__EE_State_Select_Input____construct__state_options',
+			$this->get_state_answer_options( $state_options ),
+			$this
+		);
 		parent::__construct( $state_options, $input_settings );
 	}
 

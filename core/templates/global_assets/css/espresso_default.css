@@ -632,15 +632,15 @@ input.ee-register-button {
 	box-sizing: border-box;
 	color:#666666;
 	cursor: pointer;
-	font-size: 26px;
+	font-size: 21px;
 	font-weight: bold;
 	height: 30px;
-	line-height: 23px;
+	line-height: 24px;
 	padding: 0;
 	position: absolute;
-	right: -13px;
+	right: -15px;
 	text-align: center;
-	top: -13px;
+	top: -15px;
 	vertical-align: middle;
 	width: 30px;
 }
