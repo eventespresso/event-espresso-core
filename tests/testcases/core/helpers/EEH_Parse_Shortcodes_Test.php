@@ -64,6 +64,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$this->_ticket->set( 'TKT_description', 'One entry in the event.' );
 		$this->_datetime = $this->_ticket->first_datetime();
 		$this->_event = $this->_datetime->event();
+
+		//set the author of the event
+		$this->_event->set( 'EVT_wp_user', 1 );
 	}
 
 
