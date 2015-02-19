@@ -325,7 +325,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	/**
 	 * gets the payment method for this transaction. Otherwise gets a default one.
 	 */
-	private function _get_payment_method( $transaction ){
+	private function _get_payment_method( $transaction = null ){
 		if( $transaction instanceof EE_Transaction ) {
 			$payment_method = $transaction->payment_method();
 			if ( empty( $payment_method ) ) {
