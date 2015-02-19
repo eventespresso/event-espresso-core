@@ -323,13 +323,15 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		//add in shortcodes for testing [ANSWER_*] as a part of the [ATTENDEE_LIST] parsing from the [EVENT_LIST] context.
 		$test_answer_attendee_list_event_list_append = array(
 			'event_list' => '[ATTENDEE_LIST]',
-			'attendee_list' => 'Custom Answer: [ANSWER_* What is your favorite planet?]'
+			'attendee_list' => 'Custom Answer: [ANSWER_* What is your favorite planet?]',
+			'ticket_list' => '[ATTENDEE_LIST]',
+			'main' => '[ATTENDEE_LIST]'
 			);
 
 		$parsed = $this->_get_parsed_content( 'email', 'registration', 'attendee_list', 'attendee', $test_answer_attendee_list_event_list_append );
 
-		//testing [ANSWER_*]
-		$this->assertContains('Custom Answer: Tattoine', $parsed );
+		//testing [ATTENDEE_LIST] and [ANSWER_*] which should appear three times (because [ATTENDEE_LIST] was added to three fields),
+		$this->assertEquals( 3, substr_count( $parsed, 'Custom Answer: Tattoine' ) );
 	}
 
 
