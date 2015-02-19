@@ -7,6 +7,7 @@
 	"name" : "Event Espresso Core",
 	"archiveBaseUrl" : "http://build.eventespresso.com/",
 	"archiveBasePath" : "~/www/build/",
+	"srcBuildFolderName" : "event-espresso-core",
 	"releaseFilesRemove" : [
 		"src/tests/**",
 		"src/info.json",
