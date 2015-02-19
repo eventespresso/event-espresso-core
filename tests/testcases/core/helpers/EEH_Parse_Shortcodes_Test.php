@@ -111,6 +111,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		 */
 		switch ( $context ) {
 			case 'primary_attendee'  :
+			case 'purchaser' :
 				$aee = $addressee_data;
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
@@ -244,9 +245,15 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 
-
+	/**
+	 * Test parsing the html receipt message templates.
+	 *
+	 * @since 4.6
+	 * @group 7623
+	 */
 	public function test_parsing_html_receipt() {
-
+		//currently with @group 7623 just testing if there are any error notices.
+		$parsed = $this->_get_parsed_content( 'html', 'receipt', 'content', 'purchaser' );
 	}
 
 
