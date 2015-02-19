@@ -55,6 +55,57 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
+	 * 	lock
+	 *
+	 * 	sets a wp_option indicating that this TXN is locked
+	 * and should not be updated in the db
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function lock() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		$locked_transactions[ $this->ID() ] = true;
+		update_option( 'ee_locked_transactions', $locked_transactions );
+	}
+
+
+
+	/**
+	 * 	unlock
+	 *
+	 * 	removes transaction lock applied in lock_transaction()
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function unlock() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		unset( $locked_transactions[ $this->ID() ] );
+		update_option( 'ee_locked_transactions', $locked_transactions );
+	}
+
+	/**
+	 * is_locked
+	 *
+	 * Decides whether or not now is the right time to update the transaction.
+	 * This is useful because we don't always if it is safe to update the transaction
+	 * and its related data. why?
+	 * because it's possible that the transaction is being used in another
+	 * request and could overwrite anything we save.
+	 * So we want to only update the txn once we know that won't happen.
+	 *
+	 * @access 	public
+	 * @return boolean
+	 */
+	public function is_locked() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		return isset( $locked_transactions[ $this->ID() ] ) ? true : false;
+	}
+
+
+
+	/**
 	 *        Set transaction total
 	 *
 	 * @access        public

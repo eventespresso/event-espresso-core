@@ -80,6 +80,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		if ( ! $message_type instanceof EE_message_type || ! $messenger instanceof EE_messenger ) {
 			echo '';
+			return;
 		}
 
 		parent::single_row( $item );
