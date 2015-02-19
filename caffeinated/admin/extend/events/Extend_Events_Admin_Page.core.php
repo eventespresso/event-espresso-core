@@ -423,6 +423,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
 		$new_event->set( 'status', 'draft' );
 
+		//duplicate discussion settings
+		$new_event->set( 'comment_status', $orig_event->get('comment_status') );
+		$new_event->set( 'ping_status', $orig_event->get( 'ping_status' ) );
+
 		//save the new event
 		$new_event->save();
 
@@ -477,6 +481,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				if ( ! $orig_tkt instanceof EE_Ticket )
 					continue;
 
+				//is this ticket archived?  If it is then let's skip
+				if ( $orig_tkt->get( 'TKT_deleted' ) ) {
+					continue;
+				}
+
 				//does this original ticket already exist in the clone_tickets cache?  If so we'll just use the new ticket from it.
 				if ( isset( $cloned_tickets[$orig_tkt->ID()] ) ) {
 					$new_tkt = $cloned_tickets[$orig_tkt->ID()];
@@ -506,7 +515,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			}
 		}
 
-		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event);
+		//clone taxonomy information
+		$taxonomies_to_clone_with = apply_filters( 'FHEE__Extend_Events_Admin_Page___duplicate_event__taxonomies_to_clone', array( 'espresso_event_categories', 'espresso_event_type', 'post_tag' ) );
+
+		//get terms for original event (notice)
+		$orig_terms = wp_get_object_terms( $orig_event->ID(), $taxonomies_to_clone_with );
+
+		//loop through terms and add them to new event.
+		foreach ( $orig_terms as $term ) {
+			wp_set_object_terms( $new_event->ID(), $term->term_id, $term->taxonomy, true );
+		}
+
+
+		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event, $orig_event );
 
 		//now let's redirect to the edit page for this duplicated event if we have a new event id.
 		if ( $new_event->ID() ) {
