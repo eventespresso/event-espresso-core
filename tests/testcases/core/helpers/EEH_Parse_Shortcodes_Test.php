@@ -152,10 +152,11 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @param string $message_type The slug for the message type being tested.
 	 * @param string $field                  The field being tested.
 	 * @param string $context             The context being tested.
+	 * @param string $append  	       Append content to a default template for testing with.
 	 *
 	 * @return string The parsed content.
 	 */
-	protected function _get_parsed_content( $messenger, $message_type, $field, $context ) {
+	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '' ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => $messenger,
@@ -183,7 +184,37 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$mt_shortcodes = $message_type->get_valid_shortcodes();
 
 		//just sending in the content field and primary_attendee context/data for testing.
-		$template = $templates[$field][$context];
+		$template = isset( $templates[$field][$context] ) ? $templates[$field][$context] : array();
+
+		/**
+		 * if empty template then its possible that the requested field is inside the "content"
+		 * field array.
+		 */
+		if ( empty( $template ) ) {
+			$template = isset( $templates['content'][$context] ) ? $templates['content'][$context] : array();
+			//verify the requested field is present
+			if ( ! empty( $template ) && is_array( $template ) && ! isset( $template[$field]) ) {
+				return '';
+			}
+		}
+
+		//if $template is still empty then return an empty string
+		if ( empty( $template ) ) {
+			return '';
+		}
+
+		// any appends?
+		if (  ! empty( $append ) ) {
+			if ( is_array( $template ) ) {
+				//we've already done a check for the presence of field above.
+				$template[$field] = $template[$field] . $append;
+			} else {
+				$template .= $append;
+			}
+		}
+
+
+
 		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
 		$data = $this->_get_addressee();
 
