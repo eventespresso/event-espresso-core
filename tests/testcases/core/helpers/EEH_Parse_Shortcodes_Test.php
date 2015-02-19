@@ -155,7 +155,10 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @param string $message_type The slug for the message type being tested.
 	 * @param string $field                  The field being tested.
 	 * @param string $context             The context being tested.
-	 * @param string $append  	       Append content to a default template for testing with.
+	 * @param array|string $append    Append content to a default template for testing with.  If
+	 *                                		       you want to append to multiple fields, then include an
+	 *                                		       array indexed by field.  Otherwise the string will be
+	 *                                		       appended to the field sent in with the $field param.
 	 *
 	 * @return string The parsed content.
 	 */
@@ -210,9 +213,21 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		if (  ! empty( $append ) ) {
 			if ( is_array( $template ) ) {
 				//we've already done a check for the presence of field above.
-				$template[$field] = $template[$field] . $append;
+				if ( is_array( $append ) ) {
+					foreach ( $append as $a_field => $string ) {
+						if ( isset( $template[$a_field] ) ) {
+							$template[$a_field] = $template[$a_field] . $string;
+						}
+					}
+				} else {
+					$template[$field] = $template[$field] . $append;
+				}
 			} else {
-				$template .= $append;
+				//only append if $append is not an array because the $template is not an array.
+				if ( ! is_array( $append ) ) {
+					$template .= $append;
+				}
+
 			}
 		}
 
