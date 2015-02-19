@@ -254,6 +254,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	public function test_parsing_html_receipt() {
 		//currently with @group 7623 just testing if there are any error notices.
 		$parsed = $this->_get_parsed_content( 'html', 'receipt', 'content', 'purchaser' );
+
+		//testing [PAYMENT_GATEWAY]
+		$this->assertContains( 'Invoice', $parsed );
 	}
 
 
