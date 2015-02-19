@@ -275,7 +275,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	public function loadMessagesMocks() {
-		require_once EE_TESTS_DIR . 'mocks/core/libraries/messages/validators/EE_Messages_Validator_mock.php';
+		require_once EE_TESTS_DIR . 'mocks/core/libraries/messages/validators/EE_Messages_Validator_Mock.php';
 	}
 
 
