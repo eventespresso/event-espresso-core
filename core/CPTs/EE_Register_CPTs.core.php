@@ -32,7 +32,7 @@ class EE_Register_CPTs {
 		// register CPTs
 		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
-			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'], $CPT['singular_slug'], $CPT['plural_slug'] );
 		}
 		// setup default terms in any of our taxonomies (but only if we're in admin).
 		// Why not added via register_activation_hook?
@@ -305,7 +305,7 @@ class EE_Register_CPTs {
 	 * The default values set in this function will be overridden by whatever you set in $override_args
 	 * @return void, but registers the custom post type
 	 */
-	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array()) {
+	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array(), $singular_slug = '', $plural_slug = '' ) {
 
 	  $labels = array(
 		'name' => $plural_name,
@@ -323,6 +323,10 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+	  //verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
+	  $singular_slug = ! empty( $singular_slug ) ? $singular_slug : $singular_name;
+	  $plural_slug = ! empty( $plural_slug ) ? $plural_slug : $plural_name;
+
 
 	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesn't actually have that in their register_post_type api.
 	  $args = array(
@@ -333,7 +337,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => $plural_slug ), $post_type ),
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,
