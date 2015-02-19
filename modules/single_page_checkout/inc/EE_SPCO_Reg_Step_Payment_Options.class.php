@@ -585,7 +585,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					)
 				);
 			}
-			return $billing_form;
+			return apply_filters(
+				'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
+				$billing_form
+			);
 		}
 		// no actual billing form, so return empty HTML form section
 		return new EE_Form_Section_HTML();
