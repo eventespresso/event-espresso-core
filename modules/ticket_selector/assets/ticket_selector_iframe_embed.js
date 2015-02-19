@@ -13,6 +13,10 @@ jQuery(document).ready(function($) {
 			if ( $(this).val() > 0 ) {
 				has_selection++;
 			}
+			//hang on there may be radios!
+			if ( $(this).attr('type') == 'radio' && $(this).prop('checked' ) ) {
+				has_selection++;
+			}
 		});
 
 		if ( has_selection > 0 ) {
