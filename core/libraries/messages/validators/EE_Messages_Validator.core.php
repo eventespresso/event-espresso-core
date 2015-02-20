@@ -444,7 +444,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * @param  array  $valid_shortcodes array of shortcodes that are acceptable.
 	 * @return mixed (bool|string)  return either a list of invalid shortcodes OR false if the shortcodes validate.
 	 */
-	private function _invalid_shortcodes($value, $valid_shortcodes) {
+	protected function _invalid_shortcodes($value, $valid_shortcodes) {
 		//first we need to go through the string and get the shortcodes in the string
 		$sc = preg_match_all( '/(\[.+?\])/', $value, $matches );
 		$incoming_shortcodes = (array) $matches[0];
@@ -454,8 +454,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
 		foreach ( $diff as $ind => $code ) {
-			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) )
-				unset( $diff[$ind] );
+			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) ) {
+				//strip the shortcode so we just have the BASE string (i.e. [ANSWER_*] )
+				$dynamic_sc = preg_replace('/(_\*+.+)/', '_*]', $code);
+				//does this exist in the $valid_shortcodes?  If so then unset.
+				if ( isset( $valid_shortcodes[$dynamic_sc] ) ) {
+					unset( $diff[$ind] );
+				}
+			}
 		}
 
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
@@ -474,7 +480,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * @param  string $value incoming value to validate
 	 * @return bool        true if the string validates, false if it doesn't
 	 */
-	private function _validate_email( $value ) {
+	protected function _validate_email( $value ) {
 		$validate = TRUE;
 		$fail = FALSE;
 		$or_val = $value;
