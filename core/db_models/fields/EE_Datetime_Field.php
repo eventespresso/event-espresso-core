@@ -278,7 +278,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value ){
-		$this->_set_date_obj( date( $this->_date_format . ' ' . $this->_time_format, $current_datetime_value), 'UTC' );
+		$this->_set_date_obj( $current_datetime_value, 'UTC', 'U' );
 		if ( ! $this->_date instanceof DateTime  && ! $this->_nullable ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		}
@@ -295,7 +295,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value ){
-		$this->_set_date_obj( date( $this->_date_format  . ' ' . $this->_time_format, $current_datetime_value ), 'UTC' );
+		$this->_set_date_obj( $current_datetime_value, 'UTC', 'U' );
 		if ( ! $this->_date instanceof DateTime && ! $this->_nullable ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		}
@@ -346,6 +346,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string                mysql timestamp in UTC
 	 */
 	public function prepare_for_use_in_db( $datetime_value ) {
+		//if $datetime_value is empty, and ! $this->_nullable, use time();
+		$datetime_value = ! $this->_nullable && empty( $datetime_value ) ? time() : $datetime_value;
 		return $this->_nullable && empty( $datetime_value) ? NULL : date( "Y-m-d H:i:s", $datetime_value );
 	}
 
@@ -359,7 +361,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int                 UnixTime in UTC
 	 */
 	public function prepare_for_set_from_db( $datetime_value ) {
-		return $this->_nullable && empty( $datetime_value ) ? NULL : strtotime( $datetime_value );
+		//if $datetime_value is empty, and ! $this->_nullable, just use time()
+		$datetime_value = ! empty( $datetime_value ) ? strtotime( $datetime_value ) : $datetime_value;
+		$datetime_value =  $this->_nullable && empty( $datetime_value ) ? NULL : $datetime_value;
+		return ! $this->_nullable && empty( $datetime_value ) ? time() : $datetime_value;
 	}
 
 
@@ -404,8 +409,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( $this->_nullable && empty( $datetime_adjustment ) ) {
 			return NULL;
 		}
+
+		$format = $is_time ? $this->_time_format : $this->_date_format;
+
 		//first let's parse the incoming string
-		$parsed = date_parse( $datetime_adjustment );
+		$parsed = date_parse_from_format( $format, $datetime_adjustment );
 		//set the timezone to the incoming timezone for the current date_object
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
 		//let's adjust the time or date depending on our $is_time boolean
