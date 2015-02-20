@@ -36,9 +36,12 @@
 					<p>
 						<?php
 						printf(
-							__( 'First, %1$s check the forums %2$s to see if there is a solution before re-attempting to migrate.', 'event_espresso' ),
+							__( 'First, %1$s check the forums %2$s to see if there is a solution before re-attempting to migrate. Often it helps to deactivate other plugins which may have conflicts; or it may help to add %3$s to your %4$s wp-config.php%5$s (which will make the migrations run slower, but may resolve any memory exhaustion errors.', 'event_espresso' ),
 							"<a href='" . EE_SUPPORT_EMAIL . "' target='_blank'>",
-							'</a>'
+							'</a>',
+							'<pre lang="php">define( EE_MIGRATION_STEP_SIZE, 10 );</pre>',
+							'<b>',
+							'</b>'
 						);
 						?>
 					</p>
