@@ -64,6 +64,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$this->_ticket->set( 'TKT_description', 'One entry in the event.' );
 		$this->_datetime = $this->_ticket->first_datetime();
 		$this->_event = $this->_datetime->event();
+
+		//set the author of the event
+		$this->_event->set( 'EVT_wp_user', 1 );
 	}
 
 
@@ -152,10 +155,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @param string $message_type The slug for the message type being tested.
 	 * @param string $field                  The field being tested.
 	 * @param string $context             The context being tested.
+	 * @param array|string $append    Append content to a default template for testing with.  If
+	 *                                		       you want to append to multiple fields, then include an
+	 *                                		       array indexed by field.  Otherwise the string will be
+	 *                                		       appended to the field sent in with the $field param.
 	 *
 	 * @return string The parsed content.
 	 */
-	protected function _get_parsed_content( $messenger, $message_type, $field, $context ) {
+	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '' ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => $messenger,
@@ -183,7 +190,49 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$mt_shortcodes = $message_type->get_valid_shortcodes();
 
 		//just sending in the content field and primary_attendee context/data for testing.
-		$template = $templates[$field][$context];
+		$template = isset( $templates[$field][$context] ) ? $templates[$field][$context] : array();
+
+		/**
+		 * if empty template then its possible that the requested field is inside the "content"
+		 * field array.
+		 */
+		if ( empty( $template ) ) {
+			$template = isset( $templates['content'][$context] ) ? $templates['content'][$context] : array();
+			//verify the requested field is present
+			if ( ! empty( $template ) && is_array( $template ) && ! isset( $template[$field]) ) {
+				return '';
+			}
+		}
+
+		//if $template is still empty then return an empty string
+		if ( empty( $template ) ) {
+			return '';
+		}
+
+		// any appends?
+		if (  ! empty( $append ) ) {
+			if ( is_array( $template ) ) {
+				//we've already done a check for the presence of field above.
+				if ( is_array( $append ) ) {
+					foreach ( $append as $a_field => $string ) {
+						if ( isset( $template[$a_field] ) ) {
+							$template[$a_field] = $template[$a_field] . $string;
+						}
+					}
+				} else {
+					$template[$field] = $template[$field] . $append;
+				}
+			} else {
+				//only append if $append is not an array because the $template is not an array.
+				if ( ! is_array( $append ) ) {
+					$template .= $append;
+				}
+
+			}
+		}
+
+
+
 		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
 		$data = $this->_get_addressee();
 
@@ -257,6 +306,32 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 		//testing [PAYMENT_GATEWAY]
 		$this->assertContains( 'Invoice', $parsed );
+	}
+
+
+
+
+
+	/**
+	 * Test parsing the email registration message templates (registration approved).
+	 *
+	 * @since 4.6
+	 * @group 7613
+	 *
+	 */
+	public function test_parsing_email_registration() {
+		//add in shortcodes for testing [ANSWER_*] as a part of the [ATTENDEE_LIST] parsing from the [EVENT_LIST] context.
+		$test_answer_attendee_list_event_list_append = array(
+			'event_list' => '[ATTENDEE_LIST]',
+			'attendee_list' => 'Custom Answer: [ANSWER_* What is your favorite planet?]',
+			'ticket_list' => '[ATTENDEE_LIST]',
+			'main' => '[ATTENDEE_LIST]'
+			);
+
+		$parsed = $this->_get_parsed_content( 'email', 'registration', 'attendee_list', 'attendee', $test_answer_attendee_list_event_list_append );
+
+		//testing [ATTENDEE_LIST] and [ANSWER_*] which should appear three times (because [ATTENDEE_LIST] was added to three fields),
+		$this->assertEquals( 3, substr_count( $parsed, 'Custom Answer: Tattoine' ) );
 	}
 
 
