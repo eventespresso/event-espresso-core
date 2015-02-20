@@ -26,12 +26,60 @@
  */
 class EE_Register_Addon implements EEI_Plugin_API {
 
+
+	/**
+	 * possibly truncated version of the EE core version string
+	 * @var string
+	 */
+	protected static $_core_version = '';
+
+
 	/**
 	 * Holds values for registered addons
 	 * @var array
 	 */
 	protected static $_settings = array();
 
+
+
+	/**
+	 * We should always be comparing core to a version like '4.3.0.rc.000',
+	 * not just '4.3.0'.
+	 * So if the addon developer doesn't provide that full version string,
+	 * fill in the blanks for them
+	 *
+	 * @param string $min_core_version
+	 * @return string always like '4.3.0.rc.000'
+	 */
+	protected static function _effective_version( $min_core_version ) {
+		// versions: 4 . 3 . 1 . p . 123
+		// offsets:    0 . 1 . 2 . 3 . 4
+		$version_parts = explode( '.', $min_core_version );
+		//check they specified the micro version (after 2nd period)
+		if( ! isset( $version_parts[ 2 ] ) ) {
+			$version_parts[ 2] = '0';
+		}
+		//if they didn't specify the 'p', or 'rc' part. Just assume the lowest possible
+		//soon we can assume that's 'rc', but this current version is 'alpha'
+		if( ! isset( $version_parts[ 3 ] ) ) {
+			$version_parts[ 3 ] = 'dev';
+		}
+		if( ! isset( $version_parts[ 4 ] ) ) {
+			$version_parts[ 4 ] = '000';
+		}
+		return implode( '.', $version_parts );
+
+	}
+
+	/**
+	 * Returns whether or not the min core version requirement of the addon is met
+	 * @param string $min_core_version the minimum core version required by the addon
+	 * @param string $actual_core_version the actual core version, optional
+	 * @return boolean
+	 */
+	public static  function _meets_min_core_version_requirement( $min_core_version, $actual_core_version = EVENT_ESPRESSO_VERSION ) {
+		return version_compare( self::_effective_version( $actual_core_version ), self::_effective_version( $min_core_version ), '>=' );
+	}
 
 
 	/**
@@ -85,7 +133,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
-
 		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
@@ -150,10 +197,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_extension_paths' 		=> isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
 			'custom_post_types' => isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
 			'custom_taxonomies' => isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
+			'payment_method_paths'		=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
 			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
 		);
+
 		//check whether this addon version is compatible with EE core
-		if( version_compare( $setup_args[ 'min_core_version'], espresso_version(), '>' ) ){
+		if ( ! self::_meets_min_core_version_requirement( $setup_args['min_core_version'], espresso_version() ) ){
 			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
 			//plugin activated fine when it didn't
 			if( isset( $_GET[ 'activate' ]) ) {
@@ -165,10 +214,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			//and show an error message indicating the plugin didn't activate properly
 			EE_Error::add_error(
 				sprintf(
-					__( 'The Event Espresso addon "%1$s" could not be activated because it requires Event Espresso Core version %2$s or higher in order to run. Your version of Event Espresso Core is currently at %3$s. Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+					__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
 					$addon_name,
-					$setup_args[ 'min_core_version' ],
-					espresso_version()
+					self::_effective_version( $setup_args[ 'min_core_version' ] ),
+					self::_effective_version( espresso_version() ),
+					'<br />'
 				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
@@ -178,7 +228,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			}
 			return;
 		}
-
 		//this is an activation request
 		if( did_action( 'activate_plugin' ) ){
 			//to find if THIS is the addon that was activated,
@@ -209,6 +258,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
+		}
+		// register new models
+		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
+			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
+		}
+		// register model extensions
+		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
+			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
 		}
 		// setup DMS
 		if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] )) {
@@ -262,16 +319,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			);
 			add_action( 'AHEE__EE_System__brew_espresso__after_pue_init', array( 'EE_Register_Addon', 'load_pue_update' ));
 		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
-			EE_Register_Model::register( $addon_name, array( 'model_paths' => self::$_settings[ $addon_name ]['model_paths'] , 'class_paths' => self::$_settings[ $addon_name ]['class_paths']));
-		}
-		if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
-			EE_Register_Model_Extensions::register( $addon_name, array( 'model_extension_paths' => self::$_settings[ $addon_name ]['model_extension_paths'] , 'class_extension_paths' => self::$_settings[ $addon_name ]['class_extension_paths']));
-		}
 
 		//any custom post type/ custom capabilities or default terms to register
 		if ( !empty( self::$_settings[$addon_name]['custom_post_types'] ) || !empty( self::$_settings[$addon_name]['custom_taxonomies'] ) ) {
 			EE_Register_CPT::register( $addon_name, array( 'cpts' => self::$_settings[$addon_name]['custom_post_types'] , 'cts' => self::$_settings[$addon_name]['custom_taxonomies'], 'default_terms' => self::$_settings[$addon_name]['default_terms'] ) );
+		}
+		if( ! empty( self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) ){
+			EE_Register_Payment_Method::register($addon_name, array( 'payment_method_paths' => self::$_settings[ $addon_name ][ 'payment_method_paths' ] ) );
 		}
 		// load and instantiate main addon class
 		$addon = self::_load_and_init_addon_class($addon_name);
@@ -290,7 +344,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_name( $addon_name );
 		$addon->set_main_plugin_file( self::$_settings[ $addon_name ]['main_file_path'] );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
-		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
+		$addon->set_min_core_version( self::_effective_version( self::$_settings[ $addon_name ]['min_core_version'] ) );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
@@ -414,6 +468,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}
+
+
 
 
 

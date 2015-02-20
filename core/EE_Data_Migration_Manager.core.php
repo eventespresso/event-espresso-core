@@ -67,6 +67,12 @@ class EE_Data_Migration_Manager{
 	 * during migration)
 	 */
 	const step_size = 50;
+
+	/**
+	 * option name that stores the queue of ee plugins needing to have
+	 * their data initialized (or re-initialized) once we are done migrations
+	 */
+	const db_init_queue_option_name = 'ee_db_init_queue';
 	/**
 	 * Array of information concerning data migrations that have ran in the history
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
@@ -116,7 +122,7 @@ class EE_Data_Migration_Manager{
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
+		if ( ! self::$_instance instanceof EE_Data_Migration_Manager ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -155,8 +161,14 @@ class EE_Data_Migration_Manager{
 		);
 		//make sure we've included the base migration script, because we may need the EE_DMS_Unknown_1_0_0 class
 		//to be defined, because right now it doesn't get autoloaded on its own
-		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
+		EE_Registry::instance()->load_core( 'Data_Migration_Class_Base', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Base', array(), TRUE );
+		EE_Registry::instance()->load_core( 'DMS_Unknown_1_0_0', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
+		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
 	}
+
+
 
 	/**
 	 * Deciphers, from an option's name, what plugin and version it relates to (see _save_migrations_ran to see what the option names are like, but generally they're like
@@ -424,6 +436,7 @@ class EE_Data_Migration_Manager{
 			}
 		}
 
+		do_action( 'AHEE__EE_Data_Migration_Manager__check_for_applicable_data_migration_scripts__scripts_that_should_run', $scripts_that_should_run );
 		return $scripts_that_should_run;
 	}
 
@@ -469,6 +482,9 @@ class EE_Data_Migration_Manager{
 	 */
 	public function migration_step( $step_size = 0 ){
 
+		//bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
+		remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
 			if( ! $currently_executing_script){
@@ -477,12 +493,9 @@ class EE_Data_Migration_Manager{
 				if( ! $scripts ){
 					//huh, no more scripts to run... apparently we're done!
 					//but dont forget to make sure initial data is there
-					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-					EEH_Activation::system_initialization();
-					EEH_Activation::create_upload_directories();
-					EEH_Activation::initialize_db_content();
+					$this->initialize_db_for_enqueued_ee_plugins();
 					//make sure the datetime and ticket total sold are correct
 					$this->_save_migrations_ran();
 					return array(
@@ -550,10 +563,7 @@ class EE_Data_Migration_Manager{
 						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure initial data is there
-						EE_Registry::instance()->load_helper('Activation');
-						EEH_Activation::system_initialization();
-						EEH_Activation::create_upload_directories();
-						EEH_Activation::initialize_db_content();
+						$this->initialize_db_for_enqueued_ee_plugins();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
@@ -659,7 +669,12 @@ class EE_Data_Migration_Manager{
 				if($folder_path[count($folder_path-1)] != DS ){
 					$folder_path.= DS;
 				}
-				$files = glob($folder_path."*.dms.php");
+				$files = glob( $folder_path. '*.dms.php' );
+
+				if ( empty( $files ) ) {
+					continue;
+				}
+
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
@@ -701,7 +716,7 @@ class EE_Data_Migration_Manager{
 	public function add_error_to_migrations_ran($error_message){
 		//get last-ran migration script
 		global $wpdb;
-		$last_migration_script_option = $wpdb->get_row("SELECT * FROM ".$wpdb->options." WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
+		$last_migration_script_option = $wpdb->get_row("SELECT * FROM $wpdb->options WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
 
 		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
@@ -851,9 +866,7 @@ class EE_Data_Migration_Manager{
 		}
 	}
 
-
-
-	/**
+/**
 	 * Resets the borked data migration scripts so they're no longer borked
 	 * so we can again attempt to migrate
 	 *
@@ -876,5 +889,59 @@ class EE_Data_Migration_Manager{
 			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script ) ) );
 		}
 		return $this->_save_migrations_ran();
+	}
+	/**
+	 * Gets whether or not this particular migration has run or not
+	 * @param string $version the version the DMS searched for migrates to. Usually just the content before the 3rd period. Eg '4.1.0'
+	 * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
+	 * @return boolean
+	 */
+	public function migration_has_ran( $version, $plugin_slug = 'Core' ) {
+		return $this->get_migration_ran( $version, $plugin_slug ) !== NULL;
+	}
+	/**
+	 * Enqueues this ee plugin to have its data initialized
+	 * @param string $plugin_slug either 'Core' or EE_Addon::name()'s return value
+	 */
+	public function enqueue_db_initialization_for( $plugin_slug ) {
+		$queue = $this->get_db_initialization_queue();
+		if( ! in_array( $plugin_slug, $queue ) ) {
+			$queue[] = $plugin_slug;
+		}
+		update_option( self::db_init_queue_option_name, $queue );
+	}
+	/**
+	 * Calls EE_Addon::initialize_db_if_no_migrations_required() on each addon
+	 * specified in EE_Data_Migration_Manager::get_db_init_queue(), and if 'Core' is
+	 * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
+	 */
+	public function initialize_db_for_enqueued_ee_plugins() {
+		$queue = $this->get_db_initialization_queue();
+		foreach( $queue as $plugin_slug ){
+			if( $plugin_slug == 'Core' ){
+				EE_System::instance()->initialize_db_if_no_migrations_required();
+			}else{
+				//just loop through the addons to make sure
+				foreach( EE_Registry::instance()->addons as $addon ) {
+					if( $addon->name() == $plugin_slug ) {
+						$addon->initialize_db_if_no_migrations_required();
+						break;
+					}
+				}
+			}
+		}
+		//because we just initialized the DBs for the enqueued ee plugins
+		//we don't need to keep remembering which ones needed to be initialized
+		delete_option( self::db_init_queue_option_name );
+	}
+
+	/**
+	 * Gets a numerically-indexed array of plugin slugs that need to have their databases
+	 * (re-)initialized after migrations are complete. ie, each element should be either
+	 * 'Core', or the return value of EE_Addon::name() for an addon
+	 * @return array
+	 */
+	public function get_db_initialization_queue(){
+		return get_option ( self::db_init_queue_option_name, array() );
 	}
 }

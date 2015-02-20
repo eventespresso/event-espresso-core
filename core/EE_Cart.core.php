@@ -66,7 +66,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			self::$_instance = new self( $grand_total );
 		}elseif ( ! self::$_instance instanceof EE_Cart) {
 			//try getting the cart out of the session
-			$saved_cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
+			$saved_cart = EE_Registry::instance()->SSN->cart();
 			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );
 			unset( $saved_cart );
 		}
@@ -105,7 +105,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public static function reset( EE_Line_Item $grand_total = NULL ){
 		remove_action( 'shutdown', array( self::$_instance, 'save_cart'), 90 );
-		EE_Registry::instance()->SSN->reset_data( array('cart') );
+		EE_Registry::instance()->SSN->reset_cart();
 		self::$_instance = NULL;
 		return self::instance( $grand_total );
 	}
@@ -157,8 +157,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public function all_ticket_quantity_count() {
 		$tickets = $this->get_tickets();
-		if ( empty( $tickets ) )
+		if ( empty( $tickets )) {
 			return 0;
+		}
 		$count = 0;
 		foreach ( $tickets as $ticket ) {
 			$count = $count + $ticket->get('LIN_quantity');
@@ -282,7 +283,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public function save_cart() {
 		EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
-		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ));
+		return EE_Registry::instance()->SSN->set_cart( $this );
 	}
 
 

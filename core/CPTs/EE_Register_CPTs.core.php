@@ -1,25 +1,12 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Event List
+ * EE_Register_CPTs
  *
  * @package			Event Espresso
- * @subpackage	includes/core/
+ * @subpackage		includes/core/
  * @author				Darren Ethier
  *
- * ------------------------------------------------------------------------
  */
 class EE_Register_CPTs {
 
@@ -45,7 +32,7 @@ class EE_Register_CPTs {
 		// register CPTs
 		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
-			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'], $CPT['singular_slug'], $CPT['plural_slug'] );
 		}
 		// setup default terms in any of our taxonomies (but only if we're in admin).
 		// Why not added via register_activation_hook?
@@ -152,6 +139,7 @@ class EE_Register_CPTs {
 	 */
 	public static function get_CPTs(){
 		// define CPTs
+		// NOTE the ['args']['page_templates'] array index is something specific to our CPTs and not part of the WP custom post type api.
 		return apply_filters( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
@@ -182,7 +170,8 @@ class EE_Register_CPTs {
 						'espresso_event_categories',
 						'espresso_event_type',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
@@ -212,7 +201,8 @@ class EE_Register_CPTs {
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			'espresso_attendees' => array(
 				'singular_name' => __("Contact", "event_espresso"),
@@ -255,13 +245,13 @@ class EE_Register_CPTs {
 	 * @return array
 	 */
 	public static function get_private_CPTs() {
-		$cpts = self::get_CPTs();
-		$private_cpts = array();
-		foreach ( $cpts as $cpt => $details ) {
+		$CPTs = self::get_CPTs();
+		$private_CPTs = array();
+		foreach ( $CPTs as $CPT => $details ) {
 			if ( empty( $details['args']['public'] ) )
-				$private_cpts[$cpt] = $details;
+				$private_CPTs[ $CPT ] = $details;
 		}
-		return $private_cpts;
+		return $private_CPTs;
 	}
 
 
@@ -277,7 +267,7 @@ class EE_Register_CPTs {
 	 * @param string $plural_name internationalized plural name
 	 * @param array $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
 	 */
-	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
+	function register_taxonomy( $taxonomy_name, $singular_name, $plural_name, $override_args = array() ){
 
 		$args = array(
 		'hierarchical'      => true,
@@ -315,7 +305,7 @@ class EE_Register_CPTs {
 	 * The default values set in this function will be overridden by whatever you set in $override_args
 	 * @return void, but registers the custom post type
 	 */
-	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array()) {
+	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array(), $singular_slug = '', $plural_slug = '' ) {
 
 	  $labels = array(
 		'name' => $plural_name,
@@ -333,6 +323,12 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+	  //verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
+	  $singular_slug = ! empty( $singular_slug ) ? $singular_slug : $singular_name;
+	  $plural_slug = ! empty( $plural_slug ) ? $plural_slug : $plural_name;
+
+
+	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesn't actually have that in their register_post_type api.
 	  $args = array(
 		'labels' => $labels,
 		'public' => true,
@@ -341,7 +337,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => $plural_slug ), $post_type ),
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,
@@ -437,7 +433,7 @@ class EE_Register_CPTs {
 			return; //no default terms set so lets just exit.
 
 		foreach ( $this->_default_terms as $defaults ) {
-			foreach ( $defaults as $term_slug => $default_obj ) {
+			foreach ( $defaults as $default_obj ) {
 				if ( $post->post_status == 'publish' && in_array( $post->post_type, $default_obj->cpt_slugs ) ) {
 
 					//note some error proofing going on here to save unnecessary db queries
@@ -452,10 +448,6 @@ class EE_Register_CPTs {
 			}
 		}
 	}
-
-
-
-
 
 }
 

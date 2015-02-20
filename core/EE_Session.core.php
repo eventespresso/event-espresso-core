@@ -24,39 +24,85 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  */
  class EE_Session {
 
+	 /**
+	  * instance of the EE_Session object
+	  * @var EE_Session
+	  */
+	 private static $_instance = NULL;
 
-  // instance of the EE_Session object
-	private static $_instance = NULL;
+	 /**
+	  * the session id
+	  * @var string
+	  */
+	 private $_sid = NULL;
 
-	// the session id
-	private $_sid = NULL;
+	 /**
+	  * session data
+	  * @var array
+	  */
+	 private $_session_data = array();
 
-	// and the session data
-	private $_session_data = array();
+	 /**
+	  * how long an EE session lasts
+	  * default session lifespan of 2 hours (for not so instant IPNs)
+	  * @var int
+	  */
+	 private $_lifespan;
 
-	// default session expiration 2 hours
-	private $_expiration = 172800;
+	 /**
+	  * session expiration time as Unix timestamp in GMT
+	  * @var int
+	  */
+	 private $_expiration;
 
-	// current time with GMT offset
-	private $_time;
+	 /**
+	  * current time as Unix timestamp in GMT
+	  * @var int
+	  */
+	 private $_time;
 
-	// whether to encrypt session data
-	private $_use_encryption = FALSE;
+	 /**
+	  * whether to encrypt session data
+	  * @var bool
+	  */
+	 private $_use_encryption = FALSE;
 
-	// EE_Encryption object stored by reference
-	public $encryption = NULL;
+	 /**
+	  * EE_Encryption object
+	  * @var EE_Encryption
+	  */
+	 private $encryption = NULL;
 
-	// well... according to the server...
-	private $_user_agent = NULL;
+	 /**
+	  * well... according to the server...
+	  * @var null
+	  */
+	 private $_user_agent = NULL;
 
-	// array for defining default session vars
-	private $_default_session_vars = array (
+	 /**
+	  * do you really trust the server ?
+	  * @var null
+	  */
+	 private $_ip_address = NULL;
+
+	 /**
+	  * current WP user_id
+	  * @var null
+	  */
+	 private $_wp_user_id = NULL;
+
+	 /**
+	  * array for defining default session vars
+	  * @var array
+	  */
+	 private $_default_session_vars = array (
 		'id' => NULL,
 		'user_id' => NULL,
 		'ip_address' => NULL,
 		'user_agent' => NULL,
 		'init_access' => NULL,
 		'last_access' => NULL,
+		'expiration' => NULL,
 		'pages_visited' => array()
 	);
 
@@ -69,7 +115,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
-	 *		@return \EE_Session
+	 *		@return EE_Session
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
@@ -85,7 +131,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	* 	private constructor to prevent direct creation
 	* 	@Constructor
 	* 	@access private
-	* 	@return \EE_Session
+	* 	@return EE_Session
 	*/
 	private function __construct() {
 
@@ -93,11 +139,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
 			return NULL;
 		}
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
 		define( 'ESPRESSO_SESSION', TRUE );
-
+		// default session lifespan in seconds
+		$this->_lifespan = apply_filters(
+			'FHEE__EE_Session__construct___lifespan',
+			60 * MINUTE_IN_SECONDS
+		) + 1;
+		/*
+		 * do something like the following to adjust the session lifespan:
+		 * 		public static function session_lifespan() {
+		 * 			return 15 * MINUTE_IN_SECONDS;
+		 * 		}
+		 */
 		// retrieve session options from db
 		$session_settings = get_option( 'ee_session_settings' );
 		if ( $session_settings !== FALSE ) {
@@ -107,22 +161,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_{$var_name} = $session_setting;
 			}
 		}
-
-		// get the current time in UTC
-		$this->_time = time();
-
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
 			$this->encryption = EE_Registry::instance()->load_core( 'Encryption' );
 		}
-
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_session_vars = apply_filters( 'FHEE__EE_Session__construct__extra_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
-
+		// apply default session vars
 		$this->_set_defaults();
-
 		// check for existing session and retrieve it from db
 		if ( ! $this->_espresso_session() ) {
 			// or just start a new one
@@ -136,6 +184,24 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
 
 	}
+
+
+
+	 /**
+	  * @return int
+	  */
+	 public function expiration() {
+		 return $this->_expiration;
+	 }
+
+
+
+	 /**
+	  * @return int
+	  */
+	 public function lifespan() {
+		 return $this->_lifespan;
+	 }
 
 
 
@@ -158,8 +224,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
 	/**
 	 * @retrieve session data
 	 * @access	public
@@ -172,12 +236,107 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
-	  * @retrieve  session data
+	  * @param \EE_Cart $cart
+	  * @return bool
+	  */
+	 public function set_cart( EE_Cart $cart ) {
+		 $this->_session_data['cart'] = $cart;
+		 return TRUE;
+	 }
+
+
+
+	 /**
+	  * reset_cart
+	  */
+	 public function reset_cart() {
+		 $this->_session_data['cart'] = NULL;
+	 }
+
+
+
+	 /**
+	  * @return \EE_Cart
+	  */
+	 public function cart() {
+		 return isset( $this->_session_data['cart'] ) ? $this->_session_data['cart'] : NULL;
+	 }
+
+
+
+	 /**
+	  * @param \EE_Checkout $checkout
+	  * @return bool
+	  */
+	 public function set_checkout( EE_Checkout $checkout ) {
+		 $this->_session_data['checkout'] = $checkout;
+		 return TRUE;
+	 }
+
+
+
+	 /**
+	  * reset_checkout
+	  */
+	 public function reset_checkout() {
+		 $this->_session_data['checkout'] = NULL;
+	 }
+
+
+
+	 /**
+	  * @return \EE_Checkout
+	  */
+	 public function checkout() {
+		 return isset( $this->_session_data['checkout'] ) ? $this->_session_data['checkout'] : NULL;
+	 }
+
+
+
+	 /**
+	  * @param \EE_Transaction $transaction
+	  * @return bool
+	  */
+	 public function set_transaction( EE_Transaction $transaction ) {
+		 // first remove the session from the transaction before we save the transaction in the session
+		 $transaction->set_txn_session_data( NULL );
+		 $this->_session_data['transaction'] = $transaction;
+		 return TRUE;
+	 }
+
+
+
+	 /**
+	  * reset_transaction
+	  */
+	 public function reset_transaction() {
+		 $this->_session_data['transaction'] = NULL;
+	 }
+
+
+
+	 /**
+	  * @return \EE_Transaction
+	  */
+	 public function transaction() {
+		 return isset( $this->_session_data['transaction'] ) ? $this->_session_data['transaction'] : NULL;
+	 }
+
+
+
+	 /**
+	  * retrieve session data
 	  * @access    public
 	  * @param null $key
+	  * @param bool $reset_cache
 	  * @return    array
 	  */
-	public function get_session_data( $key = NULL ) {
+	public function get_session_data( $key = NULL, $reset_cache = FALSE ) {
+		if ( $reset_cache ) {
+			$this->reset_cart();
+			$this->reset_checkout();
+			$this->reset_transaction();
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
@@ -189,10 +348,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
-	  * @set       session data
-	  * @access    public
-	  * @param $data
-	  * @return    TRUE on success, FALSE on fail
+	  * set session data
+	  * @access 	public
+	  * @param 	array $data
+	  * @return 	TRUE on success, FALSE on fail
 	  */
 	public function set_session_data( $data ) {
 
@@ -210,11 +369,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $key ), __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			} else {
-				// are we saving a copy of the transaction ?
-				if ( $key == 'transaction' && $value instanceof EE_Transaction ) {
-					// then let's remove the session data from the transaction before we save the transaction in the session_data
-					$value->set_txn_session_data( NULL );
-				}
 				$this->_session_data[ $key ] = $value;
 			}
 		}
@@ -243,13 +397,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( session_id() === '' ) {
 			//starts a new session if one doesn't already exist, or re-initiates an existing one
 			session_start();
-			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
-			// set referer
-			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 		}
 		// grab the session ID
 		$this->_sid = session_id();
+		// and the visitors IP
+		$this->_ip_address = $this->_visitor_ip();
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retrieve what's in the db
@@ -265,10 +417,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				// no?!?! then something is wrong
 				return FALSE;
 			}
+			// get the current time in UTC
+			$this->_time = isset( $this->_time ) ? $this->_time : time();
+			// and reset the session expiration
+			$this->_expiration = isset( $session_data['expiration'] ) ?
+				$session_data['expiration'] : $this->_time + $this->_lifespan;
 
 		} else {
-			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;
+			// set initial site access time and the session expiration
+			$this->_set_init_access_and_expiration();
 			// set referer
 			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 			// no previous session = go back and create one (on top of the data above)
@@ -278,26 +435,38 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// have we met before???
 		// let's compare our stored session details with the current visitor
 		// first the ip address
-		if ( $session_data['ip_address'] != $this->_visitor_ip() ) {
+		if ( $session_data['ip_address'] != $this->_ip_address ) {
 			return FALSE;
 		}
 		// now the user agent
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
 		}
-
 		// wait a minute... how old are you?
-		// if the last access time for the session is less than the current time subtract the session expiration time...
-		// ie: is 1pm less than 4pm minus (the default) 2 hours?
-		if ( $session_data['last_access'] < ( $this->_time - $this->_expiration ) ) {
+		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
-			return FALSE;
+			// wipe out everything that isn't a default session datum
+			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
-
 		// make event espresso session data available to plugin
-		$this->_session_data = $session_data;
+		$this->_session_data = array_merge( $session_data, $this->_session_data );
 		return TRUE;
 
+	}
+
+
+
+	 /**
+	  * _set_init_access_and_expiration
+	  * @return void
+	  */
+	protected function _set_init_access_and_expiration() {
+		$this->_time = time();
+		$this->_expiration = $this->_time + $this->_lifespan;
+		// set initial site access time
+		$this->_session_data['init_access'] = $this->_time;
+		// and the session expiration
+		$this->_session_data['expiration'] = $this->_expiration;
 	}
 
 
@@ -310,13 +479,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	public function update( $new_session = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
+		$this->_session_data = isset( $this->_session_data )
+			&& is_array( $this->_session_data )
+			&& isset( $this->_session_data['id'])
+			? $this->_session_data
+			: NULL;
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
-
-		$session_data = $this->_default_session_vars;
-
+		$session_data = array();
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
@@ -343,6 +514,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				case 'last_access' :
 					// current access time
 					$session_data['last_access'] = $this->_time;
+				break;
+
+				case 'expiration' :
+					// when the session expires
+					$session_data['expiration'] = ! empty( $this->_expiration )
+						? $this->_expiration
+						: $session_data['init_access'] + $this->_lifespan;
 				break;
 
 				case 'user_id' :
@@ -390,9 +568,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *			@create session data array
-	 *		  @access public
-	 *			@return bool
+	 * 	@create session data array
+	 * 	@access public
+	 * 	@return bool
 	 */
 	private function _create_espresso_session( ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -405,13 +583,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *			@attempt to get IP address of current visitor from server
-	 *		  @access public
-	 *			@return string
+	 * 	@attempt to get IP address of current visitor from server
+	 * 	@access public
+	 * 	@return string
 	 */
 	private function _save_session_to_db() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if ( ! EE_Registry::instance()->REQ instanceof EE_Request_Handler || ! EE_Registry::instance()->REQ->is_espresso_page() ) {
+		if (
+			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
+			|| ! (
+				EE_Registry::instance()->REQ->is_espresso_page()
+				|| EE_Registry::instance()->REQ->front_ajax
+			)
+		) {
 			return FALSE;
 		}
 		// first serialize all of our session data
@@ -428,52 +612,33 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
+	 * plz see: http://stackoverflow.com/a/2031935/1475279
 	 *	@attempt to get IP address of current visitor from server
 	 *	@access public
 	 *	@return string
 	 */
 	private function _visitor_ip() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$visitor_ip = '0:0:0:0';
-
-		if ( isset( $_SERVER['REMOTE_ADDR'] )) {
-			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['REMOTE_ADDR'] )) {
-				$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
-			}
-		} else if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
-			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
-				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
+		$visitor_ip = '0.0.0.0';
+		$server_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR'
+		);
+		foreach ( $server_keys as $key ){
+			if ( isset( $_SERVER[ $key ] )) {
+				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] )) as $ip ) {
+					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ) {
+						$visitor_ip = $ip;
+					}
+				}
 			}
 		}
-
-		// break it up!!!
-		$ip_bits = explode( ':', $visitor_ip );
-
-		// cycle through this four times
-		for ( $i=0; $i<4; $i++ ) {
-
-			if ( ! isset( $ip_bits[$i] )) {
-				// nothing set ?
-				$ip_bits[$i] = 0;
-
-			} elseif ( ! absint( $ip_bits[$i] )) {
-				// not an absolute integer?
-				$ip_bits[$i] = 0;
-
-			} elseif ( $ip_bits[$i] < 1 ) {
-				// less than 1?
-				$ip_bits[$i] = 0;
-			}
-
-		}
-
-		// pull yourself together!!
-		$ip_bits = implode( ':', $ip_bits );
-
-		return $ip_bits;
-
+		return $visitor_ip;
 	}
 
 
@@ -536,14 +701,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *	@the current wp user id
-	 *	@access public
-	 *	@return int | NULL
+	 * 	@the current wp user id
+	 * 	@access public
+	 * 	@return int
 	 */
 	public function _wp_user_id() {
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
-		$user = wp_get_current_user();
-		return $user instanceof WP_User ? $user->ID : NULL;
+		$this->_wp_user_id = get_current_user_id();
+		return $this->_wp_user_id;
 	}
 
 
@@ -557,11 +722,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return void
 	  */
 	public function clear_session( $class = '', $function = '' ) {
-
-//		echo '<h2 style="color:#E76700;">session cleared by : ' . $class . '::' .  $function . '()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
+		// reset initial site access time and the session expiration
+		$this->_set_init_access_and_expiration();
 	}
 
 
@@ -613,6 +778,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			}
 
 		} // end of foreach
+
 		return $return_value;
 
 	}
@@ -657,7 +823,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
-			 $expiration = current_time( 'timestamp' );
+			 $expiration = time();
 			 // filter the query limit. Set to 0 to turn off garbage collection
 			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
 			 // non-zero LIMIT means take out the trash
@@ -694,10 +860,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 			 }
 		 }
+//		 printr( $this, 'EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	 }
 
 
 
-}
+ }
 /* End of file EE_Session.class.php */
 /* Location: /includes/classes/EE_Session.class.php */

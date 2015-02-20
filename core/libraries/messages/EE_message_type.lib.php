@@ -450,7 +450,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//if empty then something went wrong!
 		if ( empty( $data ) ) {
-			throw new EE_Error( sprintf(  __('There is no data retrieved, it\'s possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
+			throw new EE_Error( sprintf(  __('There is no data retrieved, it is possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
 		}
 
 		return $data;
@@ -634,6 +634,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'billing' => $this->_data->billing,
 			'taxes' => $this->_data->taxes,
 			'tax_line_items' => $this->_data->tax_line_items,
+			'additional_line_items' => $this->_data->additional_line_items,
 			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
 			'payments' => $this->_data->payments,
@@ -830,7 +831,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected function _get_templates() {
 		//defaults
 		$EVT_ID = $mtpg = $global_mtpg = NULL;
-		$templates = array();
 
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
@@ -844,10 +844,13 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$EVT_ID = $event['ID'];
 			}
 		}
-
+		// is there a Group ID in the incoming request?
+		EE_Registry::instance()->load_core( 'Request_Handler' );
+		// if not, set a default value of false
+		$GRP_ID = EE_Registry::instance()->REQ->get( 'GRP_ID', false );
 		//if this is a preview then we just get whatever message group is for the preview and skip this part!
-		if ( $this->_preview && EE_Registry::instance()->REQ->is_set('GRP_ID')  ) {
-			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
+		if ( $this->_preview && $GRP_ID ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 		} else {
 			//not a preview or test send so lets continue on our way!
 			//is there an evt_id?  If so let's get that. template.
@@ -862,8 +865,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//is there a 'GRP_ID' ? if so let's get that.
 
 			//if global template is NOT an override, and there is a 'GRP_ID' in the request, then we'll assume a specific template has ben requested.
-			if ( EE_Registry::instance()->REQ->is_set('GRP_ID') ) {
-				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
+			if ( $GRP_ID ) {
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 			}
 
 

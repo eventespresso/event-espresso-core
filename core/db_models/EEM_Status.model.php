@@ -26,40 +26,13 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Status extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Status object
-	 *
-	 *		@access public
-	 *		@return EEM_Status instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Status already exists
-		if ( ! self::$_instance instanceof EEM_Status ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Status object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Status
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
+	protected static $_instance = NULL;
 
 
 	/**
 	 * @return EEM_Status
 	 */
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
@@ -87,7 +60,7 @@ class EEM_Status extends EEM_Base {
 			'Payment'=>new EE_Has_Many_Relation()
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
@@ -119,6 +92,10 @@ class EEM_Status extends EEM_Base {
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
 	  			),
+	  		EEM_Registration::status_id_incomplete => array(
+	  			__('incomplete', 'event_espresso'),
+	  			__('incomplete', 'event_espresso')
+	  			),
 	  		EEM_Registration::status_id_declined => array(
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
@@ -138,6 +115,10 @@ class EEM_Status extends EEM_Base {
 	  		EEM_Transaction::failed_status_code => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
+	  			),
+	  		EEM_Transaction::abandoned_status_code => array(
+	  			__('abandoned', 'event_espresso'),
+	  			__('abandoned', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
 	  			__('accepted', 'event_espresso'),

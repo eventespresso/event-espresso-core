@@ -371,35 +371,13 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
 
-		$grand_total = $cart->get_cart_grand_total() * count($this->_attendees);
-
-
-		//EEH_Template::format_currency($cart->get_grand_total(), true);
-
-		//setup billing property
-		//todo:  I'm only using this format for the array because its how the gateways currently setup this data.  I HATE IT and it needs fixed but I have no idea how many places in the code this data structure currently touches.  Once its fixed we'll have to fix it here and in the shortcode parsing where this particular property is accessed.  (See https://events.codebasehq.com/projects/event-espresso/tickets/2271) for related ticket.
-		$this->billing = array(
-			'first name' => 'Luke',
-			'last name' => 'Skywalker',
-			'email address' => 'farfaraway@galaxy.com',
-			'address' => '804 Bantha Dr.',
-			'city' => 'Mos Eisley',
-			'state' => 'Section 7',
-			'country' => 'Tatooine',
-			'zip' => 'f0r3e',
-			'ccv code' => 'xxx',
-			'credit card #' => '999999xxxxxxxx',
-			'expiry date' => '12 / 3000',
-			'total_due' => $grand_total
-			);
-
 
 
 		//setup txn property
 		$this->txn = EE_Transaction::new_instance(
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
-				'TXN_total' => $grand_total, //txn_total
+				'TXN_total' => 0, //txn_total
 				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
@@ -461,6 +439,18 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			EEH_Line_Item::add_ticket_purchase( $line_item_total, $ticket, $qty );
 		}
 
+		$shipping_line_item = EE_Line_Item::new_instance( array(
+			'LIN_name' => __( 'Shipping Surcharge', 'event_espresso' ),
+			'LIN_desc' => __( 'Sent via Millenium Falcon', 'event_espresso' ),
+			'LIN_unit_price' => 20,
+			'LIN_quantity' => 1,
+			'LIN_is_taxable' => TRUE,
+			'LIN_total' => 20,
+			'LIN_type' => EEM_Line_Item::type_line_item
+		));
+		EEH_Line_Item::add_item($line_item_total, $shipping_line_item );
+		$this->additional_line_items = array( $shipping_line_item );
+
 		//now let's add taxes
 		EEH_Line_Item::apply_taxes( $line_item_total );
 
@@ -468,10 +458,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
 
 		foreach ( $ticket_line_items as $line_id => $line_item ) {
-			$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
-			$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
-			$line_items[$line_item->ID()]['children'] = $line_item->children();
-			$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+			if( $line_item->OBJ_ID() && $line_item->OBJ_type() ){
+				$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
+				$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
+				$line_items[$line_item->ID()]['children'] = $line_item->children();
+				$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+			}
 		}
 
 		$this->line_items_with_children = $line_items;

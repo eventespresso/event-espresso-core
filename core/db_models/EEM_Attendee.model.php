@@ -1,32 +1,19 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once ( EE_MODELS . 'EEM_Base.model.php' );
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * Attendee Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author				Mike Nelson, Brent Christensen
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
 class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
@@ -46,12 +33,13 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	 *		private constructor to prevent direct creation
-	 *		@Constructor
-	 *		@access protected
-	 *		@return void
+	 *        private constructor to prevent direct creation
+	 *
+	 * @Constructor
+	 * @access protected
+	 * @param null $timezone
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		$this->_tables = array(
@@ -66,9 +54,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
 				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
 				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
-				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), true, current_time('timestamp')),
+				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), FALSE, current_time('timestamp')),
 				'ATT_author'=>new EE_Integer_Field('post_author', __("WP User that Created Attendee", "event_espresso"), false, get_current_user_id() ),
-				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), true),
+				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), false, 0),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_attendees'),// EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees'),
 				'status' => new EE_WP_Post_Status_Field('post_status', __('Attendee Status', 'event_espresso'), false, 'publish')
 			),
@@ -90,58 +78,34 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Registration'=>new EE_Has_Many_Relation(),
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
-			'Event'=>new EE_HABTM_Relation('Registration'),
+			'Event'=>new EE_HABTM_Relation('Registration', FALSE ),
 		);
 		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
-		parent::__construct();
+		parent::__construct( $timezone );
 
 	}
+
+
+
+	/**
+	 * @param $query_params
+	 * @return \EE_Attendee[]
+	 */
 	public function get_all_wpdb_results($query_params){
 		return $this->_get_all_wpdb_results($query_params);
 	}
 
 
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Attendee
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
 	/**
 	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)
 	 * @param EE_Transaction/int $transaction_id_or_obj EE_Transaction or its ID
-	 * @param string $output
 	 * @return EE_Attendee[]
 	 */
-	public function get_attendees_for_transaction($transaction_id_or_obj){
-		if ($transaction_id_or_obj instanceof EE_Transaction){
-			$transaction_id = $transaction_id_or_obj->ID();
-		}else{
-			$transaction_id = $transaction_id;
-		}
-		return $this->get_all(array(array('Registration.Transaction.TXN_ID'=>$transaction_id)));
+	public function get_attendees_for_transaction( $transaction_id_or_obj ){
+		return $this->get_all( array( array(
+			  'Registration.Transaction.TXN_ID' => $transaction_id_or_obj instanceof EE_Transaction ? $transaction_id_or_obj->ID() : $transaction_id_or_obj
+		  )));
 	}
 
 
@@ -152,20 +116,11 @@ class EEM_Attendee extends EEM_CPT_Base {
 	* 		@access		public
 	* 		@param		$ATT_ID
 	*		@return 		mixed		array on success, FALSE on fail
+	 * 		@deprecated
 	*/
 	public function get_attendee_by_ID( $ATT_ID = FALSE ) {
-
-		if ( ! $ATT_ID ) {
-			return FALSE;
-		}
-		// retrieve a particular transaction
-		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
-		if ( $attendee = $this->get_all( array($where_cols_n_values ) )) {
-			return array_shift( $attendee_array );
-		} else {
-			return FALSE;
-		}
-
+		// retrieve a particular EE_Attendee
+		return $this->get_one_by_ID( $ATT_ID );
 	}
 
 
@@ -175,16 +130,16 @@ class EEM_Attendee extends EEM_CPT_Base {
 	*		retrieve  a single attendee from db via their ID
 	*
 	* 		@access		public
-	* 		@param		$ATT_ID
+	* 		@param		array $where_cols_n_values
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_attendee( $where_cols_n_values = FALSE ) {
+	public function get_attendee( $where_cols_n_values = array() ) {
 
-		if ( ! $where_cols_n_values ) {
+		if ( empty( $where_cols_n_values )) {
 			return FALSE;
 		}
-
-		if ( $attendee = $this->get_all( array($where_cols_n_values ) ) ) {
+		$attendee = $this->get_all( array($where_cols_n_values ));
+		if ( ! empty( $attendee )) {
 			return array_shift( $attendee );
 		} else {
 			return FALSE;
@@ -194,13 +149,13 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 
-
-
-
 	/**
-	*		Search for an existing Attendee record in the DB
-	* 		@access		public
-	*/
+	 *        Search for an existing Attendee record in the DB
+	 *
+	 * @access        public
+	 * @param array $where_cols_n_values
+	 * @return bool|mixed
+	 */
 	public function find_existing_attendee( $where_cols_n_values = NULL ) {
 		// search by combo of first and last names plus the email address
 		$attendee_data_keys = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );
@@ -213,7 +168,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 		$valid_data = isset( $where_cols_n_values['ATT_email'] ) && ! empty( $where_cols_n_values['ATT_email'] ) ? $valid_data : FALSE;
 
 		if ( $valid_data ) {
-			if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
+			$attendee = $this->get_attendee( $where_cols_n_values );
+			if ( $attendee instanceof EE_Attendee ) {
 				return $attendee;
 			}
 		}

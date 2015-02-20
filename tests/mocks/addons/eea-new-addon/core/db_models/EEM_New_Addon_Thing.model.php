@@ -31,33 +31,6 @@ class EEM_New_Addon_Thing extends EEM_Base{
 		);
 		parent::__construct($timezone);
 	}
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_New_Addon_Thing instance
-	 */
-	public static function instance( $timezone = NULL ){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-		//we might have a timezone set, let set_timezone decide what to do with it
-		self::$_instance->set_timezone( $timezone );
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_New_Addon_Thing
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 }
 
 // End of file EEM_New_Addon_Thing.model.php

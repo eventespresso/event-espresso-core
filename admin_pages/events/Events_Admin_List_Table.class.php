@@ -57,6 +57,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
+			'author' => __('Author', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('On Sale', 'event_espresso'),
@@ -69,13 +70,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
+			'author' => array( 'EVT_wp_user' => false ),
 			'venue' => array( 'Venue.VNU_name' => false ),
 			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			);
 
-		$this->_hidden_columns = array();
-		}
+		$this->_hidden_columns = array( 'author' );
+	}
 
 
 	protected function _get_table_filters() {
@@ -107,8 +109,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		//does event have any attached registrations?
 		$regs = $item->count_related('Registration');
-        return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
-            '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
+		return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
+			'<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
         );
     }
 
@@ -122,6 +124,31 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_name($item) {
+		$edit_query_args = array(
+				'action' => 'edit',
+				'post' => $item->ID()
+			);
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+		$actions = $this->_column_name_action_setup( $item );
+		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
+		$content .= $this->row_actions($actions);
+		return $content;
+
+	}
+
+
+
+
+
+	/**
+	 * Just a method for setting up the actions for the name column
+	 *
+	 * @param EE_Event $item
+	 *
+	 * @return array array of actions
+	 */
+	protected function _column_name_action_setup( EE_Event $item ) {
 		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
@@ -145,15 +172,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				);
 			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
-		}
-
-		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export_events', $item->ID() ) ) {
-			$export_query_args = array(
-					'action' => 'export_events',
-					'EVT_ID' => $item->ID()
-				);
-			$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
-			$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
 		}
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
@@ -198,16 +216,24 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 					}
 		}
-
-		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
-		$content .= $this->row_actions($actions);
-		return $content;
-
+		return $actions;
 	}
 
 
 
+
+	public function column_author( EE_Event $item ) {
+		//user author info
+		$event_author = get_userdata( $item->wp_user() );
+		$gravatar = get_avatar( $item->wp_user(), '15' );
+		//filter link
+		$query_args = array(
+			'action' => 'default',
+			'EVT_wp_user' => $item->wp_user()
+			);
+		$filter_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, EVENTS_ADMIN_URL );
+		return $gravatar . '  <a href="' . $filter_url . '" title="' . __('Click to filter events by this author.', 'event_espresso') . '">' . $event_author->display_name . '</a>';
+	}
 
 
 
@@ -221,9 +247,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_start_date_time($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_date_and_time() : _e('No Date was saved for this Event', 'event_espresso');
+		echo !empty( $this->_dtt ) ?  $this->_dtt->get_i18n_datetime('DTT_EVT_start') : __('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_datetime', '', 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_i18n_datetime', '', 'My Timezone: ' ) : '';
 
 	}
 
@@ -232,9 +258,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_reg_begins($item) {
 		$reg_start = $item->get_ticket_with_earliest_start_time();
-		!empty( $reg_start ) ? $reg_start->e_datetime('TKT_start_date') : _e('No Tickets have been setup for this Event', 'event_espresso');
+		echo !empty( $reg_start ) ? $reg_start->get_i18n_datetime('TKT_start_date') : __('No Tickets have been setup for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $reg_start ) ? $reg_start->display_in_my_timezone('TKT_start_date', 'get_datetime', '', 'My Timezone: ' ) : '';/**/
+		echo !empty( $reg_start ) ? $reg_start->display_in_my_timezone('TKT_start_date', 'get_i18n_datetime', '', 'My Timezone: ' ) : '';/**/
 	}
 
 
@@ -271,6 +297,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 		$actionlinks = array();
 
+		$view_link = get_permalink($item->ID());
+
+		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
+		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
+
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ) {
 			$edit_query_args = array(
 					'action' => 'edit',
@@ -289,18 +320,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 		}
 
-		$view_link = get_permalink($item->ID());
-
-		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
-		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
-
 		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );
 
-		$content = '<div style="width:100%;">' . "\n\t";
-		$content .= implode( "\n\t", $actionlinks );
-		//todo: we need to put back in a email attendees link via the new messages system
-		$content .= "\n" . '</div>' . "\n";
-		return $content;
+		return $this->_action_string( implode( "\n\t", $actionlinks ), $item, 'div' );
 	}
 
 

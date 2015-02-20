@@ -22,6 +22,18 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$l = EE_Line_Item::new_instance(array('OBJ_type'=>'Transaction','OBJ_ID'=>$t->ID()));
 		$this->assertNotNull($l->generate_code());
 	}
+
+	function test_get_nearest_descendant_of_type(){
+		$txn = $this->new_typical_transaction();
+		$line_item = $txn->total_line_item();
+		$old_tax_subtotal = $line_item->get_nearest_descendant_of_type( EEM_Line_Item::type_tax_sub_total );
+		$this->assertInstanceOf( 'EE_Line_Item', $old_tax_subtotal );
+		$this->assertEquals( EEM_Line_Item::type_tax_sub_total, $old_tax_subtotal->type() );
+		$old_tax = $old_tax_subtotal->get_nearest_descendant_of_type( EEM_Line_Item::type_tax );
+		$this->assertInstanceOf( 'EE_Line_Item', $old_tax_subtotal );
+		$this->assertEquals( EEM_Line_Item::type_tax, $old_tax->type() );
+
+	}
 	/**
 	 * test that if you call this on the grand total, that it doesn't REMOVE the taxes from it
 	 * @group 7026
@@ -63,7 +75,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$old_total = $total_line_item->total();
 		//when we calculate the pre-tax, including only taxable items (ie, we're wanting
 		//to know how much to apply taxes to) we don't change the grand or ticket totals
-		$pretax_total = $total_line_item->recalculate_pre_tax_total( TRUE );
+		$pretax_total = $total_line_item->taxable_total();
 		//because there is only one taxable line item, the taxable total should equals its total
 		$this->assertEquals( $taxable_line_item->total(), $pretax_total );
 		//check we didn't assign the taxable total to be the grand total

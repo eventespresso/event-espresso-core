@@ -220,7 +220,6 @@ class EE_Admin_Page_Loader {
 
 
 
-
 	/**
 	 * This takes all the groups in the _admin_menu_groups array and returns the array indexed by group
 	 * slug.  The other utility with this function is it validates that all the groups are instances of
@@ -228,11 +227,12 @@ class EE_Admin_Page_Loader {
 	 *
 	 * @since  4.4.0
 	 *
+	 * @throws \EE_Error
 	 * @return EE_Admin_Page_Menu_Group[]
 	 */
 	private function _rearrange_menu_groups() {
 		$groups = array();
-		//first let's order the menu groups by their internal menu order (note usort typehinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
+		//first let's order the menu groups by their internal menu order (note usort type hinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
 		usort( $this->_admin_menu_groups, array( $this, '_sort_menu_maps' ) );
 		foreach ( $this->_admin_menu_groups as $group ) {
 			if ( ! $group instanceof EE_Admin_Page_Menu_Group )
@@ -472,7 +472,7 @@ class EE_Admin_Page_Loader {
 
 				//if page map is NOT a EE_Admin_Page_Menu_Map object then throw error.
 				if ( ! $page_map instanceof EE_Admin_Page_Menu_Map ) {
-					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please doublecheck that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
+					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please double check that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
 				}
 
 				//use the maintenance_mode_parent property and maintenance mode status to determine if this page even gets added to array.

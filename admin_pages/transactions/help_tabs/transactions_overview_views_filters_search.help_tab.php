@@ -6,7 +6,23 @@
 <ul>
 <li>
 <strong><?php _e('View All Transactions', 'event_espresso'); ?></strong><br />
-<?php _e('Show all transactions that are in Event Espresso.', 'event_espresso'); ?>
+<?php
+	printf(
+		__('Shows transactions where the registrant has completed the full registration process. Transactions in this view will either have a status of: %1$s%2$s"Incomplete" meaning there are monies owing%3$s%2$s"Complete" meaning there are NO monies owing%3$s%2$s"Overpaid" meaning that monies should be refunded to the registrant.%3$s%4$s', 'event_espresso'),
+		'<ul>',
+		'<li>',
+		'</li>',
+		'</ul>'
+	);
+?>
+</li>
+<li>
+<strong><?php _e('Abandoned Transactions', 'event_espresso'); ?></strong><br />
+<?php _e('Shows transactions that have been abandoned, either due to a technical reason (server or computer crash during registration), or due to an abandoned cart where the registrant chose not to complete the registration process. Please note that Abandoned Transactions were able to capture contact information for at least one registrant. This can be helpful for following up with the contact to determine if they still wish to attend the event or not.', 'event_espresso'); ?>
+</li>
+<li>
+<strong><?php _e('Failed Transactions', 'event_espresso'); ?></strong><br />
+<?php _e('Shows transactions that have failed, either due to a technical reason (server or computer crash during registration), or some other reason that prevented the collection of any useful contact information from any of the registrants. This could mean the registrant abandoned the registration process before submitting any data whatsoever or may even indicate attempts by spam bots to submit the registration form.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

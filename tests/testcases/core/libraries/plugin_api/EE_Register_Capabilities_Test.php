@@ -68,7 +68,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 	private function _pretend_capabilities_registered() {
 		//pretend correct hookpoint set.
 		global $wp_actions;
-		unset( $wp_actions['AHEE__EE_Capabilities__init_role_caps__complete'] );
+		unset( $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] );
 		//register capabilities
 		EE_Register_Capabilities::register( 'Test_Capabilities', $this->_valid_capabilities );
 
@@ -125,7 +125,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 		try{
 			EE_Register_Capabilities::register('Test_Capabilities', $this->_valid_capabilities);
 			$this->fail('We should have had a warning saying that we are registering capabilities at the wrong time');
-		}catch(PHPUnit_Framework_Error_Notice $e){
+		}catch(PHPUnit_Framework_Error_Deprecated $e){
 			$this->assertTrue(True);
 		}
 	}

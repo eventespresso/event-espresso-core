@@ -64,9 +64,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[OWING_STATUS_MESSAGE_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
-			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
+			'[TXN_TOTAL_TICKETS]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
+			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction. <strong>NOTE: This shortcode is good to use in the "[TICKET_LIST]" field but has been deprecated from all other contexts in favor of the more explicit [TXN_TOTAL_TICKETS] shortcode.</strong>', 'event_espresso'),
 			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso'),
-			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso')
+			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_URL]' => __( 'This parses to the url that will switch to the receipt if an invoice is displayed, and switch to the invoice if receipt is displayed. If a message type OTHER than invoice or receipt is displayed then this will just return the url for the invoice. If the related message type is not active  then will parse to an empty string.', 'event_espresso'),
+			'[INVOICE_RECEIPT_SWITCHER_BUTTON]' => sprintf( __( 'The same as %1$s[INVOICE_RECEIPT_SWITCHER_URL]%2$s except this returns the html for a button linked to the invoice or receipt.', 'event_espresso' ), '<code>', '</code>' )
 			);
 	}
 
@@ -75,27 +78,36 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		EE_Registry::instance()->load_helper( 'Template' );
 
-		if ( !$this->_data->txn instanceof EE_Transaction )
+		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
+		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;
+		$transaction = ! $transaction instanceof EE_Transaction && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->txn: $transaction;
+
+		//payment
+		$payment = $this->_data->payment instanceof EE_Payment ? $this->_data->payment : null;
+		$payment = ! $payment instanceof EE_Payment && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->payment: $payment;
+
+
+		if ( ! $transaction instanceof EE_Transaction )
 			return '';
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
-				return $this->_data->txn->ID();
+				return $transaction->ID();
 				break;
 
 			case '[PAYMENT_URL]' :
-				$payment_url = $this->_data->txn->payment_overview_url();
+				$payment_url = $transaction->payment_overview_url();
 				return empty( $payment_url ) ? __( 'http://dummypaymenturlforpreview.com', 'event_espresso') : $payment_url;
 				break;
 
 			case '[INVOICE_LINK]' :
-				$invoice_url = $this->_data->txn->invoice_url();
+				$invoice_url = $transaction->invoice_url();
 				$invoice_url = empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
 				return sprintf( __('%sClick here for Invoice%s', 'event_espresso'), '<a href="' . $invoice_url . '">', '</a>' );
 				break; /**/
 
 			case '[INVOICE_URL]' :
-				$invoice_url = $this->_data->txn->invoice_url();
+				$invoice_url = $transaction->invoice_url();
 				return empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
 				break;
 
@@ -125,40 +137,40 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 			case "[TOTAL_COST]" :
-				$total = $this->_data->txn->total();
+				$total = $transaction->total();
 				return ! empty($total) ? EEH_Template::format_currency( $total ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :
-				$status = $this->_data->txn->pretty_status();
+				$status = $transaction->pretty_status();
 				return !empty($status) ? $status : __('Unknown', 'event_espresso');
 				break; /**/
 
 			// note the [payment_status] shortcode is kind of misleading because payment status might be different from txn status so I'm adding this here for clarity.
 			case "[TXN_STATUS]" :
-				$status = $this->_data->txn->pretty_status();
+				$status = $transaction->pretty_status();
 				return !empty( $status ) ? $status : __('Unknown', 'event_espresso');
 				break;
 
 			case "[TXN_STATUS_ID]" :
-				return $this->_data->txn->status_ID();
+				return $transaction->status_ID();
 				break;
 
 			case "[PAYMENT_GATEWAY]" :
-				return $this->_get_payment_gateway();
+				return $this->_get_payment_gateway( $transaction );
 				break;
 
 			case "[AMOUNT_PAID]" :
-				$amount = isset( $this->_data->payment ) && is_object( $this->_data->payment ) ? $this->_data->payment->amount() : 0;
+				$amount = $payment instanceof EE_Payment ? $payment->amount() : 0;
 				return EEH_Template::format_currency( $amount );
 				break;
 
 			case "[TOTAL_AMOUNT_PAID]" :
-				return EEH_Template::format_currency( $this->_data->txn->paid() );
+				return EEH_Template::format_currency( $transaction->paid() );
 				break;
 
 			case "[TOTAL_OWING]" :
-				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
+				$total_owing = isset( $transaction ) && is_object($transaction) ? $transaction->remaining() : $transaction->total();
 				return EEH_Template::format_currency( $total_owing );
 				break;
 
@@ -171,12 +183,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[TKT_QTY_PURCHASED]" :
+			case "[TXN_TOTAL_TICKETS]" :
 				return $this->_data->total_ticket_count;
 				break;
 
 			case "[TRANSACTION_ADMIN_URL]" :
 				require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
-				$query_args = array( 'page' => 'espresso_transactions', 'action' => 'view_transaction', 'TXN_ID' => $this->_data->txn->ID() );
+				$query_args = array( 'page' => 'espresso_transactions', 'action' => 'view_transaction', 'TXN_ID' => $transaction->ID() );
 				$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
 				return $url;
 				break;
@@ -190,6 +203,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				}
 				return $reg->receipt_url();
 				break;
+
+			case "[INVOICE_RECEIPT_SWITCHER_URL]" :
+				return $this->_get_invoice_receipt_switcher( FALSE );
+				break;
+
+			case "[INVOICE_RECEIPT_SWITCHER_BUTTON]" :
+				return $this->_get_invoice_receipt_switcher();
+				break;
+
 
 		}
 
@@ -238,10 +260,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 
-	private function _get_payment_gateway() {
-		if ( !is_object( $this->_data->txn ) )
-			return '';
-		return $this->_data->txn->selected_gateway();
+	private function _get_payment_gateway( $transaction ) {
+		$pm = $this->_get_payment_method( $transaction );
+		return $pm instanceof EE_Payment_Method ? $pm->name() : '';
 	}
 
 
@@ -256,12 +277,14 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string url or html
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = ! empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-
-		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
-			$invoice_logo_url = $invoice_settings['invoice_logo_url'];
-		} else {
+		//try to get the invoice payment method's logo for this transaction image first
+		$pm = $this->_get_payment_method();
+		if ( $pm instanceof EE_Payment_Method ){
+			$invoice_logo_url = $pm->get_extra_meta( 'pdf_logo_image', TRUE );
+		}else{
+			$invoice_logo_url = NULL;
+		}
+		if( empty( $invoice_logo_url ) ){
 			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
 		}
 
@@ -290,11 +313,28 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_name() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_name = ! empty( $invoice_settings['template_invoice_payee_name'] ) ? $invoice_settings['template_invoice_payee_name'] : '';
-		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->name : $payee_name;
+		$payee_name = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_name = $pm->get_extra_meta( 'pdf_payee_name', TRUE );
+		}
+		$payee_name = empty( $payee_name ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) : $payee_name;
 		return $payee_name;
+	}
+
+	/**
+	 * gets the payment method for this transaction. Otherwise gets a default one.
+	 */
+	private function _get_payment_method( $transaction = null ){
+		if( $transaction instanceof EE_Transaction ) {
+			$payment_method = $transaction->payment_method();
+			if ( empty( $payment_method ) ) {
+				return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
+			}
+		}else{
+			//get the first payment method we can find
+			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
+		}
 	}
 
 
@@ -308,10 +348,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_email() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_email = ! empty( $invoice_settings['template_invoice_email'] ) ? $invoice_settings['template_invoice_email'] : '';
-		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->email : $payee_email;
+		$payee_email = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_email = $pm->get_extra_meta( 'pdf_payee_email', TRUE );
+		}
+		$payee_email = empty( $payee_email ) ? EE_Registry::instance()->CFG->organization->get_pretty( 'email' ) : $payee_email;
 		return $payee_email;
 	}
 
@@ -328,9 +370,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_tax_number( $shortcode ) {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_tax_number = ! empty( $invoice_settings['template_invoice_tax_number'] ) ? $invoice_settings['template_invoice_tax_number'] : '';
+		$payee_tax_number = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_tax_number = $pm->get_extra_meta( 'pdf_payee_tax_number', TRUE );
+		}
 		$payee_tax_number = empty( $payee_tax_number ) ? EE_Registry::instance()->CFG->organization->vat : $payee_tax_number;
 
 		if ( empty( $payee_tax_number ) ) {
@@ -357,14 +401,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payee_address() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		$payee_address = ! empty( $invoice_settings['template_invoice_address'] ) ? $invoice_settings['template_invoice_address'] : '';
+		$payee_address = NULL;
+		$pm = $this->_get_payment_method();
+		if( $pm instanceof EE_Payment_Method ){
+			$payee_address = $pm->get_extra_meta( 'pdf_payee_address', TRUE );
+		}
 		if ( empty( $payee_address ) ) {
 			$organization = EE_Registry::instance()->CFG->organization;
-			$payee_address = $organization->address_1 . '<br>';
-			$payee_address .= !empty( $organization->address_2 ) ? $organization->address_2 . '<br>' : '';
-			$payee_address .= $organization->city . '<br>';
+			$payee_address = $organization->get_pretty( 'address_1' ) . '<br>';
+			$payee_address .= !empty( $organization->address_2 ) ? $organization->get_pretty( 'address_2' ) . '<br>' : '';
+			$payee_address .= $organization->get_pretty( 'city' ) . '<br>';
 
 			//state
 			$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
@@ -388,9 +434,47 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_invoice_payment_instructions() {
-		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = !empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
-		return ! empty( $invoice_settings['template_payment_instructions'] ) ? $invoice_settings['template_payment_instructions'] : '';
+		$instructions = NULL;
+		$pm = $this->_get_payment_method();
+		return ( $pm instanceof EE_Payment_Method ) ? $pm->get_extra_meta( 'pdf_instructions', TRUE) : '';
+	}
+
+
+
+
+
+	/**
+	 * get invoice/receipt switch button or url.
+	 *
+	 * @param bool $button true (default) returns the html for a button, false just returns the url.
+	 *
+	 * @return string
+	 */
+	protected function _get_invoice_receipt_switcher( $button = TRUE ) {
+		$reg = $this->_data->primary_reg_obj;
+		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
+		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
+			return'';
+		}
+
+		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
+		$switch_to_label = $switch_to_invoice && ! $message_type instanceof EE_Receipt_message_type ? __('View Invoice', 'event_espresso' ) : __( 'Switch to Invoice', 'event_espresso' );
+		$switch_to_label = ! $switch_to_invoice ? __( 'Switch to Receipt', 'event_espresso' ) : $switch_to_label;
+		$switch_to_url = $switch_to_invoice ? $reg->invoice_url() : $reg->receipt_url();
+
+		if ( ! $button ) {
+			return $switch_to_url;
+		}
+
+		if ( ! empty( $switch_to_url ) ) {
+
+		return  '
+<form method="post" action="' . $switch_to_url . '" >
+	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
+</form>
+		';
+		}
+		return '';
 	}
 
 

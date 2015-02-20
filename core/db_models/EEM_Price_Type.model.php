@@ -28,7 +28,7 @@ require_once ( EE_CLASSES . 'EE_Price_Type.class.php' );
 class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 	// private instance of the Price Type object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 	// An array of the price type objects
 	public $type = NULL;
 
@@ -79,7 +79,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * 		@access protected
 	 * 		@return void
 	 */
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->base_types = array(
 			EEM_Price_Type::base_type_base_price => __('Price','event_espresso'),
 			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'),
@@ -106,38 +106,8 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 			'Price'=>new EE_Has_Many_Relation(),
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 
-	}
-
-
-
-
-
-	/**
-	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 * 		@access public
-	 * 		@return EEM_Price_Type instance
-	 */
-	public static function instance() {
-
-		// check if instance of EEM_Price_Type already exists
-		if (self::$_instance === NULL) {
-			// instantiate Price_Type model
-			self::$_instance = new self();
-		}
-		// EEM_Price_Type object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Price_Type
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
 	}
 
 

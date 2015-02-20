@@ -63,6 +63,10 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 				);
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_registry[ $ref ] ) ){
+			return;
+		}
 
 		//check that incoming $ref doesn't already exist. If it does then we'll create a unique reference for this template pack.
 		if ( isset( self::$_registry[$ref] ) ) {

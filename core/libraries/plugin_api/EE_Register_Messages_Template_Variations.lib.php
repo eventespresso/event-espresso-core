@@ -83,6 +83,10 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 				);
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_registry[ $variation_ref ] ) ){
+			return;
+		}
 
 		//make sure variation ref is unique.
 		if ( isset( self::$_registry[$variation_ref] ) ) {

@@ -49,6 +49,11 @@ class EE_Register_Model implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register Models with EE_Register_Model::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_paths" (an array of full server paths to folders that contain models)', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_model_registry[ $model_id ] ) ){
+			return;
+		}
+
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'FHEE__EE_System__parse_model_names' ) || did_action( 'FHEE__EE_System__parse_implemented_model_names' )) {
             EE_Error::doing_it_wrong(
 				__METHOD__,
