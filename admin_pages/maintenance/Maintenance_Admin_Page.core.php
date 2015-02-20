@@ -222,7 +222,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		if($exception_thrown ||
 				(	$most_recent_migration &&
-					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+					$most_recent_migration instanceof EE_Data_Migration_Script_Base &&
 					$most_recent_migration->is_broken()
 				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
@@ -232,7 +232,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
 			if($most_recent_migration &&
-					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+					$most_recent_migration instanceof EE_Data_Migration_Script_Base  &&
 					$most_recent_migration->can_continue()){
 				$show_backup_db_text = false;
 				$show_continue_current_migration_script = true;
