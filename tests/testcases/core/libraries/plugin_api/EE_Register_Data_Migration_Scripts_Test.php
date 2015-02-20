@@ -30,7 +30,7 @@ class EE_Register_Data_Migration_Scripts_Test extends EE_UnitTestCase{
 		try{
 			EE_Register_Data_Migration_Scripts::register($pretend_addon_name, $args);
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(PHPUnit_Framework_Error_Deprecated $e){
+		}catch(PHPUnit_Framework_Error_Notice $e){
 			$this->assertTrue(True);
 		}
 		//and check we didn't actually register the DMSs (because we attempted to do so at teh wrong time)
