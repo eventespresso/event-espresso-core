@@ -280,6 +280,12 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
+	public function loadModelsMocks() {
+		require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/EE_Datetime_Field_Mock.php';
+	}
+
+
+
 	/**
 	 * IT would be better to add a constraint and do this properly at some point
 	 * @param mixed $item
