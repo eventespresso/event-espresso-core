@@ -182,7 +182,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param  array    	$data    the request data from the form
 	 * @return EE_Datetime           array of EE_Datetime ids created/updated.
 	 */
-	private function _update_dtts( $evt_obj, $data ) {
+	protected function _update_dtts( $evt_obj, $data ) {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
@@ -284,7 +284,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param  array            $data       incoming request data
 	 * @return bool                 		success or fail
 	 */
-	private function _update_tkts( $evtobj, $saved_dtts, $data ) {
+	protected function _update_tkts( $evtobj, $saved_dtts, $data ) {
 		//stripslashes because WP filtered the $_POST ($data) array to add slashes
 		$data = stripslashes_deep($data);
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
@@ -582,7 +582,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param int|bool 		$base_price_id  if present then this is the base_price_id being updated.
 	 * @return  void
 	 */
-	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = FALSE, $base_price_id = FALSE ) {
+	protected function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = FALSE, $base_price_id = FALSE ) {
 
 		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
 		$current_prices_on_ticket = $base_price !== FALSE ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
@@ -789,7 +789,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE, $all_dtts = array() ) {
+	protected function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE, $all_dtts = array() ) {
 
 		$dtt_display_template_args = array(
 			'dtt_edit_row' => $this->_get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ),
@@ -802,7 +802,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
+	protected function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
 
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
@@ -830,7 +830,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ) {
+	protected function _get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ) {
 
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
@@ -859,7 +859,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default ) {
+	protected function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default ) {
 		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
 		$dtt_tkts = $dtt instanceof EE_Datetime && isset( $datetime_tickets[$dtt->ID()] ) ? $datetime_tickets[$dtt->ID()] : array();
 		$displayrow = !empty( $ticket ) ? $ticket->get('TKT_row') : 0;
@@ -882,7 +882,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE, $all_tickets = array() ) {
+	protected function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE, $all_tickets = array() ) {
 		$prices = !empty($ticket) && !$default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC') ) ) : array();
 
 		// check if we're dealing with a default ticket in which case we don't want any starting_ticket_datetime_row values set (otherwise there won't be any new relationships created for tickets based off of the default ticket).  This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
@@ -999,7 +999,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_tax_rows( $tktrow, $ticket ) {
+	protected function _get_tax_rows( $tktrow, $ticket ) {
 		$tax_rows = '';
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_tax_row.template.php';
 		$template_args = array();
@@ -1024,7 +1024,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_tax_added( EE_Price $tax, $ticket ) {
+	protected function _get_tax_added( EE_Price $tax, $ticket ) {
 		$subtotal = empty( $ticket ) ? 0 : $ticket->get_ticket_subtotal();
 		return $subtotal * $tax->get('PRC_amount') / 100;
 	}
@@ -1032,7 +1032,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default, $ticket, $show_trash = TRUE, $show_create = TRUE ) {
+	protected function _get_ticket_price_row( $tktrow, $prcrow, $price, $default, $ticket, $show_trash = TRUE, $show_create = TRUE ) {
 		$send_disabled = !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE;
 		$template_args = array(
 			'tkt_row' => $default && empty($ticket) ? 'TICKETNUM' : $tktrow,
@@ -1062,7 +1062,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_price_type_selector( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
+	protected function _get_price_type_selector( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
 		if ( $price->is_base_price() ) {
 			return $this->_get_base_price_template( $tktrow, $prcrow, $price, $default );
 		} else {
@@ -1072,7 +1072,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_base_price_template( $tktrow, $prcrow, $price, $default ) {
+	protected function _get_base_price_template( $tktrow, $prcrow, $price, $default ) {
 		$template_args = array(
 				'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 				'PRC_order' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
@@ -1090,7 +1090,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
+	protected function _get_price_modifier_template( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
 		$select_name = $default && empty( $price ) ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
 		$price_types = EE_Registry::instance()->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
@@ -1138,7 +1138,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default ) {
+	protected function _get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default ) {
 		$dttid = !empty($dtt) ? $dtt->ID() : 0;
 		$displayrow = !empty($dtt) ? $dtt->get('DTT_order') : 0;
 		$tkt_dtts = $ticket instanceof EE_Ticket && isset( $ticket_datetimes[$ticket->ID()] ) ? $ticket_datetimes[$ticket->ID()] : array();
@@ -1158,7 +1158,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_ticket_js_structure($all_dtts, $all_tickets) {
+	protected function _get_ticket_js_structure($all_dtts, $all_tickets) {
 		$template_args = array(
 			'default_datetime_edit_row' => $this->_get_dtt_edit_row('DTTNUM', NULL, TRUE, $all_dtts),
 			'default_ticket_row' => $this->_get_ticket_row( 'TICKETNUM', NULL, array(), array(), TRUE),
