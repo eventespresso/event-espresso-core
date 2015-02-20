@@ -25,14 +25,6 @@ jQuery(document).ready(function($) {
 	$('.updated.fade').delay(5000).fadeOut();
 
 
-
-
-	$('#txn-admin-payment-method-slct').bind('change', function() {
-		var mop = $(this).val();
-		$('.mop').hide();
-		$('.mop-'+mop).show();
-	});
-
 	var dialog_content = {};
 	var d_contents = '';
 
@@ -49,8 +41,7 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
 		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
 		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
-		$('#txn-admin-payment-method-slct').val( $('#payment-method-' + PAY_ID ).text() );
-		$('#txn-admin-payment-gateway-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+		$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
 		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
 		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
 		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
@@ -132,8 +123,6 @@ jQuery(document).ready(function($) {
 				// remove validation notices
 				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
 				$('.validation-notice-dv').hide();
-
-				$('.mop').hide();
 			});
 	}
 
@@ -370,7 +359,7 @@ jQuery(document).ready(function($) {
 		$('#payment-method-' + PAY_ID).html( response.return_data.method );
 		// payment-gateway
 		$('#payment-gateway-' + PAY_ID).html( response.return_data.gateway );
-		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.gateway );
+		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.PM_ID );
 		// payment-gateway_response
 		$('#payment-response-' + PAY_ID).html( response.return_data.gateway_response );
 		// payment-txn_id_chq_nmbr

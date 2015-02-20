@@ -249,7 +249,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 							$payment->timestamp()
 						);
 						// start of row
-						$html = EEH_HTML::tr( '', '', 'total_tr odd' );
+						$html .= EEH_HTML::tr( '', '', 'total_tr odd' );
 						// payment desc
 						$html .= EEH_HTML::td( $payment_desc, '',  '',  '',  ' colspan="3"' );
 						// total td

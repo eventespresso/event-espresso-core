@@ -36,6 +36,7 @@ jQuery(document).ready(function($){
 		initialize : function( form_data ) {
             // reset previous form validation rules
             EEFV.reset_validation_rules();
+			EEFV.initialize_datepicker_inputs();
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
 			EEFV.add_url_validator();
@@ -52,6 +53,49 @@ jQuery(document).ready(function($){
             EEFV.form_validators = {};
         },
 
+
+
+		/**
+		 * @function initialize_datepicker_inputs
+		 */
+		initialize_datepicker_inputs : function() {
+			// if datepicker function exists
+			if ( $.fn.datepicker ) {
+				// activate datepicker fields
+				$( '.datepicker' ).datepicker({
+					changeMonth: true,
+					changeYear: true,
+					yearRange: eei18n.datepicker_yearRange
+					// yearRange: "-150:+20"
+				});
+			}
+			// to internationalize the datepicker, copy the following to somewhere safe,
+			// then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key.
+			// Multiple languages can be added this way
+			/*
+			$.datepicker.regional['fr_FR'] = {
+				closeText: 'Fermer',
+				prevText: 'Précédent',
+				nextText: 'Suivant',
+				currentText: 'Aujourd\'hui',
+				monthNames: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+				'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+				monthNamesShort: ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
+				'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+				dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+				dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+				dayNamesMin: ['D','L','M','M','J','V','S'],
+				weekHeader: 'Sem.',
+				dateFormat: 'dd/mm/yy',
+				firstDay: 1,
+				isRTL: false,
+				showMonthAfterYear: false,
+				yearSuffix: ''
+			};
+			$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);
+			//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
+			 */
+		},
 
 
 		/**
@@ -137,7 +181,7 @@ jQuery(document).ready(function($){
 			//EEFV.console_log( 'EEFV.remove_rules', '', true );
 			//console.log( form_data );
 			//now apply those validation rules to each html form, and show the server-side errors properly
-			$.each( form_data, function( input_id, validation_rules ){
+			$.each( form_data, function( input_id ){
 				var form_input = $( input_id );
 				if ( typeof form_input !== 'undefined' && form_input.length ) {
 					//alert( 'remove_rules input_id = ' + input_id + '\n' + 'form_input ID = ' + form_input.attr('id') );

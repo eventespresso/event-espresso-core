@@ -224,7 +224,7 @@ class EEH_HTML {
 	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
 	 * @return string
 	 */
-	function ul( $id = '', $class = '', $style = '', $other_attributes = '' ) {
+	public static function ul( $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'ul', '', $id, $class, $style, $other_attributes );
 	}
 

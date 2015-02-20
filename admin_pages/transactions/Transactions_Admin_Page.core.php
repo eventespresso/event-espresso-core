@@ -866,6 +866,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$json_response_data['return_data']['status'] = self::$_pay_status[ $payment->STS_ID() ];
 				$json_response_data['return_data']['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
 				$json_response_data['return_data']['method'] = strtoupper( $payment->source() ) ;
+				$json_response_data['return_data']['PM_ID'] = $payment->payment_method() ? $payment->payment_method()->ID() : 1;
 				$json_response_data['return_data']['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
 				$json_response_data['return_data']['gateway_response'] = $payment->gateway_response();
 				$json_response_data['return_data']['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();

@@ -4,7 +4,7 @@ Note: for non stable versions. We currently use minor versioning numbers such as
 
 ***
 
-**Current Stable Version:** 4.4.x.p
+**Current Stable Version:** 4.6.x.p
 
 ***
 

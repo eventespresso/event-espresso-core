@@ -170,12 +170,18 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * the payment method passes in.
 	 * @param array $update_info like $_POST
 	 * @param EEI_Transaction $transaction
-	 * @return EE_Payment updated
+	 * @return EEI_Payment updated
 	 */
 	public function handle_payment_update( $update_info, $transaction ){
 		//verify there's payment data that's been sent
 		if(empty($update_info['payment_status']) || empty($update_info['txn_id'])){
-			return NULL;
+			//waaaait... is this a PDT request? (see https://developer.paypal.com/docs/classic/products/payment-data-transfer/)
+			//indicated by the "tx" argument? If so, we don't need it. We'll just use the IPN data when it comes
+			if( isset( $update_info[ 'tx' ] ) ){
+				return $transaction->last_payment();
+			}else{
+				return NULL;
+			}
 		}
 		$payment =  $this->_pay_model->get_payment_by_txn_id_chq_nmbr($update_info['txn_id']);
 		if ( ! $payment ){
