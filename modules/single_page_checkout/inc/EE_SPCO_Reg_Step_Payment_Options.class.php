@@ -119,16 +119,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$reg_count = 0;
 		// loop thru registrations to gather info
 		foreach ( $this->checkout->transaction->registrations() as $registration ) {
-			$reg_count++;
 			/** @var $registration EE_Registration */
-			if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
-				// add event to list of events that are sold out
-				$sold_out_events[ $registration->event()->ID() ] = $registration->event();
-			}
-			// event requires admin approval
-			if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
-				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+			$reg_count++;
+			// if returning registrant is Approved then do NOT do this
+			if ( ! ( $this->checkout->revisit && $registration->status_ID() == EEM_Registration::status_id_approved )) {
+				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+					// add event to list of events that are sold out
+					$sold_out_events[ $registration->event()->ID() ] = $registration->event();
+				}
+				// event requires admin approval
+				if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+				}
 			}
 			// these reg statuses require payment (if event is not free)
 			$requires_payment = array(
