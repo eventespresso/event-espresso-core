@@ -836,10 +836,25 @@ abstract class EE_Data_Migration_Class_Base{
 		return $this->get_status() == EE_Data_Migration_Manager::status_fatal_error;
 	}
 	/**
+	 * @deprecated since 4.6.12
+	 */
+	public function is_borked(){
+		EE_Error::doing_it_wrong('is_borked', __( 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"', 'event_espresso' ), '4.6.12');
+		return $this->is_broken();
+	}
+	/**
 	 * Sets the status to as having a fatal error
 	 */
 	public function set_broken(){
 		$this->_status = EE_Data_Migration_Manager::status_fatal_error;
+	}
+	/**
+	 *
+	 * @deprecated since 4.6.12
+	 */
+	public function set_borked(){
+		EE_Error::doing_it_wrong('is_borked', __( 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"', 'event_espresso' ), '4.6.12');
+		return $this->set_broken();
 	}
 	/**
 	 * Checks if this thing believes it is completed
