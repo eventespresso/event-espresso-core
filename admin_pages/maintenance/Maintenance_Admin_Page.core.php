@@ -259,7 +259,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
 					'script_names'=>$script_names,//array of names of scripts that have run
 					'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
-					'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
+					'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
 					'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
 					'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 				)
@@ -417,8 +417,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
 		}
+		//make sure when we reset the registry's config that it
+		//switches to using the new singleton
+		EE_Registry::instance()->CFG = EE_Registry::instance()->CFG->reset( TRUE );
 		EE_System::instance()->initialize_db_if_no_migrations_required( TRUE );
-		EE_Registry::instance()->CFG->reset( TRUE );
 		EE_System::instance()->redirect_to_about_ee();
 	}
 

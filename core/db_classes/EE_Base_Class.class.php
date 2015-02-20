@@ -834,6 +834,22 @@ abstract class EE_Base_Class{
 
 
 
+
+	/**
+	 * Get the i8ln value for a date using the WordPress @see date_i18n function.
+	 *
+	 * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
+	 * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format on the object will be used.
+	 *
+	 * @return string Date and time string in set locale.
+	 */
+	public function get_i18n_datetime( $field_name, $format = NULL ) {
+		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
+		return date_i18n( $format, strtotime( $this->_get_datetime( $field_name, NULL, NULL, NULL, false ) ) );
+	}
+
+
+
 	/**
 	 * This method validates whether the given field name is a valid field on the model object as well as it is of a type EE_Datetime_Field.  On success there will be returned the field settings.  On fail an EE_Error exception is thrown.
 	 * @param  string $field_name The field name being checked

@@ -265,7 +265,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_PRC_name(EE_Registration $item){
-		return $item->ticket() ? $item->ticket()->name() : __("Unknown", "event_espresso");
+		return $item->ticket() instanceof EE_Ticket ? $item->ticket()->name() : __("Unknown", "event_espresso");
 	}
 
 

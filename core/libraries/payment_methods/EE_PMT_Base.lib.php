@@ -107,6 +107,8 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
+			EE_Registry::instance()->load_helper( 'Money' );
+			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));

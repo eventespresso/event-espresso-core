@@ -436,6 +436,7 @@ class EE_Data_Migration_Manager{
 			}
 		}
 
+		do_action( 'AHEE__EE_Data_Migration_Manager__check_for_applicable_data_migration_scripts__scripts_that_should_run', $scripts_that_should_run );
 		return $scripts_that_should_run;
 	}
 
@@ -480,6 +481,9 @@ class EE_Data_Migration_Manager{
 	 * }
 	 */
 	public function migration_step( $step_size = 0 ){
+
+		//bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
+		remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
 
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
@@ -665,7 +669,12 @@ class EE_Data_Migration_Manager{
 				if($folder_path[count($folder_path-1)] != DS ){
 					$folder_path.= DS;
 				}
-				$files = glob($folder_path."*.dms.php");
+				$files = glob( $folder_path. '*.dms.php' );
+
+				if ( empty( $files ) ) {
+					continue;
+				}
+
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
