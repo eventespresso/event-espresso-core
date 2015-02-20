@@ -433,6 +433,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	private function _convert_to_utc_unix_timestamp( $datetime ) {
 		if ( $this->_nullable && empty( $datetime ) )
 			return NULL;
+
 		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unix_timestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unix_timestamp( $datetime );
 		return $timestamp;
 	}
@@ -630,9 +631,24 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( $this->_nullable && empty( $date_string ) ) {
 			$this->_date = NULL;
 			return;
+
+		/**
+		 * if we get NULL as the value for date_string and the field is NOT nullable, then let's just set the field as current time in UTC (gmt) and set the timezone appropriately as well.
+		 */
+		} else if ( empty( $date_string ) ) {
+			$date_string = current_time('mysql', true);
+			$timezone = 'UTC';
 		}
 
 		$format = $format !== NULL ? $format : $this->_date_format . ' ' . $this->_time_format;
+
+		/**
+		 * before using format.  It's possible the incoming $date_string is in mysql format.  If it is,
+		 * let's override whatever format is set and use mysql format.
+		 */
+		if ( is_string( $date_string ) && substr_count( $date_string, '-' ) == 2 && substr_count( $date_string, ':' ) == 2 ) {
+			$format = 'Y-m-d H:i:s';
+		}
 
 		if( ! $this->_date ){
 			try {
@@ -647,6 +663,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				}
 			}
 		}
+
 	}
 
 
