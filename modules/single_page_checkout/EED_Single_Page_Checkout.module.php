@@ -423,8 +423,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
-		// add powered by EE msg
-		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 		// remove transaction lock
 		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
@@ -1101,7 +1099,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		/**
 		 * dynamic action hook for enqueueing styles and scripts with spco calls.
-		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_sytles_and_scripts__attendee_information
+		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__attendee_information
 		 */
 		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
 
@@ -1122,6 +1120,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->admin_request ) {
 			EE_Registry::instance()->REQ->add_output( $this->checkout->current_step->display_reg_form() );
 		} else {
+			// add powered by EE msg
+			add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 			$this->checkout->registration_form = new EE_Form_Section_Proper(
 				array(
 					'name' 	=> 'single-page-checkout',
