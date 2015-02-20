@@ -1095,14 +1095,15 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 *
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
 	 * @param  string $function The function that was called
-	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @return trigger_error()
+	 * @param  string $message A message explaining what has been done incorrectly
+	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param int     $error_type
+	 * @return void
 	 */
-	public static function doing_it_wrong( $function, $message, $version ) {
+	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			EE_Registry::instance()->load_helper('Debug_Tools');
-			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version );
+			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
 		}
 	}
 
