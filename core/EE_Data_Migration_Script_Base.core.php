@@ -274,15 +274,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 					throw $e;
 				}
 				//check that the migration stage didn't mark itself as having a fatal error
-				if($stage->is_borked()){
-					$this->set_borked();
+				if($stage->is_broken()){
+					$this->set_broken();
 					throw new EE_Error($stage->get_last_error());
 				}
 			}
 			//once we've migrated all the number we intended to (possibly from different stages), stop migrating
 			//or if we had a fatal error
 			//or if the current script stopped early- its not done, but it's done all it thinks we should do on this step
-			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_borked() || $stage->has_more_to_do()){
+			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_broken() || $stage->has_more_to_do()){
 				break;
 			}
 		}
@@ -569,7 +569,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 	/**
-	 * Sets whether or not this DMS is being ran as part of a migratation, instead of
+	 * Sets whether or not this DMS is being ran as part of a migration, instead of
 	 * just being used to setup (or verify) the current database structure matches
 	 * what the latest DMS indicates it should be
 	 * @param boolean $migrating
@@ -586,7 +586,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		parent::reattempt();
 		//also, we want to reattempt any stages that were marked as borked
 		foreach( $this->stages() as $stage ) {
-			if( $stage->is_borked() ) {
+			if( $stage->is_broken() ) {
 				$stage->reattempt();
 			}
 		}
@@ -832,13 +832,13 @@ abstract class EE_Data_Migration_Class_Base{
 	 * Indicates there was a fatal error and the migration cannot possibly continue
 	 * @return boolean
 	 */
-	public function is_borked(){
+	public function is_broken(){
 		return $this->get_status() == EE_Data_Migration_Manager::status_fatal_error;
 	}
 	/**
 	 * Sets the status to as having a fatal error
 	 */
-	public function set_borked(){
+	public function set_broken(){
 		$this->_status = EE_Data_Migration_Manager::status_fatal_error;
 	}
 	/**
@@ -984,7 +984,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	 */
 	function _count_records_to_migrate() {
 		global $wpdb;
-		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
+		$count = $wpdb->get_var("SELECT COUNT(*) FROM " . $this->_old_table );
 		return $count;
 	}
 
