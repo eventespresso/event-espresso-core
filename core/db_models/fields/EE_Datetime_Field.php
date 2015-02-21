@@ -382,7 +382,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 		$this->_set_date_obj( (int) $datetime_value, 'UTC', 'U' );
 		if ( ! $this->_date instanceof DateTime ) {
-			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used on %s', 'event_espresso' ) , $this->get_model_name() ) );
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string (%s ), Format ( %s) or an invalid timezone string ( %s ) being used on %s', 'event_espresso' ) , $datetime_value, 'U', $this->_timezone, $this->get_model_name() ) );
 		}
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
 		return $this->_date->format( $format );
@@ -460,7 +460,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 		//if we don't have a datetime at this point then something has gone wrong
 		if ( $timestamp === NULL || $timestamp === FALSE) {
-			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used. Datetime passed in: %s producted timestamp: %s', 'event_espresso' ), $datetime, $timestamp )  );
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used. Datetime passed in: %s produced timestamp: %s', 'event_espresso' ), $datetime, $timestamp )  );
 		}
 
 		//return to default for PHP
@@ -482,7 +482,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$this->_set_date_obj( $datetime, $this->_timezone );
 
 		if ( ! $this->_date instanceof DateTime && ! $this->_nullable ) {
-			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string (%s), Format (%s) or an invalid timezone ( %s ) string being used.', 'event_espresso' ), $datetime, $this->_date_format . ' ' . $this->_time_format, $this->_timezone ) );
 		}
 
 		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
@@ -650,14 +650,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 		$format = $format !== NULL ? $format : $this->_date_format . ' ' . $this->_time_format;
 
-		/**
-		 * before using format.  It's possible the incoming $date_string is in mysql format.  If it is,
-		 * let's override whatever format is set and use mysql format.
-		 */
-		if ( is_string( $date_string ) && substr_count( $date_string, '-' ) == 2 && substr_count( $date_string, ':' ) == 2 ) {
-			$format = 'Y-m-d H:i:s';
-		}
-
 		if( ! $this->_date ){
 			try {
 				$this->_date = DateTime::createFromFormat( $format, $date_string, new DateTimeZone( $timezone ) );
@@ -673,6 +665,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 	}
+
 
 
 
