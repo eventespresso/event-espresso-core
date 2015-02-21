@@ -191,8 +191,8 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 					$this->assertInstanceof( 'EE_Ticket', $tkt );
 
 					//verify start and date
-					$this->assertEquals( $tkt->start_date(), $this->_default_dates['TKT_start']->format( $full_format ), sprintf( 'Start Date Format Tested: %s', $full_format ) );
-					$this->assertEquals( $tkt->end_date(), $this->_default_dates['TKT_end']->format( $full_format ), sprintf( 'End Date Format Tested: %s', $full_format ) );
+					$this->assertEquals( $tkt->start_date(), $this->_default_dates['TKT_start']->format( $full_format ), sprintf( 'Start Ticket DateFormat Tested: %s', $full_format ) );
+					$this->assertEquals( $tkt->end_date(), $this->_default_dates['TKT_end']->format( $full_format ), sprintf( 'End Ticket Date Format Tested: %s', $full_format ) );
 				}
 			}
 		}
