@@ -269,6 +269,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function loadAdminMocks() {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_mock.php';
 	}
 
 
