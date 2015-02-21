@@ -645,6 +645,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		 */
 		} else if ( empty( $date_string ) ) {
 			$date_string = current_time('mysql', true);
+			$format = 'Y-m-d H:i:s';
 			$timezone = 'UTC';
 		}
 
@@ -659,9 +660,14 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to its formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
 				} else {
 					//ok give up, but don't throw an error
-					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
+					$this->_date = new DateTime( time(), new DateTimeZone( $timezone ));
 				}
 			}
+		}
+
+		//if STILL false.  Let's just use the current time.
+		if ( ! $this->_date ) {
+			$this->_date = new DateTime( time(), new DateTimeZone( $timezone ) );
 		}
 
 	}
