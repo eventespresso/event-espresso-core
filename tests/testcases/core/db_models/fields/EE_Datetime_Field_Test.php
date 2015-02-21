@@ -79,20 +79,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$this->_defaultDTT = new DateTime( '2015-02-20 11:38', $datetimeZoneVC );
 
 		//formats we want to test
-		$date_formats = array(
-			'date' => array(
-				'F j, Y',
-				'Y-m-d',
-				'm/d/Y',
-				'd/m/Y',
-				'j F, Y'
-				),
-			'time' => array(
-				'g:i a',
-				'g:i A',
-				'H: i'
-				)
-			);
+		$date_formats = $this->date_formats_to_test();
 
 		//set the timezone to be America/Vancouver (UTC-8h Daylight UTC-7h)
 		$this->_datetime_field->set_timezone( 'America/Vancouver' );

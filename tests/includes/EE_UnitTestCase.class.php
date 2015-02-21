@@ -288,6 +288,30 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	/**
+	 * This returns an array of date and time formats that are commonly used in testing.
+	 *
+	 * @return array
+	 */
+	public function date_formats_to_test() {
+		return array(
+			'date' => array(
+				'F j, Y',
+				'Y-m-d',
+				'm/d/Y',
+				'd/m/Y',
+				'j F, Y'
+				),
+			'time' => array(
+				'g:i a',
+				'g:i A',
+				'H: i'
+				)
+			);
+	}
+
+
+
+	/**
 	 * IT would be better to add a constraint and do this properly at some point
 	 * @param mixed $item
 	 * @param       $haystack
