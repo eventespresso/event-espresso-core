@@ -74,6 +74,7 @@ final class EE_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_action( 'network_admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
 		//reset Environment config (we only do this on admin page loads);
@@ -657,6 +658,67 @@ final class EE_Admin {
 				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}
+	}
+
+
+
+	/**
+	 *    check_for_invalid_datetime_formats
+	 *
+	 *    if an admin changes their date or time format settings on the WP General Settings admin page, verify that their selected format can be parsed by PHP
+	 *
+	 * @access    public
+	 * @param    $value
+	 * @param    $option
+	 * @throws EE_Error
+	 * @return    string
+	 */
+	public function check_for_invalid_datetime_formats( $value, $option ) {
+		EE_Registry::instance()->load( 'DTT_Helper' );
+		// check for date_format or time_format
+		switch ( $option ) {
+			case 'date_format' :
+				$date_time_format = $value . ' ' . get_option('time_format');
+				break;
+			case 'time_format' :
+				$date_time_format = get_option('date_format') . ' ' . $value;
+				break;
+			default :
+				$date_time_format = FALSE;
+		}
+		// do we have a date_time format to check ?
+		if ( $date_time_format ) {
+			$error_msg = EEH_DTT_Helper::validate_format_string( $date_time_format );
+
+			if ( is_array( $error_msg ) ) {
+				$msg = '<p>' . sprintf( __( 'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:', 'event_espresso' ), date( $date_time_format ) , $date_time_format  ) . '</p><p><ul>';
+
+
+				foreach ( $error_msg as $error ) {
+					$msg .= '<li>' . $error . '</li>';
+				}
+
+				$msg .= '</ul></p><p>' . sprintf( __( '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ), '<span style="color:#D54E21;">', '</span>' ) . '</p>';
+
+				// trigger WP settings error
+				add_settings_error(
+					'date_format',
+					'date_format',
+					$msg
+				);
+
+				// set format to something valid
+				switch ( $option ) {
+					case 'date_format' :
+						$value = 'F j, Y';
+						break;
+					case 'time_format' :
+						$value = 'g:i a';
+						break;
+				}
+			}
+		}
+		return $value;
 	}
 
 
