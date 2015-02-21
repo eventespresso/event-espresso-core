@@ -504,4 +504,37 @@ class EEH_DTT_Helper {
 	}
 
 
+
+
+	/**
+	 * This takes an incoming format string and validates it to ensure it will work fine with PHP.
+	 *
+	 * @param string $format_string Incoming format string for php date().
+	 *
+	 * @return mixed bool|array  If all is okay then TRUE is returned.  Otherwise an array of validation
+	 *                           		errors is returned.  So for client code calling, check for is_array() to
+	 *                           		indicate failed validations.
+	 */
+	public static function validate_format_string( $format_string ) {
+		$error_msg = array();
+		//time format checks
+		switch ( true ) {
+			case   strpos( $format_string, 'h' )  !== false  :
+			case   strpos( $format_string, 'g' ) !== false :
+				/**
+				 * if the time string has a lowercase 'h' which == 12 hour time format and there
+				 * is not any antimeridiam format ('a' or 'A').  Then throw an error because its
+				 * too ambiguous and PHP won't be able to figure out whether 1 = 1pm or 1am.
+				 */
+				if ( strpos( strtoupper( $format_string ), 'A' )  === false ) {
+					$error_msg[] = __('There is a  time format for 12 hour time but no  "a" or "A" to indicate am/pm.  Without this distinction, PHP is unable to determine if a "1" for the hour value equals "1pm" or "1am".', 'event_espresso' );
+				}
+				break;
+
+		}
+
+		return empty( $error_msg ) ? true : $error_msg;
+	}
+
+
 }// end class EEH_DTT_Helper
