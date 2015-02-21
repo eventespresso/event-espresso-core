@@ -302,13 +302,15 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				'j F, Y',
 				'd-m-Y',
 				'm-d-Y',
-				'd-m Y'
+				'd-m Y',
+				'\D\a\t\e\: Y-m-d'
 				),
 			'time' => array(
 				'g:i a',
 				'g:i A',
 				'H: i',
-				'h:i:s a'
+				'h:i:s a',
+				'\T\i\m\e\: g:i a'
 				)
 			);
 	}
