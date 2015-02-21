@@ -141,10 +141,10 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 		//loop through timestrings and run tests
 		foreach ( $timestrings['date'] as $format  ) {
-			$dtt = $this->_defaultDTT->format( $format );
+			$datetime = $this->_defaultDTT->format( $format );
 			$this->_datetime_field->set_date_format( $format );
 			foreach( $timestrings['time'] as $time_format ) {
-				$dtt .= ' ' . $this->_defaultDTT->format( $time_format );
+				$dtt = $datetime . ' ' . $this->_defaultDTT->format( $time_format );
 				$this->_datetime_field->set_time_format( $time_format );
 				$timestamp = $this->_datetime_field->prepare_for_set( $dtt );
 				//test expected value
@@ -173,7 +173,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		foreach ( $timestrings['time'] as $format ) {
 			$this->_datetime_field->set_time_format( $format );
 			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_time( $DTToffset->format( $format ), $this->_expected_unixtimestamp );
-			$this->assertEquals( $expected, $new_time_string, sprintf( 'Format is %s', $format ) );
+			$this->assertEquals( $expected, $new_time_string, sprintf( 'Time Format is %s. Date format is %s.', $format, $this->_datetime_field->get_date_format() ) );
 		}
 	}
 
