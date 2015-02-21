@@ -153,6 +153,8 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 		$this->_load_pricing_mock();
 		$formats_to_test = $this->date_formats_to_test();
 
+		$saved_dtts_for_tickets = array();
+
 		//test each date and time format combination for creating datetime objects
 		foreach( $formats_to_test['date'] as $date_format ) {
 			foreach( $formats_to_test['time'] as $time_format ) {
@@ -163,12 +165,34 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 
 				foreach ( $dtts as $dtt ) {
 					$this->assertInstanceof( 'EE_Datetime', $dtt );
-					$test = clone $this->_default_dates['DTT_start'];
-					$test->setTimezone( new DateTimeZone('UTC') );
 
 					//verify start and date
 					$this->assertEquals( $dtt->start_date_and_time(), $this->_default_dates['DTT_start']->format( $full_format ), sprintf( 'Start Date Format Tested: %s', $full_format ) );
 					$this->assertEquals( $dtt->end_date_and_time(), $this->_default_dates['DTT_end']->format( $full_format ), sprintf( 'End Date Format Tested: %s', $full_format ) );
+				}
+
+				$saved_dtts_for_tickets[$full_format] = $dtt;
+			}
+		}
+
+
+
+		//test each date and time format combination for creating ticket objects
+		foreach( $formats_to_test['date'] as $date_format ) {
+			foreach( $formats_to_test['time'] as $time_format ) {
+				$full_format = $date_format . ' ' . $time_format;
+				$this->_pricingMock->set_date_format_strings( array( 'date' => $date_format, 'time' => $time_format ) );
+				$data = $this->_get_save_data( $full_format );
+
+				$dtt_for_ticket['1'] = $saved_dtts_for_tickets[$full_format];
+				$tkts = $this->_pricingMock->update_tkts( $this->_event, $dtt_for_ticket, $data );
+
+				foreach ( $tkts as $tkt ) {
+					$this->assertInstanceof( 'EE_Ticket', $tkt );
+
+					//verify start and date
+					$this->assertEquals( $tkt->start_date(), $this->_default_dates['TKT_start']->format( $full_format ), sprintf( 'Start Date Format Tested: %s', $full_format ) );
+					$this->assertEquals( $tkt->end_date(), $this->_default_dates['TKT_end']->format( $full_format ), sprintf( 'End Date Format Tested: %s', $full_format ) );
 				}
 			}
 		}
