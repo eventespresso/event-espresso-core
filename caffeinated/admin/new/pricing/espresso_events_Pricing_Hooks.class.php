@@ -98,6 +98,22 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$this->_date_format_strings['date'] = isset( $this->_date_format_strings['date'] ) ? $this->_date_format_strings['date'] : null;
 		$this->_date_format_strings['time'] = isset( $this->_date_format_strings['time'] ) ? $this->_date_format_strings['time'] : null;
 
+		//validate format strings
+		$format_validation = EEH_DTT_Helper::validate_format_string( $this->_date_format['date'] . ' ' . $this->_date_format['time'] );
+		if ( is_array( $format_validation ) ) {
+			$msg = '<p>' . sprintf( __( 'The format "%s" was likely added via a filter and is invalid for the following reasons:', 'event_espresso' ), $this->_date_format['date'] . ' ' . $this->_date_format['time'] ) . '</p><ul>';
+			foreach ( $format_validation as $error ) {
+				$msg .= '<li>' . $error . '</li>';
+			}
+			$msg .= '</ul></p><p>' . sprintf( __( '%sPlease note that your date and time formats have been reset to "Y-m-d" and "h:i a" respectively.%s', 'event_espresso' ), '<span style="color:#D54E21;">', '</span>' ) . '</p>';
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			$this->_date_format_strings = array(
+				'date' => 'Y-m-d',
+				'time' => 'h:i a'
+				);
+		}
+
+
 		$this->_scripts_styles = array(
 			'registers' => array(
 				'ee-tickets-datetimes-css' => array(
