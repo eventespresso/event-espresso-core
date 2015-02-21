@@ -564,6 +564,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
 			$tkt_to_remove->delete_permanently();
 		}
+		return $saved_tickets;
 	}
 
 
