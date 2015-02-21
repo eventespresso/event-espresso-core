@@ -339,14 +339,8 @@ abstract class EE_Base_Class{
 		//temporarily cached what was set so that it can be returned to its value.
 		$orig_dt_format = $field->get_date_format();
 
-		// possibly correct date format if the date format is d/m/y
-		$dt_format = $orig_dt_format;
-		if ( strpos( $dt_format, 'd/' )=== 0 ) {
-			// change it to d-m-y, or else strtotime() will think it is m/d/y
-			$dt_format = str_replace( '/', '-', $dt_format );
-		}
-
-		$field->set_date_format( $dt_format );
+		//setting to a format we KNOW will work.
+		$field->set_date_format( 'Y-m-d' );
 		$field->set_date_time_output();
 		$dtt = $field->prepare_for_get( $this->get_raw( $field_name ) );
 
