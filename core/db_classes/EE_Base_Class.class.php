@@ -127,6 +127,8 @@ abstract class EE_Base_Class{
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
+		$this->_timezone = $timezone;
+
 		//if db model is instantiating
 		if( $bydb ){
 			//client code has indicated these field values are from the database
@@ -141,8 +143,6 @@ abstract class EE_Base_Class{
 			}
 		}
 
-
-		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
 		//remember in entity mapper
