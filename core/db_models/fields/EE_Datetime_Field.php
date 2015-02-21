@@ -313,7 +313,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string                formatted date time for given timezone
 	 */
 	public function prepare_for_get( $datetime_value ) {
-
 		$format_string = $this->_get_date_time_output();
 		//send this to our formatter to return localized time for the timezone
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetime_value, $format_string );
@@ -636,8 +635,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return void
 	 */
 	protected function _set_date_obj( $date_string, $timezone, $format = NULL ) {
+		//clear existing _date so we don't get any caching going on
+		$this->_date = NULL;
 		if ( $this->_nullable && empty( $date_string ) ) {
-			$this->_date = NULL;
 			return;
 
 		/**
