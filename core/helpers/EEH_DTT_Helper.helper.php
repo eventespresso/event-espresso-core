@@ -201,7 +201,10 @@ class EEH_DTT_Helper {
 		$dtt = $obj->get_raw($dttfield);
 		$new_date = self::calc_date($dtt, $what, $value);
 		//set the new date value!
-		$obj->set($dttfield, $dtt);
+		$orig_timezone = $obj->get_timezone();
+		$obj->set_timezone( 'UTC' );
+		$obj->set($dttfield, $new_date);
+		$obj->set_timezone( $orig_timezone );
 		return $obj;
 	}
 
@@ -210,7 +213,10 @@ class EEH_DTT_Helper {
 		//get the raw UTC date
 		$dtt = $obj->get_raw($dttfield);
 		$new_date = self::calc_date($dtt, $what, $value, '-');
-		$obj->set($dttfield, $dtt);
+		$orig_timezone = $obj->get_timezone();
+		$obj->set_timezone( 'UTC' );
+		$obj->set($dttfield, $new_date);
+		$obj->set_timezone( $orig_timezone );
 		return $obj;
 	}
 
