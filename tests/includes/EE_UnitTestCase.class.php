@@ -40,6 +40,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	static $accidental_txn_commit_noted = FALSE;
 
+
+
+	/**
+	 * Holds an array of default DateTime objects for testing with.
+	 * This is set via the _set_default_dates() method.  Child test classes that wish to use this much set it first
+	 * using the method.
+	 *
+	 * @var array.
+	 */
+	protected $_default_dates;
+
+
+
 	public function setUp() {
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
@@ -269,7 +282,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function loadAdminMocks() {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
-		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_mock.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
 	}
 
 
@@ -314,6 +328,100 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				)
 			);
 	}
+
+
+
+	/**
+	 * This sets a bunch of default dates for common data properties using dates for testing.
+	 *
+	 * @param string $timezone Timezone string to initialize the times in.
+	 */
+	protected function _set_default_dates( $timezone = 'America/Vancouver' ) {
+		$tz = new DateTimeZone( $timezone );
+		$this->_default_dates = array(
+			'DTT_start' => new DateTime( '2015-02-20 11:30 am', $tz ),
+			'DTT_end' => new DateTime( '2015-02-20 2:00 pm', $tz ),
+			'TKT_start' => new DateTime( '2015-01-30 8:00 am', $tz ),
+			'TKT_end' => new DateTime( '2015-02-20 8:00 am', $tz )
+			);
+	}
+
+
+
+
+	/**
+	 * This sets up some save data for use in testing updates and saves via the event editor.
+	 *
+	 * @todo Add extra event data for testing event creation/save.
+	 * @param string $format The format used for incoming date strings.
+	 * @param string $prefix  A string to prefix the fields being assembled.  Used as a way of
+	 *                        	    differentiating between multiple calls.
+	 * @param string $row     Equals the value we want to give for row.
+	 * @param string $timezone  Timezone string to add to the timezone data point.  Remember that
+	 *                          		$this->_default_date() datetime objects are used for the default dates, so if
+	 *                          		you include a string here make sure it matches what you set used for setting
+	 *                          		_default_dates unless you are intentionally testing timezone mismatches.
+	 *
+	 * @return array of data in post format from the save action.
+	 */
+	protected function _get_save_data( $format = 'Y-m-d h:i a', $prefix = '', $row = '1', $timezone = 'America/Vancouver' ) {
+		$data = array(
+			'starting_ticket_datetime_rows' => array(
+				$row => ''
+				),
+			'ticket_datetime_rows' => array(
+				$row => '1'
+				),
+			'datetime_IDs' => '',
+			'edit_event_datetimes' => array(
+				$row => array(
+					'DTT_EVT_end' => $this->_default_dates['DTT_end']->format( $format ),
+					'DTT_EVT_start' => $this->_default_dates['DTT_start']->format( $format ),
+					'DTT_ID' => '0',
+					'DTT_name' => $prefix . ' Datetime A',
+					'DTT_description' => $prefix . ' Lorem Ipsum Emitetad',
+					'DTT_reg_limit' => '',
+					'DTT_order' => $row
+					)
+				),
+			'edit_tickets' => array(
+				$row => array(
+					'TKT_ID' => '0',
+					'TKT_base_price' => '0',
+					'TKT_base_price_ID' => '1',
+					'TTM_ID' => '0',
+					'TKT_name' => $prefix . ' Ticket A',
+					'TKT_description' => $prefix . ' Lorem Ipsum Tekcit',
+					'TKT_start_date' => $this->_default_dates['TKT_start']->format( $format ),
+					'TKT_end_date' => $this->_default_dates['TKT_end']->format( $format ),
+					'TKT_qty' => '',
+					'TKT_uses' => '',
+					'TKT_min' => '',
+					'TKT_max' => '',
+					'TKT_row' => '',
+					'TKT_order' => $row,
+					'TKT_taxable' => '0',
+					'TKT_required' => '0',
+					'TKT_price' => '0',
+					'TKT_is_default' => '0'
+					)
+				),
+			'edit_prices' => array(
+				$row => array(
+					'PRT_ID' => '1',
+					'PRC_ID' => '0',
+					'PRC_amount' => '0',
+					'PRC_name' => $prefix . ' Price A',
+					'PRC_desc' => $prefix . ' Lorem Ipsum Ecirp',
+					'PRC_is_default' => '1',
+					'PRC_order' => $row
+					)
+				),
+			'timezone_string' => $timezone
+			);
+		return $data;
+	}
+
 
 
 
