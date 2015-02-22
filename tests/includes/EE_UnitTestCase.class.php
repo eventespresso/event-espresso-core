@@ -283,6 +283,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
+
+	}
+
+
+	/**
+	 * This loads the various admin page mock files requred for tests.
+	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
+	 * @since 4.6.0
+	 */
+	public function delayedAdminPageMocks() {
 		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
 	}
 

@@ -21,16 +21,6 @@ class Events_Admin_Page_Decaf_Mock extends Events_Admin_Page {
 
 
 	public function __construct( $routing = TRUE ) {
-		//core constants that might not be loaded yet.
-		if ( ! defined( 'EE_ADMIN_PAGES_URL' ) ) {
-			define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
-			define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
-			define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
-			define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
-			define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ));
-			define( 'JQPLOT_URL', EE_GLOBAL_ASSETS_URL . 'scripts/jqplot/' );
-		}
-
 		//define any constants that might not be defined yet when using this mock.
 		if ( ! defined( 'EVENTS_PG_SLUG' ) ) {
 			define( 'EVENTS_PG_SLUG', 'espresso_events' );
@@ -38,7 +28,7 @@ class Events_Admin_Page_Decaf_Mock extends Events_Admin_Page {
 			define( 'EVENTS_ADMIN', EE_ADMIN_PAGES . 'events' . DS );
 			define( 'EVENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EVENTS_PG_SLUG ));
 			define( 'EVENTS_TEMPLATE_PATH', EVENTS_ADMIN . 'templates' . DS );
-			define( 'EVENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'events/assets/' );
+			define( 'EVENTS_ASSETS_URL', EE_PLUGIN_DIR_URL . 'admin_pages/events/assets/' );
 		}
 
 		parent::__construct( false );
