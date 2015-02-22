@@ -14,7 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  */
 require_once( EE_CAFF_PATH . 'admin/new/pricing/espresso_events_Pricing_Hooks.class.php' );
-class espresso_events_Pricing_Hooks_mock extends espresso_events_Pricing_Hooks {
+class espresso_events_Pricing_Hooks_Mock extends espresso_events_Pricing_Hooks {
 
 	public function __construct( $admin_page = '' ) {
 		$admin_page = ! $admin_page instanceof EE_Admin_Page ? new Admin_Mock_Valid_Admin_Page() : $admin_page;
