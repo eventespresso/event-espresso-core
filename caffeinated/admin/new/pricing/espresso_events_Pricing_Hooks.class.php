@@ -249,7 +249,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
-				EE_Registry::instance()->load_helper('DTT_Helper');
 				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
@@ -335,13 +334,28 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			$price_rows = is_array($data['edit_prices']) && isset($data['edit_prices'][$row]) ? $data['edit_prices'][$row] : array();
 
+			$now = null;
+			if ( empty( $tkt['TKT_start_date'] ) ) {
+				//lets' use now in the set timezone.
+				$now = new DateTime( 'now', new DateTimeZone( $evtobj->get_timezone() ) );
+				$tkt['TKT_start_date'] = $now->format( $this->_date_format_strings['date'] . ' ' . $this->_date_format_strings['time'] );
+			}
+
+			if ( empty( $tkt['TKT_end_date'] ) ) {
+				/**
+				 * set the TKT_end_date to the first datetime attached to the ticket.
+				 */
+				$first_dtt = $saved_dtt_objs[reset( $tkt_dtt_rows )];
+				$tkt['TKT_end_date'] = $dtt->start_date_and_time( $this->_date_format_strings['date'] . ' ' . $this->_date_format_string['time'] );
+			}
+
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
 				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
 				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
-				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
-				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
+				'TKT_start_date' => $tkt['TKT_start_date'],
+				'TKT_end_date' => $tkt['TKT_end_date'],
 				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
 				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
