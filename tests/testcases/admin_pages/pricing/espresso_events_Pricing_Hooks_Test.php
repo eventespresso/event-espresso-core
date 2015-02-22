@@ -32,15 +32,6 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 
 
 
-	/**
-	 * This will hold an array of default dates.
-	 *
-	 * @var array
-	 */
-	protected $_default_dates;
-
-
-
 	public function setUp() {
 		parent::setUp();
 		$this->loadAdminMocks();
@@ -51,98 +42,17 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 
 	/**
 	 * loads the pricing mock object for tests
+	 *
+	 * @param string $timezone Timezone string to initialize the times in.
 	 * @since 4.6
 	 */
-	protected function _load_pricing_mock() {
-		$this->_pricingMock = new espresso_events_Pricing_Hooks_mock();
+	protected function _load_pricing_mock( $timezone = 'America/Vancouver') {
+		$this->_pricingMock = new espresso_events_Pricing_Hooks_Mock();
 		$this->_event = $this->factory->event->create();
-		$this->_event->set_timezone( 'America/Vancouver' );
+		$this->_event->set_timezone( $timezone );
 		$this->_event->save();
-		$timezone = new DateTimeZone( 'America/Vancouver' );
-		$this->_default_dates = array(
-			'DTT_start' => new DateTime( '2015-02-20 11:30 am', $timezone ),
-			'DTT_end' => new DateTime( '2015-02-20 2:00 pm', $timezone ),
-			'TKT_start' => new DateTime( '2015-01-30 8:00 am', $timezone ),
-			'TKT_end' => new DateTime( '2015-02-20 8:00 am', $timezone )
-			);
+		$this->_set_default_dates( $timezone );
 	}
-
-
-	/**
-	 * This sets up some save data for use in testing updates and saves.
-	 *
-	 * @param string $format The format used for incoming date strings.
-	 * @param string $prefix  A string to prefix the fields being assembled.  Used as a way of
-	 *                        	    differentiating between multiple calls.
-	 * @param string $row     Equals the value we want to give for row.
-	 * @param bool|array $existing  Indicate whether you want data to be for existing tickets/
-	 * datetimes.  If you want to use existing tickets and datetimes, then send an array in this format:
-	 * array(
-	 * 	'tickets' => array( EE_Ticket, EE_Ticket ),
-	 * 	'datetimes' => array( EE_Datetime, EE_Datetime ),
-	 * )
-	 *
-	 * @return array of data in post format from the save action.
-	 */
-	protected function _get_save_data( $format = 'Y-m-d h:i a', $prefix = '', $row = '1', $existing = false ) {
-		$data = array(
-			'starting_ticket_datetime_rows' => array(
-				$row => ''
-				),
-			'ticket_datetime_rows' => array(
-				$row => '1'
-				),
-			'datetime_IDs' => '',
-			'edit_event_datetimes' => array(
-				$row => array(
-					'DTT_EVT_end' => $this->_default_dates['DTT_end']->format( $format ),
-					'DTT_EVT_start' => $this->_default_dates['DTT_start']->format( $format ),
-					'DTT_ID' => '0',
-					'DTT_name' => $prefix . ' Datetime A',
-					'DTT_description' => $prefix . ' Lorem Ipsum Emitetad',
-					'DTT_reg_limit' => '',
-					'DTT_order' => $row
-					)
-				),
-			'edit_tickets' => array(
-				$row => array(
-					'TKT_ID' => '0',
-					'TKT_base_price' => '0',
-					'TKT_base_price_ID' => '1',
-					'TTM_ID' => '0',
-					'TKT_name' => $prefix . ' Ticket A',
-					'TKT_description' => $prefix . ' Lorem Ipsum Tekcit',
-					'TKT_start_date' => $this->_default_dates['TKT_start']->format( $format ),
-					'TKT_end_date' => $this->_default_dates['TKT_end']->format( $format ),
-					'TKT_qty' => '',
-					'TKT_uses' => '',
-					'TKT_min' => '',
-					'TKT_max' => '',
-					'TKT_row' => '',
-					'TKT_order' => $row,
-					'TKT_taxable' => '0',
-					'TKT_required' => '0',
-					'TKT_price' => '0',
-					'TKT_is_default' => '0'
-					)
-				),
-			'edit_prices' => array(
-				$row => array(
-					'PRT_ID' => '1',
-					'PRC_ID' => '0',
-					'PRC_amount' => '0',
-					'PRC_name' => $prefix . ' Price A',
-					'PRC_desc' => $prefix . ' Lorem Ipsum Ecirp',
-					'PRC_is_default' => '1',
-					'PRC_order' => $row
-					)
-				),
-			'timezone_string' => 'America/Vancouver'
-			);
-		return $data;
-	}
-
-
 
 
 
