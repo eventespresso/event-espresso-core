@@ -79,10 +79,10 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 		//test getting pretty (should return formatted item in the correct timezone)
 		$this->assertEquals( $now->format( $format_to_use ) . '<span class="ee_dtt_timezone_string">(PST)</span>', $t->datetime( true ), 'datetime( true ) test' );
 
-		//test getting raw
+		//test getting raw unixtimestamp
 		$this->assertEquals( $now->format( 'U' ), $t->datetime( false, true ), 'datetime( false, true) test' );
 
-		//test getting unixtime with offset
+		//test get() (timestring with offset)
 		$this->assertEquals( $now->format( $format_to_use ), $t->datetime(), 'datetime() test' );
 	}
 }
