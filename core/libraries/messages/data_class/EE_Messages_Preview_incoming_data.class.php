@@ -376,7 +376,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//setup txn property
 		$this->txn = EE_Transaction::new_instance(
 			array(
-				'TXN_timestamp' => current_time('mysql'), //unix timestamp
+				'TXN_timestamp' => current_time('timestamp'), //unix timestamp
 				'TXN_total' => 0, //txn_total
 				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
@@ -404,7 +404,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'TXN_ID' => $regtxn,
 						'TKT_ID' => $ticket->ID(),
 						'STS_ID' => EEM_Registration::status_id_pending_payment,
-						'REG_date' => current_time('mysql'),
+						'REG_date' => current_time('timestamp'),
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
 						'REG_code' => $regid . '-dummy-generated-code',
@@ -514,8 +514,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_id = 1;
 		$this->ip_address = '192.0.2.1';
 		$this->user_agent = '';
-		$this->init_access = current_time('mysql');
-		$this->last_access = current_time('mysql');
+		$this->init_access = current_time('timestamp');
+		$this->last_access = current_time('timestamp');
 	}
 
 } //end EE_Messages_Preview_incoming_data class
