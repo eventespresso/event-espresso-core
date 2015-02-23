@@ -394,10 +394,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	/**
 	 * This returns the given datetime value.
 	 *
-	 * @param  DateTime $DateTime
+	 * @param  mixed $DateTime
 	 * @return string formatted date time for given timezone
 	 */
-	public function prepare_for_get( DateTime $DateTime ) {
+	public function prepare_for_get( $DateTime ) {
 		return $this->_prepare_for_display( $DateTime  );
 	}
 
@@ -409,11 +409,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * _pretty_date_format, and _pretty_time_format.  However, it also appends a timezone
 	 * abbreviation to the date_string.
 	 *
-	 * @param DateTime $DateTime
+	 * @param mixed $DateTime
 	 * @param null     $schema
 	 * @return string
 	 */
-	public function prepare_for_pretty_echoing( DateTime $DateTime, $schema = null ) {
+	public function prepare_for_pretty_echoing( $DateTime, $schema = null ) {
 		return $this->_prepare_for_display( $DateTime, true );
 	}
 
@@ -448,7 +448,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0
 	 * timezone).
 	 *
-	 * @param  null | DateTime $datetime_value u
+	 * @param  mixed $datetime_value u
 	 * @return string mysql timestamp in UTC
 	 * @throws \EE_Error
 	 */
