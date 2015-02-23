@@ -198,19 +198,21 @@ class EEH_DTT_Helper {
 	 */
 	public static function date_time_add( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
 		//get the raw UTC date.
-		$dtt = $obj->get_raw($dttfield);
+		$dtt = $obj->get_raw_date($dttfield);
+		$format = $obj->get_format();
 		$new_date = self::calc_date($dtt, $what, $value);
 		//set the new date value!
-		$obj->set($dttfield, $new_date);
+		$obj->set($dttfield, $new_date->format( $format ) );
 		return $obj;
 	}
 
 	//same as date_time_add except subtracting value instead of adding.
 	public static function date_time_subtract( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
 		//get the raw UTC date
-		$dtt = $obj->get_raw($dttfield);
+		$dtt = $obj->get_raw_date($dttfield);
+		$format = $obj->get_format();
 		$new_date = self::calc_date($dtt, $what, $value, '-');
-		$obj->set($dttfield, $new_date);
+		$obj->set($dttfield, $new_date->format( $format ) );
 		return $obj;
 	}
 
@@ -218,43 +220,66 @@ class EEH_DTT_Helper {
 
 
 	/**
-	 * Simply takes an incoming UTC timestamp and does calcs on it based on the incoming parameters and returns the new timestamp.
-	 * @param  string  $utcdtt UTC timestamp
+	 * Simply takes an incoming UTC timestamp or DateTime object and does calcs on it based on the incoming parameters and returns the new timestamp or DateTime.
+	 * @param  mixed string|DateTime $dtt     unixtimestamp or DateTime
 	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
 	 * @param  integer $value  What you want to increment the date by
 	 * @param  string  $operand What operand you wish to use for the calculation
-	 * @return string          new UTC timestamp
+	 * @return mixed string|DateTime          return whatever type came in.
 	 */
-	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+' ) {
+	public static function calc_date( $dtt, $what = 'years', $value = 1, $operand = '+' ) {
 		$newdtt = '';
 
-		switch ( $what ) {
-			case 'years' :
-				$value = (60*60*24*364.5) * $value;
-				break;
-			case 'months' :
-				$value = (60*60*24*30.375) * $value;
-				break;
-			case 'days' :
-				$value = (60*60*24) * $value;
-				break;
-			case 'hours' :
-				$value = (60*60) * $value;
-				break;
-			case 'minutes' :
-				$value = 60 * $value;
-				break;
-			case 'seconds' :
-				$value;
-				break;
+		if ( $dtt instanceof DateTime ) {
+			switch ( $what ) {
+				case 'years' :
+					$value = 'P' . $value . 'Y';
+					break;
+				case 'months' :
+					$value = 'P' . $value . 'M';
+					break;
+				case 'days' :
+					$value = 'P' . $value . 'D';
+					break;
+				case 'hours' :
+					$value = 'PT' . $value . 'H';
+					break;
+				case 'minutes' :
+					$value = 'PT' . $value . 'M';
+					break;
+				case 'seconds' :
+					$value = 'PT' . $value . 'S';
+					break;
+			}
+		} else {
+			switch ( $what ) {
+				case 'years' :
+					$value = (60*60*24*364.5) * $value;
+					break;
+				case 'months' :
+					$value = (60*60*24*30.375) * $value;
+					break;
+				case 'days' :
+					$value = (60*60*24) * $value;
+					break;
+				case 'hours' :
+					$value = (60*60) * $value;
+					break;
+				case 'minutes' :
+					$value = 60 * $value;
+					break;
+				case 'seconds' :
+					$value;
+					break;
+			}
 		}
 
 		switch ( $operand ) {
 			case '+':
-				$newdtt = $utcdtt + $value;
+				$newdtt = $dtt instanceof DateTime ? $dtt->add( new DateInterval( $value ) ) : $dtt + $value;
 				break;
 			case '-':
-				$newdtt = $utcdtt - $value;
+				$newdtt = $dtt instanceof DateTime ? $dtt->sub( new DateInterval( $value ) ) : $dtt - $value;
 				break;
 		}
 
