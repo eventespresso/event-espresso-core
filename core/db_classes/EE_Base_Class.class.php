@@ -635,6 +635,7 @@ abstract class EE_Base_Class{
 				$field_value = $field_value_from_db;
 			}
 			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_clear_cached_property( $field_name );
 		}
 	}
 

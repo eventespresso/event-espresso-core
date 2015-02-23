@@ -274,7 +274,6 @@ class EE_Import_Test extends EE_UnitTestCase {
 
 	/**
 	 * test that term relationships are migrated ok if they would conflict with something already in the db
-	 * @group uno
 	 */
 	function test_save_data_array_to_db__from_other_site__no_duplicate_term_relationships() {
 		$event_id_from_other_db = 122;
@@ -318,8 +317,63 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$this->assertEquals( $old_term_r_order, $new_term_r->get('term_order' ) );
 
 	}
-	//@todo: account for wp 4.2 term splitting (https://developer.wordpress.org/plugins/taxonomy/working-with-split-terms-in-wp-4-2/)
-	//specifically, if we makek an export with a shared term, then have it split, when we re-import we need to use the correct term
+	/**
+	 * @todo: account for wp 4.2 term splitting (https://developer.wordpress.org/plugins/taxonomy/working-with-split-terms-in-wp-4-2/)
+	 */
+	function test_save_data_array_to_db__from_this_site__term_split(){
+		//create term and term taxonomy
+		$term = $this->new_model_obj_with_dependencies( 'Term', array( 'name' => 'Jaguar', 'slug' => 'jag' ) );
+		$ttcar = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'term_id' => $term->ID(), 'taxonomy' => 'cars', 'description' => 'A fast car' ) );
+		$ttcat = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'term_id' => $term->ID(), 'taxonomy' => 'cats', 'description' => 'A large black cat that likes to swim' ) );
+		//create "csv" data for it (pretend exported)
+		$csv_data = array(
+			'Term' => array(
+				$term->model_field_array()
+			),
+			'Term_Taxonomy' => array(
+				$ttcar->model_field_array(),
+				$ttcat->model_field_array()
+			)
+		);
+		$this->assertEquals( $ttcat->get('term_id' ), $ttcar->get( 'term_id' ) );
+		//split the term in the "wp" way. Our model objet $ttcar will NOT get updated on its own
+		$new_term_id_for_car = _split_shared_term( $term->ID(), $ttcar->ID() );
+		$ttcar = EEM_Term_Taxonomy::instance()->refresh_entity_map_from_db( $ttcar->ID() );
+//		echo "updated term taxonomy:";var_dump($ttcar->model_field_array());
+		$this->assertNotEquals( $ttcat->get( 'term_id' ), $ttcar->get( 'term_id' ) );
+		//import it
+		$new_mapping = EE_Import::instance()->save_data_rows_to_db( $csv_data, false, array() );
+
+		$ttcar = EEM_Term_Taxonomy::instance()->refresh_entity_map_from_db( $ttcar->ID() );
+
+		//when it's done importing, we should have saved a term-taxonomy for the new term, not re-inserted a term-taxonomy to the old term
+		//and because it used the models, the model objects we have in scope should already be up-to-date
+		$this->assertEquals( $new_term_id_for_car, $ttcar->get( 'term_id' ) );
+
+	}
+	/**
+	 * in wp 4.1 there was no functions for term splitting. So let's add a filter
+	 * to simulate that and mostly make sure there are no fatal errors
+	 */
+	function test_save_data_array_to_db__from_this_site__term_split__in_wp_41(){
+		add_filter( 'FHEE__EE_Import__handle_split_term_ids__function_exists', '__return_false' );
+		$term = $this->new_model_obj_with_dependencies( 'Term', array( 'name' => 'Jaguar', 'slug' => 'jag' ) );
+		$ttcar = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'term_id' => $term->ID(), 'taxonomy' => 'cars', 'description' => 'A fast car' ) );
+		$ttcat = $this->new_model_obj_with_dependencies( 'Term_Taxonomy', array( 'term_id' => $term->ID(), 'taxonomy' => 'cats', 'description' => 'A large black cat that likes to swim' ) );
+		//create "csv" data for it (pretend exported)
+		$csv_data = array(
+			'Term' => array(
+				$term->model_field_array()
+			),
+			'Term_Taxonomy' => array(
+				$ttcar->model_field_array(),
+				$ttcat->model_field_array()
+			)
+		);
+		//now there should just not be any fatal errors when importing
+		EE_Import::instance()->save_data_rows_to_db( $csv_data, false, array() );
+		$this->assertTrue( true );
+	}
 	//@todo: test state which have int PKs, but should haev an unique index according to state abbrev and country
 	//@todo: test more regarding things with NO pks
 	//@todo: I suspect people will want to avoid duplicate states. This could be achieved by having the state abbrev and country ISO be a unique key
@@ -347,6 +401,144 @@ class EE_Import_Test extends EE_UnitTestCase {
 		$this->assertEmpty( EE_Import::instance()->get_total_update_errors(), isset( $notices['errors'] ) ? $notices['errors'] : '');
 		$this->assertEmpty( EE_Import::instance()->get_total_insert_errors(), isset( $notices['errors'] ) ? $notices['errors'] : '' );
 	}
+}
+//in case this is run on WP 4.1, we'd still like to be able to test this WP 4.2 feature
+if( ! function_exists( '_split_shared_term' ) ){
+	/**
+	 * Create a new term for a term_taxonomy item that currently shares its term with another term_taxonomy.
+	 *
+	 * @since 4.2.0
+	 * @access private
+	 *
+	 * @param int  $term_id          ID of the shared term.
+	 * @param int  $term_taxonomy_id ID of the term_taxonomy item to receive a new term.
+	 * @return int|WP_Error When the current term does not need to be split (or cannot be split on the current database
+	 *                      schema), `$term_id` is returned. When the term is successfully split, the new term_id is
+	 *                      returned. A `WP_Error` is returned for miscellaneous errors.
+	 */
+	function _split_shared_term( $term_id, $term_taxonomy_id ) {
+		global $wpdb;
+		// Don't try to split terms if database schema does not support shared slugs.
+		$current_db_version = get_option( 'db_version' );
+		if ( $current_db_version < 30133 ) {
+			return $term_id;
+		}
+
+		// If there are no shared term_taxonomy rows, there's nothing to do here.
+		$shared_tt_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->term_taxonomy tt WHERE tt.term_id = %d AND tt.term_taxonomy_id != %d", $term_id, $term_taxonomy_id ) );
+		if ( ! $shared_tt_count ) {
+			return $term_id;
+		}
+
+		// Pull up data about the currently shared slug, which we'll use to populate the new one.
+		$shared_term = $wpdb->get_row( $wpdb->prepare( "SELECT t.* FROM $wpdb->terms t WHERE t.term_id = %d", $term_id ) );
+
+		$new_term_data = array(
+			'name' => $shared_term->name,
+			'slug' => $shared_term->slug,
+			'term_group' => $shared_term->term_group,
+		);
+
+		if ( false === $wpdb->insert( $wpdb->terms, $new_term_data ) ) {
+			return new WP_Error( 'db_insert_error', __( 'Could not split shared term.' ), $wpdb->last_error );
+		}
+
+		$new_term_id = (int) $wpdb->insert_id;
+
+		// Update the existing term_taxonomy to point to the newly created term.
+		$wpdb->update( $wpdb->term_taxonomy,
+			array( 'term_id' => $new_term_id ),
+			array( 'term_taxonomy_id' => $term_taxonomy_id )
+		);
+
+		// Reassign child terms to the new parent.
+		$term_taxonomy = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->term_taxonomy WHERE term_taxonomy_id = %d", $term_taxonomy_id ) );
+		$children_tt_ids = $wpdb->get_col( $wpdb->prepare( "SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = %s AND parent = %d", $term_taxonomy->taxonomy, $term_id ) );
+
+		if ( ! empty( $children_tt_ids ) ) {
+			foreach ( $children_tt_ids as $child_tt_id ) {
+				$wpdb->update( $wpdb->term_taxonomy,
+					array( 'parent' => $new_term_id ),
+					array( 'term_taxonomy_id' => $child_tt_id )
+				);
+				clean_term_cache( $term_id, $term_taxonomy->taxonomy );
+			}
+		} else {
+			// If the term has no children, we must force its taxonomy cache to be rebuilt separately.
+			clean_term_cache( $new_term_id, $term_taxonomy->taxonomy );
+		}
+
+		// Clean the cache for term taxonomies formerly shared with the current term.
+		$shared_term_taxonomies = $wpdb->get_row( $wpdb->prepare( "SELECT taxonomy FROM $wpdb->term_taxonomy WHERE term_id = %d", $term_id ) );
+		if ( $shared_term_taxonomies ) {
+			foreach ( $shared_term_taxonomies as $shared_term_taxonomy ) {
+				clean_term_cache( $term_id, $shared_term_taxonomy );
+			}
+		}
+
+		// Keep a record of term_ids that have been split, keyed by old term_id. See {@see wp_get_split_term()}.
+		$split_term_data = get_option( '_split_terms', array() );
+		if ( ! isset( $split_term_data[ $term_id ] ) ) {
+			$split_term_data[ $term_id ] = array();
+		}
+
+		$split_term_data[ $term_id ][ $term_taxonomy->taxonomy ] = $new_term_id;
+
+		update_option( '_split_terms', $split_term_data );
+
+		/**
+		 * Fires after a previously shared taxonomy term is split into two separate terms.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param int    $term_id          ID of the formerly shared term.
+		 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
+		 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
+		 * @param string $taxonomy         Taxonomy for the split term.
+		 */
+		do_action( 'split_shared_term', $term_id, $new_term_id, $term_taxonomy_id, $term_taxonomy->taxonomy );
+
+		return $new_term_id;
+	}
+}
+if( ! function_exists( 'wp_get_split_terms' ) ) {
+	/**
+	 *
+	 * @param type $old_term_id
+	 * @return int
+	 */
+	function wp_get_split_terms( $old_term_id ) {
+		$split_terms = get_option( '_split_terms', array() );
+
+		$terms = array();
+		if ( isset( $split_terms[ $old_term_id ] ) ) {
+			$terms = $split_terms[ $old_term_id ];
+		}
+
+		return $terms;
+	}
+}
+if( ! function_exists( 'wp_get_split_term' ) ){
+	/**
+	 * Get the new term ID corresponding to a previously split term.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int    $old_term_id Term ID. This is the old, pre-split term ID.
+	 * @param string $taxonomy    Taxonomy that the term belongs to.
+	 * @return bool|int If a previously split term is found corresponding to the old term_id and taxonomy, the new term_id
+	 *                  will be returned. If no previously split term is found matching the parameters, returns false.
+	 */
+	function wp_get_split_term( $old_term_id, $taxonomy ) {
+		$split_terms = wp_get_split_terms( $old_term_id );
+
+		$term_id = false;
+		if ( isset( $split_terms[ $taxonomy ] ) ) {
+			$term_id = (int) $split_terms[ $taxonomy ];
+		}
+
+		return $term_id;
+}
 }
 
 // End of file EE_Import_Test.php

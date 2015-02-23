@@ -565,9 +565,29 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				//or it's just a regular value that ought to be replaced
 			}
 		}
+		//
+		if( $model instanceof EEM_Term_Taxonomy ){
+			$model_object_data = $this->_handle_split_term_ids( $model_object_data );
+		}
 		return $model_object_data;
 	}
 
+	/**
+	 * If the data was exported PRE-4.2, but then imported POST-4.2, then the term_id
+	 * this term-taxonomy refers to may be out-of-date so we need to update it.
+	 * see https://make.wordpress.org/core/2015/02/16/taxonomy-term-splitting-in-4-2-a-developer-guide/
+	 * @param type $model_object_data
+	 * @return array new model object data
+	 */
+	protected function _handle_split_term_ids( $model_object_data ){
+		if( isset( $model_object_data['term_id'] ) && isset( $model_object_data[ 'taxonomy' ]) && apply_filters( 'FHEE__EE_Import__handle_split_term_ids__function_exists', function_exists( 'wp_get_split_term' ), $model_object_data ) ) {
+			$new_term_id = wp_get_split_term( $model_object_data[ 'term_id' ], $model_object_data[ 'taxonomy' ] );
+			if( $new_term_id ){
+				$model_object_data[ 'term_id' ] = $new_term_id;
+			}
+		}
+		return $model_object_data;
+	}
 	/**
 	 * Given the object's ID and its model's name, find it int he mapping data,
 	 * bearing in mind where it came from
