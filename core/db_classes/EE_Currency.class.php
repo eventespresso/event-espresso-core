@@ -20,13 +20,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Currency
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_Currency extends EE_Base_Class{
-	
+
 		/** Currency COde @var CUR_code*/ protected $_CUR_code = NULL;
 		/** Currency Name Singular @var CUR_single*/ protected $_CUR_single = NULL;
 		/** Currency Name Plural @var CUR_plural*/ protected $_CUR_plural = NULL;
@@ -35,28 +35,29 @@ class EE_Currency extends EE_Base_Class{
 		/** Active? @var CUR_active*/ protected $_CUR_active = NULL;
 		protected $_Payment_Method;
 	/**
-	 * 
-	 * @param type $props_n_values
-	 * @return EE_Answer
+	 *
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
-//		d( $has_object );
-		return $has_object ? $has_object : new self( $props_n_values);
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
+
+
 	/**
-	 * 
-	 * @param type $props_n_values
-	 * @return EE_Answer
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		$classname = __CLASS__;
-//		$mapped_object = parent::_get_object_from_entity_mapper($props_n_values, $classname);
-//		d( $mapped_object );
-//		return $mapped_object ? $mapped_object : new self( $props_n_values, TRUE );
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 	/**
 	 * Gets code

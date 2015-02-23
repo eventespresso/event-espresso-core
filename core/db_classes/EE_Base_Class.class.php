@@ -102,16 +102,15 @@ abstract class EE_Base_Class{
 	 * @param array 		$fieldValues where each key is a field (ie, array key in the 2nd layer of the model's _fields array, (eg, EVT_ID, TXN_amount, QST_name, etc) and values are their values
 	 * @param boolean 	$bydb 			a flag for setting if the class is instantiated by the corresponding db model or not.
 	 * @param string 		$timezone 	indicate what timezone you want any datetime fields to be in when instantiating a EE_Base_Class object.
+	 * @param array                      $date_formats An array of date formats to set on construct where first
+	 *                                                 		 value is the date_format and second value is the time
+	 *                                                 		 format.
 	 * @throws EE_Error
 	 * @return \EE_Base_Class
 	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ){
+	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '', $date_formats = array() ){
 
 		$className=get_class($this);
-		//set default formats for date and time
-		$this->_dt_frmt = get_option( 'date_format' );
-		$this->_tm_frmt = get_option( 'time_format' );
-
 
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->get_model();
@@ -128,6 +127,15 @@ abstract class EE_Base_Class{
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		$this->_timezone = $timezone;
+
+		if ( ! empty( $date_formats ) && is_array( $date_formats ) ) {
+			$this->_dt_frmt = $date_formats[0];
+			$this->_tm_frmt = $date_formats[1];
+		} else {
+			//set default formats for date and time
+			$this->_dt_frmt = get_option( 'date_format' );
+			$this->_tm_frmt = get_option( 'time_format' );
+		}
 
 		//if db model is instantiating
 		if( $bydb ){
