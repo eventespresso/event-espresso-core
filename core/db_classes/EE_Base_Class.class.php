@@ -439,6 +439,16 @@ abstract class EE_Base_Class{
 
 		$field_obj = $this->get_model()->field_settings_for($fieldname);
 		if ( $field_obj instanceof EE_Model_Field_Base ) {
+			/**
+			 * maybe this is EE_Datetime_Field.  If so we need to make sure timezone and
+			 * formats are correct.
+			 */
+			if ( $field_obj instanceof EE_Datetime_Field ) {
+				$field_obj->set_timezone( $this->_timezone );
+				$field_obj->set_date_format( $this->_dt_frmt );
+				$field_obj->set_time_format( $this->_tm_frmt );
+			}
+
 			if( ! isset($this->_fields[$fieldname])){
 				$this->_fields[$fieldname] = NULL;
 			}
@@ -775,21 +785,22 @@ abstract class EE_Base_Class{
 		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt :  $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
 
-
 		//validate field for datetime and returns field settings if valid.
 		$field = $this->_get_dtt_field_settings( $field_name );
 
-		if ( $dt_frmt !== NULL ) {
+		//clear cached property if either formats are not null.
+		if( $dt_frmt !== null || $tm_frmt !== null ) {
 			$this->_clear_cached_property( $field_name, $date_or_time );
+			//reset format properties because they are used in get()
+			$this->_dt_frmt = $in_dt_frmt;
+			$this->_tm_frmt = $in_tm_frmt;
 		}
+
 		if ( $echo )
 			$field->set_pretty_date_format( $in_dt_frmt );
 		else
 			$field->set_date_format( $in_dt_frmt );
 
-		if ( $tm_frmt !== NULL ) {
-			$this->_clear_cached_property( $field_name, $date_or_time );
-		}
 		if ( $echo )
 			$field->set_pretty_time_format( $in_tm_frmt );
 		else
