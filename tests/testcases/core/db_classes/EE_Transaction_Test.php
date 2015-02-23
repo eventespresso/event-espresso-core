@@ -55,6 +55,36 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 		$pm = $t->payment_method();
 		$this->assertInstanceOf('EE_Payment_Method', $pm);
 	}
+
+
+	/**
+	 * This tests the datetime method on EE_Transaction
+	 * @since 4.6
+	 */
+	public function test_datetime() {
+		$now = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		$format_to_use = get_option( 'date_format' ) . ' ' . 'H:i:s';
+		$t = $this->factory->transaction->create();
+		$t->set_timezone( 'America/Vancouver' );
+
+		/**
+		 * just to standardize the two times because unixtime is so precise, we'll use our expected
+		 * time to set the time on the transaction.  This still verifies the functionality of the class.
+		 * Because time comparisons will be based on seconds (unixtime), let's ensure we use a
+		 * format with seconds as well
+		 */
+		$t->set_time_format( 'H:i:s' );
+		$t->set( 'TXN_timestamp', $now->format( $t->get_format( $format_to_use ) ) );
+
+		//test getting pretty (should return formatted item in the correct timezone)
+		$this->assertEquals( $now->format( $format_to_use ) . '<span class="ee_dtt_timezone_string">(PST)</span>', $t->datetime( true ), 'datetime( true ) test' );
+
+		//test getting raw
+		$this->assertEquals( $now->format( 'U' ), $t->datetime( false, true ), 'datetime( false, true) test' );
+
+		//test getting unixtime with offset
+		$this->assertEquals( $now->format( $format_to_use ), $t->datetime(), 'datetime() test' );
+	}
 }
 
 // End of file EE_Transaction_Test.php
