@@ -285,11 +285,12 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	/**
 	 *    datetime
 	 *
-	 *    Returns the transaction datetime as:
-	 * 			- unix timestamp format including the UTC (timezone) offset (default)
-	 * 			- formatted date string including the UTC (timezone) offset ($format = TRUE ($gmt has no affect with this option))
-	 * 			- unix timestamp format in UTC+0 (GMT) ($gmt = TRUE)
-	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *    Returns the transaction datetime as either:
+	 * 			- unix timestamp format ($format = false, $gmt = true)
+	 * 			- formatted date string including the UTC (timezone) offset ($format = true ($gmt
+	 * 			  has no affect with this option)), this also may include a timezone abbreviation if the
+	 * 			  set timezone in this class differs from what the timezone is on the blog.
+	 * 			- formatted date string including the UTC (timezone) offset (default).
 	 *
 	 * @access 	public
 	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string
