@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Datetime_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/db_classes
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
-	
+
 	function test_increase_sold(){
 		$d = EE_Datetime::new_instance();
 		$this->assertEquals($d->get('DTT_sold'),0);
@@ -42,14 +42,14 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertEquals($id,$d->ID());
 	}
 	function test_start(){
-		$start_time = 123456;//some random time
-		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>$start_time));
-		$this->assertEquals($start_time,$d->start());
+		$start_time = new DateTime("now");
+		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>$start_time->format('U')));
+		$this->assertEquals($start_time->format('U'),$d->start());
 	}
 	function test_end(){
-		$end_time = 234567;
-		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>$end_time));
-		$this->assertEquals($end_time,$d->end());
+		$end_time =new DateTime("now");
+		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>$end_time->format('U')));
+		$this->assertEquals($end_time->format('U'),$d->end());
 	}
 	function test_reg_limit(){
 		$d = EE_Datetime::new_instance(array('DTT_reg_limit'=>10));
@@ -90,12 +90,16 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertFalse($d->is_expired());
 	}
 	function test_datetime_display(){
-		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>1234567, 'DTT_EVT_end'=>23456781));
-		$this->assertEquals('Jan 15, 1970 6:56 am - Sep 29, 1970 11:46 am',$d->get_dtt_display_name());
+		$sdate = new DateTime( "now" );
+		$edate = new DateTime( "now +2days" );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$sdate->format('U'), 'DTT_EVT_end'=>$edate->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $sdate->format('M j\, g:i a') . ' - ' . $edate->format('M j\, g:i a Y'),$d->get_dtt_display_name());
 		$this->assertEquals('monkey time',$d->get_dtt_display_name(true));
 	}
-	
-	
+
+
 }
 
 // End of file EE_Datetime_Test.php

@@ -146,9 +146,10 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 			foreach( $timestrings['time'] as $time_format ) {
 				$dtt = $datetime . ' ' . $this->_defaultDTT->format( $time_format );
 				$this->_datetime_field->set_time_format( $time_format );
-				$timestamp = $this->_datetime_field->prepare_for_set( $dtt );
+				$dateobject = $this->_datetime_field->prepare_for_set( $dtt );
+				$this->assertInstanceOf( 'DateTime', $dateobject );
 				//test expected value
-				$this->assertEquals( $this->_expected_unixtimestamp, $timestamp );
+				$this->assertEquals( $this->_expected_unixtimestamp, $dateobject->format( 'U' ) );
 			}
 		}
 	}
@@ -172,8 +173,8 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		//loop through timestrings and run tests
 		foreach ( $timestrings['time'] as $format ) {
 			$this->_datetime_field->set_time_format( $format );
-			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_time( $DTToffset->format( $format ), $this->_expected_unixtimestamp );
-			$this->assertEquals( $expected, $new_time_string, sprintf( 'Time Format is %s. Date format is %s.', $format, $this->_datetime_field->get_date_format() ) );
+			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_time( $DTToffset->format( $format ), $this->_defaultDTT );
+			$this->assertEquals( $expected, $new_time_string->format('U'), sprintf( 'Time Format is %s. Date format is %s.', $format, $this->_datetime_field->get_date_format() ) );
 		}
 	}
 
@@ -197,8 +198,8 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		//loop through timestrings and run tests
 		foreach ( $timestrings['date'] as $format ) {
 			$this->_datetime_field->set_date_format( $format );
-			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_date( $DTToffset->format( $format ), $this->_expected_unixtimestamp );
-			$this->assertEquals( $expected, $new_time_string,  sprintf( 'Format is %s', $format ) );
+			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_date( $DTToffset->format( $format ), $this->_defaultDTT );
+			$this->assertEquals( $expected, $new_time_string->format('U'),  sprintf( 'Format is %s', $format ) );
 		}
 	}
 
@@ -221,17 +222,17 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 				//test date_time_output as time.
 				$this->_datetime_field->set_date_time_output( 'time' );
-				$output = $this->_datetime_field->prepare_for_get( $this->_expected_unixtimestamp );
+				$output = $this->_datetime_field->prepare_for_get( $this->_defaultDTT );
 				$this->assertEquals( $output, $this->_defaultDTT->format( $timeformat ), sprintf( 'Date Format: %s', 'Time Format: %s', $dateformat, $timeformat ) );
 
 				//test date_time_output as date.
 				$this->_datetime_field->set_date_time_output( 'date' );
-				$output = $this->_datetime_field->prepare_for_get( $this->_expected_unixtimestamp );
+				$output = $this->_datetime_field->prepare_for_get( $this->_defaultDTT );
 				$this->assertEquals( $output, $this->_defaultDTT->format( $dateformat ), sprintf( 'Date Format: %s', 'Time Format: %s', $dateformat, $timeformat ) );
 
 				//test date_time_output as date and time.
 				$this->_datetime_field->set_date_time_output( 'all' );
-				$output = $this->_datetime_field->prepare_for_get( $this->_expected_unixtimestamp );
+				$output = $this->_datetime_field->prepare_for_get( $this->_defaultDTT );
 				$this->assertEquals( $output, $this->_defaultDTT->format( $dateformat . ' ' . $timeformat ), sprintf( 'Date Format: %s', 'Time Format: %s', $dateformat, $timeformat ) );
 			}
 		}
@@ -256,7 +257,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$this->assertNull( $this->_datetime_field->prepare_for_use_in_db('') );
 
 		//test getting the correct value for the set UTC timestamp
-		$this->assertEquals( $this->_expected_mysqltimestamp, $this->_datetime_field->prepare_for_use_in_db( $this->_expected_unixtimestamp ) );
+		$this->assertEquals( $this->_expected_mysqltimestamp, $this->_datetime_field->prepare_for_use_in_db( $this->_defaultDTT ) );
 	}
 
 
@@ -270,15 +271,15 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$this->_set_dtt_field_object();
 		$timestrings = $this->_get_timestrings_for_testing();
 
-		//test if not nullable and datestring is empty, then we should get back unixtimestamp utc.
-		$this->assertEquals( time(), $this->_datetime_field->prepare_for_set_from_db('') );
+		//test if not nullable and datestring is empty, then we should get back datetime object.
+		$this->assertInstanceOf( 'DateTime', $this->_datetime_field->prepare_for_set_from_db('') );
 
 		//test if nullable and datestring is empty, then we should get null.
 		$this->_datetime_field->set_nullable();
 		$this->assertNull( $this->_datetime_field->prepare_for_set_from_db('') );
 
 		//test getting the correct value for the set UTC mysql timestamp
-		$this->assertEquals( $this->_expected_unixtimestamp, $this->_datetime_field->prepare_for_set_from_db( $this->_expected_mysqltimestamp ) );
+		$this->assertEquals( $this->_expected_unixtimestamp, $this->_datetime_field->prepare_for_set_from_db( $this->_expected_mysqltimestamp )->format('U') );
 	}
 
 
