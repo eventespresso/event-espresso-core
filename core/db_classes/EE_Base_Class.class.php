@@ -340,6 +340,21 @@ abstract class EE_Base_Class{
 
 
 
+	/**
+	 * This returns the current internal set format for the date and time formats.
+	 *
+	 * @param bool $full   if true (default), then return the full format.  Otherwise will return an array where the
+	 *                     		 first value is the date format and the second value is the time format.
+	 *
+	 * @return mixed string|array
+	 */
+	public function get_format( $full = true ) {
+		return $full ? $this->_dt_frmt . ' ' . $this->_tm_frmt : array( $this->_dt_frmt, $this->_tm_frmt );
+	}
+
+
+
+
 
 	/**
 	 * cache
