@@ -279,11 +279,9 @@ abstract class EE_Base_Class{
 	public function set_timezone( $timezone = '' ) {
 		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
 
-		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		// if timezone is STILL empty then let's set the timezone_string using the WP GMT offset option
 		if ( empty( $timezone ) ) {
-			//let's get a the WordPress UTC offset
-			$offset = get_option('gmt_offset');
-			$timezone = EE_Datetime_Field::timezone_convert_to_string_from_offset( $offset );
+			$timezone = EE_Datetime_Field::get_timezone_string_from_gmt_offset();
 		}
 
 		EE_Datetime_Field::validate_timezone( $timezone ); //just running validation on the timezone.
