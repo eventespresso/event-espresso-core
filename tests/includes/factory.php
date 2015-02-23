@@ -303,7 +303,23 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['EVT_ID'] );
 		}
 
-		$dtt = EE_Datetime::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//dateformats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$dtt = EE_Datetime::new_instance( $args, $timezone, $formats );
 		$dttID = $dtt->save();
 		$dtt = $this->_maybe_chained( $dtt, $args );
 		return $dttID ? $dtt : false;
@@ -511,7 +527,23 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['DTT_ID'] );
 		}
 
-		$tkt = EE_ticket::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$tkt = EE_Ticket::new_instance( $args, $timezone, $formats );
 		$tktID = $tkt->save();
 		$tkt = $this->_maybe_chained( $tkt, $args );
 		return $tktID ? $tkt : false;
