@@ -546,6 +546,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				$DateTime = new DateTime( 'now', $this->_DateTimeZone );
 				// NOW apply the timestamp which SHOULD be in the same timezone as our DateTimeZone object
 				$DateTime->setTimestamp( $date_string );
+				return $DateTime;
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue
 			 }
