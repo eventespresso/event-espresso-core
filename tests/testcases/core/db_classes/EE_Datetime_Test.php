@@ -100,6 +100,62 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	}
 
 
+
+
+	/**
+	 * This tests the ticket_types_available_for_purchase method.
+	 * @since 4.6.0
+	 */
+	public function test_ticket_types_available_for_purchase() {
+		//setup some dates we'll use for testing with.
+		$timezone = new DateTimeZone( 'America/Toronto' );
+		$upcoming_start_date = new DateTime( "now +2days", $timezone );
+		$past_start_date = new DateTime( "now -2days", $timezone );
+		$current_end_date = new DateTime( "now +2hours", $timezone );
+		$current = new DateTime( "now", $timezone );
+		$formats = array( 'Y-m-d',  'H:i:s' );
+		$full_format = implode( ' ', $formats );
+
+		//create some tickets
+		$tickets = array(
+			'expired_ticket' => array( 'TKT_start_date' => $past_start_date->format($full_format), 'TKT_end_date' => $past_start_date->format($full_format), 'timezone' => 'America/Toronto', 'formats' =>$formats ),
+			'upcoming_ticket' => array( 'TKT_start_date' => $past_start_date->format( $full_format ), 'TKT_end_date' => $upcoming_start_date->format( $full_format ), 'timezone' => 'America/Toronto', 'formats' => $formats )
+			);
+
+		$datetimes = array(
+			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
+			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
+			);
+
+		//assign tickets to all datetimes
+		foreach ( $datetimes as $datetime ) {
+			foreach( $tickets as $ticket_args ) {
+				$tkt = $this->factory->ticket->create ( $ticket_args );
+				$datetime->_add_relation_to( $tkt, 'Ticket' );
+				$datetime->save();
+			}
+		}
+
+		//okay NOW we have some objects for testing with.
+
+		//test expired_datetime
+		$this->assertEmpty( $datetimes['expired_datetime']->ticket_types_available_for_purchase() );
+
+		//test upcoming datetime
+		$tickets = $datetimes['upcoming_datetime']->ticket_types_available_for_purchase();
+		$this->assertEquals( 1, count( $tickets ) );
+		$this->assertInstanceOf( 'EE_Ticket', reset( $tickets ) );
+
+		//test active datetime
+		$this->assertEmpty( $datetimes['active_datetime']->ticket_types_available_for_purchase() );
+
+		//test sold out datetime
+		$this->assertEmpty( $datetimes['sold_out_datetime']->ticket_types_available_for_purchase() );
+	}
+
+
 }
 
 // End of file EE_Datetime_Test.php
