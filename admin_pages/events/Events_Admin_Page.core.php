@@ -922,9 +922,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
-				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $evtobj->get_timezone() ), FALSE, FALSE );
+				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
 				$DTM->set_date_format( $incoming_date_formats[0] );
 				$DTM->set_time_format( $incoming_date_formats[1] );
+				$DTM->set_timezone( $evtobj->get_timezone() );
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
@@ -1043,11 +1044,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
-				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values, $evtobj->get_timezone() ), FALSE, FALSE );
+				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
 
 				//need to reset values to properly account for the date formats
 				$TKT->set_date_format( $incoming_date_formats[0] );
 				$TKT->set_time_format( $incoming_date_formats[1] );
+				$TKT->set_timezone( $evtobj->get_timezone() );
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {

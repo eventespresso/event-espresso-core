@@ -212,6 +212,18 @@ abstract class EE_Base_Class{
 			$holder_of_value = $field_obj->prepare_for_set($field_value);
 			if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 				$this->_fields[$field_name] = $field_obj->get_default_value();
+
+				/**
+				 * To save having to refactor all the models, if a default value is used for a
+				 * EE_Datetime_Field, and that value is not null nor is it a DateTime
+				 * object.  Then let's do a set again to ensure that it becomes a DateTime
+				 * object.
+				 * @since 4.6.10+
+				 */
+				if ( $field_obj instanceof EE_Datetime_Field && ! is_null( $this->_fields[$field_name] ) && ! $this->_fields[$field_name] instanceof DateTime ) {
+					is_null( $this->_fields[$field_name] ) ? $this->set( $field_name, current_time('timestamp') ) : $this->set( $field_name, $this->_fields[$field_name] );
+				}
+
 			}else{
 				$this->_fields[$field_name] = $holder_of_value;
 			}
@@ -297,6 +309,8 @@ abstract class EE_Base_Class{
 	 */
 	public function set_date_format( $format ) {
 		$this->_dt_frmt = $format;
+		//clear cached_properties becuase they won't be relevant now.
+		$this->_clear_cached_properties();
 	}
 
 
@@ -311,44 +325,8 @@ abstract class EE_Base_Class{
 	 */
 	public function set_time_format( $format ) {
 		$this->_tm_frmt = $format;
-	}
-
-
-
-
-	/**
-	 * This gets the strtotime value of a given field.  Use this instead of php native strtotime
-	 * because we want to convert the date string from a possibly incompatible format first
-	 * before calling strtotime.
-	 *
-	 * From the PHP strtotime() function documentation:
-	 * "Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator
-	 * between the various components: if the separator is a slash (/), then the American m/d/
-	 * y is assumed; whereas if the separator is a dash (-) or a dot (.), then the European d-m-
-	 * y format is assumed."
-	 *
-	 * @param string $field_name   The field name of the field we're getting the strtotime
-	 *                             		   value from.
-	 * @return string
-	 */
-	public function get_strtotime( $field_name ) {
-
-		//now let's use strtotime to get the timestamp (note for now we're not caching the values on this object)
-		$field = $this->_get_dtt_field_settings( $field_name );
-
-		//temporarily cached what was set so that it can be returned to its value.
-		$orig_dt_format = $field->get_date_format();
-
-		//setting to a format we KNOW will work.
-		$field->set_date_format( 'Y-m-d' );
-		$field->set_date_time_output();
-		$dtt = $field->prepare_for_get( $this->get_raw( $field_name ) );
-
-		//restore what was set on the field.
-		$field->set_date_format( $orig_dt_format );
-
-		//now we can do the strtotime on the $dtt
-		return strtotime( $dtt );
+		//clear cached_properties becuase they won't be relevant now.
+		$this->_clear_cached_properties();
 	}
 
 
@@ -708,9 +686,34 @@ abstract class EE_Base_Class{
 	 * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
 	 */
 	public function get_raw($field_name) {
-		$this->get_model()->field_settings_for($field_name);
-		return $this->_fields[$field_name];
+		$field_settings = $this->get_model()->field_settings_for($field_name);
+		return $field_settings instanceof EE_Datetime_Field && $this->_fields[$field_name] instanceof DateTime ? $this->_fields[$field_name]->format('U') : $this->_fields[$field_name];
 
+	}
+
+
+
+	/**
+	 * This is used to return the internal DateTime object used for a field that is a
+	 * EE_Datetime_Field.
+	 *
+	 * @param string $field_name The field name retrieving the DateTime object.
+	 *
+	 * @return mixed null | false | DateTime  If the requested field is NOT a EE_Datetime_Field then
+	 *                    				     an error is set and false returned.  If the field IS an
+	 *                    				     EE_Datetime_Field and but the field value is null, then
+	 *                    				     just null is returned (because that indicates that likely
+	 *                    				     this field is nullable).
+	 */
+	public function get_raw_date( $field_name ) {
+		$field_settings = $this->get_model()->field_settings_for( $field_name );
+
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			EE_Error::add_error( sprintf( __('The field %s is not an EE_Datetime_Field field.  There is no DateTime object stored on this field type.', 'event_espresso' ), $field_name ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+
+		return $this->_fields[$field_name];
 	}
 
 
@@ -891,7 +894,7 @@ abstract class EE_Base_Class{
 	 */
 	public function get_i18n_datetime( $field_name, $format = NULL ) {
 		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
-		return date_i18n( $format, $this->get_strtotime( $field_name ) );
+		return date_i18n( $format, $this->get_raw( $field_name ) );
 	}
 
 
