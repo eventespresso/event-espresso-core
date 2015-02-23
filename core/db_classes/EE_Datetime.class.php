@@ -744,7 +744,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 			return array();
 		}
 		if ( empty( $query_params ) ) {
-			$query_params = array( array( 'TKT_start_date' => array( '<=', current_time( 'mysql', true ) ), 'TKT_end_date' => array( '>=', current_time( 'mysql', true ) ), 'TKT_deleted' => FALSE ) );
+			$query_params = array( array( 'TKT_start_date' => array( '<=', current_time( 'timestamp') ), 'TKT_end_date' => array( '>=', current_time( 'timestamp' ) ), 'TKT_deleted' => FALSE ) );
 		}
 		return $this->tickets( $query_params );
 	}

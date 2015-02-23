@@ -113,7 +113,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$past_start_date = new DateTime( "now -2days", $timezone );
 		$current_end_date = new DateTime( "now +2hours", $timezone );
 		$current = new DateTime( "now", $timezone );
-		$formats = array( 'Y-m-d',  'H:i:s' );
+		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 
 		//create some tickets
@@ -135,6 +135,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 				$tkt = $this->factory->ticket->create ( $ticket_args );
 				$datetime->_add_relation_to( $tkt, 'Ticket' );
 				$datetime->save();
+				$dtt_id = $datetime;
 			}
 		}
 
@@ -149,7 +150,9 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Ticket', reset( $tickets ) );
 
 		//test active datetime
-		$this->assertEmpty( $datetimes['active_datetime']->ticket_types_available_for_purchase() );
+		$tickets = $datetimes['active_datetime']->ticket_types_available_for_purchase();
+		$this->assertEquals( 1, count( $tickets ) );
+		$this->assertInstanceOf( 'EE_Ticket', reset( $tickets ) );
 
 		//test sold out datetime
 		$this->assertEmpty( $datetimes['sold_out_datetime']->ticket_types_available_for_purchase() );
