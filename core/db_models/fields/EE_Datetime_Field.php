@@ -186,10 +186,15 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 *
 	 * @access public
 	 * @param string $format a new date format (corresponding to formats accepted by PHP date() function)
+	 * @param bool   $pretty Whether to set pretty format or not.
 	 * @return void
 	 */
-	public function set_date_format( $format ) {
-		$this->_date_format = $format;
+	public function set_date_format( $format, $pretty = false ) {
+		if ( $pretty ) {
+			$this->_pretty_date_format = $format;
+		} else {
+			$this->_date_format = $format;
+		}
 	}
 
 
@@ -197,10 +202,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	/**
 	 * return the $_date_format property value.
 	 *
+	 * @param bool   $pretty Whether to get pretty format or not.
 	 * @return string
 	 */
-	public function get_date_format() {
-		return $this->_date_format;
+	public function get_date_format( $pretty = false ) {
+		return $pretty ? $this->_pretty_date_format : $this->_date_format;
 	}
 
 
@@ -211,10 +217,15 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 *
 	 * @access public
 	 * @param string $format a new time format (corresponding to formats accepted by PHP date() function)
+	 * @param bool   $pretty Whether to set pretty format or not.
 	 * @return void
 	 */
-	public function set_time_format( $format ) {
-		$this->_time_format = $format;
+	public function set_time_format( $format, $pretty = false ) {
+		if ( $pretty ) {
+			$this->_pretty_time_format = $format;
+		} else {
+			$this->_time_format = $format;
+		}
 	}
 
 
@@ -222,10 +233,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	/**
 	 * return the $_time_format property value.
 	 *
+	 * @param bool   $pretty Whether to get pretty format or not.
 	 * @return string
 	 */
-	public function get_time_format() {
-		return $this->_time_format;
+	public function get_time_format( $pretty = false ) {
+		return $pretty ? $this->_pretty_time_format : $this->_time_format;
 	}
 
 

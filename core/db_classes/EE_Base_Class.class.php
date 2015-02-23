@@ -460,8 +460,8 @@ abstract class EE_Base_Class{
 			 */
 			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
-				$field_obj->set_date_format( $this->_dt_frmt );
-				$field_obj->set_time_format( $this->_tm_frmt );
+				$field_obj->set_date_format( $this->_dt_frmt, $pretty );
+				$field_obj->set_time_format( $this->_tm_frmt, $pretty );
 			}
 
 			if( ! isset($this->_fields[$fieldname])){
