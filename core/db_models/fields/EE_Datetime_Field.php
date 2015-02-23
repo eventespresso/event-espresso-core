@@ -542,11 +542,16 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		 * The pattern we're looking for is if only the characters 0-9 are found and there are only
 		 * 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 );
 		 */
-		preg_match( '/[0-9]{10,}/', $date_string, $matches );
-
-		if ( ! empty( $matches ) ) {
+		if ( preg_match( '/[0-9]{10,}/', $date_string ) ) {
 			try {
-			 	return new DateTime( '@' . $date_string );
+				/**
+				 * php DateTime() ignores incoming timezone when the value is a unix
+				 * timestamp.  In other words it does not consider the incoming timestamp
+				 * as having an offset.  So, for backward compat, we need to first set the
+				 * time to a non-unix format and then include the timezone.
+				 *
+				 */
+				return new DateTime( date( 'Y-m-d H:i:s', $date_string), new DateTimeZone( $this->_timezone ) );
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue
 			 }
