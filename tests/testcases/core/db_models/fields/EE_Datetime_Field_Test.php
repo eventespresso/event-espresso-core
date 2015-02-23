@@ -119,9 +119,9 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 * @since 4.6
 	 */
 	public function test_get_UTC_DateTimeZone() {
-		$utcTz = EE_Datetime_Field_Mock::get_UTC_DateTimeZone();
-		$this->assertInstanceOf( 'DateTimeZone',$utcTz );
-
+		$this->_set_dtt_field_object();
+		$utcTz = $this->_datetime_field->get_UTC_DateTimeZone();
+		$this->assertInstanceOf( 'DateTimeZone', $utcTz );
 		//should be in utc!
 		$this->assertEquals( 'UTC', $utcTz->getName() );
 	}
