@@ -232,9 +232,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( $gmt_offset !== '' ) {
 			// convert GMT offset to seconds
 			$gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
-			// although we don't know the TZ abbreviation, we know the UTC offset,
-			// and can just use the daylight savings time value for the server
-			$timezone_string = timezone_name_from_abbr( null, $gmt_offset, date( 'I' ) );
+			// although we don't know the TZ abbreviation, we know the UTC offset
+			$timezone_string = timezone_name_from_abbr( null, $gmt_offset );
 		}
 		return $timezone_string;
 	}
