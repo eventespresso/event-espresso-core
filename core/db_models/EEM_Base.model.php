@@ -692,6 +692,24 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * This returns the date formats set for the given field name.
+	 *
+	 * @return array formats in an array with the date format first, and the time format last.
+	 */
+	public function get_formats_for( $field_name, $pretty = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then return empty array
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			return array();
+		}
+
+		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
+	}
+
+
+
+	/**
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
 	 * @return EE_Table_Base[]
 	 */
@@ -2136,6 +2154,7 @@ abstract class EEM_Base extends EE_Base{
 				);
 			}
 		}
+
 		//check if it's a custom selection
 		elseif(array_key_exists($query_param,$this->_custom_selections)){
 			return;
