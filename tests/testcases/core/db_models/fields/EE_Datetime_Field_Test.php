@@ -64,12 +64,14 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	/**
 	 * This returns a common set of time strings for testing indexed by format.
-	 *  @param string $date_offset_test This is the offset used in offset tests. It should be included as
-	 *                                  	          an accepted DateInterval interval_spec value (@see http://
-	 *                                  	          php.net/manual/en/dateinterval.construct.php)
-	 *  @param string $time_offset_test This works the same as the $date_offset_test except will be
-	 *                                  	          applied for time offsets.
-	 *  @since
+	 *
+	 * @param string $date_offset_test This is the offset used in offset tests.
+	 *     It should be included as an accepted DateInterval interval_spec
+	 *     value (@see http:// php.net/manual/en/dateinterval.construct.php)
+	 * @param string $time_offset_test This works the same as the
+	 *     $date_offset_test except will be applied for time offsets.
+	 * @since
+	 * @return array
 	 */
 	protected function _get_timestrings_for_testing() {
 		//set our expected properties
