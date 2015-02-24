@@ -306,8 +306,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$time_end = ' 23:59:59';
 		$_where['REG_date']= array('BETWEEN',
 			array(
-				strtotime($current_date . $time_start),
-				strtotime($current_date . $time_end)
+				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_start, 'Y-m-d H:i:s' ),
+				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_end, 'Y-m-d H:i:s' )
 		));
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}

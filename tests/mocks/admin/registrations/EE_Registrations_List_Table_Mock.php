@@ -31,4 +31,8 @@ class EE_Registrations_List_Table_Mock extends EE_Registrations_List_Table {
 	public function total_registrations_this_month() {
 		return $this->_total_registrations_this_month();
 	}
+
+	public function total_registrations_today() {
+		return $this->_total_registrations_today();
+	}
 }
