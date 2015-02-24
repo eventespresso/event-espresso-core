@@ -28,6 +28,12 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 
 	/**
+	 * @var EE_UnitTest_Factory_For_Venue
+	 */
+	public $venue;
+
+
+	/**
 	 * @var EE_UnitTest_Factory_For_Datetime
 	 */
 	public $datetime;
