@@ -288,7 +288,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	/**
-	 * This loads the various admin page mock files requred for tests.
+	 * This loads the various admin page mock files required for tests.
 	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
 	 * @since 4.6.0
 	 */
@@ -304,9 +304,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+	/**
+	 * @param array $ModelsMocks array of Model class names like "EEM_Event"
+	 */
+	public function loadModelsMocks( $ModelsMocks = array() ) {
+		foreach ( $ModelsMocks as $ModelsMock ) {
+			if ( is_readable( EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php' ) ) {
+				require_once EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php';
+			}
+		}
+	}
 
-	public function loadModelsMocks() {
-		require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/EE_Datetime_Field_Mock.php';
+
+	/**
+	 * @param array $ModelFieldMocks array of Model Field class names like "EE_Datetime_Field"
+	 */
+	public function loadModelFieldMocks( $ModelFieldMocks = array() ) {
+		foreach ( $ModelFieldMocks as $ModelFieldMock ) {
+			if ( is_readable( EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php' ) ) {
+				require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php';
+			}
+		}
 	}
 
 
