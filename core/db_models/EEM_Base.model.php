@@ -734,12 +734,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
 	 */
 	public function current_time_for_query( $field_name, $timestamp = false ) {
-		$field_settings = $this->field_settings_for( $field_name );
-
-		//if not a valid EE_Datetime_Field then throw error
-		if ( ! $field_settings instanceof EE_Datetime_Field ) {
-			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
-		}
+		$formats = $this->get_formats_for( $field_name );
 
 		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
 
@@ -749,7 +744,40 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		//not returning timestamp, so return formatted string in timezone.
-		return $DateTime->format( $field_settings->get_date_format() . ' ' . $field_settings->get_time_format() );
+		return $DateTime->format( implode( ' ', $formats) );
+	}
+
+
+
+
+
+	/**
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings for the model are.
+	 *
+	 * @param string $field_name The field being setup.
+	 * @param string $timestring   The date timestring being used.
+	 * @param string $incoming_format        The format for the time string.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for the blog.  If this is not
+	 *                           		the case, then it can be specified here.
+	 */
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+		$formats = $this->get_formats_for( $field_name );
+		$full_format = implode( ' ', $formats );
+
+		//load EEH_DTT_Helper
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$current_timezone = EEH_DTT_Helper::get_timezone();
+
+		//first let's do comparisons and see if we even need to convert
+		if ( $current_timezone == $this->_timezone && $full_format == $incoming_format ) {
+			return $timestring;
+		}
+
+		//if made it here then that means conversion is necessary.
+		$incomingDateTime = date_create_from_format( $incoming_format, new DateTimeZone( $timezone ) );
+
+		//return converted string
+		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
 	}
 
 
