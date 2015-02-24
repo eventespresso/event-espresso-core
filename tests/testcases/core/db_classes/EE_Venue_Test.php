@@ -27,11 +27,11 @@ class EE_Venue_Test extends EE_UnitTestCase{
 	public function test_events() {
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$upcoming_start_date = new DateTime( "now +2days", $timezone );
-		$past_start_date = new DateTime( "now -2days", $timezone );
+		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
+		$past_start_date = new DateTime( "now -5days", $timezone );
 		$current_end_date = new DateTime( "now +2hours", $timezone );
 		$current = new DateTime( "now", $timezone );
-		$formats = array( 'Y-m-d',  'H:i:s' );
+		$formats = array( 'd/m Y',  'h:i:s a' );
 		$full_format = implode( ' ', $formats );
 
 		//setup some datetimes for event testing.
@@ -43,38 +43,28 @@ class EE_Venue_Test extends EE_UnitTestCase{
 			);
 
 
-		$venues = array();
-		//assign events to the datetimes and then the events to a venue.
+		$venue = $this->factory->venue->create();
+		//assign events to the datetimes and then the events to the venue.
 		foreach ( $datetimes as $type => $datetime ) {
 			$event = $this->factory->event->create();
 			$event->set_timezone( 'America/Toronto' );
 			$event->set('status', 'publish');
 			$event->_add_relation_to( $datetime, 'Datetime' );
 			$event->save();
-			$venues[$type] = $this->factory->venue->create();
-			$venues[$type]->_add_relation_to($event, 'Event');
-			$venues[$type]->save();
+			$venue->_add_relation_to($event, 'Event');
+			$venue->save();
 		}
 
-		//test expired event upcoming false, and upcoming true
-		$vnus = $venues['expired_datetime']->events();
-		$this->assertEquals( 1, count($vnus) );
-		$this->assertInstanceOf( 'EE_Event', reset($vnus) );
-		$this->assertEmpty( $venues['expired_datetime']->events(array(), true ) );
+		//test with upcoming as false.  Should return 4 events.
+		$events = $venue->events();
+		$this->assertEquals( 4, count($events) );
+		$this->assertInstanceOf( 'EE_Event', reset($events) );
 
-		//test upcoming event with upcoming true, and upcoming false.
-		$vnus = $venues['upcoming_datetime']->events();
-		$this->assertEquals( 1, count($vnus) );
-		$this->assertInstanceOf( 'EE_Event', reset($vnus) );
-		$vnus = $venues['upcoming_datetime']->events(array(), true);
-		$this->assertEquals( 1, count( $vnus ) );
-		$this->assertInstanceOf( 'EE_Event', reset($vnus) );
+		//test with upcoming as true.  Should return 2 events.
+		$events = $venue->events(array(), true);
+		$this->assertEquals( 2, count($events) );
+		$this->assertInstanceOf( 'EE_Event', reset($events) );
 
-		//test active_event with upcoming variations
-		$vnus = $venues['active_datetime']->events();
-		$this->assertEquals( 1, count($vnus) );
-		$this->assertInstanceOf( 'EE_Event', reset($vnus) );
-		$this->assertEmpty( $venues['active_datetime']->events( array(), true ) );
 	}
 
 
