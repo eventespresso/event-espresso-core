@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EEH_DTT_Helper
  *
- * This is a helper utility class containging a variety for date time formatting helpers for Event Espresso.
+ * This is a helper utility class containing a variety for date time formatting helpers for Event Espresso.
  *
  * @package		Event Espresso
  * @subpackage	/helpers/EEH_DTT_Helper.helper.php
@@ -38,101 +38,231 @@ class EEH_DTT_Helper {
 	 * @return string valid timezone string for PHP DateTimeZone() class
 	 */
 	public static function get_timezone() {
-		$timezone = get_option('timezone_string');
-		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
-		if ( empty( $timezone ) ) {
-			//let's get a the WordPress UTC offset
-			$offset = get_option('gmt_offset');
-			$timezone = self::_timezone_convert_to_string_from_offset( $offset );
-		}
-		return $timezone;
+		return EEH_DTT_Helper::get_valid_timezone_string();
 	}
-
-
 
 
 
 	/**
-	 * all this method does is take an incoming GMT offset value ( e.g. "+1" or "-4" ) and returns a corresponding valid DateTimeZone() timezone_string.
-	 * @param  string $offset GMT offset
-	 * @return string         timezone_string (valid for DateTimeZone)
+	 * get_valid_timezone_string
+	 *
+	 * 	ensures that a valid timezone string is returned
+	 *
+	 * @access protected
+	 * @param string $timezone_string
+	 * @return string
+	 * @throws \EE_Error
 	 */
-	private static function _timezone_convert_to_string_from_offset( $offset ) {
-		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
-		$offset *= 3600; // convert hour offset to seconds
-		$abbrarray = timezone_abbreviations_list();
-		foreach ($abbrarray as $abbr) {
-			foreach ($abbr as $city) {
-				if ($city['offset'] === $offset && $city['dst'] === false) {
-					return $city['timezone_id'];
+	public static function get_valid_timezone_string( $timezone_string = '' ) {
+		// if passed a value, then use that, else get WP option
+		$timezone_string = ! empty( $timezone_string ) ? $timezone_string : get_option( 'timezone_string' );
+		// value from above exists, use that, else get timezone string from gmt_offset
+		$timezone_string = ! empty( $timezone_string ) ? $timezone_string : EEH_DTT_Helper::get_timezone_string_from_gmt_offset();
+		EEH_DTT_Helper::validate_timezone( $timezone_string );
+		return $timezone_string;
+	}
+
+
+
+	/**
+	 * This only purpose for this static method is to validate that the incoming timezone is a valid php timezone.
+	 *
+	 * @static
+	 * @access public
+	 * @param  string $timezone_string Timezone string to check
+	 * @param bool    $throw_error
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public static function validate_timezone( $timezone_string, $throw_error = true ) {
+		// easiest way to test a timezone string is just see if it throws an error when you try to create a DateTimeZone object with it
+		try {
+			new DateTimeZone( $timezone_string );
+		} catch ( Exception $e ) {
+			// sometimes we take exception to exceptions
+			if ( ! $throw_error ) {
+				return false;
+			}
+			throw new EE_Error(
+				sprintf(
+					__( 'The timezone given (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used', 'event_espresso' ),
+					$timezone_string,
+					'<a href="http://www.php.net/manual/en/timezones.php">',
+					'</a>'
+				)
+			);
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * _create_timezone_object_from_timezone_name
+	 *
+	 * @access protected
+	 * @param string $gmt_offset
+	 * @return string
+	 */
+	public static function get_timezone_string_from_gmt_offset( $gmt_offset = '' ) {
+		$timezone_string = 'UTC';
+		$gmt_offset = ! empty( $gmt_offset ) ? $gmt_offset : get_option( 'gmt_offset' );
+		if ( $gmt_offset !== '' ) {
+			// convert GMT offset to seconds
+			$gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
+			// account for WP offsets that aren't valid UTC
+			$gmt_offset = EEH_DTT_Helper::adjust_invalid_gmt_offsets( $gmt_offset );
+			// although we don't know the TZ abbreviation, we know the UTC offset
+			$timezone_string = timezone_name_from_abbr( null, $gmt_offset );
+		}
+		// better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
+		$timezone_string = $timezone_string !== false ? $timezone_string : EEH_DTT_Helper::get_timezone_string_from_abbreviations_list( $gmt_offset );
+		return $timezone_string;
+	}
+
+
+
+	/**
+	 * _create_timezone_object_from_timezone_name
+	 *
+	 * @access public
+	 * @param int $gmt_offset
+	 * @return int
+	 */
+	public static function adjust_invalid_gmt_offsets( $gmt_offset = 0 ) {
+		//make sure $gmt_offset is int
+		$gmt_offset = (int) $gmt_offset;
+		switch ( $gmt_offset ) {
+
+			//			case -30600 :
+			//				$gmt_offset = -28800;
+			//				break;
+
+			case -27000 :
+				$gmt_offset = -25200;
+				break;
+
+			case -23400 :
+				$gmt_offset = -21600;
+				break;
+
+			case -19800 :
+				$gmt_offset = -18000;
+				break;
+
+			case -9000 :
+				$gmt_offset = -7200;
+				break;
+
+			case -5400 :
+				$gmt_offset = -3600;
+				break;
+
+			case -1800 :
+				$gmt_offset = 0;
+				break;
+
+			case 1800 :
+				$gmt_offset = 3600;
+				break;
+
+			case 49500 :
+				$gmt_offset = 50400;
+				break;
+
+		}
+		return $gmt_offset;
+	}
+
+
+
+	/**
+	 * get_timezone_string_from_abbreviations_list
+	 *
+	 * @access public
+	 * @param int $gmt_offset
+	 * @return string
+	 * @throws \EE_Error
+	 */
+	public static function get_timezone_string_from_abbreviations_list( $gmt_offset = 0 ) {
+		$abbreviations = timezone_abbreviations_list();
+		foreach ( $abbreviations as $abbreviation ) {
+			foreach ( $abbreviation as $city ) {
+				if ( $city['offset'] === $gmt_offset && $city['dst'] === FALSE ) {
+					// check if the timezone is valid but don't throw any errors if it isn't
+					if ( EEH_DTT_Helper::validate_timezone( $city['timezone_id'], false ) ) {
+						return $city['timezone_id'];
+					}
 				}
 			}
 		}
-
-		return false;
+		throw new EE_Error(
+			sprintf(
+				__( 'The provided GMT offset (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used', 'event_espresso' ),
+				$gmt_offset,
+				'<a href="http://www.php.net/manual/en/timezones.php">',
+				'</a>'
+			)
+		);
 	}
 
 
 
-	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
+	/**
+	 * @access public
+	 * @param string $timezone_string
+	 */
+	public static function timezone_select_input( $timezone_string = '' ) {
+		// get WP date time format
+		$datetime_format = get_option('date_format') . ' '  . get_option('time_format');
+		// if passed a value, then use that, else get WP option
+		$timezone_string = ! empty( $timezone_string ) ? $timezone_string : get_option( 'timezone_string' );
+		// check if the timezone is valid but don't throw any errors if it isn't
+		$timezone_string = EEH_DTT_Helper::validate_timezone( $timezone_string, false );
+		$gmt_offset = get_option('gmt_offset');
 
-		$timezone = self::get_timezone();
-
-		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
-		if ( !$date_obj )
-			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
-		$date_obj->setTimezone( new DateTimeZone($timezone) );
-
-		return $date_obj->format($format);
-	}
-
-
-
-
-
-	public static function ddtimezone($tz_event = '') {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$timezone_format = _x('Y-m-d G:i:s', 'timezone date format');
-
-		$current_offset = get_option('gmt_offset');
-		$tzstring = $tz_event != '' ? $tz_event : get_option('timezone_string');
-		//echo $tzstring;
 		$check_zone_info = true;
-
-		// Remove old Etc mappings.  Fallback to gmt_offset.
-		if (false !== strpos($tzstring, 'Etc/GMT'))
-			$tzstring = '';
-
-		if (empty($tzstring)) { // Create a UTC+- zone if no timezone string exists
+		if ( empty( $timezone_string )) {
+			// Create a UTC+- zone if no timezone string exists
 			$check_zone_info = false;
-			if (0 == $current_offset)
-				$tzstring = 'UTC';
-			elseif ($current_offset < 0)
-				$tzstring = 'UTC' . $current_offset;
-			else
-				$tzstring = 'UTC+' . $current_offset;
+			if ( $gmt_offset > 0 ) {
+				$timezone_string = 'UTC+' . $gmt_offset;
+			} elseif ( $gmt_offset < 0 ) {
+				$timezone_string = 'UTC' . $gmt_offset;
+			} else {
+				$timezone_string = 'UTC';
+			}
 		}
 		?>
 
-		<p><select id="timezone_string" name="timezone_string">
-		<?php echo wp_timezone_choice($tzstring); ?>
+		<p>
+			<label for="timezone_string"><?php _e('timezone'); ?></label>
+			<select id="timezone_string" name="timezone_string">
+				<?php echo wp_timezone_choice($timezone_string); ?>
 			</select>
 			<br />
 			<span class="description"><?php _e('Choose a city in the same timezone as the event.'); ?></span>
 		</p>
 
-		<p><span><?php printf(__('<abbr title="Coordinated Universal Time">UTC</abbr> time is <code>%s</code>'), date_i18n($timezone_format, false, 'gmt')); ?></span>
-			<?php if (get_option('timezone_string') || !empty($current_offset)) : ?>
-				<br /><span><?php printf(__('Local time is <code>%1$s</code>'), date_i18n($timezone_format)); ?></span>
+		<p>
+			<span><?php
+				printf(
+					__('%1$sUTC%2$s time is %3$s'),
+					'<abbr title="Coordinated Universal Time">',
+					'</abbr>',
+					'<code>' . date_i18n( $datetime_format , false, 'gmt') . '</code>'
+				);
+				?></span>
+			<?php if ( ! empty( $timezone_string ) || ! empty( $gmt_offset )) : ?>
+				<br /><span><?php printf(__('Local time is %1$s'), '<code>' . date_i18n( $datetime_format ) . '</code>' ); ?></span>
 		<?php endif; ?>
 
-				<?php if ($check_zone_info && $tzstring) : ?>
+				<?php if ($check_zone_info && $timezone_string) : ?>
 				<br />
 				<span>
 					<?php
 					// Set TZ so localtime works.
-					date_default_timezone_set($tzstring);
+					date_default_timezone_set($timezone_string);
 					$now = localtime(time(), true);
 					if ($now['tm_isdst'])
 						_e('This timezone is currently in daylight saving time.');
@@ -143,9 +273,10 @@ class EEH_DTT_Helper {
 					<?php
 					if (function_exists('timezone_transitions_get')) {
 						$found = false;
-						$date_time_zone_selected = new DateTimeZone($tzstring);
+						$date_time_zone_selected = new DateTimeZone($timezone_string);
 						$tz_offset = timezone_offset_get($date_time_zone_selected, date_create());
 						$right_now = time();
+						$tr['isdst'] = false;
 						foreach (timezone_transitions_get($date_time_zone_selected) as $tr) {
 							if ($tr['ts'] > $right_now) {
 								$found = true;
@@ -159,7 +290,7 @@ class EEH_DTT_Helper {
 											__('Daylight saving time begins on: <code>%s</code>.') :
 											__('Standard time begins  on: <code>%s</code>.');
 							// Add the difference between the current offset and the new offset to ts to get the correct transition time from date_i18n().
-							printf($message, date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $tr['ts'] + ($tz_offset - $tr['offset'])));
+							printf( $message, date_i18n( $datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])));
 						} else {
 							_e('This timezone does not observe daylight saving time.');
 						}
@@ -173,46 +304,45 @@ class EEH_DTT_Helper {
 	}
 
 
-
-	public static function date_time_for_timezone( $timestamp, $format, $timezone ) {
-		$timezone = empty( $timezone ) ? self::get_timezone() : $timezone;
-
-		//set timezone
-		date_default_timezone_set( $timezone );
-
-		$date = date( $format, $timestamp );
-
-		//setback
-		date_default_timezone_set( 'UTC' );
-		return $date;
-	}
-
-
 	/**
-	 * helper for doing simple datetime calculations on a given datetime from EE_Base_Class and modifying it IN the EE_Base_Class so you don't have to do anything else.
+	 * 	date_time_add
+	 * 	helper for doing simple datetime calculations on a given datetime from EE_Base_Class
+	 * 	and modifying it IN the EE_Base_Class so you don't have to do anything else.
+	 *
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
-	 * @param  string        $dttfield What field in the class has the date to manipulate
+	 * @param  string        $dtt_field What field in the class has the date to manipulate
 	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
 	 * @param  integer       $value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
-	public static function date_time_add( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
+	public static function date_time_add( EE_Base_Class $obj, $dtt_field, $what = 'years', $value = 1 ) {
 		//get the raw UTC date.
-		$dtt = $obj->get_raw_date($dttfield);
+		$dtt = $obj->get_raw_date($dtt_field);
 		$format = $obj->get_format();
 		$new_date = self::calc_date($dtt, $what, $value);
 		//set the new date value!
-		$obj->set($dttfield, $new_date->format( $format ) );
+		$obj->set($dtt_field, $new_date->format( $format ) );
 		return $obj;
 	}
 
-	//same as date_time_add except subtracting value instead of adding.
-	public static function date_time_subtract( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
+
+
+	/**
+	 * 	date_time_subtract
+	 * 	same as date_time_add except subtracting value instead of adding.
+	 *
+	 * @param \EE_Base_Class $obj
+	 * @param                $dtt_field
+	 * @param string         $what
+	 * @param int            $value
+	 * @return \EE_Base_Class
+	 */
+	public static function date_time_subtract( EE_Base_Class $obj, $dtt_field, $what = 'years', $value = 1 ) {
 		//get the raw UTC date
-		$dtt = $obj->get_raw_date($dttfield);
+		$dtt = $obj->get_raw_date($dtt_field);
 		$format = $obj->get_format();
 		$new_date = self::calc_date($dtt, $what, $value, '-');
-		$obj->set($dttfield, $new_date->format( $format ) );
+		$obj->set($dtt_field, $new_date->format( $format ) );
 		return $obj;
 	}
 
@@ -220,15 +350,14 @@ class EEH_DTT_Helper {
 
 
 	/**
-	 * Simply takes an incoming UTC timestamp or DateTime object and does calcs on it based on the incoming parameters and returns the new timestamp or DateTime.
-	 * @param  mixed string|DateTime $dtt     unixtimestamp or DateTime
+	 * Simply takes an incoming UTC timestamp or DateTime object and does calculations on it based on the incoming parameters and returns the new timestamp or DateTime.
+	 * @param  int | DateTime $dtt     Unix timestamp or DateTime
 	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
 	 * @param  integer $value  What you want to increment the date by
 	 * @param  string  $operand What operand you wish to use for the calculation
 	 * @return mixed string|DateTime          return whatever type came in.
 	 */
 	public static function calc_date( $dtt, $what = 'years', $value = 1, $operand = '+' ) {
-		$newdtt = '';
 
 		if ( $dtt instanceof DateTime ) {
 			switch ( $what ) {
@@ -268,26 +397,21 @@ class EEH_DTT_Helper {
 				case 'minutes' :
 					$value = 60 * $value;
 					break;
-				case 'seconds' :
-					$value;
-					break;
 			}
 		}
 
+		$new_dtt = '';
 		switch ( $operand ) {
 			case '+':
-				$newdtt = $dtt instanceof DateTime ? $dtt->add( new DateInterval( $value ) ) : $dtt + $value;
+				$new_dtt = $dtt instanceof DateTime ? $dtt->add( new DateInterval( $value ) ) : $dtt + $value;
 				break;
 			case '-':
-				$newdtt = $dtt instanceof DateTime ? $dtt->sub( new DateInterval( $value ) ) : $dtt - $value;
+				$new_dtt = $dtt instanceof DateTime ? $dtt->sub( new DateInterval( $value ) ) : $dtt - $value;
 				break;
 		}
 
-		return $newdtt;
+		return $new_dtt;
 	}
-
-
-
 
 
 
@@ -300,15 +424,17 @@ class EEH_DTT_Helper {
 	 *
 	 * @see http://stackoverflow.com/posts/16725290/ for the code inspiration.
 	 *
-	 * @param string $format_string Incoming valid php date format string.
 	 *
-	 * @return array array(
-	 *         'js' => array (
-	 *         		'date' => //date format
-	 *         		'time' => //time format
-	 *         ),
-	 *         'moment' => //date and time format.
-	 * )
+	 * @param null $date_format_string
+	 * @param null $time_format_string
+	 * @return array
+	 * 		array(
+	 * 			'js' => array (
+	 * 				'date' => //date format
+	 * 				'time' => //time format
+	 * 			),
+	 * 			'moment' => //date and time format.
+	 * 		)
 	 */
 	public static function convert_php_to_js_and_moment_date_formats( $date_format_string = null, $time_format_string = null ) {
 		if ( $date_format_string === null ) {
@@ -391,7 +517,7 @@ class EEH_DTT_Helper {
 			'moment' => 'DDD' //note moment does not start with 0 so will need to modify by subtracting 1
 			),
 		// Week
-		//ISO-8601 week number of year (weeks starting on mond)
+		//ISO-8601 week number of year (weeks starting on monday)
 		'W' => array(
 			'js' => '',
 			'moment' => 'w'
@@ -495,7 +621,7 @@ class EEH_DTT_Helper {
 			'moment' => ''
 			)
 		);
-		$jqueryui_format = "";
+		$jquery_ui_format = "";
 		$moment_format = "";
 		$escaping = false;
 		for ( $i = 0; $i < strlen($format_string); $i++ ) {
@@ -503,29 +629,29 @@ class EEH_DTT_Helper {
 			if ( $char === '\\' )  { // PHP date format escaping character
 				$i++;
 				if ( $escaping ) {
-					$jqueryui_format .= $format_string[$i];
+					$jquery_ui_format .= $format_string[$i];
 					$moment_format .= $format_string[$i];
 				} else {
-					$jqueryui_format .= '\'' . $format_string[$i];
+					$jquery_ui_format .= '\'' . $format_string[$i];
 					$moment_format .= $format_string[$i];
 				}
 				$escaping = true;
 			} else {
 				if ($escaping) {
-					$jqueryui_format .= "'";
-					$mment_format .= "'";
+					$jquery_ui_format .= "'";
+					$moment_format .= "'";
 					 $escaping = false;
 				}
 				if (isset($symbols_map[$char])) {
-					$jqueryui_format .= $symbols_map[$char]['js'];
+					$jquery_ui_format .= $symbols_map[$char]['js'];
 					$moment_format .= $symbols_map[$char]['moment'];
 				} else {
-					$jqueryui_format .= $char;
+					$jquery_ui_format .= $char;
 					$moment_format .= $char;
 				}
 			}
 		}
-		return array( 'js' => $jqueryui_format, 'moment' => $moment_format );
+		return array( 'js' => $jquery_ui_format, 'moment' => $moment_format );
 	}
 
 
@@ -548,7 +674,7 @@ class EEH_DTT_Helper {
 			case   strpos( $format_string, 'g' ) !== false :
 				/**
 				 * if the time string has a lowercase 'h' which == 12 hour time format and there
-				 * is not any antimeridiam format ('a' or 'A').  Then throw an error because its
+				 * is not any ante meridiem format ('a' or 'A').  Then throw an error because its
 				 * too ambiguous and PHP won't be able to figure out whether 1 = 1pm or 1am.
 				 */
 				if ( strpos( strtoupper( $format_string ), 'A' )  === false ) {
