@@ -165,171 +165,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			// the function arg didn't provide one
 			return;
 		}
-		$timezone_string = self::_get_valid_timezone_string( $timezone_string );
+		$this->_timezone_string = EEH_DTT_Helper::get_valid_timezone_string( $timezone_string );
 		$this->_timezone_string = ! empty( $timezone_string ) ? $timezone_string : 'UTC';
 		$this->_DateTimeZone = $this->_create_timezone_object_from_timezone_string( $this->_timezone_string );
-	}
-
-
-
-	/**
-	 * _create_timezone_object_from_timezone_name
-	 *
-	 * @access protected
-	 * @param string $timezone_string
-	 * @return string
-	 * @throws \EE_Error
-	 */
-	protected static function _get_valid_timezone_string( $timezone_string = '' ) {
-		// if passed a value, then use that, else get WP option
-		$timezone_string = ! empty( $timezone_string ) ? $timezone_string : get_option( 'timezone_string' );
-		// value from above exists, use that, else get timezone string from gmt_offset
-		$timezone_string = ! empty( $timezone_string ) ? $timezone_string : self::get_timezone_string_from_gmt_offset();
-		self::validate_timezone( $timezone_string );
-		return $timezone_string;
-	}
-
-
-
-	/**
-	 * This only purpose for this static method is to validate that the incoming timezone is a valid php timezone.
-	 *
-	 * @static
-	 * @access public
-	 * @param  string $timezone_string Timezone string to check
-	 * @throws EE_Error
-	 * @return boolean    Return True if Valid, False if Invalid
-	 */
-	public static function validate_timezone( $timezone_string, $throw_error = true ) {
-		// easiest way to test a timezone string is just see if it throws an error when you try to create a DateTimeZone object with it
-		try {
-			new DateTimeZone( $timezone_string );
-		} catch ( Exception $e ) {
-			// sometimes we take exception to exceptions
-			if ( ! $throw_error ) {
-				return false;
-			}
-			throw new EE_Error(
-				sprintf(
-					__( 'The timezone given (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used', 'event_espresso' ),
-					$timezone_string,
-					'<a href="http://www.php.net/manual/en/timezones.php">',
-					'</a>'
-				)
-			);
-		}
-		return true;
-	}
-
-
-
-	/**
-	 * _create_timezone_object_from_timezone_name
-	 *
-	 * @access protected
-	 * @param string $gmt_offset
-	 * @return string
-	 */
-	public static function get_timezone_string_from_gmt_offset( $gmt_offset = '' ) {
-		$timezone_string = 'UTC';
-		$gmt_offset = ! empty( $gmt_offset ) ? $gmt_offset : get_option( 'gmt_offset' );
-		if ( $gmt_offset !== '' ) {
-			// convert GMT offset to seconds
-			$gmt_offset = $gmt_offset * HOUR_IN_SECONDS;
-			// account for WP offsets that aren't valid UTC
-			$gmt_offset = self::_adjust_invalid_gmt_offsets( $gmt_offset );
-			// although we don't know the TZ abbreviation, we know the UTC offset
-			$timezone_string = timezone_name_from_abbr( null, $gmt_offset );
-		}
-		// better have a valid timezone string by now, but if not, sigh... loop thru  the timezone_abbreviations_list()...
-		$timezone_string = $timezone_string !== false ? $timezone_string : self::_get_timezone_string_from_abbreviations_list( $gmt_offset );
-		return $timezone_string;
-	}
-
-
-
-	/**
-	 * _create_timezone_object_from_timezone_name
-	 *
-	 * @access protected
-	 * @param int $gmt_offset
-	 * @return int
-	 */
-	protected static function _adjust_invalid_gmt_offsets( $gmt_offset = 0 ) {
-		//make sure $gmt_offset is int
-		$gmt_offset = (int) $gmt_offset;
-		switch ( $gmt_offset ) {
-
-//			case -30600 :
-//				$gmt_offset = -28800;
-//				break;
-
-			case -27000 :
-				$gmt_offset = -25200;
-				break;
-
-			case -23400 :
-				$gmt_offset = -21600;
-				break;
-
-			case -19800 :
-				$gmt_offset = -18000;
-				break;
-
-			case -9000 :
-				$gmt_offset = -7200;
-				break;
-
-			case -5400 :
-				$gmt_offset = -3600;
-				break;
-
-			case -1800 :
-				$gmt_offset = 0;
-				break;
-
-			case 1800 :
-				$gmt_offset = 3600;
-				break;
-
-			case 49500 :
-				$gmt_offset = 50400;
-				break;
-
-		}
-		return $gmt_offset;
-	}
-
-
-
-	/**
-	 * _get_timezone_string_from_abbreviations_list
-	 *
-	 * @access protected
-	 * @param int $gmt_offset
-	 * @return string
-	 * @throws \EE_Error
-	 */
-	protected static function _get_timezone_string_from_abbreviations_list( $gmt_offset = 0 ) {
-		$abbreviations = timezone_abbreviations_list();
-		foreach ( $abbreviations as $abbreviation ) {
-			foreach ( $abbreviation as $city ) {
-				if ( $city['offset'] === $gmt_offset && $city['dst'] === FALSE ) {
-					// check if the timezone is valid but don't throw any errors if it isn't
-					if ( self::validate_timezone( $city['timezone_id'], false ) ) {
-						return $city['timezone_id'];
-					}
-				}
-			}
-		}
-		throw new EE_Error(
-			sprintf(
-				__( 'The provided GMT offset (%1$s), is invalid, please check with %2$sthis list%3$s for what valid timezones can be used', 'event_espresso' ),
-				$gmt_offset,
-				'<a href="http://www.php.net/manual/en/timezones.php">',
-				'</a>'
-			)
-		);
 	}
 
 
@@ -342,7 +180,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return \DateTimeZone
 	 */
 	protected function _create_timezone_object_from_timezone_string( $timezone_string = '' ) {
-		return new DateTimeZone( self::_get_valid_timezone_string( $timezone_string ) );
+		return new DateTimeZone( EEH_DTT_Helper::get_valid_timezone_string( $timezone_string ) );
 	}
 
 
@@ -680,7 +518,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string           abbreviation
 	 */
 	public function get_timezone_abbrev( $timezone_string ) {
-		$timezone_string = self::_get_valid_timezone_string( $timezone_string );
+		$timezone_string = EEH_DTT_Helper::get_valid_timezone_string( $timezone_string );
 		$dateTime = new DateTime( 'now', new DateTimeZone( $timezone_string ) );
 		return $dateTime->format( 'T' );
 	}
