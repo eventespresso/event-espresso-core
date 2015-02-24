@@ -709,6 +709,10 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
 		}
 
+		//while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
+		//the field.
+		$this->_timezone = $field_settings->get_timezone();
+
 		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
 	}
 
