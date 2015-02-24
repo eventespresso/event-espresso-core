@@ -211,7 +211,8 @@ abstract class EE_Base_Class{
 	public function set( $field_name, $field_value, $use_default = FALSE ){
 		$field_obj = $this->get_model()->field_settings_for( $field_name );
 		if ( $field_obj instanceof EE_Model_Field_Base ) {
-			if ( method_exists( $field_obj, 'set_timezone' )) {
+//			if ( method_exists( $field_obj, 'set_timezone' )) {
+			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
 				$field_obj->set_date_format( $this->_dt_frmt );
 				$field_obj->set_time_format( $this->_tm_frmt );
@@ -277,15 +278,7 @@ abstract class EE_Base_Class{
 	 * @return void
 	 */
 	public function set_timezone( $timezone = '' ) {
-		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
-
-		// if timezone is STILL empty then let's set the timezone_string using the WP GMT offset option
-		if ( empty( $timezone ) ) {
-			$timezone = EE_Datetime_Field::get_timezone_string_from_gmt_offset();
-		}
-
-		EE_Datetime_Field::validate_timezone( $timezone ); //just running validation on the timezone.
-		$this->_timezone = $timezone;
+		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 		//make sure we clear all cached properties because they won't be relevant now
 		$this->_clear_cached_properties();
 	}
@@ -1522,10 +1515,10 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
-	 * @param array  $query_params   like EEM_Base::get_all's
-	 * @param string $field_to_count name of field to count by. By default, uses primary key
-	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
+	 * @param string 	$relation_name model_name like 'Event', or 'Registration'
+	 * @param array  	$query_params   like EEM_Base::get_all's
+	 * @param string 	$field_to_count name of field to count by. By default, uses primary key
+	 * @param bool   	$distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
 	public function count_related($relation_name, $query_params =array(),$field_to_count = NULL, $distinct = FALSE){
@@ -1537,9 +1530,9 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
-	 * @param array  $query_params like EEM_Base::get_all's
-	 * @param string $field_to_sum name of field to count by.
+	 * @param string 	$relation_name model_name like 'Event', or 'Registration'
+	 * @param array  	$query_params like EEM_Base::get_all's
+	 * @param string 	$field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)
 	 * @return int
 	 */
@@ -1827,12 +1820,12 @@ abstract class EE_Base_Class{
 	}
 	/**
 	 * Returns a simple array of all the extra meta associated with this model object.
-	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, key sbeing the
+	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, keys being the
 	 * extra meta's key, and teh value being its value. However, if there are duplicate extra meta rows with
 	 * the same key, only one will be used. (eg array('foo'=>'bar','monkey'=>123))
 	 * If $one_of_each_key is false, it will return an array with the top-level keys being
 	 * the extra meta keys, but their values are also arrays, which have the extra-meta's ID as their sub-key, and
-	 * finally the extra meta's value as each sub-value. (eg arrya('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
+	 * finally the extra meta's value as each sub-value. (eg array('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
 	 * @param boolean $one_of_each_key
 	 * @return array
 	 */
@@ -1841,21 +1834,25 @@ abstract class EE_Base_Class{
 		if($one_of_each_key){
 			$extra_meta_objs = $this->get_many_related('Extra_Meta', array('group_by'=>'EXM_key'));
 			foreach($extra_meta_objs as $extra_meta_obj){
-				$return_array[$extra_meta_obj->key()] = $extra_meta_obj->value();
+				if ( $extra_meta_obj instanceof EE_Extra_Meta ) {
+					$return_array[$extra_meta_obj->key()] = $extra_meta_obj->value();
+				}
 			}
 		}else{
 			$extra_meta_objs = $this->get_many_related('Extra_Meta');
 			foreach($extra_meta_objs as $extra_meta_obj){
-				if( ! isset($return_array[$extra_meta_obj->key()])){
-					$return_array[$extra_meta_obj->key()] = array();
+				if ( $extra_meta_obj instanceof EE_Extra_Meta ) {
+					if( ! isset($return_array[$extra_meta_obj->key()])){
+						$return_array[$extra_meta_obj->key()] = array();
+					}
+					$return_array[$extra_meta_obj->key()][$extra_meta_obj->ID()] = $extra_meta_obj->value();
 				}
-				$return_array[$extra_meta_obj->key()][$extra_meta_obj->ID()] = $extra_meta_obj->value();
 			}
 		}
 		return $return_array;
 	}
 	/**
-	 * Gets a pretty nice displayable nice for this model object. Often overriden
+	 * Gets a pretty nice displayable nice for this model object. Often overridden
 	 * @return string
 	 */
 	public function name(){
