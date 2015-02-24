@@ -279,10 +279,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$time_end = ' 23:59:59';
 		$this_month_r = date('m', current_time('timestamp'));
 		$days_this_month = date( 't', current_time('timestamp') );
+		//setup date query.
+		$beginning_string = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s' );
+		$end_string = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end, 'Y-m-d H:i:s' );
 		$_where['REG_date']= array('BETWEEN',
 			array(
-				strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
-				strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
+				$beginning_string,
+				$end_string
 		));
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
