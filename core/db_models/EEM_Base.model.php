@@ -694,18 +694,60 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * This returns the date formats set for the given field name.
 	 *
+	 * @since 4.6.x
+	 * @param string $field_name The name of the field the formats are being retrieved for.
+	 * @param bool   $pretty          Whether to return the pretty formats (true) or not (false).
+	 * @throws EE_Error   If the given field_name is not of the EE_Datetime_Field type.
+	 *
 	 * @return array formats in an array with the date format first, and the time format last.
 	 */
 	public function get_formats_for( $field_name, $pretty = false ) {
 		$field_settings = $this->field_settings_for( $field_name );
 
-		//if not a valid EE_Datetime_Field then return empty array
+		//if not a valid EE_Datetime_Field then throw error
 		if ( ! $field_settings instanceof EE_Datetime_Field ) {
-			return array();
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
 		}
 
 		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
 	}
+
+
+
+	/**
+	 * This returns the current time in a format setup for a query on this model.
+	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
+	 * it will return:
+	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
+	 *  - or a unixtimestamp with the offset applied for the currently set timezone for NOW.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The field the currrent time is needed for.
+	 * @param bool   $timestamp  True means to return a unix timestamp with offset for the timezone applied. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will be returned.
+	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
+	 */
+	public function current_time_for_query( $field_name, $timestamp = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then throw error
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
+		}
+
+		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
+
+		if ( $timestamp ) {
+			$offset = timezone_offset_get( new DateTimeZone( 'UTC' ), $DateTime );
+			return $DateTime->format( 'U' ) + $offset;
+		}
+
+		//not returning timestamp, so return formatted string in timezone.
+		return $DateTime->format( $field_settings->get_date_format() . ' ' . $field_settings->get_time_format() );
+	}
+
 
 
 
