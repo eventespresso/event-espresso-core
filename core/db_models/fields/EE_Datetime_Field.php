@@ -62,6 +62,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$this->_pretty_time_format = ! empty( $pretty_time_format ) ? $pretty_time_format : get_option('time_format');
 
 		parent::__construct( $table_column, $nice_name, $nullable, $default_value );
+		EE_Registry::instance()->load_helper('DTT_Helper');
 		$this->set_timezone( $timezone_string );
 
 	}
