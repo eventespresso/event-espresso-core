@@ -278,6 +278,7 @@ abstract class EE_Base_Class{
 	 * @return void
 	 */
 	public function set_timezone( $timezone = '' ) {
+		EE_Registry::instance()->load_helper('DTT_Helper');
 		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 		//make sure we clear all cached properties because they won't be relevant now
 		$this->_clear_cached_properties();
