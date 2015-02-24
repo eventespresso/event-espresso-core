@@ -766,7 +766,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//load EEH_DTT_Helper
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
-		$current_timezone = EEH_DTT_Helper::get_timezone();
+		$current_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
 
 		//first let's do comparisons and see if we even need to convert
 		if ( $current_timezone == $this->_timezone && $full_format == $incoming_format ) {
@@ -774,7 +774,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		//if made it here then that means conversion is necessary.
-		$incomingDateTime = date_create_from_format( $incoming_format, new DateTimeZone( $timezone ) );
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $current_timezone ) );
 
 		//return converted string
 		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
