@@ -866,6 +866,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
 
+
 		switch ( $this->_req_data['orderby'] ) {
 			case '_REG_ID':
 				$orderby = 'REG_ID';
@@ -921,23 +922,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$curdate = date('Y-m-d', current_time('timestamp'));
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime($curdate . $time_start),
-					strtotime($curdate . $time_end)
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $curdate . $time_start, 'Y-m-d H:i:s' ),
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $curdate . $time_end, 'Y-m-d H:i:s' ),
 			));
 		}elseif($this_month_a || $this_month){
 			$this_month_r = date('m', current_time('timestamp'));
 			$days_this_month = date( 't', current_time('timestamp') );
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
-					strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s' ),
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end, 'Y-m-d H:i:s' )
 			));
 		}elseif($month_range){
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
 			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$_where['REG_date']= array('BETWEEN',
-				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+				array(  EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-01 00:00:00', 'Y-m-d H:i:s'), EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-31 23:59:59', 'Y-m-d H:i:s' ) ) );
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
