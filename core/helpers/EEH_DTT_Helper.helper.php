@@ -369,20 +369,23 @@ class EEH_DTT_Helper {
 	}
 
 
-
-
 	/**
 	 * Simply takes an incoming DateTime object and does calculations on it based on the incoming parameters
-	 * @param  DateTime $DateTime 	DateTime object
-	 * @param  string  $period   			a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
-	 * @param  integer $value  				What you want to increment the date by
-	 * @param  string  $operand 			What operand you wish to use for the calculation
-	 * @return 	DateTime 						return whatever type came in.
+	 * @param  DateTime $DateTime DateTime object
+	 * @param  string   $period   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer  $value    What you want to increment the date by
+	 * @param  string   $operand  What operand you wish to use for the calculation
+	 * @return \DateTime return whatever type came in.
+	 * @throws \EE_Error
 	 */
 	protected static function _modify_datetime_object( DateTime $DateTime, $period = 'years', $value = 1, $operand = '+' ) {
 		if ( ! $DateTime instanceof DateTime ) {
-			// error
-			return $DateTime;
+			throw new EE_Error(
+				sprintf(
+					__( 'Expected a PHP DateTime object, but instead received %1$s', 'event_espresso' ),
+					print_r( $DateTime, true )
+				)
+			);
 		}
 		switch ( $period ) {
 			case 'years' :
@@ -416,19 +419,23 @@ class EEH_DTT_Helper {
 	}
 
 
-
 	/**
 	 * Simply takes an incoming Unix timestamp and does calculations on it based on the incoming parameters
-	 * @param  int 			$timestamp 	Unix timestamp
-	 * @param  string  	$period   		a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
-	 * @param  integer 	$value  			What you want to increment the date by
-	 * @param  string  	$operand 		What operand you wish to use for the calculation
-	 * @return 	DateTime 						return whatever type came in.
+	 * @param  int     $timestamp Unix timestamp
+	 * @param  string  $period    a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer $value     What you want to increment the date by
+	 * @param  string  $operand   What operand you wish to use for the calculation
+	 * @return \DateTime return whatever type came in.
+	 * @throws \EE_Error
 	 */
 	protected static function _modify_timestamp( $timestamp, $period = 'years', $value = 1, $operand = '+' ) {
 		if ( ! preg_match( '/[0-9]{10,}/', $timestamp ) ) {
-			// error
-			return $timestamp;
+			throw new EE_Error(
+				sprintf(
+					__( 'Expected a Unix timestamp, but instead received %1$s', 'event_espresso' ),
+					print_r( $timestamp, true )
+				)
+			);
 		}
 		switch ( $period ) {
 			case 'years' :
