@@ -35,6 +35,15 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 * if none provided.
 	 *
 	 * @see EE_Datetime_Field for docs on params
+	 * @param string $table_column
+	 * @param string $nice_name
+	 * @param bool   $nullable
+	 * @param string $default_value
+	 * @param null   $timezone
+	 * @param null   $date_format
+	 * @param null   $time_format
+	 * @param null   $pretty_date_format
+	 * @param null   $pretty_time_format
 	 */
 	protected function _set_dtt_field_object( $table_column = 'DTT_EVT_start', $nice_name = 'Start Date', $nullable = false, $default_value = '', $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ) {
 		$this->loadModelFieldMocks( array( 'EE_Datetime_Field' ));
@@ -106,6 +115,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	}
 
 
+
 	/**
 	 *  setup_DateTime_object
 	 *
@@ -129,7 +139,6 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 */
 	function test_date_time_add() {
 		$this->_date_time_modifier_tests();
-
 	}
 
 
@@ -142,6 +151,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	}
 
 
+
 	/**
 	 * 	 _date_time_modifier_tests
 	 *
@@ -150,7 +160,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	protected function _date_time_modifier_tests( $increment_datetimes = true ) {
 		// setup some objects used for testing
 		$EVT_start = $this->setup_DateTime_object();
-		$EE_Datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $EVT_start->format( 'U' ) ) );
+		$EE_Datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $EVT_start->format( 'U' ) ), 'UTC' );
 		// setup data arrays for generating test conditions
 		$periods = array(
 			'years' 			=> 'P%Y',
@@ -169,18 +179,30 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 				// clone our test objects
 				$expected_datetime = clone( $EVT_start );
 				$datetime_object = clone( $EE_Datetime );
+				$period_interval = str_replace( '%', $interval, $designator );
 				// apply conditions to both objects
 				if ( $increment_datetimes ) {
-					$expected_datetime->add( new DateInterval( str_replace( '%', $interval, $designator ) ) );
-					/** @var DateTime $actual_datetime */
+					$expected_datetime->add( new DateInterval( $period_interval ) );
 					$actual_datetime = EEH_DTT_Helper::date_time_add( $datetime_object, 'DTT_EVT_start', $period, $interval );
 				} else {
-					$expected_datetime->sub( new DateInterval( str_replace( '%', $interval, $designator ) ) );
-					/** @var DateTime $actual_datetime */
+					$expected_datetime->sub( new DateInterval( $period_interval ) );
 					$actual_datetime = EEH_DTT_Helper::date_time_subtract( $datetime_object, 'DTT_EVT_start', $period, $interval );
 				}
+				$expected = $expected_datetime->format( 'Y-m-d H:i:s' );
+				$actual = $actual_datetime->get_raw_date( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
 				// compare
-				$this->assertEquals( $expected_datetime->format( 'U' ), $actual_datetime->format( 'U' ) );
+				if ( $expected !== $actual ) {
+					$this->fail(
+						sprintf(
+							__( 'The %1$s method failed to produce correct results for the the period interval %2$s.%3$sExpected value: %4$s%3$sActual value: %5$s%3$s', 'event_espresso' ),
+							$increment_datetimes ? 'EEH_DTT_Helper::date_time_add()' : 'EEH_DTT_Helper::date_time_subtract()',
+							$period_interval,
+							'<br />',
+							$expected,
+							$actual
+						)
+					);
+				}
 				// kill all clones
 				unset( $expected_datetime );
 				unset( $actual_datetime );
