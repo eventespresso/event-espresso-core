@@ -764,17 +764,24 @@ abstract class EEM_Base extends EE_Base{
 		$formats = $this->get_formats_for( $field_name );
 		$full_format = implode( ' ', $formats );
 
+		//if empty $timezone and incoming format is 'U'.  Then that means the incoming timestring is current_time('timestamp') which has an
+		//offset applied.  So let's REMOVE that offset so setting DateTime works correctly.
+		if ( empty( $timezone ) && $incoming_format == 'U' ) {
+			$offset = get_option( 'gmt_offset' ) * 60 * 60;
+			$timestring = $timestring - $offset;
+		}
+
 		//load EEH_DTT_Helper
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
-		$current_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
 
 		//first let's do comparisons and see if we even need to convert
-		if ( $current_timezone == $this->_timezone && $full_format == $incoming_format ) {
+		if ( $set_timezone == $this->_timezone && $full_format == $incoming_format ) {
 			return $timestring;
 		}
 
 		//if made it here then that means conversion is necessary.
-		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $current_timezone ) );
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
 
 		//return converted string
 		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
