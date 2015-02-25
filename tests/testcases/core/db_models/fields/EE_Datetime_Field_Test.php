@@ -25,7 +25,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	/**
 	 * Expected values.
-	 * Set in the _get_timestrings_for_testing method.
+	 * Set in the _get_time_strings_for_testing method.
 	 *
 	 * @var string
 	 */
@@ -35,7 +35,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	/**
 	 * Default PHP DateTime object in the timezone being tested.
-	 * Set in the _get_timestrings_for_testing method.
+	 * Set in the _get_time_strings_for_testing method.
 	 *
 	 * @var DateTime
 	 */
@@ -44,7 +44,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->loadModelsMocks();
+		$this->loadModelFieldMocks( array( 'EE_Datetime_Field' ));
 	}
 
 
@@ -64,16 +64,18 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	/**
 	 * This returns a common set of time strings for testing indexed by format.
-	 *  @param string $date_offset_test This is the offset used in offset tests. It should be included as
-	 *                                  	          an accepted DateInterval interval_spec value (@see http://
-	 *                                  	          php.net/manual/en/dateinterval.construct.php)
-	 *  @param string $time_offset_test This works the same as the $date_offset_test except will be
-	 *                                  	          applied for time offsets.
-	 *  @since
+	 *
+	 * @param string $date_offset_test This is the offset used in offset tests.
+	 *     It should be included as an accepted DateInterval interval_spec
+	 *     value (@see http:// php.net/manual/en/dateinterval.construct.php)
+	 * @param string $time_offset_test This works the same as the
+	 *     $date_offset_test except will be applied for time offsets.
+	 * @since
+	 * @return array
 	 */
-	protected function _get_timestrings_for_testing() {
+	protected function _get_time_strings_for_testing() {
 		//set our expected properties
-		//setup some baselines to get expected values (the date/time strings match what is returned from _get_timestrings_for_testing );
+		//setup some baselines to get expected values (the date/time strings match what is returned from _get_time_strings_for_testing );
 		$datetimeZoneVC = new DateTimeZone( 'America/Vancouver' );
 		$datetimeZoneUTC = new DateTimeZone( 'UTC' );
 		$this->_defaultDTT = new DateTime( '2015-02-20 11:38', $datetimeZoneVC );
@@ -84,7 +86,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		//set the timezone to be America/Vancouver (UTC-8h Daylight UTC-7h)
 		$this->_datetime_field->set_timezone( 'America/Vancouver' );
 
-		//set the expected unixtimestamp
+		//set the expected Unix timestamp
 		$expectedDTT = clone $this->_defaultDTT;
 		$expectedDTT->setTimezone( $datetimeZoneUTC );
 		$this->_expected_unixtimestamp = $expectedDTT->format( 'U' );
@@ -109,7 +111,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$this->assertEquals( $this->_datetime_field->get_property( '_pretty_time_format' ), 'g:i a' );
 
 		//verify timezone
-		$this->assertEquals( $this->_datetime_field->get_timezone(), 'Africa/Abidjan' );
+		$this->assertEquals( $this->_datetime_field->get_timezone(), 'UTC' );
 	}
 
 
@@ -119,9 +121,9 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 * @since 4.6
 	 */
 	public function test_get_UTC_DateTimeZone() {
-		$utcTz = EE_Datetime_Field_Mock::get_UTC_DateTimeZone();
-		$this->assertInstanceOf( 'DateTimeZone',$utcTz );
-
+		$this->_set_dtt_field_object();
+		$utcTz = $this->_datetime_field->get_UTC_DateTimeZone();
+		$this->assertInstanceOf( 'DateTimeZone', $utcTz );
 		//should be in utc!
 		$this->assertEquals( 'UTC', $utcTz->getName() );
 	}
@@ -137,7 +139,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		$this->_set_dtt_field_object();
 
 		//grab our time strings
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		//loop through timestrings and run tests
 		foreach ( $timestrings['date'] as $format  ) {
@@ -163,7 +165,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_set_with_new_time() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		//clone defaultDTT to setup what our expected time offset unixtimestamp will be.
 		$DTToffset = clone $this->_defaultDTT;
@@ -187,7 +189,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_set_with_new_date() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		//clone defaultDTT to setup what our expected time offset unixtimestamp will be.
 		$DTToffset = clone $this->_defaultDTT;
@@ -213,7 +215,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_get() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		foreach ( $timestrings['date'] as $dateformat ) {
 			$this->_datetime_field->set_date_format( $dateformat );
@@ -247,7 +249,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_use_in_db() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		//test if not nullable and datestring is empty, then we should get back current_time in utc in mysql timestamp.
 		$this->assertEquals( date( 'Y-m-d H:i:s' ), $this->_datetime_field->prepare_for_use_in_db(null) );
@@ -269,7 +271,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_set_from_db() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_timestrings_for_testing();
+		$timestrings = $this->_get_time_strings_for_testing();
 
 		//test if not nullable and datestring is empty, then we should get back datetime object.
 		$this->assertInstanceOf( 'DateTime', $this->_datetime_field->prepare_for_set_from_db('') );
