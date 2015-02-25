@@ -350,6 +350,96 @@ class EEH_DTT_Helper {
 
 
 	/**
+	 * Simply takes an incoming DateTime object and does calculations on it based on the incoming parameters
+	 * @param  DateTime $DateTime 	DateTime object
+	 * @param  string  $period   			a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer $value  				What you want to increment the date by
+	 * @param  string  $operand 			What operand you wish to use for the calculation
+	 * @return 	DateTime 						return whatever type came in.
+	 */
+	protected static function _modify_datetime_object( DateTime $DateTime, $period = 'years', $value = 1, $operand = '+' ) {
+		if ( ! $DateTime instanceof DateTime ) {
+			// error
+			return $DateTime;
+		}
+		switch ( $period ) {
+			case 'years' :
+				$value = 'P' . $value . 'Y';
+				break;
+			case 'months' :
+				$value = 'P' . $value . 'M';
+				break;
+			case 'days' :
+				$value = 'P' . $value . 'D';
+				break;
+			case 'hours' :
+				$value = 'PT' . $value . 'H';
+				break;
+			case 'minutes' :
+				$value = 'PT' . $value . 'M';
+				break;
+			case 'seconds' :
+				$value = 'PT' . $value . 'S';
+				break;
+		}
+		switch ( $operand ) {
+			case '+':
+				$DateTime->add( new DateInterval( $value ) );
+				break;
+			case '-':
+				$DateTime->sub( new DateInterval( $value ) );
+				break;
+		}
+		return $DateTime;
+	}
+
+
+
+	/**
+	 * Simply takes an incoming Unix timestamp and does calculations on it based on the incoming parameters
+	 * @param  int 			$timestamp 	Unix timestamp
+	 * @param  string  	$period   		a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer 	$value  			What you want to increment the date by
+	 * @param  string  	$operand 		What operand you wish to use for the calculation
+	 * @return 	DateTime 						return whatever type came in.
+	 */
+	protected static function _modify_timestamp( $timestamp, $period = 'years', $value = 1, $operand = '+' ) {
+		if ( ! preg_match( '/[0-9]{10,}/', $timestamp ) ) {
+			// error
+			return $timestamp;
+		}
+		switch ( $period ) {
+			case 'years' :
+				$value = (60*60*24*364.5) * $value;
+				break;
+			case 'months' :
+				$value = (60*60*24*30.375) * $value;
+				break;
+			case 'days' :
+				$value = (60*60*24) * $value;
+				break;
+			case 'hours' :
+				$value = (60*60) * $value;
+				break;
+			case 'minutes' :
+				$value = 60 * $value;
+				break;
+		}
+		switch ( $operand ) {
+			case '+':
+				$timestamp  += $value;
+				break;
+			case '-':
+				$timestamp -= $value;
+				break;
+		}
+		return $timestamp;
+	}
+
+
+
+
+	/**
 	 * Simply takes an incoming UTC timestamp or DateTime object and does calculations on it based on the incoming parameters and returns the new timestamp or DateTime.
 	 * @param  int | DateTime $DateTime_or_timestamp     DateTime object or Unix timestamp
 	 * @param  string  $period   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
@@ -359,56 +449,12 @@ class EEH_DTT_Helper {
 	 */
 	public static function calc_date( $DateTime_or_timestamp, $period = 'years', $value = 1, $operand = '+' ) {
 		if ( $DateTime_or_timestamp instanceof DateTime ) {
-			switch ( $period ) {
-				case 'years' :
-					$value = 'P' . $value . 'Y';
-					break;
-				case 'months' :
-					$value = 'P' . $value . 'M';
-					break;
-				case 'days' :
-					$value = 'P' . $value . 'D';
-					break;
-				case 'hours' :
-					$value = 'PT' . $value . 'H';
-					break;
-				case 'minutes' :
-					$value = 'PT' . $value . 'M';
-					break;
-				case 'seconds' :
-					$value = 'PT' . $value . 'S';
-					break;
-			}
-		} else if ( preg_match( '/[0-9]{10,}/', $value )) {
-			switch ( $period ) {
-				case 'years' :
-					$value = (60*60*24*364.5) * $value;
-					break;
-				case 'months' :
-					$value = (60*60*24*30.375) * $value;
-					break;
-				case 'days' :
-					$value = (60*60*24) * $value;
-					break;
-				case 'hours' :
-					$value = (60*60) * $value;
-					break;
-				case 'minutes' :
-					$value = 60 * $value;
-					break;
-			}
+			return EEH_DTT_Helper::_modify_datetime_object( $DateTime_or_timestamp, $period, $value, $operand );
+		} else if ( preg_match( '/[0-9]{10,}/', $DateTime_or_timestamp )) {
+			return EEH_DTT_Helper::_modify_timestamp( $DateTime_or_timestamp, $period, $value, $operand );
+		} else {
+			//error
 		}
-
-		switch ( $operand ) {
-			case '+':
-				$DateTime_or_timestamp = $DateTime_or_timestamp instanceof DateTime ? $DateTime_or_timestamp->add( new DateInterval( $value ) ) : $DateTime_or_timestamp + $value;
-				break;
-			case '-':
-				$DateTime_or_timestamp = $DateTime_or_timestamp instanceof DateTime ? $DateTime_or_timestamp->sub( new DateInterval( $value ) ) : $DateTime_or_timestamp - $value;
-				break;
-		}
-
-		return $DateTime_or_timestamp;
 	}
 
 
