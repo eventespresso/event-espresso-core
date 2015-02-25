@@ -158,9 +158,6 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 * @param bool $increment_datetimes
 	 */
 	protected function _date_time_modifier_tests( $increment_datetimes = true ) {
-		// setup some objects used for testing
-		$EVT_start = $this->setup_DateTime_object();
-		$EE_Datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $EVT_start->format( 'U' ) ), 'UTC' );
 		// setup data arrays for generating test conditions
 		$periods = array(
 			'years' 			=> 'P%Y',
@@ -176,17 +173,17 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 		foreach ( $periods as $period => $designator ) {
 			foreach ( $intervals as $interval ) {
 				// TEST: add $interval $period ( ie: add 1 year...  add 3 months...  add 34 seconds )
-				// clone our test objects
-				$expected_datetime = clone( $EVT_start );
-				$datetime_object = clone( $EE_Datetime );
+				// setup some objects used for testing
+				$expected_datetime = $this->setup_DateTime_object();
+				$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $expected_datetime->format( 'U' ) ), 'UTC' );
 				$period_interval = str_replace( '%', $interval, $designator );
 				// apply conditions to both objects
 				if ( $increment_datetimes ) {
 					$expected_datetime->add( new DateInterval( $period_interval ) );
-					$actual_datetime = EEH_DTT_Helper::date_time_add( $datetime_object, 'DTT_EVT_start', $period, $interval );
+					$actual_datetime = EEH_DTT_Helper::date_time_add( $actual_datetime, 'DTT_EVT_start', $period, $interval );
 				} else {
 					$expected_datetime->sub( new DateInterval( $period_interval ) );
-					$actual_datetime = EEH_DTT_Helper::date_time_subtract( $datetime_object, 'DTT_EVT_start', $period, $interval );
+					$actual_datetime = EEH_DTT_Helper::date_time_subtract( $actual_datetime, 'DTT_EVT_start', $period, $interval );
 				}
 				$expected = $expected_datetime->format( 'Y-m-d H:i:s' );
 				$actual = $actual_datetime->get_raw_date( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
@@ -203,7 +200,6 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 						)
 					);
 				}
-				// kill all clones
 				unset( $expected_datetime );
 				unset( $actual_datetime );
 			}
