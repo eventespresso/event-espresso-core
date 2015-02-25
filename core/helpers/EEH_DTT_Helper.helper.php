@@ -306,23 +306,47 @@ class EEH_DTT_Helper {
 
 
 	/**
+	 * 	_set_date_time_field
+	 *
+	 * 	modifies EE_Base_Class EE_Datetime_Field objects
+	 *
+	 * @param  EE_Base_Class 	$obj 	EE_Base_Class object
+	 * @param 	DateTime 			$DateTime 		PHP DateTime object
+	 * @param  string					$datetime_field_name 	the datetime fieldname to be manipulated
+	 * @return 	EE_Base_Class
+	 */
+	protected static function _set_date_time_field( EE_Base_Class $obj, DateTime $DateTime, $datetime_field_name ) {
+		// grab current datetime format
+		$current_format = $obj->get_format();
+		// set new full timestamp format
+		$obj->set_date_format( 'Y-m-d' );
+		$obj->set_time_format( 'H:i:s' );
+		// set the new date value using a full timestamp format so that no data is lost
+		$obj->set( $datetime_field_name, $DateTime->format( 'Y-m-d H:i:s' ) );
+		// reset datetime formats
+		$obj->set_date_format( $current_format[0] );
+		$obj->set_time_format( $current_format[1] );
+		return $obj;
+	}
+
+
+
+	/**
 	 * 	date_time_add
 	 * 	helper for doing simple datetime calculations on a given datetime from EE_Base_Class
 	 * 	and modifying it IN the EE_Base_Class so you don't have to do anything else.
 	 *
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
-	 * @param  string 		$datetime_field_name 	the datetime fieldname to be manipulated
+	 * @param  string 		$datetime_field_name 	name of the EE_Datetime_Filed datatype db column to be manipulated
 	 * @param  string 		$period     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
 	 * @param  integer 	$value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
 	public static function date_time_add( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date.
-		$datetime_field = $obj->get_raw_date( $datetime_field_name );
-		$datetime_field = self::calc_date( $datetime_field, $period, $value );
-		//set the new date value using a timestamp so that no data is lost
-		$obj->set( $datetime_field_name, $datetime_field->format( 'U' ) );
-		return $obj;
+		$DateTime = $obj->get_raw_date( $datetime_field_name );
+		$DateTime = EEH_DTT_Helper::calc_date( $DateTime, $period, $value );
+		return EEH_DTT_Helper::_set_date_time_field( $obj, $DateTime, $datetime_field_name );
 	}
 
 
@@ -332,18 +356,16 @@ class EEH_DTT_Helper {
 	 * 	same as date_time_add except subtracting value instead of adding.
 	 *
 	 * @param \EE_Base_Class $obj
-	 * @param  string 		$datetime_field_name 	the datetime fieldname to be manipulated
+	 * @param  string 		$datetime_field_name 	name of the EE_Datetime_Filed datatype db column to be manipulated
 	 * @param string         $period
 	 * @param int            $value
 	 * @return \EE_Base_Class
 	 */
 	public static function date_time_subtract( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date
-		$datetime_field = $obj->get_raw_date( $datetime_field_name );
-		$datetime_field = self::calc_date( $datetime_field, $period, $value, '-' );
-		//set the new date value using a timestamp so that no data is lost
-		$obj->set( $datetime_field_name, $datetime_field->format( 'U' ) );
-		return $obj;
+		$DateTime = $obj->get_raw_date( $datetime_field_name );
+		$DateTime = EEH_DTT_Helper::calc_date( $DateTime, $period, $value, '-' );
+		return EEH_DTT_Helper::_set_date_time_field( $obj, $DateTime, $datetime_field_name );
 	}
 
 
@@ -454,6 +476,7 @@ class EEH_DTT_Helper {
 			return EEH_DTT_Helper::_modify_timestamp( $DateTime_or_timestamp, $period, $value, $operand );
 		} else {
 			//error
+			return $DateTime_or_timestamp;
 		}
 	}
 
