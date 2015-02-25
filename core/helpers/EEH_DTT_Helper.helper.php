@@ -304,24 +304,24 @@ class EEH_DTT_Helper {
 	}
 
 
+
 	/**
 	 * 	date_time_add
 	 * 	helper for doing simple datetime calculations on a given datetime from EE_Base_Class
 	 * 	and modifying it IN the EE_Base_Class so you don't have to do anything else.
 	 *
 	 * @param  EE_Base_Class $obj      EE_Base_Class object
-	 * @param  string        $dtt_field What field in the class has the date to manipulate
-	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
-	 * @param  integer       $value    what you want to increment the time by
+	 * @param  string 		$datetime_field_name 	the datetime fieldname to be manipulated
+	 * @param  string 		$period     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years
+	 * @param  integer 	$value    what you want to increment the time by
 	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
 	 */
-	public static function date_time_add( EE_Base_Class $obj, $dtt_field, $what = 'years', $value = 1 ) {
+	public static function date_time_add( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date.
-		$dtt = $obj->get_raw_date($dtt_field);
-		$format = $obj->get_format();
-		$new_date = self::calc_date($dtt, $what, $value);
-		//set the new date value!
-		$obj->set($dtt_field, $new_date->format( $format ) );
+		$datetime_field = $obj->get_raw_date( $datetime_field_name );
+		$datetime_field = self::calc_date( $datetime_field, $period, $value );
+		//set the new date value using a timestamp so that no data is lost
+		$obj->set( $datetime_field_name, $datetime_field->format( 'U' ) );
 		return $obj;
 	}
 
@@ -332,17 +332,17 @@ class EEH_DTT_Helper {
 	 * 	same as date_time_add except subtracting value instead of adding.
 	 *
 	 * @param \EE_Base_Class $obj
-	 * @param                $dtt_field
-	 * @param string         $what
+	 * @param  string 		$datetime_field_name 	the datetime fieldname to be manipulated
+	 * @param string         $period
 	 * @param int            $value
 	 * @return \EE_Base_Class
 	 */
-	public static function date_time_subtract( EE_Base_Class $obj, $dtt_field, $what = 'years', $value = 1 ) {
+	public static function date_time_subtract( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date
-		$dtt = $obj->get_raw_date($dtt_field);
-		$format = $obj->get_format();
-		$new_date = self::calc_date($dtt, $what, $value, '-');
-		$obj->set($dtt_field, $new_date->format( $format ) );
+		$datetime_field = $obj->get_raw_date( $datetime_field_name );
+		$datetime_field = self::calc_date( $datetime_field, $period, $value, '-' );
+		//set the new date value using a timestamp so that no data is lost
+		$obj->set( $datetime_field_name, $datetime_field->format( 'U' ) );
 		return $obj;
 	}
 
@@ -351,16 +351,15 @@ class EEH_DTT_Helper {
 
 	/**
 	 * Simply takes an incoming UTC timestamp or DateTime object and does calculations on it based on the incoming parameters and returns the new timestamp or DateTime.
-	 * @param  int | DateTime $dtt     Unix timestamp or DateTime
-	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  int | DateTime $DateTime_or_timestamp     DateTime object or Unix timestamp
+	 * @param  string  $period   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
 	 * @param  integer $value  What you want to increment the date by
 	 * @param  string  $operand What operand you wish to use for the calculation
 	 * @return mixed string|DateTime          return whatever type came in.
 	 */
-	public static function calc_date( $dtt, $what = 'years', $value = 1, $operand = '+' ) {
-
-		if ( $dtt instanceof DateTime ) {
-			switch ( $what ) {
+	public static function calc_date( $DateTime_or_timestamp, $period = 'years', $value = 1, $operand = '+' ) {
+		if ( $DateTime_or_timestamp instanceof DateTime ) {
+			switch ( $period ) {
 				case 'years' :
 					$value = 'P' . $value . 'Y';
 					break;
@@ -380,8 +379,8 @@ class EEH_DTT_Helper {
 					$value = 'PT' . $value . 'S';
 					break;
 			}
-		} else {
-			switch ( $what ) {
+		} else if ( preg_match( '/[0-9]{10,}/', $value )) {
+			switch ( $period ) {
 				case 'years' :
 					$value = (60*60*24*364.5) * $value;
 					break;
@@ -400,17 +399,16 @@ class EEH_DTT_Helper {
 			}
 		}
 
-		$new_dtt = '';
 		switch ( $operand ) {
 			case '+':
-				$new_dtt = $dtt instanceof DateTime ? $dtt->add( new DateInterval( $value ) ) : $dtt + $value;
+				$DateTime_or_timestamp = $DateTime_or_timestamp instanceof DateTime ? $DateTime_or_timestamp->add( new DateInterval( $value ) ) : $DateTime_or_timestamp + $value;
 				break;
 			case '-':
-				$new_dtt = $dtt instanceof DateTime ? $dtt->sub( new DateInterval( $value ) ) : $dtt - $value;
+				$DateTime_or_timestamp = $DateTime_or_timestamp instanceof DateTime ? $DateTime_or_timestamp->sub( new DateInterval( $value ) ) : $DateTime_or_timestamp - $value;
 				break;
 		}
 
-		return $new_dtt;
+		return $DateTime_or_timestamp;
 	}
 
 
