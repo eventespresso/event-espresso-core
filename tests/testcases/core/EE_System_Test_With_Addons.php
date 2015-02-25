@@ -138,7 +138,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$track_it = TRUE;
 		try{
 			EEH_Activation::create_table( 'esp_new_addon_thing', 'BORKED SQL', 'ENGINE=MyISAM ', TRUE );
-			$this->fail( 'Borked SQL didnt\'t cause EEH_Activation::create_table to throw an EE_Error. It should have' );
+			$this->fail( 'Borked SQL didn\'t cause EEH_Activation::create_table to throw an EE_Error. It should have' );
 		}catch( EE_Error $e ){
 			$this->assertTrue( TRUE );
 		}
