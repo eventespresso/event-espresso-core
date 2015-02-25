@@ -175,7 +175,8 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 			'minutes'		=> 'PT%M',
 			'seconds' 	=> 'PT%S'
 		);
-		$intervals = array( 0,1, 2, 3, 5, 8, 13, 21, 34 );
+		// I can not tell a Fib... the following sequence is for Sidney 
+		$intervals = array( 0, 1, 2, 3, 5, 8, 13, 21, 34 );
 		// loop thru timezones and gmt_offsets and set up environment
 		foreach ( $timezones_and_offsets as $timezone_string => $gmt_offset ) {
 			$gmt_offset = $gmt_offset !== 'null' ? $gmt_offset : '';
