@@ -394,6 +394,9 @@ class EEH_DTT_Helper {
 			case 'months' :
 				$value = 'P' . $value . 'M';
 				break;
+			case 'weeks' :
+				$value = 'P' . $value . 'W';
+				break;
 			case 'days' :
 				$value = 'P' . $value . 'D';
 				break;
@@ -439,19 +442,22 @@ class EEH_DTT_Helper {
 		}
 		switch ( $period ) {
 			case 'years' :
-				$value = (60*60*24*364.5) * $value;
+				$value = YEAR_IN_SECONDS * $value;
 				break;
 			case 'months' :
-				$value = (60*60*24*30.375) * $value;
+				$value = YEAR_IN_SECONDS / 12 * $value;
+				break;
+			case 'weeks' :
+				$value = WEEK_IN_SECONDS * $value;
 				break;
 			case 'days' :
-				$value = (60*60*24) * $value;
+				$value = DAY_IN_SECONDS * $value;
 				break;
 			case 'hours' :
-				$value = (60*60) * $value;
+				$value = HOUR_IN_SECONDS * $value;
 				break;
 			case 'minutes' :
-				$value = 60 * $value;
+				$value = MINUTE_IN_SECONDS * $value;
 				break;
 		}
 		switch ( $operand ) {
