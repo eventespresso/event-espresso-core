@@ -191,7 +191,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 					// TEST: add $interval $period ( ie: add 1 year...  add 3 months...  add 34 seconds )
 					// setup some objects used for testing
 					$expected_datetime = $this->setup_DateTime_object();
-					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $expected_datetime->format( 'U' ) ), $timezone_string );
+					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $expected_datetime->format( 'U' ) ));
 					$period_interval = str_replace( '%', $interval, $designator );
 					// apply conditions to both objects
 					if ( $increment_datetimes ) {
@@ -201,21 +201,20 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 						$expected_datetime->sub( new DateInterval( $period_interval ) );
 						$actual_datetime = EEH_DTT_Helper::date_time_subtract( $actual_datetime, 'DTT_EVT_start', $period, $interval );
 					}
-					if ( ! $actual_datetime instanceof EE_Datetime ) {
-						printr( $actual_datetime, '$actual_datetime', __FILE__, __LINE__);
-					}
 					$expected = $expected_datetime->format( 'Y-m-d H:i:s' );
 					$actual = $actual_datetime->get_raw_date( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
 					// compare
 					if ( $expected !== $actual ) {
 						$this->fail(
 							sprintf(
-								__( 'The %1$s method failed to produce correct results for the the period interval %2$s.%3$sExpected value: %4$s%3$sActual value: %5$s%3$s', 'event_espresso' ),
+								__( 'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s', 'event_espresso' ),
 								$increment_datetimes ? 'EEH_DTT_Helper::date_time_add()' : 'EEH_DTT_Helper::date_time_subtract()',
 								$period_interval,
 								'<br />',
 								$expected,
-								$actual
+								$actual,
+								$timezone_string,
+								$gmt_offset
 							)
 						);
 					}
