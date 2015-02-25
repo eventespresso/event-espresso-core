@@ -98,7 +98,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	function test_detect_activations_or_upgrades__new_install_on_core_and_addon_simultaneously(){
 
 		ob_start();
-		error_log( 'message taht shouldnt be outputte dbut is');
 		ob_end_clean();
 		global $wp_actions, $wpdb;
 		//pretend core was just activated
