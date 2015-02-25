@@ -692,6 +692,105 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * This returns the date formats set for the given field name.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The name of the field the formats are being retrieved for.
+	 * @param bool   $pretty          Whether to return the pretty formats (true) or not (false).
+	 * @throws EE_Error   If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return array formats in an array with the date format first, and the time format last.
+	 */
+	public function get_formats_for( $field_name, $pretty = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then throw error
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
+		}
+
+		//while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
+		//the field.
+		$this->_timezone = $field_settings->get_timezone();
+
+		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
+	}
+
+
+
+	/**
+	 * This returns the current time in a format setup for a query on this model.
+	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
+	 * it will return:
+	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
+	 *  - or a unixtimestamp with the offset applied for the currently set timezone for NOW.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The field the currrent time is needed for.
+	 * @param bool   $timestamp  True means to return a unix timestamp with offset for the timezone applied. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will be returned.
+	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
+	 */
+	public function current_time_for_query( $field_name, $timestamp = false ) {
+		$formats = $this->get_formats_for( $field_name );
+
+		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
+
+		if ( $timestamp ) {
+			$offset = timezone_offset_get( new DateTimeZone( 'UTC' ), $DateTime );
+			return $DateTime->format( 'U' ) + $offset;
+		}
+
+		//not returning timestamp, so return formatted string in timezone.
+		return $DateTime->format( implode( ' ', $formats) );
+	}
+
+
+
+
+
+	/**
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings for the model are.
+	 *
+	 * @param string $field_name The field being setup.
+	 * @param string $timestring   The date timestring being used.
+	 * @param string $incoming_format        The format for the time string.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for the blog.  If this is not
+	 *                           		the case, then it can be specified here.
+	 */
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+		$formats = $this->get_formats_for( $field_name );
+		$full_format = implode( ' ', $formats );
+
+		//if empty $timezone and incoming format is 'U'.  Then that means the incoming timestring is current_time('timestamp') which has an
+		//offset applied.  So let's REMOVE that offset so setting DateTime works correctly.
+		if ( empty( $timezone ) && $incoming_format == 'U' ) {
+			$offset = get_option( 'gmt_offset' ) * 60 * 60;
+			$timestring = $timestring - $offset;
+		}
+
+		//load EEH_DTT_Helper
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+
+		//first let's do comparisons and see if we even need to convert
+		if ( $set_timezone == $this->_timezone && $full_format == $incoming_format ) {
+			return $timestring;
+		}
+
+		//if made it here then that means conversion is necessary.
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
+
+		//return converted string
+		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
+	}
+
+
+
+
+	/**
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
 	 * @return EE_Table_Base[]
 	 */
@@ -2136,6 +2235,7 @@ abstract class EEM_Base extends EE_Base{
 				);
 			}
 		}
+
 		//check if it's a custom selection
 		elseif(array_key_exists($query_param,$this->_custom_selections)){
 			return;

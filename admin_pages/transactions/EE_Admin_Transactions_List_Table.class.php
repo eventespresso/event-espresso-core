@@ -163,14 +163,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		// is TXN less than 2 hours old ?
 		if (
 			(
-				( current_time( 'timestamp' ) - EE_Registry::instance()->SSN->lifespan() )
-				< strtotime( $item->datetime() )
+				( time() - EE_Registry::instance()->SSN->lifespan() )
+				< $item->datetime( false, true )
 			) &&
 			( $item->failed() || $item->is_abandoned() )
 		) {
 			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) . '</a>';
 		} else {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime() .  '</a>';
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime(true) .  '</a>';
 		}
 		return $txn_date;
 	}

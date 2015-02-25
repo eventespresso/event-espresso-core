@@ -300,7 +300,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 			$query_params = array(
 				array(
 					'status' => 'publish',
-					'Datetime.DTT_EVT_start' => array( '>', current_time( 'mysql' ))
+					'Datetime.DTT_EVT_start' => array( '>',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) )
 				)
 			);
 		}

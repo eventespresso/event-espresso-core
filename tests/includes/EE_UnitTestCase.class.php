@@ -283,7 +283,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
-
+		require_once EE_TESTS_DIR . 'mocks/admin/registrations/EE_Registrations_List_Table_Mock.php';
 	}
 
 
@@ -294,6 +294,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function delayedAdminPageMocks() {
 		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
 	}
 
 

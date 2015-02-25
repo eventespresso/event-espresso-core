@@ -1012,6 +1012,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $start_date = min( $start_date, $end_date );
 	    $end_date = max( $start_date, $end_date );
 
+	    //convert to correct format for query
+	$start_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', $start_date, 'U' );
+	$end_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', $end_date, 'U' );
+
 
 	    //set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';

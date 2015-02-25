@@ -28,6 +28,12 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 
 	/**
+	 * @var EE_UnitTest_Factory_For_Venue
+	 */
+	public $venue;
+
+
+	/**
 	 * @var EE_UnitTest_Factory_For_Datetime
 	 */
 	public $datetime;
@@ -89,6 +95,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 		//setup any properties containing various test factory objects. EE_Test_Factories should extend the WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/factory.php).
 		$this->event = new EE_UnitTest_Factory_For_Event( $this );
+		$this->venue = new EE_UnitTest_Factory_For_Venue( $this );
 		$this->datetime = new EE_UnitTest_Factory_For_Datetime( $this );
 		$this->datetime_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
 		$this->ticket = new EE_UnitTest_Factory_For_Ticket( $this );
@@ -184,6 +191,87 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 		return EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 	}
 }
+
+
+
+
+
+/**
+ * EE Factory Class for Venues
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Venue extends WP_UnitTest_Factory_For_Thing {
+
+	public function __construct( $factory = NULL ) {
+		parent::__construct( $factory );
+		//default args for creating events.
+		$this->default_generation_definitions = array(
+			'VNU_name' => new WP_UnitTest_Generator_Sequence( 'Venue %s' ),
+			'VNU_desc' => new WP_UnitTest_Generator_Sequence( 'Venue content %s' ),
+			'VNU_short_desc' => new WP_UnitTest_Generator_Sequence( 'Venue excerpt %s' ),
+		);
+	}
+
+
+	/**
+	 * used by factory to create venue object
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Venue|false
+	 */
+	public function create_object( $args ) {
+		$venue = EE_Venue::new_instance( $args );
+		$venID = $venue->save();
+		return $venID ? $venue : false;
+	}
+
+
+	/**
+	 * Update venue object for given venue
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int      $VNU_ID         Venue ID for the event to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Venue|false
+	 */
+	public function update_object( $VNU_ID, $cols_n_data ) {
+		//all the stuff for updating an event.
+		$venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+		if ( ! $venue instanceof EE_Venue )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$venue->set( $key, $val );
+		}
+		$success = $venue->save();
+		return $success ? $venue : false;
+	}
+
+
+
+	/**
+	 * return the venue object for a given venue ID
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int  $VNU_ID the venue id for the venue to attemp to retrieve
+	 *
+	 * @return mixed null|EE_Venue
+	 */
+	public function get_object_by_id( $VNU_ID ) {
+		return EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+	}
+}
+
+
 
 
 
@@ -303,7 +391,23 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['EVT_ID'] );
 		}
 
-		$dtt = EE_Datetime::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//dateformats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$dtt = EE_Datetime::new_instance( $args, $timezone, $formats );
 		$dttID = $dtt->save();
 		$dtt = $this->_maybe_chained( $dtt, $args );
 		return $dttID ? $dtt : false;
@@ -511,7 +615,23 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['DTT_ID'] );
 		}
 
-		$tkt = EE_ticket::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$tkt = EE_Ticket::new_instance( $args, $timezone, $formats );
 		$tktID = $tkt->save();
 		$tkt = $this->_maybe_chained( $tkt, $args );
 		return $tktID ? $tkt : false;
