@@ -309,9 +309,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function loadModelsMocks( $ModelsMocks = array() ) {
 		foreach ( $ModelsMocks as $ModelsMock ) {
-			if ( is_readable( EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php' ) ) {
-				require_once EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php';
-			}
+			require_once EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php';
 		}
 	}
 
@@ -321,9 +319,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function loadModelFieldMocks( $ModelFieldMocks = array() ) {
 		foreach ( $ModelFieldMocks as $ModelFieldMock ) {
-			if ( is_readable( EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php' ) ) {
-				require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php';
-			}
+			require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php';
 		}
 	}
 
