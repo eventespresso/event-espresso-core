@@ -398,7 +398,7 @@ class EEH_Activation {
 		// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
 		preg_match( '((((["\'])(.+)(["\'])|(.+))(,\s))+)', $sql, $valid_column_data );
 		if ( ! empty( $valid_column_data ) ) {
-			$SQL = "CREATE TABLE $wp_table_name $sql $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+			$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 			//get $wpdb to echo errors, but buffer them. This way at least WE know an error
 			//happened. And then we can choose to tell the end user
 			$old_show_errors_policy = $wpdb->show_errors( TRUE );
