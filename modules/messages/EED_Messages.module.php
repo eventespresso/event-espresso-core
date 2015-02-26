@@ -335,7 +335,19 @@ class EED_Messages  extends EED_Module {
 	public static function payment_reminder( EE_Transaction $transaction ) {
 		self::_load_controller();
 		$data = array( $transaction, null );
-		self::$_EEMSG->send_message( 'payment_reminder', $data );
+		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
+			if ( WP_DEBUG ) {
+				$delivered_messages = get_option( 'EED_Messages__payment', array() );
+				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+					$delivered_messages[ $transaction->ID() ] = array();
+				}
+				$delivered_messages[ $transaction->ID() ][ time() ] = array(
+					'message_type' => 'payment_reminder',
+					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+				);
+				update_option( 'EED_Messages__payment', $delivered_messages );
+			}
+		}
 	}
 
 
@@ -361,7 +373,20 @@ class EED_Messages  extends EED_Module {
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
 
-		self::$_EEMSG->send_message( $message_type, $data);
+		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
+			if ( WP_DEBUG ) {
+				$delivered_messages = get_option( 'EED_Messages__payment', array() );
+				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+					$delivered_messages[ $transaction->ID() ] = array();
+				}
+				$delivered_messages[ $transaction->ID() ][ time() ] = array(
+					'message_type' => $message_type,
+					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+					'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
+				);
+				update_option( 'EED_Messages__payment', $delivered_messages );
+			}
+		}
 	}
 
 
@@ -405,10 +430,19 @@ class EED_Messages  extends EED_Module {
 		// verify message type is active
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
-			self::$_EEMSG->send_message(
-				$message_type,
-				array( $registration->transaction(), NULL )
-			);
+			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
+				if ( WP_DEBUG ) {
+					$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
+					if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
+						$delivered_messages[ $registration->ID() ] = array();
+					}
+					$delivered_messages[ $registration->ID() ][ time() ] = array(
+						'message_type' => $message_type,
+						'reg_status' => $registration->status_obj()->code( false, 'sentence' )
+					);
+					update_option( 'EED_Messages__maybe_registration', $delivered_messages );
+				}
+			}
 		}
 
 	}
