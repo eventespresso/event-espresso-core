@@ -37,7 +37,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-//		EEH_Activation::CPT_initialization();//dont register taxonomies on activation because they need to happen on INIT hook anyways
+		EEH_Activation::reset_and_update_config();
 		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
 	}
@@ -78,19 +78,79 @@ class EEH_Activation {
 
 
 	/**
-	 * 	CPT_initialization
-	 *	registers all EE CPTs ( Custom Post Types ) then flushes rewrite rules so that all endpoints exist
+	 * 	reset_and_update_config
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function CPT_initialization() {
-		// register Custom Post Types
-		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		flush_rewrite_rules();
+	public static function reset_and_update_config() {
+		do_action( 'AHEE__EE_Config___load_core_config__start', array( 'EEH_Activation', 'load_calendar_config' ) );
+		add_filter( 'FHEE__EE_Config___load_core_config__config_settings', array( 'EEH_Activation', 'migrate_old_config_data' ), 10, 3 );
+		EE_Config::reset();
 	}
 
+
+
+	/**
+	 *    load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	public static function load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		if ( empty( $plugins ) ) {
+			return;
+		}
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array      $settings
+	 * @param string     $config
+	 * @param \EE_Config $EE_Config
+	 * @return \stdClass
+	 */
+	public static function migrate_old_config_data( $settings = array(), $config = '', EE_Config $EE_Config ) {
+		$convert_from_array = array( 'addons' );
+		// in case old settings were saved as an array
+		if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+			// convert existing settings to an object
+			$config_array = $settings;
+			$settings = new stdClass();
+			foreach ( $config_array as $key => $value ){
+				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+				} else {
+					$settings->$key = $value;
+				}
+			}
+			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
+		}
+		return $settings;
+	}
 
 
 
