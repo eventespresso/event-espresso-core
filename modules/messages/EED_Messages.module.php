@@ -489,7 +489,7 @@ class EED_Messages  extends EED_Module {
 
 
 			// and only send messages during revisit if the reg status changes
-			if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+			if ( isset( $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
 				return FALSE;
 			}
 		}
