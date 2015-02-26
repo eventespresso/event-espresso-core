@@ -35,11 +35,6 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * @return EE_Cron_Tasks
 	 */
 	private function __construct() {
-		// so we can compare against timestamps in the "cron" option
-		update_option(
-			'ee_cron_timestamp',
-			time()
-		);
 		// UPDATE TRANSACTION WITH PAYMENT
 		add_action(
 			'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
@@ -86,10 +81,6 @@ class EE_Cron_Tasks extends EE_BASE {
 		// validate $TXN_ID and $timestamp
 		$TXN_ID = absint( $TXN_ID );
 		$timestamp = absint( $timestamp );
-		update_option(
-			'ee_cron_schedule_update_transaction_with_payment',
-			$timestamp
-		);
 		if ( $TXN_ID && $timestamp ) {
 			wp_schedule_single_event(
 				$timestamp,
@@ -118,10 +109,6 @@ class EE_Cron_Tasks extends EE_BASE {
 	 */
 	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $payment = null ) {
 		if ( absint( $TXN_ID )) {
-			update_option(
-				'ee_cron_setup_update_for_transaction_with_payment',
-				array( $TXN_ID => $payment )
-			);
 			self::$_update_transactions_with_payment[ $TXN_ID ] = $payment;
 			add_action(
 				'shutdown',
@@ -142,10 +129,6 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * returning from an off-site payment gateway
 	 */
 	public static function update_transaction_with_payment() {
-		update_option(
-			'ee_cron_update_transaction_with_payment',
-			self::$_update_transactions_with_payment
-		);
 		// are there any TXNs that need cleaning up ?
 		if ( ! empty( self::$_update_transactions_with_payment ) ) {
 			/** @type EE_Payment_Processor $payment_processor */
@@ -170,10 +153,6 @@ class EE_Cron_Tasks extends EE_BASE {
 				if ( $transaction instanceof EE_Transaction ) {
 					// now try to update the TXN with any payments
 					$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
-					update_option(
-						'ee_cron_update_transaction_with_payment',
-						$transaction
-					);
 				}
 				unset( self::$_update_transactions_with_payment[ $TXN_ID ] );
 			}
@@ -214,10 +193,6 @@ class EE_Cron_Tasks extends EE_BASE {
 		// validate $TXN_ID and $timestamp
 		$TXN_ID = absint( $TXN_ID );
 		$timestamp = absint( $timestamp );
-		update_option(
-			'ee_cron_schedule_finalize_abandoned_transactions_check',
-			$timestamp
-		);
 		if ( $TXN_ID && $timestamp ) {
 			wp_schedule_single_event(
 				$timestamp,
@@ -246,10 +221,6 @@ class EE_Cron_Tasks extends EE_BASE {
 	 */
 	public static function check_for_abandoned_transactions(	$TXN_ID = 0 ) {
 		if ( absint( $TXN_ID )) {
-			update_option(
-				'ee_cron_check_for_abandoned_transactions',
-				$TXN_ID
-			);
 			self::$_abandoned_transactions[]  = $TXN_ID;
 			add_action(
 				'shutdown',
@@ -270,10 +241,6 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * returning from an off-site payment gateway
 	 */
 	public static function finalize_abandoned_transactions() {
-		update_option(
-			'ee_cron_finalize_abandoned_transactions',
-			self::$_abandoned_transactions
-		);
 		// are there any TXNs that need cleaning up ?
 		if ( ! empty( self::$_abandoned_transactions ) ) {
 			/** @type EE_Transaction_Processor $transaction_processor */
@@ -285,10 +252,6 @@ class EE_Cron_Tasks extends EE_BASE {
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
 			foreach ( self::$_abandoned_transactions as $TXN_ID ) {
-//				update_option(
-//					'ee_cron_finalize_abandoned_transactions',
-//					'$TXN_ID = ' . $TXN_ID
-//				);
 				// reschedule the cron if we can't hit the db right now
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for finalizing the TXN
@@ -299,58 +262,24 @@ class EE_Cron_Tasks extends EE_BASE {
 					continue;
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
-//				update_option(
-//					'ee_cron_finalize_abandoned_transactions',
-//					$transaction
-//				);
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
 					// or have had all of their reg steps completed
 					if ( $transaction_processor->all_reg_steps_completed(	$transaction ) === true ) {
-//						update_option(
-//							'ee_cron_finalize_abandoned_transactions',
-//							'all_reg_steps_completed'
-//						);
 						continue;
 					}
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						'$transaction->ID() = ' . $transaction->ID() . ' &&
-//						$transaction->reg_steps() = '
-//						. serialize( $transaction->reg_steps() )
-//					);
-//					$transaction->save();
 					// maybe update status, but don't save transaction just yet
 					$transaction_payments	->update_transaction_status_based_on_total_paid( $transaction, false );
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						'$transaction->ID() = ' . $transaction->ID() . ' &&
-//						$transaction->reg_steps( finalize ) = '
-//						. serialize( $transaction->reg_steps() ) . ' &&
-//						$transaction->status_ID() = '
-//						. $transaction->status_ID()
-//					);
 					// check if enough Reg Steps have been completed to warrant finalizing the TXN
 					if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
 						// and if it hasn't already been set as being started...
 						$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						'$transaction->ID() = ' . $transaction->ID() . ' &&
-//						$transaction->reg_steps( finalize_registration ) = '
-//						. serialize( $transaction->reg_steps() )
-//					);
 					}
 					// now update the TXN and trigger notifications
 					$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 						$transaction,
 						$transaction->last_payment()
 					);
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						serialize(get_option(
-//							'ee_cron_finalize_abandoned_transactions'	)) . serialize($transaction)
-//					);
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
