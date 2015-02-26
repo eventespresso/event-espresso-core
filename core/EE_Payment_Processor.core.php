@@ -181,8 +181,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
 				//  update the TXN, but not the payment, cuz we'll do that here
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, false, true );
-				$payment->save();
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -278,7 +277,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 *                        update_transaction_and_registrations_after_checkout_or_payment()
 	 *                        (you can save 1 DB query if you know you're going
 	 *                        to save it later instead)
-	 * @param bool           $update_payment
 	 * @param bool           $IPN
 	 *                        if processing IPNs or other similar payment
 	 *                        related activities that occur in alternate
@@ -287,31 +285,43 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 *                        TXN is locked before updating
 	 * @throws \EE_Error
 	 */
-	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $update_payment = true, $IPN = false ){
+	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $IPN = false ){
+
 		$do_action = FALSE;
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
+		// 4 DEBUGGING - will be removed
+		$update_txn_based_on_payment = get_option( 'ee_update_txn_based_on_payment', array() );
+		if ( ! isset( $update_txn_based_on_payment[ $transaction->ID() ] )) {
+			$update_txn_based_on_payment[ $transaction->ID() ] = array();
+		}
+		$time = time();
+		$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['update_txn'] = $update_txn;
+		$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['IPN'] = $IPN;
+		$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_status'] = $transaction->status_ID();
+		$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['reg_steps'] = $transaction->reg_steps();
+
 		// can we freely update the TXN at this moment?
 		if ( $IPN && $transaction->is_locked() ) {
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_locked'] = true;
 			// don't update the transaction at this exact moment
 			// because the TXN is active in another request
 			EE_Cron_Tasks::schedule_update_transaction_with_payment(
-				time() + 1,
+				time(),
 				$transaction->ID(),
 				$payment
 			);
 		} else {
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_locked'] = false;
 			// verify payment
 			if ( $payment instanceof EE_Payment ) {
 				if( $payment->payment_method() instanceof EE_Payment_Method &&
 					$payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
-				if ( $update_payment ) {
-					// we need to save this payment in order for transaction to be updated correctly
-					// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-					$payment->save();
-				}
+				// we need to save this payment in order for transaction to be updated correctly
+				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
+				$payment->save();
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
 
 			} else {
@@ -329,11 +339,31 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
+			// don't need to do anything more if the payment has failed
+			if ( $payment instanceof EE_Payment && $payment->status() === EEM_Payment::status_id_failed ) {
+				return;
+			}
+			//DEBUG
+			$PAY_ID = $payment instanceof EE_Payment ? $payment->ID() : 0;
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['payment'] = array();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['payment'][ $PAY_ID ]['status'] = $payment->status();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['payment'][ $PAY_ID ]['amount'] = $payment->amount();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_1']['status'] = $transaction->status_ID();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_1']['reg_steps'] = $transaction->reg_steps();
+
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_1']['paid'] = $transaction_payments->recalculate_total_payments_for_transaction( $transaction );
 			// set new value for total paid, but pass the OPPOSITE value for $update_txn so that we don't perform the update twice
 			// ie: if we are going to update the TXN here, then don't do it there, and vice versa
-			$transaction_payments->calculate_total_payments_and_update_status( $transaction, ( ! $update_txn ) );
+//			$transaction_payments->calculate_total_payments_and_update_status( $transaction, ( ! $update_txn ) );
+			$transaction_payments->calculate_total_payments_and_update_status( $transaction );
+
+			//DEBUG
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_2']['status'] = $transaction->status_ID();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_2']['reg_steps'] = $transaction->reg_steps();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_2']['paid'] = $transaction->paid();
+
 			// call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
 			if ( $update_txn ) {
 				$this->_post_payment_processing( $transaction, $payment, $IPN );
@@ -342,7 +372,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			if ( $do_action ) {
 				do_action( $do_action, $transaction, $payment );
 			}
+
+			//DEBUG
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_3']['status'] = $transaction->status_ID();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_3']['reg_steps'] = $transaction->reg_steps();
+			$update_txn_based_on_payment[ $transaction->ID() ][ $time ]['TXN_3']['paid'] = $transaction->paid();
+
+
 		}
+		update_option( 'ee_update_txn_based_on_payment', $update_txn_based_on_payment );
 	}
 
 
