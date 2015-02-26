@@ -488,8 +488,16 @@ class EED_Messages  extends EED_Module {
 			}
 
 
-			// and only send messages during revisit if the reg status changes
-			if ( isset( $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+			// do NOT send messages if:
+			// * first pass thru SPCO and the reg status was already Approved and has NOT changed
+			// * SPCO revisit and the reg status has NOT changed
+			if (
+				isset( $extra_details['old_reg_status'], $extra_details['new_reg_status'] )
+				&& (
+					( $extra_details['old_reg_status'] == EEM_Registration::status_id_approved && $extra_details['new_reg_status'] == EEM_Registration::status_id_approved )
+					|| ( isset( $extra_details['revisit'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] )
+				)
+			) {
 				return FALSE;
 			}
 		}
