@@ -281,7 +281,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'slug' => 'registration_confirmation',
 					'has_hooks' => FALSE
 				),
-				5 => array(
+				30 => array(
 					'file_path' => SPCO_REG_STEPS_PATH . 'payment_options',
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options',
