@@ -119,16 +119,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$reg_count = 0;
 		// loop thru registrations to gather info
 		foreach ( $this->checkout->transaction->registrations() as $registration ) {
-			$reg_count++;
 			/** @var $registration EE_Registration */
-			if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
-				// add event to list of events that are sold out
-				$sold_out_events[ $registration->event()->ID() ] = $registration->event();
-			}
-			// event requires admin approval
-			if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
-				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+			$reg_count++;
+			// if returning registrant is Approved then do NOT do this
+			if ( ! ( $this->checkout->revisit && $registration->status_ID() == EEM_Registration::status_id_approved )) {
+				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+					// add event to list of events that are sold out
+					$sold_out_events[ $registration->event()->ID() ] = $registration->event();
+				}
+				// event requires admin approval
+				if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+				}
 			}
 			// these reg statuses require payment (if event is not free)
 			$requires_payment = array(
@@ -585,7 +588,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					)
 				);
 			}
-			return $billing_form;
+			return apply_filters(
+				'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
+				$billing_form
+			);
 		}
 		// no actual billing form, so return empty HTML form section
 		return new EE_Form_Section_HTML();
@@ -775,16 +781,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment = $this->_post_payment_processing( $this->_validate_payment( $payment ));
 		// verify payment
 		if ( $payment instanceof EE_Payment ) {
+			// store that for later
+			$this->checkout->payment = $payment;
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
 			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
 			return true;
+		} else if ( $payment === true ) {
+			// please note that offline payment methods will NOT make a payment,
+			// but instead just mark themselves as the PMD_ID on the transaction, and return true
+			$this->checkout->payment = $payment;
+			return true;
 		}
-		// please note that offline payment methods will NOT make a payment,
-		// but instead just mark themselves as the PMD_ID on the transaction, and return true
-		return $payment === true ? true : false;
-
+		// where's my money?
+		return false;
 	}
 
 
@@ -1022,15 +1033,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	protected function _get_return_url( EE_Payment_Method $payment_method ) {
 		$return_url = '';
 		switch ( $payment_method->type_obj()->payment_occurs() ) {
-			case EE_PMT_Base::onsite :
-				$return_url = add_query_arg( array( 'action' => 'process_ipn' ), $this->reg_step_url() );
-				break;
+
 			case EE_PMT_Base::offsite :
-				$return_url = add_query_arg( array( 'action' => 'process_ipn' ), $this->reg_step_url() );
+				$return_url = add_query_arg( array( 'action' => 'process_gateway_response' ), $this->reg_step_url() );
 				break;
+
+			case EE_PMT_Base::onsite :
 			case EE_PMT_Base::offline :
 				$return_url = $this->checkout->next_step->reg_step_url();
 				break;
+
 		}
 		return $return_url;
 	}
@@ -1038,15 +1050,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * process_ipn
+	 * process_gateway_response
 	 *
 	 * @access private
 	 * @return EE_Payment | FALSE
 	 */
-	public function process_ipn() {
+	public function process_gateway_response() {
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 			// how have they chosen to pay?
-			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE, 'ee_payment_method' );
+			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( true, 'ee_payment_method' );
 			if ( $this->checkout->selected_method_of_payment ) {
 				// make sure we have an EE_Payment_Method and that it matches the incoming request
 				if ( ! $this->checkout->payment_method instanceof EE_Payment_Method || $this->checkout->payment_method->slug() != $this->checkout->selected_method_of_payment ) {
@@ -1056,22 +1068,25 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
 					/** @type EE_Payment_Processor $payment_processor */
 					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-					$payment = $payment_processor->process_ipn( $_REQUEST, $this->checkout->transaction, $this->checkout->payment_method );
+					// try to finalize any payment that may have been attempted,
+					$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, true );
 					// process results
 					$payment = $this->_validate_payment( $payment );
-					$payment = $this->_post_payment_processing( $payment, TRUE );
+					$payment = $this->_post_payment_processing( $payment, true );
 					if ( $payment instanceof EE_Payment ) {
+						// store that for later
+						$this->checkout->payment = $payment;
 						// mark this reg step as completed
 						$this->checkout->current_step->set_completed();
-						return TRUE;
+						return true;
 					}
 
 				}
 			}
 		}
 		$this->checkout->action = 'display_spco_reg_step';
-		$this->checkout->continue_reg = FALSE;
-		return FALSE;
+		$this->checkout->continue_reg = false;
+		return false;
 	}
 
 
@@ -1135,6 +1150,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
 				// set JSON response
 				$this->checkout->json_response->set_redirect_form( $this->checkout->redirect_form );
+				// set cron job for finalizing the TXN
+				// in case the user does not return from the off-site gateway
+				EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
+					EE_Registry::instance()->SSN->expiration() + 1,
+					$this->checkout->transaction->ID()
+				);
 			} else {
 				// not a payment
 				EE_Error::add_error(

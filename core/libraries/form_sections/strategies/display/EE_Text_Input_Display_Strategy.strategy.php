@@ -18,6 +18,11 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 	 */
 	protected $_type;
 
+
+
+	/**
+	 * @param string $type
+	 */
 	function __construct( $type = 'text' ) {
 		$this->_type = $type;
 		parent::__construct();
@@ -43,6 +48,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 		$input .= $this->_input->required() ? ' required' : '';
 		$input .= ' value="' . $this->_input->raw_value_in_form() . '"';
 		$input .= ' style="' . $this->_input->html_style() . '"';
+		$input .= $this->_input->html_other_attributes();
 		$input .= '/>';
 		return $input;
 	}

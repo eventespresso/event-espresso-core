@@ -240,7 +240,7 @@ class EED_Recaptcha  extends EED_Module {
 
 		// verify library is loaded
 		if ( ! class_exists( 'ReCaptcha' )) {
-			require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
+			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );
 		}
 		// The response from reCAPTCHA
 		$recaptcha_response = EE_Registry::instance()->REQ->get( 'g-recaptcha-response', FALSE );

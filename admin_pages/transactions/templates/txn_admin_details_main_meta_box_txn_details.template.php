@@ -330,7 +330,7 @@
 						<p class="description"><?php _e( 'Whether the payment was made via PayPal, Credit Card, Cheque, or Cash', 'event_espresso' );?></p>
 					</div>
 
-					<div class="mop-PP mop-CC mop-CHQ mop" style="display:none">
+					<div class="mop-PP mop-CC mop-CHQ mop">
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
 							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
@@ -348,7 +348,7 @@
 						</div>
 					</div>
 
-					<div class="mop-PP mop-CC mop" style="display:none">
+					<div class="mop-PP mop-CC mop">
 						<div class="txn-admin-apply-payment-status-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-status-inp" class=""><?php _e( 'Payment Status', 'event_espresso' );?></label>
 							<select name="txn_admin_payment[status]" id="txn-admin-payment-status-slct" class="txn-admin-apply-payment-slct" type="text" >

@@ -90,7 +90,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ));
+		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 
 
 	}
@@ -99,15 +100,28 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * Finishes construction given the parent form section and this form section's name
+	 *
 	 * @param EE_Form_Section_Proper $parent_form_section
-	 * @param string $name
+	 * @param string                 $name
+	 * @throws \EE_Error
 	 */
-	public function _construct_finalize($parent_form_section, $name) {
+	public function _construct_finalize( $parent_form_section, $name ) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_name_if_empty();
 		$this->_set_default_html_id_if_empty();
-		foreach($this->_subsections as $subsection_name => $subsection){
-			$subsection->_construct_finalize($this, $subsection_name);
+		foreach( $this->_subsections as $subsection_name => $subsection ){
+			if ( $subsection instanceof EE_Form_Section_Base ) {
+				$subsection->_construct_finalize( $this, $subsection_name );
+			} else {
+				throw new EE_Error(
+					sprintf(
+						__( 'Subsection "%s" is not an instanceof EE_Form_Section_Base on form "%s". It is a "%s"', 'event_espresso' ),
+						$subsection_name,
+						get_class($this),
+						$subsection ? get_class($subsection) : __( 'NULL', 'event_espresso' )
+					)
+				);
+			}
 		}
 	}
 
@@ -366,9 +380,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * could change until it's actually outputted)
 	 * @return void
 	 */
-	public function wp_enqueue_scripts(){
+	public static function wp_enqueue_scripts(){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -384,8 +398,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		$this->localize_validation_rules();
-		add_action( 'get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
-		add_action( 'admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+		add_action( 'wp_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ), -999 );
+		add_action( 'admin_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ) );
 	}
 
 
