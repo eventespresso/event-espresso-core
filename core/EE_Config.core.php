@@ -1946,6 +1946,17 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 		$this->recaptcha_width = 500;
+		add_action( 'AHEE__EE_Config___load_core_config__end', array( $this, 'set_default_reg_status_on_EEM_Event' ));
+
+	}
+
+
+
+	/**
+	 * @return void
+	 */
+	public function set_default_reg_status_on_EEM_Event() {
+		EEM_Event::set_default_reg_status( $this->default_STS_ID );
 	}
 
 
