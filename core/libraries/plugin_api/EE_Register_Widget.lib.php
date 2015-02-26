@@ -39,8 +39,7 @@ class EE_Register_Widget implements EEI_Plugin_API {
 	 *
 	 * @since    4.3.0
 	 * @param string $widget_id			a unique identifier for this set of widgets
-	 * @param  array $setup_args  		an array of arguments provided for registering widgets
-	 * @internal param string widget_paths 		an array of full server paths to folders containing any EED_Widgets, or to the EED_Widget files themselves
+	 * @param  array $setup_args  		an array of full server paths to folders containing any EED_Widgets, or to the EED_Widget files themselves
 	 * @throws EE_Error
 	 * @return void
 	 */
