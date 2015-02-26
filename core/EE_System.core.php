@@ -1045,14 +1045,14 @@ final class EE_System {
 
 
 	/**
-	* do_no_cache
+	* do_not_cache
 	*
 	* sets no cache headers and defines no cache constants for WP plugins
 	*
 	* @access public
 	* @return void
 	*/
-	public static function do_no_cache() {
+	public static function do_not_cache() {
 		// set no cache constants
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 			define( 'DONOTCACHEPAGE', true );

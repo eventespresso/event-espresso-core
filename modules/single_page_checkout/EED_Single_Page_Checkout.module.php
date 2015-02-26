@@ -392,7 +392,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
 		// set no cache headers and constants
-		EE_System::do_no_cache();
+		EE_System::do_not_cache();
 		// remove transaction lock
 		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}

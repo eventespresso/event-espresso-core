@@ -302,7 +302,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() ) : '';
 		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_close() : '';
 		// set no cache headers and constants
-		EE_System::do_no_cache();
+		EE_System::do_not_cache();
 
 		return $ticket_selector;
 	}

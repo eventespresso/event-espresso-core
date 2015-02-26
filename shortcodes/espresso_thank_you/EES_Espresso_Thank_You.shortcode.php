@@ -322,7 +322,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
 		// set no cache headers and constants
-		EE_System::do_no_cache();
+		EE_System::do_not_cache();
 
 	}
 
