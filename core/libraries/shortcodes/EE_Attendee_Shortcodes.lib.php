@@ -74,11 +74,16 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		//incoming object should only be a registration object.
 		$registration = ! $this->_data instanceof EE_Registration ? NULL : $this->_data;
 
-		if ( empty( $registration ) )
-			return '';
+		if ( ! $registration instanceof EE_Registration ) {
+			throw new EE_Error( __('There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.', 'event_espresso' ) );
+		}
 
 		//attendee obj for this registration
 		$attendee = $this->_xtra->registrations[$registration->ID()]['att_obj'];
+
+		if ( ! $attendee instanceof EE_Attendee ) {
+			throw new EE_Error( __('There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.', 'event_espresso' ) );
+		}
 
 		switch ( $shortcode ) {
 
