@@ -159,7 +159,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		//setup $_settings array from incoming values.
 		$addon_settings = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
-			'class_name' 			=> $class_name,
+			'class_name' 						=> $class_name,
+			// the addon slug for use in URLs, etc
+			'plugin_slug' 						=> isset( $setup_args['plugin_slug'] ) ? (string)$setup_args['plugin_slug'] : '',
 			// the "software" version for the addon
 			'version' 								=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
@@ -195,14 +197,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_paths' 						=> isset( $setup_args['class_paths'] ) ? (array) $setup_args['class_paths'] : array(),
 			'model_extension_paths' 	=> isset( $setup_args['model_extension_paths'] ) ? (array) $setup_args['model_extension_paths'] : array(),
 			'class_extension_paths' 		=> isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
-			'custom_post_types' => isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
-			'custom_taxonomies' => isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
-			'payment_method_paths'		=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
-			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
+			'custom_post_types' 			=> isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
+			'custom_taxonomies' 		=> isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
+			'payment_method_paths'	=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
+			'default_terms' 					=> isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array(),
+			'plugins_page_row' 			=> isset( $setup_args['plugins_page_row'] ) ? $setup_args['plugins_page_row'] : '',
 		);
+		// full server path to main file (file loaded directly by WP)
+		$addon_settings['plugin_basename'] = plugin_basename( $addon_settings[ 'main_file_path' ] );
 
 		//check whether this addon version is compatible with EE core
-		if ( ! self::_meets_min_core_version_requirement( $setup_args['min_core_version'], espresso_version() ) ){
+		if ( ! self::_meets_min_core_version_requirement( $setup_args['min_core_version'], EVENT_ESPRESSO_VERSION ) ){
 			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
 			//plugin activated fine when it didn't
 			if( isset( $_GET[ 'activate' ]) ) {
@@ -217,7 +222,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 					__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
 					$addon_name,
 					self::_effective_version( $setup_args[ 'min_core_version' ] ),
-					self::_effective_version( espresso_version() ),
+					self::_effective_version( EVENT_ESPRESSO_VERSION ),
 					'<br />'
 				),
 				__FILE__, __FUNCTION__, __LINE__
@@ -308,6 +313,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				add_action( 'EE_Brewing_Regular___messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
+		add_filter( 'plugin_action_links', array( 'EE_Register_Addon', 'plugin_actions' ), 10, 2 );
+		add_filter( 'after_plugin_row_' .  self::$_settings[ $addon_name ]['plugin_basename'], array( 'EE_Register_Addon', 'after_plugin_row' ), 10, 3 );
 
 		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
 		if ( ! empty( $setup_args['pue_options'] )) {
@@ -334,6 +341,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
 		}
 	}
+
+
+
 	/**
 	 * Loads and instantiates the EE_Addon class and adds it onto the registry
 	 * @param string $addon_name
@@ -354,6 +364,62 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		return $addon;
 	}
 
+
+
+	/**
+	 * plugin_actions
+	 *
+	 * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
+	 * @param $links
+	 * @param $file
+	 * @return array
+	 */
+	public static function plugin_actions( $links, $file ) {
+		// is admin and not in M-Mode ?
+		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
+			foreach ( self::$_settings as $addon_name => $settings ) {
+				if ( $file == $settings[ 'plugin_basename' ] && ! empty( $settings[ 'admin_path' ] ) ) {
+					// before other links
+					array_unshift( $links, '<a href="admin.php?page=' . $settings[ 'plugin_slug' ] . '">' . __('Settings') . '</a>' );
+				}
+			}
+		}
+		return $links;
+	}
+
+
+
+	/**
+	 * after_plugin_row
+	 *
+	 * Add additional content to the plugins page plugin row
+	 *
+	 * @param $plugin_file
+	 * @param $plugin_data
+	 * @param $status
+	 * @return array
+	 */
+	public static function after_plugin_row( $plugin_file, $plugin_data, $status ) {
+		// is admin and not in M-Mode ?
+		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
+			foreach ( self::$_settings as $addon_name => $settings ) {
+				if ( $plugin_file == $settings[ 'plugin_basename' ] && ! empty( $settings[ 'plugins_page_row' ] ) ) {
+					$class = $status ? 'active' : 'inactive';
+					echo '<tr id="' . sanitize_title( $plugin_file ) . '" class="' . $class . '">';
+					echo '<td colspan="3" style="padding:0 1.5em 1em; background-color: #45BBE6;">';
+					echo '<div class="ee-addon-upsell-info-dv">' . $settings[ 'plugins_page_row' ] . '</div>';
+					//ob_start();
+					//printr( $settings[ 'plugin_basename' ], 'plugin_basename', __FILE__, __LINE__ );
+					//printr( $plugin_file, '$plugin_file', __FILE__, __LINE__ );
+					//printr( $plugin_data, '$plugin_data', __FILE__, __LINE__ );
+					//printr( $status, '$status', __FILE__, __LINE__ );
+					//echo ob_get_clean();
+					echo '</td></tr>';
+
+				}
+			}
+		}
+	}
 
 
 	/**
