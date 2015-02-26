@@ -39,9 +39,8 @@ class EE_Register_Module implements EEI_Plugin_API {
 	 *
 	 * @since    4.3.0
 	 * @param string $module_id		a unique identifier for this set of modules Required.
-	 * @param  array $setup_args 		an array of arguments provided for registering modules Required.
+	 * @param  array $setup_args 		an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves Required.
 	 * @throws EE_Error
-	 * @internal param string module_paths 	an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves
 	 * @return void
 	 */
 	public static function register( $module_id = NULL, $setup_args = array()  ) {
