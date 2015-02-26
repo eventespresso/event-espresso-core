@@ -39,8 +39,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API {
 	 *
 	 * @since    4.3.0
 	 * @param string $shortcode_id		a unique identifier for this set of modules Required.
-	 * @param  array $setup_args  						an array of arguments provided for registering shortcodes Required.
-	 * @internal param string shortcode_paths 		an array of full server paths to folders containing any EES_Shortcodes, or to the EES_Shortcode files themselves
+	 * @param  array $setup_args  		an array of full server paths to folders containing any EES_Shortcodes, or to the EES_Shortcode files themselves Required.
 	 * @throws EE_Error
 	 * @return void
 	 */

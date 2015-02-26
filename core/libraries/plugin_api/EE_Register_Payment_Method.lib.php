@@ -45,7 +45,6 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 	 *		EE_PMT_Payomatic.pm.php)
 	 * }
 	 * @throws EE_Error
-	 * @internal param string payment_method_paths 	an array of full server paths to folders containing any EE_PMT_Base children, or to the EED_Module files themselves
 	 * @return void
 	 */
 	public static function register( $payment_method_id = NULL, $setup_args = array()  ) {
@@ -78,9 +77,9 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 
 		/**
 		 * If EE_Payment_Method_Manager::register_payment_methods has already been called, we need it to be called again
-		 * (because it's missing the paymetn method we JUST registered here). We are assuming EE_Register_payment_method::register()
+		 * (because it's missing the payment method we JUST registered here). We are assuming EE_Register_payment_method::register()
 		 * will be called only once per payment method from an addon, so going with that assumption we should always do this.
-		 * If that assumption is false, we should verify this newly-registered paymetn method isn't on the EE_Payment_Method_Manager::_payment_method_types array before calling this (this code should be changed to improve performance)
+		 * If that assumption is false, we should verify this newly-registered payment method isn't on the EE_Payment_Method_Manager::_payment_method_types array before calling this (this code should be changed to improve performance)
 		 */
 		if ( did_action( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods' ) ) {
 			EE_Registry::instance()->load_lib('Payment_Method_Manager');
