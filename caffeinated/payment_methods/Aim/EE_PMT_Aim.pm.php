@@ -100,15 +100,20 @@ class EE_PMT_Aim extends EE_PMT_Base{
 			array(
 				'extra_meta_inputs'=>array(
 					'login_id'=>new EE_Text_Input(
-						array( 'html_label_text'=>  sprintf( __("Authorize.net API Login ID %s", "event_espresso"),  $this->get_help_tab_link() ))
+						array(
+							'html_label_text'=>  sprintf( __("Authorize.net API Login ID %s", "event_espresso"),  $this->get_help_tab_link() ),
+							'required' => true )
 					),
 					'transaction_key'=>new EE_Text_Input(
-						array( 'html_label_text'=> sprintf( __("Authorize.net Transaction Key %s", "event_espresso"), $this->get_help_tab_link() ))
+						array(
+							'html_label_text'=> sprintf( __("Authorize.net Transaction Key %s", "event_espresso"), $this->get_help_tab_link() ),
+							'required' => true )
 					),
 					'test_transactions'=>new EE_Yes_No_Input(
 						array(
 							'html_label_text'=>  sprintf( __("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link() ),
-							'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso')
+							'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso'),
+							'required' => true
 						)
 					),
 				)
