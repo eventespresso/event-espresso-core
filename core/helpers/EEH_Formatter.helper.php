@@ -113,15 +113,14 @@ class EEH_Formatter {
 	 * Formats a date
 	 * @param string $date
 	 * @param string $format - format for the date
+	 * @deprecated 4.6.12  Note, a search revealed this was not used anywhere in core or in our
+	 *             		  addons at time of writing this.  So just deprecated in case of third party use.
 	 * @return string
 	 */
 	static public function event_date_display( $date, $format = '' ) {
-		if ( empty( $date )) {
-			return '';
-		} else {
-			$format = $format == '' ? get_option('date_format') : $format;
-			return date_i18n( $format, strtotime( $date ));
-		}
+		EE_Error::doing_it_wrong( __METHOD__, 'This method is deprecated as of EE 4.6.12.  Currently it does not reformat as with prior behaviour but just returns the incoming string.  Please use the EE_Datetime helpers for Datetime on the event to display as desired.', 'event_espresso' );
+
+		return $date;
 	}
 
 
