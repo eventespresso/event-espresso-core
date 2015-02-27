@@ -356,11 +356,17 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment, $IPN = false ) {
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		$transaction_processor->set_revisit( $this->_revisit );
+		// is the Payment Options Reg Step completed ?
+		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
+		// if the Payment Options Reg Step is completed...
+		// then this is kinda sorta a revisit with regards to payments at least
+		$transaction_processor->set_revisit( $payment_options_step_completed );
+		// let's consider the Payment Options Reg Step completed if not already
+		if ( ! $payment_options_step_completed && $payment->is_approved() ) {
+			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+		}
 		// if processing an IPN...
 		if ( $IPN ) {
-			// then let's consider the Payment Options Reg Step completed
-			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			// maybe update status, but don't save transaction just yet
@@ -370,6 +376,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				// and if it hasn't already been set as being started...
 				$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			}
+			$transaction->save();
 		}
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
