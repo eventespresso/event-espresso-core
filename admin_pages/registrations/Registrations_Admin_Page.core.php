@@ -103,7 +103,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'edit' => __('Edit Contact', 'event_espresso'),
 					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
 					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
-					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
+					'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
+					'contact_list_export'=>  __("Export Data", "event_espresso"),
 				),
 			'publishbox' => array(
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
@@ -353,6 +354,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func'=>'_contact_list_export',
 					'noheader'=>TRUE,
 					'capability' => 'export'
+				),
+				'contact_list_report' => array(
+					'func'=> '_contact_list_report',
+					'noheader' => TRUE,
+					'capability' => 'ee_read_contacts',
 				)
 		);
 
@@ -2293,6 +2299,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export_attendees();
+		}
+	}
+
+	public function _contact_list_report(){
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->report_attendees();
 		}
 	}
 

@@ -247,6 +247,29 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 	}
 
+	function report_attendees(){
+		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State' ) ) );
+		$csv_data = array();
+		foreach( $attendee_rows as $attendee_row ){
+			$csv_row = array();
+			foreach( EEM_Attendee::instance()->field_settings() as $field_name => $field_obj ){
+				if( $field_name == 'STA_ID' ){
+					$state_name_field = EEM_State::instance()->field_settings_for( 'STA_name' );
+					$csv_row[ __( 'State', 'event_espresso' ) ] = $attendee_row[ $state_name_field->get_qualified_column() ];
+				}else{
+					$csv_row[ $field_obj->get_nicename() ] = $attendee_row[ $field_obj->get_qualified_column() ];
+				}
+			}
+			$csv_data[] = $csv_row;
+		}
+
+		$filename = $this->generate_filename ( 'contact-list-report' );
+
+		$handle = $this->EE_CSV->begin_sending_csv( $filename);
+		$this->EE_CSV->write_data_array_to_csv($handle, $csv_data);
+		$this->EE_CSV->end_sending_csv($handle);
+	}
+
 
 	/**
 	 *			@Export data for ALL attendees
