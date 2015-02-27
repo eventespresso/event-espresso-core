@@ -1435,7 +1435,22 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 	 * @return EE_Transaction|false
 	 */
 	public function create_object( $args ) {
-		$transaction = EE_Transaction::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+		$transaction = EE_Transaction::new_instance( $args, $timezone, $formats );
 		$transactionID = $transaction->save();
 		$transaction = $this->_maybe_chained( $transaction, $args );
 		$transaction->save();
