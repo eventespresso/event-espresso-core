@@ -115,7 +115,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
 		$d->set_date_format( 'Y-m-d' );
 		$d->set_time_format( 'h:i a' );
-		$this->assertEquals( $base_date->format( 'F j\, Y' ) . '@' . $base_date->format( 'g:i a') . ' - ' . $testing_date->format( 'g:i a' ), $d->get_dtt_display_name() );
+		$this->assertEquals( $base_date->format( 'F j\, Y' ) . ' @ ' . $base_date->format( 'g:i a') . ' - ' . $testing_date->format( 'g:i a' ), $d->get_dtt_display_name() );
 	}
 
 
@@ -175,6 +175,24 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 		//test sold out datetime
 		$this->assertEmpty( $datetimes['sold_out_datetime']->ticket_types_available_for_purchase() );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_time_range() {
+		//setup a datetime for testing
+		$start_date = new DateTime( 'now' );
+		$end_date = new DateTime( 'now + 3 hours' );
+		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ) ), 'UTC', array( 'Y-m-d', 'H:i:s' ) );
+
+		//assert we have a datetime
+		$this->assertInstanceOf( 'Datetime', $datetime );
+
+		//verify that the expected time format is generated.
+		$this->assertEquals( $start_date->format( 'H:i:s' ) . ' - ' . $end_date->format( 'H:i:s' ), $datetime->time_range() );
 	}
 
 

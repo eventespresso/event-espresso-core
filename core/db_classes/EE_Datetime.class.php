@@ -420,8 +420,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		$tm_format = !empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
-		$start = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'start', NULL, NULL ) ) ) );
-		$end = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'end', NULL, NULL ) ) ) );
+
+		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $tm_format ) );
+		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end',  $tm_format ) );
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 
