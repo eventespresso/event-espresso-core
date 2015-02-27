@@ -31,6 +31,12 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 	/**
+	 * @var string
+	 */
+	protected static $_default_reg_status = NULL;
+
+
+	/**
 	 * private instance of the Event object
 	 * @var EEM_Event
 	 */
@@ -96,7 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			)
 		);
 
-		$default_registration_status = EE_Registry::instance()->CFG->registration instanceof EE_Registration_Config ? EE_Registry::instance()->CFG->registration->default_STS_ID : EEM_Registration::status_id_pending_payment;
+		EEM_Event::$_default_reg_status = EEM_Registration::status_id_pending_payment;
 
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table( 'posts','ID' ),
@@ -126,7 +132,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_visible_on'=>new EE_Datetime_Field( 'EVT_visible_on', __( 'Event Visible Date', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
 				'EVT_additional_limit'=>new EE_Integer_Field( 'EVT_additional_limit', __( 'Limit of Additional Registrations on Same Transaction', 'event_espresso' ), TRUE, 10 ),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field(
-					'EVT_default_registration_status', __( 'Default Registration Status on this Event', 'event_espresso' ), FALSE, $default_registration_status, EEM_Registration::reg_status_array()
+					'EVT_default_registration_status', __( 'Default Registration Status on this Event', 'event_espresso' ), FALSE, EEM_Event::$_default_reg_status, EEM_Registration::reg_status_array()
 				),
 				'EVT_member_only'=>new EE_Boolean_Field( 'EVT_member_only', __( 'Member-Only Event Flag', 'event_espresso' ), FALSE, FALSE ),
 				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __( 'Event Phone Number', 'event_espresso' ), FALSE ),
@@ -153,6 +159,12 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
+	/**
+	 * @param string $default_reg_status
+	 */
+	public static function set_default_reg_status( $default_reg_status ) {
+		self::$_default_reg_status = $default_reg_status;
+	}
 
 
 
