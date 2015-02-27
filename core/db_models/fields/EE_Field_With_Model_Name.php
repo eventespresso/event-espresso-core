@@ -26,10 +26,24 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base{
 	}
 	/**
 	 * Returns the name of the model(s) pointed to
+	 * @deprecated since version 4.6.7
 	 * @return mixed string or array of strings
 	 */
 	function get_model_name_pointed_to(){
+		EE_Error::doing_it_wrong( 'get_model_name_pointed_to', __( 'This method has been deprecated in favour of instead using get_model_names_pointed_to, which consistently returns an array', 'event_espresso' ), '4.6.7' );
 		return $this->_model_name_pointed_to;
+	}
+	/**
+	 * Gets the model names pointed to by this field, always as an array
+	 * (even if there's only one)
+	 * @return array of model names pointed to by this field
+	 */
+	function get_model_names_pointed_to() {
+		if( is_array( $this->_model_name_pointed_to ) ) {
+			return $this->_model_name_pointed_to;
+		}else{
+			return array( $this->_model_name_pointed_to );
+		}
 	}
 	/**
 	 * Returns the model's classname (eg EE_Event instead of just Event)
