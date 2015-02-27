@@ -1404,18 +1404,18 @@ class EEH_Form_Fields {
 
 				case 'expired' :
 					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) ) );
 					break;
 
 				case 'active' :
 					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
-					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+					$where['DTT_EVT_start'] = array('>',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+					$where['DTT_EVT_end'] = array('<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 					break;
 
 				case 'inactive' :
 					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) );
 					break;
 			}
 		}
