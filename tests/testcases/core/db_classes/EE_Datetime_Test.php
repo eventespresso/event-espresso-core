@@ -89,14 +89,33 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$d->set('DTT_EVT_end',current_time('timestamp') + 1000);
 		$this->assertFalse($d->is_expired());
 	}
-	function test_datetime_display(){
-		$sdate = new DateTime( "now" );
-		$edate = new DateTime( "now +2days" );
-		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$sdate->format('U'), 'DTT_EVT_end'=>$edate->format('U')));
+	function test_get_dtt_display_name(){
+		//test using actual dates because now could result in different results depending on what time of day it is
+		$base_date = date_create_from_format( 'Y-m-d H:i:s', '2015-01-01 00:00:00' );
+		$testing_date = clone $base_date;
+
+		//setup datetime with different months for start and end dates.
+		$testing_date->add( new DateInterval( 'P1M' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
 		$d->set_date_format( 'Y-m-d' );
 		$d->set_time_format( 'h:i a' );
-		$this->assertEquals( $sdate->format('M j\, g:i a') . ' - ' . $edate->format('M j\, g:i a Y'),$d->get_dtt_display_name());
+		$this->assertEquals( $base_date->format('M j\, Y g:i a') . ' - ' . $testing_date->format('M j\, Y g:i a'),$d->get_dtt_display_name());
 		$this->assertEquals('monkey time',$d->get_dtt_display_name(true));
+
+		//setup datetime with start date and end date with same month but different days.
+		$testing_date->sub( new DateInterval( 'P15D' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $base_date->format( 'M j\, g:i a') . ' - ' . $testing_date->format( 'M j\, g:i a Y' ), $d->get_dtt_display_name() );
+
+		//setup datetime with start date and end date the same day but different times.
+		$testing_date = clone $base_date;
+		$testing_date->add( new DateInterval( 'PT1H' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $base_date->format( 'F j\, Y' ) . '@' . $base_date->format( 'g:i a') . ' - ' . $testing_date->format( 'g:i a' ), $d->get_dtt_display_name() );
 	}
 
 
