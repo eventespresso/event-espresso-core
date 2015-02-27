@@ -108,7 +108,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
 
-		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
+		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
 		$results = $this->_get_all_wpdb_results(
 			array(
 				array(
