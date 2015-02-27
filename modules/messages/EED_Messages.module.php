@@ -460,7 +460,13 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		$verified = TRUE;
+		$verified = true;
+		// determine the type of payment method
+		if ( $extra_details[ 'last_payment' ] instanceof EE_Payment && $extra_details[ 'last_payment' ]->payment_method() instanceof EE_Payment_Method ) {
+			$off_site_payment = $extra_details[ 'last_payment' ]->payment_method()->is_off_site();
+		} else {
+			$off_site_payment = false;
+		}
 
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
@@ -485,8 +491,9 @@ class EED_Messages  extends EED_Module {
 				return FALSE;
 			}
 			// do NOT send messages if:
-			// * SPCO revisit and the reg status has NOT changed
-			if ( isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) && $extra_details['revisit'] && ! $extra_details[ 'status_updates' ] ) {
+			// * Payment Method was Off-Site and the reg status has NOT changed
+			// (because the messages would have been sent during the IPN when the reg status DID change)
+			if ( $off_site_payment && isset( $extra_details[ 'status_updates' ] ) && ! $extra_details[ 'status_updates' ] ) {
 				return FALSE;
 			}
 		}
