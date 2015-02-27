@@ -248,7 +248,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	function report_attendees(){
-		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State' ) ) );
+		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State', 'Country' ) ) );
 		$csv_data = array();
 		foreach( $attendee_rows as $attendee_row ){
 			$csv_row = array();
@@ -256,6 +256,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $field_name == 'STA_ID' ){
 					$state_name_field = EEM_State::instance()->field_settings_for( 'STA_name' );
 					$csv_row[ __( 'State', 'event_espresso' ) ] = $attendee_row[ $state_name_field->get_qualified_column() ];
+				}elseif( $field_name == 'CNT_ISO' ){
+					$country_name_field = EEM_Country::instance()->field_settings_for( 'CNT_name' );
+					$csv_row[ __( 'Country', 'event_espresso' ) ] = $attendee_row[ $country_name_field->get_qualified_column() ];
 				}else{
 					$csv_row[ $field_obj->get_nicename() ] = $attendee_row[ $field_obj->get_qualified_column() ];
 				}
