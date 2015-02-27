@@ -88,14 +88,6 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 
-	/**
-	 * @param $query_params
-	 * @return \EE_Attendee[]
-	 */
-	public function get_all_wpdb_results($query_params){
-		return $this->_get_all_wpdb_results($query_params);
-	}
-
 
 	/**
 	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)
