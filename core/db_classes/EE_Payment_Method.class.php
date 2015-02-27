@@ -484,6 +484,29 @@ class EE_Payment_Method extends EE_Base_Class{
 	}
 
 	/**
+	 * Overrides parent. If the field is 'PMD_button_url' and the current site is for
+	 * SSL and the image is local, prefer loading the SSL
+	 * @param type $field_name
+	 * @param type $extra_cache_ref
+	 * @return mixed
+	 */
+	public function get( $field_name, $extra_cache_ref = NULL ){
+		$value = parent::get( $field_name, $extra_cache_ref );
+		if( $field_name == 'PMD_button_url' ){
+			//if this a URL for this site and this is SSL?
+			$url_for_this_site = strpos( $value, site_url( null, 'http' ) ) === 0 || strpos( $value, site_url( null, 'https' ) ) === 0;
+			if( $url_for_this_site ){
+				if( is_ssl()){
+					$value = str_replace( 'http://', 'https://', $value );
+				}else{
+					$value = str_replace( 'https://', 'http://', $value );
+				}
+			}
+		}
+		return $value;
+	}
+
+	/**
 	 * Overrides default __sleep so the object type is NOT cached.
 	 * This way we can rely on the normal EE_Payment_Method::type_obj() logic
 	 * to load the required classes, and don't need them at the time of unserialization
