@@ -465,11 +465,9 @@ class EED_Messages  extends EED_Module {
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (
-			(
-				is_admin() && ! EE_FRONT_AJAX
-			) && (
-				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
-			)
+			( is_admin() && ! EE_FRONT_AJAX )
+			&&
+			( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
 		) {
 			//no messages sent please.
 			$verified = false;
@@ -486,22 +484,12 @@ class EED_Messages  extends EED_Module {
 			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
 				return FALSE;
 			}
-
-
 			// do NOT send messages if:
-			// * first pass thru SPCO and the reg status was already Approved and has NOT changed
 			// * SPCO revisit and the reg status has NOT changed
-			if (
-				isset( $extra_details['old_reg_status'], $extra_details['new_reg_status'] )
-				&& (
-					( $extra_details['old_reg_status'] == EEM_Registration::status_id_approved && $extra_details['new_reg_status'] == EEM_Registration::status_id_approved )
-					|| ( isset( $extra_details['revisit'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] )
-				)
-			) {
+			if ( isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) && $extra_details['revisit'] && ! $extra_details[ 'status_updates' ] ) {
 				return FALSE;
 			}
 		}
-
 		return $verified;
 	}
 
