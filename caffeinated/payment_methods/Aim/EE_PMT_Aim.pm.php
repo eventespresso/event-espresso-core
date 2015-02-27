@@ -38,6 +38,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		$this->_gateway = new EEG_AIM();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
+		$this->_requires_https = true;
 		parent::__construct($pm_instance);
 	}
 
