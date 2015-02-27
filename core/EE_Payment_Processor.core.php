@@ -301,8 +301,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		} else {
 			// verify payment
 			if ( $payment instanceof EE_Payment ) {
-				if( $payment->payment_method() instanceof EE_Payment_Method &&
-					$payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
+				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
 				// we need to save this payment in order for transaction to be updated correctly
@@ -324,10 +323,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				);
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
-			}
-			// don't need to do anything more if the payment has failed
-			if ( $payment instanceof EE_Payment && ( $payment->ID() != 0 && $payment->status() === EEM_Payment::status_id_failed )) {
-				return;
 			}
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
