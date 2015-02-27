@@ -34,7 +34,7 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * This sets up some payments in the db for testing with.
+	 * This sets up some registrations in the db for testing with.
 	 * @since 4.6.0
 	 */
 	public function _setup_registrations() {
