@@ -186,10 +186,10 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		//setup a datetime for testing
 		$start_date = new DateTime( 'now' );
 		$end_date = new DateTime( 'now + 3 hours' );
-		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ) ), 'UTC', array( 'Y-m-d', 'H:i:s' ) );
+		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ), 'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
 
 		//assert we have a datetime
-		$this->assertInstanceOf( 'Datetime', $datetime );
+		$this->assertInstanceOf( 'EE_Datetime', $datetime );
 
 		//verify that the expected time format is generated.
 		$this->assertEquals( $start_date->format( 'H:i:s' ) . ' - ' . $end_date->format( 'H:i:s' ), $datetime->time_range() );
