@@ -2236,10 +2236,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$offset = ($current_page-1)*$per_page;
 		$limit = $count ? NULL : array( $offset, $per_page );
 
-		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->count_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
-		else
+		if ( $trash ) {
+			$_where['status'] = array( '!=', 'publish' );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+		} else {
+			$_where['status'] = array( 'IN', array( 'publish' ) );
 			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+		}
 
 		return $all_attendees;
 	}
@@ -2524,7 +2527,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes
 			while (list( $ATT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+				$updated = $trash ? $ATT_MDL->update_by_ID(array( 'status' => 'trash' ), $ATT_ID) : $ATT_MDL->update_by_ID( array('status' => 'publish' ), $ATT_ID);
 				if ( !$updated ) {
 					$success = 0;
 				}
@@ -2535,7 +2538,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$ATT_ID = absint($this->_req_data['ATT_ID']);
 			//get attendee
 			$att = $ATT_MDL->get_one_by_ID( $ATT_ID );
-			$updated = $trash ? $att->delete() : $att->restore();
+			$updated = $trash ? $att->set_status('trash') : $att->set_status('publish');
 			$updated = $att->save();
 			if ( ! $updated ) {
 				$success = 0;

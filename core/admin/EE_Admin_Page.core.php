@@ -1798,15 +1798,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
-	 * 		get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
-	*		@access public
-	*		@return array
-	*/
-	public function get_list_table_view_RLs() {
+	 * get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
+	 *
+	 * @param array $extra_query_args Optional. An array of extra query args to add to the generated
+	 *                                		          	urls.  The array should be indexed by the view it is being
+	 *                                		          	added to.
+	 *
+	 * @return array
+	 */
+	public function get_list_table_view_RLs( $extra_query_args = array() ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$query_args = array();
 
 		if ( empty( $this->_views )) {
 			$this->_views = array();
@@ -1814,11 +1819,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
+			$query_args = array();
 			// check for current view
 			$this->_views[ $key ]['class'] = $this->_view == $view['slug'] ? 'current' : '';
 			$query_args['action'] = $this->_req_action;
 			$query_args[$this->_req_action.'_nonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
+			//merge any other arguments sent in.
+			if ( isset( $extra_query_args[$view['slug']] ) ) {
+				$query_args = array_merge( $query_args, $extra_query_args[$view['slug']] );
+			}
 			$this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		}
 
@@ -3066,6 +3076,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function get_view() {
 		return $this->_view;
+	}
+
+
+
+
+	/**
+	 * getter for the protected $_views property
+	 *
+	 * @return array
+	 */
+	public function get_views() {
+		return $this->_views;
 	}
 
 
