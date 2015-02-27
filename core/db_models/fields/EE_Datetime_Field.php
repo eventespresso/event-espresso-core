@@ -166,7 +166,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			// the function arg didn't provide one
 			return;
 		}
-		$this->_timezone_string = EEH_DTT_Helper::get_valid_timezone_string( $timezone_string );
+		$timezone_string = EEH_DTT_Helper::get_valid_timezone_string( $timezone_string );
 		$this->_timezone_string = ! empty( $timezone_string ) ? $timezone_string : 'UTC';
 		$this->_DateTimeZone = $this->_create_timezone_object_from_timezone_string( $this->_timezone_string );
 	}
@@ -475,11 +475,16 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		// 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 );
 		if ( preg_match( '/[0-9]{10,}/', $date_string ) ) {
 			try {
-				// create DateTime object using our known timezone
-				$DateTime = new DateTime( 'now', $this->_DateTimeZone );
-				// NOW apply the timestamp which SHOULD be in the same timezone as our DateTimeZone object
-				$DateTime->setTimestamp( $date_string );
-				return $DateTime;
+				/**
+				 * php DateTime() ignores incoming timezone when the value is a unix
+				 * timestamp.  In other words it does not consider the incoming timestamp
+				 * as having an offset.  So, for backward compat, we need to first remove the offset
+				 * that WP applied.
+				 *
+				 */
+				$date_string = $date_string - get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+				$DateTime =  new DateTime( "now", $this->_DateTimeZone );
+				return $DateTime->setTimestamp( $date_string );
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue
 			 }
