@@ -176,6 +176,7 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 					$this->assertInstanceof( 'EE_Ticket', $tkt, $context_for_error_messages . sprintf( 'Format: %s', $full_format ) );
 
 					//verify start and date
+					//Note: currently this test sometimes fails depending on the timing of when it happens and how fast the server is. Whenever I've seen this fail its been off by 1 minute.
 					$this->assertEquals( $tkt->start_date( $date_format, $time_format ), $this->_default_dates['TKT_start']->format( $full_format ), $context_for_error_messages . sprintf( 'Start Ticket DateFormat Tested: %s', $full_format ) );
 					$this->assertEquals( $tkt->end_date( $date_format, $time_format ), $this->_default_dates['TKT_end']->format( $full_format ), $context_for_error_messages . sprintf( 'End Ticket Date Format Tested: %s', $full_format ) );
 
