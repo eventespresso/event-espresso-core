@@ -1050,26 +1050,28 @@ final class EE_Config {
 		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
 			// grab and shortcode file name from directory name and break apart at dots
 			$module_file = explode( '.', basename( $module_path ));
-			// take first segment from file name pieces and remove class prefix if it exists
-			$module = strpos( $module_file[0], 'EED_' ) === 0 ? substr( $module_file[0], 4 ) : $module_file[0];
-			// sanitize shortcode directory name
-			$module = sanitize_key( $module );
 			// now we need to rebuild the shortcode path
 			$module_path = explode( DS, $module_path );
 			// remove last segment
 			array_pop( $module_path );
 			// glue it back together
 			$module_path = implode( DS, $module_path ) . DS;
+			// take first segment from file name pieces and sanitize it
+			$module = preg_replace( '/[^a-zA-Z0-9_\-]/', '', $module_file[0] );
+			// ensure class prefix is added
+			$module_class = strpos( $module, 'EED_' ) !== 0 ? 'EED_' . $module : $module;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize module name
-			$module = basename( $module_path );
+			$module = strtolower( basename( $module_path ));
+			$module = preg_replace( '/[^a-z0-9_\-]/', '', $module);
+			// like trailingslashit()
 			$module_path = rtrim( $module_path, DS ) . DS;
+			// create classname from module directory name
+			$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
+			// add class prefix
+			$module_class = 'EED_' . $module;
 		}
-		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
-		// add class prefix
-		$module_class = 'EED_' . $module;
 		// does the module exist ?
 		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
 			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
