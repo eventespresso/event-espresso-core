@@ -159,10 +159,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 *                                		       you want to append to multiple fields, then include an
 	 *                                		       array indexed by field.  Otherwise the string will be
 	 *                                		       appended to the field sent in with the $field param.
+	 * @param EE_Messages_Addressee $addressee Optionally include a
+	 *                                         	messages addressee object if you do not wish
+	 *                                         	to use the default one generated.  This is
+	 *                                         	useful for simulating exceptions and failures.
 	 *
 	 * @return string The parsed content.
 	 */
-	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '' ) {
+	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '', $addressee = null ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => $messenger,
@@ -234,7 +238,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
-		$data = $this->_get_addressee();
+		$data = $addressee instanceof EE_Messages_Addressee ? $addressee : $this->_get_addressee();
 
 		EE_Registry::instance()->load_helper('Parse_Shortcodes');
 		$parser = new EEH_Parse_Shortcodes();
@@ -332,6 +336,28 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 		//testing [ATTENDEE_LIST] and [ANSWER_*] which should appear three times (because [ATTENDEE_LIST] was added to three fields),
 		$this->assertEquals( 3, substr_count( $parsed, 'Custom Answer: Tattoine' ) );
+	}
+
+
+
+
+	/**
+	 * This test is for testing an exception is thrown when invalid attendee
+	 * object in the data sent to the parsers.
+	 * @group 7659
+	 */
+	public function test_invalid_attendee_obj_EE_Attendee_Shortcodes() {
+		$addressee = $this->_get_addressee();
+
+		//manipulate to remove data
+		$addressee->registrations = array();
+
+		try {
+			$parsed_content = $this->_get_parsed_content( 'email', 'registration', 'content', 'admin', '', $addressee );
+		} catch( EE_Error $e ) {
+			return;
+		}
+		$this->fail( 'Expected an exception for invalid EE_Attendee Object' );
 	}
 
 
