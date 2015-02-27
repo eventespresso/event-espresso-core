@@ -1220,7 +1220,22 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 	 */
 	public function create_object( $args ) {
 		static $att_nmbr = 0;
-		$registration = EE_Registration::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+		$registration = EE_Registration::new_instance( $args, $timezone, $formats );
 		//some things have to be set after the registration has been instantiated.
 		$registration->set( 'REG_session', uniqid() );
 		$registrationID = $registration->save();
