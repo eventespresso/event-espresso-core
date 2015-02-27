@@ -377,6 +377,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
 		// array of details to aid in decision making by systems
@@ -392,7 +394,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
 			'update_registration_after_checkout_or_payment',
 			$transaction,
-			$registration_query_params,
+			$this->_registration_query_params,
 			$update_params
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
