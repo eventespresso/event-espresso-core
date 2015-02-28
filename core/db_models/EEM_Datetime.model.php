@@ -80,8 +80,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$times = array(
 				EE_Datetime::new_instance(
 					array(
-						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30),
-						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30),
+						'DTT_EVT_start' => $this->current_time_for_query( 'DTT_EVT_start', true ) + (60 * 60 * 24 * 30),
+						'DTT_EVT_end' => $this->current_time_for_query( 'DTT_EVT_end', true ) + (60 * 60 * 24 * 30),
 //						'DTT_is_primary' => 1,
 						'DTT_order' => 1,
 						'DTT_reg_limit' => INF

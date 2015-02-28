@@ -29,6 +29,9 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		parent::tearDown();
 	}
 
+
+
+
 	/**
 	 * Tests the get_datetimes_for_event_ordered_by_DTT_order method.
 	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/6744 for bug being tested below.
@@ -41,13 +44,13 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	public function test_get_datetimes_for_event_ordered_by_DTT_order__different_timezone() {
 
 		//create an event and datetime
-		$event = $this->factory->event->create();
+		$event = $this->factory->event->create( array( 'EVT_timezone_string' =>  'Australia/Sydney' ) );
 
 		//for test we want a datetime begining one hour before now and ending now (-1min), and a datetime starting now and ending one hour from now.
-		$dtt1_start = (int) current_time('timestamp') - 60*60;
-		$dtt1_end = (int) current_time('timestamp') - 60;
+		$dtt1_start = (int) current_time('timestamp') - 60*60*24;
+		$dtt1_end = (int) current_time('timestamp') - 60*60;
 		$dtt2_start = $dtt1_start + 60*60;
-		$dtt2_end = $dtt1_end + 60*60;
+		$dtt2_end = $dtt1_end + 60*60*24;
 
 
 		$dtt1 = $this->factory->datetime->create( array( 'DTT_EVT_start' => $dtt1_start, 'DTT_EVT_end' => $dtt1_end ) );
@@ -265,6 +268,37 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		//first datetime returned should be dtt2 because dtt1 is expired.
 		$this->assertInstanceOf( 'EE_Datetime', $second_dtt_chk );
 		$this->assertEquals( $second_dtt_chk->ID(), $dtt2->ID() );
+	}
+
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function create_new_blank_datetime() {
+		//make sure now is in the timezone we want to test with.
+		$now =  new Datetime( "now", new DateTimeZone( 'America/Toronto' ) );
+
+		//get the default datetime
+		$default_date = EEM_Datetime::instance()->create_new_blank_datetime();
+		$default_date = reset( $default_date );
+
+		//assert instance
+		$this->assertInstanceOf( 'EE_Datetime', $default_date );
+
+		//set its timezone to match our expected timezone
+		$default_date->set_timezone( 'America/Toronto' );
+		$actual = $default_date->get_raw_date();
+
+		$this->assertInstanceOf( 'DateTime', $actual );
+
+		//assert that we have the correct values on the date... we'll do each part separately to verify.
+		$this->assertEquals( $now->format('Y'), $actual->format('Y' ) );
+		$this->assertEquals( $now->format('m'), $actual->format( 'm' ) );
+		$this->assertEquals( $now->format('d'), $actual->format( 'd' ) );
+		$this->assertEquals( $now->format('H'), $actual->format('H' ) );
+		$this->assertEquals( $now->format('i'), $actual->format('i' ) );
 	}
 
 }
