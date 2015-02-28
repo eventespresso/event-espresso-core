@@ -747,11 +747,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_name The field the currrent time is needed for.
 	 * @param bool   $timestamp  True means to return a unix timestamp with offset for the timezone applied. Otherwise a
 	 *                           		 formatted string matching the set format for the field in the set timezone will be returned.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 *
 	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
 	 *
 	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
 	 */
-	public function current_time_for_query( $field_name, $timestamp = false ) {
+	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {
 		$formats = $this->get_formats_for( $field_name );
 
 		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
@@ -762,7 +764,17 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		//not returning timestamp, so return formatted string in timezone.
-		return $DateTime->format( implode( ' ', $formats) );
+		switch( $what ) {
+			case 'time' :
+				return $DateTime->format( $formats[1] );
+				break;
+			case 'date' :
+				return $DateTime->format( $formats[0] );
+				break;
+			default :
+				return $DateTime->format( implode( ' ', $formats ) );
+				break;
+		}
 	}
 
 
