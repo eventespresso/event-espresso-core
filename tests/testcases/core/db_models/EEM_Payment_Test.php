@@ -40,7 +40,7 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 	public function _setup_payments() {
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
+		$upcoming_start_date = new DateTime( "now +1hour", $timezone );
 		$past_start_date = new DateTime( "now -2days", $timezone );
 		$current_end_date = new DateTime( "now +2days", $timezone );
 		$current = new DateTime( "now", $timezone );
@@ -58,7 +58,7 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 			);
 
 		foreach( $payment_args as $payment_arg ) {
-			$this->factory->payment->create( $payment_arg );
+			$payment = $this->factory->payment->create( $payment_arg );
 		}
 
 		$this->assertEquals( 5, EEM_Payment::instance()->count() );
@@ -80,13 +80,13 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		$this->assertEquals( 4, count( EEM_Payment::instance()->get_payments_made_between_dates( $now->sub( new DateInterval( 'P2D' ) )->format( 'd/m/Y'), '', 'd/m/Y', 'America/Toronto' ) ) );
 
 		//test including a date from past date for end date.
-		$this->assertEquals( 2, count( EEM_Payment::instance()->get_payments_made_between_dates( '', $now->format( 'd/m/Y'), 'd/m/Y', 'America/Toronto' ) ) );
+		$this->assertEquals( 4, count( EEM_Payment::instance()->get_payments_made_between_dates( '', $now->format( 'd/m/Y'), 'd/m/Y', 'America/Toronto' ) ) );
 
 		//test including a date from upcoming date for start date
-		$this->assertEquals( 0, count( EEM_Payment::instance()->get_payments_made_between_dates( $now->add( new DateInterval( 'P4D' ) )->format( 'd/m/Y'), '',  'd/m/Y', 'America/Toronto' ) ) );
+		$this->assertEquals( 3, count( EEM_Payment::instance()->get_payments_made_between_dates( $now->add( new DateInterval( 'P4D' ) )->format( 'd/m/Y'), '',  'd/m/Y', 'America/Toronto' ) ) );
 
 		//test including a date from upcoming date for end date
-		$this->assertEquals( 2, count( EEM_Payment::instance()->get_payments_made_between_dates( '', $now->format( 'd/m/Y'), 'd/m/Y', 'America/Toronto' ) ) );
+		$this->assertEquals( 3, count( EEM_Payment::instance()->get_payments_made_between_dates( '', $now->format( 'd/m/Y'), 'd/m/Y', 'America/Toronto' ) ) );
 
 		//test exception
 		$this->setExpectedException( 'EE_Error' );

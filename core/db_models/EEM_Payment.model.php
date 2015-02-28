@@ -165,29 +165,31 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		}
 
 		if ( ! empty( $start_date ) ) {
-			//always convert to UTC so it matches the default
 			$start_date = date_create_from_format( $format, $start_date, new DateTimeZone( $timezone ) );
-			$start_date = $start_date->setTimeZone( new DateTimeZone( 'UTC' ) )->format( 'U' );
+			$start_date = $start_date->setTimeZone( new DateTimeZone( $this->_timezone) )->format( 'Y-m-d' ) . ' 00:00:00';
 		} else {
-			$start_date = strtotime( date( 'Y-m-d', time() ) . '00:00:00' );
-			$start_date_timezone = 'UTC';
+			$start_date = new DateTime( 'now' );
+			$start_date = $start_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format('Y-m-d') . ' 00:00:00';
 		}
 
 		if ( ! empty( $end_date ) ) {
-			//always convert to UTC so it matches the default.
 			$end_date = date_create_from_format( $format, $end_date, new DateTimeZone( $timezone ) );
-			$end_date = $end_date->setTimeZone( new DateTimeZone( 'UTC' ) )->format( 'U' );
+			$end_date = $end_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( 'Y-m-d' ) . ' 23:59:59';
 		} else {
-			$end_date = strtotime( date( 'Y-m-d', time() ) . '23:59:59' );
-			$end_date_timezone = 'UTC';
+			$end_date = new DateTime( 'now' );
+			$end_date = $end_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format('Y-m-d') . ' 23:59:59';
 		}
 
-		// make sure our start date is the lowest value and vice versa
-		$start_date = min( $start_date, $end_date );
-		$end_date = max( $start_date, $end_date );
+		$start_date = strtotime( $start_date );
+		$end_date = strtotime( $end_date );
 
-		$start_date = $this->convert_datetime_for_query( 'PAY_timestamp', $start_date, 'U', 'UTC' );
-		$end_date = $this->convert_datetime_for_query( 'PAY_timestamp', $end_date, 'U', 'UTC' );
+		// make sure our start date is the lowest value and vice versa
+		$start = min( $start_date, $end_date );
+		$end = max( $start_date, $end_date );
+
+		//yes we generated the date and time string in utc but we WANT this start date and time used in the set timezone on the model.
+		$start_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $start ) . ' 00:00:00', 'Y-m-d H:i:s', $this->get_timezone() );
+		$end_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $end) . ' 23:59:59' , 'Y-m-d H:i:s', $this->get_timezone() );
 
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
