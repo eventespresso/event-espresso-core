@@ -237,6 +237,27 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//and make sure p's cache was updated to be the same as p2's
 		$this->assertEquals( $p2->get_all_from_cache( 'Transaction' ), $p->get_all_from_cache( 'Transaction' ) );
 	}
+
+	/**
+	 * Tests that when we get rows from the database
+	 * @group 7634
+	 */
+	public function test_if_no_meta_row_use_defaults_not_nulls(){
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		//now use wpdb to directly delete its meta row
+		global $wpdb;
+		$deletions = $wpdb->delete( EEM_Event::instance()->second_table(), array( 'EVT_ID' => $e->ID() ), array( '%d' ) );
+		$this->assertEquals( 1, $deletions );
+		//now forget about the old event object we had, we want to see what happens when we fetch it again
+		EEM_Event::reset();
+		$incomplete_e = EEM_Event::instance()->get_one_by_ID( $e->ID() );
+		$actual_row = EEM_Event::instance()->get_all_wpdb_results( array( array( 'EVT_ID' => $e->ID() ) ) );
+		$a_field_from_meta_table = EEM_Event::instance()->field_settings_for( 'EVT_display_ticket_selector' );
+		$another_field_from_meta_table = EEM_Event::instance()->field_settings_for( 'EVT_additional_limit' );
+		$this->assertEquals( $a_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_display_ticket_selector' ) );
+		$this->assertTrue( NULL !== $incomplete_e->get( 'EVT_display_ticket_selector' ) );
+		$this->assertEquals( $another_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_additional_limit' ) );
+	}
 }
 
 // End of file EEM_Base_Test.php
