@@ -760,8 +760,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_name The field being setup.
 	 * @param string $timestring   The date timestring being used.
 	 * @param string $incoming_format        The format for the time string.
-	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for the blog.  If this is not
-	 *                           		the case, then it can be specified here.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
+	 *                           		the blog.  If this is not the case, then it can be specified here.
 	 */
 	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
 		$formats = $this->get_formats_for( $field_name );
@@ -770,7 +770,7 @@ abstract class EEM_Base extends EE_Base{
 		//if empty $timezone and incoming format is 'U'.  Then that means the incoming timestring is current_time('timestamp') which has an
 		//offset applied.  So let's REMOVE that offset so setting DateTime works correctly.
 		if ( empty( $timezone ) && $incoming_format == 'U' ) {
-			$offset = get_option( 'gmt_offset' ) * 60 * 60;
+			$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 			$timestring = $timestring - $offset;
 		}
 
