@@ -885,7 +885,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -907,7 +907,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 

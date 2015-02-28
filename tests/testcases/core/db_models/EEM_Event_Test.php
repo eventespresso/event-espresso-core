@@ -52,7 +52,8 @@ class EEM_Event_Test extends EE_UnitTestCase {
 			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
 			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
 			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ), 'DTT_EVT_end' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
+			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'inactive_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ), 'DTT_EVT_end' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
 			);
 
 		//setup some events
@@ -73,8 +74,11 @@ class EEM_Event_Test extends EE_UnitTestCase {
 			$event->save();
 		}
 
-		//gonna add one more event that is inactive for the inactive test (should be draft by default)
-		$this->factory->event->create();
+		//one more event that is just going to be inactive
+		$final_event = $this->factory->event->create();
+		$final_event->_add_relation_to( $datetimes['inactive_datetime'], 'Datetime' );
+		$final_event->save();
+
 	}
 
 
@@ -100,12 +104,12 @@ class EEM_Event_Test extends EE_UnitTestCase {
 	public function test_get_expired_events() {
 		$this->_setup_events();
 		//now do our tests
-		$this->assertEquals( 2, EEM_Event::instance()->get_expired_events( array(), true ) );
+		$this->assertEquals( 1, EEM_Event::instance()->get_expired_events( array(), true ) );
 	}
 
 	public function test_get_inactive_events() {
 		$this->_setup_events();
 		//now do our tests
-		$this->assertEquals( 2, EEM_Event::instance()->get_inactive_events( array(), true ) );
+		$this->assertEquals( 1, EEM_Event::instance()->get_inactive_events( array(), true ) );
 	}
 }

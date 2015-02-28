@@ -457,12 +457,27 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params = array();
 		}
 
+		//if we have count make sure we don't include group by
+		if ( $count && isset( $query_params['group_by'] ) ) {
+			unset( $query_params['group_by'] );
+		}
+
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
 		$where_params['status'] = 'publish';
-		$where_params['Datetime.DTT_EVT_start'] = array('<',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
-		$where_params['Datetime.DTT_EVT_end'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
+		//if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
+		if ( isset( $where_params['Datetime.DTT_EVT_start'] ) ) {
+			$where_params['Datetime.DTT_EVT_start******'] = array('<',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+		} else {
+			$where_params['Datetime.DTT_EVT_start'] = array('<',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+		}
+
+		if ( isset( $where_params['Datetime.DTT_EVT_end'] ) ) {
+			$where_params['Datetime.DTT_EVT_end*****'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
+		} else {
+			$where_params['Datetime.DTT_EVT_end'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
+		}
 		$query_params[0] = $where_params;
-		$events = $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		$events = $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
 		return $events;
 	}
 
@@ -486,16 +501,26 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params = array();
 		}
 
+		//if we have count make sure we don't include group by
+		if ( $count && isset( $query_params['group_by'] ) ) {
+			unset( $query_params['group_by'] );
+		}
+
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
 		$where_params['status'] = 'publish';
-		$where_params['Datetime.DTT_EVT_start'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+		//if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
+		if ( isset( $where_params['Datetime.DTT_EVT_start'] ) ) {
+			$where_params['Datetime.DTT_EVT_start*****'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+		} else {
+			$where_params['Datetime.DTT_EVT_start'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
+		}
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		return $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
 	}
 
 
 	/**
-	 * Get all events that are either published and have an event end time that is less than now OR unpublished events.
+	 * This only returns events that are expired.  They may still be published but all their datetimes have expired.
 	 *
 	 * @access public
 	 * @param  array  $query_params An array of query params to further filter on (note that status and DTT_EVT_end will be overridden)
@@ -503,46 +528,97 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * @return array 	EE_Event objects
 	 */
 	public function get_expired_events( $query_params, $count = FALSE ) {
-		if ( array_key_exists( 0, $query_params ) ) {
-			$where_params = $query_params[0];
-			unset( $query_params[0] );
-		} else {
-			$where_params = array();
+
+		$where_params = isset( $query_params[0] ) ? $query_params[0] : array();
+
+		//if we have count make sure we don't include group by
+		if ( $count && isset( $query_params['group_by'] ) ) {
+			unset( $query_params['group_by'] );
 		}
 
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
-		if ( isset( $where_params['status'] ) )
+		if ( isset( $where_params['status'] ) ) {
 			unset( $where_params['status'] );
-		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'AND' => array('status' => 'publish', 'Datetime.DTT_EVT_end' => array( '<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) ) );
+		}
+		$exclude_query = $query_params;
+		if ( isset( $exclude_query[0] ) ) {
+			unset( $exclude_query[0] );
+		}
+		$exclude_query[0] = array( 'Datetime.DTT_EVT_end' => array( '>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) );
+		//first get all events that have datetimes where its not expired.
+		$event_ids = $this->_get_all_wpdb_results( $exclude_query, OBJECT_K, 'Event_CPT.ID' );
+		$event_ids = array_keys( $event_ids );
+
+		//if we have any additional query_params, let's add them to the 'AND' condition
+		$and_condition = array(
+			'Datetime.DTT_EVT_end' => array( '<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ),
+			'EVT_ID' =>  array( 'NOT IN', $event_ids )
+			);
+
+		if ( isset( $where_params['OR'] ) ) {
+			$and_condition['OR'] = $where_params['OR'];
+			unset( $where_params['OR'] );
+		}
+
+		if ( isset( $where_params['Datetime.DTT_EVT_end'] ) ) {
+			$and_condition['Datetime.DTT_EVT_end****'] = $where_params['Datetime.DTT_EVT_end'];
+			unset( $where_params['Datetime.DTT_EVT_end'] );
+		}
+
+		if ( isset( $where_params['Datetime.DTT_EVT_start'] ) ) {
+			$and_condition['Datetime.DTT_EVT_start'] = $where_params['Datetime.DTT_EVT_start'];
+			unset( $where_params['Datetime.DTT_EVT_start'] );
+		}
+
+		//merge remaining $where params with the and conditions.
+		$and_condtion = array_merge( $and_condition, $where_params );
+
+		$where_params['AND'] = $and_condition;
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		return $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
 	}
 
 
 
 	/**
-	 * This basically just returns the events that do not have the publish status or that are expired.
+	 * This basically just returns the events that do not have the publish status.
 	 * @param  array  $query_params  An array of query params to further filter on (note that status will be overwritten)
 	 * @param  boolean $count        whether to return the count or not (default FALSE)
 	 * @return EE_Event[]            array of EE_Event objects
 	 */
 	public function get_inactive_events( $query_params, $count = FALSE ) {
-		if ( array_key_exists( 0, $query_params ) ) {
-			$where_params = $query_params[0];
-			unset( $query_params[0] );
-		} else {
-			$where_params = array();
-		}
+		$where_params = isset( $query_params[0] ) ? $query_params[0] : array();
 
 		//let's add in specific query_params for inactive events.
-		if ( isset( $where_params['status'] ) )
+		if ( isset( $where_params['status'] ) ) {
 			unset( $where_params['status'] );
+		}
 
-		//we check for events that are not published OR are expired.
+		//if we have count make sure we don't include group by
+		if ( $count && isset( $query_params['group_by'] ) ) {
+			unset( $query_params['group_by'] );
+		}
 
-		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'Datetime.DTT_EVT_end' => array( '<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) );
+		//if we have any additional query_params, let's add them to the 'AND' condition
+		$where_params['AND']['status'] = array( '!=', 'publish' );
+
+		if ( isset( $where_params['OR'] ) ) {
+			$where_params['AND']['OR'] = $where_params['OR'];
+			unset( $where_params['OR'] );
+		}
+
+		if ( isset( $where_params['Datetime.DTT_EVT_end'] ) ) {
+			$where_params['AND']['Datetime.DTT_EVT_end****'] = $where_params['Datetime.DTT_EVT_end'];
+			unset( $where_params['Datetime.DTT_EVT_end'] );
+		}
+
+		if ( isset( $where_params['Datetime.DTT_EVT_start'] ) ) {
+			$where_params['AND']['Datetime.DTT_EVT_start'] = $where_params['Datetime.DTT_EVT_start'];
+			unset( $where_params['Datetime.DTT_EVT_start'] );
+		}
+
 		$query_params[0] = $where_params;
-		return $count ? $this->count( $query_params, 'EVT_ID' ) : $this->get_all( $query_params );
+		return $count ? $this->count( $query_params, 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 

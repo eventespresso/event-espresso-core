@@ -1368,8 +1368,6 @@ class EEH_Form_Fields {
 	 * @return string                    html
 	 */
 	public static function generate_event_months_dropdown( $cur_date = '', $status = NULL, $evt_category = NULL, $evt_active_status = NULL ) {
-		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
-
 		//determine what post_status our condition will have for the query.
 		switch ( $status ) {
 			case 'month' :
@@ -1394,36 +1392,10 @@ class EEH_Form_Fields {
 			$where['Event.Term_Taxonomy.term_id'] = $evt_category;
 		}
 
-		//what about active status for the event?
-		if ( !empty( $evt_active_status ) ) {
-			switch ( $evt_active_status ) {
-				case 'upcoming' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
-					break;
-
-				case 'expired' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) ) );
-					break;
-
-				case 'active' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>',  EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
-					$where['DTT_EVT_end'] = array('<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
-					break;
-
-				case 'inactive' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) );
-					break;
-			}
-		}
-
 
 //		$where['DTT_is_primary'] = 1;
 
-		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where);
+		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where, $evt_active_status );
 
 		//let's setup vals for select input helper
 		$options = array(

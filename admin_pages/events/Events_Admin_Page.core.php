@@ -1551,17 +1551,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//date where conditions
+		$start_formats = EEM_Datetime::instance()->get_formats_for( 'DTT_EVT_start' );
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+			$DateTime = new DateTime( $year_r . '-' . $month_r . '-01 00:00:00', new DateTimeZone( EEM_Datetime::instance()->get_timezone() ) );
+			$start = $DateTime->format( implode( ' ', $start_formats  ) );
+			$end = $DateTime->setDate( $year_r, $month_r, $DateTime->format('t') )->setTime(23,59,59)->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( $start, $end ) );
 		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+			$DateTime = new DateTime( 'now', new DateTimeZone( EEM_Event::instance()->get_timezone() ) );
+			$start = $DateTime->setTime( 0,0,0 )->format( implode( ' ', $start_formats ) );
+			$end = $DateTime->setTime( 23, 59, 59 )->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( $start, $end ) );
 		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
-			$this_year_r = date('Y');
-			$this_month_r = date('m');
-			$days_this_month = date('t');
-			$start = ' 00:00:00';
-			$end = ' 23:59:59';
-			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
+			$now = date( 'Y-m-01' );
+			$DateTime = new DateTime( $now, new DateTimeZone( EEM_Event::instance()->get_timezone() ) );
+			$start = $DateTime->setTime( 0, 0, 0 )->format( implode( ' ', $start_formats ) );
+			$end = $DateTime->setDate( date('Y'), date('m'), $DateTime->format('t' ) )->setTime( 23, 59, 59 )->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( $start, $end ) );
 		}
 
 		//possible conditions for capability checks
@@ -1616,7 +1622,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			}
 		}
 
-		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID', true ) : $EEME->get_all( $query_params );
 
 		return $events;
 	}
@@ -1924,7 +1930,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array(), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array(), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -1942,7 +1948,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => array( 'IN', array('draft', 'auto-draft' ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -1961,7 +1967,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => 'trash'
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 
