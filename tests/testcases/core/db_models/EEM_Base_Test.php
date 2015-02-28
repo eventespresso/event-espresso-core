@@ -281,9 +281,9 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	function test_current_time_for_query() {
 		//baseline DateTime object for testing
 		$now = new DateTime( "now" );
-		$utcTimezone = new DateTimeZone( 'UTC' );
+		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
 		$timezoneTest = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
-		$testTimestampWithOffset = $now->format('U') + timezone_offset_get( $utcTimezone, $timezoneTest );
+		$testTimestampWithOffset = $now->format('U') + timezone_offset_get( $DateTimeZone, $timezoneTest );
 
 		//test getting default formatted string and default formatted unix timestamp.
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );

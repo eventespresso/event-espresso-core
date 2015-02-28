@@ -742,7 +742,7 @@ abstract class EEM_Base extends EE_Base{
 		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
 
 		if ( $timestamp ) {
-			$offset = timezone_offset_get( new DateTimeZone( 'UTC' ), $DateTime );
+			$offset = timezone_offset_get( new DateTimeZone( $this->_timezone ), $DateTime );
 			return $DateTime->format( 'U' ) + $offset;
 		}
 
@@ -762,8 +762,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $incoming_format        The format for the time string.
 	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
 	 *                           		the blog.  If this is not the case, then it can be specified here.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
 	 */
-	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
 		$formats = $this->get_formats_for( $field_name );
 		$full_format = implode( ' ', $formats );
 
@@ -787,7 +788,17 @@ abstract class EEM_Base extends EE_Base{
 		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
 
 		//return converted string
-		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
+		switch ( $what ) {
+			case 'time' :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[1] );
+				break;
+			case 'date' :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[0] );
+				break;
+			default :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
+				break;
+		}
 	}
 
 
