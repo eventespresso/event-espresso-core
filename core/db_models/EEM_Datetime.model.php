@@ -87,12 +87,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 						'DTT_reg_limit' => INF
 						/*NULL,
 						NULL*/
-					)
+					),
+					$this->_timezone
 				)
 		);
 
-		$times[0]->set_start_time("8am");
-		$times[0]->set_end_time("5pm");
+		$times[0]->set_start_time( $this->convert_datetime_for_query( 'DTT_EVT_start', '8am', 'ga', $this->_timezone, 'time' ) );
+		$times[0]->set_end_time( $this->convert_datetime_for_query( 'DTT_EVT_end', '5pm', 'ga', $this->_timezone, 'time' ) );
 		return $times;
 	}
 

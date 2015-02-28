@@ -276,9 +276,20 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	/**
 	 * @since 4.6.x
 	 */
-	public function create_new_blank_datetime() {
+	public function test_create_new_blank_datetime() {
+		//if timezone is empty string then the setUp didn't work correctly.  For the purpose of this test
+		//we want a high positive timezone, so let's force that if necessary
+		if ( get_option( 'timezone_string' ) != 'Australia/Sydney' ) {
+			update_option( 'timezone_string', 'Australia/Sydney' );
+			EEM_Datetime::reset();
+			EEM_Datetime::instance();
+		}
+
+		EE_Registry::instance()->load_helper('DTT_Helper');
 		//make sure now is in the timezone we want to test with.
-		$now =  new Datetime( "now", new DateTimeZone( 'America/Toronto' ) );
+		$now =  new Datetime( "now +30 days", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+		$now->setTime( '8', '0', '0' );
+		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
 
 		//get the default datetime
 		$default_date = EEM_Datetime::instance()->create_new_blank_datetime();
@@ -289,7 +300,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 		//set its timezone to match our expected timezone
 		$default_date->set_timezone( 'America/Toronto' );
-		$actual = $default_date->get_raw_date();
+		$actual = $default_date->get_raw_date( 'DTT_EVT_start');
 
 		$this->assertInstanceOf( 'DateTime', $actual );
 
@@ -297,7 +308,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( $now->format('Y'), $actual->format('Y' ) );
 		$this->assertEquals( $now->format('m'), $actual->format( 'm' ) );
 		$this->assertEquals( $now->format('d'), $actual->format( 'd' ) );
-		$this->assertEquals( $now->format('H'), $actual->format('H' ) );
+		$this->assertEquals( $now->format('H'), $actual->format( 'H' ) );
 		$this->assertEquals( $now->format('i'), $actual->format('i' ) );
 	}
 
