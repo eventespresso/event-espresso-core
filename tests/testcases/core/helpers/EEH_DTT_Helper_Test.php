@@ -57,6 +57,8 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 */
 	function test_get_valid_timezone_string() {
 
+		$original_timezone_string = get_option('timezone_string');
+
 		// TEST 1: retrieval of WP timezone string
 		$expected_timezone_string = 'UTC';
 		update_option( 'timezone_string', $expected_timezone_string );
@@ -77,7 +79,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 			$this->assertTrue( true );
 		}
 		// reset timezone_string
-		update_option( 'timezone_string', 'UTC' );
+		update_option( 'timezone_string', $original_timezone_string );
 	}
 
 
