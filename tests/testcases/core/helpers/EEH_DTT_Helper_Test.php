@@ -175,7 +175,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 			'minutes'		=> 'PT%M',
 			'seconds' 	=> 'PT%S'
 		);
-		// I can not tell a Fib... the following sequence is for Sidney 
+		// I can not tell a Fib... the following sequence is for Sidney
 		$intervals = array( 0, 1, 2, 3, 5, 8, 13, 21, 34 );
 		// loop thru timezones and gmt_offsets and set up environment
 		foreach ( $timezones_and_offsets as $timezone_string => $gmt_offset ) {
@@ -192,7 +192,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 					// TEST: add $interval $period ( ie: add 1 year...  add 3 months...  add 34 seconds )
 					// setup some objects used for testing
 					$expected_datetime = $this->setup_DateTime_object();
-					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => $expected_datetime->format( 'U' ) ));
+					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => current_time( 'timestamp' ) ));
 					$period_interval = str_replace( '%', $interval, $designator );
 					// apply conditions to both objects
 					if ( $increment_datetimes ) {
@@ -211,7 +211,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 								__( 'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s', 'event_espresso' ),
 								$increment_datetimes ? 'EEH_DTT_Helper::date_time_add()' : 'EEH_DTT_Helper::date_time_subtract()',
 								$period_interval,
-								'<br />',
+								"\n",
 								$expected,
 								$actual,
 								$timezone_string,
