@@ -689,6 +689,21 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	public function get_timezone() {
+		//first validate if timezone is set.  If not, then let's set it be whatever is set on the model fields.
+		if ( empty( $this->_timezone ) ) {
+			foreach( $this->_fields as $field ) {
+				if ( $field instanceof EE_Datetime_Field ) {
+					$this->set_timezone($field->get_timezone());
+					break;
+				}
+			}
+		}
+
+		//if timezone STILL empty then return the default timezone for the site.
+		if ( empty( $this->_timezone ) ) {
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$this->set_timezone( EEH_DTT_Helper::get_timezone() );
+		}
 		return $this->_timezone;
 	}
 
