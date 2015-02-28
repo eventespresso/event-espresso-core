@@ -282,6 +282,17 @@ abstract class EE_Base_Class{
 		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 		//make sure we clear all cached properties because they won't be relevant now
 		$this->_clear_cached_properties();
+
+		//make sure we update field settings and the date for all EE_Datetime_Fields
+		$model_fields = $this->get_model()->field_settings( false );
+		foreach ( $model_fields as $field_name => $field_obj ) {
+			if ( $field_obj instanceof EE_Datetime_Field ) {
+				$field_obj->set_timezone( $this->_timezone );
+				if ( isset( $this->_fields[$field_name] ) && $this->_fields[$field_name] instanceof DateTime ) {
+					$this->_fields[$field_name]->setTimeZone( new DateTimeZone( $this->_timezone ) );
+				}
+			}
+		}
 	}
 
 
@@ -1008,7 +1019,7 @@ abstract class EE_Base_Class{
 				break;
 		}
 
-		$this->_clear_cached_property($this->_fields[$fieldname]);
+		$this->_clear_cached_property($fieldname);
 	}
 
 
