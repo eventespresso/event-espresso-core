@@ -124,9 +124,6 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 			$new_dtts[$format] = EEM_Datetime::instance()->refresh_entity_map_from_db( $dtt->ID() );
 		}/**/
 
-		EEM_Ticket::reset();
-		EEM_Datetime::reset();
-		EEM_Event::reset();
 
 		$new_event = EEM_Event::instance()->refresh_entity_map_from_db( $this->_event->ID() );
 		$new_event->set_timezone( 'America/Vancouver' );
