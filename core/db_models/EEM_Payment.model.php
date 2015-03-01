@@ -190,9 +190,6 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		//yes we generated the date and time string in utc but we WANT this start date and time used in the set timezone on the model.
 		$start_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $start ) . ' 00:00:00', 'Y-m-d H:i:s', $this->get_timezone() );
 		$end_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $end) . ' 23:59:59' , 'Y-m-d H:i:s', $this->get_timezone() );
-		var_dump($start_date);
-		var_dump($end_date);
-		var_dump('-------');
 
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
