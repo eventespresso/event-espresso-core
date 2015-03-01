@@ -53,7 +53,7 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 			array( 'PAY_timestamp' => $past_start_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $upcoming_start_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'PAY_timestamp' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
+			array( 'PAY_timestamp' => $current_end_date->format( $full_format) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $past_start_date->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			);
 
