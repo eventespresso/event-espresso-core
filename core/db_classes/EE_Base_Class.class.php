@@ -230,7 +230,7 @@ abstract class EE_Base_Class{
 				 * @since 4.6.10+
 				 */
 				if ( $field_obj instanceof EE_Datetime_Field && ! is_null( $this->_fields[$field_name] ) && ! $this->_fields[$field_name] instanceof DateTime ) {
-					is_null( $this->_fields[$field_name] ) ? $this->set( $field_name, current_time('timestamp') ) : $this->set( $field_name, $this->_fields[$field_name] );
+					empty( $this->_fields[$field_name] ) ? $this->set( $field_name, current_time('timestamp') ) : $this->set( $field_name, $this->_fields[$field_name] );
 				}
 
 			}else{
