@@ -335,13 +335,13 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
+						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add('weeks', 1).hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
 					case 'event-datetime-DTT_EVT_end' :
 						DTT_end_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, 'YYYY-MM-DD h:mm a').add('hours', 4 ).format('YYYY-MM-DD h:mm a') : DTT_end_time;
+						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, DTT_CONVERTED_FORMATS.moment).add('hours', 4 ).format(DTT_CONVERTED_FORMATS.moment) : DTT_end_time;
 						$(this).val(DTT_end_time);
 						break;
 
@@ -1176,7 +1176,7 @@ jQuery(document).ready(function($) {
 					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
 						idref = 'add-new-ticket-TKT_start_date';
 						if ( $(this).val() === '' ) {
-							curval = tktHelper.eemoment().add('hours', 2).format('YYYY-MM-DD h:mm a');
+							curval = tktHelper.eemoment().add('hours', 2).format(DTT_CONVERTED_FORMATS.moment);
 						}
 					}
 
@@ -1215,7 +1215,7 @@ jQuery(document).ready(function($) {
 			} else {
 				//make sure tkt sell until date matches the date-time start date for the first date.
 				var dtt_end_date = $('.event-datetime-DTT_EVT_start').first().val();
-				var tkt_end_date = tktHelper.eemoment(dtt_end_date, 'YYYY-MM-DD h:mm a').startOf('day').format('YYYY-MM-DD h:mm a');
+				var tkt_end_date = tktHelper.eemoment(dtt_end_date, DTT_CONVERTED_FORMATS.moment).startOf('day').format(DTT_CONVERTED_FORMATS.moment);
 				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
 
@@ -1478,8 +1478,8 @@ jQuery(document).ready(function($) {
 			if ( dttname.length > 0 )
 				return dttname;
 
-			var fullstartdate = moment( start, 'YYYY-MM-DD h:mm a' );
-			var fullenddate = moment( end, 'YYYY-MM-DD h:mm a' );
+			var fullstartdate = moment( start, DTT_CONVERTED_FORMATS.moment );
+			var fullenddate = moment( end, DTT_CONVERTED_FORMATS.moment );
 
 			//first are months equal?
 			if ( fullstartdate.month() != fullenddate.month() ) {
@@ -1497,11 +1497,11 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * takes incoming date and returns the date in the given format
-		 * @param {string} date   incoming date (in format YYYY-MM-DD h:mm a) (needs to be in a format that the moment.js library accepts see @link http://momentjs.com/docs/#/displaying/format/)
+		 * @param {string} date   incoming date (in format set by DTT_CONVERTED_FORMATS.moment) (needs to be in a format that the moment.js library accepts see @link http://momentjs.com/docs/#/displaying/format/)
 		 * @param {string} format format date is returned in.
 		 */
 		TKT_DTT_display_text: function(date, dttformat) {
-			var fulldate = moment( date, 'YYYY-MM-DD h:mm a' );
+			var fulldate = moment( date, DTT_CONVERTED_FORMATS.moment );
 			return fulldate !== null ? fulldate.format(dttformat) : '';
 
 		},
@@ -1511,13 +1511,13 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * calculates what the status for the ticket is based on the incoming start and end date
-		 * @param  {string} startdate start date in format (yyyy-MM-dd h:mm a)
-		 * @param  {string} enddate   end date in format (yyyy-MM-dd h:mm a)
+		 * @param  {string} startdate start date in format (DTT_CONVERTED_FORMATS.moment)
+		 * @param  {string} enddate   end date in format (DTT_CONVERTED_FORMATS.moment)
 		 * @return {string}           one of three statuses depending on dates (On Sale, Pending, Expired)
 		 */
 		getTKTstatus: function(startdate, enddate) {
-			startdate = moment(startdate, 'YYYY-MM-DD h:mm a');
-			enddate = moment(enddate, 'YYYY-MM-DD h:mm a');
+			startdate = moment(startdate, DTT_CONVERTED_FORMATS.moment );
+			enddate = moment(enddate, DTT_CONVERTED_FORMATS.moment );
 
 			if ( startdate === null || enddate === null )
 				return '';
@@ -1869,8 +1869,8 @@ jQuery(document).ready(function($) {
 			var tktEnd = $('.edit-ticket-TKT_end_date', displayrow).val();
 
 			var now = tktHelper.eemoment();
-			tktStart = tktHelper.eemoment(tktStart, 'YYYY-MM-DD h:mm a');
-			tktEnd = tktHelper.eemoment(tktEnd, 'YYYY-MM-DD h:mm a');
+			tktStart = tktHelper.eemoment(tktStart, DTT_CONVERTED_FORMATS.moment );
+			tktEnd = tktHelper.eemoment(tktEnd, DTT_CONVERTED_FORMATS.moment );
 
 			//now we have moment objects to do some calcs and determine what status we're setting.
 			if ( now.isBefore(tktStart) ) {
