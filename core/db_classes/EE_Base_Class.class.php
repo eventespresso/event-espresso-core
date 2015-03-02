@@ -931,9 +931,11 @@ abstract class EE_Base_Class{
 	 *                         field name.
 	 */
 	public function get_i18n_datetime( $field_name, $format = NULL ) {
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
-		return date_i18n( $format, $this->get_raw( $field_name ) );
+		return date_i18n( $format, EEH_DTT_Helper::get_timestamp_with_offset( $this->get_raw( $field_name ), $this->_timezone ) );
 	}
+
 
 
 

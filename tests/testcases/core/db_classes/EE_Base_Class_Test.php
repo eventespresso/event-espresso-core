@@ -440,6 +440,44 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//if that didn't throw an error, we're good
 	}
 
+
+
+
+	/**
+	 * @since 4.6.12+
+	 */
+	public function test_get_i18n_datetime() {
+		//setup a datetime object with some known values for testing with.
+		$original_timezone = get_option('timezone_string' );
+		update_option( 'timezone_string', 'America/Toronto' );
+		$dateTimeZone = new DateTimeZone( 'America/Toronto' );
+		$currentTime = new DateTime( "now", $dateTimeZone );
+		$futureTime = clone $currentTime;
+		$futureTime->add( new DateInterval( 'P2D' ) );
+
+		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $futureTime->format( 'Y-m-d H:i:s' ), 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+
+		$this->assertInstanceOf( 'EE_Datetime', $datetime );
+
+
+		//test get_i18n_datetime
+		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get_i18n_datetime( 'DTT_EVT_start' ) );
+		$this->assertEquals( $futureTime->format( 'Y-m-d H:i:s' ), $datetime->get_i18n_datetime( 'DTT_EVT_end' ) );
+
+		$id = $datetime->ID();
+		//test when retreived from the database.
+		EEM_Datetime::reset();
+		$dbDatetime = EEM_Datetime::instance()->get_one_by_ID( $id );
+		//set formats to match expected
+		$dbDatetime->set_date_format( 'Y-m-d' );
+		$dbDatetime->set_time_format( 'H:i:s' );
+		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $dbDatetime->get_i18n_datetime( 'DTT_EVT_start' ) );
+		$this->assertEquals( $futureTime->format( 'Y-m-d H:i:s' ), $dbDatetime->get_i18n_datetime( 'DTT_EVT_end' ) );
+
+		//restore timezone
+		update_option( 'timezone_string', $original_timezone );
+	}
+
 }
 
 // End of file EE_Base_Class_Test.php
