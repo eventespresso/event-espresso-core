@@ -6,7 +6,7 @@
 <?php _e('Shows the Check-In status for an registrant. Available statuses are checked in <span class="ee-icon ee-icon-check-in"></span>, checked out <span class="ee-icon ee-icon-check-out"></span>, or no check-in record is available <span class="dashicons dashicons-no"></span>.', 'event_espresso'); ?>
 </li>
 <li>
-<?php echo '<strong>#</strong>'; ?><br />
+<strong><?php echo '#'; ?></strong><br />
 <?php _e('This is the registrant number in the group. For example, 1 of 1 means that there was a single registrant. 1 of 2 means that this registrant is the first to register of the the two registrants in the group.', 'event_espresso'); ?>
 </li>
 <li>
