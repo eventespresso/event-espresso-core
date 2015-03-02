@@ -125,8 +125,8 @@ abstract class EE_Base_Class{
 			}
 		}
 		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$this->_timezone = $timezone;
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 
 		if ( ! empty( $date_formats ) && is_array( $date_formats ) ) {
 			$this->_dt_frmt = $date_formats[0];
