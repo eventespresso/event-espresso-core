@@ -645,9 +645,9 @@ abstract class EE_Addon extends EE_Configurable {
 	box-sizing: border-box;
 	display: inline-block;
 	position: relative;
-	top: -2px;
+	top: -1px;
 	padding:.5em 1em;
-	margin: 0 0 0 1em;
+	margin: 0;
 	background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
 	background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
 	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
@@ -673,19 +673,28 @@ abstract class EE_Addon extends EE_Configurable {
 	color: #fff !important;
 	background: #4EBFDE;
 }
-
-.ee-button:active { top:-1px; }
+.ee-button:active { top:0; }
 </style>';
+			$plugins_page_row = $this->plugins_page_row();
+			$link_text = isset( $plugins_page_row[ 'link_text' ] ) ? $plugins_page_row[ 'link_text' ] : '';
+			$link_url = isset( $plugins_page_row[ 'link_url' ] ) ? $plugins_page_row[ 'link_url' ] : '';
+			$description = isset( $plugins_page_row[ 'description' ] ) ? $plugins_page_row[ 'description' ] : $plugins_page_row;
 			echo '<tr id="' . sanitize_title( $plugin_file ) . '" class="' . $class . '">';
-			echo '<td colspan="3" style="padding:1em 1.5em;">';
-			echo '<div class="ee-addon-upsell-info-dv">' . $this->plugins_page_row() . '</div>';
-			//ob_start();
-			//printr( $this->plugin_basename(), 'plugin_basename', __FILE__, __LINE__ );
-			//printr( $plugin_file, '$plugin_file', __FILE__, __LINE__ );
-			//printr( $plugin_data, '$plugin_data', __FILE__, __LINE__ );
-			//printr( $status, '$status', __FILE__, __LINE__ );
-			//echo ob_get_clean();
-			echo '</td></tr>';
+			if ( ! empty( $link_text )) {
+				echo '<th class="check-column" scope="row"></th>';
+				echo '<td class="ee-addon-upsell-info-title-td plugin-title">';
+				echo '
+<div class="ee-addon-upsell-info-dv">
+	<a class="ee-button" href="' . $link_url . '">' . $link_text . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></a>
+</div>';
+				echo '</td>';
+				echo '<td class="ee-addon-upsell-info-desc-td column-description desc">';
+				echo $description;
+				echo '</td>';
+			} else {
+				echo $description;
+			}
+			echo '</tr>';
 		}
 	}
 
