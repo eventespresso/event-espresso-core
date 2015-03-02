@@ -740,7 +740,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// first, get all of the datetimes that are available to this ticket
 		$datetimes = $ticket->get_many_related(
 			'Datetime',
-			array( array( 'DTT_EVT_end' => array( '>=', EEM_Datetime::current_time_for_query( 'DTT_EVT_end' ) ) ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
+			array( array( 'DTT_EVT_end' => array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
 		);
 		if ( ! empty( $datetimes )) {
 			// now loop thru all of the datetimes
