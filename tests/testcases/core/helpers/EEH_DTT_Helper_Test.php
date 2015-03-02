@@ -125,7 +125,8 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 * @param int    $time
 	 * @return \DateTime
 	 */
-	function setup_DateTime_object( $timezone_string = 'UTC', $time = 0 ) {
+	function setup_DateTime_object( $timezone_string = 'Africa/Abidjan', $time = 0 ) {
+		$timezone_string = empty( $timezone_string ) ? 'Africa/Abidjan' : $timezone_string;
 		$DateTime = new DateTime( 'now', new DateTimeZone( $timezone_string ) );
 		$time = absint( $time );
 		if ( $time ) {
@@ -166,7 +167,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 		$timezones_and_offsets = array(
 			'UTC' => '',
 			'America/Vancouver' => '',
-			'null' => 5 // EST
+			null => -5 // EST with no DST
 		);
 		$periods = array(
 			'years' 			=> 'P%Y',
@@ -195,6 +196,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 					// setup some objects used for testing
 					$expected_datetime = $this->setup_DateTime_object();
 					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => current_time( 'timestamp' ) ));
+					$expected_datetime->setTimeZone( new DateTimeZone( $actual_datetime->get_timezone() ) );
 					$period_interval = str_replace( '%', $interval, $designator );
 					// apply conditions to both objects
 					if ( $increment_datetimes ) {
