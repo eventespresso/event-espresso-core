@@ -92,10 +92,12 @@ Class  EE_New_Addon extends EE_Addon {
 	 * 	plugins_page_row
 	 *
 	 * 	if not empty, inserts a new table row after this plugin's row on the WP Plugins page
-	 * this can be used for adding upgrading/marketing info
+	 * this can be used for adding upgrading/marketing info.
+	 * Return an array (like below) to have the upsell info markup generated automatically, or
+	 * Return a string of HTML to customize the entire table row contents
 	 *
 	 *  @access 	public
-	 *  @return    array
+	 *  @return    string | array
 	 */
 	public static function plugins_page_upsell_info() {
 		return array(
