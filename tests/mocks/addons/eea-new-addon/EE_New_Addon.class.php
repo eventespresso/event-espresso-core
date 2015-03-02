@@ -34,7 +34,7 @@ Class  EE_New_Addon extends EE_Addon {
 				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'plugin_slug'			=> 'new_addon',
-				'plugins_page_row'=> EE_New_Addon::new_addon_upsell_info(),
+				'plugins_page_row'=> EE_New_Addon::plugins_page_upsell_info(),
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_New_Addon_Config',
 				'config_name' 		=> 'EE_New_Addon',
@@ -95,10 +95,14 @@ Class  EE_New_Addon extends EE_Addon {
 	 * this can be used for adding upgrading/marketing info
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return    array
 	 */
-	public static function new_addon_upsell_info() {
-		return 'GET MOAR BETTERER FEATURES <button class="ee-button">UPGRADE TO PRO &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></button>';
+	public static function plugins_page_upsell_info() {
+		return array(
+			'link_text' 		=>  __( 'UPGRADE TO PRO', 'event_espresso' ),
+			'link_url' 			=> '#',
+			'description' 	=> sprintf( __( 'Upgrade to Pro Version %1$s today and get moar betterer features.', 'event_espresso' ), '1.1.0' ),
+		);
 	}
 
 
