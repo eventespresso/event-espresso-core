@@ -305,6 +305,30 @@ class EEH_DTT_Helper {
 
 
 
+
+	/**
+	 * This method will take an incoming unix timestamp and add the offset to it for the given timezone_string.
+	 * If no unix timestamp is given then time() is used.  If no timezone is given then the set timezone string for
+	 * the site is used.
+	 *
+	 * @param int      $unixtimestamp   if 0, then time() will be used.
+	 * @param string $timezone_string timezone_string. If empty, then the current set timezone for the site will
+	 *                                		        be used.
+	 *
+	 * @return int      unixtimestamp with the offset applied for the given timezone.
+	 */
+	public static function get_timestamp_with_offset( $unixtimestamp = 0, $timezone_string = '' ) {
+		$unixtimestamp = $unixtimestamp === 0 ? time() : (int) $unixtimestamp;
+		$timezone_string = self::get_valid_timezone_string( $timezone_string );
+		$TimeZone = new DateTimeZone( $timezone_string );
+
+		$DateTime = new DateTime( '@' . $unixtimestamp, $TimeZone );
+		$offset = timezone_offset_get( $TimeZone, $DateTime );
+		return $DateTime->format( 'U' ) + $offset;
+	}
+
+
+
 	/**
 	 * 	_set_date_time_field
 	 *

@@ -234,6 +234,29 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 
 
 
+
+	/**
+	 * @since 4.6.12+
+	 */
+	public function test_get_timestamp_with_offset() {
+		//now in timezone currently set.
+		$default_timezone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
+		$now = new DateTime( "now",  $default_timezone );
+		$expected_offset = $now->format( 'U' ) + timezone_offset_get( $default_timezone, $now );
+
+		$this->assertEquals( $expected_offset, EEH_DTT_Helper::get_timestamp_with_offset( $now->format('U' ) ) );
+
+		//this might fail because of execution time.
+		$this->assertEquals( current_time( 'timestamp' ), EEH_DTT_Helper::get_timestamp_with_offset() );
+
+		//now let's test with a different timezone for the incoming timestamp.
+		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
+		$expected_timestamp = $now->format('U') + timezone_offset_get( new DateTimeZone( 'America/Toronto' ), $now );
+		$this->assertEquals( $expected_timestamp, EEH_DTT_Helper::get_timestamp_with_offset( $now->format('U'), 'America/Toronto' ) );
+	}
+
+
+
 }
 // End of file EEH_DTT_Helper_Test.php
 // Location: /EEH_DTT_Helper_Test.php
