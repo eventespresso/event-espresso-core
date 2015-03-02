@@ -936,9 +936,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}elseif($month_range){
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
 			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$days_in_month = date('t', current_time('timestamp') );
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$_where['REG_date']= array('BETWEEN',
-				array(  EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-01 00:00:00', 'Y-m-d H:i:s'), EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-31 23:59:59', 'Y-m-d H:i:s' ) ) );
+				array(  EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-01 00:00:00', 'Y-m-d H:i:s'), EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-' . $days_in_month .  ' 23:59:59', 'Y-m-d H:i:s' ) ) );
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
