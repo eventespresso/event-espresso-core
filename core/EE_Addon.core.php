@@ -40,19 +40,33 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @var $_version
 	 * @type string
 	 */
-	protected $_version;
+	protected $_version = '';
 
 	/**
 	 * @var $_min_core_version
 	 * @type string
 	 */
-	protected $_min_core_version;
+	protected $_min_core_version = '';
+
+	/**
+	 * derived from plugin 'main_file_path using plugin_basename()
+	 *
+	 * @type string $_plugin_basename
+	 */
+	protected $_plugin_basename = '';
+
+	/**
+	 * A non-internationalized name to identify this addon for use in URLs, etc
+	 *
+	 * @type string $_plugin_slug
+	 */
+	protected $_plugin_slug = '';
 
 	/**
 	 * A non-internationalized name to identify this addon. Eg 'Calendar','MailChimp',etc/
 	 * @type string _addon_name
 	 */
-	protected $_addon_name;
+	protected $_addon_name = '';
 
 	/**
 	 * one of the EE_System::req_type_* constants
@@ -60,12 +74,28 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	protected $_req_type = NULL;
 
+	/**
+	 * page slug to be used when generating the "Settings" link on the WP plugin page
+	 *
+	 * @type string $_plugin_action_slug
+	 */
+	protected $_plugin_action_slug = '';
+
+	/**
+	 * if not empty, inserts a new table row after this plugin's row on the WP Plugins page
+	 * that can be used for adding upgrading/marketing info
+	 *
+	 * @type string $_plugins_page_row
+	 */
+	protected $_plugins_page_row = '';
+
 
 
 	/**
 	 *    class constructor
 	 */
 	public function __construct() {
+		add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $this, 'admin_init' ) );
 	}
 
 
@@ -123,6 +153,86 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	function name() {
 		return $this->_addon_name;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function plugin_basename() {
+
+		return $this->_plugin_basename;
+	}
+
+
+
+	/**
+	 * @param string $plugin_basename
+	 */
+	public function set_plugin_basename( $plugin_basename ) {
+
+		$this->_plugin_basename = $plugin_basename;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function plugin_slug() {
+
+		return $this->_plugin_slug;
+	}
+
+
+
+	/**
+	 * @param string $plugin_slug
+	 */
+	public function set_plugin_slug( $plugin_slug ) {
+
+		$this->_plugin_slug = $plugin_slug;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function plugin_action_slug() {
+
+		return $this->_plugin_action_slug;
+	}
+
+
+
+	/**
+	 * @param string $plugin_action_slug
+	 */
+	public function set_plugin_action_slug( $plugin_action_slug ) {
+
+		$this->_plugin_action_slug = $plugin_action_slug;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function plugins_page_row() {
+
+		return $this->_plugins_page_row;
+	}
+
+
+
+	/**
+	 * @param string $plugins_page_row
+	 */
+	public function set_plugins_page_row( $plugins_page_row ) {
+
+		$this->_plugins_page_row = $plugins_page_row;
 	}
 
 
@@ -478,6 +588,109 @@ abstract class EE_Addon extends EE_Configurable {
 	public function get_main_plugin_file_dirname(){
 		return dirname( $this->get_main_plugin_file() );
 	}
+
+
+	/**
+	 * sets hooks used in the admin
+	 *
+*@return string
+	 */
+	public function admin_init(){
+		// is admin and not in M-Mode ?
+		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
+			add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
+			add_filter( 'after_plugin_row_' . $this->_plugin_basename, array( $this, 'after_plugin_row' ), 10, 3 );
+		}
+	}
+
+
+
+	/**
+	 * plugin_actions
+	 *
+	 * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
+	 *
+	 * @param $links
+	 * @param $file
+	 * @return array
+	 */
+	public function plugin_actions( $links, $file ) {
+		if ( $file == $this->plugin_basename() && $this->plugin_action_slug() != '' ) {
+			// before other links
+			array_unshift( $links, '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . __( 'Settings' ) . '</a>' );
+		}
+		return $links;
+	}
+
+
+
+	/**
+	 * after_plugin_row
+	 *
+	 * Add additional content to the plugins page plugin row
+	 * Inserts another row
+	 *
+	 * @param $plugin_file
+	 * @param $plugin_data
+	 * @param $status
+	 * @return array
+	 */
+	public function after_plugin_row( $plugin_file, $plugin_data, $status ) {
+		if ( $plugin_file == $this->plugin_basename() && $this->plugins_page_row() != '' ) {
+			$class = $status ? 'active' : 'inactive';
+			echo '<style>
+.ee-button,
+.ee-button:active,
+.ee-button:visited {
+	box-sizing: border-box;
+	display: inline-block;
+	position: relative;
+	top: -2px;
+	padding:.5em 1em;
+	margin: 0 0 0 1em;
+	background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
+	background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
+	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
+	background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
+	border: 1px solid rgba(0,0,0,0.1) !important;
+	border-top: 1px solid rgba(255,255,255,0.5) !important;
+	border-bottom: 2px solid rgba(0,0,0,0.25) !important;
+	font-weight: normal;
+	cursor: pointer;
+	color: #fff !important;
+	text-decoration: none !important;
+	text-align: center;
+	line-height: 1em;
+/*	line-height: 1;*/
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+.ee-button:hover {
+	color: #fff !important;
+	background: #4EBFDE;
+}
+
+.ee-button:active { top:-1px; }
+</style>';
+			echo '<tr id="' . sanitize_title( $plugin_file ) . '" class="' . $class . '">';
+			echo '<td colspan="3" style="padding:1em 1.5em;">';
+			echo '<div class="ee-addon-upsell-info-dv">' . $this->plugins_page_row() . '</div>';
+			//ob_start();
+			//printr( $this->plugin_basename(), 'plugin_basename', __FILE__, __LINE__ );
+			//printr( $plugin_file, '$plugin_file', __FILE__, __LINE__ );
+			//printr( $plugin_data, '$plugin_data', __FILE__, __LINE__ );
+			//printr( $status, '$status', __FILE__, __LINE__ );
+			//echo ob_get_clean();
+			echo '</td></tr>';
+		}
+	}
+
+
+
 
 }
 // End of file EE_Addon.core.php
