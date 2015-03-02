@@ -239,7 +239,9 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
-	 * Tests that when we get rows from the database
+	 * Tests that when we get rows from the database and a secondary table has no row,
+	 * but the primary one does, that the fields for the secondary table are given
+	 * DEFAULT values instead of NULLs
 	 * @group 7634
 	 */
 	public function test_if_no_meta_row_use_defaults_not_nulls(){
@@ -257,6 +259,20 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals( $a_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_display_ticket_selector' ) );
 		$this->assertTrue( NULL !== $incomplete_e->get( 'EVT_display_ticket_selector' ) );
 		$this->assertEquals( $another_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_additional_limit' ) );
+	}
+
+	/**
+	 * Tests that if we are joining to a table that has no entries matching the query,
+	 * but the primary table does that we don't create model objects for the non-existent
+	 * row, but we do still create model objects for the row that did exist.
+	 * @group 7634
+	 */
+	function test_get_all_if_related_model_blank_use_nulls(){
+		$price_sans_price_type = EE_Price::new_instance( array ( 'PRC_name' => 'original', 'PRT_ID' => EEM_Price_Type::instance()->count() + 1 ) );
+		$price_sans_price_type->save();
+		$fetched_price = EEM_Price::reset()->get_one( array( array( 'PRC_ID' => $price_sans_price_type->ID() ), 'force_join' => array( 'Price_Type' ) ) );
+		$this->assertInstanceOf( 'EE_Price', $fetched_price );
+		$this->assertEquals( null, $fetched_price->type_obj() );
 	}
 }
 
