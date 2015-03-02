@@ -1409,10 +1409,11 @@ class EEH_Form_Fields {
 		global $wp_locale;
 
 		foreach ( $DTTS as $DTT ) {
-			$date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
+			$localized_date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
+			$id = $DTT->dtt_month . ' ' . $DTT->dtt_year;
 			$options[] = array(
-				'text' => $date,
-				'id' => $date
+				'text' => $localized_date,
+				'id' => $id
 				);
 		}
 
