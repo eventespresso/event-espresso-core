@@ -31,8 +31,10 @@ Class  EE_New_Addon extends EE_Addon {
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
 				'min_core_version' => '4.3.0.dev.000',
-				'main_file_path' 				=> EE_NEW_ADDON_PLUGIN_FILE,
+				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
+				'plugin_slug'			=> 'new_addon',
+				'plugins_page_row'=> EE_New_Addon::new_addon_upsell_info(),
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_New_Addon_Config',
 				'config_name' 		=> 'EE_New_Addon',
@@ -48,10 +50,10 @@ Class  EE_New_Addon extends EE_Addon {
 				'widget_paths' 		=> array( EE_NEW_ADDON_PATH . 'EEW_New_Addon.widget.php' ),
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
-					'pue_plugin_slug' => 'eea-new-addon',
+					'pue_plugin_slug' 	=> 'eea-new-addon',
 					'plugin_basename' => EE_NEW_ADDON_BASENAME,
-					'checkPeriod' => '24',
-					'use_wp_update' => FALSE,
+					'checkPeriod' 			=> '24',
+					'use_wp_update' 	=> FALSE,
 					),
 				'capabilities' => array(
 					'administrator' => array(
@@ -61,14 +63,14 @@ Class  EE_New_Addon extends EE_Addon {
 				'capability_maps' => array(
 					new EE_Meta_Capability_Map_Edit( 'edit_addon', array( 'Event', '', 'edit_others_addon', 'edit_private_addon' ) )
 					),
-				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
-				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
-				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
-				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
-				'custom_post_types' => array(), //note for the mock we're not actually adding any custom
-								   //cpt stuff yet.
-				'custom_taxonomies' => array(),
-				'default_terms' => array()
+				'class_paths' 						=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
+				'model_paths' 					=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
+				'class_extension_paths' 		=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
+				'model_extension_paths' 	=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
+				//note for the mock we're not actually adding any custom cpt stuff yet.
+				'custom_post_types' 			=> array(),
+				'custom_taxonomies' 		=> array(),
+				'default_terms' 					=> array()
 			)
 		);
 	}
@@ -82,28 +84,21 @@ Class  EE_New_Addon extends EE_Addon {
 	 *  @return 	void
 	 */
 	public function additional_admin_hooks() {
-		// is admin and not in M-Mode ?
-		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
-			add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
-		}
 	}
 
 
 
 	/**
-	 * plugin_actions
+	 * 	plugins_page_row
 	 *
-	 * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
-	 * @param $links
-	 * @param $file
-	 * @return array
+	 * 	if not empty, inserts a new table row after this plugin's row on the WP Plugins page
+	 * this can be used for adding upgrading/marketing info
+	 *
+	 *  @access 	public
+	 *  @return 	string
 	 */
-	public function plugin_actions( $links, $file ) {
-		if ( $file == EE_NEW_ADDON_BASENAME ) {
-			// before other links
-			array_unshift( $links, '<a href="admin.php?page=espresso_new_addon">' . __('Settings') . '</a>' );
-		}
-		return $links;
+	public static function new_addon_upsell_info() {
+		return 'GET MOAR BETTERER FEATURES <button class="ee-button">UPGRADE TO PRO &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></button>';
 	}
 
 
