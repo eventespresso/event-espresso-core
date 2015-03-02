@@ -368,8 +368,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				if ( isset( $where_params['Datetime.DTT_EVT_end'] ) ) {
 					$where_params['Datetime.DTT_EVT_end*****'] = $where_params['DTT_EVT_end'];
 				}
-				$where_params['DTT_EVT_start'] = array('>',  $this->current_time_for_query( 'DTT_EVT_start' ) );
-				$where_params['DTT_EVT_end'] = array('<', $this->current_time_for_query( 'DTT_EVT_end' ) );
+				$where_params['DTT_EVT_start'] = array('<',  $this->current_time_for_query( 'DTT_EVT_start' ) );
+				$where_params['DTT_EVT_end'] = array('>', $this->current_time_for_query( 'DTT_EVT_end' ) );
 				break;
 
 			case 'inactive' :
