@@ -105,6 +105,11 @@ Class  EE_New_Addon extends EE_Addon {
 			'link_url' 			=> '#',
 			'description' 	=> sprintf( __( 'Upgrade to Pro Version %1$s today and get moar betterer features.', 'event_espresso' ), '1.1.0' ),
 		);
+		// or return a string like:
+		//$html = '<td colspan="3" class="ee-addon-upsell-info-td column-description desc">';
+		//$html = sprintf( __( 'Upgrade to Pro Version %1$s today and get moar betterer features.', 'event_espresso' ), '1.1.0' );
+		//$html = '</td>';
+		//return $html;
 	}
 
 
