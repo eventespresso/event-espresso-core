@@ -162,6 +162,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_name' 						=> $class_name,
 			// the addon slug for use in URLs, etc
 			'plugin_slug' 						=> isset( $setup_args['plugin_slug'] ) ? (string)$setup_args['plugin_slug'] : '',
+			// page slug to be used when generating the "Settings" link on the WP plugin page
+			'plugin_action_slug' 			=> isset( $setup_args[ 'plugin_action_slug' ] ) ? (string)$setup_args[ 'plugin_action_slug' ] : '',
 			// the "software" version for the addon
 			'version' 								=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
@@ -201,8 +203,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'custom_taxonomies' 		=> isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
 			'payment_method_paths'	=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
 			'default_terms' 					=> isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array(),
+			// if not empty, inserts a new table row after this plugin's row on the WP Plugins page that can be used for adding upgrading/marketing info
 			'plugins_page_row' 			=> isset( $setup_args['plugins_page_row'] ) ? $setup_args['plugins_page_row'] : '',
 		);
+		// if plugin_action_slug is NOT set, but an admin page path IS set, then let's just use the plugin_slug since that will be used for linking to the admin page
+		$addon_settings[ 'plugin_action_slug' ] = empty( $addon_settings[ 'plugin_action_slug' ] ) && ! empty( $addon_settings[ 'admin_path' ] ) ? $addon_settings[ 'plugin_slug' ] : $addon_settings[ 'plugin_action_slug' ];
 		// full server path to main file (file loaded directly by WP)
 		$addon_settings['plugin_basename'] = plugin_basename( $addon_settings[ 'main_file_path' ] );
 
@@ -313,9 +318,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				add_action( 'EE_Brewing_Regular___messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
-		add_filter( 'plugin_action_links', array( 'EE_Register_Addon', 'plugin_actions' ), 10, 2 );
-		add_filter( 'after_plugin_row_' .  self::$_settings[ $addon_name ]['plugin_basename'], array( 'EE_Register_Addon', 'after_plugin_row' ), 10, 3 );
-
 		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
 		if ( ! empty( $setup_args['pue_options'] )) {
 			self::$_settings[ $addon_name ]['pue_options'] = array(
@@ -352,7 +354,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	private static function _load_and_init_addon_class($addon_name){
 		$addon = EE_Registry::instance()->load_addon( dirname( self::$_settings[ $addon_name ]['main_file_path'] ), self::$_settings[ $addon_name ]['class_name'] );
 		$addon->set_name( $addon_name );
+		$addon->set_plugin_slug( self::$_settings[ $addon_name ][ 'plugin_slug' ] );
+		$addon->set_plugin_basename( self::$_settings[ $addon_name ][ 'plugin_basename' ] );
 		$addon->set_main_plugin_file( self::$_settings[ $addon_name ]['main_file_path'] );
+		$addon->set_plugin_action_slug( self::$_settings[ $addon_name ][ 'plugin_action_slug' ] );
+		$addon->set_plugins_page_row( self::$_settings[ $addon_name ][ 'plugins_page_row' ] );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::_effective_version( self::$_settings[ $addon_name ]['min_core_version'] ) );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
@@ -364,62 +370,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		return $addon;
 	}
 
-
-
-	/**
-	 * plugin_actions
-	 *
-	 * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
-	 * @param $links
-	 * @param $file
-	 * @return array
-	 */
-	public static function plugin_actions( $links, $file ) {
-		// is admin and not in M-Mode ?
-		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
-			foreach ( self::$_settings as $addon_name => $settings ) {
-				if ( $file == $settings[ 'plugin_basename' ] && ! empty( $settings[ 'admin_path' ] ) ) {
-					// before other links
-					array_unshift( $links, '<a href="admin.php?page=' . $settings[ 'plugin_slug' ] . '">' . __('Settings') . '</a>' );
-				}
-			}
-		}
-		return $links;
-	}
-
-
-
-	/**
-	 * after_plugin_row
-	 *
-	 * Add additional content to the plugins page plugin row
-	 *
-	 * @param $plugin_file
-	 * @param $plugin_data
-	 * @param $status
-	 * @return array
-	 */
-	public static function after_plugin_row( $plugin_file, $plugin_data, $status ) {
-		// is admin and not in M-Mode ?
-		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
-			foreach ( self::$_settings as $addon_name => $settings ) {
-				if ( $plugin_file == $settings[ 'plugin_basename' ] && ! empty( $settings[ 'plugins_page_row' ] ) ) {
-					$class = $status ? 'active' : 'inactive';
-					echo '<tr id="' . sanitize_title( $plugin_file ) . '" class="' . $class . '">';
-					echo '<td colspan="3" style="padding:0 1.5em 1em; background-color: #45BBE6;">';
-					echo '<div class="ee-addon-upsell-info-dv">' . $settings[ 'plugins_page_row' ] . '</div>';
-					//ob_start();
-					//printr( $settings[ 'plugin_basename' ], 'plugin_basename', __FILE__, __LINE__ );
-					//printr( $plugin_file, '$plugin_file', __FILE__, __LINE__ );
-					//printr( $plugin_data, '$plugin_data', __FILE__, __LINE__ );
-					//printr( $status, '$status', __FILE__, __LINE__ );
-					//echo ob_get_clean();
-					echo '</td></tr>';
-
-				}
-			}
-		}
-	}
 
 
 	/**
