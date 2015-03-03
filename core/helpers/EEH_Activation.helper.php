@@ -80,6 +80,10 @@ class EEH_Activation {
 	/**
 	 * 	reset_and_update_config
 	 *
+	 * The following code was moved over from EE_Config so that it will no longer run on every request.
+	 * If there is old calendar config data saved, then it will get converted on activation.
+	 * This was basically a DMS before we had DMS's, and will get removed after a few more versions.
+	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
