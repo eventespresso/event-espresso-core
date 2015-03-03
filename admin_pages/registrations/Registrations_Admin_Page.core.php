@@ -1372,6 +1372,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
+		$this->_template_args['REG_ID'] = $this->_registration->ID();
 		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
 
 
