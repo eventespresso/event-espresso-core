@@ -113,7 +113,7 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	protected static function _register_routes() {
-		EE_Config::register_route( __('msg_url_trigger', 'event_espresso'), 'Messages', 'run' );
+		EE_Config::register_route( 'msg_url_trigger', 'event_espresso', 'Messages', 'run' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
 	}
 
