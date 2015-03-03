@@ -255,6 +255,11 @@ class EE_Checkout {
 	 */
 	public function remove_reg_step( $reg_step_slug = '' ) {
 		unset( $this->reg_steps[ $reg_step_slug  ] );
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		// now remove reg step from TXN and save
+		$transaction_processor->remove_reg_step( $this->transaction, $reg_step_slug );
+		$this->transaction->save();
 	}
 
 
