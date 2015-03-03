@@ -362,7 +362,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	protected function _prepare_for_display( DateTime $DateTime, $pretty = false ) {
 		if ( ! $DateTime instanceof DateTime ) {
-			throw new EE_Error( __('EE_Datetime_Field::prepare_for_pretty_echoing requires a DateTime value to be the value for the $datetime_value argument.', 'event_espresso' ) );
+			throw new EE_Error( __('EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $datetime_value argument.', 'event_espresso' ) );
 		}
 		$format_string = $this->_get_date_time_output( $pretty );
 		//make sure datetime_value is in the correct timezone (in case that's been updated).
