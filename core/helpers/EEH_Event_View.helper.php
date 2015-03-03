@@ -184,7 +184,7 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 *  @access 	public
 	 * @param    int $EVT_ID
-	 *  @return 	string
+	 *  @return 	EE_Ticket[]
 	 */
 	public static function event_tickets_available( $EVT_ID = 0 ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
