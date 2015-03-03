@@ -599,6 +599,22 @@ abstract class EEM_Base extends EE_Base{
 		return $results;
 	}
 
+	/**
+	 * Gets an array of rows from the database just like $wpdb->get_results would,
+	 * but you can use the $query_params like on EEM_Base::get_all() to more easily
+	 * take care of joins, field preparation etc. 
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
+	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
+	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
+	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
+	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
+	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 */
+	public function  get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
+		return $this->_get_all_wpdb_results($query_params, $output, $columns_to_select);
+	}
 
 
 	/**
