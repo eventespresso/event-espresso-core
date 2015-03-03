@@ -26,26 +26,9 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Term_Relationship extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Term Relationship','event_espresso');
 		$this->plural_item = __('Term Relationships','event_espresso');
 		$this->_tables = array(
@@ -67,7 +50,7 @@ class EEM_Term_Relationship extends EEM_Base {
 			'PRIMARY'=>new EE_Primary_Key_Index(array('object_id','term_taxonomy_id'))
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 	/**
@@ -85,8 +68,8 @@ class EEM_Term_Relationship extends EEM_Base {
 		}else{
 			$second_operand = 'tr.term_taxonomy_id';
 		}
-		$rows_affected = $wpdb->query("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
-from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)");
+		$rows_affected = $this->_do_wpdb_query( 'query' , array("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
+from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)" ) );
 		return $rows_affected;
 	}
 

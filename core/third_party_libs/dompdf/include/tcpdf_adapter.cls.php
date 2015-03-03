@@ -1,43 +1,11 @@
 <?php
 /**
- * DOMPDF - PHP5 HTML to PDF renderer
- *
- * File: $RCSfile$
- * Created on: 2004-08-04
- *
- * Copyright (c) 2004 - Benj Carson <benjcarson@digitaljunkies.ca>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library in the file LICENSE.LGPL; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307 USA
- *
- * Alternatively, you may distribute this software under the terms of the
- * PHP License, version 3.0 or later.  A copy of this license should have
- * been distributed with this file in the file LICENSE.PHP .  If this is not
- * the case, you can obtain a copy at http://www.php.net/license/3_0.txt.
- *
- * The latest version of DOMPDF might be available at:
- * http://www.dompdf.com/
- *
- * @link http://www.dompdf.com/
- * @copyright 2004 Benj Carson
- * @author Benj Carson <benjcarson@digitaljunkies.ca>
  * @package dompdf
-
+ * @link    http://www.dompdf.com/
+ * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+ * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @version $Id: tcpdf_adapter.cls.php 448 2011-11-13 13:00:03Z fabien.menager $
  */
-
-/* $Id: tcpdf_adapter.cls.php 311 2010-09-05 20:02:01Z fabien.menager $ */
 
 require_once(DOMPDF_LIB_DIR . '/tcpdf/tcpdf.php');
 
@@ -63,7 +31,7 @@ class TCPDF_Adapter implements Canvas {
    * @var array;
    */
   static public $PAPER_SIZES = array(); // Set to
-										// CPDF_Adapter::$PAPER_SIZES below.
+                                        // CPDF_Adapter::$PAPER_SIZES below.
 
 
   /**
@@ -133,36 +101,36 @@ class TCPDF_Adapter implements Canvas {
    * Class constructor
    *
    * @param mixed $paper The size of paper to use either a string (see {@link CPDF_Adapter::$PAPER_SIZES}) or
-   *					 an array(xmin,ymin,xmax,ymax)
+   *                     an array(xmin,ymin,xmax,ymax)
    * @param string $orientation The orientation of the document (either 'landscape' or 'portrait')
    */
   function __construct($paper = "letter", $orientation = "portrait") {
    
-	if ( is_array($paper) )
-	  $size = $paper;
-	else if ( isset(self::$PAPER_SIZES[mb_strtolower($paper)]) )
-	  $size = self::$PAPER_SIZE[$paper];
-	else
-	  $size = self::$PAPER_SIZE["letter"];
+    if ( is_array($paper) )
+      $size = $paper;
+    else if ( isset(self::$PAPER_SIZES[mb_strtolower($paper)]) )
+      $size = self::$PAPER_SIZE[$paper];
+    else
+      $size = self::$PAPER_SIZE["letter"];
 
-	if ( mb_strtolower($orientation) === "landscape" ) {
-	  list($size[2], $size[3]) = array($size[3], $size[2]);
-	}
+    if ( mb_strtolower($orientation) === "landscape" ) {
+      list($size[2], $size[3]) = array($size[3], $size[2]);
+    }
 
-	$this->_width = $size[2] - $size[0];
-	$this->_height = $size[3] - $size[1];
+    $this->_width = $size[2] - $size[0];
+    $this->_height = $size[3] - $size[1];
 
-	$this->_pdf = new TCPDF("P", "pt", array($this->_width, $this->_height));
-	$this->_pdf->Setcreator("DOMPDF Converter");
+    $this->_pdf = new TCPDF("P", "pt", array($this->_width, $this->_height));
+    $this->_pdf->Setcreator("DOMPDF Converter");
 
-	$this->_pdf->AddPage();
+    $this->_pdf->AddPage();
 
-	$this->_page_number = $this->_page_count = 1;
-	$this->_page_text = array();
+    $this->_page_number = $this->_page_count = 1;
+    $this->_page_text = array();
 
-	$this->_last_fill_color	 =
-	  $this->_last_stroke_color =
-	  $this->_last_line_width   = null;
+    $this->_last_fill_color     =
+      $this->_last_stroke_color =
+      $this->_last_line_width   = null;
 
   }  
   
@@ -180,14 +148,14 @@ class TCPDF_Adapter implements Canvas {
    * @param array $color
    */
   protected function _set_stroke_colour($colour) {
-	$colour[0] = round(255 * $colour[0]);
-	$colour[1] = round(255 * $colour[1]);
-	$colour[2] = round(255 * $colour[2]);
+    $colour[0] = round(255 * $colour[0]);
+    $colour[1] = round(255 * $colour[1]);
+    $colour[2] = round(255 * $colour[2]);
 
-	if ( is_null($this->_last_stroke_color) || $color != $this->_last_stroke_color ) {
-	  $this->_pdf->SetDrawColor($color[0],$color[1],$color[2]);
-	  $this->_last_stroke_color = $color;
-	}
+    if ( is_null($this->_last_stroke_color) || $color != $this->_last_stroke_color ) {
+      $this->_pdf->SetDrawColor($color[0],$color[1],$color[2]);
+      $this->_last_stroke_color = $color;
+    }
 
   }
 
@@ -197,14 +165,14 @@ class TCPDF_Adapter implements Canvas {
    * @param array $color
    */
   protected function _set_fill_colour($colour) {
-	$colour[0] = round(255 * $colour[0]);
-	$colour[1] = round(255 * $colour[1]);
-	$colour[2] = round(255 * $colour[2]);
+    $colour[0] = round(255 * $colour[0]);
+    $colour[1] = round(255 * $colour[1]);
+    $colour[2] = round(255 * $colour[2]);
 
-	if ( is_null($this->_last_fill_color) || $color != $this->_last_fill_color ) {
-	  $this->_pdf->SetDrawColor($color[0],$color[1],$color[2]);
-	  $this->_last_fill_color = $color;
-	}
+    if ( is_null($this->_last_fill_color) || $color != $this->_last_fill_color ) {
+      $this->_pdf->SetDrawColor($color[0],$color[1],$color[2]);
+      $this->_last_fill_color = $color;
+    }
 
   }
 
@@ -221,7 +189,7 @@ class TCPDF_Adapter implements Canvas {
    * @return int
    */
   function get_page_number() {
-	return $this->_page_number;
+    return $this->_page_number;
   }
 
   /**
@@ -230,7 +198,7 @@ class TCPDF_Adapter implements Canvas {
    * @return int
    */
   function get_page_count() {
-	return $this->_page_count;
+    return $this->_page_count;
   }
 
   /**
@@ -239,7 +207,7 @@ class TCPDF_Adapter implements Canvas {
    * @param int $count
    */
   function set_page_count($count) {
-	$this->_page_count = (int)$count;
+    $this->_page_count = (int)$count;
   }
 
   /**
@@ -259,15 +227,15 @@ class TCPDF_Adapter implements Canvas {
    */
   function line($x1, $y1, $x2, $y2, $color, $width, $style = null) {
 
-	if ( is_null($this->_last_line_width) || $width != $this->_last_line_width ) {
-	  $this->_pdf->SetLineWidth($width);
-	  $this->_last_line_width = $width;
-	}
+    if ( is_null($this->_last_line_width) || $width != $this->_last_line_width ) {
+      $this->_pdf->SetLineWidth($width);
+      $this->_last_line_width = $width;
+    }
 
-	$this->_set_stroke_colour($color);
+    $this->_set_stroke_colour($color);
 
-	// FIXME: ugh, need to handle different styles here
-	$this->_pdf->line($x1, $y1, $x2, $y2);
+    // FIXME: ugh, need to handle different styles here
+    $this->_pdf->line($x1, $y1, $x2, $y2);
   }
 
   /**
@@ -287,16 +255,16 @@ class TCPDF_Adapter implements Canvas {
    */   
   function rectangle($x1, $y1, $w, $h, $color, $width, $style = null) {
 
-	if ( is_null($this->_last_line_width) || $width != $this->_last_line_width ) {
-	  $this->_pdf->SetLineWidth($width);
-	  $this->_last_line_width = $width;
-	}
+    if ( is_null($this->_last_line_width) || $width != $this->_last_line_width ) {
+      $this->_pdf->SetLineWidth($width);
+      $this->_last_line_width = $width;
+    }
 
-	$this->_set_stroke_colour($color);
-	
-	// FIXME: ugh, need to handle styles here
-	$this->_pdf->rect($x1, $y1, $w, $h);
-	
+    $this->_set_stroke_colour($color);
+    
+    // FIXME: ugh, need to handle styles here
+    $this->_pdf->rect($x1, $y1, $w, $h);
+    
   }
 
   /**
@@ -312,10 +280,10 @@ class TCPDF_Adapter implements Canvas {
    */   
   function filled_rectangle($x1, $y1, $w, $h, $color) {
 
-	$this->_set_fill_colour($color);
-	
-	// FIXME: ugh, need to handle styles here
-	$this->_pdf->rect($x1, $y1, $w, $h, "F");
+    $this->_set_fill_colour($color);
+    
+    // FIXME: ugh, need to handle styles here
+    $this->_pdf->rect($x1, $y1, $w, $h, "F");
   }
 
   /**
@@ -325,11 +293,11 @@ class TCPDF_Adapter implements Canvas {
    * array.  $points has the following structure:
    * <code>
    * array(0 => x1,
-   *	   1 => y1,
-   *	   2 => x2,
-   *	   3 => y2,
-   *	   ...
-   *	   );
+   *       1 => y1,
+   *       2 => x2,
+   *       3 => y2,
+   *       ...
+   *       );
    * </code>
    *
    * See {@link Style::munge_colour()} for the format of the colour array.
@@ -343,7 +311,7 @@ class TCPDF_Adapter implements Canvas {
    * @param bool  $fill  Fills the polygon if true
    */
   function polygon($points, $color, $width = null, $style = null, $fill = false) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -362,7 +330,7 @@ class TCPDF_Adapter implements Canvas {
    * @param bool $fill Fills the circle if true   
    */   
   function circle($x, $y, $r, $color, $width = null, $style = null, $fill = false) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -379,7 +347,7 @@ class TCPDF_Adapter implements Canvas {
    * @param int $h height (in pixels)
    */
   function image($img_url, $img_type, $x, $y, $w, $h) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -396,11 +364,11 @@ class TCPDF_Adapter implements Canvas {
    * @param float $adjust word spacing adjustment
    */
   function text($x, $y, $text, $font, $size, $color = array(0,0,0), $adjust = 0) {
-	// FIXME
+    // FIXME
   }
 
   function javascript($code) {
-	// FIXME
+    // FIXME
   }
   
   /**
@@ -409,7 +377,7 @@ class TCPDF_Adapter implements Canvas {
    * @param string $anchorname The name of the named destination
    */
   function add_named_dest($anchorname) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -422,7 +390,7 @@ class TCPDF_Adapter implements Canvas {
    * @param float  $height   The height of the link
    */
   function add_link($url, $x, $y, $width, $height) {
-	// FIXME
+    // FIXME
   }
   
   /**
@@ -432,10 +400,10 @@ class TCPDF_Adapter implements Canvas {
    * @param string $value  the text to set
    */
   function add_info($label, $value) {
-	$method = "Set$label";
-	if ( in_array("Title", "Author", "Keywords", "Subject") && method_exists($this->_pdf, $method) ) {
-	  $this->_pdf->$method($value);
-	}
+    $method = "Set$label";
+    if ( in_array("Title", "Author", "Keywords", "Subject") && method_exists($this->_pdf, $method) ) {
+      $this->_pdf->$method($value);
+    }
   }
   
   /**
@@ -448,7 +416,7 @@ class TCPDF_Adapter implements Canvas {
    * @return float
    */
   function get_text_width($text, $font, $size, $spacing = 0) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -459,7 +427,7 @@ class TCPDF_Adapter implements Canvas {
    * @return float
    */
   function get_font_height($font, $size) {
-	// FIXME
+    // FIXME
   }
 
   
@@ -469,7 +437,7 @@ class TCPDF_Adapter implements Canvas {
    * Subsequent drawing operations will appear on the new page.
    */
   function new_page() {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -479,7 +447,7 @@ class TCPDF_Adapter implements Canvas {
    * @param array  $options associative array, 'Attachment' => 0 or 1, 'compress' => 1 or 0
    */
   function stream($filename, $options = null) {
-	// FIXME
+    // FIXME
   }
 
   /**
@@ -489,10 +457,10 @@ class TCPDF_Adapter implements Canvas {
    * @return string
    */
   function output($options = null) {
-	// FIXME
+    // FIXME
   }
   
 }
-	
+    
 // Workaround for idiotic limitation on statics...
 PDFLib_Adapter::$PAPER_SIZES = CPDF_Adapter::$PAPER_SIZES;

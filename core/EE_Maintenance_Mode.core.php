@@ -79,6 +79,15 @@ class EE_Maintenance_Mode {
 		return self::$_instance;
 	}
 
+	/**
+	 * Resets maintenance mode (mostly just re-checks whether or not we should be in maintenance mode)
+	 * @return EE_Maintenance_Mode
+	 */
+	public static function reset(){
+		self::instance()->set_maintenance_mode_if_db_old();
+		return self::instance();
+	}
+
 
 
 	/**
@@ -143,6 +152,7 @@ class EE_Maintenance_Mode {
 	 * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
 	 */
 	public function set_maintenance_mode_if_db_old(){
+		EE_Registry::instance()->load_core( 'Data_Migration_Manager' );
 		if( EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
 			update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
 			return true;
@@ -162,6 +172,7 @@ class EE_Maintenance_Mode {
 	 * @return void
 	 */
 	public function set_maintenance_level($level){
+		do_action( 'AHEE__EE_Maintenance_Mode__set_maintenance_level', $level );
 		update_option(self::option_name_maintenance_mode, intval($level));
 	}
 

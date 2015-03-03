@@ -27,7 +27,7 @@ require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 class EEM_Datetime extends EEM_Soft_Delete_Base {
 
   	// private instance of the EEM_Datetime object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -69,29 +69,6 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the Espresso_model object
-	 *
-	 *		@access public
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Datetime instance
-	 */
-	public static function instance( $timezone = NULL ){
-
-		// check if instance of Espresso_model already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//we might have a timezone set, let set_timezone decide what to do with it
-		self::$_instance->set_timezone( $timezone );
-
-		// Espresso_model object
-		return self::$_instance;
-	}
 
 	/**
 	*		create new blank datetime
@@ -159,25 +136,24 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 */
 	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $include_expired = TRUE, $include_deleted= TRUE, $limit = NULL  ) {
 
-		$original_vapbmo = $this->_values_already_prepared_by_model_object;
-		$this->_values_already_prepared_by_model_object = TRUE; //make sure we dont' do conversions on the time in the query because the time in the db IS in GMT.
+		//sanitize EVT_ID
+		$EVT_ID = intval( $EVT_ID );
 
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
 
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
 
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array( '>=', current_time( 'mysql' ));
+			$query_params[0]['DTT_EVT_end'] = array( '>=', current_time( 'mysql', TRUE ) );
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array( 'IN', array( TRUE, FALSE ));
 		}
 
 		$result = $this->get_all( $query_params );
-
-		//reset _values_already_prepared_by_model_object prop to previous setting.
-		$this->_values_already_prepared_by_model_object = $original_vapbmo;
-
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
 		return $result;
 	}
 
@@ -244,10 +220,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL ){
-//		echo "time provided:".current_time('mysql')."<br>"; //(should be in local timezone)
+		//sanitize EVT_ID
+		$EVT_ID = intval( $EVT_ID );
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql', TRUE));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
@@ -256,6 +235,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			$query_params['limit'] = $limit;
 		}
 		$result = $this->get_all( $query_params );
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
 		return $result;
 	}
 
@@ -269,9 +249,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_ticket_ordered_by_start_time($TKT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
+		//sanitize TKT_ID
+		$TKT_ID =  intval( $TKT_ID );
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$query_params =array(array('Ticket.TKT_ID'=>$TKT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql', TRUE));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
@@ -279,7 +263,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		if($limit){
 			$query_params['limit'] = $limit;
 		}
-		return $this->get_all( $query_params );
+		$result = $this->get_all( $query_params );
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
+		return $result;
 	}
 
 
@@ -295,10 +281,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_ticket_ordered_by_DTT_order( $TKT_ID, $include_expired = true, $include_deleted = true, $limit = NULL ) {
+		//sanitize id.
+		$TKT_ID =  intval( $TKT_ID );
+		$old_assumption = $this->get_assumption_concerning_values_already_prepared_by_model_object();
+		$this->assume_values_already_prepared_by_model_object( EEM_Base::prepared_for_use_in_db );
 		$where_params = array( 'Ticket.TKT_ID' => $TKT_ID );
 		$query_params = array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ) );
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql', TRUE));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
@@ -306,7 +296,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		if($limit){
 			$query_params['limit'] = $limit;
 		}
-		return $this->get_all( $query_params );
+		$result = $this->get_all( $query_params );
+		$this->assume_values_already_prepared_by_model_object( $old_assumption );
+		return $result;
 	}
 
 
@@ -335,6 +327,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	public function get_dtt_months_and_years( $where_params ) {
 		$query_params[0] = $where_params;
 		$query_params['group_by'] = array('dtt_year', 'dtt_month');
+		$query_params['order_by'] = array( 'DTT_EVT_start' => 'DESC' );
 		$columns_to_select = array(
 			'dtt_year' => array('YEAR(DTT_EVT_start)', '%s'),
 			'dtt_month' => array('MONTHNAME(DTT_EVT_start)', '%s')

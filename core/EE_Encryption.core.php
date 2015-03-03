@@ -84,14 +84,13 @@ class EE_Encryption {
 	/**
 	 * @encrypts data
 	 * @access   public
-	 * @param bool $text_string
-	 * @internal param $string - the text to be encrypted
+	 * @param string $text_string  - the text to be encrypted
 	 * @return string
 	 */
-	public function encrypt ( $text_string = FALSE ) {
+	public function encrypt ( $text_string = '' ) {
 
 		// you give me nothing??? GET OUT !
-		if  ( ! $text_string )  {
+		if  ( empty( $text_string ))  {
 			return FALSE;
 		}
 
@@ -110,14 +109,13 @@ class EE_Encryption {
 	/**
 	 * @decrypts data
 	 * @access   public
-	 * @param bool $encrypted_text
-	 * @internal param $string - the text to be decrypted
+	 * @param string $encrypted_text - the text to be decrypted
 	 * @return string
 	 */
-	public function decrypt  ( $encrypted_text = FALSE )  {
+	public function decrypt  ( $encrypted_text = '' )  {
 
 		// you give me nothing??? GET OUT !
-		if  ( ! $encrypted_text )  {
+		if  ( empty( $encrypted_text ))  {
 			return FALSE;
 		}
 

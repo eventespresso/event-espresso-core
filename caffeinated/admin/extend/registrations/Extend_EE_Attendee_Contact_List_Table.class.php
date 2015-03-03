@@ -28,13 +28,16 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class Extend_EE_Attendee_Contact_List_Table extends EE_Attendee_Contact_List_Table {
-	
+
 	protected function _set_properties() {
 		parent::_set_properties();
 		$this->_bottom_buttons = array(
-			'contact_list_export'=> array(
-				'route' => 'contact_list_export',
-				)
+			'contact_list_report' => array(
+				'route' => 'contact_list_report'
+			),
+//			'contact_list_export'=> array(
+//				'route' => 'contact_list_export'
+//			)
 		);
 	}
 }

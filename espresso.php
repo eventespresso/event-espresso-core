@@ -3,13 +3,12 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.4.7.rc.001
-  Author: 				Event Espresso
+  Version: 		4.6.14.rc.000
+  Author: 		Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: 			GPLv2
+  License: 		GPLv2
   TextDomain: 		event_espresso
-
-  Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
+  Copyright 		(c) 2008-2014 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +30,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @package 		Event Espresso
- * @author 			Seth Shoultes
+ * @author 		Seth Shoultes
  * @copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
  * @license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @link 				{@link http://www.eventespresso.com}
@@ -46,7 +45,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.4.7.rc.001';
+		return '4.6.14.rc.000';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -54,8 +53,8 @@ if ( ! function_exists( 'espresso_version' )) {
 }
 // define versions
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
-define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
-define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
+define( 'EE_MIN_WP_VER_REQUIRED', '4.0' );
+define( 'EE_MIN_WP_VER_RECOMMENDED', '4.1' );
 define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
 define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.33' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
@@ -68,8 +67,11 @@ if ( ! defined( 'DS' )) {
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
-if( ! defined( 'SP' ) ){
-	define('SP',' ');
+if( ! defined( 'SP' )){
+	define( 'SP', ' ' );
+}
+if( ! defined( 'EENL' )){
+	define( 'EENL', "\n" );
 }
 
 
@@ -85,17 +87,20 @@ define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
 define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
+define( 'EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods' . DS);
 define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
 define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
+define( 'EE_BUSINESS', EE_CORE . 'business' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
 define( 'EE_TEMPLATES', EE_CORE . 'templates' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
 define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
+define( 'EE_FORM_SECTIONS', EE_LIBRARIES  .'form_sections' . DS );
 // gateways
 define( 'EE_GATEWAYS', EE_MODULES . 'gateways' . DS );
 define( 'EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules' . DS . 'gateways' . DS );
@@ -105,6 +110,7 @@ define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
 define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
 define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS );
 define( 'EE_HELPERS_ASSETS', EE_PLUGIN_DIR_URL . 'core/helpers/assets/' );
+define( 'EE_LIBRARIES_URL', EE_PLUGIN_DIR_URL . 'core/libraries/');
 
 // define upload paths
 $uploads = wp_upload_dir();
@@ -120,6 +126,10 @@ define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS
 // languages folder/path
 define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS );
 define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
+//check for dompdf fonts in uploads
+if( file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS ) ){
+	define( 'DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS  );
+}
 
 //ajax constants
 define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? TRUE : FALSE );

@@ -52,24 +52,20 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 * @return    void
 	 */
 	public function run( WP $WP ) {
-		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
-		global $wpdb;
-		$SQL = 'SELECT post_content from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND post_name=%s';
-		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
-			// now check for this shortcode
-			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
-				if ( ! did_action( 'pre_get_posts' )) {
-					// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
-					// this allows us to initialize things, enqueue assets, etc,
-					// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
-					add_action( 'pre_get_posts', array( EED_Single_Page_Checkout::instance(), 'run' ));
-				} else {
-					global $wp;
-					EED_Single_Page_Checkout::instance()->run( $wp );
-				}
-			}
+		if ( ! did_action( 'pre_get_posts' )) {
+			// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
+			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
+			// this will trigger the EED_Single_Page_Checkout module's run() method during the pre_get_posts hook point,
+			// this allows us to initialize things, enqueue assets, etc,
+			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'init' ), 10, 1 );
+		} else {
+			global $wp_query;
+			EED_Single_Page_Checkout::load_reg_steps();
+			EED_Single_Page_Checkout::init( $wp_query );
 		}
 	}
+
+
 
 	/**
 	 * 	process_shortcode - ESPRESSO_CHECKOUT

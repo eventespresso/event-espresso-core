@@ -69,6 +69,11 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
             throw new EE_Error( __( 'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include a "name" (a unique identifier for this set of message shortcodes), and an array containing the following keys: : "autoload_paths"', 'event_espresso' ) );
         }
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_messages_shortcode_registry[ $name ] ) ){
+			return;
+		}
+
 		//make sure this was called in the right place!
 		if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
 			EE_Error::doing_it_wrong(__METHOD__, sprintf( __('Should be only called on the "EE_Brewing_Regular___messages_caf" hook (Trying to register a library named %s).','event_espresso'), $name ), '4.3.0' );
@@ -81,7 +86,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
             );
 
          //add filters
-         add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Register_Messages_Shortcode_Library', 'register_msgs_autoload_paths'), 10 );
+         add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Messages_Shortcode_Library', 'register_msgs_autoload_paths'), 10 );
 
         //add below filters if the required callback is provided.
         if ( !empty( $setup_args['msgr_validator_callback'] ) )
@@ -115,7 +120,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
 
 
      /**
-     * callback for FHEE__EE_Messages_Init__autoload_messages__dir_ref filter.
+     * callback for FHEE__EED_Messages___set_messages_paths___MSG_PATHS filter.
      *
      * @since    4.3.0
      *

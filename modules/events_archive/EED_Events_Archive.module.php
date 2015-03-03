@@ -104,7 +104,9 @@ class EED_Events_Archive  extends EED_Module {
 		$this->load_event_list_assets();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		EEH_Event_Query::filter_query_parts();
+		//add query filters
+		EEH_Event_Query::add_query_filters();
+		// set params that will get used by the filters
 		EEH_Event_Query::set_query_params(
 			'', 	// month
 			'', 	// category
@@ -150,6 +152,7 @@ class EED_Events_Archive  extends EED_Module {
 		// ensure valid EE_Events_Archive_Config() object exists
 //		EED_Events_Archive::_set_config();
 		// don't add content filter for dedicated EE child themes or private posts
+		EE_Registry::instance()->load_helper( 'Template' );
 		if ( ! EEH_Template::is_espresso_theme() ) {
 			// add status banner ?
 			if ( $this->config()->display_status_banner ) {
@@ -350,7 +353,7 @@ class EED_Events_Archive  extends EED_Module {
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
-		// don't diplay entry meta because the existing theme will take care of that
+		// don't display entry meta because the existing theme will take care of that
 		remove_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 	}
 
