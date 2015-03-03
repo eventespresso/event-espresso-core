@@ -274,6 +274,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
 		$transaction->set_reg_steps( $txn_reg_steps );
+		$transaction->save();
 		return true;
 	}
 
