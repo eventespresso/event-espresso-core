@@ -834,7 +834,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'PAY_extra_accntng' => $this->_req_data['txn_admin_payment']['accounting'],
 					'PAY_details' => $this->_req_data['txn_admin_payment'],
 					'PAY_ID' => $this->_req_data['txn_admin_payment']['PAY_ID']
-				)
+				),
+				'',
+				array( 'Y-m-d', 'H:i a' )
 			);
 			if ( ! $payment->save() ){
 				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
