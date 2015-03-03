@@ -441,7 +441,7 @@ jQuery(document).ready( function($) {
 					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
 					labels1: [ eei18n.timer_year, eei18n.timer_month, eei18n.timer_week, eei18n.timer_day, eei18n.timer_hour, eei18n.timer_minute, eei18n.timer_second ],
 					until: expiration,
-					layout: layout,
+					layout: layout
 					//onExpiry: SPCO.display_registration_expiration_notice()
 				});
 			}
