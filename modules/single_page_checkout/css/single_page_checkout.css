@@ -231,6 +231,11 @@
 
 /*** INPUTS ***/
 
+
+#ee-single-page-checkout-dv  .new-state-abbrv {
+	display:inline-block!important;
+	width:auto!important;
+}
 .ee-reg-qstn-input-dv,
 .ee-billing-qstn-input-dv {
 	margin:0 0 1em;

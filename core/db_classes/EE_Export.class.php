@@ -247,6 +247,32 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 	}
 
+	function report_attendees(){
+		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State', 'Country' ) ) );
+		$csv_data = array();
+		foreach( $attendee_rows as $attendee_row ){
+			$csv_row = array();
+			foreach( EEM_Attendee::instance()->field_settings() as $field_name => $field_obj ){
+				if( $field_name == 'STA_ID' ){
+					$state_name_field = EEM_State::instance()->field_settings_for( 'STA_name' );
+					$csv_row[ __( 'State', 'event_espresso' ) ] = $attendee_row[ $state_name_field->get_qualified_column() ];
+				}elseif( $field_name == 'CNT_ISO' ){
+					$country_name_field = EEM_Country::instance()->field_settings_for( 'CNT_name' );
+					$csv_row[ __( 'Country', 'event_espresso' ) ] = $attendee_row[ $country_name_field->get_qualified_column() ];
+				}else{
+					$csv_row[ $field_obj->get_nicename() ] = $attendee_row[ $field_obj->get_qualified_column() ];
+				}
+			}
+			$csv_data[] = $csv_row;
+		}
+
+		$filename = $this->generate_filename ( 'contact-list-report' );
+
+		$handle = $this->EE_CSV->begin_sending_csv( $filename);
+		$this->EE_CSV->write_data_array_to_csv($handle, $csv_data);
+		$this->EE_CSV->end_sending_csv($handle);
+	}
+
 
 	/**
 	 *			@Export data for ALL attendees
@@ -306,7 +332,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$query_params = apply_filters(
 			'FHEE__EE_Export__report_registration_for_event',
 			array(
-				array( 'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ) ),
+				array(
+					'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
+					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
 				'force_join' => array( 'Transaction', 'Ticket' )
 			),
@@ -430,7 +459,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//if we couldn't export anything, we want to at least show the column headers
 		if(empty($registrations_csv_ready_array)){
 			$reg_csv_array = array();
-			foreach($reg_fields_to_include as $model_name => $field_list){
+			$model_and_fields_to_include = array(
+				'Registration' => $reg_fields_to_include,
+				'Attendee' => $att_fields_to_include
+			);
+			foreach($model_and_fields_to_include as $model_name => $field_list){
 				$model = EE_Registry::instance()->load_model($model_name);
 				foreach($field_list as $field_name){
 					$field = $model->field_settings_for($field_name);

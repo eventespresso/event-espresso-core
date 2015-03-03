@@ -175,7 +175,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	public function handle_payment_update( $update_info, $transaction ){
 		//verify there's payment data that's been sent
 		if(empty($update_info['payment_status']) || empty($update_info['txn_id'])){
-			return NULL;
+			//waaaait... is this a PDT request? (see https://developer.paypal.com/docs/classic/products/payment-data-transfer/)
+			//indicated by the "tx" argument? If so, we don't need it. We'll just use the IPN data when it comes
+			if( isset( $update_info[ 'tx' ] ) ){
+				return $transaction->last_payment();
+			}else{
+				return NULL;
+			}
 		}
 		$payment =  $this->_pay_model->get_payment_by_txn_id_chq_nmbr($update_info['txn_id']);
 		if ( ! $payment ){
@@ -183,9 +189,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
-			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
-			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
 		}
 
@@ -277,9 +280,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( ! is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 			return true;
 		}else{
+			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
+			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			$payment->set_gateway_response(sprintf(__("IPN Validation failed! Paypal responded with '%s'", "event_espresso"),$result['body']));
 			$payment->set_details(array('REQUEST'=>$update_info,'VALIDATION_RESPONSE'=>$result));
 			$payment->set_status(EEM_Payment::status_id_failed);
+			$this->log( array( 'message' => $payment->gateway_response(), 'details' => $payment->details() ), $payment);
 			return false;
 		}
 	}
