@@ -29,7 +29,10 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 
-
+	/**
+	 *__construct
+	 * @return Payments_Admin_Page_Init
+	 */
 	public function __construct() {
 		//define some page related constants
 		define( 'EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings' );
@@ -39,7 +42,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/' );
 
 		//check that there are active gateways on all admin page loads. but dont do it just yet
-//		echo "constrtucrting payments admin page";die;
+//		echo "constructing payments admin page";die;
 		add_action('admin_notices',array($this,'check_payment_gateway_setup'));
 		parent::__construct();
 	}
