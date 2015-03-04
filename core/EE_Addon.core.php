@@ -598,7 +598,7 @@ abstract class EE_Addon extends EE_Configurable {
 	public function admin_init(){
 		// is admin and not in M-Mode ?
 		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
-			add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
+			add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
 			add_filter( 'after_plugin_row_' . $this->_plugin_basename, array( $this, 'after_plugin_row' ), 10, 3 );
 		}
 	}
@@ -614,7 +614,7 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @param $file
 	 * @return array
 	 */
-	public function plugin_actions( $links, $file ) {
+	public function plugin_action_links( $links, $file ) {
 		if ( $file == $this->plugin_basename() && $this->plugin_action_slug() != '' ) {
 			// before other links
 			array_unshift( $links, '<a href="admin.php?page=' . $this->plugin_action_slug() . '">' . __( 'Settings' ) . '</a>' );
