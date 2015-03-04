@@ -311,20 +311,20 @@ class EEH_DTT_Helper {
 	 * If no unix timestamp is given then time() is used.  If no timezone is given then the set timezone string for
 	 * the site is used.
 	 *
-	 * @param int      $unixtimestamp   if 0, then time() will be used.
+	 * @param int      $unix_timestamp   if 0, then time() will be used.
 	 * @param string $timezone_string timezone_string. If empty, then the current set timezone for the site will
 	 *                                		        be used.
 	 *
-	 * @return int      unixtimestamp with the offset applied for the given timezone.
+	 * @return int      $unix_timestamp with the offset applied for the given timezone.
 	 */
-	public static function get_timestamp_with_offset( $unixtimestamp = 0, $timezone_string = '' ) {
-		$unixtimestamp = $unixtimestamp === 0 ? time() : (int) $unixtimestamp;
+	public static function get_timestamp_with_offset( $unix_timestamp = 0, $timezone_string = '' ) {
+		$unix_timestamp = $unix_timestamp === 0 ? time() : (int) $unix_timestamp;
 		$timezone_string = self::get_valid_timezone_string( $timezone_string );
 		$TimeZone = new DateTimeZone( $timezone_string );
 
-		$DateTime = new DateTime( '@' . $unixtimestamp, $TimeZone );
+		$DateTime = new DateTime( '@' . $unix_timestamp, $TimeZone );
 		$offset = timezone_offset_get( $TimeZone, $DateTime );
-		return $DateTime->format( 'U' ) + $offset;
+		return (int)$DateTime->format( 'U' ) + (int)$offset;
 	}
 
 
