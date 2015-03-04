@@ -37,15 +37,44 @@
  * ------------------------------------------------------------------------
  */
 define( 'EE_NEW_ADDON_VERSION', '1.0.0.dev.000' );
+define( 'EE_NEW_ADDON_CORE_VERSION_REQUIRED', '4.6.0.alpha' );
 define( 'EE_NEW_ADDON_PLUGIN_FILE',  __FILE__ );
 function load_espresso_new_addon() {
-if ( class_exists( 'EE_Addon' )) {
-	// new_addon version
-	require_once ( plugin_dir_path( __FILE__ ) . 'EE_New_Addon.class.php' );
-	EE_New_Addon::register_addon();
-}
+  if ( class_exists( 'EE_Addon' )) {
+      // new_addon version
+      require_once ( plugin_dir_path( __FILE__ ) . 'EE_New_Addon.class.php' );
+      EE_New_Addon::register_addon();
+  } else {
+    add_action( 'admin_notices', 'espresso_new_addon_activation_error' );
+  }
 }
 add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
+
+
+
+function espresso_new_addon_activation_check() {
+  if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) ) {
+    add_action( 'admin_notices', 'espresso_new_addon_activation_error' );
+  }
+}
+add_action( 'init', 'espresso_new_addon_activation_check', 1 );
+
+
+
+function espresso_new_addon_activation_error() {
+  unset( $_GET[ 'activate' ] );
+  unset( $_REQUEST[ 'activate' ] );
+  if ( ! function_exists( 'deactivate_plugins' ) ) {
+    require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+  }
+  deactivate_plugins( plugin_basename( EE_NEW_ADDON_PLUGIN_FILE ) );
+  ?>
+  <div class="error">
+    <p><?php printf( __( 'Event Espresso New Addon could not be activated. Please ensure that Event Espresso version %1$s or higher is running', 'event_espresso' ), EE_NEW_ADDON_CORE_VERSION_REQUIRED ); ?></p>
+  </div>
+<?php
+}
+
 
 // End of file espresso_new_addon.php
 // Location: wp-content/plugins/eea-new-addon/espresso_new_addon.php

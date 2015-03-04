@@ -48,27 +48,30 @@ Class  EE_New_Addon extends EE_Addon {
 				'widget_paths' 		=> array( EE_NEW_ADDON_PATH . 'EEW_New_Addon.widget.php' ),
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
-					'pue_plugin_slug' => 'eea-new-addon',
-					'plugin_basename' => EE_NEW_ADDON_BASENAME,
-					'checkPeriod' => '24',
-					'use_wp_update' => FALSE,
-					),
+					'pue_plugin_slug' 		=> 'eea-new-addon',
+					'plugin_basename' 	=> EE_NEW_ADDON_BASENAME,
+					'checkPeriod' 				=> '24',
+					'use_wp_update' 		=> FALSE,
+				),
 				'capabilities' => array(
 					'administrator' => array(
 						'read_addon', 'edit_addon', 'edit_others_addon', 'edit_private_addon'
-						),
 					),
+				),
 				'capability_maps' => array(
-					new EE_Meta_Capability_Map_Edit( 'edit_addon', array( 'Event', '', 'edit_others_addon', 'edit_private_addon' ) )
-					),
-				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
-				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
-				'class_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
-				'model_extension_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
-				'custom_post_types' => array(), //note for the mock we're not actually adding any custom
-								   //cpt stuff yet.
-				'custom_taxonomies' => array(),
-				'default_terms' => array()
+					'EE_Meta_Capability_Map_Edit' => array(
+						'edit_addon',
+						array( 'Event', '', 'edit_others_addon', 'edit_private_addon' )
+					)
+				),
+				'class_paths' 						=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
+				'model_paths' 					=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
+				'class_extension_paths' 		=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_class_extensions',
+				'model_extension_paths' 	=> EE_NEW_ADDON_PATH . 'core' . DS . 'db_model_extensions',
+				//note for the mock we're not actually adding any custom cpt stuff yet.
+				'custom_post_types' 			=> array(),
+				'custom_taxonomies' 		=> array(),
+				'default_terms' 					=> array()
 			)
 		);
 	}
