@@ -187,7 +187,7 @@ jQuery(document).ready(function($) {
 		},
 
 
-		messenger_toggle: function( messenger, status ) {
+		messenger_toggle: function( messenger, status, event ) {
 			var data = {
 				messenger: messenger,
 				status: status,
@@ -215,6 +215,9 @@ jQuery(document).ready(function($) {
 								MSG_helper.update_mt_form(value, messenger);
 							});
 						}
+						return true;
+					} else {
+						event.preventDefault();
 					}
 				}
 			});
@@ -257,7 +260,7 @@ jQuery(document).ready(function($) {
 		toggle_msg_elements: function( messenger, status, mts ) {
 			$('.ajax-loader-grey').toggle().hide();
 
-			var $on_off_button = $('#on-off-' + messenger),
+			var $on_off_button = $('#ee-on-off-toggle-' + messenger),
 				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
 				$active_mts = $('#active-message-types'),
 				$inactive_mts = $('#inactive-message-types'),
@@ -268,7 +271,6 @@ jQuery(document).ready(function($) {
 				show_hide_msgr_form = $('#has_form_class').text();
 
 			if ( status == 'on' ) {
-				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
 				if ( show_hide_msgr_form !== 'hidden' )
 					$( $messenger_settings ).removeClass('hidden');
 				$( $active_mts ).removeClass('hidden');
@@ -278,7 +280,6 @@ jQuery(document).ready(function($) {
 				$( $active_on_msg ).removeClass('hidden');
 				$( $msgr_link ).addClass('messenger-active');
 			} else if ( status == 'off' ) {
-				$( $on_off_button ).attr('value', 'messenger-on').attr('class','on-off-inactive on-off-action');
 				$( $messenger_settings ).addClass('hidden');
 				$( $active_mts ).addClass('hidden');
 				$( $inactive_mts ).addClass('hidden');
@@ -336,9 +337,9 @@ jQuery(document).ready(function($) {
 						MSG_helper.display_notices(resp.notices);
 						MSG_helper.display_content(display_content, whr, wht);
 					}
+					return true;
 				}
 			});
-			return false;
 		},
 
 
@@ -424,11 +425,11 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.activate_messages_on_off_toggle_container').on('click', '.on-off-action', function(e) {
-		e.preventDefault();
-		var messenger = $(this).attr('id').replace('on-off-',''),
-		status = $(this).attr('value').replace('messenger-','');
-		MSG_helper.messenger_toggle(messenger, status);
+	$('.activate_messages_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e) {
+		var messenger = $(this).attr('id').replace('ee-on-off-toggle-',''),
+		status = $(this).prop('checked') ? 'on' : 'off';
+		e.stopPropagation();
+		MSG_helper.messenger_toggle(messenger, status, e)
 	});
 
 
