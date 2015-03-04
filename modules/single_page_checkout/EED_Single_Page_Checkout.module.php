@@ -946,7 +946,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// good registrant, you get to proceed
 						if ( $this->checkout->current_step->success_message() != '' ) {
-							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							if ( apply_filters( 'FHEE__Single_Page_Checkout___process_form_action__display_success', false ) ) {
+								EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							}
 						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();
