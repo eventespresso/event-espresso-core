@@ -274,7 +274,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			//if we couldnt make the transaction, also abandon all hope
 			return false;
 		}
-			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);$pay_id = $this->_insert_new_payment($old_row,$txn_id);
+		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);$pay_id = $this->_insert_new_payment($old_row,$txn_id);
 		if($pay_id){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_payment_table,$pay_id);
 		}
@@ -393,8 +393,26 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _insert_new_transaction($old_attendee){
 		global $wpdb;
-		if(intval($old_attendee['is_primary'])){//primary attendee, so create txn
 
+		//first: let's check for an existing transaction for this old attendee
+		if( intval( $old_attendee[ 'is_primary' ] ) ) {//primary attendee, so create txn
+			$txn_id = $this->get_migration_script()->get_mapping_new_pk( $this->_old_table, intval($old_attendee['id']), $this->_new_transaction_table );
+		} else { //non-primary attendee, so find its primary attendee's transaction
+			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
+			if( ! $primary_attendee_old_id){
+				$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
+				$primary_attendee_old_id = is_array($primary_attendee) ? $primary_attendee['id'] : NULL;
+			}
+			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
+			if( ! $txn_id){
+				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  $this->_json_encode($old_attendee),$primary_attendee_old_id));
+				$txn_id = 0;
+			}
+		}
+		//if there isn't yet a transaction row for this, create one
+		//(so even if it was a non-primary attendee with no EE3 primary attendee,
+		// it ought to have SOME transaction, so we'll make one)
+		if( ! $txn_id ) {
 			//maps 3.1 payment stati onto 4.1 transaction stati
 			$txn_status_mapping = array(
 				'Completed'=>'TCM',
@@ -425,23 +443,10 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_transaction_table, $cols_n_values, $datatypes));
 				return 0;
 			}
-			$new_id = $wpdb->insert_id;
-			return $new_id;
-		}else{//non-primary attendee, so find its primary attendee's transaction
-			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
-			if( ! $primary_attendee_old_id){
-				$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
-				$primary_attendee_old_id = is_array($primary_attendee) ? $primary_attendee['id'] : NULL;
-			}
-			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
-			if( ! $txn_id){
-				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  $this->_json_encode($old_attendee),$primary_attendee_old_id));
-				$txn_id = 0;
-			}
-			return $txn_id;
+			$txn_id = $wpdb->insert_id;
 		}
 
-
+		return $txn_id;
 	}
 	/**
 	 * Detects if the MER tables exist
@@ -496,6 +501,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$ticket_id = $this->_try_to_find_new_ticket_id($old_attendee,$new_event_id);
 		if( ! $ticket_id){
 			$ticket_id = $this->_insert_new_ticket_because_none_found( $old_attendee, $new_event_id );
+			$this->add_error( sprintf( __( 'Could not find a ticket for old attendee with id %d for new event %d, so created a new ticket with id %d', 'event_espresso' ), $old_attendee['id'], $new_event_id, $ticket_id ) );
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();
