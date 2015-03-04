@@ -67,7 +67,7 @@ class EE_Transaction_Payments {
 			return false;
 		}
 		// calculate total paid
-		$total_paid = $this->recalculate_total_payments_for_transaction( $transaction, EEM_Payment::status_id_approved );
+		$total_paid = $this->recalculate_total_payments_for_transaction( $transaction );
 		// if total paid has changed
 		if ( $total_paid != $transaction->paid() ) {
 			$transaction->set_paid( $total_paid );

@@ -505,7 +505,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_categories' => __('Delete Permanently', 'event_espresso'),
-					'export_categories' => __('Export Categories', 'event_espresso'),
+//					'export_categories' => __('Export Categories', 'event_espresso'),
 					)
 				)
 		);
