@@ -597,7 +597,14 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @param        mixed $item
 	 */
 	private function _strip_all_tags_within_array( &$item ) {
-		$item = wp_strip_all_tags( $item );
+		if( is_object( $item ) ) {
+			$item = (array) $item;
+		}
+		if( is_array( $item ) ){
+			array_walk_recursive( $item, array( $this, '_strip_all_tags_within_array' ) );
+		}else{
+			$item = wp_strip_all_tags( $item );
+		}
 	}
 
 	/**

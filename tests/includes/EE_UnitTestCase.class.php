@@ -99,6 +99,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
 		$current_user = $this->_orig_current_user;
 		$this->_detect_accidental_txn_commit();
+		$notices = EE_Error::get_notices( false, false, true );
+		if( ! empty( $notices[ 'errors' ] ) ){
+			$this->fail(  $notices['errors'] );
+		}
+		EE_Error::reset_notices();
 	}
 
 	/**
@@ -358,8 +363,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 						sprintf(
 							__( 'EE objects of class "%1$s" did not match. They were: %2$s and %3$s', 'event_espresso' ),
 							get_class( $expected_object),
-							PHP_EOL . json_encode( $expected_object->model_field_array() ),
-							PHP_EOL . json_encode( $actual_object->model_field_array() )
+							print_r( $expected_object->model_field_array(), true ),
+							print_r( $actual_object->model_field_array(), true )
 						)
 					);
 				}

@@ -505,7 +505,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_categories' => __('Delete Permanently', 'event_espresso'),
-					'export_categories' => __('Export Categories', 'event_espresso'),
+//					'export_categories' => __('Export Categories', 'event_espresso'),
 					)
 				)
 		);
@@ -947,10 +947,17 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array($offset, $per_page);
 
+		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
+
 		$where = array(
 			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
 			//todo add filter by category
 			);
+
+		if ( $category ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
 
 		//cap checks
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {

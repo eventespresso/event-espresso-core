@@ -603,7 +603,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
+		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_lifespan ) ? TRUE : FALSE;
 
 	}
 
@@ -824,6 +824,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
 			 $expiration = time();
+			 $too_far_in_the_the_future = $expiration + ( $this->_lifespan * 2 );
 			 // filter the query limit. Set to 0 to turn off garbage collection
 			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
 			 // non-zero LIMIT means take out the trash
@@ -834,6 +835,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					WHERE option_name
 					LIKE '\_transient\_timeout\_ee\_ssn\_%'
 					AND option_value < {$expiration}
+					OR option_value > {$too_far_in_the_the_future}
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
 				 $expired_sessions = $wpdb->get_col( $SQL );
