@@ -544,12 +544,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
 			return FALSE;
 		}
-		EE_Error::add_success(
-			apply_filters(
-				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-				sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
-			)
-		);
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false ) ) {
+            EE_Error::add_success(
+                apply_filters(
+                    'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+                    sprintf(__('You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso'), $this->checkout->payment_method->name())
+                )
+            );
+        }
 		// now generate billing form for selected method of payment
 		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
 		// fill form with attendee info if applicable
@@ -581,12 +583,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
 		if ( $billing_form instanceof EE_Billing_Info_Form ) {
 			if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
-				EE_Error::add_success(
-					apply_filters(
-						'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-						sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $payment_method->name() )
-					)
-				);
+                if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
+                    EE_Error::add_success(
+                        apply_filters(
+                            'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+                            sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $payment_method->name() )
+                        )
+                    );
+                }
 			}
 			return apply_filters(
 				'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
@@ -668,12 +672,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			case 'payments_closed' :
-				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__payments_closed__display_success', false ) ) {
+					EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
 				return TRUE;
 				break;
 
 			case 'no_payment_required' :
-				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__no_payment_required__display_success', false ) ) {
+					EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
 				return TRUE;
 				break;
 
