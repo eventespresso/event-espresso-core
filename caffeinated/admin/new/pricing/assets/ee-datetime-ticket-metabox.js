@@ -11,6 +11,8 @@ jQuery(document).ready(function($) {
 		lastDTTtoggle: true,
 		timeZone: false, //used to hold timezone string
 		offSet: 0, //used to hold the timezone offset.
+		event_and_ticket_form_content: $('#event-and-ticket-form-content'),
+		event_datetimes_container: $('.event-datetimes-container'),
 
 		/**
 		 * This can be one of three values:
@@ -1913,13 +1915,13 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	 * all event datetims and tickets triggers go below here
+	 * all event datetimes and tickets triggers go below here
 	 */
 
 	/**
 	 * add datetime/ticket
 	 */
-	$('#event-and-ticket-form-content').on('click', '.ee-create-button', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.ee-create-button', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -1976,7 +1978,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * update datetime/ticket
 	 */
-	$('#event-and-ticket-form-content').on('click', '.ee-save-button', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.ee-save-button', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -1992,7 +1994,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.event-datetimes-container').on('focusout', '.ee-datepicker', function(e) {
+	tktHelper.event_datetimes_container.on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
 		if ( typeof data.datetimeRow !== 'undefined' ) {
@@ -2001,7 +2003,7 @@ jQuery(document).ready(function($) {
 	});/**/
 
 
-	$('.event-datetimes-container').on('focusout', '.event-datetime-DTT_name', function(e) {
+	tktHelper.event_datetimes_container.on('focusout', '.event-datetime-DTT_name', function(e) {
 		e.preventDefault();
 		var dttrow = $(this).attr('id').replace('event-datetime-DTT_name-', '');
 		tktHelper.updateDTTrow(dttrow);
@@ -2011,7 +2013,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * handle cancel button clicks
 	 */
-	$('#event-and-ticket-form-content').on('click', '.ee-cancel-button', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.ee-cancel-button', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
 
@@ -2037,7 +2039,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * edit datetime/ticket
 	 */
-	$('#event-and-ticket-form-content').on('click', '.gear-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.gear-icon', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2079,7 +2081,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * assigned tickets toggle
 	 */
-	$('#event-and-ticket-form-content').on('click', '.ticket-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.ticket-icon', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2092,7 +2094,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * clone icon toggle
 	 */
-	$('#event-and-ticket-form-content').on('click', '.clone-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.clone-icon', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2116,7 +2118,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * trash icon click
 	 */
-	$('#event-and-ticket-form-content').on('click', '.trash-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.trash-icon', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2141,7 +2143,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * collapsible click
 	 */
-	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
+	tktHelper.event_and_ticket_form_content.on('click', '.ee-collapsible', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		var item = $(this);
@@ -2165,7 +2167,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * datetime/ticket list item clicked to attach/detach from related item.
 	 */
-	$('#event-and-ticket-form-content').on('click', '.datetime-ticket', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.datetime-ticket', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var TKTH = tktHelper.toggleTicketSelect(this);
@@ -2177,7 +2179,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * capture clicks of checkboxes in dtt/ticket list items
 	 */
-	$('#event-and-ticket-form-content').on('click', 'input.datetime-ticket-checkbox', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', 'input.datetime-ticket-checkbox', function(e) {
 		e.stopPropagation();
 		var liitem = $(this).parent();
 		var TKTH = tktHelper.toggleTicketSelect(liitem);
@@ -2191,7 +2193,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * toggle cog for add-new-ticket row
 	 */
-	$('#event-and-ticket-form-content').on('keyup', '.add-new-ticket-TKT_name', function(e) {
+	tktHelper.event_and_ticket_form_content.on('keyup', '.add-new-ticket-TKT_name', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		if ( $(this).val() !== '' )
@@ -2205,7 +2207,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * toggle price modifier selection
 	 */
-	$('#event-and-ticket-form-content').on('change', '.edit-price-PRT_ID', function(e) {
+	tktHelper.event_and_ticket_form_content.on('change', '.edit-price-PRT_ID', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var parent = $(this).parent(); //parent (td)
@@ -2239,7 +2241,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * Toggle price amount change calculations
 	 */
-	$('#event-and-ticket-form-content').on('keyup', '.edit-price-PRC_amount', function(e) {
+	tktHelper.event_and_ticket_form_content.on('keyup', '.edit-price-PRC_amount', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.trash-icon').data();
@@ -2250,7 +2252,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * Toggle Ticket Name changes in all other ui elements
 	 */
-	$('#event-and-ticket-form-content').on('keyup', '.edit-ticket-TKT_name', function(e) {
+	tktHelper.event_and_ticket_form_content.on('keyup', '.edit-ticket-TKT_name', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.gear-icon').data();
@@ -2261,7 +2263,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * toggling of TKT_taxable checkbox
 	 */
-	$('#event-and-ticket-form-content').on('click', '.TKT-taxable-checkbox', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.TKT-taxable-checkbox', function(e) {
 		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_taxable-', '');
 		$('.TKT-taxes-display', '#edit-ticketrow-' + tktrow).slideToggle();
 		tktHelper.setticketRow(tktrow).applyTotalPrice();
@@ -2271,7 +2273,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * calculating dtt reg limit changes affecting sold out values.
 	 */
-	$('#event-and-ticket-form-content').on('focusout', '.event-datetime-DTT_reg_limit', function(e) {
+	tktHelper.event_and_ticket_form_content.on('focusout', '.event-datetime-DTT_reg_limit', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var dttrow = $(this).attr('id').replace('event-datetime-DTT_reg_limit-','');
@@ -2282,7 +2284,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * Calculating tkt qty changes affecting sold out values.
 	 */
-	$('#event-and-ticket-form-content').on('focusout', '.edit-ticket-TKT_qty', function(e) {
+	tktHelper.event_and_ticket_form_content.on('focusout', '.edit-ticket-TKT_qty', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_qty-', '');
@@ -2294,7 +2296,7 @@ jQuery(document).ready(function($) {
 	 * Datepicker functionality
 	 */
 
-	$('#event-and-ticket-form-content').on('focusin', '.ee-datepicker', function(e) {
+	tktHelper.event_and_ticket_form_content.on('focusin', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
@@ -2315,4 +2317,6 @@ jQuery(document).ready(function($) {
 		id = id.replace('edit-ticket-TKT_end_date-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
 	});
+
+
 });
