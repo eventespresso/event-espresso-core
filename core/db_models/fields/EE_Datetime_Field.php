@@ -479,11 +479,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				 * php DateTime() ignores incoming timezone when the value is a unix
 				 * timestamp.  In other words it does not consider the incoming timestamp
 				 * as having an offset.  So, for backward compat, we need to first remove the offset
-				 * that WP applied.
+				 * that was applied on the timestamp.
 				 *
 				 */
-				$date_string = $date_string - get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 				$DateTime =  new DateTime( "now", $this->_DateTimeZone );
+				$offset = timezone_offset_get( $this->_DateTimeZone, $DateTime );
+				$date_string = $date_string - $offset;
+
 				return $DateTime->setTimestamp( $date_string );
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue
