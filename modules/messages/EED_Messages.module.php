@@ -336,17 +336,17 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$data = array( $transaction, null );
 		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
-			if ( WP_DEBUG ) {
-				$delivered_messages = get_option( 'EED_Messages__payment', array() );
-				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-					$delivered_messages[ $transaction->ID() ] = array();
-				}
-				$delivered_messages[ $transaction->ID() ][ time() ] = array(
-					'message_type' => 'payment_reminder',
-					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-				);
-				update_option( 'EED_Messages__payment', $delivered_messages );
-			}
+			//if ( WP_DEBUG ) {
+			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
+			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+			//		$delivered_messages[ $transaction->ID() ] = array();
+			//	}
+			//	$delivered_messages[ $transaction->ID() ][ time() ] = array(
+			//		'message_type' => 'payment_reminder',
+			//		'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+			//	);
+			//	update_option( 'EED_Messages__payment', $delivered_messages );
+			//}
 		}
 	}
 
@@ -374,18 +374,18 @@ class EED_Messages  extends EED_Module {
 
 
 		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
-			if ( WP_DEBUG ) {
-				$delivered_messages = get_option( 'EED_Messages__payment', array() );
-				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-					$delivered_messages[ $transaction->ID() ] = array();
-				}
-				$delivered_messages[ $transaction->ID() ][ time() ] = array(
-					'message_type' => $message_type,
-					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-					'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
-				);
-				update_option( 'EED_Messages__payment', $delivered_messages );
-			}
+			//if ( WP_DEBUG ) {
+			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
+			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+			//		$delivered_messages[ $transaction->ID() ] = array();
+			//	}
+			//	$delivered_messages[ $transaction->ID() ][ time() ] = array(
+			//		'message_type' => $message_type,
+			//		'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+			//		'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
+			//	);
+			//	update_option( 'EED_Messages__payment', $delivered_messages );
+			//}
 		}
 	}
 
@@ -431,17 +431,17 @@ class EED_Messages  extends EED_Module {
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
 			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
-				if ( WP_DEBUG ) {
-					$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
-					if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
-						$delivered_messages[ $registration->ID() ] = array();
-					}
-					$delivered_messages[ $registration->ID() ][ time() ] = array(
-						'message_type' => $message_type,
-						'reg_status' => $registration->status_obj()->code( false, 'sentence' )
-					);
-					update_option( 'EED_Messages__maybe_registration', $delivered_messages );
-				}
+				//if ( WP_DEBUG ) {
+				//	$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
+				//	if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
+				//		$delivered_messages[ $registration->ID() ] = array();
+				//	}
+				//	$delivered_messages[ $registration->ID() ][ time() ] = array(
+				//		'message_type' => $message_type,
+				//		'reg_status' => $registration->status_obj()->code( false, 'sentence' )
+				//	);
+				//	update_option( 'EED_Messages__maybe_registration', $delivered_messages );
+				//}
 			}
 		}
 
@@ -459,6 +459,27 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
+
+		///** @type EE_Payment $payment */
+		//$payment = $extra_details[ 'last_payment' ];
+		//unset( $extra_details[ 'last_payment' ] );
+		//// DEBUG
+		//$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		//$microtime = microtime();
+		//if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+		//	$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		//}
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment->ID();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment->status();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_status' ] = $registration->transaction()->status_ID();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_reg_steps' ] = $registration->transaction()->reg_steps();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
+		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
+		//update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		//// DEBUG
 
 		$verified = true;
 		// determine the type of payment method
