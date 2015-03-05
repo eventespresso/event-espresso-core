@@ -307,6 +307,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	function report_registrations_for_event( $event_id = NULL ){
 		$reg_fields_to_include = array(
+				'TXN_ID',
 				'REG_ID',
 				'REG_date',
 				'REG_code',
