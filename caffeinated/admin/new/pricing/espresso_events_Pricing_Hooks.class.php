@@ -1014,7 +1014,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ticket_datetime_rows' => $default ? '' : implode(',', $tkt_dtts),
 			'existing_ticket_price_ids' => $default, '', implode(',', array_keys( $prices) ),
 			'ticket_template_id' => $default ? 0 : $ticket->get('TTM_ID'),
-			'TKT_taxable' => $ticket_taxable,
+			'TKT_taxable' => $TKT_taxable,
 			'display_subtotal' => $ticket instanceof EE_Ticket && $ticket->get('TKT_taxable') ? '' : ' style="display:none"',
 			'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
 			'TKT_subtotal_amount_display' => EEH_Template::format_currency($ticket_subtotal, FALSE, FALSE ),
