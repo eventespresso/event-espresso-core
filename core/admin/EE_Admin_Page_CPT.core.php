@@ -1265,15 +1265,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
 		$this->_template_args['is_IE'] = $is_IE;
 		$last = wp_check_post_lock( $post->ID );
-		if ( $last ) {
-			add_action('admin_notices', '_admin_notice_post_locked' );
-		} else {
+		if ( ! wp_check_post_lock( $post->ID ) ) {
 			$this->_template_args['active_post_lock'] = wp_set_post_lock( $post->ID );
-			wp_enqueue_script('autosave');
+			//wp_enqueue_script('autosave');
 		}
 
 		$title = $this->_cpt_object->labels->edit_item;
 
+		add_action('admin_footer', '_admin_notice_post_locked' );
 
 		if ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && !isset( $this->_labels['hide_add_button_on_cpt_route'][$this->_req_data['action']] ) ) {
 			$create_new_action = apply_filters( 'FHEE__EE_Admin_Page_CPT___edit_cpt_item__create_new_action', 'create_new', $this );
