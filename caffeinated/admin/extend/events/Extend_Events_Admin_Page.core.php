@@ -311,11 +311,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
 		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
-			$this->_views['all']['bulk_action']['export_events'] = $export_label;
-			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
 
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
-				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+//				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
 			}
 		}
 
@@ -325,7 +325,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('Today', 'event_espresso'),
 				'count' => $this->total_events_today(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
@@ -334,7 +334,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('This Month', 'event_espresso'),
 				'count' => $this->total_events_this_month(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			)
@@ -348,7 +348,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _set_list_table_views_category_list() {
 		parent::_set_list_table_views_category_list();
-		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
+//		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 

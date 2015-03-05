@@ -335,7 +335,19 @@ class EED_Messages  extends EED_Module {
 	public static function payment_reminder( EE_Transaction $transaction ) {
 		self::_load_controller();
 		$data = array( $transaction, null );
-		self::$_EEMSG->send_message( 'payment_reminder', $data );
+		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
+			if ( WP_DEBUG ) {
+				$delivered_messages = get_option( 'EED_Messages__payment', array() );
+				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+					$delivered_messages[ $transaction->ID() ] = array();
+				}
+				$delivered_messages[ $transaction->ID() ][ time() ] = array(
+					'message_type' => 'payment_reminder',
+					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+				);
+				update_option( 'EED_Messages__payment', $delivered_messages );
+			}
+		}
 	}
 
 
@@ -361,7 +373,20 @@ class EED_Messages  extends EED_Module {
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
 
-		self::$_EEMSG->send_message( $message_type, $data);
+		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
+			if ( WP_DEBUG ) {
+				$delivered_messages = get_option( 'EED_Messages__payment', array() );
+				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
+					$delivered_messages[ $transaction->ID() ] = array();
+				}
+				$delivered_messages[ $transaction->ID() ][ time() ] = array(
+					'message_type' => $message_type,
+					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
+					'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
+				);
+				update_option( 'EED_Messages__payment', $delivered_messages );
+			}
+		}
 	}
 
 
@@ -405,10 +430,19 @@ class EED_Messages  extends EED_Module {
 		// verify message type is active
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
-			self::$_EEMSG->send_message(
-				$message_type,
-				array( $registration->transaction(), NULL )
-			);
+			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
+				if ( WP_DEBUG ) {
+					$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
+					if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
+						$delivered_messages[ $registration->ID() ] = array();
+					}
+					$delivered_messages[ $registration->ID() ][ time() ] = array(
+						'message_type' => $message_type,
+						'reg_status' => $registration->status_obj()->code( false, 'sentence' )
+					);
+					update_option( 'EED_Messages__maybe_registration', $delivered_messages );
+				}
+			}
 		}
 
 	}
@@ -426,16 +460,20 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		$verified = TRUE;
+		$verified = true;
+		// determine the type of payment method
+		if ( $extra_details[ 'last_payment' ] instanceof EE_Payment && $extra_details[ 'last_payment' ]->payment_method() instanceof EE_Payment_Method ) {
+			$off_site_payment = $extra_details[ 'last_payment' ]->payment_method()->is_off_site();
+		} else {
+			$off_site_payment = false;
+		}
 
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (
-			(
-				is_admin() && ! EE_FRONT_AJAX
-			) && (
-				empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] )
-			)
+			( is_admin() && ! EE_FRONT_AJAX )
+			&&
+			( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
 		) {
 			//no messages sent please.
 			$verified = false;
@@ -452,14 +490,13 @@ class EED_Messages  extends EED_Module {
 			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
 				return FALSE;
 			}
-
-
-			// and only send messages during revisit if the reg status changes
-			if ( isset( $extra_details['revisit'], $extra_details['old_reg_status'], $extra_details['new_reg_status'] ) && $extra_details['revisit'] && $extra_details['old_reg_status'] == $extra_details['new_reg_status'] ) {
+			// do NOT send messages if:
+			// * Payment Method was Off-Site and the reg status has NOT changed
+			// (because the messages would have been sent during the IPN when the reg status DID change)
+			if ( $off_site_payment && isset( $extra_details[ 'status_updates' ] ) && ! $extra_details[ 'status_updates' ] ) {
 				return FALSE;
 			}
 		}
-
 		return $verified;
 	}
 

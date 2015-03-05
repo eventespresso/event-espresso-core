@@ -600,6 +600,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	public function txn_details_meta_box() {
 
 		$this->_set_transaction_object();
+		$this->_template_args['TXN_ID'] = $this->_transaction->ID();
 		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
 
 		//get line items from transaction
@@ -628,20 +629,39 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( isset( $txn_details['invoice_number'] )) {
 			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_template_args['REG_code'];
 			$this->_template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
-			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		}
 
 		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get_first_related('Registration')->get('REG_session');
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
-		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 
 		$this->_template_args['txn_details']['ip_address']['value'] = isset( $this->_session['ip_address'] ) ? $this->_session['ip_address'] : '';
 		$this->_template_args['txn_details']['ip_address']['label'] = __( 'Transaction placed from IP', 'event_espresso' );
-		$this->_template_args['txn_details']['ip_address']['class'] = 'regular-text';
 
 		$this->_template_args['txn_details']['user_agent']['value'] = isset( $this->_session['user_agent'] ) ? $this->_session['user_agent'] : '';
 		$this->_template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
-		$this->_template_args['txn_details']['user_agent']['class'] = 'large-text';
+
+		$reg_steps = '<ul>';
+		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
+//			printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
+			switch ( $reg_step_status ) {
+				case $reg_step_status === true :
+					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
+					break;
+				case $reg_step_status === false :
+					$reg_steps .= '<li>' . sprintf( __( '%1$s : Never Initiated', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
+					break;
+				case is_numeric( $reg_step_status ) :
+					$reg_steps .= '<li>' . sprintf(
+							__( '%1$s : Initiated %2$s', 'event_espresso' ),
+							ucwords( str_replace( '_', ' ', $reg_step ) ),
+							gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $reg_step_status + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) )
+						) . '</li>';
+					break;
+			}
+		}
+		$reg_steps .= '</ul>';
+		$this->_template_args['txn_details']['reg_steps']['value'] = $reg_steps;
+		$this->_template_args['txn_details']['reg_steps']['label'] = __( 'Registration Step Progress', 'event_espresso' );
 
 
 		$this->_get_payment_methods();
