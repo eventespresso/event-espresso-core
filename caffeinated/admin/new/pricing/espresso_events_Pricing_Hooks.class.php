@@ -345,8 +345,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				/**
 				 * set the TKT_end_date to the first datetime attached to the ticket.
 				 */
-				$first_dtt = $saved_dtt_objs[reset( $tkt_dtt_rows )];
-				$tkt['TKT_end_date'] = $dtt->start_date_and_time( $this->_date_format_strings['date'] . ' ' . $this->_date_format_string['time'] );
+				$first_dtt = $saved_dtts[reset( $tkt_dtt_rows )];
+				$tkt['TKT_end_date'] = $first_dtt->start_date_and_time( $this->_date_format_strings['date'] . ' ' . $this->_date_format_string['time'] );
 			}
 
 			$TKT_values = array(
