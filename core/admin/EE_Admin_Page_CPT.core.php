@@ -355,6 +355,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
 
 
+		/**
+		 * Filtering WP's esc_url to capture urls pointing to core wp routes so they point to our route.
+		 */
+		add_filter( 'clean_url', array( $this, 'switch_core_wp_urls_with_ours' ), 10, 3 );
+
+
 		parent::_load_page_dependencies();
 
 		//notice we are ALSO going to load the pagenow hook set for this route (see _before_page_setup for the reset of the pagenow global ). This is for any plugins that are doing things properly and hooking into the load page hook for core wp cpt routes.
@@ -369,6 +375,37 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+	}
+
+
+
+
+	/**
+	 * Since we don't want users going to default core wp routes, this will check any wp urls run through the
+	 * esc_url() method and if we see a url matching a pattern for our routes, we'll modify it to point to OUR
+	 * route instead.
+	 *
+	 * @param string $good_protocol_url The escaped url.
+	 * @param string $original_url      The original url.
+	 * @param string $_context          The context sendt to the esc_url method.
+	 *
+	 * @return string possibly a new url for our route.
+	 */
+	public function switch_core_wp_urls_with_ours( $good_protocol_url, $original_url, $_context ) {
+		$routes_to_match = array(
+			 0 => array(
+			 	'edit.php?post_type=' . $this->_cpt_object->name,
+			 	'?page=' . $this->_cpt_object->name
+				)
+			);
+
+		foreach( $routes_to_match as $route_matches ) {
+			if ( strpos( $good_protocol_url, $route_matches[0] ) !== false ) {
+				return str_replace( $route_matches[0], $route_matches[1], $good_protocol_url );
+
+			}
+		}
+		return $good_protocol_url;
 	}
 
 
