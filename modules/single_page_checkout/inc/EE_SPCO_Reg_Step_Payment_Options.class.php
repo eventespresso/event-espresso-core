@@ -780,9 +780,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		//$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
-		$transaction_processor->toggle_registration_statuses_for_default_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
+		//$transaction_processor->toggle_registration_statuses_for_default_approved_events( $this->checkout->transaction, $this->checkout->reg_cache_where_params );
 		// attempt payment
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
 		// process results
