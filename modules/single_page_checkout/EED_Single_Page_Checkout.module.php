@@ -102,32 +102,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    nocache_headers_nginx
-	 *
-	 * @access    public
-	 * @param $headers
-	 * @return    array
-	 */
-	public static function nocache_headers_nginx ( $headers ) {
-		$headers['X-Accel-Expires'] = 0;
-		return $headers;
-	}
-
-
-
-	/**
-	 * 	nocache_headers
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function nocache_headers() {
-		nocache_headers();
-	}
-
-
-
-	/**
 	 * 	process ajax request
 	 * @param string $ajax_action
 	 */
@@ -417,14 +391,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->add_styles_and_scripts();
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
-		// add no cache headers
-		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
-		// plus a little extra for nginx
-		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
-		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
-		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
-		// add powered by EE msg
-		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
+		// set no cache headers and constants
+		EE_System::do_not_cache();
 		// remove transaction lock
 		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
@@ -893,8 +861,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$reg_step->initialize_reg_step();
 			// i18n
 			$reg_step->translate_js_strings();
-			// the text that appears on the reg step form submit button
-			$reg_step->set_submit_button_text();
+			if ( $reg_step->is_current_step() ) {
+				// the text that appears on the reg step form submit button
+				$reg_step->set_submit_button_text();
+			}
 		}
 		// dynamically creates hook point like: AHEE__Single_Page_Checkout___initialize_reg_step__attendee_information
 		do_action( "AHEE__Single_Page_Checkout___initialize_reg_step__{$this->checkout->current_step->slug()}", $this->checkout->current_step );
@@ -976,7 +946,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// good registrant, you get to proceed
 						if ( $this->checkout->current_step->success_message() != '' ) {
-							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							if ( apply_filters( 'FHEE__Single_Page_Checkout___process_form_action__display_success', false ) ) {
+								EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							}
 						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();
@@ -1099,7 +1071,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		/**
 		 * dynamic action hook for enqueueing styles and scripts with spco calls.
-		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_sytles_and_scripts__attendee_information
+		 * The hook will end up being something like AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__attendee_information
 		 */
 		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
 
@@ -1120,6 +1092,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->admin_request ) {
 			EE_Registry::instance()->REQ->add_output( $this->checkout->current_step->display_reg_form() );
 		} else {
+			// add powered by EE msg
+			add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 			$this->checkout->registration_form = new EE_Form_Section_Proper(
 				array(
 					'name' 	=> 'single-page-checkout',

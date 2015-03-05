@@ -64,6 +64,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$this->_ticket->set( 'TKT_description', 'One entry in the event.' );
 		$this->_datetime = $this->_ticket->first_datetime();
 		$this->_event = $this->_datetime->event();
+
+		//set the author of the event
+		$this->_event->set( 'EVT_wp_user', 1 );
 	}
 
 
@@ -111,6 +114,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		 */
 		switch ( $context ) {
 			case 'primary_attendee'  :
+			case 'purchaser' :
 				$aee = $addressee_data;
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
@@ -143,6 +147,106 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 
+
+	/**
+	 * This helper returns parsed content from the parser to be used for tests using the given params.
+	 *
+	 * @param string $messenger      The slug for the messenger being tested.
+	 * @param string $message_type The slug for the message type being tested.
+	 * @param string $field                  The field being tested.
+	 * @param string $context             The context being tested.
+	 * @param array|string $append    Append content to a default template for testing with.  If
+	 *                                		       you want to append to multiple fields, then include an
+	 *                                		       array indexed by field.  Otherwise the string will be
+	 *                                		       appended to the field sent in with the $field param.
+	 * @param EE_Messages_Addressee $addressee Optionally include a
+	 *                                         	messages addressee object if you do not wish
+	 *                                         	to use the default one generated.  This is
+	 *                                         	useful for simulating exceptions and failures.
+	 *
+	 * @return string The parsed content.
+	 */
+	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '', $addressee = null ) {
+		//grab the correct template  @see EE_message_type::_get_templates()
+		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type,
+			'MTP_is_global' => true
+			)));
+		$all_templates = $mtpg->context_templates();
+
+		foreach ( $all_templates as $t_context => $template_fields ) {
+			foreach( $template_fields as $template_field=> $template_obj ) {
+				$templates[$template_field][$t_context] = $template_obj->get('MTP_content');
+			}
+		}
+
+		//instantiate messenger and message type objects
+		$msg_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) ) . '_messenger';
+		$mt_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) ) . '_message_type';
+		$messenger = new $msg_class();
+		$message_type = new $mt_class();
+
+		$message_type->set_messages( array(), $messenger, $context, true );
+
+		//grab valid shortcodes and setup for parser.
+		$m_shortcodes = $messenger->get_valid_shortcodes();
+		$mt_shortcodes = $message_type->get_valid_shortcodes();
+
+		//just sending in the content field and primary_attendee context/data for testing.
+		$template = isset( $templates[$field][$context] ) ? $templates[$field][$context] : array();
+
+		/**
+		 * if empty template then its possible that the requested field is inside the "content"
+		 * field array.
+		 */
+		if ( empty( $template ) ) {
+			$template = isset( $templates['content'][$context] ) ? $templates['content'][$context] : array();
+			//verify the requested field is present
+			if ( ! empty( $template ) && is_array( $template ) && ! isset( $template[$field]) ) {
+				return '';
+			}
+		}
+
+		//if $template is still empty then return an empty string
+		if ( empty( $template ) ) {
+			return '';
+		}
+
+		// any appends?
+		if (  ! empty( $append ) ) {
+			if ( is_array( $template ) ) {
+				//we've already done a check for the presence of field above.
+				if ( is_array( $append ) ) {
+					foreach ( $append as $a_field => $string ) {
+						if ( isset( $template[$a_field] ) ) {
+							$template[$a_field] = $template[$a_field] . $string;
+						}
+					}
+				} else {
+					$template[$field] = $template[$field] . $append;
+				}
+			} else {
+				//only append if $append is not an array because the $template is not an array.
+				if ( ! is_array( $append ) ) {
+					$template .= $append;
+				}
+
+			}
+		}
+
+
+
+		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
+		$data = $addressee instanceof EE_Messages_Addressee ? $addressee : $this->_get_addressee();
+
+		EE_Registry::instance()->load_helper('Parse_Shortcodes');
+		$parser = new EEH_Parse_Shortcodes();
+		return $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, $context, $mtpg->ID() );
+	}
+
+
+
 	/**
 	 * Tests parsing the message template for email messenger, payment received message
 	 * type.
@@ -151,36 +255,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @since 4.6
 	 */
 	public function test_parsing_email_payment_received() {
-		//grab the correct template  @see EE_message_type::_get_templates()
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
-			'MTP_messenger' => 'email',
-			'MTP_message_type' => 'payment',
-			'MTP_is_global' => true
-			)));
-		$all_templates = $mtpg->context_templates();
-
-		foreach ( $all_templates as $context => $template_fields ) {
-			foreach( $template_fields as $template_field=> $template_obj ) {
-				$templates[$template_field][$context] = $template_obj->get('MTP_content');
-			}
-		}
-
-		//instantiate messenger and message type objects
-		$messenger = new EE_Email_messenger();
-		$message_type = new EE_Payment_message_type();
-
-		//grab valid shortcodes and setup for parser.
-		$m_shortcodes = $messenger->get_valid_shortcodes();
-		$mt_shortcodes = $message_type->get_valid_shortcodes();
-
-		//just sending in the content field and primary_attendee context/data for testing.
-		$template = $templates['content']['primary_attendee'];
-		$valid_shortcodes = isset( $m_shortcodes['content'] ) ? $m_shortcodes['content'] : $mt_shortcodes['primary_attendee'];
-		$data = $this->_get_addressee();
-
-		EE_Registry::instance()->load_helper('Parse_Shortcodes');
-		$parser = new EEH_Parse_Shortcodes();
-		$parsed = $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, 'primary_attendee', $mtpg->ID() );
+		$parsed = $this->_get_parsed_content( 'email', 'payment', 'content', 'primary_attendee' );
 
 		//now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
 
@@ -219,6 +294,70 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$expected = '<strong>Quantity Purchased:</strong> 3';
 		$this->assertContains( $expected, $parsed, '[TKT_QTY_PURCHASED] shortcode was not parsed correctly to the expected value which is 3' );
 
+	}
+
+
+
+	/**
+	 * Test parsing the html receipt message templates.
+	 *
+	 * @since 4.6
+	 * @group 7623
+	 */
+	public function test_parsing_html_receipt() {
+		//currently with @group 7623 just testing if there are any error notices.
+		$parsed = $this->_get_parsed_content( 'html', 'receipt', 'content', 'purchaser' );
+
+		//testing [PAYMENT_GATEWAY]
+		$this->assertContains( 'Invoice', $parsed );
+	}
+
+
+
+
+
+	/**
+	 * Test parsing the email registration message templates (registration approved).
+	 *
+	 * @since 4.6
+	 * @group 7613
+	 *
+	 */
+	public function test_parsing_email_registration() {
+		//add in shortcodes for testing [ANSWER_*] as a part of the [ATTENDEE_LIST] parsing from the [EVENT_LIST] context.
+		$test_answer_attendee_list_event_list_append = array(
+			'event_list' => '[ATTENDEE_LIST]',
+			'attendee_list' => 'Custom Answer: [ANSWER_* What is your favorite planet?]',
+			'ticket_list' => '[ATTENDEE_LIST]',
+			'main' => '[ATTENDEE_LIST]'
+			);
+
+		$parsed = $this->_get_parsed_content( 'email', 'registration', 'attendee_list', 'attendee', $test_answer_attendee_list_event_list_append );
+
+		//testing [ATTENDEE_LIST] and [ANSWER_*] which should appear three times (because [ATTENDEE_LIST] was added to three fields),
+		$this->assertEquals( 3, substr_count( $parsed, 'Custom Answer: Tattoine' ) );
+	}
+
+
+
+
+	/**
+	 * This test is for testing an exception is thrown when invalid attendee
+	 * object in the data sent to the parsers.
+	 * @group 7659
+	 */
+	public function test_invalid_attendee_obj_EE_Attendee_Shortcodes() {
+		$addressee = $this->_get_addressee();
+
+		//manipulate to remove data
+		$addressee->registrations = array();
+
+		try {
+			$parsed_content = $this->_get_parsed_content( 'email', 'registration', 'content', 'admin', '', $addressee );
+		} catch( EE_Error $e ) {
+			return;
+		}
+		$this->fail( 'Expected an exception for invalid EE_Attendee Object' );
 	}
 
 
