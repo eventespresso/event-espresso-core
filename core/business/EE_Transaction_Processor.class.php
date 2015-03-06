@@ -260,16 +260,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return true;
 		}
 		// if we're trying to set a start time
-		if ( is_numeric( $status )) {
-			// for an already completed step
-			if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
-				return true;
-			}
-			// but if the step has already been initialized...
-			if ( is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
-				// skip the update below, but don't return FALSE so that errors won't be displayed
-				return true;
-			}
+		if ( is_numeric( $status ) && is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
+			// skip the update below, but don't return FALSE so that errors won't be displayed
+			return true;
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
@@ -401,10 +394,15 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
+		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
+		if ( is_numeric( $finalized ) && $finalized !== true ) {
+			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
+			$finalized = true;
+		}
+		$transaction->save();
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'old_txn_status' 			=> $transaction->status_ID(),
-			'reg_steps' 					=> $transaction->reg_steps(),
+			'txn_status' 			=> $transaction->status_ID(),
 			'finalized' 					=> $finalized,
 			'revisit' 						=> $this->_revisit,
 			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
@@ -418,11 +416,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$update_params
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
-		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
-		if ( is_numeric( $finalized ) && $finalized !== TRUE ) {
-			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
-		}
-		$transaction->save();
 		return $update_params;
 	}
 

@@ -237,7 +237,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function is_final_step() {
-		return $this->slug() === 'finalize_registration' ? TRUE : FALSE;
+		return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
 	}
 
 

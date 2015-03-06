@@ -459,28 +459,6 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
-
-		///** @type EE_Payment $payment */
-		//$payment = $extra_details[ 'last_payment' ];
-		//unset( $extra_details[ 'last_payment' ] );
-		//// DEBUG
-		//$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
-		//$microtime = microtime();
-		//if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
-		//	$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-		//}
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment->ID();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment->status();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_status' ] = $registration->transaction()->status_ID();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_reg_steps' ] = $registration->transaction()->reg_steps();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
-		//$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
-		//update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
-		//// DEBUG
-
 		$verified = true;
 		// determine the type of payment method
 		if ( $extra_details[ 'last_payment' ] instanceof EE_Payment && $extra_details[ 'last_payment' ]->payment_method() instanceof EE_Payment_Method ) {
@@ -488,6 +466,26 @@ class EED_Messages  extends EED_Module {
 		} else {
 			$off_site_payment = false;
 		}
+
+		/** @type EE_Payment $payment */
+		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
+		unset( $extra_details[ 'last_payment' ] );
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment ? $payment->ID() : '';
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment ? $payment->status() : '';
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
 
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
@@ -508,13 +506,14 @@ class EED_Messages  extends EED_Module {
 		if ( $verified && ( ! is_admin() || EE_FRONT_AJAX ) ) {
 
 			// let's NOT send out notifications if the registration was NOT finalized.
-			if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
-				return FALSE;
-			}
-			// do NOT send messages if:
-			// * Payment Method was Off-Site and the reg status has NOT changed
-			// (because the messages would have been sent during the IPN when the reg status DID change)
-			if ( $off_site_payment && isset( $extra_details[ 'status_updates' ] ) && ! $extra_details[ 'status_updates' ] ) {
+			//if ( ! is_array( $extra_details )  || ! isset( $extra_details['finalized'] ) || empty( $extra_details['finalized'] )) {
+			//	return FALSE;
+			//}
+			// do NOT send messages if the reg status has NOT changed
+			if (
+				isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] )
+				&& ! $extra_details[ 'status_updates' ]
+			) {
 				return FALSE;
 			}
 		}

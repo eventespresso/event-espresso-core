@@ -413,9 +413,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return 	EE_Form_Input_Base
 	 */
 	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
+
 		// if this question was for an attendee detail, then check for that answer
 		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
-		$answer = ( $registration->reg_url_link() || ! $answer_value ) && $registration->ID() != 0 ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
+		$answer = $answer_value === null
+				? EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() )	) )
+				: null;
 		// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
 		if( ! $registration->reg_url_link() || $answer_value || ! $answer instanceof EE_Answer ) {
 			// create an EE_Answer object for storing everything in
@@ -468,11 +471,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 
 		$input_constructor_args = array(
-			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
-			'html_id' 					=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
+			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
-			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
 			'html_label_text'		=> $question->display_text(),
 			'required_validation_error_message' => $question->required_text()
@@ -575,7 +578,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
-		// printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -586,6 +588,29 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+
+
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->checkout->transaction->status_ID();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		}
+		foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
+		}
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
+
 		// get cached registrations
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
 		// verify we got the goods
@@ -761,8 +786,26 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+
+					// DEBUG
+					$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+					$microtime = microtime();
+					if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+						$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+					}
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
+					// DEBUG
+
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
+
+					// DEBUG
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
+					update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+					// DEBUG
+
 					/** @type EE_Transaction_Processor $transaction_processor */
 					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 					// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned

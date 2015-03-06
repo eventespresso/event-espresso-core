@@ -158,11 +158,7 @@ class EE_Registration_Processor {
 				// send messages
 				$this->trigger_registration_update_notifications(
 					$registration,
-					array(
-						'manually_updated' 	=> TRUE,
-						'old_reg_status' 			=> $this->old_reg_status(),
-						'new_reg_status' 		=> $this->new_reg_status()
-					)
+					array( 'manually_updated' 	=> true )
 				);
 			}
 			return TRUE;
@@ -185,8 +181,8 @@ class EE_Registration_Processor {
 	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->status_ID() );
-		// is the registration currently incomplete?
-		if ( $registration->status_ID() == EEM_Registration::status_id_incomplete ) {
+		// is the registration currently incomplete
+		if ( $registration->status_ID() === EEM_Registration::status_id_incomplete ) {
 			// grab default reg status for the event, if set
 			$event_default_registration_status = $registration->event()->default_registration_status();
 			// if no default reg status is set for the event, then use the global value
@@ -280,11 +276,11 @@ class EE_Registration_Processor {
 							'status_updates' 			=> $this->new_reg_status() !== $this->old_reg_status() ? true : false,
 							'finalized' 						=> false,
 							'revisit' 							=> false,
-							'reg_steps' 						=> array(),
-							'old_txn_status' 				=> null,
+							'reg_steps' 						=> $registration->transaction()->reg_steps(),
+							'txn_status' 						=> $registration->transaction()->status_ID(),
 							'last_payment'				=> null,
-							'old_reg_status' 				=> null,
-							'new_reg_status' 			=> null
+							'old_reg_status' 				=> $this->old_reg_status(),
+							'new_reg_status' 			=> $this->new_reg_status()
 						),
 						$additional_details
 					)
@@ -311,10 +307,28 @@ class EE_Registration_Processor {
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->status_ID() );
+
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
+		// DEBUG
+
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
 			$registration->save();
 		}
+
+		// DEBUG
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->status_ID() );
 		// send messages
@@ -322,12 +336,7 @@ class EE_Registration_Processor {
 			$registration,
 			array_merge(
 				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
-				array(
-					'checkout_or_payment' 	=> true,
-					'old_reg_status' 					=> $this->old_reg_status(),
-					'new_reg_status' 				=> $this->new_reg_status(),
-					'status_updates' 				=> $this->new_reg_status() !== $this->old_reg_status() ? true : false,
-				)
+				array( 'checkout_or_payment' 	=> true )
 			)
 		);
 		return $this->new_reg_status() == EEM_Registration::status_id_approved ? true : false;
