@@ -392,7 +392,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 		//}
 		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
 		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
@@ -1247,7 +1247,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 		//	}
 		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
 		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;

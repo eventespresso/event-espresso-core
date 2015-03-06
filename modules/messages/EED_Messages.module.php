@@ -471,7 +471,7 @@ class EED_Messages  extends EED_Module {
 			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
 		}
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment ? $payment->ID() : '';
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment ? $payment->status() : '';

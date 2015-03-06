@@ -524,7 +524,7 @@ class EE_Checkout {
 			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
 		}
 		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'step' ] = $this->step;
 		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'action' ] = $this->action;
 		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->transaction->status_ID();

@@ -949,7 +949,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
 			}
 			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
-			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $primary_registration->status_ID();
 			// DEBUG
 
@@ -1078,7 +1078,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 		}
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'return_url' ] = $return_url;
@@ -1100,7 +1100,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// grab fresh entities from the db
 			$this->checkout->refresh_all_entities( true );
 
-			
+
 			// DEBUG
 			$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
 			$microtime = microtime();
@@ -1108,12 +1108,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 			}
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
 			// DEBUG
 
-			
+
 			$payment = $this->checkout->transaction->last_payment();
 			// process results
 			$payment = $this->_validate_payment( $payment );
