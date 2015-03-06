@@ -465,7 +465,7 @@ class EED_Messages  extends EED_Module {
 		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
 		unset( $extra_details[ 'last_payment' ] );
 		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
 		$microtime = microtime();
 		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
@@ -478,7 +478,7 @@ class EED_Messages  extends EED_Module {
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
-		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
 		// DEBUG
 
 

@@ -385,27 +385,27 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->_initialize_reg_steps();
 
 
-		//// DEBUG
-		//$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
-		//$microtime = microtime();
-		//if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//}
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] =	$this->checkout->transaction->status_ID();
-		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
-		//if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-		//}
-		//foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
-		//}
-		//update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
-		//// DEBUG
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] =	$this->checkout->transaction->status_ID();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		}
+		foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
+		}
+		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
+		// DEBUG
 
 
 		// get reg form
@@ -1239,22 +1239,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 
-		//if ( EE_Registry::instance()->REQ->ajax || ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ))) {
-		//	// DEBUG
-		//	$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
-		//	$microtime = microtime();
-		//	if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-		//		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//	}
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
-		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
-		//	update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
-		//	// DEBUG
-		//}
+		if ( EE_Registry::instance()->REQ->ajax || ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ))) {
+			// DEBUG
+			$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
+			$microtime = microtime();
+			if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+			}
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
+			update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
+			// DEBUG
+		}
 
 
 		// if this is an ajax request AND a callback function exists

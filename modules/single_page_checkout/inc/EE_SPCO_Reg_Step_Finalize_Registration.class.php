@@ -124,7 +124,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
 		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
 		$microtime = microtime();
 		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
@@ -144,7 +144,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
 					$registration->status_ID();
 		}
-		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
 		// DEBUG
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(

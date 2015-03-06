@@ -518,7 +518,7 @@ class EE_Checkout {
 		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
 		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
 		$microtime = microtime();
 		if ( ! isset( $DEBUG_7631[ $this->transaction->ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
@@ -535,7 +535,7 @@ class EE_Checkout {
 			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
 					$registration->status_ID();
 		}
-		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
 		// DEBUG
 
 	}

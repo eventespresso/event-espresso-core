@@ -305,7 +305,7 @@ class EE_Registration_Processor {
 		$this->set_old_reg_status( $registration->status_ID() );
 
 		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
 		$microtime = microtime();
 		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
@@ -322,7 +322,7 @@ class EE_Registration_Processor {
 
 		// DEBUG
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
-		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
 		// DEBUG
 
 		// set new  REG_Status

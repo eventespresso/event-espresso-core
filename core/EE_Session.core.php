@@ -227,7 +227,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 * @retrieve session data
 	 * @access	public
-	 * @return	array
+	 * @return	string
 	 */
 	public function id() {
 		return $this->_sid;
