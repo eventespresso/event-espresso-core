@@ -460,6 +460,28 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
+
+		/** @type EE_Payment $payment */
+		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
+		unset( $extra_details[ 'last_payment' ] );
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment ? $payment->ID() : '';
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment ? $payment->status() : '';
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
+
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (

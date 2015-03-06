@@ -941,10 +941,28 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
+
+			// DEBUG
+			$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+			$microtime = microtime();
+			if ( ! isset( $DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] ) ) {
+				$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
+			}
+			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
+			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $primary_registration->status_ID();
+			// DEBUG
+
 			/** @type EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 			$registration_processor->toggle_incomplete_registration_status_to_default( $primary_registration );
+
+			// DEBUG
+			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $primary_registration->status_ID();
+			update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+			// DEBUG
+
 			return TRUE;
 		}
 
@@ -1053,6 +1071,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 		}
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'return_url' ] = $return_url;
+
+		// DEBUG
 		return $return_url;
 	}
 
@@ -1069,6 +1100,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// grab fresh entities from the db
 			$this->checkout->refresh_all_entities( true );
 
+			
+			// DEBUG
+			$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+			$microtime = microtime();
+			if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+			}
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+			// DEBUG
+
+			
 			$payment = $this->checkout->transaction->last_payment();
 			// process results
 			$payment = $this->_validate_payment( $payment );

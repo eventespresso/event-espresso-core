@@ -517,6 +517,27 @@ class EE_Checkout {
 		//$this->save_all_data( FALSE );
 		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'step' ] = $this->step;
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'action' ] = $this->action;
+		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->transaction->status_ID();
+		if ( ! isset( $DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		}
+		foreach ( $this->transaction->registrations() as $registration ) {
+			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
+					$registration->status_ID();
+		}
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
 	}
 
 

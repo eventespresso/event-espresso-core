@@ -303,10 +303,28 @@ class EE_Registration_Processor {
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->status_ID() );
+
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
+		// DEBUG
+
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
 			$registration->save();
 		}
+
+		// DEBUG
+		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->status_ID() );
 		// send messages

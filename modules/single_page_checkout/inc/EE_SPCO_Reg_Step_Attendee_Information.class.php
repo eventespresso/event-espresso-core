@@ -588,6 +588,29 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+
+
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->checkout->transaction->status_ID();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		}
+		foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
+		}
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
+
+
 		// get cached registrations
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
 		// verify we got the goods
@@ -763,8 +786,26 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+
+					// DEBUG
+					$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+					$microtime = microtime();
+					if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+						$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+					}
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
+					// DEBUG
+
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
+
+					// DEBUG
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
+					update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+					// DEBUG
+
 					/** @type EE_Transaction_Processor $transaction_processor */
 					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 					// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned

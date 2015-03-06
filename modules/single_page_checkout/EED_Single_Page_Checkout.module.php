@@ -383,6 +383,31 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->refresh_all_entities();
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
+
+
+		//// DEBUG
+		//$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		//$microtime = microtime();
+		//if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		//}
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] =	$this->checkout->transaction->status_ID();
+		//$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
+		//if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		//}
+		//foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
+		//}
+		//update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		//// DEBUG
+
+
 		// get reg form
 		$this->_check_form_submission();
 		// checkout the action!!!
@@ -832,6 +857,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _initialize_reg_steps() {
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// call set_reg_step_initiated ???
 		if (
 			// first time visiting SPCO ?
@@ -839,8 +866,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// and displaying the reg step form for the first time ?
 			&& $this->checkout->action === 'display_spco_reg_step'
 		) {
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set the start time for this reg step
 			if ( ! $transaction_processor->set_reg_step_initiated( $this->checkout->transaction, $this->checkout->current_step->slug() ) ) {
 				if ( WP_DEBUG ) {
@@ -1212,6 +1237,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' ) {
 			return;
 		}
+
+
+		//if ( EE_Registry::instance()->REQ->ajax || ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ))) {
+		//	// DEBUG
+		//	$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		//	$microtime = microtime();
+		//	if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+		//		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		//	}
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
+		//	$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
+		//	update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		//	// DEBUG
+		//}
+
+
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );

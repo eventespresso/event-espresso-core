@@ -123,6 +123,29 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
+		// DEBUG
+		$DEBUG_7631 = get_option( 'EE_DEBUG_7631', array() );
+		$microtime = microtime();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		}
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ ] = __CLASS__ . '::' . __FUNCTION__ . '() ' . __LINE__;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->checkout->transaction->status_ID();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_paid' ] = $this->checkout->transaction->paid();
+		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
+		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
+		}
+		foreach ( $this->checkout->transaction->registrations() as $registration ) {
+			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
+					$registration->status_ID();
+		}
+		update_option( 'EE_DEBUG_7631', $DEBUG_7631 );
+		// DEBUG
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
