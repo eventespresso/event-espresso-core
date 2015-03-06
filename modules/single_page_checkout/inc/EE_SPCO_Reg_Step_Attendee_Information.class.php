@@ -413,9 +413,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return 	EE_Form_Input_Base
 	 */
 	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
+
 		// if this question was for an attendee detail, then check for that answer
 		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
-		$answer = ( $registration->reg_url_link() || ! $answer_value ) && $registration->ID() != 0 ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
+		$answer = $answer_value === null
+				? EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() )	) )
+				: null;
 		// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
 		if( ! $registration->reg_url_link() || $answer_value || ! $answer instanceof EE_Answer ) {
 			// create an EE_Answer object for storing everything in
@@ -468,11 +471,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 
 		$input_constructor_args = array(
-			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
-			'html_id' 					=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
+			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
-			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
 			'html_label_text'		=> $question->display_text(),
 			'required_validation_error_message' => $question->required_text()
@@ -575,7 +578,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
-		// printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
