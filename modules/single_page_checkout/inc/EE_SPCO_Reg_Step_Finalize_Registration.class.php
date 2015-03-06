@@ -47,9 +47,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	public function initialize_reg_step() {
 		// there's actually no reg form to process if this is the final step
 		if ( $this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
-			$this->checkout->action = 'process_reg_step';
+			$this->checkout->step = $_REQUEST['step'] = $this->checkout->current_step->slug();
+			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
 		}
+
 	}
 
 
@@ -69,8 +71,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 */
 	public function process_reg_step() {
 //		printr( $this->checkout, '$this->checkout', __FILE__, __LINE__ );
-		// ensure all data gets saved to the db and all model object relations get updated
-		if ( $this->checkout->save_all_data() ) {
+		// ensure all data gets refreshed from the db
+		if ( $this->checkout->refresh_all_entities( true ) ) {
 			// ensures that all details and statuses for transaction, registration, and payments are updated
 			$txn_update_params = $this->_finalize_transaction();
 			// this will result in the base session properties getting saved to the TXN_Session_data field
@@ -90,11 +92,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			// set a hook point
 			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
+			// mark this reg step as completed
+			$this->checkout->current_step->set_completed();
 			return true;
 		}
 		$this->checkout->redirect = false;
-		// mark this reg step as completed
-		$this->checkout->current_step->set_completed();
 		return false;
 
 	}
