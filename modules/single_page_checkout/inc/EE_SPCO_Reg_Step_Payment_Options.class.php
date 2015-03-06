@@ -688,9 +688,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			default:
 				$payment_successful = $this->_process_payment();
 				if ( $payment_successful ) {
+					$this->checkout->continue_reg = true;
 					$this->_maybe_set_completed( $this->checkout->payment_method );
 				} else {
-					$this->checkout->continue_reg = FALSE;
+					$this->checkout->continue_reg = false;
 				}
 				return $payment_successful;
 
@@ -700,7 +701,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * _get_return_url
+	 * _maybe_set_completed
 	 *
 	 * @access protected
 	 * @param \EE_Payment_Method $payment_method
@@ -1065,31 +1066,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function process_gateway_response() {
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			// how have they chosen to pay?
-			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( true, 'ee_payment_method' );
-			if ( $this->checkout->selected_method_of_payment ) {
-				// make sure we have an EE_Payment_Method and that it matches the incoming request
-				if ( ! $this->checkout->payment_method instanceof EE_Payment_Method || $this->checkout->payment_method->slug() != $this->checkout->selected_method_of_payment ) {
-					// get EE_Payment_Method object
-					$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
-				}
-				if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
-					/** @type EE_Payment_Processor $payment_processor */
-					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-					// try to finalize any payment that may have been attempted,
-					$payment = $payment_processor->finalize_payment_for( $this->checkout->transaction, true );
-					// process results
-					$payment = $this->_validate_payment( $payment );
-					$payment = $this->_post_payment_processing( $payment, true );
-					if ( $payment instanceof EE_Payment ) {
-						// store that for later
-						$this->checkout->payment = $payment;
-						// mark this reg step as completed
-						$this->checkout->current_step->set_completed();
-						return true;
-					}
+			// grab fresh entities from the db
+			$this->checkout->refresh_all_entities( true );
 
-				}
+			$payment = $this->checkout->transaction->last_payment();
+			// process results
+			$payment = $this->_validate_payment( $payment );
+			$payment = $this->_post_payment_processing( $payment, true );
+			// if payment was not declined by the payment gateway or cancelled by the registrant
+			if ( $payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_declined && $payment->status() !== EEM_Payment::status_id_cancelled ) {
+				// store that for later
+				$this->checkout->payment = $payment;
+				// mark this reg step as completed
+				$this->checkout->current_step->set_completed();
+				$this->_setup_redirect_for_next_step();
+				return true;
 			}
 		}
 		$this->checkout->action = 'display_spco_reg_step';
