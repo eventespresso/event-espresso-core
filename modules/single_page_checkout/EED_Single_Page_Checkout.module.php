@@ -716,7 +716,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				} else if ( $this->checkout->revisit && $this->checkout->reg_url_link != $registration->reg_url_link() ) {
 					// but hide info if it doesn't belong to you
 					$transaction->clear_cache( 'Registration', $registration->ID() );
-					$transaction->clear_cache( 'Registration', $registration->reg_url_link() );
 				}
 			}
 		}
@@ -774,11 +773,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'REG_url_link'			=> $reg_url_link
 					));
 					$registration->set_reg_code( $registration_processor->generate_reg_code( $registration ));
+					$registration->save();
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
-//					$registration->save();
-					$transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-					$registrations[ $reg_url_link ] = $registration;
+					$transaction->_add_relation_to( $registration, 'Registration' );
+					$registrations[ $registration->ID() ] = $registration;
 				}
 			}
 		}
@@ -837,20 +836,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if (
 			// first time visiting SPCO ?
 			! $this->checkout->revisit
-			&& (
-				// and initially displaying a reg step form ?
-				$this->checkout->action === 'display_spco_reg_step'
-				|| (
-					// or processing the final step?
-					$this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration
-					&& $this->checkout->action = 'process_reg_step'
-				)
-			)
+			// and displaying the reg step form for the first time ?
+			&& $this->checkout->action === 'display_spco_reg_step'
 		) {
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set the start time for this reg step
-			if ( ! $transaction_processor->set_reg_step_initiated( $this->checkout->transaction, $this->checkout->current_step->slug() ) && ! $this->checkout->current_step->completed() ) {
+			if ( ! $transaction_processor->set_reg_step_initiated( $this->checkout->transaction, $this->checkout->current_step->slug() ) ) {
 				if ( WP_DEBUG ) {
 					EE_Error::add_error( sprintf(__( 'The "%1$s" registration step was not initialized properly.', 'event_espresso' ), $this->checkout->current_step->name() ), __FILE__, __FUNCTION__, __LINE__ );
 				}
@@ -934,7 +926,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if ( EE_Registry::instance()->REQ->ajax ) {
 					$this->checkout->json_response->set_reg_step_html( $this->checkout->current_step->display_reg_form() );
 				}
-				$this->go_to_next_step();
 				break;
 
 			default :
@@ -952,13 +943,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();
-						// store our progress so far
-						$this->checkout->stash_transaction_and_checkout();
 					}
 					// dynamically creates hook point like: AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}", $this->checkout->current_step );
-					// advance to the next step! If you pass GO, collect $200
-					$this->go_to_next_step();
 
 				} else {
 					EE_Error::add_error(
@@ -972,6 +959,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			// end default
 		}
+		// store our progress so far
+		$this->checkout->stash_transaction_and_checkout();
+		// advance to the next step! If you pass GO, collect $200
+		$this->go_to_next_step();
 	}
 
 
@@ -1130,8 +1121,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// load template and add to output sent that gets filtered into the_content()
 			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
 		}
-		// store our progress so far
-		$this->checkout->stash_transaction_and_checkout();
 	}
 
 
