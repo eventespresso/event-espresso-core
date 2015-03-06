@@ -307,6 +307,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	function report_registrations_for_event( $event_id = NULL ){
 		$reg_fields_to_include = array(
+				'TXN_ID',
+				'ATT_ID',
 				'REG_ID',
 				'REG_date',
 				'REG_code',
@@ -364,6 +366,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					$field = $reg_model->field_settings_for($field_name);
 					if($field_name == 'REG_final_price'){
 						$value = $registration->get_pretty($field_name,'localized_float');
+					}elseif( $field_name == 'REG_count' ){
+						$value = sprintf( __( '%s of %s', 'event_espresso' ), $registration->get_pretty( 'REG_count' ), $registration->get_pretty( 'REG_group_size'  ) );
 					}else{
 						$value = $registration->get_pretty($field->get_name());
 					}
@@ -379,14 +383,33 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
 				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
 				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
-				//just get all the payment methods used for this transaction (if primary registrant and something has been paid)
-				$reg_csv_array[ __( 'Payment Method', 'event_espresso' )] = $registration->is_primary_registrant() && $registration->transaction()->paid() ? implode(", ",EEM_Payment_Method::instance()->get_col(
-						array(
+				$payment_methods = array();
+				$gateway_txn_ids_etc = array();
+				$payment_times = array();
+				if($registration->is_primary_registrant() && $registration->transaction() instanceof EE_Transaction ){
+					$payments_info = EEM_Payment::instance()->get_all_wpdb_results(
 							array(
-								'Payment.TXN_ID' => $registration->transaction_ID(),
-								'Payment.STS_ID' => EEM_Payment::status_id_approved
-							)
-						), 'PMD_admin_name')) : '' ;
+								array(
+									'TXN_ID' => $registration->get('TXN_ID'),
+									'STS_ID' => EEM_Payment::status_id_approved
+								),
+								'force_join' => array( 'Payment_Method' ),
+
+							),
+							ARRAY_A,
+							'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time' );
+
+					foreach( $payments_info as $payment_method_and_gateway_txn_id ){
+						$payment_methods[] = isset( $payment_method_and_gateway_txn_id[ 'name' ] ) ? $payment_method_and_gateway_txn_id[ 'name' ] : __( 'Unknown', 'event_espresso' );
+						$gateway_txn_ids_etc[] = isset( $payment_method_and_gateway_txn_id[ 'gateway_txn_id' ] ) ? $payment_method_and_gateway_txn_id[ 'gateway_txn_id' ] : '';
+						$payment_times[] = isset( $payment_method_and_gateway_txn_id[ 'payment_time' ] ) ? $payment_method_and_gateway_txn_id[ 'payment_time' ] : '';
+					}
+
+				}
+				$reg_csv_array[ __( 'Payment Date(s)', 'event_espresso' ) ] = implode( ',', $payment_times );
+				$reg_csv_array[ __( 'Payment Method(s)', 'event_espresso' ) ] = implode( ",", $payment_methods );
+				$reg_csv_array[ __( 'Gateway Transaction ID(s)', 'event_espresso' )] = implode( ',', $gateway_txn_ids_etc );
+
 				//get whether or not the user has checked in
 				$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 				//get ticket of registration and its price
@@ -452,7 +475,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					}
 					$reg_csv_array[ $question_label ] = $answer->pretty_value();
 				}
-				$registrations_csv_ready_array[] = $reg_csv_array;
+				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $registration );
 			}
 		}
 
