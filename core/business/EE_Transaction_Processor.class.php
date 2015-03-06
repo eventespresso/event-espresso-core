@@ -190,7 +190,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return boolean
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, current_time( 'timestamp' ));
+		$current_time = (int)current_time( 'timestamp' );
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
 	}
 
 
@@ -238,42 +239,61 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 */
 	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
 		// validate status
-		$status = is_bool( $status ) || is_numeric( $status ) ? $status : FALSE;
+		$status = is_bool( $status ) || is_numeric( $status ) ? $status : false;
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
 		// if reg step does NOT exist
 		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] )) {
-			return FALSE;
+			return false;
 		}
 		// if  we're trying to complete a step that is already completed
-		if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
-			return FALSE;
+		if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
+			return true;
 		}
 		// if  we're trying to complete a step that hasn't even started
-		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
-			return FALSE;
+		if ( $status === true && $txn_reg_steps[ $reg_step_slug ] === false ) {
+			return false;
 		}
 		// if current status value matches the incoming value (no change)
 		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
 			// this will happen in cases where multiple AJAX requests occur during the same step
-			return FALSE;
+			return true;
 		}
 		// if we're trying to set a start time
 		if ( is_numeric( $status )) {
 			// for an already completed step
-			if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
-				return FALSE;
+			if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
+				return true;
 			}
 			// but if the step has already been initialized...
 			if ( is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
 				// skip the update below, but don't return FALSE so that errors won't be displayed
-				return TRUE;
+				return true;
 			}
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
 		$transaction->set_reg_steps( $txn_reg_steps );
-		return TRUE;
+		$transaction->save();
+		return true;
+	}
+
+
+
+	/**
+	 * remove_reg_step
+	 * given a valid TXN_reg_step slug, this will remove (unset)
+	 * the reg step from the TXN reg step array
+	 *
+	 * @access public
+	 * @param \EE_Transaction $transaction
+	 * @param string $reg_step_slug
+	 * @return void
+	 */
+	public function remove_reg_step( EE_Transaction $transaction, $reg_step_slug ) {
+		// get reg steps array
+		$txn_reg_steps = $transaction->reg_steps();
+		unset( $txn_reg_steps[ $reg_step_slug ] );
 	}
 
 
