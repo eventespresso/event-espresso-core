@@ -393,9 +393,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function switch_core_wp_urls_with_ours( $good_protocol_url, $original_url, $_context ) {
 		$routes_to_match = array(
-			 0 => array(
+			0 => array(
+				'edit.php?post_type=espresso_attendees',
+				'admin.php?page=espresso_registrations&action=contact_list'
+				),
+			 1 => array(
 			 	'edit.php?post_type=' . $this->_cpt_object->name,
-			 	'?page=' . $this->_cpt_object->name
+			 	'admin.php?page=' . $this->_cpt_object->name
 				)
 			);
 
