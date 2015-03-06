@@ -61,6 +61,7 @@
 	</div>
 	<div class="taxes">
 		<h3 class="section-title"><?php _e( "Taxes", 'event_espresso' ) ?></h3>
+		<p><?php printf( __( 'Any items that have a %s*%s next to them are taxable and included in the below totals.', 'event_espresso' ), '<strong>', '</strong>' ); ?></p>
 		<table class="invoice-amount">
 			<thead>
 				<tr class="header_row">
