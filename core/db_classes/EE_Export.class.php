@@ -385,8 +385,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
+				$payment_times = array();
 				if($registration->is_primary_registrant() && $registration->transaction() instanceof EE_Transaction ){
-					$payment_method_and_cheque_number = EEM_Payment::instance()->get_all_wpdb_results(
+					$payments_info = EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
 									'TXN_ID' => $registration->get('TXN_ID'),
@@ -396,16 +397,18 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 							),
 							ARRAY_A,
-							'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id' );
+							'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time' );
 
-					foreach( $payment_method_and_cheque_number as $payment_method_and_gateway_txn_id ){
+					foreach( $payments_info as $payment_method_and_gateway_txn_id ){
 						$payment_methods[] = isset( $payment_method_and_gateway_txn_id[ 'name' ] ) ? $payment_method_and_gateway_txn_id[ 'name' ] : __( 'Unknown', 'event_espresso' );
 						$gateway_txn_ids_etc[] = isset( $payment_method_and_gateway_txn_id[ 'gateway_txn_id' ] ) ? $payment_method_and_gateway_txn_id[ 'gateway_txn_id' ] : '';
+						$payment_times[] = isset( $payment_method_and_gateway_txn_id[ 'payment_time' ] ) ? $payment_method_and_gateway_txn_id[ 'payment_time' ] : '';
 					}
 
 				}
-				$reg_csv_array[ __( 'Payment Method', 'event_espresso' ) ] = implode(",", $payment_methods );
-				$reg_csv_array[ __( 'Gateway Transaction ID', 'event_espresso' )] = implode( ',', $gateway_txn_ids_etc );
+				$reg_csv_array[ __( 'Payment Date(s)', 'event_espresso' ) ] = implode( ',', $payment_times );
+				$reg_csv_array[ __( 'Payment Method(s)', 'event_espresso' ) ] = implode( ",", $payment_methods );
+				$reg_csv_array[ __( 'Gateway Transaction ID(s)', 'event_espresso' )] = implode( ',', $gateway_txn_ids_etc );
 
 				//get whether or not the user has checked in
 				$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
