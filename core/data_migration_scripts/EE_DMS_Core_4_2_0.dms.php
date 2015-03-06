@@ -11,10 +11,12 @@
 //(all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE.'data_migration_scripts/4_2_0_stages/*');
 $class_to_filepath = array();
-foreach($stages as $filepath){
-	$matches = array();
-	preg_match('~4_2_0_stages/(.*).dmsstage.php~',$filepath,$matches);
-	$class_to_filepath[$matches[1]] = $filepath;
+if ( ! empty( $stages ) ) {
+	foreach($stages as $filepath){
+		$matches = array();
+		preg_match('~4_2_0_stages/(.*).dmsstage.php~',$filepath,$matches);
+		$class_to_filepath[$matches[1]] = $filepath;
+	}
 }
 //give addons a chance to autoload their stages too
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_2_0__autoloaded_stages',$class_to_filepath);

@@ -103,7 +103,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'edit' => __('Edit Contact', 'event_espresso'),
 					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
 					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
-					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
+					'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
+					'contact_list_export'=>  __("Export Data", "event_espresso"),
 				),
 			'publishbox' => array(
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
@@ -353,6 +354,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func'=>'_contact_list_export',
 					'noheader'=>TRUE,
 					'capability' => 'export'
+				),
+				'contact_list_report' => array(
+					'func'=> '_contact_list_report',
+					'noheader' => TRUE,
+					'capability' => 'ee_read_contacts',
 				)
 		);
 
@@ -591,6 +597,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script( 'ee-spco-for-admin', REG_ASSETS_URL . 'spco_for_admin.js', array('underscore', 'jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('ee-spco-for-admin');
 		add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
+		EE_Form_Section_Proper::wp_enqueue_scripts();
 		EED_Ticket_Selector::load_tckt_slctr_assets();
 		EE_Datepicker_Input::enqueue_styles_and_scripts();
 	}
@@ -1365,6 +1372,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
+		$this->_template_args['REG_ID'] = $this->_registration->ID();
 		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
 
 
@@ -1946,7 +1954,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function new_registration() {
-
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
@@ -2236,10 +2243,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$offset = ($current_page-1)*$per_page;
 		$limit = $count ? NULL : array( $offset, $per_page );
 
-		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->count_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
-		else
+		if ( $trash ) {
+			$_where['status'] = array( '!=', 'publish' );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+		} else {
+			$_where['status'] = array( 'IN', array( 'publish' ) );
 			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+		}
 
 		return $all_attendees;
 	}
@@ -2290,6 +2300,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export_attendees();
+		}
+	}
+
+	public function _contact_list_report(){
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->report_attendees();
 		}
 	}
 
@@ -2524,7 +2543,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes
 			while (list( $ATT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+				$updated = $trash ? $ATT_MDL->update_by_ID(array( 'status' => 'trash' ), $ATT_ID) : $ATT_MDL->update_by_ID( array('status' => 'publish' ), $ATT_ID);
 				if ( !$updated ) {
 					$success = 0;
 				}
@@ -2535,7 +2554,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$ATT_ID = absint($this->_req_data['ATT_ID']);
 			//get attendee
 			$att = $ATT_MDL->get_one_by_ID( $ATT_ID );
-			$updated = $trash ? $att->delete() : $att->restore();
+			$updated = $trash ? $att->set_status('trash') : $att->set_status('publish');
 			$updated = $att->save();
 			if ( ! $updated ) {
 				$success = 0;

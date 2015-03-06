@@ -86,7 +86,7 @@ class EE_State extends EE_Base_Class {
 
 
 	/**
-	 * @return EE_Base_Class
+	 * @return EE_Country
 	 */
 	public function country() {
 		return $this->get_first_related( 'Country' );

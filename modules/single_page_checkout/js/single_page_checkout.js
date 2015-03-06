@@ -36,13 +36,27 @@ jQuery(document).ready( function($) {
 		 *     valid_email_and_questions: string,
 		 *     no_payment_method: string,
 		 *     invalid_payment_method: string,
+		 *     invalid_json_response: string,
 		 *     forwarding_to_offsite: string,
 		 *     process_registration: string,
 		 *     language: string,
 		 *     EESID: string,
 		 *     datepicker_yearRange: string,
 		 *     revisit: string,
-		 *     e_reg_url_link: string
+		 *     e_reg_url_link: string,
+		 *     timer_years: string,
+		 *     timer_months: string,
+		 *     timer_weeks, eei18n.days: string,
+		 *     timer_hours: string,
+		 *     timer_minutes: string,
+		 *     timer_seconds: string,
+		 *     timer_year, eei18n.month: string,
+		 *     timer_week: string,
+		 *     timer_day: string,
+		 *     timer_hour: string,
+		 *     timer_minute: string,
+		 *     timer_second: string,
+		 *     registration_expiration_notice: string
 		 * }}
 	 * @namespace response
 	 * @type {{
@@ -130,7 +144,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
 				SPCO.set_listener_close_notifications();
-				SPCO.initialize_datepicker_inputs();
+				SPCO.start_registration_time_limit_countdown();
 			}
 		},
 
@@ -178,7 +192,7 @@ jQuery(document).ready( function($) {
 					}
 				},
 
-				invalidHandler: function( event, validator ) {
+				invalidHandler: function() {
 					SPCO.reset_validation_vars();
 				}
 
@@ -404,6 +418,37 @@ jQuery(document).ready( function($) {
 		},
 
 
+
+		/**
+		 * @function display_registration_expiration_notice
+		 */
+		display_registration_expiration_notice : function() {
+			SPCO.main_container.slideUp().html( eei18n.registration_expiration_notice ).slideDown();
+		},
+
+
+
+		/**
+		 * @function start_registration_time_limit_countdown
+		 */
+		start_registration_time_limit_countdown : function() {
+			var $registration_time_limit = $('#spco-registration-time-limit-spn');
+			if ( $registration_time_limit.length > 0 ) {
+				var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
+				var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
+				//alert( '$registration_time_limit = ' + $registration_time_limit.html() + '\n' + 'expiration = ' + expiration );
+				$registration_time_limit.countdown({
+					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
+					labels1: [ eei18n.timer_year, eei18n.timer_month, eei18n.timer_week, eei18n.timer_day, eei18n.timer_hour, eei18n.timer_minute, eei18n.timer_second ],
+					until: expiration,
+					layout: layout
+					//onExpiry: SPCO.display_registration_expiration_notice()
+				});
+			}
+		},
+
+
+
 		/**
 		 * @function reset_validation_vars
 		 */
@@ -425,49 +470,6 @@ jQuery(document).ready( function($) {
 			SPCO.offset_from_top_modifier = -50;
 	},
 
-
-
-		/**
-		 * @function initialize_datepicker_inputs
-		 */
-		initialize_datepicker_inputs : function() {
-			// if datepicker function exists
-			if ( $.fn.datepicker ) {
-				// activate datepicker fields
-				$( '.datepicker' ).datepicker({
-					changeMonth: true,
-					changeYear: true,
-					yearRange: eei18n.datepicker_yearRange
-					// yearRange: "-150:+20"
-				});
-			}
-			// to internationalize the datepicker, copy the following to somewhere safe,
-			// then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key.
-			// Multiple languages can be added this way
-			/*
-			$.datepicker.regional['fr_FR'] = {
-				closeText: 'Fermer',
-				prevText: 'Précédent',
-				nextText: 'Suivant',
-				currentText: 'Aujourd\'hui',
-				monthNames: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-				'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-				monthNamesShort: ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
-				'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
-				dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
-				dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
-				dayNamesMin: ['D','L','M','M','J','V','S'],
-				weekHeader: 'Sem.',
-				dateFormat: 'dd/mm/yy',
-				firstDay: 1,
-				isRTL: false,
-				showMonthAfterYear: false,
-				yearSuffix: ''
-			};
-			$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);
-			//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
-			*/
-		},
 
 
 

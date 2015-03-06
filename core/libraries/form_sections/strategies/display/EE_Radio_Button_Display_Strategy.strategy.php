@@ -23,9 +23,9 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
 
-		$html = $this->display_label();
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
+		$html = '';
 		foreach( $this->_input->options() as $value => $display_text ){
 			$value = $this->_input->get_normalization_strategy()->unnormalize( $value );
 
@@ -51,30 +51,5 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 		return $html;
 	}
 
-
-
-
-	/**
-	 * Gets the HTML for the 'label', which is just text for this (because labels
-	 * should be for each input)
-	 *
-	 * @throws \EE_Error
-	 * @return string
-	 */
-	public function display_label(){
-		if ( ! $this->_input instanceof EE_Form_Input_With_Options_Base ){
-			throw new EE_Error(sprintf(__('Can not use Radio Button Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
-		}
-		if ( $this->_input->display_html_label_text() != '' ) {
-			$html = EEH_HTML::nl( 0, 'radio' );
-			$html .= '<div id="' . $this->_input->html_label_id() . '"';
-			$html .= ' class="' . $this->_input->html_label_class() . '"';
-			$html .= ' style="' . $this->_input->html_label_style() . '">';
-			$html .= $this->_input->html_label_text() . '</div>';
-			return $html;
-		} else {
-			return '';
-		}
-	}
 
 }

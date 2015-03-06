@@ -35,7 +35,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
+		$this->_template = SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please answer the following registration questions before proceeding.', 'event_espresso'));
@@ -81,8 +81,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		);
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
-			'registrations' =>array(),
-			'ticket_count' 	=>array()
+			'registrations' => array(),
+			'ticket_count' 	=> array()
 		);
 		// grab the saved registrations from the transaction
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
@@ -123,7 +123,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout(
 						array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'layout_template_file' 	=> $this->_template, // layout_template
 							'template_args' 				=> $template_args
 						)
 					),
@@ -262,7 +262,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// filter for additional content after questions
 		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '', $registration, $question_group, $this ));
 //		d( $form_args );
-		return new EE_Form_Section_Proper( $form_args );
+		$question_group_reg_form = new EE_Form_Section_Proper( $form_args );
+		return apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', $question_group_reg_form, $registration, $question_group, $this );
 	}
 
 
@@ -511,11 +512,32 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				return new EE_State_Select_Input( NULL, $input_constructor_args );
+				$state_options = array();
+				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
+				if ( ! empty( $states )) {
+					foreach( $states as $state ){
+						if ( $state instanceof EE_State ) {
+							$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
+						}
+					}
+				}
+				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this );
+				return new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				return new EE_Country_Select_Input( NULL, $input_constructor_args );
+				$country_options = array();
+				// get possibly cached list of countries
+				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
+				if ( ! empty( $countries )) {
+					foreach( $countries as $country ){
+						if ( $country instanceof EE_Country ) {
+							$country_options[ $country->ID() ] = $country->name();
+						}
+					}
+				}
+				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this );
+				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
 			case EEM_Question::QST_type_checkbox :
@@ -669,9 +691,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					 * @var bool   if TRUE is returned by the plugin then the
 					 *      		registration processing is halted.
 					 */
-					$allstop = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this );
-
-					if ( $allstop ) {
+					if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this ) ) {
 						return FALSE;
 					}
 
@@ -779,15 +799,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
 
-		/**
-		 * allow for plugins to hook in and do their own processing of the form input. For
-		 * plugins to bypass normal processing here, they just need to return a truthy value.
-		 *
-		 * @var bool
-		 */
-		$has_processed = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this );
-
-		if ( $has_processed ) {
+		// allow for plugins to hook in and do their own processing of the form input.
+		// For plugins to bypass normal processing here, they just need to return a boolean value.
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this ) ) {
 			return TRUE;
 		}
 

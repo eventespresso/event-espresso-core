@@ -184,6 +184,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	public function get_reg_months_and_years( $where_params ) {
 		$query_params[0] = $where_params;
 		$query_params['group_by'] = array('reg_year', 'reg_month');
+		$query_params['order_by'] = array( 'REG_date' => 'DESC' );
 		$columns_to_select = array(
 			'reg_year' => array('YEAR(REG_date)', '%s'),
 			'reg_month' => array('MONTHNAME(REG_date)', '%s')

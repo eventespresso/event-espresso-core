@@ -13,7 +13,11 @@
 <p>
 <?php _e('You can perform a search to find certain contacts. The following sources will be searched: Event Name (title), Event Description, First Name, Last Name, Biography, Email, Address, Comments, Notes, Registration Final Price, and Registration Code. To use the search feature, enter a value into the search box and click on the Search Contacts button.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Contact List CSV Export', 'event_espresso'); ?></h3>
+<h3><?php _e('Contact List CSV Report', 'event_espresso'); ?></h3>
 <p>
-<?php _e('The Contact List CSV Export button which appears at the bottom of this page can be used to quickly export your contact list as a CSV file. The following information will be exported: ID, First Name, Last Name, Email, Phone, Address, City, State, and Country. Additionally, the following information will be exported: Contact Full Name, Contact Biography, Contact URL Slug, Time the Contact was Created, Contact Short Biography, Time the Contact was Last Modified, WP User that created Contact as a Numeric Value, and Contact Status.', 'event_espresso'); ?>
+<?php _e('The Contact List CSV Report button which appears at the bottom of this page can be used to quickly generate a report of your contact list as a CSV file. The following information will be exported: ID, First Name, Last Name, Email, Phone, Address, City, State, and Country. Additionally, the following information will be exported: Contact Full Name, Contact Biography, Contact URL Slug, Time the Contact was Created, Contact Short Biography, Time the Contact was Last Modified, WP User that created Contact as a Numeric Value, and Contact Status.', 'event_espresso'); ?>
+</p>
+<h3><?php _e('Export Data', 'event_espresso'); ?></h3>
+<p>
+<?php _e('The Export Data button which appears at the bottom of this page can be used to quickly export your contact list as a CSV file, which CSV file can then be imported into a different site or re-imported into this same site using the Event Importer.', 'event_espresso'); ?>
 </p>

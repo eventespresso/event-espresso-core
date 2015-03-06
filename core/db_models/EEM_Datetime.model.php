@@ -327,6 +327,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	public function get_dtt_months_and_years( $where_params ) {
 		$query_params[0] = $where_params;
 		$query_params['group_by'] = array('dtt_year', 'dtt_month');
+		$query_params['order_by'] = array( 'DTT_EVT_start' => 'DESC' );
 		$columns_to_select = array(
 			'dtt_year' => array('YEAR(DTT_EVT_start)', '%s'),
 			'dtt_month' => array('MONTHNAME(DTT_EVT_start)', '%s')
