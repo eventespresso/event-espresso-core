@@ -200,9 +200,17 @@ abstract class EE_SPCO_Reg_Step {
 	 * @param string $submit_button_text
 	 */
 	public function set_submit_button_text( $submit_button_text = '' ) {
-		if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
-			$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		if ( ! empty( $submit_button_text )) {
+			$this->_submit_button_text = $submit_button_text;
+		} else if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			if ( $this->checkout->revisit ) {
+				$this->_submit_button_text = sprintf( __( 'Update %s', 'event_espresso' ), $this->checkout->current_step->name() );
+			} else {
+				$this->_submit_button_text = sprintf( __( 'Proceed to %s', 'event_espresso' ), $this->checkout->next_step->name() );
+			}
 		}
+		// filters the submit button text
+		$this->_submit_button_text = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text', $this->_submit_button_text, $this->checkout );
 	}
 
 

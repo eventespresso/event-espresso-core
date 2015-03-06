@@ -156,6 +156,8 @@ final class EE_System {
 		// load interfaces
 		require_once EE_CORE . 'EEI_Interfaces.php';
 		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
+		// WP cron jobs
+		EE_Registry::instance()->load_core( 'Cron_Tasks' );
 
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
@@ -1005,33 +1007,8 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
-//		EEM_Change_Log::instance()->show_next_x_db_queries();
-//		$logs = EEM_Change_Log::instance()->get_all(array(array(
-//			'OR'=>array(
-//				'Payment.Payment_Method.PMD_ID'=>2,
-//				'Payment_Method.PMD_ID'=>2),
-//			'LOG_ID'=>15
-//		),'limit'=>10));
-//		d($logs);
-//		EEM_Change_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
-
-
-//		EEM_Answer::instance()->show_next_x_db_queries();
-//		EEM_Answer::instance()->get_all(array(array(
-//			'Question.Question_Group.QSG_ID'=>1
-//		)));
-
-
-//		EEM_Event::instance()->show_next_x_db_queries();
-//		EEM_Event::instance()->get_all();
-		//should produce no errors
-
-//		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
-		//should produce no error
-//		die;
-//		EEM_Price::instance()->get_all(array('order_by'=>array('PRC_ID'=>'asc','Price_Type.PRT_ID'=>'asc')));die;
 		do_action( 'AHEE__EE_System__initialize' );
-
+//		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
 
 
@@ -1062,6 +1039,59 @@ final class EE_System {
 	*/
 	public function set_hooks_for_shortcodes_modules_and_addons() {
 //		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+	}
+
+
+
+
+	/**
+	* do_not_cache
+	*
+	* sets no cache headers and defines no cache constants for WP plugins
+	*
+	* @access public
+	* @return void
+	*/
+	public static function do_not_cache() {
+		// set no cache constants
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
+			define( 'DONOTCACHCEOBJECT', true );
+		}
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EE_System', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
+	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
 	}
 
 

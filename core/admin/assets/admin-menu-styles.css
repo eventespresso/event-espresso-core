@@ -368,3 +368,60 @@ div.TB-ee-frame a {
 	font-size: 13px;
 
 }
+
+
+
+/**
+ * fancy toggles
+ */
+.ee-on-off-toggle{
+  position: absolute;
+  margin-left: -9999px;
+  visibility: hidden;
+}
+.ee-on-off-toggle+ label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+input.ee-toggle-round-flat + label {
+  padding: 2px;
+  width: 50px;
+  height: 25px;
+  background-color: #dddddd;
+  border-radius: 25px;
+  transition: background 0.4s;
+}
+input.ee-toggle-round-flat + label:before,
+input.ee-toggle-round-flat + label:after {
+  display: block;
+  position: absolute;
+  content: "";
+}
+input.ee-toggle-round-flat + label:before {
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  right: 2px;
+  background-color: #fff;
+  border-radius: 25px;
+  transition: background 0.4s;
+}
+input.ee-toggle-round-flat + label:after {
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 22px;
+  background-color: #dddddd;
+  border-radius: 20px;
+  transition: margin 0.4s, background 0.4s;
+}
+input.ee-toggle-round-flat:checked + label {
+  background-color: #8ce196;
+}
+input.ee-toggle-round-flat:checked + label:after {
+  margin-left: 25px;
+  background-color: #8ce196;
+}

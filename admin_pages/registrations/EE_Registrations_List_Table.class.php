@@ -58,6 +58,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return EE_Registrations_List_Table
 	 */
 	function __construct( $admin_page ){
+
+		if ( ! empty( $_GET['event_id'] ) ) {
+			$extra_query_args = array();
+			foreach ( $admin_page->get_views() as $key => $view_details ) {
+				$extra_query_args[$view_details['slug']] = array( 'event_id' => $_GET['event_id'] );
+			}
+			$this->_views = $admin_page->get_list_table_view_RLs( $extra_query_args );
+		}
+
 		parent::__construct($admin_page);
 		$this->_status = $this->_admin_page->get_registration_status_array();
 
@@ -391,12 +400,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
    	function column_DTT_EVT_start(EE_Registration $item){
 		$datetime_strings = array();
-		$remove_defaults = array('default_where_conditions' => 'none');
-		$datetimes = $item->ticket( TRUE )->datetimes($remove_defaults);
-		foreach($datetimes as $datetime){
-			$datetime_strings[] = $datetime->start_date_and_time();
+		$ticket = $item->ticket( TRUE );
+		if ( $ticket instanceof EE_Ticket ) {
+			$remove_defaults = array('default_where_conditions' => 'none');
+			$datetimes = $ticket->datetimes($remove_defaults);
+			foreach($datetimes as $datetime){
+				$datetime_strings[] = $datetime->start_date_and_time();
+			}
+			return implode("<br />",$datetime_strings);
+		} else {
+			return __( 'There is no ticket on this registration', 'event_espresso' );
 		}
-		return implode("<br />",$datetime_strings);
     }
 
 
@@ -489,7 +503,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column_PRC_amount(EE_Registration $item){
-		$content = isset( $_GET['event_id'] ) ? '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />' : '';
+		$ticket = $item->ticket();
+
+		$content = isset( $_GET['event_id'] ) && $ticket instanceof EE_Ticket ? '<span class="TKT_name">' . $ticket->name() . '</span><br />' : '';
 
 		if ( $item->price_paid() > 0 ) {
 			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';
@@ -512,7 +528,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column__REG_final_price(EE_Registration $item){
-		$content = isset( $_GET['event_id'] ) ? '' : '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />';
+		$ticket = $item->ticket();
+		$content = isset( $_GET['event_id'] ) || ! $ticket instanceof EE_Ticket ? '' : '<span class="TKT_name">' . $ticket->name() . '</span><br />';
 
 		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';
 		return $content;
@@ -574,6 +591,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions(EE_Registration $item) {
 
 		$attendee = $item->attendee();
+		$ticket = $item->ticket();
 		$this->_set_related_details( $item );
 
 		//Build row actions

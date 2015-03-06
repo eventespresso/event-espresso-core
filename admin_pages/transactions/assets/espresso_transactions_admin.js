@@ -25,14 +25,6 @@ jQuery(document).ready(function($) {
 	$('.updated.fade').delay(5000).fadeOut();
 
 
-
-
-	$('#txn-admin-payment-method-slct').bind('change', function() {
-		var mop = $(this).val();
-		$('.mop').hide();
-		$('.mop-'+mop).show();
-	});
-
 	var dialog_content = {};
 	var d_contents = '';
 
@@ -131,8 +123,6 @@ jQuery(document).ready(function($) {
 				// remove validation notices
 				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
 				$('.validation-notice-dv').hide();
-
-				$('.mop').hide();
 			});
 	}
 

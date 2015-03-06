@@ -238,3 +238,65 @@
 .ee-event-expired-notice {
 	margin: 0 0 1em;
 }
+
+/* responsive styles */
+
+.tckt-slctr-tkt-details-tbl td:before {
+	display: none;
+}
+.tckt-slctr-tkt-details-tbl .ttl-lbl-td {
+	display: table-cell;
+}
+.tckt-slctr-tkt-details-tbl th, 
+.tckt-slctr-tkt-details-tbl td {
+	display: table-cell;
+	padding: .25em .5em;
+}
+.tckt-slctr-tkt-details-tbl th:first-child, .tckt-slctr-tkt-details-tbl td:first-child {
+	padding-left: 0;
+}
+.tckt-slctr-tkt-details-tbl th:last-child, .tckt-slctr-tkt-details-tbl td:last-child {
+	padding-right: 0;
+}
+
+@media (max-width: 600px) {
+
+	.tckt-slctr-tkt-details-tbl {
+		margin: 1em 0;
+		min-width: 300px;
+	}
+	.tckt-slctr-tkt-details-tbl tr {
+		border-top: 1px solid #ddd;
+		border-bottom: 1px solid #ddd;
+	}
+	.tckt-slctr-tkt-details-tbl th,
+	.tckt-slctr-tkt-details-tbl .ttl-lbl-td,
+	.tckt-slctr-tkt-details-tbl .sbttl {
+		display: none;
+	}
+	.tckt-slctr-tkt-details-tbl td {
+		display: block;
+	}
+	.tckt-slctr-tkt-details-tbl td:first-child {
+		padding-top: .5em;
+	}
+	.tckt-slctr-tkt-details-tbl td:last-child {
+		padding-bottom: .5em;
+	}
+	.tckt-slctr-tkt-details-tbl td:before {
+		content: attr(data-th) ": ";
+		font-weight: bold;
+		width: 8.5em;
+		display: inline-block;
+	}
+	.tckt-slctr-tkt-sale-dates-sctn .ticket-details-label-spn {
+		width: 100%;
+	}
+	.tckt-slctr-tkt-details-tbl th, .tckt-slctr-tkt-details-tbl td {
+		text-align: left;
+	}
+	.tckt-slctr-tkt-details-dv .smaller-text {
+		display: inline;
+		font-size: inherit; 
+	}
+}

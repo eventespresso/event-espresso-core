@@ -9,3 +9,7 @@ select.state {
 #url-event {
 	width: 100%;
 }
+
+#espresso_venue_address_options input.regular-text {
+	width: 100%;
+}
