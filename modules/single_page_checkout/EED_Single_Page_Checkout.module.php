@@ -1126,11 +1126,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			);
 			// load template and add to output sent that gets filtered into the_content()
 			EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
-			if ( ! defined( 'WP_DEBUG' )) {
-				define( 'WP_DEBUG', false );
-			}
-			echo '<h5 style="color:#2EA2CC;">WP_DEBUG : <span style="color:#E76700">' . WP_DEBUG . '</span><br/><span
-style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		}
 	}
 
