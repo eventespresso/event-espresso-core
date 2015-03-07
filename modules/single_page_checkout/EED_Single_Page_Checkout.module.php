@@ -349,8 +349,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout = $this->_initialize_checkout();
 		// get the $_GET
 		$this->_get_request_vars();
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__, array(), true );
 		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
@@ -381,10 +379,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// lock the transaction
 		$this->checkout->transaction->lock();
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__,__FUNCTION__,__LINE__ );
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// DEBUG LOG
