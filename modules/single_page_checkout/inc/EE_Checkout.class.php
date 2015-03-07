@@ -725,22 +725,88 @@ class EE_Checkout {
 	 */
 	public function refresh_all_entities( $from_db = false ) {
 		$from_db = $this->current_step->is_final_step() ? true : $from_db;
-		return $this->refresh_entity_map( $from_db );
+		return $from_db ? $this->refresh_from_db() : $this->refresh_entity_map();
 	}
 
 
 
 	/**
-	 *    refresh_entity_map
-	 *    simply loops through the current transaction and updates each model's entity map
-	 *    if $from_db is true, then we'll use EEM_Base::refresh_entity_map_from_db()
-	 *    if $from_db is false, then we'll use EEM_Base::refresh_entity_map_with()
+	 *  refresh_entity_map
+	 *  simply loops through the current transaction and updates each
+	 *  model's entity map using EEM_Base::refresh_entity_map_from_db()
 	 *
 	 * @access public
-	 * @param bool $from_db true ? EEM_Base::refresh_entity_map_from_db() : EEM_Base::refresh_entity_map_with()
 	 * @return bool
 	 */
-	protected function refresh_entity_map( $from_db = false ) {
+	protected function refresh_from_db() {
+		// verify the transaction
+		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
+			// pull fresh TXN data from the db
+			$this->transaction = $this->transaction->get_model()->refresh_entity_map_from_db( $this->transaction->ID() );
+			// update EE_Checkout's cached primary_attendee object
+			$this->primary_attendee_obj = $this->_refresh_primary_attendee_obj_from_db( $this->transaction );
+			// update EE_Checkout's cached payment object
+			$payment = $this->transaction->last_payment();
+			$this->payment = $payment instanceof EE_Payment ? $payment : null;
+			// update EE_Checkout's cached payment_method object
+			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
+			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : null;
+		} else {
+			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
+		}
+		if ( $this->cart instanceof EE_Cart ) {
+			$this->cart = $this->cart->get_grand_total()->get_model()->refresh_entity_map_from_db(
+				$this->cart->get_grand_total()->ID()
+			);
+		}
+		return TRUE;
+	}
+
+
+
+	/**
+	 * _refresh_primary_attendee_obj_from_db
+	 *
+	 * @param   EE_Transaction $transaction
+	 * @return  EE_Attendee | null
+	 */
+	protected function _refresh_primary_attendee_obj_from_db( $transaction ) {
+
+		$primary_attendee_obj = null;
+		// grab the saved registrations from the transaction
+		foreach ( $transaction->registrations( $this->reg_cache_where_params, true ) as $registration ) {
+			// verify object
+			if ( $registration instanceof EE_Registration ) {
+				$attendee = $registration->attendee();
+				// verify object
+				if ( $attendee instanceof EE_Attendee  ) {
+					// maybe cache primary_attendee_obj ?
+					if ( $registration->is_primary_registrant() ) {
+						$primary_attendee_obj = $attendee;
+					}
+				}
+			} else {
+				EE_Error::add_error(
+						__( 'An invalid Registration object was discovered when attempting to update the model entity mapper.', 'event_espresso' ),
+						__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+		}
+		return $primary_attendee_obj;
+	}
+
+
+
+	/**
+	 *  refresh_entity_map
+	 *  simply loops through the current transaction and updates
+	 *  each model's entity map using EEM_Base::refresh_entity_map_with()
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	protected function refresh_entity_map() {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
 			// never cache payment info
@@ -756,34 +822,24 @@ class EE_Checkout {
 			}
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
-				$this->_refresh_registration( $reg_cache_ID, $registration, $from_db );
+				$this->_refresh_registration( $reg_cache_ID, $registration );
 			}
-			if ( $from_db ) {
-				// pull fresh TXN data from the db
-				$this->transaction = $this->transaction->get_model()->refresh_entity_map_from_db( $this->transaction->ID() );
-			} else {
-				// make sure our cached TXN is added to the model entity mapper
-				$this->transaction = $this->transaction->get_model()->refresh_entity_map_with( $this->transaction->ID(), $this->transaction );
-			}
+			// make sure our cached TXN is added to the model entity mapper
+			$this->transaction = $this->transaction->get_model()->refresh_entity_map_with( $this->transaction->ID(), $this->transaction );
+
 		} else {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
 		if ( $this->cart instanceof EE_Cart ) {
-			if ( $from_db ) {
-				$this->cart->get_grand_total()->get_model()->refresh_entity_map_from_db(
-					$this->cart->get_grand_total()->ID()
-				);
-			} else {
-				$this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
-					$this->cart->get_grand_total()->ID(),
-					$this->cart->get_grand_total()
-				);
-			}
-
+			$this->cart = $this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
+				$this->cart->get_grand_total()->ID(),
+				$this->cart->get_grand_total()
+			);
 		}
 		return TRUE;
 	}
+
 
 
 	/**
@@ -791,23 +847,18 @@ class EE_Checkout {
 	 *
 	 * @param 	string | int 	$reg_cache_ID
 	 * @param 	EE_Registration 	$registration
-	 * @param bool $from_db true ? EEM_Base::refresh_entity_map_from_db() : EEM_Base::refresh_entity_map_with()
 	 * @return void
 	 */
-	private function _refresh_registration( $reg_cache_ID, $registration, $from_db = false ) {
+	protected function _refresh_registration( $reg_cache_ID, $registration ) {
 
 		// verify object
 		if ( $registration instanceof EE_Registration ) {
 			// update the entity mapper attendee
-			$this->_refresh_registration_attendee( $registration, $from_db );
+			$this->_refresh_registration_attendee( $registration );
 			// update the entity mapper answers for reg form questions
-			$this->_refresh_registration_answers( $registration, $from_db );
+			$this->_refresh_registration_answers( $registration );
 			// make sure the cached registration is added to the model entity mapper
-			if ( $from_db ) {
-				$registration->get_model()->refresh_entity_map_from_db( $reg_cache_ID );
-			} else {
-				$registration->get_model()->refresh_entity_map_with( $reg_cache_ID, $registration );
-			}
+			$registration->get_model()->refresh_entity_map_with( $reg_cache_ID, $registration );
 		} else {
 			EE_Error::add_error(
 				__( 'An invalid Registration object was discovered when attempting to update the model entity mapper.', 'event_espresso' ),
@@ -822,20 +873,15 @@ class EE_Checkout {
 	 * _save_registration_attendee
 	 *
 	 * @param 	EE_Registration 	$registration
-	 * @param bool $from_db true ? EEM_Base::refresh_entity_map_from_db() : EEM_Base::refresh_entity_map_with()
 	 * @return void
 	 */
-	private function _refresh_registration_attendee( $registration, $from_db = false ) {
+	protected function _refresh_registration_attendee( $registration ) {
 
 		$attendee = $registration->attendee();
 		// verify object
 		if ( $attendee instanceof EE_Attendee && $attendee->ID() ) {
 			// make sure the cached attendee is added to the model entity mapper
-			if ( $from_db ) {
-				$registration->attendee()->get_model()->refresh_entity_map_from_db( $attendee->ID() );
-			} else {
-				$registration->attendee()->get_model()->refresh_entity_map_with( $attendee->ID(), $attendee );
-			}
+			$registration->attendee()->get_model()->refresh_entity_map_with( $attendee->ID(), $attendee );
 			// maybe cache primary_attendee_obj ?
 			if ( $registration->is_primary_registrant() ) {
 				$this->primary_attendee_obj = $attendee;
@@ -849,10 +895,9 @@ class EE_Checkout {
 	 * _refresh_registration_answers
 	 *
 	 * @param 	EE_Registration 	$registration
-	 * @param bool $from_db true ? EEM_Base::refresh_entity_map_from_db() : EEM_Base::refresh_entity_map_with()
 	 * @return void
 	 */
-	private function _refresh_registration_answers( $registration, $from_db = false ) {
+	protected function _refresh_registration_answers( $registration ) {
 
 		// now update the answers
 		foreach ( $registration->answers() as $cache_key => $answer ) {
@@ -860,11 +905,7 @@ class EE_Checkout {
 			if ( $answer instanceof EE_Answer ) {
 				if ( $answer->ID() ) {
 					// make sure the cached answer is added to the model entity mapper
-					if ( $from_db ) {
-						$answer->get_model()->refresh_entity_map_from_db( $answer->ID() );
-					} else {
-						$answer->get_model()->refresh_entity_map_with( $answer->ID(), $answer );
-					}
+					$answer->get_model()->refresh_entity_map_with( $answer->ID(), $answer );
 				}
 			} else {
 				EE_Error::add_error(
