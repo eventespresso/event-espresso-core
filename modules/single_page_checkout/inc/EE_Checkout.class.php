@@ -832,10 +832,16 @@ class EE_Checkout {
 			return FALSE;
 		}
 		if ( $this->cart instanceof EE_Cart ) {
-			$this->cart = $this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
+			$grand_total = $this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
 				$this->cart->get_grand_total()->ID(),
 				$this->cart->get_grand_total()
 			);
+			if ( $grand_total instanceof EE_Line_Item ) {
+				$this->cart = EE_Cart::instance( $grand_total );
+			} else {
+				EE_Error::add_error( __( 'A valid Cart was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
+			}
 		}
 		return TRUE;
 	}
