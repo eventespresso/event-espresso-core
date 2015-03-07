@@ -943,18 +943,19 @@ class EE_Checkout {
 				foreach ( $this->transaction->registrations() as $REG_ID => $registration ) {
 					$default_data[ 'registrations' ][ $REG_ID ] = $registration->status_ID();
 				}
-			}
-			if ( $this->transaction->ID() ) {
-				// don't serialize objects
-				$info = $this->_strip_objects( $info );
-				if ( ! isset( $debug_data[ $this->transaction->ID() ] ) ) {
-					$debug_data[ $this->transaction->ID() ] = array();
+				if ( $this->transaction->ID() ) {
+					$TXN_ID = 'TXN_ID: ' . $this->transaction->ID();
+					// don't serialize objects
+					$info = $this->_strip_objects( $info );
+					if ( ! isset( $debug_data[ $TXN_ID ] ) ) {
+						$debug_data[ $TXN_ID ] = array();
+					}
+					$debug_data[ $TXN_ID ][ microtime() ] = array_merge(
+						$default_data,
+						$info
+					);
+					update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
 				}
-				$debug_data[ $this->transaction->ID() ][ microtime() ] = array_merge(
-					$default_data,
-					$info
-				);
-				update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
 			}
 		}
 	}

@@ -54,20 +54,20 @@ class EE_Processor_Base {
 			if ( $transaction instanceof EE_Transaction ) {
 				$default_data[ 'TXN_status' ] = $transaction->status_ID();
 				$default_data[ 'TXN_reg_steps' ] = $transaction->reg_steps();
-				$TXN_ID = 'TXN_ID: ' . $transaction->ID();
-			} else {
-				$TXN_ID = 'TXN_ID: 0 ' . time();
+				if ( $transaction->ID() ) {
+					$TXN_ID = 'TXN_ID: ' . $transaction->ID();
+					// don't serialize objects
+					$info = $this->_strip_objects( $info );
+					if ( ! isset( $debug_data[ $TXN_ID ] ) ) {
+						$debug_data[ $TXN_ID ] = array();
+					}
+					$debug_data[ $TXN_ID ][ microtime() ] = array_merge(
+						$default_data,
+						$info
+					);
+					update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
+				}
 			}
-			// don't serialize objects
-			$info = $this->_strip_objects( $info );
-			if ( ! isset( $debug_data[ $TXN_ID ] ) ) {
-				$debug_data[ $TXN_ID ] = array();
-			}
-			$debug_data[ $TXN_ID ][ microtime() ] = array_merge(
-				$default_data,
-				$info
-			);
-			update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
 		}
 
 	}
