@@ -349,6 +349,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout = $this->_initialize_checkout();
 		// get the $_GET
 		$this->_get_request_vars();
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__, array(), true );
 		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
@@ -379,34 +381,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// lock the transaction
 		$this->checkout->transaction->lock();
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__,__FUNCTION__,__LINE__ );
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
-
-
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] =	$this->checkout->transaction->status_ID();
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
-		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-		}
-		foreach ( $this->checkout->transaction->registrations() as $reg_id => $registration ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $reg_id ] = $registration->status_ID();
-		}
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
-
-
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// get reg form
 		$this->_check_form_submission();
 		// checkout the action!!!
@@ -1237,26 +1219,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 
-
-		if ( EE_Registry::instance()->REQ->ajax || ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ))) {
-			// DEBUG
-			$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-			$microtime = microtime();
-			if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-			}
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'redirect_url' ] = $this->checkout->redirect_url;
-			update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-			// DEBUG
-		}
-
-
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax ) {
+			// DEBUG LOG
+			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
@@ -1266,6 +1232,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// going somewhere ?
 		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array( 'redirect_url' => $this->checkout->redirect_url )
+			);
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 			$this->unlock_transaction();

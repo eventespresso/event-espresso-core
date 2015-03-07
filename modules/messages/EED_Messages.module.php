@@ -336,6 +336,15 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$data = array( $transaction, null );
 		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
+			self::log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$transaction,
+				array(
+					'delivered'  			=> current_time( 'mysql' ),
+					'message_type' 	=> 'payment_reminder',
+					'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
+				)
+			);
 			//if ( WP_DEBUG ) {
 			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
 			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
@@ -374,6 +383,16 @@ class EED_Messages  extends EED_Module {
 
 
 		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
+			self::log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$transaction,
+				array(
+					'delivered' 			=>  current_time( 'mysql' ),
+					'message_type' 	=> $message_type,
+					'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
+					'pay_status' 		=> $payment->status_obj()->code( false, 'sentence' ),
+				)
+			);
 			//if ( WP_DEBUG ) {
 			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
 			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
@@ -431,18 +450,16 @@ class EED_Messages  extends EED_Module {
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
 			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
-				// DEBUG
-				$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-				$microtime = microtime();
-				if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
-					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-				}
-				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'message_type' ] = $message_type;
-				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'reg_status' ] = $registration->status_obj()->code( false, 'sentence' );
-				update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-				// DEBUG
+				// DEBUG LOG
+				self::log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$registration->transaction(),
+					array(
+						'message_type' => $message_type,
+						'reg_status' => $registration->status_obj()->code( false, 'sentence' ),
+					)
+				);
+
 				//if ( WP_DEBUG ) {
 				//	$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
 				//	if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
@@ -476,22 +493,15 @@ class EED_Messages  extends EED_Module {
 		/** @type EE_Payment $payment */
 		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
 		unset( $extra_details[ 'last_payment' ] );
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment ? $payment->ID() : '';
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_status' ] = $payment ? $payment->status() : '';
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'TXN_paid' ] = $registration->transaction()->paid();
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status' ] = $registration->status_ID();
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'extra_details' ] = $extra_details;
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
-
+		self::log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction(),
+			array(
+				'payment' => $payment,
+				'extra_details'   => $extra_details,
+			),
+			true
+		);
 
 		//first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
@@ -718,7 +728,70 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param \EE_Transaction $transaction
+	 * @param array $info
+	 * @param bool $display_request
+	 */
+	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
+		if ( WP_DEBUG ) {
+			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
+			$default_data = array(
+				$class => $func . '() : ' . $line,
+				'REQ'  => $display_request ? $_REQUEST : '',
+			);
+			if ( $transaction instanceof EE_Transaction ) {
+				$default_data[ 'TXN_status' ] = $transaction->status_ID();
+				$default_data[ 'TXN_reg_steps' ] = $transaction->reg_steps();
+				$TXN_ID = 'TXN_ID: ' . $transaction->ID();
+			} else {
+				$TXN_ID = 'TXN_ID: 0 ' . time();
+			}
+			// don't serialize objects
+			$info = self::_strip_objects( $info );
+			if ( ! isset( $debug_data[ $TXN_ID ] ) ) {
+				$debug_data[ $TXN_ID ] = array();
+			}
+			$debug_data[ $TXN_ID ][ microtime() ] = array_merge(
+				$default_data,
+				$info
+			);
+			update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
+		}
 
+	}
+
+
+
+	/**
+	 * _strip_objects
+	 *
+	 * @param array $info
+	 * @return array
+	 */
+	protected static function _strip_objects( $info = array() ) {
+		foreach ( $info as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$info[ $key ] = self::_strip_objects( $value );
+			} else if ( is_object( $value ) ) {
+				$object_class = get_class( $value );
+				$info[ $object_class ] = array();
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : 0;
+				if ( method_exists( $value, 'status' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status();
+				} else if ( method_exists( $value, 'status_ID' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status_ID();
+				}
+				unset( $info[ $key ] );
+			}
+		}
+		return (array)$info;
+	}
 
 }
 // End of file EED_Messages.module.php

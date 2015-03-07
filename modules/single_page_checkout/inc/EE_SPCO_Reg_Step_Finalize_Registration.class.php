@@ -71,10 +71,17 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 */
 	public function process_reg_step() {
 //		printr( $this->checkout, '$this->checkout', __FILE__, __LINE__ );
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// ensure all data gets refreshed from the db
 		if ( $this->checkout->refresh_all_entities( true ) ) {
 			// ensures that all details and statuses for transaction, registration, and payments are updated
 			$txn_update_params = $this->_finalize_transaction();
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array( 'txn_update_params' => $txn_update_params )
+			);
 			// this will result in the base session properties getting saved to the TXN_Session_data field
 			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
 			// you don't have to go home but you can't stay here !
@@ -123,28 +130,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->checkout->transaction->status_ID();
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_paid' ] = $this->checkout->transaction->paid();
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $this->checkout->transaction->reg_steps();
-		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-		}
-		foreach ( $this->checkout->transaction->registrations() as $registration ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
-					$registration->status_ID();
-		}
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,

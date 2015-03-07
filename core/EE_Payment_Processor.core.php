@@ -77,28 +77,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$method,
 				$by_admin
 			);
-			// DEBUG
-			$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-			$microtime = microtime();
-			if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
-			}
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'IPN' ] = false;
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'PAY_ID' ] = $payment->ID();
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'PAY_status' ] = $payment->status();
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_status' ] = $transaction->status_ID();
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_paid' ] = $transaction->paid();
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $transaction->reg_steps();
-			if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-			}
-			foreach ( $transaction->registrations() as $registration ) {
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
-						$registration->status_ID();
-			}
-			update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-			// DEBUG
+			// DEBUG LOG
+			$this->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$transaction,
+				array(
+					'IPN'     => false,
+					'payment' => $payment,
+				)
+			);
 			//offline gateways DON'T return a payment object, so check it
 			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			return $payment;
@@ -203,21 +190,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
 				$payment->save();
-
-
-				// DEBUG
-				$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-				$microtime = microtime();
-				if ( ! isset( $DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ] ) ) {
-					$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ] = array();
-				}
-				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ 'IPN' ] = true;
-				update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-				// DEBUG
-
-
+				// DEBUG LOG
+				$this->log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$transaction,
+					array(
+						'IPN' => true,
+						'payment' => $payment,
+					)
+				);
 				//  update the TXN
 				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
 			}else{
@@ -363,21 +344,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
-				// DEBUG
-				$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-				$microtime = microtime();
-				if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
-					$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
-				}
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-				if ( ! $IPN  ) {
-					$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
-				}
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'IPN' ] = $IPN;
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'PAY_ID' ] = $payment->ID();
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'PAY_status' ] = $payment->status();
-				update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-				// DEBUG
+				// DEBUG LOG
+				$this->log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$transaction,
+					array(
+						'IPN'     => $IPN,
+						'payment' => $payment,
+					)
+				);
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				// set new value for total paid
@@ -432,26 +407,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			$transaction->save();
 		}
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_status' ] = $transaction->status_ID();
-		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_paid' ] = $transaction->paid();
-		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_reg_steps' ] = $transaction->reg_steps();
-		if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-		}
-		foreach ( $transaction->registrations() as $registration ) {
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
-					$registration->status_ID();
-		}
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
-
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'IPN'     => $IPN,
+				'payment_options_step_completed' => $payment_options_step_completed,
+			)
+		);
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}

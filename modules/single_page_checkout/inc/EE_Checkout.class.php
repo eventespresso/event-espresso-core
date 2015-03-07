@@ -517,26 +517,8 @@ class EE_Checkout {
 		//$this->save_all_data( FALSE );
 		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $this->transaction->ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ] = array();
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'step' ] = $this->step;
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'action' ] = $this->action;
-		$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'TXN_status' ] = $this->transaction->status_ID();
-		if ( ! isset( $DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ] ) ) {
-			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ] = array();
-		}
-		foreach ( $this->transaction->registrations() as $registration ) {
-			$DEBUG_7631[ $this->transaction->ID() ][ $microtime ][ 'registrations' ][ $registration->ID() ] =
-					$registration->status_ID();
-		}
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
+		// DEBUG LOG
+		$this->log( __CLASS__, __FUNCTION__, __LINE__ );
 
 	}
 
@@ -771,7 +753,7 @@ class EE_Checkout {
 	 * @param   EE_Transaction $transaction
 	 * @return  EE_Attendee | null
 	 */
-	protected function _refresh_primary_attendee_obj_from_db( $transaction ) {
+	protected function _refresh_primary_attendee_obj_from_db( EE_Transaction $transaction ) {
 
 		$primary_attendee_obj = null;
 		// grab the saved registrations from the transaction
@@ -934,6 +916,75 @@ class EE_Checkout {
 			$reg_step->checkout = $this;
 		}
 	}
+
+
+
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param array $info
+	 * @param bool $display_request
+	 */
+	function log( $class = '', $func = '', $line = '', $info = array(), $display_request = false ) {
+		if ( WP_DEBUG ) {
+			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
+			$default_data = array(
+				$class 		=> $func . '() : ' . $line,
+				'REQ' 		=> $display_request ? $_REQUEST : '',
+				'step' 		=> $this->step,
+				'action' 	=> $this->action,
+			);
+			if ( $this->transaction instanceof EE_Transaction ) {
+				$default_data[ 'TXN_status' ] 		= $this->transaction->status_ID();
+				$default_data[ 'TXN_reg_steps' ] 	= $this->transaction->reg_steps();
+				foreach ( $this->transaction->registrations() as $REG_ID => $registration ) {
+					$default_data[ 'registrations' ][ $REG_ID ] = $registration->status_ID();
+				}
+			}
+			if ( $this->transaction->ID() ) {
+				// don't serialize objects
+				$info = $this->_strip_objects( $info );
+				if ( ! isset( $debug_data[ $this->transaction->ID() ] ) ) {
+					$debug_data[ $this->transaction->ID() ] = array();
+				}
+				$debug_data[ $this->transaction->ID() ][ microtime() ] = array_merge(
+					$default_data,
+					$info
+				);
+				update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
+			}
+		}
+	}
+
+
+	/**
+	 * _strip_objects
+	 *
+	 * @param array $info
+	 * @return array
+	 */
+	function _strip_objects( $info = array() ) {
+		foreach ( $info as $key => $value ) {
+			if ( is_array( $value )) {
+				$info[ $key ] = $this->_strip_objects( $value );
+			} else if ( is_object( $value ) ) {
+				$object_class = get_class( $value );
+				$info[ $object_class ] = array();
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : 0;
+				if ( method_exists( $value, 'status' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status();
+				} else if ( method_exists( $value, 'status_ID' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status_ID();
+				}
+				unset( $info[ $key ] );
+			}
+		}
+		return (array)$info;
+	}
+
 
 
 

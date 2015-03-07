@@ -13,7 +13,7 @@ EE_Registry::instance()->load_class( 'Processor_Base' );
  *
  */
 
-class EE_Registration_Processor {
+class EE_Registration_Processor extends EE_Processor_Base {
 
 	/**
 	 * initial reg status at the beginning of this request.
@@ -304,25 +304,10 @@ class EE_Registration_Processor {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->status_ID() );
 
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
-		// DEBUG
-
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
 			$registration->save();
 		}
-
-		// DEBUG
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $registration->status_ID();
-		update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-		// DEBUG
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->status_ID() );
@@ -332,6 +317,15 @@ class EE_Registration_Processor {
 			array_merge(
 				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
 				array( 'checkout_or_payment' 	=> true )
+			)
+		);
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction(),
+			array(
+				'old_reg_status' => $this->old_reg_status(),
+				'new_reg_status' => $this->new_reg_status(),
 			)
 		);
 		return $this->new_reg_status() == EEM_Registration::status_id_approved ? true : false;

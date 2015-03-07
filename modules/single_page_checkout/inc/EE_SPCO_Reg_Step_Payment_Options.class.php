@@ -687,6 +687,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 			default:
 				$payment_successful = $this->_process_payment();
+				// DEBUG LOG
+				$this->checkout->log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					array( 'payment' => $this->checkout->payment )
+				);
 				if ( $payment_successful ) {
 					$this->checkout->continue_reg = true;
 					$this->_maybe_set_completed( $this->checkout->payment_method );
@@ -941,26 +946,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
-
-			// DEBUG
-			$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-			$microtime = microtime();
-			if ( ! isset( $DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] ) ) {
-				$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
-			}
-			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $primary_registration->status_ID();
-			// DEBUG
-
 			/** @type EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 			$registration_processor->toggle_incomplete_registration_status_to_default( $primary_registration );
-
-			// DEBUG
-			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_2' ] = $primary_registration->status_ID();
-			update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
-			// DEBUG
 
 			return TRUE;
 		}
@@ -1070,18 +1059,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 		}
-		// DEBUG
-		$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-		$microtime = microtime();
-		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-		}
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'return_url' ] = $return_url;
 
-		// DEBUG
 		return $return_url;
 	}
 
@@ -1095,26 +1073,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function process_gateway_response() {
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			// DEBUG LOG
+			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 			// grab fresh entities from the db
 			$this->checkout->refresh_all_entities( true );
-
-
-			// DEBUG
-			$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
-			$microtime = microtime();
-			if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
-				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
-			}
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
-			// DEBUG
-
-
 			$payment = $this->checkout->transaction->last_payment();
 			// process results
 			$payment = $this->_validate_payment( $payment );
 			$payment = $this->_post_payment_processing( $payment, true );
+			// DEBUG LOG
+			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+				array( 'payment' => $payment )
+			);
 			// if payment was not declined by the payment gateway or cancelled by the registrant
 			if ( $payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_declined && $payment->status() !== EEM_Payment::status_id_cancelled ) {
 				// store that for later
