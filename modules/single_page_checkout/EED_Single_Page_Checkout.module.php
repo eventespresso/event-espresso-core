@@ -922,6 +922,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _process_form_action() {
 //		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
 //		d( $this->checkout );
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
 			// AJAX next step reg form
