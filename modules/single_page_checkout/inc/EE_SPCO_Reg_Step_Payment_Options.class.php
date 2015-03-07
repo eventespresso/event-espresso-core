@@ -1072,13 +1072,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return EE_Payment | FALSE
 	 */
 	public function process_gateway_response() {
+		// grab fresh entities from the db
+		$this->checkout->refresh_all_entities( true );
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			// DEBUG LOG
-			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-			// grab fresh entities from the db
-			$this->checkout->refresh_all_entities( true );
+			// get payment details and process results
 			$payment = $this->checkout->transaction->last_payment();
-			// process results
 			$payment = $this->_validate_payment( $payment );
 			$payment = $this->_post_payment_processing( $payment, true );
 			// DEBUG LOG
