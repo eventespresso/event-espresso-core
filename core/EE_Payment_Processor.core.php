@@ -395,7 +395,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		// if processing an IPN...
-		if ( $IPN ) {
+		//if ( $IPN ) {
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			// maybe update status, but don't save transaction just yet
@@ -406,7 +406,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			}
 			$transaction->save();
-		}
+		//}
 		// DEBUG LOG
 		$this->log(
 			__CLASS__, __FUNCTION__, __LINE__,
