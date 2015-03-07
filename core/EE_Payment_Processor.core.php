@@ -83,7 +83,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
 				$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 			}
-			$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'IPN' ] = false;
 			$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'PAY_ID' ] = $payment->ID();
@@ -212,7 +211,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( ! isset( $DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ] ) ) {
 					$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ] = array();
 				}
-				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ] = array();
 				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
 				$DEBUG_7631[ $payment->transaction()->ID() ][ $microtime ][ 'IPN' ] = true;
@@ -371,7 +369,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
 					$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 				}
-				$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 				$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 				if ( ! $IPN  ) {
 					$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
@@ -441,7 +438,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( ! isset( $DEBUG_7631[ $transaction->ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 		}
-		$DEBUG_7631[ $transaction->ID() ][ $microtime ] = array();
 		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_status' ] = $transaction->status_ID();
 		$DEBUG_7631[ $transaction->ID() ][ $microtime ][ 'TXN_paid' ] = $transaction->paid();

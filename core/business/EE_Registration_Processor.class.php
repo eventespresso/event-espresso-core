@@ -310,7 +310,6 @@ class EE_Registration_Processor {
 		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
 		}
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $registration->status_ID();
 		// DEBUG

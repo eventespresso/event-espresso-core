@@ -948,7 +948,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( ! isset( $DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] ) ) {
 				$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
 			}
-			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ] = array();
 			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 			$DEBUG_7631[ $primary_registration->transaction_ID() ][ $microtime ][ 'REG_status_1' ] = $primary_registration->status_ID();
 			// DEBUG
@@ -1077,7 +1076,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 		}
-		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 		$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;
@@ -1107,7 +1105,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( ! isset( $DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] ) ) {
 				$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 			}
-			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ] = array();
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'step' ] = $this->checkout->step;
 			$DEBUG_7631[ $this->checkout->transaction->ID() ][ $microtime ][ 'action' ] = $this->checkout->action;

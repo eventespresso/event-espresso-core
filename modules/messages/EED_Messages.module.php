@@ -431,6 +431,18 @@ class EED_Messages  extends EED_Module {
 		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
 			self::_load_controller();
 			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
+				// DEBUG
+				$DEBUG_7631 = get_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), array() );
+				$microtime = microtime();
+				if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
+					$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
+				}
+				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
+				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
+				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'message_type' ] = $message_type;
+				$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'reg_status' ] = $registration->status_obj()->code( false, 'sentence' );
+				update_option( 'EE_DEBUG_IPN_' . EE_Session::instance()->id(), $DEBUG_7631 );
+				// DEBUG
 				//if ( WP_DEBUG ) {
 				//	$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
 				//	if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
@@ -470,7 +482,6 @@ class EED_Messages  extends EED_Module {
 		if ( ! isset( $DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] ) ) {
 			$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
 		}
-		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ] = array();
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ __CLASS__ ] = __FUNCTION__ . '() ' . __LINE__;
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'REQ' ] = $_REQUEST;
 		$DEBUG_7631[ $registration->transaction_ID() ][ $microtime ][ 'PAY_ID' ] = $payment ? $payment->ID() : '';
