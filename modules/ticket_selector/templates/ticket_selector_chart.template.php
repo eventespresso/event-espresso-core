@@ -84,8 +84,39 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			break;
 		}
 
+		/**
+		 * Allow plugins to hook in and abort the generation and display of this row to do
+		 * something else if they want.
+		 * For an addon to abort things, all they have to do is register a filter with this hook, and
+		 * return a value that is NOT false.  Whatever is returned gets echoed instead of the
+		 * current row.
+		 *
+		 *
+		 * @var string|bool
+		 */
+		if ( false !== ( $new_row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_content;
+			continue;
+		}
 	?>
 				<tr class="tckt-slctr-tbl-tr <?php echo $status_class . ' ' . espresso_get_object_css_class( $ticket ); ?>">
+		<?php
+		/**
+		 * Allow plugins to hook in and abort the generation and display of the contents of this
+		 * row to do something else if they want.
+		 * For an addon to abort things, all they have to do is register a filter with this hook, and
+		 * return a value that is NOT false.  Whatever is returned gets echoed instead of the
+		 * current row.
+		 *
+		 *
+		 * @var string|bool
+		 */
+		if ( false !== ( $new_row_cells_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_inside_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+			echo $new_row_cells_content;
+			echo '</tr>';
+			continue;
+		}
+		?>
 					<td class="tckt-slctr-tbl-td-name">
 						<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 						<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )); ?>">
@@ -183,7 +214,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					}
 				?>
 						<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
-						<input type="hidden" name="tkt-slctr-ticket-obj-<?php echo $EVT_ID; ?>[]" value="<?php echo base64_encode( serialize( $ticket )); ?>" />
 
 					</td>
 				</tr>
@@ -210,9 +240,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<tbody>
 									<?php if ( $ticket->base_price() instanceof EE_Price ) { ?>
 												<tr>
-													<td class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
-													<td class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
-													<td class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
+													<td data-th="<?php _e( 'Name', 'event_espresso' ); ?>" class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
+													<td data-th="<?php _e( 'Amount', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
 												</tr>
 												<?php
 														$running_total = $ticket->base_price()->amount();
@@ -222,42 +252,42 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													// now add price modifiers
 													foreach ( $ticket->price_modifiers() as $price_mod ) { ?>
 												<tr>
-													<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
+													<td data-th="<?php _e( 'Name', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
 												<?php if ( $price_mod->is_percent() ) { ?>
-													<td class="small-text"><?php echo $price_mod->desc(); ?> <?php echo $price_mod->amount(); ?>%</td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="small-text"><?php echo $price_mod->desc(); ?> <?php echo $price_mod->amount(); ?>%</td>
 													<?php
 														$new_sub_total = $running_total * ( $price_mod->amount() / 100 );
 														$new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
 													?>
 												<?php } else { ?>
 													<?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
-													<td class="small-text"><?php echo $price_mod->desc(); ?></td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="small-text"><?php echo $price_mod->desc(); ?></td>
 													<?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
 												<?php } ?>
-													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
+													<td data-th="<?php _e( 'Amount', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
 													<?php $running_total += $new_sub_total; ?>
 												</tr>
 											<?php } ?>
 											<?php if ( $ticket->taxable() ) { ?>
 												<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
 												<tr>
-													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
-													<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
+													<td colspan="2" class="jst-rght small-text sbttl"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
+													<td data-th="<?php _e( 'subtotal', 'event_espresso' ); ?>" class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
 												</tr>
 
 												<?php foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
 												<tr>
-													<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
-													<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
+													<td data-th="<?php _e( 'Name', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $tax->name(); ?></td>
+													<td data-th="<?php _e( 'Description', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
 													<?php $tax_amount = $running_total * ( $tax->amount() / 100 ); ?>
-													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
+													<td data-th="<?php _e( 'Amount', 'event_espresso' ); ?>" class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
 													<?php $running_total += $tax_amount; ?>
 												</tr>
 												<?php } ?>
 											<?php } ?>
 												<tr>
-													<td colspan="2" class="jst-rght small-text"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?></b></td>
-													<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
+													<td colspan="2" class="jst-rght small-text ttl-lbl-td"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?></b></td>
+													<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?>" class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
 												</tr>
 											</tbody>
 										</table>
@@ -343,25 +373,25 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										?>
 
 											<tr>
-												<td class="small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date', __( 'Event Date ', 'event_espresso' )); ?>" class="small-text">
 													<?php $datetime_name = $datetime->name(); ?>
 													<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
 													<?php echo $datetime->date_range( $date_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php _e( 'Time ', 'event_espresso' ); ?>" class="cntr small-text">
 													<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold', __( 'This Ticket Sold', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $ticket->sold(); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', __( 'This Ticket Left', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
 												</td>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', __( 'Total Tickets Sold', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $datetime->sold(); ?>
 												</td>
 										<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
-												<td class="cntr small-text">
+												<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left', __( 'Total Spaces Left', 'event_espresso' )); ?>" class="cntr small-text">
 													<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 												</td>
 											</tr>
@@ -393,7 +423,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
-	<input type="hidden" name="tkt-slctr-event-<?php echo $EVT_ID; ?>" value="<?php echo base64_encode( serialize( $event )); ?>" />
 
 <?php if ( $max_atndz > 0 ) { ?>
 	<p class="smaller-text lt-grey-text">* <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote', sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz ));?></p>

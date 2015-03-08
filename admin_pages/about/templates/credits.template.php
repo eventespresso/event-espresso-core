@@ -107,7 +107,10 @@
 	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a Github pull request. Want to see your name listed here? %sApply for access to our github repo.%s When you submit a pull request that gets included in a major release, we\'ll add your name here linked to your Github profile.', 'event_espresso'), '<a href="http://eventespresso.com/developers/request-repo-access/">', '</a>' ); ?>
 </p>
 <p class="wp-credits-list">
-	<a href="https://github.com/Veraxus">Matt Van Andel</a>
+	<ul>
+		<li><a href="https://github.com/Veraxus">Matt Van Andel</a></li>
+		<li><a href="https://github.com/jonathan-dejong">Jonathan de Jong</a></li>
+	</ul>
 
 </p>
 <h4 class="wp-people-group"><?php _e('External Libraries', 'event_espresso'); ?></h4>

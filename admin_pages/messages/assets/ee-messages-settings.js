@@ -4,15 +4,15 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This function toggles message boxes active and inactive setting the correct selectors for other js used on this page
-		 * @param  {string} messenger What messenger is being toggled
+		 * @param  {string} incoming_messenger What messenger is being toggled
 		 * @param  {string} type      'active' or 'inactive'? (default: active)
 		 * @return {void}
 		 */
-		toggle: function( messenger, type ) {
+		toggle: function( incoming_messenger, type ) {
 			if ( typeof(type) === 'undefined' ) type = 'active';
 
 			//makes sure we strip out any '#'
-			messenger = messenger.replace('#','');
+			messenger = incoming_messenger.replace('#','');
 
 			//set refs
 			var active_main = '#espresso_' + messenger + '_settings';
@@ -32,6 +32,41 @@ jQuery(document).ready(function($) {
 			//make sure we grab any changed containers
 			$active_mts = $( '#active-message-types' );
 			$inactive_mts = $( '#inactive-message-types' );
+
+			//set draggables and droppables!
+			$( "li", $active_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});
+
+			//make sure inactives are draggable too
+			$( "li", $inactive_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});/**/
+
+			$inactive_mts.droppable({
+				accept: "#active-message-types li",
+				activeClass: "ui-state-highlight",
+				drop: function( event, ui ) {
+					MSG_helper.inactivate( ui.draggable );
+				}
+			});
+
+
+			$active_mts.droppable({
+				accept: "#inactive-message-types li",
+				activeClass: "custom-state-active",
+				drop: function( event, ui ) {
+					MSG_helper.activate( ui.draggable );
+				}
+			});
 
 			return this; //make chainable
 		},
@@ -123,7 +158,7 @@ jQuery(document).ready(function($) {
 		init: function() {
 			$('#postbox-container-2 .postbox').hide();
 			$('#postbox-container-1 .postbox').hide();
-			$('.mt-settings-content').toggle();
+			$('.mt-settings-content').hide();
 
 			return this; //make chainable
 		},
@@ -152,14 +187,14 @@ jQuery(document).ready(function($) {
 		},
 
 
-		messenger_toggle: function( messenger, status ) {
+		messenger_toggle: function( messenger, status, event ) {
 			var data = {
 				messenger: messenger,
 				status: status,
 				action: 'activate_messenger',
 				page: 'espresso_messages',
 				ee_admin_ajax: true,
-				activate_nonce: $('#on-off-nonce').text()
+				activate_nonce: $('#on-off-nonce-' + messenger).text()
 			};
 
 			$('.ajax-loader-grey').toggle();
@@ -180,6 +215,9 @@ jQuery(document).ready(function($) {
 								MSG_helper.update_mt_form(value, messenger);
 							});
 						}
+						return true;
+					} else {
+						event.preventDefault();
 					}
 				}
 			});
@@ -222,7 +260,7 @@ jQuery(document).ready(function($) {
 		toggle_msg_elements: function( messenger, status, mts ) {
 			$('.ajax-loader-grey').toggle().hide();
 
-			var $on_off_button = $('#on-off-' + messenger),
+			var $on_off_button = $('#ee-on-off-toggle-' + messenger),
 				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
 				$active_mts = $('#active-message-types'),
 				$inactive_mts = $('#inactive-message-types'),
@@ -233,7 +271,6 @@ jQuery(document).ready(function($) {
 				show_hide_msgr_form = $('#has_form_class').text();
 
 			if ( status == 'on' ) {
-				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
 				if ( show_hide_msgr_form !== 'hidden' )
 					$( $messenger_settings ).removeClass('hidden');
 				$( $active_mts ).removeClass('hidden');
@@ -243,7 +280,6 @@ jQuery(document).ready(function($) {
 				$( $active_on_msg ).removeClass('hidden');
 				$( $msgr_link ).addClass('messenger-active');
 			} else if ( status == 'off' ) {
-				$( $on_off_button ).attr('value', 'messenger-on').attr('class','on-off-inactive on-off-action');
 				$( $messenger_settings ).addClass('hidden');
 				$( $active_mts ).addClass('hidden');
 				$( $inactive_mts ).addClass('hidden');
@@ -301,9 +337,9 @@ jQuery(document).ready(function($) {
 						MSG_helper.display_notices(resp.notices);
 						MSG_helper.display_content(display_content, whr, wht);
 					}
+					return true;
 				}
 			});
-			return false;
 		},
 
 
@@ -354,21 +390,9 @@ jQuery(document).ready(function($) {
 
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
-	MSG_helper.init().toggle(messenger);
-
-	//defined the global active and inactive message type containers
-	var $active_mts = $( '#active-message-types' ),
-	$inactive_mts = $( '#inactive-message-types' );
+	MSG_helper.init().toggle('email');
 
 
-	//set draggables and droppables!
-	$( "li", $active_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});
 
 	//toggle slide
 	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
@@ -377,32 +401,6 @@ jQuery(document).ready(function($) {
 
 	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
 		MSG_helper.slide(this);
-	});
-
-	//make sure inactives are draggable too
-	$( "li", $inactive_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});/**/
-
-	$inactive_mts.droppable({
-		accept: "#active-message-types li",
-		activeClass: "ui-state-highlight",
-		drop: function( event, ui ) {
-			MSG_helper.inactivate( ui.draggable );
-		}
-	});
-
-
-	$active_mts.droppable({
-		accept: "#inactive-message-types li",
-		activeClass: "custom-state-active",
-		drop: function( event, ui ) {
-			MSG_helper.activate( ui.draggable );
-		}
 	});
 
 	/**
@@ -427,11 +425,11 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.activate_messages_on_off_toggle_container').on('click', '.on-off-action', function(e) {
-		e.preventDefault();
-		var messenger = $(this).attr('id').replace('on-off-',''),
-		status = $(this).attr('value').replace('messenger-','');
-		MSG_helper.messenger_toggle(messenger, status);
+	$('.activate_messages_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e) {
+		var messenger = $(this).attr('id').replace('ee-on-off-toggle-',''),
+		status = $(this).prop('checked') ? 'on' : 'off';
+		e.stopPropagation();
+		MSG_helper.messenger_toggle(messenger, status, e)
 	});
 
 

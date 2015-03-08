@@ -89,7 +89,7 @@ final class EE_Front_Controller {
 		// process any content shortcodes
 		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 		// process request with module factory
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10, 1 );
 		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		// load css and js
@@ -101,8 +101,7 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -133,18 +132,6 @@ final class EE_Front_Controller {
 	}
 
 
-
-
-	/**
-	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
-	 *
-	 *
-	 * @param  array  $exclude_array any existing pages being excluded are in this array.
-	 * @return array
-	 */
-	public function remove_pages_from_wp_list_pages( $exclude_array ) {
-		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
-	}
 
 
 
@@ -258,7 +245,7 @@ final class EE_Front_Controller {
 			if ( $page_on_front ) {
 				// k now we need to find the post_name for this page
 				global $wpdb;
-				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+				$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d";
 				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
 				// set the current post slug to what it actually is
 				$current_post = $page_on_front ? $page_on_front : $current_post;
@@ -340,7 +327,7 @@ final class EE_Front_Controller {
 				// cycle thru module routes
 				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
-					$module = $Module_Request_Router->resolve_route( $route );
+					$module = $Module_Request_Router->resolve_route( $route[0], $route[1] );
 					if( $module instanceof EED_Module ) {
 						// get registered view for route
 						$this->_template_path = $Module_Request_Router->get_view( $route );

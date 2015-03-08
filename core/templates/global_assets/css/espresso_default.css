@@ -29,18 +29,17 @@
 	font-size: inherit;
    	height: auto;
 	margin-right: .5em;
-    	vertical-align: middle;
+    vertical-align: middle;
 	width: auto;
 }
 
 .ee-icon {
 	display: inline-block;
-	font-family: 'ee_dashicons' !important;
+	font-family: 'ee_dashicons', sans-serif !important;
  	font-style: normal;
 	font-weight: 400;
 	font-variant: normal;
 	line-height: 1;
-	speak: none;
     	text-align: center;
     	text-decoration: inherit;
 	text-transform: none;
@@ -148,7 +147,7 @@
 .tags-links a:before {
 	content: "\f318";
 	display: inline-block;
-	font-family: dashicons;
+	font-family: 'dashicons', sans-serif;
 	font-style: normal;
 	font-weight: 400;
 	line-height: 1;
@@ -198,9 +197,8 @@
 
 .ee-upcoming-events-widget-li {
 }
-.ee-upcoming-events-widget-ul li ul,
-.ee-upcoming-events-widget-ul li p {
-	padding: 0px 10px 10px;
+.ee-upcoming-events-widget-ul li ul {
+	padding: 0 0 1em;
 }
 .ee-upcoming-events-widget-header-dv {
 	position: relative;
@@ -274,8 +272,11 @@ ul.ee-upcoming-events-widget-ul li{
 	position: relative;
 	top: -2px;
 	margin: 0 0 1em;
-	background-color: #00B1CA;
-	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
+	background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
+	background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
+	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
+	background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
+
 	border: 1px solid rgba(0,0,0,0.01) !important;
 	border-top: 1px solid rgba(255,255,255,0.5) !important;
 	border-bottom: 1px solid rgba(0,0,0,0.25) !important;
@@ -295,7 +296,7 @@ ul.ee-upcoming-events-widget-ul li{
 }
 .ee-button:hover {
 	color: #fff !important;
-	background-color: #00c7e3;  /*4EBFDE*/
+	background-color: #00c7e3;
 }
 
 .ee-button:active { top:-1px; }
@@ -307,7 +308,7 @@ ul.ee-upcoming-events-widget-ul li{
 .ee-button.ee-register-button:visited {
 	margin: 0;
 	font-weight: bold;
-	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
 }
 input.ee-register-button {
 	float: right;
@@ -356,32 +357,95 @@ input.ee-register-button {
 }
 
 /* BUTTON COLOURS */
-.ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; background-image: -moz-linear-gradient( center top , #F65077, #E44064 ); }
-.ee-pink.ee-button:hover { background-color: #F65077; background-image: none; }
+.ee-pink.ee-button, .ee-pink.ee-button:visited {
+	background: #E44064 -webkit-linear-gradient( #F65077, #E44064 ); /* For Safari 5.1 to 6.0 */
+	background: #E44064 -o-linear-gradient( #F65077, #E44064 ); /* For Opera 11.1 to 12.0 */
+	background: #E44064 -moz-linear-gradient( #F65077, #E44064 ); /* For Firefox 3.6 to 15 */
+	background: #E44064 linear-gradient( #F65077, #E44064 ); /* Standard syntax */
+}
+.ee-pink.ee-button:hover {
+	background: #F65077 none;
+}
 
-.ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; background-image: -moz-linear-gradient( center top , #80DD5E, #70CC50 ); }
-.ee-green.ee-button:hover { background-color: #80DD5E; background-image: none; }
+.ee-green.ee-button, .ee-green.ee-button:visited {
+	background: #70CC50 -webkit-linear-gradient( #80DD5E, #70CC50 ); /* For Safari 5.1 to 6.0 */
+	background: #70CC50 -o-linear-gradient( #80DD5E, #70CC50 ); /* For Opera 11.1 to 12.0 */
+	background: #70CC50 -moz-linear-gradient( #80DD5E, #70CC50 ); /* For Firefox 3.6 to 15 */
+	background: #70CC50 linear-gradient( #80DD5E, #70CC50 ); /* Standard syntax */
+}
+.ee-green.ee-button:hover {
+	background : #80DD5E none;
+}
 
-.ee-red.ee-button, .ee-red.ee-button:visited { background-color: #B4113F; background-image: -moz-linear-gradient( center top , #C8194E, #B4113F ); }
-.ee-red.ee-button:hover { 	background-color: #C8194E; background-image: none; }
+.ee-red.ee-button, .ee-red.ee-button:visited {
+	background: #B4113F -webkit-linear-gradient( #C8194E, #B4113F ); /* For Safari 5.1 to 6.0 */
+	background: #B4113F -o-linear-gradient( #C8194E, #B4113F ); /* For Opera 11.1 to 12.0 */
+	background: #B4113F -moz-linear-gradient( #C8194E, #B4113F ); /* For Firefox 3.6 to 15 */
+	background: #B4113F linear-gradient( #C8194E, #B4113F ); /* Standard syntax */
+}
+.ee-red.ee-button:hover {
+	background : #C8194E none;
+}
 
-.ee-orange.ee-button, .ee-orange.ee-button:visited { background-color: #E76700; background-image: -moz-linear-gradient( center top , #FA730B, #E76700 ); }
-.ee-orange.ee-button:hover { background-color: #FA730B; background-image: none; }
+.ee-orange.ee-button, .ee-orange.ee-button:visited {
+	background: #E76700 -webkit-linear-gradient( #FA730B, #E76700 ); /* For Safari 5.1 to 6.0 */
+	background: #E76700 -o-linear-gradient( #FA730B, #E76700 ); /* For Opera 11.1 to 12.0 */
+	background: #E76700 -moz-linear-gradient( #FA730B, #E76700 ); /* For Firefox 3.6 to 15 */
+	background: #E76700 linear-gradient( #FA730B, #E76700 ); /* Standard syntax */
+}
+.ee-orange.ee-button:hover {
+	background : #FA730B none;
+}
 
-.ee-blue.ee-button, .ee-blue.ee-button:visited { background-color: #005B9E; background-image: -moz-linear-gradient( center top , #066DB1, #005B9E ); }
-.ee-blue.ee-button:hover { background-color: #066DB1; background-image: none; }
+.ee-blue.ee-button, .ee-blue.ee-button:visited {
+	background: #005B9E -webkit-linear-gradient( #066DB1, #005B9E ); /* For Safari 5.1 to 6.0 */
+	background: #005B9E -o-linear-gradient( #066DB1, #005B9E ); /* For Opera 11.1 to 12.0 */
+	background: #005B9E -moz-linear-gradient( #066DB1, #005B9E ); /* For Firefox 3.6 to 15 */
+	background: #005B9E linear-gradient( #066DB1, #005B9E ); /* Standard syntax */
+}
+.ee-blue.ee-button:hover {
+	background : #066DB1 none;
+}
 
-.ee-yellow.ee-button, .ee-yellow.ee-button:visited { background-color: #F8D755; background-image: -moz-linear-gradient( center top , #FEDF6C, #F8D755 ); }
-.ee-yellow.ee-button:hover { background-color: #FEDF6C; background-image: none; }
+.ee-yellow.ee-button, .ee-yellow.ee-button:visited {
+	background: #F8D755 -webkit-linear-gradient( #FEDF6C, #F8D755 ); /* For Safari 5.1 to 6.0 */
+	background: #F8D755 -o-linear-gradient( #FEDF6C, #F8D755 ); /* For Opera 11.1 to 12.0 */
+	background: #F8D755 -moz-linear-gradient( #FEDF6C, #F8D755 ); /* For Firefox 3.6 to 15 */
+	background: #F8D755 linear-gradient( #FEDF6C, #F8D755 ); /* Standard syntax */
+}
+.ee-yellow.ee-button:hover {
+	background : #FEDF6C none;
+}
 
-.ee-grey.ee-button, .ee-grey.ee-button:visited { background-color: #A39D9C; background-image: -moz-linear-gradient( center top , #B5B3B3, #A39D9C ); }
-.ee-grey.ee-button:hover { background-color: #B5B3B3; background-image: none; }
+.ee-grey.ee-button, .ee-grey.ee-button:visited {
+	background: #A39D9C -webkit-linear-gradient( #B5B3B3, #A39D9C ); /* For Safari 5.1 to 6.0 */
+	background: #A39D9C -o-linear-gradient( #B5B3B3, #A39D9C ); /* For Opera 11.1 to 12.0 */
+	background: #A39D9C -moz-linear-gradient( #B5B3B3, #A39D9C ); /* For Firefox 3.6 to 15 */
+	background: #A39D9C linear-gradient( #B5B3B3, #A39D9C ); /* Standard syntax */
+}
+.ee-grey.ee-button:hover {
+	background : #B5B3B3 none;
+}
 
-.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited { background-color: #464549; background-image: -moz-linear-gradient( center top , #59595B, #464549 ); }
-.ee-dark-grey.ee-button:hover { background-color: #59595B; background-image: none; }
+.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited {
+	background: #464549 -webkit-linear-gradient( #59595B, #464549 ); /* For Safari 5.1 to 6.0 */
+	background: #464549 -o-linear-gradient( #59595B, #464549 ); /* For Opera 11.1 to 12.0 */
+	background: #464549 -moz-linear-gradient( #59595B, #464549 ); /* For Firefox 3.6 to 15 */
+	background: #464549 linear-gradient( #59595B, #464549 ); /* Standard syntax */
+}
+.ee-dark-grey.ee-button:hover {
+	background : #59595B none;
+}
 
-.ee-black.ee-button, .ee-black.ee-button:visited { background-color: #2F3334; background-image: -moz-linear-gradient( center top , #424646, #2F3334 ); }
-.ee-black.ee-button:hover { background-color: #424646; background-image: none; }
+.ee-black.ee-button, .ee-black.ee-button:visited {
+	background: #2F3334 -webkit-linear-gradient( #424646, #2F3334 ); /* For Safari 5.1 to 6.0 */
+	background: #2F3334 -o-linear-gradient( #424646, #2F3334 ); /* For Opera 11.1 to 12.0 */
+	background: #2F3334 -moz-linear-gradient( #424646, #2F3334 ); /* For Firefox 3.6 to 15 */
+	background: #2F3334 linear-gradient( #424646, #2F3334 ); /* Standard syntax */
+}
+.ee-black.ee-button:hover {
+	background : #424646 none;
+}
 
 
 
@@ -400,7 +464,7 @@ input.ee-register-button {
 	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
-	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+	text-shadow: 0 -1px 0  rgba(0,0,0,0.25);
 	font-size:.5em;
 	line-height: 1;
 	-moz-border-radius: 0;
@@ -450,7 +514,7 @@ input.ee-register-button {
 	/*content: "\f463";*/
 }
 .ee-spinner {
-	font-family: 'dashicons';
+	font-family: 'dashicons', sans-serif;
 	display: inline-block;
     	font-style: normal;
     	font-weight: normal;
@@ -521,8 +585,9 @@ input.ee-register-button {
 	text-align: center;
 	left: 50%;
 	margin-left:-320px;
-	z-index: 5;
+	z-index: 999;
 }
+
 .espresso-notices,
 .espresso-ajax-notices {
 	position: relative;
@@ -534,14 +599,13 @@ input.ee-register-button {
 	margin: 0 auto 2em;
 	z-index: 999;
 	background: #fff;
-	border-width: 4px;
-	border-style: solid;
+	border   : 4px solid;
 	font-size: 1em;
 	color: #666;
 	line-height: 1.6em;
 	text-align: center;
 	font-weight: bold;
-	box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 0px 1px 3px -1px rgba(0,0,0,.6), -3px -2px 10px rgba(0,0,0,.1);
+	box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 0  1px 3px -1px rgba(0,0,0,.6), -3px -2px 10px rgba(0,0,0,.1);
 }
 .espresso-notices p,
 .espresso-ajax-notices p {
@@ -562,43 +626,80 @@ input.ee-register-button {
 
 
 .close-espresso-notice {
-	position: absolute;
-	top: 3px;
-	right: 3px;
+	background: #ffffff;
+	border: 3px solid #666666;
+	border-radius: 999px;
+	box-sizing: border-box;
+	color:#666666;
 	cursor: pointer;
-	width: 14px;
-	height: 14px;
-	padding: 0 0 0 .5px;
+	font-size: 21px;
 	font-weight: bold;
-	font-size: 14px;
-	line-height: 14px;
+	height: 30px;
+	line-height: 24px;
+	padding: 0;
+	position: absolute;
+	right: -15px;
 	text-align: center;
-	color:#999;
+	top: -15px;
+	vertical-align: middle;
+	width: 30px;
 }
 .close-espresso-notice:hover {
-	color:#666;
+	background: #ffffff;
+	border: 3px solid #333333;
+	color: #333333;
 }
 
-/*#espresso-notices-success .close-espresso-notice,
-#espresso-ajax-notices-success .close-espresso-notice,
-#espresso-notices-error .close-espresso-notice,
-#espresso-ajax-notices-error .close-espresso-notice {
-	color:#fff;
+
+
+/************* DIALOG HELPER ***************/
+.ee-admin-dialog-container {
+	position   : absolute;
+	top : 50px;
+	left : 25%;
+	width : 75%;
+	height : auto;
+	padding : 3em 4em 2em;
+	z-index : 9999991;
+	background : #FFFFFF;
+	border : 1px solid #DDDDDD;
+	border-radius : 5px;
+	color:#666666;
 }
 
-#espresso-notices-attention .close-espresso-notice,
-#espresso-ajax-notices-attention .close-espresso-notice {
-	color: #fff;
-	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+#espresso-admin-page-overlay-dv {
+	position   : absolute;
+	top : 0;
+	left : 0;
+	background : rgba(0, 0, 0, 0.6) !important;
+	z-index : 9999990;
 }
-#espresso-notices-attention .close-espresso-notice,
-#espresso-ajax-notices-attention .close-espresso-notice,
-#espresso-notices-success .close-espresso-notice:hover,
-#espresso-ajax-notices-success .close-espresso-notice:hover,
-#espresso-notices-error .close-espresso-notice:hover,
-#espresso-ajax-notices-error .close-espresso-notice:hover {
-	color: #fff !important;
-}*/
+
+.ui-datepicker {
+	padding: 1em;
+	border-radius: 3px;
+	background-color: #fff;
+	border: 1px solid #e8e8e8;
+	box-shadow: 0 1px 3px -1px rgba(0,0,0,.4), 3px 9px 9px -3px rgba(0,0,0,.2), -3px -3px 20px -3px rgba(0,0,0,.1);
+}
+
+.ui-datepicker-header .ui-datepicker-prev:hover,
+.ui-datepicker-header .ui-datepicker-prev:hover {
+	cursor: pointer;
+}
+
+.ui-datepicker-header .ui-datepicker-prev + .ui-datepicker-next {
+	float: right;
+}
+
+.ui-datepicker-title {
+	margin:.5em 0;
+}
+
+.ui-datepicker table {
+	margin:0;
+}
+
 
 /******************* GENERAL ****************** */
 
@@ -668,7 +769,7 @@ input.ee-register-button {
 }
 
 .indented-text {
-	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
+	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 }
 
 .pink-text {
@@ -714,6 +815,7 @@ input.ee-register-button {
 	margin: 0 auto 1em;
 	background: #fff;
 	border: 4px solid #F8D755;
+	color: #666;
 	font-size: 1em;
 	line-height: 1.6em;
 	text-align: center;
@@ -806,7 +908,7 @@ input.ee-register-button {
 	line-height: 1;
 	color: #fff;
 	text-align: center;
-	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
+	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;
@@ -821,11 +923,11 @@ input.ee-register-button {
 }
 #ee-m-mode-admin-notice-dv a:hover {
 	color: #F8D755;
-	text-shadow:0 .5px 0px rgba( 0, 0, 0, 0.2 );
+	text-shadow:0 .5px 0  rgba( 0, 0, 0, 0.2 );
 }
 #ee-m-mode-admin-notice-dv a:active {
 	color: #F8D755;
-	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
+	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 }
 
 #espresso-registration-footer-dv {
@@ -886,16 +988,15 @@ article .espresso_venues {
 
 .ee-ical-sbmt {
 	display: inline-block;
-	font-family: 'dashicons' !important;
+	font-family : 'dashicons', sans-serif !important;
 	font-size: .9em;
  	font-style: normal;
 	font-weight: 400;
 	font-variant: normal;
 	line-height: 1;
 	padding:.25em .4em !important;
-	speak: none;
-    	text-align: center;
-    	text-decoration: inherit;
+    text-align: center;
+    text-decoration: inherit;
 	text-transform: none !important;
 	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
