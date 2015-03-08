@@ -804,7 +804,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// attempt payment
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
 		// process results
-		$payment = $this->_post_payment_processing( $this->_validate_payment( $payment ));
+		$payment = $this->_validate_payment( $payment );
+		$payment = $this->_post_payment_processing( $payment );
 		// verify payment
 		if ( $payment instanceof EE_Payment ) {
 			// store that for later
@@ -1084,8 +1085,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return EE_Payment | FALSE
 	 */
 	public function process_gateway_response() {
-		// grab fresh entities from the db
-		$this->checkout->refresh_all_entities( true );
+		$payment = null;
 		// DEBUG LOG
 		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// verify TXN
@@ -1093,18 +1093,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// get payment details and process results
 			$payment = $this->checkout->transaction->last_payment();
 			$payment = $this->_validate_payment( $payment );
-			$payment = $this->_post_payment_processing( $payment, true );
-			// DEBUG LOG
-			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-				array( 'payment' => $payment )
-			);
 			// if payment was not declined by the payment gateway or cancelled by the registrant
-			if ( $payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_declined && $payment->status() !== EEM_Payment::status_id_cancelled ) {
+			if ( $this->_process_payment_status( $payment ) ) {
+				$this->_setup_redirect_for_next_step();
 				// store that for later
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed
 				$this->checkout->current_step->set_completed();
-				$this->_setup_redirect_for_next_step();
+				// DEBUG LOG
+				$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+					array( 'payment' => $payment )
+				);
 				return true;
 			}
 		}
@@ -1156,23 +1155,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * @access private
 	 * @param EE_Payment $payment
-	 * @param bool       $process_ipn
 	 * @return bool
 	 */
-	private function _post_payment_processing( $payment = NULL, $process_ipn = FALSE ) {
+	private function _post_payment_processing( $payment = NULL ) {
 		// On-Site payment?
 		if ( $this->checkout->payment_method->is_on_site() ) {
 			if ( $this->_process_payment_status( $payment )) {
 				$this->_setup_redirect_for_next_step();
 			}
 			// Off-Site payment?
-		} else if ( $payment instanceof EE_Payment && $this->checkout->payment_method->is_off_site() ) {
+		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
-			if ( $process_ipn ){
-				if ( $this->_process_payment_status( $payment )) {
-					$this->_setup_redirect_for_next_step();
-				}
-			} else if ( $payment->redirect_url() ){
+			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
