@@ -79,7 +79,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param EE_Transaction $transaction
 	 * @param string $reg_step_slug
 	 * @param bool   $check_all
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
 		$reg_steps = $transaction->reg_steps();
