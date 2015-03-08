@@ -45,8 +45,19 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
+
 		// there's actually no reg form to process if this is the final step
-		if ( $this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+		if ( $this->is_current_step() ) {
+			//'display_spco_reg_step'
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array(
+					'$this->checkout->step' 		=> $this->checkout->step,
+					'$this->checkout->action' 	=> $this->checkout->action,
+					'$this->checkout->current_step->slug()' 	=> $this->checkout->current_step->slug(),
+				)
+			);
 			$this->checkout->step = $_REQUEST['step'] = $this->checkout->current_step->slug();
 			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
