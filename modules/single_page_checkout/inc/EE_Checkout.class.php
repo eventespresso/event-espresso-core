@@ -937,6 +937,8 @@ class EE_Checkout {
 				'REQ' 		=> $display_request ? $_REQUEST : '',
 				'step' 		=> $this->step,
 				'action' 	=> $this->action,
+				'this->current_step->slug' 	=> $this->current_step->slug(),
+				'this->current_step->completed' 	=> $this->current_step->completed(),
 			);
 			if ( $this->transaction instanceof EE_Transaction ) {
 				$default_data[ 'TXN_status' ] 		= $this->transaction->status_ID();
