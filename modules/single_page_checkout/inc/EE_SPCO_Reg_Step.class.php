@@ -151,6 +151,8 @@ abstract class EE_SPCO_Reg_Step {
 	 * set_completed - toggles $_completed to TRUE
 	 */
 	public function set_completed() {
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		$this->_completed = TRUE;
 	}
 
