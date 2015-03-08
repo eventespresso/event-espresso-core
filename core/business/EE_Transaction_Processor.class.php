@@ -240,6 +240,15 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
 		// validate status
 		$status = is_bool( $status ) || is_numeric( $status ) ? $status : false;
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'reg_step_slug' 	=> $reg_step_slug,
+				'status' 				=> $status,
+			)
+		);
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
 		// if reg step does NOT exist
