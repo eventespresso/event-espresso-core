@@ -655,8 +655,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $transaction instanceof EE_Transaction ) {
 			// save it so that we have an ID for other objects to use
 			$transaction->save();
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array(
+					'NEW transaction' => $transaction,
+				)
+			);
 			// and save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $transaction->ID() );
+		} else {
+			EE_Error::add_error( __( 'A Valid Transaction could not be initialized.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $transaction;
 	}
