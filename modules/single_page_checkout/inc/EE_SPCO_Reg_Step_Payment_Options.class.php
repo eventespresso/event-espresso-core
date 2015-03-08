@@ -1105,6 +1105,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				return true;
 			}
 		}
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+			array( 'payment' => $payment )
+		);
 		$this->checkout->action = 'display_spco_reg_step';
 		$this->checkout->continue_reg = false;
 		return false;
