@@ -95,14 +95,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// TODO: if /when we implement donations, then this will need overriding
 		if ( ! $this->completed() && ! $this->checkout->payment_required() ) {
 			// DEBUG LOG
-			$this->checkout->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array(
-					'$this->checkout->step'                 => $this->checkout->step,
-					'$this->checkout->action'               => $this->checkout->action,
-					'$this->checkout->current_step->slug()' => $this->checkout->current_step->slug(),
-				)
-			);
+			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 			$this->checkout->remove_reg_step( $this->_slug );
 			$this->checkout->reset_reg_steps();
 			return;
