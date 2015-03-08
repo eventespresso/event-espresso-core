@@ -1222,7 +1222,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			// DEBUG LOG
-			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array( 'json_response_redirect_url' => $this->checkout->json_response->redirect_url() )
+			);
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
