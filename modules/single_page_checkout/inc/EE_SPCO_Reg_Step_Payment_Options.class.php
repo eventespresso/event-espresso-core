@@ -93,12 +93,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// 	overpaid transactions
 		// 	$ 0.00 transactions (no payment required)
 		// TODO: if /when we implement donations, then this will need overriding
-		if ( ! $this->completed() && ! $this->checkout->payment_required() ) {
-			// DEBUG LOG
-			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-			$this->checkout->remove_reg_step( $this->_slug );
-			$this->checkout->reset_reg_steps();
-			return;
+		if ( ! $this->checkout->payment_required() ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// but first do a double check that the events are free...
+			// or that the Payment Options Reg Step is FULLY completed...
+			if (
+				$this->checkout->transaction->is_free()
+				|| $transaction_processor->reg_step_completed( $this->checkout->transaction, $this->_slug ) === true
+			) {
+				// and if so, then we no longer need the Payment Options step
+				$this->checkout->remove_reg_step( $this->_slug );
+				$this->checkout->reset_reg_steps();
+				// DEBUG LOG
+				$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+				return;
+			}
 		}
 		// load EEM_Payment_Method
 		EE_Registry::instance()->load_model( 'Payment_Method' );
