@@ -517,9 +517,6 @@ class EE_Checkout {
 		//$this->save_all_data( FALSE );
 		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
-		// DEBUG LOG
-		$this->log( __CLASS__, __FUNCTION__, __LINE__ );
-
 	}
 
 
