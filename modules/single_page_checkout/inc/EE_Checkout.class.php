@@ -703,7 +703,7 @@ class EE_Checkout {
 	 * @return bool
 	 */
 	public function refresh_all_entities( $from_db = false ) {
-		$from_db = $this->current_step->is_final_step() ? true : $from_db;
+		$from_db = $this->current_step->is_final_step() || $this->action == 'process_gateway_response' ? true : $from_db;
 		$this->log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			array( 'from_db' =>$from_db )
