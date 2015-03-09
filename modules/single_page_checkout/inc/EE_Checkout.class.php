@@ -734,14 +734,15 @@ class EE_Checkout {
 			// update EE_Checkout's cached payment_method object
 			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
 			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : null;
+			//now refresh the cart, based on the TXN
+			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
+			// verify cart
+			if ( ! $this->cart instanceof EE_Cart ) {
+				$this->cart = EE_Registry::instance()->load_core( 'Cart' );
+			}
 		} else {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
-		}
-		if ( $this->cart instanceof EE_Cart ) {
-			$this->cart = $this->cart->get_grand_total()->get_model()->refresh_entity_map_from_db(
-				$this->cart->get_grand_total()->ID()
-			);
 		}
 		return TRUE;
 	}
