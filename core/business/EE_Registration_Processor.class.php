@@ -320,6 +320,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
 		}
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction(),
+			array(
+				'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' )
+			)
+		);
 	}
 
 
