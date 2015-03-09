@@ -525,6 +525,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		if ( ! method_exists( $registration_processor, $method_name )) {
 			throw new EE_Error( __( 'Method does not exist.', 'event_espresso' ));
 		}
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'method_name' => $method_name,
+			)
+		);
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// loop through cached registrations

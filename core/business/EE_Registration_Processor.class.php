@@ -287,6 +287,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return void
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction()
+		);
 		try {
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
