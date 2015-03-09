@@ -28,6 +28,20 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 */
 	private $_registration_query_params = array();
 
+	/**
+	 * initial txn status at the beginning of this request.
+	 *
+	 * @var string
+	 */
+	protected $_old_txn_status = null;
+
+	/**
+	 * txn status at the end of the request after all processing.
+	 *
+	 * @var string
+	 */
+	protected $_new_txn_status = null;
+
 
 
 	/**
@@ -68,6 +82,56 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * @return string
+	 */
+	public function old_txn_status() {
+		return $this->_old_txn_status;
+	}
+
+
+
+	/**
+	 * @param string $old_txn_status
+	 */
+	public function set_old_txn_status( $old_txn_status ) {
+		// only set the first time
+		if ( $this->_old_txn_status === null ) {
+			$this->_old_txn_status = $old_txn_status;
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function new_txn_status() {
+		return $this->_new_txn_status;
+	}
+
+
+
+	/**
+	 * @param string $new_txn_status
+	 */
+	public function set_new_txn_status( $new_txn_status ) {
+		$this->_new_txn_status = $new_txn_status;
+	}
+
+
+
+	/**
+	 * reg_status_updated
+	 *
+	 * @return bool
+	 */
+	public function txn_status_updated() {
+		return $this->_new_txn_status !== $this->_old_txn_status ? true : false;
+	}
+
+
+
+	/**
 	 * _reg_steps_completed
 	 *
 	 * if $check_all is TRUE, then returns TRUE if ALL reg steps have been marked as completed,
@@ -99,7 +163,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				}
 			}
 			// if any reg step is NOT completed (ignoring any specific steps), then just leave
-			if( ! $reg_step_completed && $slug != $reg_step_slug ) {
+			if( $reg_step_completed !== true && $slug != $reg_step_slug ) {
 				return FALSE;
 			}
 		}
@@ -310,8 +374,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * 	@return 	boolean
 	 */
 	public function toggle_failed_transaction_status( EE_Transaction $transaction ) {
+		// set incoming TXN_Status
+		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status is still set as "failed"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code ) {
+			// set incoming TXN_Status
+			$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
 			$transaction->set_status( EEM_Transaction::abandoned_status_code );
 			return TRUE;
 		}
@@ -329,8 +397,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * 	@return 	boolean
 	 */
 	public function toggle_abandoned_transaction_status( EE_Transaction $transaction ) {
+		// set incoming TXN_Status
+		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
+			// set incoming TXN_Status
+			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			$transaction->set_status( EEM_Transaction::incomplete_status_code );
 			return TRUE;
 		}
@@ -399,6 +471,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
+		// set incoming TXN_Status
+		$this->set_old_txn_status( $transaction->status_ID() );
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
@@ -411,7 +485,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$transaction->save();
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'txn_status' 			=> $transaction->status_ID(),
+			'txn_status' 					=> $transaction->status_ID(),
 			'finalized' 					=> $finalized,
 			'revisit' 						=> $this->_revisit,
 			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
