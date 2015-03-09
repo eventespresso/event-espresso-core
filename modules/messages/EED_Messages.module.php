@@ -361,31 +361,27 @@ class EED_Messages  extends EED_Module {
 	public static function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		self::_load_controller();
 		$data = array( $transaction, $payment );
+		$payment_status = strtolower( $payment->pretty_status() );
+
+		//swap out status for certain message types that don't match the status correctly.
+		//key is strtolower( pretty_status() ), value is message type slug.
+		$swap_status = array(
+			'accepted' => 'payment'
+			);
 
 		//let's set up the message type depending on the status
-		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
+		$message_type = isset( $swap_status[$payment_status] ) ? $swap_status[$payment_status] : 'payment' . '_' . $payment_status;
 
-		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+		//if payment amount is less than 0 then switch to payment_refund message type.
+		$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
 
-		//verify this message type is present and active.  If it isn't then we use the default payment message type.
+		//verify this message type is present and active.  If it isn't then no message is sent.
 		$active_mts = self::$_EEMSG->get_active_message_types();
 
-		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
+		$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
 
-
-		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
-			if ( WP_DEBUG ) {
-				$delivered_messages = get_option( 'EED_Messages__payment', array() );
-				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-					$delivered_messages[ $transaction->ID() ] = array();
-				}
-				$delivered_messages[ $transaction->ID() ][ time() ] = array(
-					'message_type' => $message_type,
-					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-					'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
-				);
-				update_option( 'EED_Messages__payment', $delivered_messages );
-			}
+		if ( $message_type ) {
+			self::$_EEMSG->send_message( $message_type, $data );
 		}
 	}
 
