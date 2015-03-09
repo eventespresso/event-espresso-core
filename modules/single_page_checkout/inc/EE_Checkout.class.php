@@ -56,6 +56,21 @@ class EE_Checkout {
 	public $process_form_submission = FALSE;
 
 	/**
+	 * tracks whether the TXN status modified during this checkout
+	 *
+	 * @type bool
+	 */
+	public $txn_status_updated = FALSE;
+
+	/**
+	 * tracks whether any of the TXN's Registrations statuses modified during this checkout
+	 * indexed by registration ID
+	 *
+	 * @type array
+	 */
+	protected $reg_status_updated = array();
+
+	/**
 	 * total number of tickets that were in the cart
 	 * @type int
 	 */
@@ -220,6 +235,26 @@ class EE_Checkout {
 
 
 	/**
+	 * @param $REG_ID
+	 * @return array
+	 */
+	public function reg_status_updated( $REG_ID ) {
+		return isset( $this->reg_status_updated[ $REG_ID ] ) ? $this->reg_status_updated[ $REG_ID ] : false;
+	}
+
+
+
+	/**
+	 * @param $REG_ID
+	 * @param $reg_status
+	 */
+	public function set_reg_status_updated( $REG_ID, $reg_status ) {
+		$this->reg_status_updated[ $REG_ID ] = $reg_status;
+	}
+
+
+
+	/**
 	 *    reset_for_current_request
 	 *
 	 * @access    public
@@ -295,15 +330,15 @@ class EE_Checkout {
 		// verify instance
 		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
 			// we don't want to repeat completed steps if this is the first time through SPCO
-			if ( $this->current_step->completed() && ! $this->revisit ) {
-				// so advance to the next step
-				$this->set_next_step();
-				if ( $this->next_step instanceof EE_SPCO_Reg_Step ) {
-					// and attempt to set it as the current step
-					$this->set_current_step( $this->next_step->slug() );
-				}
-				return;
-			}
+			//if ( $this->current_step->completed() && ! $this->revisit ) {
+			//	// so advance to the next step
+			//	$this->set_next_step();
+			//	if ( $this->next_step instanceof EE_SPCO_Reg_Step ) {
+			//		// and attempt to set it as the current step
+			//		$this->set_current_step( $this->next_step->slug() );
+			//	}
+			//	return;
+			//}
 			$this->current_step->set_is_current_step( TRUE );
 		} else {
 			EE_Error::add_error(
@@ -513,10 +548,44 @@ class EE_Checkout {
 		if ( ! $this->revisit ) {
 			$this->update_txn_reg_steps_array();
 		}
+		$this->track_transaction_and_registration_status_updates();
 		// save all data to the db, but suppress errors
 		//$this->save_all_data( FALSE );
 		// cache the checkout in the session
 		EE_Registry::instance()->SSN->set_checkout( $this );
+	}
+
+
+
+
+	/**
+	 *    track_transaction_and_registration_status_updates
+	 *
+	 * 	stores whether any updates were made to the TXN or it's related registrations
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function track_transaction_and_registration_status_updates() {
+		// verify the transaction
+		if ( $this->transaction instanceof EE_Transaction ) {
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// has there been a TXN status change during this checkout?
+			if ( $transaction_payments->txn_status_updated() || $transaction_processor->txn_status_updated() ) {
+				$this->txn_status_updated = true;
+			}
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			// grab the saved registrations from the transaction
+			foreach ( $this->transaction->registrations( $this->reg_cache_where_params ) as $registration ) {
+				if ( $registration_processor->reg_status_updated( $registration->ID() ) ) {
+					$this->set_reg_status_updated( $registration->ID(), true );
+				}
+			}
+		}
 	}
 
 
@@ -567,8 +636,8 @@ class EE_Checkout {
 			// save to ensure that TXN has ID
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
-			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
-				$this->_save_registration( $reg_cache_ID, $registration, $show_errors );
+			foreach ( $this->transaction->registrations( $this->reg_cache_where_params ) as  $registration ) {
+				$this->_save_registration( $registration, $show_errors );
 			}
 		} else {
 			if ( $show_errors ) {
@@ -583,12 +652,11 @@ class EE_Checkout {
 	/**
 	 * _save_registration_attendee
 	 *
- 	 * @param 	string | int 	$reg_cache_ID
 	 * @param 	EE_Registration 	$registration
 	 * @param bool $show_errors
 	 * @return void
 	 */
-	private function _save_registration( $reg_cache_ID, $registration, $show_errors = TRUE  ) {
+	private function _save_registration( $registration, $show_errors = TRUE  ) {
 		// verify object
 		if ( $registration instanceof EE_Registration ) {
 			// should this registration be processed during this visit ?
@@ -604,7 +672,7 @@ class EE_Checkout {
 				// save changes
 				$registration->save();
 				// update txn cache
-				if ( ! $this->transaction->update_cache_after_object_save( 'Registration', $registration, $reg_cache_ID )) {
+				if ( ! $this->transaction->update_cache_after_object_save( 'Registration', $registration )) {
 					if ( $show_errors ) {
 						EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					}
@@ -805,7 +873,7 @@ class EE_Checkout {
 				$transaction_payments->calculate_total_payments_and_update_status( $this->transaction );
 			}
 			// grab the saved registrations from the transaction
-			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
+			foreach ( $this->transaction->registrations( $this->reg_cache_where_params ) as $reg_cache_ID => $registration ) {
 				$this->_refresh_registration( $reg_cache_ID, $registration );
 			}
 			// make sure our cached TXN is added to the model entity mapper
@@ -945,7 +1013,7 @@ class EE_Checkout {
 			if ( $this->transaction instanceof EE_Transaction ) {
 				$default_data[ 'TXN_status' ] 		= $this->transaction->status_ID();
 				$default_data[ 'TXN_reg_steps' ] 	= $this->transaction->reg_steps();
-				foreach ( $this->transaction->registrations() as $REG_ID => $registration ) {
+				foreach ( $this->transaction->registrations( $this->reg_cache_where_params ) as $REG_ID => $registration ) {
 					$default_data[ 'registrations' ][ $REG_ID ] = $registration->status_ID();
 				}
 				if ( $this->transaction->ID() ) {
