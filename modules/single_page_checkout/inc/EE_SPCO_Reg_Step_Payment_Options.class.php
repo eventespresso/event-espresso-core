@@ -129,8 +129,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
 		$reg_count = 0;
+		// these reg statuses require payment (if event is not free)
+		$requires_payment = array(
+			EEM_Registration::status_id_pending_payment,
+			EEM_Registration::status_id_approved
+		);
 		// loop thru registrations to gather info
-		foreach ( $this->checkout->transaction->registrations() as $registration ) {
+		foreach ( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) as $registration ) {
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
@@ -145,11 +150,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
 				}
 			}
-			// these reg statuses require payment (if event is not free)
-			$requires_payment = array(
-				EEM_Registration::status_id_pending_payment,
-				EEM_Registration::status_id_approved
-			);
 			$payment_required = in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ? TRUE : $payment_required;
 		}
 		// now decide which template to load
@@ -157,10 +157,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return $this->_sold_out_events( $sold_out_events );
 		} else if ( ! empty( $events_requiring_pre_approval )) {
 			return $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
-		} else if ( $payment_required ) {
-			return $this->_display_payment_options( $reg_count );
-		} else {
+		} else if ( ! $payment_required ) {
 			return $this->_no_payment_required();
+		} else {
+			return $this->_display_payment_options( $reg_count );
 		}
 
 	}
