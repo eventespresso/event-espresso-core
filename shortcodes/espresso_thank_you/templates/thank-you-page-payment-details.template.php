@@ -60,10 +60,8 @@
 		 }
 
 	}
-	if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
-		echo $gateway_content;
-		do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
-	 }
+	echo $gateway_content;
+	do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
 
 ?>
 

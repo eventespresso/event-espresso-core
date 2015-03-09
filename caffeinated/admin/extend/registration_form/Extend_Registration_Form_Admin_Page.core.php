@@ -528,56 +528,62 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _insert_or_update_question_group( $new_question_group = TRUE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
-		if($new_question_group){
-			$ID=$this->_question_group_model->insert($set_column_values);
-			if($ID){
-				$success=1;
-			}else{
-				$success=0;
-			}
-		}else{
-			$ID=absint($this->_req_data['QSG_ID']);
-			$pk=$this->_question_group_model->primary_key_name();
-			$wheres=array($pk=>$ID);
-			unset($set_column_values[$pk]);
-			$success= $this->_question_group_model->update($set_column_values,array($wheres));
+		if ( $new_question_group ){
+			$QSG_ID = $this->_question_group_model->insert($set_column_values);
+			$success = $QSG_ID ? 1 : 0;
+		} else {
+			$QSG_ID = absint($this->_req_data['QSG_ID']);
+			unset( $set_column_values[ 'QSG_ID' ] );
+			$this->_question_group_model->show_next_x_db_queries(2);
+			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
-		//update the existing related questions
-		$question_group=$this->_question_group_model->get_one_by_ID($ID);
-		$questions=$question_group->questions();
-		foreach($questions as $question_ID => $question){
-			//first we always check for order.
-			if ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
+		// update the existing related questions
+		// BUT FIRST...  delete the phone question from the Question_Group_Question if it is being added to this question group (therefore removed from the existing group)
+		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ EEM_Attendee::phone_question_id ] )) {
+			// delete where QST ID = system phone question ID and Question Group ID is NOT this group
+			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => EEM_Attendee::phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
+		}
+		/** @type EE_Question_Group $question_group */
+		$question_group=$this->_question_group_model->get_one_by_ID( $QSG_ID );
+		$questions = $question_group->questions();
+		// make sure system phone question is added to list of questions for this group
+		if ( ! isset( $questions[ EEM_Attendee::phone_question_id ] )) {
+			$questions[ EEM_Attendee::phone_question_id ] = EEM_Question::instance()->get_one_by_ID( EEM_Attendee::phone_question_id );
+		}
+
+		foreach( $questions as $question_ID => $question ){
+			// first we always check for order.
+			if ( ! empty( $this->_req_data['question_orders'][ $question_ID ] ) ){
 				//update question order
-				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][ $question_ID ] );
 			}
 
-			//then we always check if adding or removing.
-			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
-				$question_group->add_question($question_ID);
-			}else {
-				//not found, remove it (but only if not a system question for the personal group)
-				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
-					continue;
-				$question_group->remove_question($question_ID);
+			// then we always check if adding or removing.
+			if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ] )) {
+				$question_group->add_question( $question_ID );
+			} else {
+				// not found, remove it (but only if not a system question for the personal group)
+				if ( ! ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal )) {
+					$question_group->remove_question( $question_ID );
+				}
 			}
 		}
-		//save new related questions
-		if(array_key_exists('questions',$this->_req_data)){
-			foreach(array_keys($this->_req_data['questions']) as $question_ID){
-				$question_group->add_question($question_ID);
-				if ( isset( $this->_req_data['question_orders'][$question_ID]))
-				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+		// save new related questions
+		if ( isset( $this->_req_data['questions'] )) {
+			foreach( $this->_req_data['questions'] as $QST_ID ){
+				$question_group->add_question( $QST_ID );
+				if ( isset( $this->_req_data['question_orders'][ $QST_ID ] )) {
+					$question_group->update_question_order( $QST_ID, $this->_req_data['question_orders'][ $QST_ID ] );
+				}
 			}
-		}/**/
-		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
+		}
+
 		if ( $success !== FALSE ) {
 			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
-		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
+		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
 	}
 
