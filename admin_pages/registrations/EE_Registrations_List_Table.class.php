@@ -284,6 +284,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
 				strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
 		));
+		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
 
@@ -306,6 +307,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				strtotime($current_date . $time_start),
 				strtotime($current_date . $time_end)
 		));
+		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
 
