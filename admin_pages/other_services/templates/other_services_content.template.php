@@ -18,11 +18,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $29.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -43,11 +39,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $39.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -68,11 +60,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $59.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -93,11 +81,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $79.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -118,11 +102,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $39.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -143,11 +123,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $69.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -168,11 +144,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $10.00</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<h1 class="service-settings-heading">Template Views</h1>
 												<div class="service-div-settings">
@@ -194,11 +166,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $29.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -219,11 +187,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $29.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<h1 class="service-settings-heading">Payment Gateways</h1>
 												<div class="service-div-settings">
@@ -245,11 +209,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $59.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -270,14 +230,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="vers column-rating">
-															
-														</div>
-														<div class="column-downloaded">
-															<strong>Cost: $69.95</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<h1 class="service-settings-heading">Support Items</h1>
 												<div class="service-div-settings">
@@ -313,11 +266,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $70.00</strong><br>
-														</div>
-													</div>
+													
 												</div>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
@@ -342,9 +291,5 @@
 															</ul>
 														</div>
 													</div>
-													<div class="plugin-card-bottom_settings">
-														<div class="column-downloaded">
-															<strong>Cost: $5.00 Month</strong><br>
-														</div>
-													</div>
+													
 												</div>
