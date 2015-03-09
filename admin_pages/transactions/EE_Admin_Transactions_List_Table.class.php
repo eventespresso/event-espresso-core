@@ -148,7 +148,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * @param \EE_Transaction $item
 	 * @return string
 	 */
-	function column_cb( EE_Transaction $item ){
+	function column_cb($item ){
 		return sprintf( '<input type="checkbox" name="%1$s[]" value="%2$s" />', $this->_wp_list_args['singular'],  $item->ID());
 	}
 
