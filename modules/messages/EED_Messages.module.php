@@ -370,8 +370,6 @@ class EED_Messages  extends EED_Module {
 
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
 
-<<<<<<< HEAD
-
 		if ( $message_type ) {
 			if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
 				self::log(
