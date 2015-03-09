@@ -322,7 +322,7 @@
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 						<?php foreach ( $payment_methods as $method ) : ?>
 							<?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo sanitize_key( $method->admin_desc() ) ? substr( $method->admin_desc(), 0, 128) : $method->admin_name() ; ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>
