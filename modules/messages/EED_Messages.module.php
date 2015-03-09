@@ -345,17 +345,6 @@ class EED_Messages  extends EED_Module {
 					'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
 				)
 			);
-			//if ( WP_DEBUG ) {
-			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
-			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-			//		$delivered_messages[ $transaction->ID() ] = array();
-			//	}
-			//	$delivered_messages[ $transaction->ID() ][ time() ] = array(
-			//		'message_type' => 'payment_reminder',
-			//		'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-			//	);
-			//	update_option( 'EED_Messages__payment', $delivered_messages );
-			//}
 		}
 	}
 
@@ -393,18 +382,6 @@ class EED_Messages  extends EED_Module {
 					'pay_status' 		=> $payment->status_obj()->code( false, 'sentence' ),
 				)
 			);
-			//if ( WP_DEBUG ) {
-			//	$delivered_messages = get_option( 'EED_Messages__payment', array() );
-			//	if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-			//		$delivered_messages[ $transaction->ID() ] = array();
-			//	}
-			//	$delivered_messages[ $transaction->ID() ][ time() ] = array(
-			//		'message_type' => $message_type,
-			//		'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-			//		'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
-			//	);
-			//	update_option( 'EED_Messages__payment', $delivered_messages );
-			//}
 		}
 	}
 
@@ -459,21 +436,8 @@ class EED_Messages  extends EED_Module {
 						'reg_status' => $registration->status_obj()->code( false, 'sentence' ),
 					)
 				);
-
-				//if ( WP_DEBUG ) {
-				//	$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
-				//	if ( ! isset( $delivered_messages[ $registration->ID() ] )) {
-				//		$delivered_messages[ $registration->ID() ] = array();
-				//	}
-				//	$delivered_messages[ $registration->ID() ][ time() ] = array(
-				//		'message_type' => $message_type,
-				//		'reg_status' => $registration->status_obj()->code( false, 'sentence' )
-				//	);
-				//	update_option( 'EED_Messages__maybe_registration', $delivered_messages );
-				//}
 			}
 		}
-
 	}
 
 
@@ -489,7 +453,6 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-
 		/** @type EE_Payment $payment */
 		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
 		unset( $extra_details[ 'last_payment' ] );
@@ -499,11 +462,12 @@ class EED_Messages  extends EED_Module {
 			array(
 				'payment' => $payment,
 				'extra_details'   => $extra_details,
+				'reg_status_updated'   => EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ),
 			),
 			true
 		);
 
-		//first we check if we're in admin and not doing front ajax and if we
+		// first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (
 			( is_admin() && ! EE_FRONT_AJAX )
@@ -524,14 +488,30 @@ class EED_Messages  extends EED_Module {
 			if ( ! is_array( $extra_details ) || ! isset( $extra_details[ 'finalized' ] ) || empty( $extra_details[ 'finalized' ] ) ) {
 				return false;
 			}
-			// do NOT send messages if the reg status has NOT changed
 			if (
-				isset( $extra_details[ 'status_updates' ] )
-				&& ! $extra_details[ 'status_updates' ]
+				// do NOT send messages if the TXN status has NOT changed
+				isset( $extra_details[ 'old_txn_status' ], $extra_details[ 'new_txn_status' ] )
+				&& $extra_details[ 'old_txn_status' ] === $extra_details[ 'new_txn_status' ]
 			) {
-				return FALSE;
+				return false;
+			}
+			// do NOT send messages if the reg status has NOT changed
+			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {
+				if ( ! EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ) ) {
+					return false;
+				}
+			} else if ( isset( $extra_details[ 'status_updates' ] ) && ! $extra_details[ 'status_updates' ] ) {
+				return false;
 			}
 		}
+		self::log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction(),
+			array(
+				'reg_status_updated' => EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ),
+				'send_messages' => true,
+			)
+		);
 		return true;
 	}
 
