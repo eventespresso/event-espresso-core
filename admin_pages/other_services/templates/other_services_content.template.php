@@ -170,7 +170,7 @@
 													</div>
 													<div class="plugin-card-bottom_settings">
 														<div class="column-downloaded">
-															<strong>Cost: $29.95</strong><br>
+															<strong>Cost: $10.00</strong><br>
 														</div>
 													</div>
 												</div>
