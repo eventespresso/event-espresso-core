@@ -314,15 +314,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
 			return true;
 		}
-		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'reg_step_slug' => $reg_step_slug,
-				'status'        => $status,
-			)
-		);
 		// if  we're trying to complete a step that hasn't even started
 		if ( $status === true && $txn_reg_steps[ $reg_step_slug ] === false ) {
 			return false;
@@ -341,6 +332,15 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$txn_reg_steps[ $reg_step_slug ] = $status;
 		$transaction->set_reg_steps( $txn_reg_steps );
 		$transaction->save();
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'reg_step_slug' => $reg_step_slug,
+				'status'        => $status,
+			)
+		);
 		return true;
 	}
 
