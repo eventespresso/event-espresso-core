@@ -485,7 +485,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$transaction->save();
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'txn_status' 					=> $transaction->status_ID(),
+			'old_txn_status' 			=> $this->old_txn_status(),
+			'new_txn_status' 		=> $this->new_txn_status(),
 			'finalized' 					=> $finalized,
 			'revisit' 						=> $this->_revisit,
 			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
