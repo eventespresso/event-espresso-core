@@ -16,24 +16,26 @@ EE_Registry::instance()->load_class( 'Processor_Base' );
 class EE_Registration_Processor extends EE_Processor_Base {
 
 	/**
-	 * initial reg status at the beginning of this request.
-	 *
-	 * @var string
+	 * @var EE_Registration_Processor $_instance
+	 * @access    private
 	 */
-	protected $_old_reg_status = NULL;
+	private static $_instance = null;
+
+	/**
+	 * initial reg status at the beginning of this request.
+	 * indexed by registration ID
+	 *
+	 * @var array
+	 */
+	protected $_old_reg_status = array();
 
 	/**
 	 * reg status at the end of the request after all processing.
+	 * indexed by registration ID
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $_new_reg_status = NULL;
-
-	/**
-	 * 	@var EE_Registration_Processor $_instance
-	 * 	@access 	private
-	 */
-	private static $_instance = NULL;
+	protected $_new_reg_status = array();
 
 
 
@@ -96,40 +98,56 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * @param int $REG_ID
 	 * @return string
 	 */
-	public function old_reg_status() {
-		return $this->_old_reg_status;
+	public function old_reg_status( $REG_ID ) {
+		return isset( $this->_old_reg_status[ $REG_ID ] ) ? $this->_old_reg_status[ $REG_ID ] : null;
 	}
 
 
 
 	/**
+	 * @param int $REG_ID
 	 * @param string $old_reg_status
 	 */
-	public function set_old_reg_status( $old_reg_status ) {
+	public function set_old_reg_status( $REG_ID, $old_reg_status ) {
 		// only set the first time
-		if ( $this->_old_reg_status === NULL ) {
-			$this->_old_reg_status = $old_reg_status;
+		if ( ! isset( $this->_old_reg_status[ $REG_ID ] ) ) {
+			$this->_old_reg_status[ $REG_ID ] = $old_reg_status;
 		}
 	}
 
 
 
 	/**
+	 * @param int $REG_ID
 	 * @return string
 	 */
-	public function new_reg_status() {
-		return $this->_new_reg_status;
+	public function new_reg_status( $REG_ID ) {
+		return isset( $this->_new_reg_status[ $REG_ID ] ) ? $this->_new_reg_status[ $REG_ID ] : null;
 	}
 
 
 
 	/**
+	 * @param int $REG_ID
 	 * @param string $new_reg_status
 	 */
-	public function set_new_reg_status( $new_reg_status ) {
-		$this->_new_reg_status = $new_reg_status;
+	public function set_new_reg_status( $REG_ID, $new_reg_status ) {
+		$this->_new_reg_status[ $REG_ID ] = $new_reg_status;
+	}
+
+
+
+	/**
+	 * reg_status_updated
+	 *
+	 * @param int $REG_ID
+	 * @return bool
+	 */
+	public function reg_status_updated( $REG_ID ) {
+		return $this->new_reg_status( $REG_ID ) !== $this->old_reg_status( $REG_ID ) ? true : false;
 	}
 
 
@@ -143,15 +161,17 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
 	 * 	@return boolean
 	 */
-	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = TRUE ) {
+	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = true ) {
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 		// set incoming REG_Status
-		$this->set_new_reg_status( $new_reg_status );
+		$this->set_new_reg_status( $registration->ID(), $new_reg_status );
 		// toggle reg status but only if it has changed and the user can do so
-		if ( $this->old_reg_status() !== $this->new_reg_status() && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )) {
+		if ( $this->reg_status_updated( $registration->ID() ) && EE_Registry::instance()->CAP->current_user_can(
+				'ee_edit_registration',
+				'toggle_registration_status', $registration->ID() )) {
 			// change status to new value
-			if ( $registration->set_status( $this->new_reg_status() )) {
+			if ( $registration->set_status( $this->new_reg_status( $registration->ID() ) )) {
 				if ( $save ) {
 					$registration->save();
 				}
@@ -180,7 +200,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 		// is the registration currently incomplete
 		if ( $registration->status_ID() === EEM_Registration::status_id_incomplete ) {
 			// grab default reg status for the event, if set
@@ -189,6 +209,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 			// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
 			$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
+			// set incoming REG_Status
+			$this->set_new_reg_status( $registration->ID(), $STS_ID );
 			$registration->set_status( $STS_ID );
 			if ( $save ) {
 				$registration->save();
@@ -208,9 +230,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function toggle_registration_status_for_default_approved_events( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 		// toggle reg status to approved IF the event default reg status is approved
 		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
+			// set incoming REG_Status
+			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
 			if ( $save ) {
@@ -232,7 +256,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
@@ -240,6 +264,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			// AND no monies are owing
 			&& ( $registration->transaction()->is_completed() || $registration->transaction()->is_overpaid() || $registration->transaction()->is_free() )
 		) {
+			// set incoming REG_Status
+			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );
 			if ( $save ) {
@@ -273,14 +299,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 							'checkout_or_payment' => false,
 							'manually_updated' 		=> false,
 							'payment_updates' 		=> false,
-							'status_updates' 			=> $this->new_reg_status() !== $this->old_reg_status() ? true : false,
+							'status_updates' 			=> $this->reg_status_updated( $registration->ID() ),
 							'finalized' 						=> false,
 							'revisit' 							=> false,
 							'reg_steps' 						=> $registration->transaction()->reg_steps(),
 							'txn_status' 						=> $registration->transaction()->status_ID(),
 							'last_payment'				=> null,
-							'old_reg_status' 				=> $this->old_reg_status(),
-							'new_reg_status' 			=> $this->new_reg_status()
+							'old_reg_status' 				=> $this->old_reg_status( $registration->ID() ),
+							'new_reg_status' 			=> $this->new_reg_status( $registration->ID() )
 						),
 						$additional_details
 					)
@@ -302,7 +328,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 
 		// if the registration status gets updated, then save the registration
 		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
@@ -310,7 +336,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		}
 
 		// set new  REG_Status
-		$this->set_new_reg_status( $registration->status_ID() );
+		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
 		// send messages
 		$this->trigger_registration_update_notifications(
 			$registration,
@@ -324,11 +350,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'old_reg_status' => $this->old_reg_status(),
-				'new_reg_status' => $this->new_reg_status(),
+				'old_reg_status' => $this->old_reg_status( $registration->ID() ),
+				'new_reg_status' => $this->new_reg_status( $registration->ID() ),
 			)
 		);
-		return $this->new_reg_status() == EEM_Registration::status_id_approved ? true : false;
+		return $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
 
