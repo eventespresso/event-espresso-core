@@ -102,7 +102,7 @@ class EE_Payment_Method_Manager {
 		// grab and sanitize module name
 		$module_dir = basename( $payment_method_path );
 		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		$module = str_replace( ' ', '_', str_replace( '_', ' ', $module_dir ));
 		// add class prefix
 		$module_class = 'EE_PMT_' . $module;
 		// does the module exist ?
