@@ -395,19 +395,16 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( $payment_options_step_completed !== true && $payment->is_approved() ) {
 			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
-		// if processing an IPN...
-		//if ( $IPN ) {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			// maybe update status, but don't save transaction just yet
-			$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
-			// check if enough Reg Steps have been completed to warrant finalizing the TXN
-			if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
-				// and if it hasn't already been set as being started...
-				$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
-			}
-			$transaction->save();
-		//}
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		// maybe update status, but don't save transaction just yet
+		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
+		// check if enough Reg Steps have been completed to warrant finalizing the TXN
+		if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
+			// and if it hasn't already been set as being started...
+			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+		}
+		$transaction->save();
 		// DEBUG LOG
 		$this->log(
 			__CLASS__, __FUNCTION__, __LINE__,
