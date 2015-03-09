@@ -362,30 +362,18 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$data = array( $transaction, $payment );
 
-		//let's set up the message type depending on the status
-		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
+		$message_type = self::_get_payment_message_type( $payment->STS_ID() );
 
-		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+		//if payment amount is less than 0 then switch to payment_refund message type.
+		$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
 
-		//verify this message type is present and active.  If it isn't then we use the default payment message type.
+		//verify this message type is present and active.  If it isn't then no message is sent.
 		$active_mts = self::$_EEMSG->get_active_message_types();
 
-		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
+		$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
 
-
-		if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
-			if ( WP_DEBUG ) {
-				$delivered_messages = get_option( 'EED_Messages__payment', array() );
-				if ( ! isset( $delivered_messages[ $transaction->ID() ] )) {
-					$delivered_messages[ $transaction->ID() ] = array();
-				}
-				$delivered_messages[ $transaction->ID() ][ time() ] = array(
-					'message_type' => $message_type,
-					'txn_status' => $transaction->status_obj()->code( false, 'sentence' ),
-					'pay_status' => $payment->status_obj()->code( false, 'sentence' ),
-				);
-				update_option( 'EED_Messages__payment', $delivered_messages );
-			}
+		if ( $message_type ) {
+			self::$_EEMSG->send_message( $message_type, $data );
 		}
 	}
 
@@ -521,6 +509,27 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * Simply returns the payment message type for the given payment status.
+	 *
+	 * @param string  $payment_status The payment status being matched.
+	 *
+	 * @return string|bool The payment message type slug matching the status or false if no match.
+	 */
+	protected static function _get_payment_message_type( $payment_status ) {
+		$matches = array(
+			EEM_Payment::status_id_approved => 'payment',
+			EEM_Payment::status_id_pending => 'payment_pending',
+			EEM_Payment::status_id_cancelled => 'payment_cancelled',
+			EEM_Payment::status_id_declined => 'payment_declined',
+			EEM_Payment::status_id_failed => 'payment_failed'
+			);
+
+		return isset( $matches[$payment_status] ) ? $matches[$payment_status] : false;
+	}
+
+
+
 
 	/**
 	 * Message triggers for a resend registration confirmation (in admin)
@@ -589,12 +598,31 @@ class EED_Messages  extends EED_Module {
 		$transaction = $payment->transaction();
 		if ( $transaction instanceof EE_Transaction ) {
 			$data = array( $transaction, $payment );
-			$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+			$message_type = self::_get_payment_message_type( $payment->STS_ID() );
+
+			//if payment amount is less than 0 then switch to payment_refund message type.
+			$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
+
+			//if payment_refund is selected, but the status is NOT accepted.  Then change message type to false so NO message notification goes out.
+			$message_type = $message_type == 'payment_refund' && $payment->STS_ID() != EEM_Payment::status_id_approved ? false : $message_type;
+
 			self::_load_controller();
-			$success = self::$_EEMSG->send_message( $message_type_name, $data );
-			if ( ! $success ) {
-				EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			//verify this message type is present and active.  If it isn't then no message is sent.
+			$active_mts = self::$_EEMSG->get_active_message_types();
+			$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
+
+
+			if ( $message_type ) {
+
+				$success = self::$_EEMSG->send_message( $message_type, $data );
+				if ( ! $success ) {
+					EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				}
+
+			} else {
+				EE_Error::add_error( __('The message type for the status of this payment is not active or does not exist, so no notification was sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
+
 		}
 		return $success;
 	}
