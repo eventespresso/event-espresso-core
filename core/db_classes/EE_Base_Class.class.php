@@ -635,6 +635,7 @@ abstract class EE_Base_Class{
 				$field_value = $field_value_from_db;
 			}
 			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_clear_cached_property( $field_name );
 		}
 	}
 
@@ -825,6 +826,22 @@ abstract class EE_Base_Class{
 	 */
 	public function e_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
 		$this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, NULL, TRUE);
+	}
+
+
+
+
+	/**
+	 * Get the i8ln value for a date using the WordPress @see date_i18n function.
+	 *
+	 * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
+	 * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format on the object will be used.
+	 *
+	 * @return string Date and time string in set locale.
+	 */
+	public function get_i18n_datetime( $field_name, $format = NULL ) {
+		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
+		return date_i18n( $format, strtotime( $this->_get_datetime( $field_name, NULL, NULL, NULL, false ) ) );
 	}
 
 
@@ -1208,20 +1225,28 @@ abstract class EE_Base_Class{
 	 * @return mixed (EE_Base_Class|bool)
 	 */
 	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
-		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if( self::_get_model( $classname )->has_primary_key_field()){
+			$primary_id_ref = self::_get_primary_key_name( $classname );
 
-		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
-			if ( $existing ) {
-				foreach ( $props_n_values as $property => $field_value ) {
-					$existing->set( $property, $field_value );
-				}
-				return $existing;
-			} else {
-				return FALSE;
+			if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+				$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			}else{
+				$existing = null;
 			}
+		}elseif( self::_get_model( $classname, $timezone )->has_all_combined_primary_key_fields(  $props_n_values ) ){
+			//no primary key on this model, but there's still a matching item in the DB
+				$existing = self::_get_model($classname, $timezone)->get_one_by_ID( self::_get_model($classname, $timezone)->get_index_primary_key_string( $props_n_values ) );
+		}else{
+			$existing = null;
 		}
-		return FALSE;
+		if ( $existing ) {
+			foreach ( $props_n_values as $property => $field_value ) {
+				$existing->set( $property, $field_value );
+			}
+			return $existing;
+		} else {
+			return FALSE;
+		}
 	}
 
 
@@ -1301,7 +1326,11 @@ abstract class EE_Base_Class{
 	 */
 	public function ID(){
 		//now that we know the name of the variable, use a variable variable to get its value and return its
-		return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		if( $this->get_model()->has_primary_key_field() ) {
+			return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		}else{
+			return $this->get_model()->get_index_primary_key_string( $this->_fields );
+		}
 	}
 
 

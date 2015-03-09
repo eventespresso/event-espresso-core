@@ -4,8 +4,8 @@ jQuery(document).ready(function($) {
 
 	// clear firefox and safari cache
 	$(window).unload( function() {});
-	
-	
+
+
 	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
 
 
@@ -21,7 +21,7 @@ jQuery(document).ready(function($) {
 			yearRange: "-80:+20"
 		});
 	}
-	
+
 
 	$('#entries-per-page-slct').change( function() {
 		var per_page = $(this).val();
@@ -29,13 +29,13 @@ jQuery(document).ready(function($) {
 		$('#registrations-overview-frm').submit();
 	});
 
-	
+
 	$( '.reg-admin-attendee-questions-input-td' ).each(function() {
 		$(this).find('input').prop( 'disabled', true );
 		$(this).find('select').prop( 'disabled', true );
 		$(this).find('textarea').prop( 'disabled', true );
 	});
-	
+
 	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
 		e.preventDefault();
 		$(this).closest('table').find('.reg-admin-attendee-questions-input-td' ).each(function() {
@@ -44,17 +44,17 @@ jQuery(document).ready(function($) {
 			$(this).find('select').prop( 'disabled', false ).addClass('editable-input');
 			$(this).find('textarea').prop( 'disabled', false ).addClass('editable-input');
 		});
+		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
 	});
-	
+
 	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
 		$(this).removeClass('editable-input').addClass('edited-input');
 		var edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
 		edit_lnk = '<span class="reminder-spn">' + eei18n.update_att_qstns + '<span><span class="hidden">' + edit_lnk + '<span>';
 		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
-		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
 	});
-	
-	
+
+
 
 	/**
 	 * catch the Check-in status triggers

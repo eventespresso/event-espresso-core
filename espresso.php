@@ -3,7 +3,7 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 		4.6.5.rc.000
+  Version: 		4.6.15.rc.016
   Author: 		Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		GPLv2
@@ -45,7 +45,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.6.5.rc.000';
+		return '4.6.15.rc.016';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -53,8 +53,8 @@ if ( ! function_exists( 'espresso_version' )) {
 }
 // define versions
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
-define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
-define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
+define( 'EE_MIN_WP_VER_REQUIRED', '4.0' );
+define( 'EE_MIN_WP_VER_RECOMMENDED', '4.1' );
 define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
 define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.33' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
@@ -218,12 +218,3 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
-
-
-
-
-
-
-
-
-

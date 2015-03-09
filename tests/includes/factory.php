@@ -217,6 +217,16 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
+	 * This is a cache holder for args that cannot be used to instantiate the object but are used for
+	 * chaining to other previously created objects.
+	 *
+	 * @var array
+	 */
+	protected $_special_args = array();
+
+
+
+	/**
 	 * constructor
 	 *
 	 * @param EE_UnitTest_Factory $factory
@@ -266,11 +276,11 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	private function _maybe_chained( EE_Datetime $dtt, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_event ) ) {
-				$EVT_ID = isset( $args['EVT_ID'] ) ? $args['EVT_ID'] : 0;
+				$EVT_ID = isset( $this->_special_args['EVT_ID'] ) ? $this->_special_args['EVT_ID'] : 0;
 				$this->_set_new_event( $EVT_ID );
 			}
 			//add relation to event
-			$dtt->_add_relation_to( $this->_event, 'EE_Event' );
+			$dtt->_add_relation_to( $this->_event, 'Event' );
 			$dtt->save();
 			return $dtt;
 		}
@@ -288,6 +298,11 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Datetime|false
 	 */
 	public function create_object( $args ) {
+		$this->_special_args['EVT_ID'] = isset( $args['EVT_ID'] ) ? $args['EVT_ID'] : 0;
+		if ( isset( $args['EVT_ID'] ) ) {
+			unset( $args['EVT_ID'] );
+		}
+
 		$dtt = EE_Datetime::new_instance( $args );
 		$dttID = $dtt->save();
 		$dtt = $this->_maybe_chained( $dtt, $args );
@@ -375,6 +390,16 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
+	 * This is a cache holder for args that cannot be used to instantiate the object but are used for
+	 * chaining to other previously created objects.
+	 *
+	 * @var array
+	 */
+	protected $_special_args = array();
+
+
+
+	/**
 	 * constructor
 	 *
 	 * @param EE_UnitTest_Factory $factory
@@ -421,8 +446,7 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	 * @return void
 	 */
 	private function _set_new_price( $PRC_ID = 0 ) {
-		$this->_price = empty( $PRC_ID ) ? EEM_Price::instance()->get_one_by_ID( $PRC_ID ) : $this->factory->price_chained->create();
-
+		$this->_price =  ! empty( $PRC_ID ) ? EEM_Price::instance()->get_one_by_ID( $PRC_ID ) : $this->factory->price_chained->create();
 		//failsafe just in case (so we can be sure to have an price).
 		if ( empty( $this->_price ) ) {
 			$this->_price = $this->factory->price_chained->create();
@@ -444,20 +468,20 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	private function _maybe_chained( EE_Ticket $tkt, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_datetime ) ) {
-				$DTT_ID = isset( $args['DTT_ID'] ) ? $args['DTT_ID'] : 0;
+				$DTT_ID = isset( $this->_special_args['DTT_ID'] ) ? $this->_special_args['DTT_ID'] : 0;
 				$this->_set_new_datetime( $DTT_ID );
 			}
 
 			if ( empty( $this->_price ) ) {
-				$PRC_ID = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
+				$PRC_ID = isset( $this->_special_args['PRC_ID'] ) ? $this->_special_args['PRC_ID'] : 0;
 				$this->_set_new_price( $PRC_ID );
 			}
 
 			//add relation to datetime
-			$tkt->_add_relation_to( $this->_datetime, 'EE_Datetime' );
+			$tkt->_add_relation_to( $this->_datetime, 'Datetime' );
 
 			//add relation to price
-			$tkt->_add_relation_to( $this->_price, 'EE_Price' );
+			$tkt->_add_relation_to( $this->_price, 'Price' );
 			$tkt->save();
 			return $tkt;
 		}
@@ -475,6 +499,18 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Ticket|false
 	 */
 	public function create_object( $args ) {
+		$this->_special_args['PRC_ID'] = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
+		$this->_special_args['DTT_ID'] = isset( $args['DTT_ID'] ) ? $args['DTT_ID'] : 0;
+		//maybe unset PRC_ID
+		if ( isset( $args['PRC_ID'] ) ) {
+			unset( $args['PRC_ID'] );
+		}
+
+		//maybe unset DTT_ID
+		if ( isset( $args['DTT_ID'] ) ) {
+			unset( $args['DTT_ID'] );
+		}
+
 		$tkt = EE_ticket::new_instance( $args );
 		$tktID = $tkt->save();
 		$tkt = $this->_maybe_chained( $tkt, $args );
@@ -553,6 +589,20 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	protected $_chained;
 
 
+
+
+	/**
+	 * This is a cache holder for args that cannot be used to instantiate the object but are used for
+	 * chaining to other previously created objects.
+	 *
+	 * @var array
+	 */
+	protected $_special_args = array();
+
+
+
+
+
 	/**
 	 * constructor
 	 *
@@ -610,7 +660,7 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	 */
 	private function _create_price_type( $args ) {
 		//BASE PRICE TYPE
-		$base_price_type = ! emtpy( $args['PRC_type'] ) ? $args['PRC_type'] : $this->default_generation_args['PRC_type'];
+		$base_price_type = ! empty( $args['PRC_type'] ) ? $args['PRC_type'] : $this->default_generation_definitions['PRC_type'];
 		switch ( $base_price_type ) {
 			case 'base' :
 				$base_type = EEM_Price_Type::base_type_base_price;
@@ -627,9 +677,9 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 		}
 		//set the properties for the price type depending on the args
 		$prt_args = array(
-			'PRT_name' => ! empty( $args['PRT_name'] ) ? $args['PRT_name'] : $this->default_generation_args['PRT_name'],
+			'PRT_name' => ! empty( $args['PRT_name'] ) ? $args['PRT_name'] : $this->default_generation_definitions['PRT_name'],
 			'PBT_ID' => $base_type,
-			'PRT_is_percent' => ! empty( $args['PRC_type_is_percent'] ) ? $args['PRC_type_is_percent'] : $this->default_generation_args['PRC_type_is_percent']
+			'PRT_is_percent' => ! empty( $args['PRC_type_is_percent'] ) ? $args['PRC_type_is_percent'] : $this->default_generation_definitions['PRC_type_is_percent']
 			);
 		return $this->factory->price_type->create( $prt_args );
 	}
@@ -649,11 +699,11 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	private function _maybe_chained( EE_Price $price, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_price_type ) ) {
-				$PRT_ID = isset( $args['PRT_ID'] ) ? $args['PRT_ID'] : 0;
+				$PRT_ID = isset( $this->_special_args['PRT_ID'] ) ? $this->_special_args['PRT_ID'] : 0;
 				$this->_set_new_price_type( $PRT_ID, $args );
 			}
 			//add relation to datetime
-			$price->_add_relation_to( $this->_price_type, 'EE_Price_Type' );
+			$price->_add_relation_to( $this->_price_type, 'Price_Type' );
 			$price->save();
 			return $price;
 		}
@@ -671,6 +721,10 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Price|false
 	 */
 	public function create_object( $args ) {
+		$this->_special_args['PRT_ID'] = isset( $args['PRT_ID'] ) ? $args['PRT_ID'] : 0;
+		if ( isset( $args['PRT_ID'] ) ) {
+			unset( $args['PRT_ID'] );
+		}
 		$price = EE_Price::new_instance( $args );
 		$priceID = $price->save();
 		$price = $this->_maybe_chained( $price, $args );
@@ -750,6 +804,16 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 	protected $_chained;
 
 
+
+	/**
+	 * This is a cache holder for args that cannot be used to instantiate the object but are used for
+	 * chaining to other previously created objects.
+	 *
+	 * @var array
+	 */
+	protected $_special_args = array();
+
+
 	/**
 	 * constructor
 	 *
@@ -801,7 +865,7 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 				$this->_set_new_price_type( $PRC_ID );
 			}
 			//add relation to datetime
-			$price_type->_add_relation_to( $this->_price, 'EE_Price' );
+			$price_type->_add_relation_to( $this->_price, 'Price' );
 			$price_type->save();
 			return $price_type;
 		}
@@ -819,6 +883,10 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Price_Type|false
 	 */
 	public function create_object( $args ) {
+		$this->_special_args['PRC_ID'] = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
+		if ( isset( $args['PRC_ID'] ) ) {
+			unset( $args['PRC_ID'] );
+		}
 		$price_type = EE_Price_Type::new_instance( $args );
 		$price_typeID = $price_type->save();
 		$price_type = $this->_maybe_chained( $price_type, $args );
@@ -988,20 +1056,20 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 			}
 
 			//add relation to transaction
-			$registration->_add_relation_to( $this->_transaction, 'EE_Transaction' );
+			$registration->_add_relation_to( $this->_transaction, 'Transaction' );
 
 			//add relation to ticket
-			$registration->_add_relation_to( $this->_ticket, 'EE_Ticket' );
+			$registration->_add_relation_to( $this->_ticket, 'Ticket' );
 
 			//add relation to event
 			$event = $this->_ticket->get_first_related( 'Datetime' )->get_first_related( 'Event' );
-			$registration->_add_relation_to( $event, 'EE_Event' );
+			$registration->_add_relation_to( $event, 'Event' );
 
 			//add relation to attendee
-			$registration->_add_relation_to( $this->_attendee, 'EE_Attendee' );
+			$registration->_add_relation_to( $this->_attendee, 'Attendee' );
 
 			//add relation to status
-			$registration->_add_relation_to( $this->_status, 'EE_Status' );
+			$registration->_add_relation_to( $this->_status, 'Status' );
 
 			$registration->save();
 			return $registration;
@@ -1204,7 +1272,7 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 			//note relation to registration should already be set via the factory->registration_chained->create() method.
 
 			//add relation to status
-			$transaction->_add_relation_to( $this->_status, 'EE_Status' );
+			$transaction->_add_relation_to( $this->_status, 'Status' );
 
 			$transaction->save();
 			return $transaction;
@@ -1373,7 +1441,7 @@ class EE_UnitTest_Factory_For_Attendee extends WP_UnitTest_Factory_For_Thing {
 			//note relation to registration should already be set via the factory->registration_chained->create() method.
 
 			//add relation to status
-			$attendee->_add_relation_to( $this->_status, 'EE_Status' );
+			$attendee->_add_relation_to( $this->_status, 'Status' );
 
 			$attendee->save();
 			return $attendee;

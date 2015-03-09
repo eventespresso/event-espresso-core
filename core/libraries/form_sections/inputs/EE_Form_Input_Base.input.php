@@ -26,6 +26,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	protected $_html_label_class;
 	/**
+	 * any additional html attributes that you may want to add
+	 * @var string
+	 */
+	protected $_html_other_attributes;
+	/**
 	 * style for teh html label tag
 	 * @var string
 	 */
@@ -334,6 +339,25 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function get_html_for_input(){
 		return  $this->_get_display_strategy()->display();
 	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function html_other_attributes() {
+		return ! empty( $this->_html_other_attributes ) ? ' ' . $this->_html_other_attributes : '';
+	}
+
+
+
+	/**
+	 * @param string $html_other_attributes
+	 */
+	public function set_html_other_attributes( $html_other_attributes ) {
+		$this->_html_other_attributes = $html_other_attributes;
+	}
+
 	/**
 	 * Gets the HTML for displaying the label for this form input
 	 * according to the form section's layout strategy

@@ -25,14 +25,6 @@ jQuery(document).ready(function($) {
 	$('.updated.fade').delay(5000).fadeOut();
 
 
-
-
-	$('#txn-admin-payment-method-slct').bind('change', function() {
-		var mop = $(this).val();
-		$('.mop').hide();
-		$('.mop-'+mop).show();
-	});
-
 	var dialog_content = {};
 	var d_contents = '';
 
@@ -74,6 +66,10 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var paymentAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( paymentAmount );
+
+		//make sure payment status selector shows
+		$('.txn-admin-apply-payment-status-dv').show();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -101,6 +97,9 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var refundAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( refundAmount );
+		//don't show payment status selector
+		$('.txn-admin-apply-payment-status-dv').hide();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -131,8 +130,6 @@ jQuery(document).ready(function($) {
 				// remove validation notices
 				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
 				$('.validation-notice-dv').hide();
-
-				$('.mop').hide();
 			});
 	}
 

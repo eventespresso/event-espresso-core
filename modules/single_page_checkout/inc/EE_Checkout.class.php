@@ -164,10 +164,17 @@ class EE_Checkout {
 	public $primary_attendee_obj = NULL;
 
 	/**
-	 *	$_payment_method - the payment method object for the selected method of payment
+	 *	$payment_method - the payment method object for the selected method of payment
 	 *	@type EE_Payment_Method
 	 */
 	public $payment_method = NULL;
+
+	/**
+	 * 	$payment - if a payment was successfully made during the reg process,
+	 * 	then here it is !!!
+	 *	@type EE_Payment
+	 */
+	public $payment = NULL;
 
 	/**
 	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
@@ -248,6 +255,13 @@ class EE_Checkout {
 	 */
 	public function remove_reg_step( $reg_step_slug = '' ) {
 		unset( $this->reg_steps[ $reg_step_slug  ] );
+		if ( $this->transaction instanceof EE_Transaction ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// now remove reg step from TXN and save
+			$transaction_processor->remove_reg_step( $this->transaction, $reg_step_slug );
+			$this->transaction->save();
+		}
 	}
 
 
@@ -410,6 +424,26 @@ class EE_Checkout {
 		$this->current_step->set_submit_button_text();
 		$this->set_reg_step_JSON_info();
 	}
+
+
+
+	/**
+	 *    get_registration_time_limit
+	 *
+	 * @access    public
+	 * @return        string
+	 */
+	public function get_registration_time_limit() {
+
+		$registration_time_limit = (float)( EE_Registry::instance()	->SSN->expiration() - time() );
+		$time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
+		$registration_time_limit = gmdate( $time_limit_format, $registration_time_limit );
+		return apply_filters(
+			'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
+			$registration_time_limit
+		);
+	}
+
 
 
 	/**
