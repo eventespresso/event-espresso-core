@@ -585,12 +585,40 @@ class EED_Messages  extends EED_Module {
 		$transaction = $payment->transaction();
 		if ( $transaction instanceof EE_Transaction ) {
 			$data = array( $transaction, $payment );
-			$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+			$payment_status = strtolower( $payment->pretty_status() );
+
+			//swap out status for certain message types that don't match the status correctly.
+			//key is strtolower( pretty_status() ), value is message type slug.
+			$swap_status = array(
+				'accepted' => 'payment'
+				);
+
+			//let's set up the message type depending on the status
+			$message_type = isset( $swap_status[$payment_status] ) ? $swap_status[$payment_status] : 'payment' . '_' . $payment_status;
+
+			//if payment amount is less than 0 then switch to payment_refund message type.
+			$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
+
+			//if payment_refund is selected, but the status is NOT accepted.  Then change message type to false so NO message notification goes out.
+			$message_type = $message_type == 'payment_refund' && $payment_status != 'accepted' ? false : $message_type;
+
 			self::_load_controller();
-			$success = self::$_EEMSG->send_message( $message_type_name, $data );
-			if ( ! $success ) {
-				EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			//verify this message type is present and active.  If it isn't then no message is sent.
+			$active_mts = self::$_EEMSG->get_active_message_types();
+			$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
+
+
+			if ( $message_type ) {
+
+				$success = self::$_EEMSG->send_message( $message_type, $data );
+				if ( ! $success ) {
+					EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				}
+
+			} else {
+				EE_Error::add_error( __('The message type for the status of this payment is not active or does not exist, so no notification was sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
+
 		}
 		return $success;
 	}
