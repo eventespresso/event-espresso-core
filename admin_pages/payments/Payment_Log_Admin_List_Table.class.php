@@ -144,7 +144,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 	 * @param \EE_Change_Log $item
 	 * @return string
 	 */
-	public function column_cb(EE_Change_Log $item) {
+	public function column_cb($item) {
 		return sprintf( '<input type="checkbox" class="option_id" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
