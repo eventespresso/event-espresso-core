@@ -361,16 +361,8 @@ class EED_Messages  extends EED_Module {
 	public static function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		self::_load_controller();
 		$data = array( $transaction, $payment );
-		$payment_status = strtolower( $payment->pretty_status() );
 
-		//swap out status for certain message types that don't match the status correctly.
-		//key is strtolower( pretty_status() ), value is message type slug.
-		$swap_status = array(
-			'accepted' => 'payment'
-			);
-
-		//let's set up the message type depending on the status
-		$message_type = isset( $swap_status[$payment_status] ) ? $swap_status[$payment_status] : 'payment' . '_' . $payment_status;
+		$message_type = self::_get_payment_message_type( $payment->STS_ID() );
 
 		//if payment amount is less than 0 then switch to payment_refund message type.
 		$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
@@ -517,6 +509,27 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * Simply returns the payment message type for the given payment status.
+	 *
+	 * @param string  $payment_status The payment status being matched.
+	 *
+	 * @return string|bool The payment message type slug matching the status or false if no match.
+	 */
+	protected static function _get_payment_message_type( $payment_status ) {
+		$matches = array(
+			EEM_Payment::status_id_approved => 'payment',
+			EEM_Payment::status_id_pending => 'payment_pending',
+			EEM_Payment::status_id_cancelled => 'payment_cancelled',
+			EEM_Payment::status_id_declined => 'payment_declined',
+			EEM_Payment::status_id_failed => 'payment_failed'
+			);
+
+		return isset( $matches[$payment_status] ) ? $matches[$payment_status] : false;
+	}
+
+
+
 
 	/**
 	 * Message triggers for a resend registration confirmation (in admin)
@@ -585,22 +598,13 @@ class EED_Messages  extends EED_Module {
 		$transaction = $payment->transaction();
 		if ( $transaction instanceof EE_Transaction ) {
 			$data = array( $transaction, $payment );
-			$payment_status = strtolower( $payment->pretty_status() );
-
-			//swap out status for certain message types that don't match the status correctly.
-			//key is strtolower( pretty_status() ), value is message type slug.
-			$swap_status = array(
-				'accepted' => 'payment'
-				);
-
-			//let's set up the message type depending on the status
-			$message_type = isset( $swap_status[$payment_status] ) ? $swap_status[$payment_status] : 'payment' . '_' . $payment_status;
+			$message_type = self::_get_payment_message_type( $payment->STS_ID() );
 
 			//if payment amount is less than 0 then switch to payment_refund message type.
 			$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
 
 			//if payment_refund is selected, but the status is NOT accepted.  Then change message type to false so NO message notification goes out.
-			$message_type = $message_type == 'payment_refund' && $payment_status != 'accepted' ? false : $message_type;
+			$message_type = $message_type == 'payment_refund' && $payment->STS_ID() != EEM_Payment::status_id_approved ? false : $message_type;
 
 			self::_load_controller();
 			//verify this message type is present and active.  If it isn't then no message is sent.
