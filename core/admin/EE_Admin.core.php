@@ -47,7 +47,7 @@ final class EE_Admin {
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Admin )) {
+		if (  ! self::$_instance instanceof EE_Admin ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -73,8 +73,12 @@ final class EE_Admin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_action( 'network_admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+
+		//reset Environment config (we only do this on admin page loads);
+		EE_Registry::instance()->CFG->environment->recheck_values();
 
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
@@ -171,17 +175,15 @@ final class EE_Admin {
 	*/
 	public function init() {
 
-		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
-		//however, we want to make use of the admin infrastructure still
-		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100 );
-		} else {
+		//only enable most of the EE_Admin IF we're not in full maintenance mode
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
+			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 			//filter for get_edit_post_link used on comments for custom post types

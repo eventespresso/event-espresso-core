@@ -68,19 +68,19 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 		switch ( $shortcode ) {
 
 			case '[COMPANY]' :
-				return EE_Registry::instance()->CFG->organization->name;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'name' );
 				break;
 
 			case '[CO_ADD1]' :
-				return EE_Registry::instance()->CFG->organization->address_1;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'address_1' );
 				break;
 
 			case '[CO_ADD2]' :
-				return EE_Registry::instance()->CFG->organization->address_2;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'address_2' );
 				break;
 
 			case '[CO_CITY]' :
-				return EE_Registry::instance()->CFG->organization->city;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'city' );
 				break;
 
 			case '[CO_STATE]' :
@@ -89,47 +89,47 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[CO_ZIP]' :
-				return EE_Registry::instance()->CFG->organization->zip;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'zip' );
 				break;
 
 			case '[CO_EMAIL]' :
-				return EE_Registry::instance()->CFG->organization->email;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'email' );
 				break;
 
 			case '[CO_PHONE]' :
-				return EE_Registry::instance()->CFG->organization->phone;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'phone' );
 				break;
 
 			case '[CO_LOGO]' :
-				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" id="headerImage" />';
+				return '<img src="' . EE_Registry::instance()->CFG->organization->get_pretty( 'logo_url' ) . '" id="headerImage" />';
 				break;
 
 			case '[CO_LOGO_URL]' :
-				return EE_Registry::instance()->CFG->organization->logo_url;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'logo_url' );
 				break;
 
 			case '[CO_FACEBOOK_URL]' :
-				return EE_Registry::instance()->CFG->organization->facebook;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'facebook' );
 				break;
 
 			case '[CO_TWITTER_URL]' :
-				return EE_Registry::instance()->CFG->organization->twitter;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'twitter' );
 				break;
 
 			case '[CO_PINTEREST_URL]' :
-				return EE_Registry::instance()->CFG->organization->pinterest;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'pinterest' );
 				break;
 
 			case '[CO_LINKEDIN_URL]' :
-				return EE_Registry::instance()->CFG->organization->linkedin;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'linkedin' );
 				break;
 
 			case '[CO_GOOGLE_URL]' :
-				return EE_Registry::instance()->CFG->organization->google;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'google' );
 				break;
 
 			case '[CO_INSTAGRAM_URL]' :
-				return EE_Registry::instance()->CFG->organization->instagram;
+				return EE_Registry::instance()->CFG->organization->get_pretty( 'instagram' );
 				break;
 
 		}

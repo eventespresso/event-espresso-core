@@ -28,6 +28,8 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+
+
 	/**
 	 * The label for the menu item. (What shows up in the actual menu).
 	 *
@@ -112,6 +114,11 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+	const NONE = 0;
+	const BLOG_ADMIN_ONLY = 1;
+	const BLOG_AND_NETWORK_ADMIN = 2;
+	const NETWORK_ADMIN_ONLY = 3;
+
 
 	/**
 	 * Whether this item is displayed in the menu or not.
@@ -123,10 +130,15 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 */
 	public $show_on_menu = self::BLOG_ADMIN_ONLY;
 
-	const NONE = 0;
-	const BLOG_ADMIN_ONLY = 1;
-	const BLOG_AND_NETWORK_ADMIN = 2;
-	const NETWORK_ADMIN_ONLY = 3;
+
+	/**
+	 * Menu maps can define a parent slug that gets used instead of the main parent slug for the menu when EE_Maintenance_Mode::level_2_complete_maintenance is active.
+	 *
+	 * @var bool
+	 */
+	public $maintenance_mode_parent = '';
+
+
 
 
 
@@ -144,6 +156,10 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * @return void
 	 */
 	public function __construct( $menu_args, $required ) {
+		//filter all args before processing so plugins can manipulate various settings for menus.
+		$menu_args = apply_filters( 'FHEE__EE_Admin_Page_Menu_Map__construct__menu_args', $menu_args, $required, get_class( $this ) );
+
+
 		//verify that required keys are present in the incoming array.
 		$missing = array_diff( (array) $required, array_keys( (array) $menu_args ) );
 
@@ -165,6 +181,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 					break;
 				case 'menu_callback' :
 					break;
+
 				default :
 					$value = (string) $value;
 					break;
@@ -174,6 +191,15 @@ abstract class EE_Admin_Page_Menu_Map  {
 				throw new EE_Error( sprintf( __('The $menu_args coming into %s has a index key (%s) representing a property that is not defined by the class.  Perhaps there is a typo?', 'event_espresso'), get_class( $this ), $prop ) );
 			$this->{$prop} = $value;
 
+		}
+
+		//filter capabilities (both static and dynamic)
+		$this->capability = apply_filters( 'FHEE_management_capability', $this->capability, NULL );
+		$this->capability = apply_filters( 'FHEE_' . $this->menu_slug . '_capability', $this->capability, NULL );
+
+		//Might need to change parent slug depending on maintenance mode.
+		if ( ! empty( $this->maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance )  {
+			$this->parent_slug = $this->maintenance_mode_parent;
 		}
 
 		//if empty menu_callback let's set default (but only if we have admin page init object)
@@ -234,6 +260,14 @@ abstract class EE_Admin_Page_Menu_Map  {
  */
 class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 
+	/**
+	 * If included int incoming params, then this class will also register a Sub Menue Admin page with a different subtitle than the main menu item.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @var string
+	 */
+	public $subtitle;
 
 	/**
 	 * The page to a icon used for this menu.
@@ -263,6 +297,8 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
 
 		parent::__construct( $menu_args, $required );
+
+		$this->position = ! empty( $this->position ) ? (int) $this->position : $this->position;
 	}
 
 
@@ -270,7 +306,11 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		return add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback );
+		$main =  add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback, $this->icon_url, $this->position );
+		if ( ! empty( $this->subtitle ) ) {
+			add_submenu_page( $this->parent_slug, $this->subtitle, $this->subtitle, $this->capability, $this->menu_slug, $this->menu_callback );
+		}
+		return $main;
 	}
 } //end EE_Admin_Page_Main_Menu
 

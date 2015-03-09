@@ -89,7 +89,7 @@ final class EE_Front_Controller {
 		// process any content shortcodes
 		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 		// process request with module factory
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10, 1 );
 		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		// load css and js
@@ -245,7 +245,7 @@ final class EE_Front_Controller {
 			if ( $page_on_front ) {
 				// k now we need to find the post_name for this page
 				global $wpdb;
-				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+				$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d";
 				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
 				// set the current post slug to what it actually is
 				$current_post = $page_on_front ? $page_on_front : $current_post;
@@ -327,7 +327,7 @@ final class EE_Front_Controller {
 				// cycle thru module routes
 				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
-					$module = $Module_Request_Router->resolve_route( $route );
+					$module = $Module_Request_Router->resolve_route( $route[0], $route[1] );
 					if( $module instanceof EED_Module ) {
 						// get registered view for route
 						$this->_template_path = $Module_Request_Router->get_view( $route );
@@ -387,14 +387,15 @@ final class EE_Front_Controller {
 					wp_enqueue_style('espresso_custom_css');
 				}
 
-				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
+				EE_Registry::instance()->load_helper( 'File' );
+				if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
 					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				}
 				wp_enqueue_style('espresso_default');
 
-				if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css' )) {
+				if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css' )) {
 					wp_register_style( 'espresso_style', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 				} else {
 					wp_register_style( 'espresso_style', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );

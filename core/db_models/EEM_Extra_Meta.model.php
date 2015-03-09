@@ -31,34 +31,9 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Extra_Meta extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Extra_Meta instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Extra_Meta
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Extra Meta','event_espresso');
 		$this->plural_item = __('Extra Metas','event_espresso');
 		$this->_tables = array(
@@ -71,7 +46,7 @@ class EEM_Extra_Meta extends EEM_Base {
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("Primary Key of Attached Thing", "event_espresso"), false, 0, $models_this_can_attach_to),
 				'EXM_type'=>new EE_Any_Foreign_Model_Name_Field('EXM_type', __("Model of Attached Thing", "event_espresso"), false, 'Transaction', $models_this_can_attach_to),
 				'EXM_key'=>new EE_Plain_Text_Field('EXM_key', __("Meta Key", "event_espresso"), false, ''),
-				'EXM_value'=>new EE_Full_HTML_Field('EXM_value', __("Meta Value", "event_espresso"), true)
+				'EXM_value'=>new EE_Maybe_Serialized_Text_Field('EXM_value', __("Meta Value", "event_espresso"), true)
 
 			));
 		$this->_model_relations = array();
@@ -79,7 +54,7 @@ class EEM_Extra_Meta extends EEM_Base {
 			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

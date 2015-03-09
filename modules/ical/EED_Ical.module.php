@@ -94,7 +94,7 @@ class EED_Ical  extends EED_Module {
 				// submit buttons appear as buttons and are very compatible with a theme's style
 				case 'submit' :
 					$html .= '<form id="download-iCal-frm-' . $datetime->ID() . '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
-					$html .= '<input type="submit" class="ee-ical-sbmt" value="' . esc_attr( '&#xf145;' ) . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
+					$html .= '<input type="submit" class="ee-ical-sbmt" value="&#xf145;" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
 					$html .= '</form>';
 					break;
 				// buttons are just links that have been styled to appear as buttons, but may not be blend with a theme as well as submit buttons
@@ -151,7 +151,7 @@ class EED_Ical  extends EED_Module {
 				$org_email = EED_Ical::_escape_ICal_data( $datetime->ID() );
 				$timestamp = date( EED_Ical::iCal_datetime_format );
 				$location = EED_Ical::_escape_ICal_data( $location );
-				$summary = EED_Ical::_escape_ICal_data( wp_trim_words( $event->description() ));
+				$summary = EED_Ical::_escape_ICal_data( $event->name() );
 				$description = EED_Ical::_escape_ICal_data( wp_strip_all_tags( $event->description() ));
 				$status = $datetime->get_active_status();
 				$status = $status == EE_Datetime::cancelled ? 'Cancelled' : 'Confirmed';

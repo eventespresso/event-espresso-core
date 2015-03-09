@@ -13,8 +13,8 @@
 <?php _e('This is the unique name for a venue category.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Category Description', 'event_espresso'); ?></strong><br />
-<?php _e('The rich text editor can be used to create a description for your venue category. Similar to WordPress pages and posts, you can upload images and customize your text by using the options on the toolbar.', 'event_espresso'); ?>
+<?php _e('<strong>Category Description</strong>', 'event_espresso'); ?><br />
+<?php _e('The rich text editor can be used to create a description for your venue category.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

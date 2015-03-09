@@ -301,6 +301,11 @@
 	border-left-color : #E76700;
 }
 
+/*not-approved*/
+.reg-status-RIC, .button-secondary.reg-status-RIC, .button-primary.reg-status-RIC {
+	border-left-color : #FCB93C;
+}
+
 .widefat td.column-_Reg_Status, .widefat th.column-_Reg_Status {
 	width   : 2%;
 	padding : 0;
@@ -328,6 +333,10 @@
 	background-color : #E76700;
 }
 
+.ee-status-legend-RIC {
+	background-color : #FCB93C;
+}
+
 .status-RPP { color : #00B1CA; }
 
 .status-RCN { color : #AC9D9C; }
@@ -337,6 +346,8 @@
 .status-RAP { color : #70CC50; }
 
 .status-RNA { color : #E76700; }
+
+.status-RIC { color : #FCB93C; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
 	margin-left : 10px;

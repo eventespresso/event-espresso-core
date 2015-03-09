@@ -30,7 +30,7 @@
 	   			</a>
 	   		</li>
 	   		<li>
-	   			<?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'.__('Plugins', 'event_espresso'). '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">' .__('Addons', 'event_espresso').'</a>'; ?><br />
+	   			<?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'.__('Plugins', 'event_espresso'). '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">' .__('Add-ons', 'event_espresso').'</a>'; ?><br />
 	   			<br />
 	   			<ol>
 	   				<li>

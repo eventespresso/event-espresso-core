@@ -182,12 +182,24 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * get Message Messenger OBJECT
 	 *
+	 * If an attempt to get the corresponding messenger object fails, then we set this message
+	 * template group to inactive, and save to db.  Then return null so client code can handle
+	 * appropriately.
+	 *
 	 * @return EE_messenger
 	 */
 	public function messenger_obj() {
 		$messenger = $this->messenger();
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::messenger_obj( $messenger );
+		try {
+			$messenger = EEH_MSG_Template::messenger_obj( $messenger );
+		} catch( EE_Error $e ) {
+			//if an exception was thrown then let's deactivate this message template group because it means there is no class for this messenger in this group.
+			$this->set( 'MTP_is_active', false );
+			$this->save();
+			return null;
+		}
+		return $messenger;
 	}
 
 
@@ -207,12 +219,25 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * get Message type OBJECT
 	 *
-	 * @return EE_message_type
+	 * If an attempt to get the corresponding message type object fails, then we set this message
+	 * template group to inactive, and save to db.  Then return null so client code can handle
+	 * appropriately.
+	 *
+	 * @throws EE_Error
+	 * @return EE_message_type|false if exception thrown.
 	 */
 	public function message_type_obj() {
 		$message_type = $this->message_type();
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::message_type_obj( $message_type );
+		try {
+			$message_type = EEH_MSG_Template::message_type_obj( $message_type );
+		} catch(EE_Error $e) {
+			//if an exception was thrown then let's deactivate this message template group because it means there is no class for the message type in this group.
+			$this->set( 'MTP_is_active', false );
+			$this->save();
+			return null;
+		}
+		return $message_type;
 	}
 
 
@@ -249,7 +274,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		if ( empty( $mtps ) ) {
 			return array();
 		}
-		//note contexts could have MULTIPLE fields per context. So we return the objects indexed by context AND field.
+		//note contexts could have CHECKBOX fields per context. So we return the objects indexed by context AND field.
 		foreach ( $mtps as $mtp ) {
 			$mtps_arr[ $mtp->get( 'MTP_context' ) ][ $mtp->get( 'MTP_template_field' ) ] = $mtp;
 		}

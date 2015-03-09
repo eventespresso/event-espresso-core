@@ -58,15 +58,18 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
-	 * Indicates a new activation, but we couldn't install eveyrthing properly because
-	 * EE was in maintenance mode. So when we exit maintenance mode, we will
-	 * consider the next request to be a reactivation and will verify default data
-	 * is in place and tables are setup
+	 * @deprecated since version 4.6.0.dev.006
+	 * Now whenever a new_activation is detected the request type is still just
+	 * new_activation (same for reactivation, upgrade, downgrade etc), but if we'r ein maintenance mode
+	 * EE_System::initialize_db_if_no_migrations_required and EE_Addon::initialize_db_if_no_migrations_required
+	 * will instead enqueue that EE plugin's db initialization for when we're taken out of maintenance mode.
+	 * (Specifically, when the migration manager indicates migrations are finished
+	 * EE_Data_Migration_Manager::initialize_db_for_enqueued_ee_plugins() will be called)
 	 */
 	const req_type_activation_but_not_installed = 5;
 
 	/**
-	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 * option prefix for recording the activation history (like core's "espresso_db_update") of addons
 	 */
 	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
@@ -96,7 +99,13 @@ final class EE_System {
 	 * @return EE_System
 	 */
 	public static function reset(){
-		self::$_instance = NULL;
+		self::$_instance->_req_type = NULL;
+		//we need to reset the migration manager in order for it to detect DMSs properly
+		EE_Data_Migration_Manager::reset();
+		//make sure none of the old hooks are left hanging around
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
+		self::instance()->detect_activations_or_upgrades();
+		self::instance()->perform_activations_upgrades_and_migrations();
 		return self::instance();
 	}
 
@@ -144,6 +153,11 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		require_once EE_CORE . 'EE_Deprecated.core.php';
+		// load interfaces
+		require_once EE_CORE . 'EEI_Interfaces.php';
+		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
+		// WP cron jobs
+		EE_Registry::instance()->load_core( 'Cron_Tasks' );
 
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
@@ -162,7 +176,6 @@ final class EE_System {
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -249,7 +262,7 @@ final class EE_System {
 		<p>
 		<?php
 		printf(
-			__( 'We\'re sorry, but Event Espresso requires WordPress version %s or greater in order to operate. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s', 'event_espresso' ),
+			__( 'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
 			EE_MIN_WP_VER_REQUIRED,
 			$wp_version,
 			'<br/>',
@@ -259,7 +272,7 @@ final class EE_System {
 		</p>
 		</div>
 		<?php
-		deactivate_plugins( EE_PLUGIN_BASENAME );
+		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
 	}
 
 
@@ -275,10 +288,11 @@ final class EE_System {
 		<p>
 		<?php
 		printf(
-			__( 'We\'re sorry, but Event Espresso requires PHP version %s or greater in order to operate. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
 			EE_MIN_PHP_VER_REQUIRED,
 			PHP_VERSION,
-			'<br/>'
+			'<br/>',
+			'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 		);
 		?>
 		</p>
@@ -300,7 +314,7 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
+				__( 'Event Espresso recommends WordPress version %1$s or greater in order for everything to operate properly. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
 				EE_MIN_WP_VER_RECOMMENDED,
 				$wp_version,
 				'<br/>',
@@ -321,12 +335,11 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.%sPlease note that Event Espresso will be dropping support for PHP 5.2 as of version 4.4.0%s', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
 				'<br/>',
-				'<br/><span style="font-weight: bold;color: #d54e21;">',
-				'</span>'
+				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 			)
 		);
 	}
@@ -409,12 +422,6 @@ final class EE_System {
 	public function detect_if_activation_or_upgrade() {
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
-		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
-		$testsbypass = apply_filters( 'FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', FALSE );
-
-		if ( !$testsbypass && ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && ! is_user_logged_in() ) ) ) {
-			return;
-		}
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
@@ -429,37 +436,24 @@ final class EE_System {
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-//				echo "done activation";die;
-				$this->update_list_of_installed_versions( $espresso_db_update );
-				$this->check_ee3addons();
-				break;
-			case EE_System::req_type_activation_but_not_installed:
-				//just record that it was activated, but don't install anything
-				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-//				echo "done reactivation";die;
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
-				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
-					// so the database doesnt look old (ie, there are no migration scripts that say they need to upgrade it)
-					// THEN, we just want to still give the system a chance to setup new default data
-					add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
-				} else {
-					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
-				}
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				//migrations may be required now that we've upgraded
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				$this->_handle_core_version_change( $espresso_db_update );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
-				$this->update_list_of_installed_versions( $espresso_db_update );
+				//its possible migrations are no longer required
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				$this->_handle_core_version_change( $espresso_db_update );
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -469,21 +463,15 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 	}
 
-
-
 	/**
-	 * check to see if any ee3addons are active and if they are deactivate and throw up message.
-	 *
-	 * @param string $plugin
-	 * @param bool   $network_wide
-	 * @return void
+	 * Updates the list of installed versions and sets hooks for
+	 * initializing the database later during the request
+	 * @param array $espresso_db_update
 	 */
-	public function check_ee3addons( $plugin = '', $network_wide = false ) {
-		//check for and deactivate and EE3 addons and deactivate (user-proofing)
-		if ( ! class_exists( 'EEH_Activation' )) {
-			EE_Registry::instance()->load_helper('Activation');
-		}
-		EEH_Activation::screen_for_ee3_addons( $plugin );
+	protected function _handle_core_version_change( $espresso_db_update ){
+		$this->update_list_of_installed_versions( $espresso_db_update );
+		//get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
+		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 	}
 
 
@@ -545,23 +533,29 @@ final class EE_System {
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
 	 * If migration script/process did not exist, this is what would happen on every activation/reactivation/upgrade.
-	 * NOTE: does nothing if we're in maintenance mode (which would be the case if we detect there are data
-	 * migration scripts that need to be run)
+	 * NOTE: if we're in maintenance mode (which would be the case if we detect there are data
+	 * migration scripts that need to be run and a version change happens), enqueues core for database initialization,
+	 * so that it will be done when migrations are finished
+	 * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
+	 *		however,
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required(){
+	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE ){
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
-			// set flag for flushing rewrite rules
 			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
-			//foreach registered addon, make sure its db is up-to-date too
-			foreach(EE_Registry::instance()->addons as $addon){
-				$addon->initialize_db_if_no_migrations_required();
+			if( $initialize_addons_too ) {
+				//foreach registered addon, make sure its db is up-to-date too
+				foreach(EE_Registry::instance()->addons as $addon){
+					$addon->initialize_db_if_no_migrations_required();
+				}
 			}
+		}else{
+			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
 			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
@@ -589,6 +583,8 @@ final class EE_System {
 	}
 
 
+
+
 	/**
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
@@ -600,64 +596,108 @@ final class EE_System {
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
 	 *                            but still know if this is a new install or not
-	 * @return int one of the consts on EE_System::req_type_
+	 * @return int one of the constants on EE_System::req_type_
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
-
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-			$this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,'ee_espresso_activation',espresso_version());
+			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
 		}
 		return $this->_req_type;
 	}
+
+
+
 	/**
 	 * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin
-	 * was just activated to (for core that will alwasy be espreso_version())
+	 * was just activated to (for core that will always be espresso_version())
 	 * @param array $activation_history_for_addon the option's value which stores the activation history for this ee plugin.
 	 * for core that's 'espresso_db_update'
 	 * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
 	 * @param string $version_to_upgrade_to the version that was just upgraded to (for core that will be espresso_version())
-	 * @return int one of the consts on EE_System::req_type_*
+	 * @return int one of the constants on EE_System::req_type_*
 	 */
-	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
-		//there are some exceptions if we're in maintenance mode. So are we in MM?
-		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			//ok check if this is a new install while in MM...
-			if( $activation_history_for_addon ){
-				$req_type = EE_System::req_type_normal;
-			}else{
-				//so this should have been a "new install" request, but we're in MM
-				//so set things up so that when we exit MM, we will consider it a delayed install
-				//for that, WE LEAVE THE activation indicator option in place
-				$req_type = EE_System::req_type_activation_but_not_installed;
-			}
-		}else{
-			if( $activation_history_for_addon ){
-				//it exists, so this isn't a completely new install
-				//check if this version already in that list of previously installed versions
-				if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
-					//its a new version!
+	public static function detect_req_type_given_activation_history( $activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to ){
+		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
+		if( $activation_history_for_addon ){
+			//it exists, so this isn't a completely new install
+			//check if this version already in that list of previously installed versions
+			if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
+				//it a version we haven't seen before
+				if( $version_is_higher === 1 ){
 					$req_type = EE_System::req_type_upgrade;
+				}else{
+					$req_type = EE_System::req_type_downgrade;
+				}
+				delete_option( $activation_indicator_option_name );
+			} else {
+				// its not an update. maybe a reactivation?
+				if( get_option( $activation_indicator_option_name, FALSE ) ){
+					if ( $version_is_higher === -1 ){
+						$req_type = EE_System::req_type_downgrade;
+					}elseif( $version_is_higher === 0 ){
+						//we've seen this version before, but it's an activation. must be a reactivation
+						$req_type = EE_System::req_type_reactivation;
+					}else{//$version_is_higher === 1
+						$req_type = EE_System::req_type_upgrade;
+					}
 					delete_option( $activation_indicator_option_name );
 				} else {
-					// its not an update. maybe a reactivation?
-					if( get_option( $activation_indicator_option_name, FALSE ) ){
-						$req_type = EE_System::req_type_reactivation;
-						delete_option( $activation_indicator_option_name );
-					} else {
-						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
+					//we've seen this version before and the activation indicate doesn't show it was just activated
+					if ( $version_is_higher === -1 ){
+						$req_type = EE_System::req_type_downgrade;
+					}elseif( $version_is_higher === 0 ){
+						//we've seen this version before and it's not an activation. its normal request
 						$req_type = EE_System::req_type_normal;
+					}else{//$version_is_higher === 1
+						$req_type = EE_System::req_type_upgrade;
 					}
 				}
-			} else {
-				//brand new install and we're not in MM
-				$req_type = EE_System::req_type_new_activation;
-				delete_option( $activation_indicator_option_name );
+			}
+		} else {
+			//brand new install
+			$req_type = EE_System::req_type_new_activation;
+			delete_option( $activation_indicator_option_name );
+		}
+		return $req_type;
+	}
 
+
+
+	/**
+	 * Detects if the $version_to_upgrade_to is higher than the most recent version in
+	 * the $activation_history_for_addon
+	 * @param array $activation_history_for_addon (keys are versions, values are arrays of times activated,
+	 * sometimes containing 'unknown-date'
+	 * @param string $version_to_upgrade_to (current version)
+	 * @return int results of version_compare( $version_to_upgrade_to, $most_recently_active_version ).
+	 *	ie, -1 if $version_to_upgrade_to is LOWER (downgrade);
+	 *		0 if $version_to_upgrade_to MATCHES (reactivation or normal request);
+	 *		1 if $version_to_upgrade_to is HIGHER (upgrade) ;
+	 */
+	protected static function _new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to ){
+		//find the most recently-activated version
+		$most_recently_active_version_activation = '1970-01-01 00:00:00';
+		$most_recently_active_version = '0.0.0.dev.000';
+		if( is_array( $activation_history_for_addon ) ){
+			foreach( $activation_history_for_addon as $version => $times_activated ){
+				//check there is a record of when this version was activated. Otherwise,
+				//mark it as unknown
+				if( ! $times_activated ){
+					$times_activated = array( 'unknown-date');
+				}
+				if( is_string( $times_activated ) ){
+					$times_activated = array( $times_activated );
+				}
+				foreach( $times_activated as $an_activation ){
+					if( $an_activation > $most_recently_active_version_activation  ){
+						$most_recently_active_version = $version;
+						$most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
+					}
+				}
 			}
 		}
-//		echo "req type for ".$activation_indicator_option_name." was $req_type";
-		return $req_type;
+		return version_compare( $version_to_upgrade_to, $most_recently_active_version );
 	}
 
 
@@ -667,8 +707,19 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		if( is_admin() ){
-			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
+		$notices = EE_Error::get_notices( FALSE );
+		//if current user is an admin and it's not an ajax request
+		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  ) && ! isset( $notices[ 'errors' ] ) ){
+			$query_params =  array( 'page' => 'espresso_about' );
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ) {
+			    $query_params['new_activation'] = TRUE;
+			}
+
+			if ( EE_System::instance()->detect_req_type() == EE_System::req_type_reactivation ) {
+			    $query_params['reactivation'] = TRUE;
+			}
+			$url = add_query_arg( $query_params, admin_url( 'admin.php' ) );
 			wp_safe_redirect( $url );
 			exit();
 		}
@@ -689,10 +740,14 @@ final class EE_System {
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
+		// enable logging?
+		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
+			EE_Registry::instance()->load_core( 'Log' );
+		}
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
-			EE_Error::add_error( $activation_errors );
+			EE_Error::add_error( $activation_errors, __FILE__, __FUNCTION__, __LINE__ );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
@@ -808,11 +863,10 @@ final class EE_System {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 
-		if ( is_admin()  ) {
+		if ( is_admin() && apply_filters( 'FHEE__EE_System__brew_espresso__load_pue', TRUE )  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
-			//check ee3addons status
-			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
+			do_action( 'AHEE__EE_System__brew_espresso__after_pue_init' );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
@@ -844,12 +898,29 @@ final class EE_System {
 			foreach ( $active_plugins as $active_plugin ) {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
-						deactivate_plugins( $active_plugin );
 						unset( $_GET['activate'] );
+						EE_System::deactivate_plugin( $active_plugin );
 					}
 				}
 			}
 		}
+	}
+
+
+
+	/**
+	 *    deactivate_plugin
+	 * usage:  EE_System::deactivate_plugin( plugin_basename( __FILE__ ));
+	 *
+	 * @access public
+	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+	 * @return    void
+	 */
+	public static function deactivate_plugin( $plugin_basename = '' ) {
+		if ( ! function_exists( 'deactivate_plugins' )) {
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
+		deactivate_plugins( $plugin_basename );
 	}
 
 
@@ -880,7 +951,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		EE_Registry::instance()->load_core( 'Session' );
+//		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -920,7 +991,9 @@ final class EE_System {
 	*/
 	public function core_loaded_and_ready() {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
-		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		EE_Registry::instance()->load_core( 'Session' );
 	}
 
 
@@ -935,6 +1008,7 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
+//		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
 
 
@@ -964,7 +1038,60 @@ final class EE_System {
 	* @return void
 	*/
 	public function set_hooks_for_shortcodes_modules_and_addons() {
-		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+	}
+
+
+
+
+	/**
+	* do_not_cache
+	*
+	* sets no cache headers and defines no cache constants for WP plugins
+	*
+	* @access public
+	* @return void
+	*/
+	public static function do_not_cache() {
+		// set no cache constants
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
+			define( 'DONOTCACHCEOBJECT', true );
+		}
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EE_System', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
+	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
 	}
 
 
@@ -979,7 +1106,7 @@ final class EE_System {
 	public function espresso_toolbar_items( $admin_bar ) {
 
 		// if in full M-Mode, or its an AJAX request, or user is NOT an admin
-		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance || defined( 'DOING_AJAX' ) || ! current_user_can( 'administrator' )) {
+		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance || defined( 'DOING_AJAX' ) || ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'ee_admin_bar_menu_top_level' )) {
 			return;
 		}
 
@@ -995,234 +1122,272 @@ final class EE_System {
 		//Top Level
 		$admin_bar->add_menu(array(
 				'id' => 'espresso-toolbar',
-				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
+				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label', 'event_espresso') . '</span>',
 				'href' => $events_admin_url,
 				'meta' => array(
-						'title' => __('Event Espresso'),
+						'title' => __('Event Espresso', 'event_espresso'),
 						'class' => $menu_class . 'first'
 				),
 		));
 
 		//Events
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events',
-				'parent' => 'espresso-toolbar',
-				'title' => 'Events',
-				'href' => $events_admin_url,
-				'meta' => array(
-						'title' => __('Events'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events',
+					'parent' => 'espresso-toolbar',
+					'title' => __( 'Events', 'event_espresso' ),
+					'href' => $events_admin_url,
+					'meta' => array(
+							'title' => __('Events', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
-		//Events Add New
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events-new',
-				'parent' => 'espresso-toolbar-events',
-				'title' => 'Add New',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'create_new' ), $events_admin_url ),
-				'meta' => array(
-						'title' => __('Add New'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_events', 'ee_admin_bar_menu_espresso-toolbar-events-new' ) ) {
+			//Events Add New
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events-new',
+					'parent' => 'espresso-toolbar-events',
+					'title' => __('Add New', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'create_new' ), $events_admin_url ),
+					'meta' => array(
+							'title' => __('Add New', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Events View
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events-view',
-				'parent' => 'espresso-toolbar-events',
-				'title' => 'View',
-				'href' => $events_admin_url,
-				'meta' => array(
-						'title' => __('View'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-view' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events-view',
+					'parent' => 'espresso-toolbar-events',
+					'title' => __( 'View', 'event_espresso' ),
+					'href' => $events_admin_url,
+					'meta' => array(
+							'title' => __('View', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
-		//Events View All
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events-all',
-				'parent' => 'espresso-toolbar-events-view',
-				'title' => 'All',
-				'href' => $events_admin_url,
-				'meta' => array(
-						'title' => __('All'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-all' ) ) {
+			//Events View All
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events-all',
+					'parent' => 'espresso-toolbar-events-view',
+					'title' => __( 'All', 'event_espresso' ),
+					'href' => $events_admin_url,
+					'meta' => array(
+							'title' => __('All', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
-		//Events View Today
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events-today',
-				'parent' => 'espresso-toolbar-events-view',
-				'title' => 'Today',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $events_admin_url ),
-				'meta' => array(
-						'title' => __('Today'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
 
-		//Events View This Month
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-events-month',
-				'parent' => 'espresso-toolbar-events-view',
-				'title' => 'This Month',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $events_admin_url ),
-				'meta' => array(
-						'title' => __('This Month'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-today' ) ) {
+			//Events View Today
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events-today',
+					'parent' => 'espresso-toolbar-events-view',
+					'title' => __('Today', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $events_admin_url ),
+					'meta' => array(
+							'title' => __('Today', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
+
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-month' ) ) {
+			//Events View This Month
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-events-month',
+					'parent' => 'espresso-toolbar-events-view',
+					'title' => __( 'This Month', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $events_admin_url ),
+					'meta' => array(
+							'title' => __('This Month', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations',
-				'parent' => 'espresso-toolbar',
-				'title' => 'Registrations',
-				'href' => $reg_admin_url,
-				'meta' => array(
-						'title' => __('Registrations'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations',
+					'parent' => 'espresso-toolbar',
+					'title' => __( 'Registrations', 'event_espresso' ),
+					'href' => $reg_admin_url,
+					'meta' => array(
+							'title' => __('Registrations', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview Today
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-today',
-				'parent' => 'espresso-toolbar-registrations',
-				'title' => 'Today',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Today'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-today',
+					'parent' => 'espresso-toolbar-registrations',
+					'title' => __( 'Today', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Today', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview Today Completed
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-today-approved',
-				'parent' => 'espresso-toolbar-registrations-today',
-				'title' => 'Approved',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Approved'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-approved' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-today-approved',
+					'parent' => 'espresso-toolbar-registrations-today',
+					'title' => __( 'Approved', 'event_espresso' ),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Approved', 'event_espresso' ),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
-		//Registration Overview Today Pending
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-today-pending',
-				'parent' => 'espresso-toolbar-registrations-today',
-				'title' => 'Pending',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Pending Payment'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
-
-		//Registration Overview Today Incomplete
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-today-not-approved',
-				'parent' => 'espresso-toolbar-registrations-today',
-				'title' => 'Not Approved',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Not Approved'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		//Registration Overview Today Pending\
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-pending' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-today-pending',
+					'parent' => 'espresso-toolbar-registrations-today',
+					'title' => __( 'Pending', 'event_espresso' ),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Pending Payment', 'event_espresso' ),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview Today Incomplete
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-today-cancelled',
-				'parent' => 'espresso-toolbar-registrations-today',
-				'title' => 'Cancelled',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Cancelled'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-not-approved' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-today-not-approved',
+					'parent' => 'espresso-toolbar-registrations-today',
+					'title' => __( 'Not Approved', 'event_espresso' ),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Not Approved', 'event_espresso' ),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
+
+		//Registration Overview Today Incomplete
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-today-cancelled' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-today-cancelled',
+					'parent' => 'espresso-toolbar-registrations-today',
+					'title' => __( 'Cancelled', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Cancelled', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview This Month
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-month',
-				'parent' => 'espresso-toolbar-registrations',
-				'title' => 'This Month',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('This Month'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-month',
+					'parent' => 'espresso-toolbar-registrations',
+					'title' => __( 'This Month', 'event_espresso' ),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('This Month', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview This Month Approved
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-month-approved',
-				'parent' => 'espresso-toolbar-registrations-month',
-				'title' => 'Approved',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Approved'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-approved' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-month-approved',
+					'parent' => 'espresso-toolbar-registrations-month',
+					'title' => __( 'Approved', 'event_espresso' ),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Approved', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview This Month Pending
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-month-pending',
-				'parent' => 'espresso-toolbar-registrations-month',
-				'title' => 'Pending',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Pending'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-pending' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-month-pending',
+					'parent' => 'espresso-toolbar-registrations-month',
+					'title' => __( 'Pending', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Pending', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 
 		//Registration Overview This Month Not Approved
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-month-not-approved',
-				'parent' => 'espresso-toolbar-registrations-month',
-				'title' => 'Not Approved',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Not Approved', 'event_espresso' ),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-not-approved' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-month-not-approved',
+					'parent' => 'espresso-toolbar-registrations-month',
+					'title' => __( 'Not Approved', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Not Approved', 'event_espresso' ),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
+
 
 		//Registration Overview This Month Cancelled
-		$admin_bar->add_menu(array(
-				'id' => 'espresso-toolbar-registrations-month-cancelled',
-				'parent' => 'espresso-toolbar-registrations-month',
-				'title' => 'Cancelled',
-				'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
-				'meta' => array(
-						'title' => __('Cancelled'),
-						'target' => '',
-						'class' => $menu_class
-				),
-		));
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'ee_admin_bar_menu_espresso-toolbar-registrations-month-cancelled' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-registrations-month-cancelled',
+					'parent' => 'espresso-toolbar-registrations-month',
+					'title' => __('Cancelled', 'event_espresso'),
+					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
+					'meta' => array(
+							'title' => __('Cancelled', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 	}
 
 
@@ -1265,6 +1430,9 @@ final class EE_System {
 			}
 		}
 	}
+
+
+
 }
 //EE_System::instance();
 

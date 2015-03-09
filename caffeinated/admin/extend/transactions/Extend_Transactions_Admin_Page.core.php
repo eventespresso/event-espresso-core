@@ -29,7 +29,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
-
+	/**
+	 * @Constructor
+	 * @access public
+	 * @param bool $routing
+	 * @return \Extend_Transactions_Admin_Page
+	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 		define( 'TXN_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'transactions/templates/');
@@ -39,17 +44,21 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 
 
-
+	/**
+	 * 	_extend_page_config
+	 *
+	 * @access protected
+	 * @return void
+	 */
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'transactions';
-		$txn_id = ! empty( $this->_req_data['TXN_ID'] ) && ! is_array( $this->_req_data['TXN_ID'] ) ? $this->_req_data['TXN_ID'] : 0;
 
 		$new_page_routes = array(
 			'reports' => array(
 				'func' => '_transaction_reports',
-				'capability' => 'edit_transactions'
-				)
-			);
+				'capability' => 'ee_read_transactions'
+			)
+		);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
 
@@ -58,7 +67,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
-					),
+				),
 				'help_tabs' => array(
 					'transactions_reports_help_tab' => array(
 						'title' => __('Transaction Reports', 'event_espresso'),
@@ -67,15 +76,22 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 				),
 				'help_tour' => array( 'Transaction_Reports_Help_Tour' ),
 				'require_nonce' => FALSE
-				)
-			);
+			)
+		);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 	}
 
+
+
+	/**
+	 * 	load_scripts_styles_reports
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function load_scripts_styles_reports() {
 		//styles
 		wp_enqueue_style('jquery-jqplot-css');
-
 		//scripts
 		global $is_IE;
 		if ( $is_IE ) {
@@ -85,10 +101,13 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	}
 
 
+
 	/**
-	 * 		generates Business Reports regarding Transactions
-	*		@access protected
-	*		@return void
+	 * _transaction_reports
+	 * 	generates Business Reports regarding Transactions
+	*
+	 * @access protected
+	*	@return void
 	*/
 	protected function _transaction_reports() {
 
@@ -110,14 +129,14 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 
 
-
-
-
 	/**
-	 * 		generates Business Report showing Total Revenue per Day
-	*		@access private
-	*		@return void
-	*/
+	 * _revenue_per_day_report
+	 * generates Business Report showing Total Revenue per Day
+	 *
+	 * @access private
+	 * @param string $period
+	 * @return int
+	 */
 	private function _revenue_per_day_report( $period = '-1 month' ) {
 
 		$report_ID = 'txn-admin-revenue-per-day-report-dv';
@@ -168,14 +187,14 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 
 
-
-
-
 	/**
-	 * 		generates Business Report showing total revenue per event
-	*		@access private
-	*		@return void
-	*/
+	 * _revenue_per_event_report
+	 * generates Business Report showing total revenue per event
+	 *
+	 * @access private
+	 * @param string $period
+	 * @return int
+	 */
 	private function _revenue_per_event_report( $period = '-1 month' ) {
 
 		$report_ID = 'txn-admin-revenue-per-event-report-dv';

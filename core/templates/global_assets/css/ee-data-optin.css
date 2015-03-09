@@ -11,3 +11,13 @@
     float: right;
     margin-right: 8px;
 }
+
+#espresso-data-collect-optin-container .dashicons {
+    font-size: 22px;
+    margin-top: 4px;
+}
+
+#espresso-data-collect-optin-container .data-optin-text {
+    display: inline-block;
+    vertical-align: middle;
+}

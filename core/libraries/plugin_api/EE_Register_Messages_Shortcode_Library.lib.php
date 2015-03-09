@@ -69,9 +69,14 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
             throw new EE_Error( __( 'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include a "name" (a unique identifier for this set of message shortcodes), and an array containing the following keys: : "autoload_paths"', 'event_espresso' ) );
         }
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_messages_shortcode_registry[ $name ] ) ){
+			return;
+		}
+
 		//make sure this was called in the right place!
 		if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
-			EE_Error::doing_it_wrong(__METHOD__, sprintf( __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook (Trying to register a library named %s).','event_espresso'), $name ), '4.3.0' );
+			EE_Error::doing_it_wrong(__METHOD__, sprintf( __('Should be only called on the "EE_Brewing_Regular___messages_caf" hook (Trying to register a library named %s).','event_espresso'), $name ), '4.3.0' );
 		}
 
         $name = (string) $name;

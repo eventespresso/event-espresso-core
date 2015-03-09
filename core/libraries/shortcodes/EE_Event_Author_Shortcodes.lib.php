@@ -82,13 +82,13 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
 				if ( !empty( $recipient ) ) {
-					$email =  !empty( $recipient->fname ) ? $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . '<' . $recipient->admin_email . '>';
+					$email =  !empty( $recipient->fname ) ? $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>' : EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) . '<' . $recipient->admin_email . '>';
 				} else {
 					$email = NULL;
 				}
 				if ( empty( $email ) && ! empty( $event ) ) {
 					$user = $this->_get_author_for_event( $event );
-					$email = ! empty( $user->first_name ) ? $user->first_name . ' ' . $user->last_name . '<' . $user->user_email . '>' : EE_Registry::instance()->CFG->organization->name . '<' . $user->user_email . '>';
+					$email = ! empty( $user->first_name ) ? $user->first_name . ' ' . $user->last_name . '<' . $user->user_email . '>' : EE_Registry::instance()->CFG->organization->get_pretty( 'name' ) . '<' . $user->user_email . '>';
 				}
 				return $email;
 				break;

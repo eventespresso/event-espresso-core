@@ -99,14 +99,6 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_default($item) {
-		return '';
-	}
-
-
-
-
-
 
 	public function column_id($item) {
 		return $item->get('term_id');
@@ -157,7 +149,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_count( $item ) {
 		$e_args = array(
 			'action' => 'default',
-			'category' => $item->get_first_related('Term')->get('slug')
+			'category' => $item->get_first_related('Term')->ID()
 			);
 		$e_link = EE_Admin_Page::add_query_args_and_nonce( $e_args, EE_VENUES_ADMIN_URL );
 		$content = '<a href="' . $e_link . '">' . $item->get('term_count') . '</a>';

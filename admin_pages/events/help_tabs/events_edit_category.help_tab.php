@@ -14,7 +14,7 @@
 </li>
 <li>
 <strong><?php _e('Category Description', 'event_espresso'); ?></strong><br />
-<?php _e('The rich text editor can be used to create a description for your event category. Similar to WordPress pages and posts, you can upload images and customize your text by using the options on the toolbar.', 'event_espresso'); ?>
+<?php _e('The rich text editor can be used to create a description for your event category.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

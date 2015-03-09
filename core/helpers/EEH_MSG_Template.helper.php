@@ -34,17 +34,17 @@ class EEH_MSG_Template {
 	}
 
 
-
 	/**
 	 * generate_new_templates
 	 * This will handle the messenger, message_type selection when "adding a new custom template" for an event and will automatically create the defaults for the event.  The user would then be redirected to edit the default context for the event.
 	 *
 	 * @access protected
-	 * @param  string  $messenger the messenger we are generating templates for
-	 * @param array $message_types array of message types that the templates are generated for.
-	 * @param int $GRP_ID If a non global template is being generated then it is expected we'll have a GRP_ID to use as the base for the new generated template.
-	 * @param bool $global true indicates generating templates on messenger activation. false requires GRP_ID for event specific template generation.
-	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
+	 * @param  string $messenger     the messenger we are generating templates for
+	 * @param array   $message_types array of message types that the templates are generated for.
+	 * @param int     $GRP_ID        If a non global template is being generated then it is expected we'll have a GRP_ID to use as the base for the new generated template.
+	 * @param bool    $global        true indicates generating templates on messenger activation. false requires GRP_ID for event specific template generation.
+	 * @throws \EE_Error
+	 * @return array|bool array of data required for the redirect to the correct edit page or FALSE if encountering problems.
 	 */
 	public static function generate_new_templates($messenger, $message_types, $GRP_ID = 0,  $global = FALSE) {
 
@@ -98,16 +98,19 @@ class EEH_MSG_Template {
 	 * @param  string $messenger     messenger
 	 * @param  string $message_type message type
 	 * @param  int $GRP_ID        GRP ID ( if a custom template) (if not provided then we're just doing global template check)
+	 * @param  bool  $update_to_active if true then we also toggle the template to active.
 	 * @return bool                true = generated, false = hasn't been generated.
 	 */
-	public static function already_generated( $messenger, $message_type, $GRP_ID = 0 ) {
+	public static function already_generated( $messenger, $message_type, $GRP_ID = 0, $update_to_active = TRUE ) {
 		self::_set_autoloader();
 		$MTP = EEM_Message_Template::instance();
 
 		//what method we use depends on whether we have an GRP_ID or not
 		$count = empty( $GRP_ID ) ? EEM_Message_Template::instance()->count( array( array( 'Message_Template_Group.MTP_messenger' => $messenger, 'Message_Template_Group.MTP_message_type' => $message_type, 'Message_Template_Group.MTP_is_global' => TRUE ) ) ) :  $MTP->count( array( array( 'GRP_ID' => $GRP_ID ) ) );
 
-		self::update_to_active( $messenger, $message_type );
+		if ( $update_to_active ) {
+			self::update_to_active( $messenger, $message_type );
+		}
 
 		return ( $count > 0 ) ? TRUE : FALSE;
 	}
@@ -129,9 +132,32 @@ class EEH_MSG_Template {
 
 
 
+	/**
+	 * Updates all message template groups matching the incoming arguments to inactive status.
+	 *
+	 * @param string $messenger      The messenger slug. If empty then all templates matching the message type are marked inactive.  Otherwise only templates matching the messenger and message type.
+	 * @param string $message_type The message type slug.  If empty then all templates matching the messenger are marked inactive. Otherwise only templates matching the messenger and message type.
+	 *
+	 * @return int  count of updated records.
+	 */
+	public static function update_to_inactive( $messenger = '', $message_type = '' ) {
+		$query_args = array();
+		if ( empty( $messenger ) && empty( $message_type ) )
+			return 0;
+		if ( ! empty( $messenger ) ) {
+			$query_args[0]['MTP_messenger'] = $messenger;
+		}
+
+		if ( ! empty( $message_type ) ) {
+			$query_args[0]['MTP_message_type'] = $message_type;
+		}
+		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => FALSE ), $query_args );
+	}
+
 
 	/**
 	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
+	 * @param string $type
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
 	public static function get_installed_message_objects($type = 'all') {
@@ -143,8 +169,6 @@ class EEH_MSG_Template {
 	}
 
 
-
-
 	/**
 	 * This will return an array of shortcodes => labels from the
 	 * messenger and message_type objects associated with this
@@ -154,21 +178,19 @@ class EEH_MSG_Template {
 	 *
 	 * @param string $message_type
 	 * @param string $messenger
-	 * @param array $fields what fields we're returning valid
-	 *                      	  shortcodes for.  If empty then we assume
-	 *                      	  all fields are to be returned. Optional.
-	 * @param string $context what context we're going to return
-	 *                        	      shortcodes for. Optional.
-	 * @param bool  $merged If TRUE then we don't return shortcodes
-	 *                      	     indexed by field but instead an array of
-	 *                      	     the unique shortcodes for all the given (
-	 *                      	     or all) fields. Optional.
+	 * @param array  $fields 		What fields we're returning valid shortcodes for.
+	 *                                           	If empty then we assume all fields are to be returned. Optional.
+	 * @param string $context 	What context we're going to return shortcodes for. Optional.
+	 * @param bool $merged 	If TRUE then we don't return shortcodes indexed by field,
+	 *                                            	but instead an array of the unique shortcodes for all the given ( or all) fields. Optional.
+	 * @throws \EE_Error
 	 * @return mixed (array|bool) an array of shortcodes in the format
-	 *                            	           array( '[shortcode] => 'label') OR
-	 *                            	           FALSE if no shortcodes found.
+	 * 												array( '[shortcode] => 'label')
+	 *												OR
+	 * 												FALSE if no shortcodes found.
 	 */
 	public static function get_shortcodes( $message_type, $messenger, $fields = array(), $context = 'admin', $merged = FALSE ) {
-		$valid_shortcodes = array();
+
 		$messenger_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) );
 		$mt_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) );
 
@@ -188,7 +210,7 @@ class EEH_MSG_Template {
 		$valid_shortcodes = $_VLD->get_validators();
 
 		//let's make sure we're only getting the shortcode part of the validators
-		$shortcodes = $fields = array();
+		$shortcodes = array();
 		foreach( $valid_shortcodes as $field => $validators ) {
 			$shortcodes[$field] = $validators['shortcodes'];
 			$fields[] = $field;
@@ -196,7 +218,7 @@ class EEH_MSG_Template {
 		$valid_shortcodes = $shortcodes;
 
 		//if not all fields let's make sure we ONLY include the shortcodes for the specified fields.
-		if ( !empty( $fields ) ) {
+		if ( ! empty( $fields ) ) {
 			$specified_shortcodes = array();
 			foreach ( $fields as $field ) {
 				if ( isset( $valid_shortcodes[$field] ) )
@@ -207,7 +229,7 @@ class EEH_MSG_Template {
 
 
 		//if not merged then let's replace the fields with the localized fields
-		if ( !$merged ) {
+		if ( ! $merged ) {
 			//let's get all the fields for the set messenger so that we can get the localized label and use that in the returned array.
 			$field_settings = $messenger->get_template_fields();
 			$localized = array();
@@ -235,7 +257,9 @@ class EEH_MSG_Template {
 				} else {
 					$_field = $field;
 				}
-				$localized[$_field] = $shortcodes;
+				if ( isset( $_field )) {
+					$localized[ $_field ] = $shortcodes;
+				}
 			}
 			$valid_shortcodes = $localized;
 		}
@@ -259,14 +283,13 @@ class EEH_MSG_Template {
 	}
 
 
-
-
 	/**
 	 * Get Messenger object.
 	 *
 	 * @since 4.3.0
 	 *
 	 * @param string $messenger messenger slug for the messenger object we want to retrieve.
+	 * @throws \EE_Error
 	 * @return EE_messenger
 	 */
 	public static function messenger_obj( $messenger ) {
@@ -286,13 +309,13 @@ class EEH_MSG_Template {
 	}
 
 
-
 	/**
 	 * get Message type object
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string  $message_type  the slug for the message type object to retrieve
+	 * @param string $message_type the slug for the message type object to retrieve
+	 * @throws \EE_Error
 	 * @return EE_message_type
 	 */
 	public static function message_type_obj( $message_type ) {
@@ -324,8 +347,7 @@ class EEH_MSG_Template {
 	 */
 	public static function is_mt_active( $message_type ) {
 		self::_set_autoloader();
-		$MSG = EE_Registry::instance()->load_lib('messages');
-		$active_mts = $MSG->get_active_message_types();
+		$active_mts = EE_Registry::instance()->load_lib( 'messages' )->get_active_message_types();
 		return in_array( $message_type, $active_mts );
 	}
 
@@ -341,10 +363,38 @@ class EEH_MSG_Template {
 	 */
 	public static function is_messenger_active( $messenger ) {
 		self::_set_autoloader();
-		$MSG = EE_Registry::instance()->load_lib('messenger');
-		$active_messengers = $MSG->get_active_messengers();
-		$active_messengers = array_keys( $active_messengers );
-		return in_array( $messenger, $active_messengers );
+		$active_messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+		return isset( $active_messengers[ $messenger ] );
+	}
+
+
+
+	/**
+	 * Used to return active messengers array stored in the wp options table.
+	 * If no value is present in the option then an empty array is returned.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @return array
+	 */
+	public static function get_active_messengers_in_db() {
+		return apply_filters( 'FHEE__EEH_MSG_Template__get_active_messengers_in_db', get_option( 'ee_active_messengers', array() ) );
+	}
+
+
+
+
+	/**
+	 * Used to update the active messengers array stored in the wp options table.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param array $data_to_save Incoming data to save.
+	 *
+	 * @return bool FALSE if not updated, TRUE if updated.
+	 */
+	public static function update_active_messengers_in_db( $data_to_save ) {
+		return update_option( 'ee_active_messengers', $data_to_save );
 	}
 
 
@@ -358,12 +408,12 @@ class EEH_MSG_Template {
 	 * @param string          $context              The context for the template.
 	 * @param string          $message_type         The message type slug
 	 * @param EE_Registration $registration
-	 * @param integer          $mtpg_id              The EE_Message_Template_Group ID for the template.
+	 * @param integer          $message_template_group id              The EE_Message_Template_Group ID for the template.
 	 * @param integer          $data_id              The id to the EE_Base_Class for getting the data used by the trigger.
 	 *
 	 * @return string          The generated url.
 	 */
-	public static function generate_url_trigger( $sending_messenger, $generating_messenger, $context, $message_type, EE_Registration $registration, $mtpg_id, $data_id ) {
+	public static function generate_url_trigger( $sending_messenger, $generating_messenger, $context, $message_type, EE_Registration $registration, $message_template_group, $data_id ) {
 		$query_args = array(
 			'ee' => 'msg_url_trigger',
 			'snd_msgr' => $sending_messenger,
@@ -371,13 +421,13 @@ class EEH_MSG_Template {
 			'message_type' => $message_type,
 			'context' => $context,
 			'token' => $registration->reg_url_link(),
-			'GRP_ID' => $mtpg_id,
+			'GRP_ID' => $message_template_group,
 			'id' => $data_id
 			);
 		$url = add_query_arg( $query_args, get_site_url() );
 
 		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
-		$url = apply_filters( 'FHEE__EEH_MSG_Template__generate_url_trigger', $url, $sending_messenger, $generating_messenger, $context, $message_type, $registration, $mtpg_id, $data_id );
+		$url = apply_filters( 'FHEE__EEH_MSG_Template__generate_url_trigger', $url, $sending_messenger, $generating_messenger, $context, $message_type, $registration, $message_template_group, $data_id );
 
 		return $url;
 	}

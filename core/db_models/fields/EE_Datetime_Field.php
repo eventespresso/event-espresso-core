@@ -357,7 +357,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$datetime = date( 'Y-m-d H:i:s', (int)$datetime_value );
 		$this->_set_date_obj( $datetime, 'UTC' );
 		if ( ! $this->_date instanceof DateTime ) {
-			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used on %s', 'event_espresso' ) , $this->get_model_name() ) );
 		}
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
 		return $this->_date->format( $format );
@@ -427,18 +427,18 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$datetime = date( 'Y-m-d H:i:s', (int) $datetime);
 
 		date_default_timezone_set( $this->_timezone );
-		$datetime = strtotime($datetime);
+		$timestamp = strtotime($datetime);
 
 		//if we don't have a datetime at this point then something has gone wrong
-		if ( ! $datetime ) {
-			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+		if ( $timestamp === NULL || $timestamp === FALSE) {
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used. Datetime passed in: %s producted timestamp: %s', 'event_espresso' ), $datetime, $timestamp )  );
 		}
 
 		//return to default for PHP
 		date_default_timezone_set('UTC');
 
 		//now that we have the string we can send this over to our string value conversion
-		return $datetime;
+		return $timestamp;
 	}
 
 
@@ -498,8 +498,41 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string         timezone_string (valid for DateTimeZone)
 	 */
 	public static function timezone_convert_to_string_from_offset( $offset ) {
-		// convert hour offset to seconds
-		$offset *= 3600;
+		$offset *= 3600; // convert hour offset to seconds
+		//make sure $offset is int (cause if incoming was int then converted to float);
+		$offset = (int) $offset;
+
+		//account for WP offsets that aren't valid UTC
+		switch ( $offset ) {
+			case -1800 :
+				$offset = -3600;
+				break;
+
+			case 1800 :
+				$offset = 3600;
+				break;
+
+			case -23400 :
+				$offset = -21600;
+				break;
+
+			case -27000 :
+				$offset = -25200;
+				break;
+
+			case -30600 :
+				$offset = -28800;
+				break;
+
+			case 49500 :
+				$offset = 50400;
+				break;
+
+			default :
+				$offset = $offset;
+				break;
+		}
+
 		$abbreviations = timezone_abbreviations_list();
 		foreach ( $abbreviations as $abbreviation ) {
 			foreach ( $abbreviation as $city ) {
@@ -508,7 +541,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				}
 			}
 		}
-        return FALSE;
+        		return FALSE;
 	}
 
 
@@ -576,21 +609,23 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			return;
 		}
 		try {
-			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
-		} catch( Exception $e ) {
-			//probably a badly formatted date string
+			//start off assuming it's a wonky excel format
+			if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+				// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
+				$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
+			} else {
+				//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
+				$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
+			}
+		} catch( Exception $e ) {}
+
+		if( ! $this->_date ){
 			try {
-				if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-					// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
-					$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
-				} else {
-					//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
-					$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
-				}
+				$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
 			} catch( Exception $e ) {
 				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
 				if ( strtotime( $date_string ) == 0 ) {
-					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to its formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
 				} else {
 					//ok give up, but don't throw an error
 					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));

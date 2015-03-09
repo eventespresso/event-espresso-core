@@ -215,7 +215,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			);
 			?><span class="description"><br /><?php _e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
 		</p>
-		
+
 		<?php
 	}
 
@@ -261,6 +261,10 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		global $post;
 		// make sure there is some kinda post object
 		if ( $post instanceof WP_Post ) {
+			$before_widget = '';
+			$before_title = '';
+			$after_title = '';
+			$after_widget = '';
 			// but NOT an events archives page, cuz that would be like two event lists on the same page
 			$show_everywhere = isset( $instance['show_everywhere'] ) ? (bool) absint( $instance['show_everywhere'] ) : TRUE;
 			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {	
@@ -306,7 +310,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				}
 				// if NOT expired then we want events that start today or in the future
 				if ( ! $show_expired ) {
-					$where['Datetime.DTT_EVT_start'] = array( '>=', date( 'Y-m-d' ));
+					$where['Datetime.DTT_EVT_end'] = array( '>=', current_time( 'mysql' ));
 				}
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
@@ -327,29 +331,32 @@ class EEW_Upcoming_Events  extends WP_Widget {
 							$name_length = strlen( $event->name() );
 							switch( $name_length ) {
 								case $name_length > 70 :
-									$len_class =  'three-line';
+									$len_class =  ' three-line';
 									break;
 								case $name_length > 35 :
-									$len_class =  'two-line';
+									$len_class =  ' two-line';
 									break;
 								default :
-									$len_class =  'one-line';
+									$len_class =  ' one-line';
 							}
-							echo '<a class="ee-widget-event-name-a" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a>';
+							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
-								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
+								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
 							}
+							$desc = $event->short_description( 25 );
 							if ( $show_dates ) {
+								$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', get_option( 'date_format' ));
+								$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', get_option( 'time_format' ));
+								$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', get_option( 'date_format' ));
+								$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', get_option( 'time_format' ));
 								if ( $date_range == TRUE ) {
-									ob_start();
-									espresso_event_date_range( 'M jS', ' ', 'D M jS @ ', ' g:i a', $event->ID() );
-									echo '<p>' . ob_get_clean() . '</p>';
+									echo espresso_event_date_range( $date_format, $time_format, $single_date_format, $single_time_format, $event->ID() );
 								}else{
-									echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE, $date_limit );
+									echo espresso_list_of_event_dates( $event->ID(), $date_format, $time_format, FALSE, NULL, TRUE, TRUE, $date_limit );
 								}
 							}
-							if ( $show_desc && $desc = $event->short_description( 25 )) {
-								echo  '<p>' . $desc . '</p>';
+							if ( $show_desc && $desc ) {
+								echo '<p style="margin-top: .5em">' . $desc . '</p>';
 							}
 							echo '</li>';
 						}

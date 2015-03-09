@@ -1,41 +1,14 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * Event List
+ * EE_Register_CPTs
  *
  * @package			Event Espresso
- * @subpackage	includes/core/
+ * @subpackage		includes/core/
  * @author				Darren Ethier
  *
- * ------------------------------------------------------------------------
  */
 class EE_Register_CPTs {
-
-	/**
-	 * $_CPTs
-	  *
-	 * @var array $_CPTs
-	 */
-	private $_CPTs = array();
-
-	/**
-	 * $_taxonomies
-	 *
-	 * @var array $_taxonomies
-	 */
-	private $_taxonomies = array();
 
 	/**
 	 * This property is used to hold an array of EE_default_term objects assigned to a custom post type when the post for that post type is published with no terms set for the taxonomy.
@@ -45,35 +18,54 @@ class EE_Register_CPTs {
 	protected $_default_terms = array();
 
 
+
+	/**
+	 * 	constructor
+	 * instantiated at init priority 5
+	 */
 	function __construct(){
 		// register taxonomies
-		$taxonomies = apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', self::get_taxonomies() );
+		$taxonomies = self::get_taxonomies();
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
 		// register CPTs
-		$CPTs = apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', self::get_CPTs() );
+		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
-			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'], $CPT['singular_slug'], $CPT['plural_slug'] );
 		}
 		// setup default terms in any of our taxonomies (but only if we're in admin).
-		// Why not added via register_actvation_hook?
-		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
-		// Keep in mind that this will READD these terms if they are deleted by the user.  Hence MUST use terms.
+		// Why not added via register_activation_hook?
+		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and register_activation_hook only reliably runs when a user manually activates the plugin.
+		// Keep in mind that this will READ these terms if they are deleted by the user.  Hence MUST use terms.
 		if ( is_admin() ) {
 			$this->set_must_use_event_types();
 		}
 		//set default terms
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 
-		// flush_rewrite_rules ?
+
+		add_action( 'AHEE__EE_System__initialize_last', array( __CLASS__,  'maybe_flush_rewrite_rules' ), 10 );
+
+		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
+		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
+		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
+	}
+
+
+
+	/**
+	 * This will flush rewrite rules on demand.  This actually gets called around wp init priority level 100.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public static function  maybe_flush_rewrite_rules() {
 		if ( get_option( 'ee_flush_rewrite_rules', TRUE )) {
 			flush_rewrite_rules();
 			update_option( 'ee_flush_rewrite_rules', FALSE );
 		}
-		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
-		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-
 	}
 
 
@@ -88,7 +80,7 @@ class EE_Register_CPTs {
 	 */
 	public static function get_taxonomies(){
 		// define taxonomies
-		return array(
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', array(
 			'espresso_event_categories' => array(
 				'singular_name' => __("Event Category", "event_espresso"),
 				'plural_name' => __("Event Categories", "event_espresso"),
@@ -132,7 +124,7 @@ class EE_Register_CPTs {
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
 				))
-			);
+			) );
 	}
 
 
@@ -147,7 +139,8 @@ class EE_Register_CPTs {
 	 */
 	public static function get_CPTs(){
 		// define CPTs
-		return array(
+		// NOTE the ['args']['page_templates'] array index is something specific to our CPTs and not part of the WP custom post type api.
+		return apply_filters( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', array(
 			'espresso_events' => array(
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
@@ -177,7 +170,8 @@ class EE_Register_CPTs {
 						'espresso_event_categories',
 						'espresso_event_type',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
@@ -207,15 +201,9 @@ class EE_Register_CPTs {
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
-					)
+					),
+					'page_templates' => TRUE
 				)),
-			/*'espresso_persons' => array(
-				'singular_name' => __("Person", "event_espresso"),
-				'plural_name' => __("People", "event_espresso"),
-				'singular_slug' => __("person", "event_espresso"),
-				'plural_slug' => __("people", "event_espresso"),
-				'args' => array()
-				),/**/ //temporarily disable personsCPT because not in use.
 			'espresso_attendees' => array(
 				'singular_name' => __("Contact", "event_espresso"),
 				'plural_name' => __("Contacts", "event_espresso"),
@@ -246,7 +234,7 @@ class EE_Register_CPTs {
 						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
-			);
+			) );
 	}
 
 
@@ -257,13 +245,13 @@ class EE_Register_CPTs {
 	 * @return array
 	 */
 	public static function get_private_CPTs() {
-		$cpts = self::get_CPTs();
-		$pcpts = array();
-		foreach ( $cpts as $cpt => $details ) {
+		$CPTs = self::get_CPTs();
+		$private_CPTs = array();
+		foreach ( $CPTs as $CPT => $details ) {
 			if ( empty( $details['args']['public'] ) )
-				$pcpts[$cpt] = $details;
+				$private_CPTs[ $CPT ] = $details;
 		}
-		return $pcpts;
+		return $private_CPTs;
 	}
 
 
@@ -276,10 +264,10 @@ class EE_Register_CPTs {
 	 *
 	 * @param string $taxonomy_name, eg 'books'
 	 * @param string $singular_name internationalized singular name
-	 * @param type $plural_name internationalized plural name
-	 * @param type $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
+	 * @param string $plural_name internationalized plural name
+	 * @param array $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
 	 */
-	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
+	function register_taxonomy( $taxonomy_name, $singular_name, $plural_name, $override_args = array() ){
 
 		$args = array(
 		'hierarchical'      => true,
@@ -311,13 +299,13 @@ class EE_Register_CPTs {
 	 * Registers a new custom post type. Sets default settings given only the following params.
 	 *
 	 * @param string $post_type the actual post type name (VERY IMPORTANT: this much match what the slug is for admin pages related to this cpt.  Also any models must use this slug as well)
-	 * @param string $singular_name a pret-internationalized string for the singular name of the obejcts
+	 * @param string $singular_name a pre-internationalized string for the singular name of the objects
 	 * @param string $plural_name a pre-internalized string for the plural name of the objects
 	 * @param array $override_args exactly like $args as described in http://codex.wordpress.org/Function_Reference/register_post_type
-	 * The default values set in this function will be overriden by whatever you set in $override_args
+	 * The default values set in this function will be overridden by whatever you set in $override_args
 	 * @return void, but registers the custom post type
 	 */
-	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array()) {
+	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array(), $singular_slug = '', $plural_slug = '' ) {
 
 	  $labels = array(
 		'name' => $plural_name,
@@ -335,6 +323,12 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+	  //verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
+	  $singular_slug = ! empty( $singular_slug ) ? $singular_slug : $singular_name;
+	  $plural_slug = ! empty( $plural_slug ) ? $plural_slug : $plural_name;
+
+
+	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesn't actually have that in their register_post_type api.
 	  $args = array(
 		'labels' => $labels,
 		'public' => true,
@@ -343,7 +337,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => $plural_slug ), $post_type ),
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,
@@ -394,20 +388,20 @@ class EE_Register_CPTs {
 	 *
 	 * Note this should ONLY be used for terms that always must be present.  Be aware that if an initial term is deleted then it WILL be recreated.
 	 * @param string $taxonomy     The name of the taxonomy
-	 * @param array  $term_details An aray of term details indexed by slug and containing Name of term, and description as the elements in the array
+	 * @param array  $term_details An array of term details indexed by slug and containing Name of term, and description as the elements in the array
 	 *
 	 * @return void
 	 */
 	function set_must_use_terms( $taxonomy, $term_details ) {
 		$term_details = (array) $term_details;
 
-		foreach ( $term_details as $slug => $deets ) {
+		foreach ( $term_details as $slug => $details ) {
 			if ( !term_exists( $slug, $taxonomy ) ) {
 				$insert_arr = array(
 					'slug' => $slug,
-					'description' => $deets[1]
+					'description' => $details[1]
 					);
-				wp_insert_term( $deets[0], $taxonomy, $insert_arr );
+				wp_insert_term( $details[0], $taxonomy, $insert_arr );
 			}
 		}
 	}
@@ -418,8 +412,8 @@ class EE_Register_CPTs {
 	/**
 	 * Allows us to set what the default will be for terms when a cpt is PUBLISHED.
 	 * @param string $taxonomy  The taxonomy we're using for the default term
-	 * @param string $cpt_slug  An array of custom post types we want the default assigned to
 	 * @param string $term_slug The slug of the term that will be the default.
+	 * @param array $cpt_slugs  An array of custom post types we want the default assigned to
 	 */
 	function set_default_term( $taxonomy, $term_slug, $cpt_slugs = array() ) {
 		$this->_default_terms[][$term_slug] = new EE_Default_Term( $taxonomy, $term_slug, $cpt_slugs );
@@ -439,7 +433,7 @@ class EE_Register_CPTs {
 			return; //no default terms set so lets just exit.
 
 		foreach ( $this->_default_terms as $defaults ) {
-			foreach ( $defaults as $term_slug => $default_obj ) {
+			foreach ( $defaults as $default_obj ) {
 				if ( $post->post_status == 'publish' && in_array( $post->post_type, $default_obj->cpt_slugs ) ) {
 
 					//note some error proofing going on here to save unnecessary db queries
@@ -454,10 +448,6 @@ class EE_Register_CPTs {
 			}
 		}
 	}
-
-
-
-
 
 }
 
@@ -480,8 +470,8 @@ class EE_Default_Term {
 	/**
 	 * constructor
 	 * @param string $taxonomy  The taxonomy the default term belongs to
-	 * @param string $cpt_slug  The custom post type the default term gets saved with
 	 * @param string $term_slug The slug of the term that will be the default.
+	 * @param array $cpt_slugs  The custom post type the default term gets saved with
 	 */
 	public function __construct( $taxonomy, $term_slug, $cpt_slugs = array() ) {
 		$this->taxonomy = $taxonomy;

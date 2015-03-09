@@ -26,8 +26,7 @@
  * @subpackage 	includes/classes/EE_Transaction.class.php
  * @author 				Brent Christensen
  */
-class EE_Transaction extends EE_Base_Class {
-
+class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
@@ -51,6 +50,57 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+
+
+
+	/**
+	 * 	lock
+	 *
+	 * 	sets a wp_option indicating that this TXN is locked
+	 * and should not be updated in the db
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function lock() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		$locked_transactions[ $this->ID() ] = true;
+		update_option( 'ee_locked_transactions', $locked_transactions );
+	}
+
+
+
+	/**
+	 * 	unlock
+	 *
+	 * 	removes transaction lock applied in lock_transaction()
+	 *
+	 * @access 	public
+	 * @return 	void
+	 */
+	public function unlock() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		unset( $locked_transactions[ $this->ID() ] );
+		update_option( 'ee_locked_transactions', $locked_transactions );
+	}
+
+	/**
+	 * is_locked
+	 *
+	 * Decides whether or not now is the right time to update the transaction.
+	 * This is useful because we don't always if it is safe to update the transaction
+	 * and its related data. why?
+	 * because it's possible that the transaction is being used in another
+	 * request and could overwrite anything we save.
+	 * So we want to only update the txn once we know that won't happen.
+	 *
+	 * @access 	public
+	 * @return boolean
+	 */
+	public function is_locked() {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		return isset( $locked_transactions[ $this->ID() ] ) ? true : false;
 	}
 
 
@@ -104,6 +154,27 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * Sets TXN_reg_steps array
+	 * @param array $txn_reg_steps
+	 */
+	function set_reg_steps( $txn_reg_steps ) {
+		$this->set( 'TXN_reg_steps', $txn_reg_steps );
+	}
+
+
+
+	/**
+	 * Gets TXN_reg_steps
+	 * @return EE_SPCO_Reg_Step[]
+	 */
+	function reg_steps() {
+		$TXN_reg_steps = $this->get( 'TXN_reg_steps' );
+		return is_array( $TXN_reg_steps ) ? $TXN_reg_steps : array();
+	}
+
+
+
+	/**
 	 *
 	 * @return string of transaction's total cost, with currency symbol and decimal
 	 */
@@ -130,7 +201,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return float amount remaining
 	 */
 	public function remaining() {
-		return $this->total() - $this->paid();
+		return (float)( $this->total() - $this->paid() );
 	}
 
 
@@ -183,6 +254,22 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 *        Set session data within the TXN object
+	 *
+	 * @access        public
+	 * @param        EE_Session|array $session_data
+	 */
+	public function set_txn_session_data( $session_data ) {
+		if ( $session_data instanceof EE_Session ) {
+			$this->set( 'TXN_session_data', $session_data->get_session_data( NULL, TRUE ));
+		} else {
+			$this->set( 'TXN_session_data', $session_data );
+		}
+	}
+
+
+
+	/**
 	 *        get Transaction hash salt
 	 * @access        public
 	 */
@@ -194,21 +281,26 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 *    datetime
-	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted date string including the UTC (timezone) offset.
-	 *    Formatting options, including the UTC offset, are set via the WP General Settings page.
-	 *    A second boolean param will apply the UTF timezone offset to the unix timestamp
 	 *
-	 * @access    public
-	 * @param    boolean $format - whether to format date  - FALSE (default) returns RAW timestamp in UTC+0, TRUE returns formatted date string including the UTC offset
-	 * @param    bool       $GMT - if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
-	 * @return    mixed
+	 *    Returns the transaction datetime as:
+	 * 			- unix timestamp format including the UTC (timezone) offset (default)
+	 * 			- formatted date string including the UTC (timezone) offset ($format = TRUE ($gmt has no affect with this option))
+	 * 			- unix timestamp format in UTC+0 (GMT) ($gmt = TRUE)
+	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *
+	 * @access 	public
+	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string
+	 * @param 	boolean 	$gmt - whether to return a unix timestamp with UTC offset applied (default) or no UTC offset applied
+	 * @return 	string | int
 	 */
-	public function datetime( $format = FALSE, $GMT = TRUE ) {
-		// grab either the formatted datetime (which INCLUDES the UTC offset ) OR the UTC+0 unix timestamp
-		$datetime = $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
-		// if either the formatted datetime or the UTC+0 unix timestamp is requested, then return that
-		// but if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
-		return $GMT || $format ? $datetime : $this->get_raw( 'TXN_timestamp' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+	public function datetime( $format = FALSE, $gmt = FALSE ) {
+		if ( $format ) {
+			return $this->get_pretty( 'TXN_timestamp' );
+		} else if ( $gmt ) {
+			return $this->get_raw( 'TXN_timestamp' );
+		} else {
+			return $this->get( 'TXN_timestamp' );
+		}
 	}
 
 
@@ -286,6 +378,9 @@ class EE_Transaction extends EE_Base_Class {
 			case EEM_Transaction::incomplete_status_code:
 				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 lt-blue-text"></span>' : '';
 				break;
+			case EEM_Transaction::abandoned_status_code:
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 red-text"></span>' : '';
+				break;
 			case EEM_Transaction::failed_status_code:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
@@ -352,8 +447,21 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * Returns whether this transaction was abandoned
+	 * meaning that the transaction/registration process was somehow interrupted and never completed
+	 * but that contact information exists for at least one registrant
+	 * @return boolean
+	 */
+	public function is_abandoned() {
+		return $this->status_ID() == EEM_Transaction::abandoned_status_code ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	 * Returns whether this transaction failed
 	 * meaning that the transaction/registration process was somehow interrupted and never completed
+	 * and that NO contact information exists for any registrants
 	 * @return boolean
 	 */
 	public function failed() {
@@ -370,8 +478,8 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
-		if ( empty( $REG ) ) {
-			return FALSE;
+		if ( ! $REG instanceof EE_Registration ) {
+			return '';
 		}
 		return $REG->invoice_url( $type );
 	}
@@ -389,14 +497,14 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the reciept
+	 * Gets the URL for viewing the receipt
 	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
 	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
-		if ( empty( $REG ) ) {
-			return FALSE;
+		if ( ! $REG instanceof EE_Registration ) {
+			return '';
 		}
 		return $REG->receipt_url( $type );
 	}
@@ -420,28 +528,18 @@ class EE_Transaction extends EE_Base_Class {
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
 	 * that apply to it
-	 * @return boolean success of the application
+	 * @deprecated
+	 * @return boolean
 	 */
-	public function update_based_on_payments() {
-		return $this->get_model()->update_based_on_payments( $this );
-	}
-
-
-
-	/**
-	 * this returns the payment method selected during the SPCO Payment Options step
-	 * @param bool $most_recent whether to return the initial or last payment method selected
-	 * @return mixed
-	 */
-	public function selected_gateway( $most_recent = FALSE ) {
-		$payment_methods = $this->get_extra_meta( 'gateway' );
-		if ( is_array( $payment_methods ) ) {
-			ksort( $payment_methods );
-			return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
-		} else {
-			return NULL;
-		}
-		return NULL;
+	public function update_based_on_payments(){
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf( __( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ), 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()' ),
+			'4.6.0'
+		);
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
 	}
 
 
@@ -451,11 +549,7 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function gateway_response_on_transaction() {
 		$payment = $this->get_first_related( 'Payment' );
-		if ( $payment instanceof EE_Payment ) {
-			$details = $payment->details();
-			return isset( $details[ 'response_msg' ] ) ? $details[ 'response_msg' ] : '';
-		}
-		return '';
+		return $payment instanceof EE_Payment ? $payment->gateway_response() : '';
 	}
 
 
@@ -486,7 +580,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @param EE_Registration $registration
 	 * @return EE_Base_Class the relation was added to
 	 */
-	public function add_registration( $registration ) {
+	public function add_registration( EE_Registration $registration ) {
 		return $this->_add_relation_to( $registration, 'Registration' );
 	}
 
@@ -515,11 +609,22 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * Wrapper for _add_relation_to
+	 * @param EE_Line_Item $line_item
+	 * @return EE_Base_Class the relation was added to
+	 */
+	public function add_line_item( EE_Line_Item $line_item ) {
+		return $this->_add_relation_to( $line_item, 'Line_Item' );
+	}
+
+
+
+	/**
 	 * Gets ALL the line items related to this transaction (unstructured)
 	 * @param array $query_params
 	 * @return EE_Line_Item[]
 	 */
-	public function line_items( $query_params ) {
+	public function line_items( $query_params = array() ) {
 		return $this->get_many_related( 'Line_Item', $query_params );
 	}
 
@@ -583,72 +688,14 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * cycles thru related registrations and calls finalize_registration() on each
-	 *
-	 * @param  bool $from_admin      used to indicate the request is initiated by admin
-	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
-	 * @return void
-	 */
-	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
-		$new_reg = FALSE;
-		$reg_to_approved = FALSE;
-		$registrations = $this->get_many_related( 'Registration' );
-		foreach ( $registrations as $registration ) {
-			if ( $registration instanceof EE_Registration ) {
-				$reg_msg = $registration->finalize( $from_admin, $flip_reg_status );
-				$new_reg = $reg_msg[ 'new_reg' ] ? TRUE : $new_reg;
-				$reg_to_approved = $reg_msg[ 'to_approved' ] ? TRUE : $reg_to_approved;
-			}
-		}
-		$reg_msg = array( 'new_reg' => $new_reg, 'to_approved' => $reg_to_approved );
-		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
-		if ( $new_reg ) {
-			// remove the transaction from the session before saving it to the db
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => NULL ) );
-			// save the session (with it's session-less transaction) back to this transaction... we need to go deeper!
-			$this->set_txn_session_data( EE_Registry::instance()->SSN );
-			// save the transaction to the db
-			$this->save();
-			do_action( 'AHEE__EE_Transaction__finalize__new_transaction', $this, $from_admin );
-		}
-		do_action( 'AHEE__EE_Transaction__finalize__all_transaction', $this, $reg_msg, $from_admin );
-	}
-
-
-
-	/**
-	 *        Set session data within the TXN object
-	 *
-	 * @access        public
-	 * @param        EE_Session|array $session_data
-	 */
-	public function set_txn_session_data( $session_data ) {
-		if ( $session_data instanceof EE_Session ) {
-			$this->set( 'TXN_session_data', $session_data->get_session_data() );
-		} else {
-			$this->set( 'TXN_session_data', $session_data );
-		}
-	}
-
-
-
-	/**
 	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
-	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
-	 *                             where keys are names of fields, and values are an array of settings (the most important keys being
-	 *                             'label' and 'value)
+	 * @return EE_Form_Section_Proper
 	 */
-	public function billing_info() {
-		$gateway_name = $this->get_extra_meta( 'gateway', TRUE );
-		if ( ! $gateway_name ) {
-			$last_payment = $this->last_payment();
-			if ( $last_payment ) {
-				$gateway_name = $last_payment->gateway();
-			}
-		}
-		if ( ! $gateway_name ) {
-			EE_Error::add_error( __( "Could not find billing info for transaction because no gateway has been used for it yet", "event_espresso" ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+	public function billing_info(){
+		$payment_method = $this->payment_method();
+		if ( !$payment_method){
+			EE_Error::add_error(__("Could not find billing info for transaction because no gateway has been used for it yet", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
 		}
 		$primary_reg = $this->primary_registration();
 		if ( ! $primary_reg ) {
@@ -660,10 +707,51 @@ class EE_Transaction extends EE_Base_Class {
 			EE_Error::add_error( __( "Cannot get billing info for gateway %s on transaction because the primary registration has no attendee exists", "event_espresso" ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		return $attendee->billing_info_for_gateway( $gateway_name );
+		return $attendee->billing_info_for_payment_method($payment_method);
 	}
 
 
+
+	/**
+	 * Gets PMD_ID
+	 * @return int
+	 */
+	function payment_method_ID() {
+		return $this->get('PMD_ID');
+	}
+
+
+
+	/**
+	 * Sets PMD_ID
+	 * @param int $PMD_ID
+	 * @return boolean
+	 */
+	function set_payment_method_ID($PMD_ID) {
+		$this->set('PMD_ID', $PMD_ID);
+	}
+
+
+
+	/**
+	 * Gets the last-used payment method on this transaction
+	 * (we COULD just use the last-made payment, but some payment methods, namely
+	 * offline ones, dont' create payments)
+	 * @return EE_Payment_Method
+	 */
+	function payment_method(){
+		$pm = $this->get_first_related('Payment_Method');
+		if( $pm instanceof EE_Payment_Method ){
+			return $pm;
+		}else{
+			$last_payment = $this->last_payment();
+			if( $last_payment instanceof EE_Payment && $last_payment->payment_method() ){
+				return $last_payment->payment_method();
+			}else{
+				return NULL;
+			}
+		}
+	}
 
 	/**
 	 * Gets the last payment made
@@ -673,38 +761,16 @@ class EE_Transaction extends EE_Base_Class {
 		return $this->get_first_related( 'Payment', array( 'order_by' => array( 'PAY_ID' => 'desc' ) ) );
 	}
 
-
-
-
 	/**
-	 * process EE_Transaction object prior to serialization
-	 * @return array
+	 * Gets all the line items which are unrelated to tickets on this transaction
+	 * @return EE_Line_Item[]
 	 */
-	//	public function __sleep() {
-	//		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
-	//		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
-	//			// but we don't want that copy of the transaction to have a copy of the session
-	//			$this->_TXN_session_data['transaction']->set_txn_session_data( NULL );
-	//		}
-	//
-	//		$properties_to_serialize = array(
-	//			'_TXN_ID',
-	//			'_TXN_timestamp',
-	//			'_TXN_total',
-	//			'_TXN_paid',
-	//			'_STS_ID',
-	//			'_TXN_session_data',
-	//			'_TXN_hash_salt',
-	//			'dt_frmt',
-	//			'_Registration',
-	//			'_Payment',
-	//			'_Status',
-	//			'_Promotion_Object',
-	//			'_Line_Item',
-	//			'_Extra_Meta'
-	//		);
-	//
-	//		return $properties_to_serialize;
-	//	}
+	public function non_ticket_line_items(){
+		return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $this->ID() );
+	}
+
+
+
+
 }/* End of file EE_Transaction.class.php */
 /* Location: includes/classes/EE_Transaction.class.php */

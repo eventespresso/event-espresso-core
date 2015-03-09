@@ -59,6 +59,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *        @type array $messengers_to_validate_with An array of messengers that this message type is valid for.  Each
      *                                                                          value in the array should match the name property of an
      *                                                                          EE_messenger. Optional.
+     *        @type bool $force_activation                   This simply is a way of indicating that this message type MUST be *
+     *                                                                          activated when the plugin is activated/reactivated (default false)
      *
      * }
      * @return void
@@ -71,12 +73,17 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 				__( 'In order to register a message type with EE_Register_Message_Type::register, you must include a unique name for the message type, plus an array containing the following keys: "mtfilename", "autoloadpaths"', 'event_espresso' )
 			);
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_message_type_registry[ $mt_name ] ) ){
+			return;
+		}
+
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
             EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
-					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
+					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular___messages_caf" hook.','event_espresso'),
 					$mt_name
 				),
 				'4.3.0'
@@ -88,7 +95,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 		'mtfilename' => (string) $setup_args['mtfilename'],
 		'autoloadpaths' => (array) $setup_args['autoloadpaths'],
 		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
-                        'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array()
+                        'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array(),
+                        'force_activation' => ! empty( $setup_args['force_activation'] ) ? (bool) $setup_args['force_activation'] : array()
 	);
 
 	//add filters
@@ -110,6 +118,16 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
     	//only set defaults if we're not in EE_Maintenance mode
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
+
+            //for any message types with force activation, let's ensure they are activated
+            foreach ( self::$_ee_message_type_registry as $mtname => $settings ) {
+                if ( $settings['force_activation'] ) {
+                    $MSG = new EE_Messages();
+                    foreach ( $settings['messengers_to_activate_with'] as $messenger ) {
+                        $MSG->ensure_message_type_is_active( $mtname, $messenger );
+                    }
+                }
+            }
     }
 
 
@@ -123,8 +141,19 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @return void
      */
     public static function deregister( $mt_name = NULL ) {
-    	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) )
+    	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) ) {
+                        //let's make sure that we remove any place this message type was made active
+                        EE_Registry::instance()->load_helper( 'MSG_Template' );
+                        $active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+                        foreach( $active_messengers as $messenger => $settings ) {
+                            if ( !empty( $settings['settings'][$messenger . '-message_types'][$mt_name] ) ) {
+                                unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
+                            }
+                        }
+                        EEH_MSG_Template::update_to_inactive( '', $mt_name );
+                        EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
     		unset( self::$_ee_message_type_registry[$mt_name] );
+        }
     }
 
 

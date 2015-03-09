@@ -129,13 +129,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_default($item) {
-		return isset( $item->$column_name ) ? $item->$column_name : '';
-	}
-
-
-
-
 
 	function column_cb($item) {
 		if ( $item->type_obj()->base_type() !== 1 )

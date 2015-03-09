@@ -1,17 +1,10 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+// if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
+	set_error_handler( array( 'EE_Error', 'error_handler' ));
+	register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
+}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link					{@link http://www.eventespresso.com}
- * @ since		 		4.0
- *
- * ------------------------------------------------------------------------
  *
  * Error Handling Class
  *
@@ -21,11 +14,6 @@
  *
  * ------------------------------------------------------------------------
  */
-// if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
-if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
-	set_error_handler( array( 'EE_Error', 'error_handler' ));
-	register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
-}
 class EE_Error extends Exception {
 
 
@@ -107,33 +95,32 @@ class EE_Error extends Exception {
 	 * @return void
 	 */
 	public static function error_handler( $code, $message, $file, $line ) {
-		if ( ! function_exists( 'wp_mail' )) {
-			return;
+		$type = EE_Error::error_type( $code );
+		$site = site_url();
+		switch ( $site ) {
+			case 'http://ee4.eventespresso.com/' :
+			case 'http://ee4decaf.eventespresso.com/' :
+			case 'http://ee4hf.eventespresso.com/' :
+			case 'http://ee4a.eventespresso.com/' :
+			case 'http://ee4ad.eventespresso.com/' :
+			case 'http://ee4b.eventespresso.com/' :
+			case 'http://ee4bd.eventespresso.com/' :
+			case 'http://ee4d.eventespresso.com/' :
+			case 'http://ee4dd.eventespresso.com/' :
+				$to = 'developers@eventespresso.com';
+				break;
+			default :
+				$to = get_option( 'admin_email' );
 		}
-		$ver = espresso_version();
-		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
-			$type = EE_Error::error_type( $code );
-			$site = site_url();
-			switch ( $site ) {
-				case 'http://ee4.eventespresso.com/' :
-				case 'http://ee4decaf.eventespresso.com/' :
-				case 'http://ee4hf.eventespresso.com/' :
-				case 'http://ee4a.eventespresso.com/' :
-				case 'http://ee4ad.eventespresso.com/' :
-				case 'http://ee4b.eventespresso.com/' :
-				case 'http://ee4bd.eventespresso.com/' :
-				case 'http://ee4d.eventespresso.com/' :
-				case 'http://ee4dd.eventespresso.com/' :
-					$to = 'developers@eventespresso.com';
-					break;
-				default :
-					$to = get_option( 'admin_email' );
-			}
-			$subject = 'Error type ' . $type . ' occurred in ' . $ver . ' on ' . site_url();
-			$msg = EE_Error::_format_error( $type, $message, $file, $line );
+		$subject = $type . ' ' . $message . ' in ' . EVENT_ESPRESSO_VERSION . ' on ' . site_url();
+		$msg = EE_Error::_format_error( $type, $message, $file, $line );
+		if ( function_exists( 'wp_mail' )) {
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
 		}
+		echo '<div id="message" class="espresso-notices error"><p>';
+		trigger_error( $message, $code );
+		echo '<br /></p></div>';
 	}
 
 
@@ -177,6 +164,8 @@ class EE_Error extends Exception {
 			return 'E_DEPRECATED';
 			case E_USER_DEPRECATED: // 16384 //
 			return 'E_USER_DEPRECATED';
+			case E_ALL: // 16384 //
+			return 'E_ALL';
 		}
 		return "";
 	}
@@ -207,7 +196,7 @@ class EE_Error extends Exception {
 	 * @return string
 	 */
 	private static function _format_error( $code, $message, $file, $line ) {
-		$html  = "<table cellpadding='10'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
+		$html  = "<table cellpadding='5'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
 		$html .= "<tr valign='top'><td><b>Code</b></td><td>$code</td></tr>";
 		$html .= "<tr valign='top'><td><b>Error</b></td><td>$message</td></tr>";
 		$html .= "<tr valign='top'><td><b>File</b></td><td>$file</td></tr>";
@@ -692,11 +681,11 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	_reset_notices
+	*	reset_notices
 	*	@access private
 	*	@return void
 	*/
-    private static function _reset_notices(){
+	public static function reset_notices(){
     	self::$_espresso_notices['success'] = FALSE;
     	self::$_espresso_notices['attention'] = FALSE;
     	self::$_espresso_notices['errors'] = FALSE;
@@ -798,7 +787,7 @@ class EE_Error extends Exception {
 
 			if ($attention_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-				$css_class = is_admin() ? 'updated' : 'attention fade-away';
+				$css_class = is_admin() ? 'updated ee-notices-attention' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '" style="display:none;"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
@@ -868,16 +857,20 @@ class EE_Error extends Exception {
 
 
 	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
-	* 	@return 		void
-	*/
-	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE ) {
+	 *    dismiss_persistent_admin_notice
+	 *
+	 * @access    public
+	 * @param        string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
+	 * @param bool          $purge
+	 * @param bool          $return_immediately
+	 * @return        void
+	 */
+	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE, $return_immediately = FALSE ) {
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
-			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
+			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
+			// check if notice we wish to dismiss is actually in the $persistent_admin_notices array
+			if ( is_array( $persistent_admin_notices ) && isset( $persistent_admin_notices[ $pan_name ] )) {
 				// completely delete nag notice, or just NULL message so that it can NOT be added again ?
 				if ( $purge ) {
 					unset( $persistent_admin_notices[ $pan_name ] );
@@ -889,7 +882,9 @@ class EE_Error extends Exception {
 				}
 			}
 		}
-		if ( EE_Registry::instance()->REQ->ajax ) {
+		if ( $return_immediately ) {
+			return;
+		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
 			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
@@ -922,7 +917,7 @@ class EE_Error extends Exception {
 			);
 			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #E76700;">
+			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #fcb93c;">
 				<p>' . $pan_message . '</p>
 				<a class="dismiss-ee-nag-notice hide-if-no-js" style="float: right; cursor: pointer; text-decoration:none;" rel="' . $pan_name . '">
 					<span class="dashicons dashicons-dismiss" style="position:relative; top:-1px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
@@ -959,14 +954,13 @@ class EE_Error extends Exception {
 
 
 
-
-
 	/**
-	* 	_print_scripts
-	*
-	*	@access public
-	* 	@return 		void
-	*/
+	 *    _print_scripts
+	 *
+	 * @access 	public
+	 * @param 	bool $force_print
+	 * @return 	void
+	 */
 	private static function _print_scripts( $force_print = FALSE ) {
 		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
@@ -1060,37 +1054,21 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		$exception_log_file = str_replace( '\\', '/', EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' ) . self::$_exception_log_file;
-
-		if ( is_writable( EVENT_ESPRESSO_UPLOAD_DIR.'logs' ) && ! file_exists( $exception_log_file )) {
-			touch( $exception_log_file );
-			self::add_htaccess();
+		EE_Registry::instance()->load_helper( 'File' );
+		try {
+			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
+			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
+			if ( ! $clear ) {
+				//get existing log file and append new log info
+				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;
+			}
+			EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file, $exception_log );
+		} catch( EE_Error $e ){
+			EE_Error::add_error( sprintf( __(  'Event Espresso error logging could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+			return;
 		}
 
-		if ( is_writable( $exception_log_file )) {
-			$fh = fopen( $exception_log_file, 'a' ) or die( 'Cannot open ' . $exception_log_file . ' file!' );
-			fwrite( $fh, $exception_log );
-			fclose( $fh );
-		} else {
-			echo '<div class="error"><p>'. sprintf( __( 'Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso' ), $exception_log_file ) . '</p></div>';
-		}
-
-	}
-
-
-
-	/**
-	 * simply adds .htaccess file to log dir.
-	 */
-	public static function add_htaccess() {
-		if ( !file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess' ) ) {
-			if ( file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all') )
-				do_action('AHEE_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder');
-			else
-  				do_action('AHEE_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
-		} else {
-			do_action('AHEE_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
-		}
 	}
 
 

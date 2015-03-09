@@ -54,13 +54,6 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
-	 * Holds billing info about the transaction
-	 * @var mixed (array|string)
-	 */
-	public $billing_info;
-
-
-	/**
 	 * The registrations details from the cart
 	 * @var array
 	 */
@@ -154,6 +147,13 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $tax_line_items;
 
+	/**
+	 * Hold teh line items which aren't taxes and don't relate
+	 * to tickets. So: promotions and miscellaneous charges
+	 * @since 4.5
+	 * @var EE_Line_Item[]
+	 */
+	public $additional_line_items;
 
 
 	/**
@@ -176,7 +176,7 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * Will hold the final transaction object (EE_Transaction)
-	 * @var EE_Transaction;
+	 * @var EE_Transaction
 	 */
 	public $txn;
 
@@ -339,7 +339,7 @@ abstract class EE_Messages_incoming_data {
 
 			if ( !empty( $eventsetup) ) {
 				foreach ( $eventsetup as $eid => $items ) {
-					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID())));
+					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID()), 'default_where_conditions' => 'none'));
 					$events[$eid] = array(
 						'ID' => $eid,
 						'event' => $evtcache[$eid],
@@ -378,7 +378,8 @@ abstract class EE_Messages_incoming_data {
 		$this->total_ticket_count = $total_ticket_count;
 		$this->registrations = $registrations;
 
-		$this->tax_line_items = $this->txn->tax_items();
+		$this->tax_line_items =  $this->txn->tax_items();
+		$this->additional_line_items = $this->txn->non_ticket_line_items();
 		$this->payments = $this->txn->payments();
 
 

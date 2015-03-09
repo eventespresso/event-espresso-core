@@ -248,6 +248,21 @@ div.TB-ee-frame a {
 .drk-grey-icon:before, .drk-grey { color: #59595B; }
 .black-icon:before, .black { color: #2F3334; }
 
+/** corresponding background colors **/
+.pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: #E44064; }
+.green-bg, .reg-status-bg-RAP, .txn-status-bg-TCM, .pymt-status-bg-PAP { background-color: #70CC50; }
+.drk-green-bg { background-color: #009900; }
+.red-bg { background-color: #B4113F; }
+.orange-bg, .reg-status-bg-RNA, .txn-status-bg-TOP, .pymt-status-bg-PFL { background-color: #E76700; }
+.lt-blue-bg, .reg-status-bg-RPP, .txn-status-bg-TIN, .pymt-status-bg-PPN { background-color: #00B1CA; }
+.blue-bg { background-color: #005B9E; }
+.yellow-bg { background-color: #F8D755; }
+.lt-grey-bg, .reg-status-bg-RCN, .pymt-status-bg-PCN { background-color: #AC9D9C; }
+.grey-bg { background-color: #888; }
+.drk-grey-bg { background-color: #59595B; }
+.black-bg { background-color: #2F3334; }
+
+
 
 .tags-links a {
 	white-space: nowrap;
@@ -352,4 +367,61 @@ div.TB-ee-frame a {
 	background-color: transparent;
 	font-size: 13px;
 
+}
+
+
+
+/**
+ * fancy toggles
+ */
+.ee-on-off-toggle{
+  position: absolute;
+  margin-left: -9999px;
+  visibility: hidden;
+}
+.ee-on-off-toggle+ label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+input.ee-toggle-round-flat + label {
+  padding: 2px;
+  width: 50px;
+  height: 25px;
+  background-color: #dddddd;
+  border-radius: 25px;
+  transition: background 0.4s;
+}
+input.ee-toggle-round-flat + label:before,
+input.ee-toggle-round-flat + label:after {
+  display: block;
+  position: absolute;
+  content: "";
+}
+input.ee-toggle-round-flat + label:before {
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  right: 2px;
+  background-color: #fff;
+  border-radius: 25px;
+  transition: background 0.4s;
+}
+input.ee-toggle-round-flat + label:after {
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 22px;
+  background-color: #dddddd;
+  border-radius: 20px;
+  transition: margin 0.4s, background 0.4s;
+}
+input.ee-toggle-round-flat:checked + label {
+  background-color: #8ce196;
+}
+input.ee-toggle-round-flat:checked + label:after {
+  margin-left: 25px;
+  background-color: #8ce196;
 }

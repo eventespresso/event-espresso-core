@@ -41,31 +41,38 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	public static function set_hooks_admin() {
 	}
 
+
+
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
-		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
-		global $wpdb;
-		$SQL = 'SELECT post_content from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND post_name=%s';
-		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
-			// now check for this shortcode
-			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
-				EE_Registry::instance()->REQ->set( 'ee', '_register' );
-			}
+		if ( ! did_action( 'pre_get_posts' )) {
+			// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
+			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
+			// this will trigger the EED_Single_Page_Checkout module's run() method during the pre_get_posts hook point,
+			// this allows us to initialize things, enqueue assets, etc,
+			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'init' ), 10, 1 );
+		} else {
+			global $wp_query;
+			EED_Single_Page_Checkout::load_reg_steps();
+			EED_Single_Page_Checkout::init( $wp_query );
 		}
 	}
+
+
 
 	/**
 	 * 	process_shortcode - ESPRESSO_CHECKOUT
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		return EE_Registry::instance()->REQ->get_output();

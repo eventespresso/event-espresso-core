@@ -51,7 +51,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	 */
 	const onsale = 'TKO';
 
-
+	/**
+	 * cached result from method of the same name
+	 * @var float $_ticket_total_with_taxes
+	 */
+	private $_ticket_total_with_taxes = NULL;
 
 	/**
 	 *
@@ -298,7 +302,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 					return $total;
 				}
 				if ( ! empty( $dtt_id ) && ! isset( $tickets_sold[ 'datetime' ][ $dtt_id ] ) ) {
-					EE_Error::add_error( __( "You've requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?", "event_espresso" ) );
+					EE_Error::add_error( __( "You've requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?", "event_espresso" ), __FILE__, __FUNCTION__, __LINE__ );
 					return $total;
 				}
 				return empty( $dtt_id ) ? $tickets_sold[ 'datetime' ] : $tickets_sold[ 'datetime' ][ $dtt_id ];
@@ -426,7 +430,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Simply returns an array of EE_Price objects that are taxes.
-	 * @return EE_Taxes[]
+	 * @return EE_Price[]
 	 */
 	public function get_ticket_taxes_for_admin() {
 		return EE_Taxes::get_taxes_for_admin( $this );
@@ -453,10 +457,24 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * @return bool
+	 */
+	public function is_free() {
+		return $this->get_ticket_total_with_taxes() == 0 ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * get_ticket_total_with_taxes
+	 * @param bool $no_cache
 	 * @return float
 	 */
-	public function get_ticket_total_with_taxes() {
-		return $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+	public function get_ticket_total_with_taxes( $no_cache = FALSE ) {
+		if ( ! isset( $this->_ticket_total_with_taxes ) || $no_cache ) {
+			$this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+		}
+		return (float)$this->_ticket_total_with_taxes;
 	}
 
 

@@ -155,6 +155,8 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 			PRIMARY KEY  (MATTM_ID)'
 				);
 		$this->assertTableExists( 'esp_mock_attendee_meta' );
+
+		EE_Register_Model_Extensions::deregister( $this->_model_group );
 	}
 
 	/**
@@ -164,7 +166,7 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	 * @return array
 	 */
 	public function dont_short_circuit_mock_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
-		if( $table_name == 'esp_mock_attendee_meta' && ! $this->_table_exists( $table_name) ){
+		if( $table_name == 'esp_mock_attendee_meta' && ! EEH_Activation::table_exists( $table_name) ){
 //			echo "\r\n\r\nDONT shortcircuit $sql";
 			//it's not altering. it's ok to allow this
 			return FALSE;
@@ -177,10 +179,6 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		//ensure the models aren't stil registered. they should have either been
 		//deregistered during the test, or not been registered at all
 		$this->_stop_pretending_addon_hook_time();
-		$att_model_a = EE_Registry::instance()->load_model( 'Attendee' );
-		$att_model_a::reset();
-		EEM_Attendee::reset();
-
 		parent::tearDown();
 	}
 }

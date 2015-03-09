@@ -32,7 +32,7 @@ class EE_Admin_Page_Loader {
 	 * _installed_pages
 	 * objects for page_init objects detected and loaded
 	 * @access private
-	 * @var array
+	 * @var \EE_Admin_Page_Init[]
 	 */
 	private $_installed_pages = array();
 
@@ -194,7 +194,8 @@ class EE_Admin_Page_Loader {
 				'menu_slug' => 'extras',
 				'capability' => 'ee_read_ee',
 				'menu_order' => 50,
-				'parent_slug' => 'espresso_events'
+				'parent_slug' => 'espresso_events',
+				'maintenance_mode_parent' => 'espresso_maintenance_settings'
 				)),
 			'tools' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __("Tools", "event_espresso"),
@@ -205,8 +206,8 @@ class EE_Admin_Page_Loader {
 				'parent_slug' => 'espresso_events'
 				)),
 			'addons' => new EE_Admin_Page_Menu_Group( array(
-				'menu_label' => __('Addons', 'event_espresso'),
 				'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
+				'menu_label' => __('Add-ons', 'event_espresso'),
 				'menu_slug' => 'addons',
 				'capability' => 'ee_read_ee',
 				'menu_order' => 20,
@@ -219,7 +220,6 @@ class EE_Admin_Page_Loader {
 
 
 
-
 	/**
 	 * This takes all the groups in the _admin_menu_groups array and returns the array indexed by group
 	 * slug.  The other utility with this function is it validates that all the groups are instances of
@@ -227,11 +227,12 @@ class EE_Admin_Page_Loader {
 	 *
 	 * @since  4.4.0
 	 *
+	 * @throws \EE_Error
 	 * @return EE_Admin_Page_Menu_Group[]
 	 */
 	private function _rearrange_menu_groups() {
 		$groups = array();
-		//first let's order the menu groups by their internal menu order (note usort typehinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
+		//first let's order the menu groups by their internal menu order (note usort type hinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
 		usort( $this->_admin_menu_groups, array( $this, '_sort_menu_maps' ) );
 		foreach ( $this->_admin_menu_groups as $group ) {
 			if ( ! $group instanceof EE_Admin_Page_Menu_Group )
@@ -276,6 +277,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
 		$installed_refs = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', $installed_refs );
+		$this->_caffeinated_extends = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__caffeinated_extends', $this->_caffeinated_extends );
 
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
@@ -289,6 +291,14 @@ class EE_Admin_Page_Loader {
 				if ( ! $this->_installed_pages[$page]->get_menu_map() instanceof EE_Admin_Page_Menu_Map ) {
 					continue;
 				}
+
+				//skip if in full maintenance mode and maintenance_mode_parent is set
+				$maintenance_mode_parent = $this->_installed_pages[$page]->get_menu_map()->maintenance_mode_parent;
+				if ( empty( $maintenance_mode_parent ) && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+					unset( $installed_refs[$page] );
+					continue;
+				}
+
 				$this->_menu_slugs[$this->_installed_pages[$page]->get_menu_map()->menu_slug] = $page;
 				//flag for register hooks on extended pages b/c extended pages use the default INIT.
 				$extend = FALSE;
@@ -330,6 +340,24 @@ class EE_Admin_Page_Loader {
 				$this->_installed_pages[$page]->do_initial_loads();
 			}
 		}
+
+		do_action( 'AHEE__EE_Admin_Page_Loader___get_installed_pages_loaded', $this->_installed_pages );
+
+	}
+
+
+
+	/**
+	 * get_admin_page_object
+	 *
+	 * @param string $page_slug
+	 * @return EE_Admin_Page
+	 */
+	public function get_admin_page_object( $page_slug = '' ) {
+		if ( isset( $this->_installed_pages[ $page_slug ] )) {
+			return $this->_installed_pages[ $page_slug ]->loaded_page_object();
+		}
+		return NULL;
 	}
 
 
@@ -438,13 +466,18 @@ class EE_Admin_Page_Loader {
 				$page_map = $page->get_menu_map();
 				//if we've got an array then the menu map is in the old format so let's throw a persistent notice that the admin system isn't setup correctly for this item.
 				if ( is_array( $page_map ) || empty( $page_map ) ) {
-					EE_Error::add_persistent_admin_notice( 'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION, sprintf( __('The admin page for %s was not correctly setup because it is using an older method for integrating with Event Espresso Core.  This means that full functionality for this component is not available.  This error message usually appears with an Addon that is out of date.  Make sure you update all your Event Espresso 4 addons to the latest version to ensure they have necessary compatibility updates in place.', 'event_espresso' ), $page->label ) );
+					EE_Error::add_persistent_admin_notice( 'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION, sprintf( __('The admin page for %s was not correctly setup because it is using an older method for integrating with Event Espresso Core.  This means that full functionality for this component is not available.  This error message usually appears with an Add-on that is out of date.  Make sure you update all your Event Espresso 4 add-ons to the latest version to ensure they have necessary compatibility updates in place.', 'event_espresso' ), $page->label ) );
 					continue;
 				}
 
 				//if page map is NOT a EE_Admin_Page_Menu_Map object then throw error.
 				if ( ! $page_map instanceof EE_Admin_Page_Menu_Map ) {
-					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please doublecheck that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
+					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please double check that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
+				}
+
+				//use the maintenance_mode_parent property and maintenance mode status to determine if this page even gets added to array.
+				if ( empty( $page_map->maintenance_mode_parent ) &&  EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+					continue;
 				}
 
 				//assign to group (remember $page_map has the admin page stored in it).
@@ -561,12 +594,9 @@ class EE_Admin_Page_Loader {
 					}
 				}
 			}
-		}
+		}/**/
 
-		//if we've got _caf_autoloaders set then let's register the autoloader method
-//		if ( !empty( $this->_caf_autoloader ) ) {
-//			spl_autoload_register(array( $this, 'caffeinated_autoloaders') );
-//		}
+		$ee_admin_hooks = apply_filters( 'FHEE__EE_Admin_Page_Loader__set_caffeinated__ee_admin_hooks', $ee_admin_hooks );
 
 		return $installed_refs;
 

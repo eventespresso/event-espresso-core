@@ -93,7 +93,7 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * Holds the retreived default templates for this template pack in a multidimensional array indexed by context and field, for a given messenger and message type.  Example format:
+	 * Holds the retrieved default templates for this template pack in a multidimensional array indexed by context and field, for a given messenger and message type.  Example format:
 	 *
 	 * $templates = array(
 	 * 	'email' => array(
@@ -132,7 +132,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Template Packs must ALWAYS have a default variation defined.  This property allow one to override the default variation labels per messenger.
 	 * example:
-	 * $this->_default_variation_labels = array( 'emal' =>  __('Default', 'event_espresso' ) );
+	 * $this->_default_variation_labels = array( 'email' =>  __('Default', 'event_espresso' ) );
 	 *
 	 * @var array
 	 */
@@ -148,7 +148,7 @@ abstract class  EE_Messages_Template_Pack {
 	 * 	)
 	 * )
 	 *
-	 * Keep in mind that this property is used both for indicating valid variations for a given message type and messenger but the varition files themselves are ONLY unique to the messenger.  So if you have a variation for the html messenger referenced by the slug "sunset_red" Then the variation file for the main type will be html_main_sunset_red.css.  All the array in this property allows you to do, is indicate that with certain message types the sunset_red variation is available but for other message types its not.  But you could NOT have a sunset_red variation file for one messenger/message_type and a different one for another messenger/message_type.  If you want different css looks then you can define a different structural layout for the template , messenger, message type combination and in the same sunset_red.css variation file just add css specific to that layout.
+	 * Keep in mind that this property is used both for indicating valid variations for a given message type and messenger but the variation files themselves are ONLY unique to the messenger.  So if you have a variation for the html messenger referenced by the slug "sunset_red" Then the variation file for the main type will be html_main_sunset_red.css.  All the array in this property allows you to do, is indicate that with certain message types the sunset_red variation is available but for other message types its not.  But you could NOT have a sunset_red variation file for one messenger/message_type and a different one for another messenger/message_type.  If you want different css looks then you can define a different structural layout for the template , messenger, message type combination and in the same sunset_red.css variation file just add css specific to that layout.
 	 *
 	 * @since 4.5.0
 	 *
@@ -187,7 +187,7 @@ abstract class  EE_Messages_Template_Pack {
 		$should_be = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $this->dbref ) ) );
 
 		if ( $should_be !== $classname ) {
-			throw new EE_Error( sprintf( __('The name of the template pack instantiated class is "%s".  It should be "%s".  Make sure that the name of the temlpate pack class matches is prepended with "EE_Messages_Template_Pack_" and appended with a sentence case iteration of the value for your template pack\'s dbref property.', 'event_espresso' ), $classname, $should_be ) );
+			throw new EE_Error( sprintf( __('The name of the template pack instantiated class is "%s".  It should be "%s".  Make sure that the name of the template pack class matches is prepended with "EE_Messages_Template_Pack_" and appended with a sentence case iteration of the value for your template pack\'s dbref property.', 'event_espresso' ), $classname, $should_be ) );
 		}
 
 		//if _base_path is not set then throw an error because a base path string is needed.
@@ -251,7 +251,7 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * This takes the incoming messenger and message type objects, uses them to get the set fields and contexts, then attempts to retreive the templates matching those for this given template pack.
+	 * This takes the incoming messenger and message type objects, uses them to get the set fields and contexts, then attempts to retrieve the templates matching those for this given template pack.
 	 *
 	 * @since 4.5.0
 	 *
@@ -264,9 +264,17 @@ abstract class  EE_Messages_Template_Pack {
 	protected function _get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
 		$templates = array();
 
-		//we get all the templates for the DEFAULT template pack to have fallbacks in case this template pack does not have templates for this messenger and message type.
-		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
-		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
+		/**
+		 * Retrieving the default pack for later usage of default templates for template packs that
+		 * are NOT the default pack ( or an extension of the default pack ).
+		 * We ONLY set this variable to be the default pack IF the loaded class is NOT the default
+		 * pack.  This prevents recursion in _get_specific_template().  The intention is that for
+		 * template packs that are NOT default packs, we use the default template pack to provide
+		 * the final fallback templates if there aren't any defined for the called template pack.
+		 *
+		 * @type EE_Messages_Template_Pack_Default | null $default_pack
+		 */
+		$default_pack = ! $this instanceof EE_Messages_Template_Pack_Default ? new EE_Messages_Template_Pack_Default() : null;
 
 		$fields = $messenger->get_template_fields();
 		$contexts = $message_type->get_contexts();
@@ -280,15 +288,15 @@ abstract class  EE_Messages_Template_Pack {
 				 * is this a field array (linked to a main field)?
 				 */
 				if ( $field == 'extra'  ) {
-					foreach ( $field_details as $mainfield => $subfields ) {
-						foreach ( $subfields as $subfield => $subfield_details ) {
+					foreach ( $field_details as $main_field => $sub_fields ) {
+						foreach ( $sub_fields as $sub_field => $sub_field_details ) {
 							//make sure that the template_field_ref matches what the main template field is for this template group.
-							$template_field_ref = $subfield == 'main' ? $mainfield : $subfield;
-							$templates[$context][$mainfield][$subfield] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $template_field_ref, $context );
+							$template_field_ref = $sub_field == 'main' ? $main_field : $sub_field;
+							$templates[ $context ][ $main_field ][ $sub_field ] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $template_field_ref, $context );
 						}
 					}
 				} else {
-					$templates[$context][$field] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $field, $context );
+					$templates[ $context ][ $field ] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $field, $context );
 				}
 			}
 		}
@@ -303,7 +311,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Utility method for retrieving a specific template matching the given parameters
 	 *
-	 * @param mixed (null|EE_Messages_Template_Pack_Default)          $default_pack either the default template pack or null
+	 * @param null | EE_Messages_Template_Pack_Default $default_pack
 	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @param string          $field          The field reference for the specific template being looked up.
@@ -312,6 +320,9 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return string          The template contents.
 	 */
 	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
+
+		//default templates
+		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
 
 		//first we allow for the $_base_path to be filtered.  However, we assign this to a new variable so that we have the original base_path as a fallback.
 		$filtered_base_path = apply_filters( 'FHEE__EE_Template_Pack___get_specific_template__filtered_base_path', $this->_base_path, $messenger, $message_type, $field, $context, $this );
@@ -322,9 +333,11 @@ abstract class  EE_Messages_Template_Pack {
 		$fallback_path = $filtered_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
 		$mt_defined_full_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
 		$mt_defined_fallback_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
+		$base_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
+		$base_defined_fallback_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
 
 		/**
-		 * Template checks are done heirarchically in the following order:
+		 * Template checks are done hierarchically in the following order:
 		 *
 		 * - a match for the full messenger name, message type, context and field in the full path for the given template pack.
 		 * - a match for the full messenger name, message type, field in the full path for the given template pack.
@@ -343,6 +356,10 @@ abstract class  EE_Messages_Template_Pack {
 			$actual_path = $mt_defined_full_path;
 		} elseif ( is_readable( $mt_defined_fallback_path ) ) {
 			$actual_path = $mt_defined_fallback_path;
+		} elseif ( is_readable( $base_defined_full_path ) ) {
+			$actual_path = $base_defined_full_path;
+		} elseif ( is_readable( $base_defined_fallback_path ) ) {
+			$actual_path = $base_defined_fallback_path;
 		} else  {
 			$actual_path = '';
 		}
@@ -377,9 +394,9 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This simply returns the $_default_variation_labels property value.
 	 *
-	 * @sinc 4.5.0
+	 * @since 4.5.0
 	 *
-	 * @param string $messenger if the messenger slug is returned then the default lable for the specific messenger is retrieved.  If it doesn't exist then the __('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
+	 * @param string $messenger if the messenger slug is returned then the default label for the specific messenger is retrieved.  If it doesn't exist then the __('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
 	 *
 	 * @return array|string
 	 */
@@ -465,12 +482,7 @@ abstract class  EE_Messages_Template_Pack {
 		} elseif ( is_readable( $base_path . $default_path_string ) ) {
 			$variation_path = $base . $default_path_string;
 		} else {
-			//prevent recursion.
-			if ( $skip_filters ) {
-				$variation_path = '';
-			} else {
-				$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $message_type, $type, 'default', $url, $file_extension, TRUE ) : '';
-			}
+			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_default_variation( $messenger, $message_type, $type, $url, $file_extension ) : '';
 		}
 
 		if ( $skip_filters ) {

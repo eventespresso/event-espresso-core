@@ -136,6 +136,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['default']['list_table'] = 'Extend_Events_Admin_List_Table';
 
 		//add tickets tab but only if there are more than one default ticket!
 		$tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(array( array('TKT_is_default' => 1 ) ), 'TKT_ID', TRUE );
@@ -177,12 +178,37 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 		//filters for event list table
-		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
+		//heartbeat stuff
+		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
+
+	}
+
+
+
+	/**
+	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle accordingly.
+	 *
+	 * @param array  $response The existing heartbeat response array.
+	 * @param array  $data        The incoming data package.
+	 *
+	 * @return array  possibly appended response.
+	 */
+	public function heartbeat_response( $response, $data ) {
+		/**
+		 * check whether count of tickets is approaching the potential
+		 * limits for the server.
+		 */
+		if ( ! empty( $data['input_count'] ) ) {
+			$response['max_input_vars_check'] = EE_Registry::instance()->CFG->environment->max_input_vars_limit_check($data['input_count']);
+		}
+
+		return $response;
 	}
 
 
@@ -232,6 +258,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function load_scripts_styles_edit() {
+		wp_register_script( 'ee-event-editor-heartbeat', EVENTS_CAF_ASSETS_URL . 'event-editor-heartbeat.js', array( 'ee_admin_js', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
+
 		/**
 		 * load accounting js.
 		 */
@@ -240,6 +268,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		wp_enqueue_script('event_editor_js');
+		wp_enqueue_script('ee-event-editor-heartbeat');
 
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
@@ -250,6 +279,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
+		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -281,11 +311,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
 		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
-			$this->_views['all']['bulk_action']['export_events'] = $export_label;
-			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
 
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
-				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+//				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
 			}
 		}
 
@@ -295,7 +325,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('Today', 'event_espresso'),
 				'count' => $this->total_events_today(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
@@ -304,7 +334,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('This Month', 'event_espresso'),
 				'count' => $this->total_events_this_month(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			)
@@ -318,7 +348,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _set_list_table_views_category_list() {
 		parent::_set_list_table_views_category_list();
-		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
+//		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 
@@ -393,6 +423,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
 		$new_event->set( 'status', 'draft' );
 
+		//duplicate discussion settings
+		$new_event->set( 'comment_status', $orig_event->get('comment_status') );
+		$new_event->set( 'ping_status', $orig_event->get( 'ping_status' ) );
+
 		//save the new event
 		$new_event->save();
 
@@ -447,6 +481,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				if ( ! $orig_tkt instanceof EE_Ticket )
 					continue;
 
+				//is this ticket archived?  If it is then let's skip
+				if ( $orig_tkt->get( 'TKT_deleted' ) ) {
+					continue;
+				}
+
 				//does this original ticket already exist in the clone_tickets cache?  If so we'll just use the new ticket from it.
 				if ( isset( $cloned_tickets[$orig_tkt->ID()] ) ) {
 					$new_tkt = $cloned_tickets[$orig_tkt->ID()];
@@ -476,7 +515,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			}
 		}
 
-		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event);
+		//clone taxonomy information
+		$taxonomies_to_clone_with = apply_filters( 'FHEE__Extend_Events_Admin_Page___duplicate_event__taxonomies_to_clone', array( 'espresso_event_categories', 'espresso_event_type', 'post_tag' ) );
+
+		//get terms for original event (notice)
+		$orig_terms = wp_get_object_terms( $orig_event->ID(), $taxonomies_to_clone_with );
+
+		//loop through terms and add them to new event.
+		foreach ( $orig_terms as $term ) {
+			wp_set_object_terms( $new_event->ID(), $term->term_id, $term->taxonomy, true );
+		}
+
+
+		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event, $orig_event );
 
 		//now let's redirect to the edit page for this duplicated event if we have a new event id.
 		if ( $new_event->ID() ) {
@@ -550,7 +601,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export();
@@ -575,7 +627,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
@@ -630,7 +683,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined, EEM_Registration::status_id_incomplete ), TRUE);
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();

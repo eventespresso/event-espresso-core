@@ -37,6 +37,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	protected $_feature_image = array();
 
 
+	abstract public function wp_user();
+
 
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
@@ -70,7 +72,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 */
 	function remove_relation_to_term_taxonomy( $term_taxonomy ) {
 		if ( !$term_taxonomy ) {
-			EE_Error::add_error( sprintf( __( "No Term_Taxonomy provided which to remove from model object of type %s and id %d", "event_espresso" ), get_class( $this ), $this->ID() ) );
+			EE_Error::add_error( sprintf( __( "No Term_Taxonomy provided which to remove from model object of type %s and id %d", "event_espresso" ), get_class( $this ), $this->ID() ), __FILE__, __FUNCTION__, __LINE__ );
 			return NULL;
 		}
 		$term_taxonomy->set_count( $term_taxonomy->count() - 1 );

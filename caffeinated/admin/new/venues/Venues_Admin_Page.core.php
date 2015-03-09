@@ -505,7 +505,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'delete_categories' => __('Delete Permanently', 'event_espresso'),
-					'export_categories' => __('Export Categories', 'event_espresso'),
+//					'export_categories' => __('Export Categories', 'event_espresso'),
 					)
 				)
 		);
@@ -947,14 +947,23 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array($offset, $per_page);
 
+		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
+
 		$where = array(
 			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
 			//todo add filter by category
 			);
 
+		if ( $category ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
+
 		//cap checks
-		if ( ! EE_Registry::instance()->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
-			$where['status**'] = array( '!=' , 'private' );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
+			if ( ! empty( $where['status'][0] ) && $where['status'][0] == 'IN' ) {
+				$where['status'][1][] = 'private';
+			}
 		}
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
@@ -1076,7 +1085,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
 			'value' => EEH_Formatter::admin_format_content($this->_category->category_desc),
-			'class' => 'my_editor_custom'
+			'class' => 'my_editor_custom',
+			'wpeditor_args' => array( 'media_buttons' => FALSE )
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
 
@@ -1190,7 +1200,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+		EE_Registry::instance()->load_helper( 'File' );
+		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();

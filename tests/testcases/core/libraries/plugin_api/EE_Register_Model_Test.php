@@ -44,7 +44,7 @@ class EE_Register_Model_Test extends EE_UnitTestCase{
 		try{
 			EE_Register_Model::register($this->_model_group, $this->_reg_args);
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(PHPUnit_Framework_Error_Notice $e){
+		}catch(PHPUnit_Framework_Error_Deprecated $e){
 			$this->assertTrue(True);
 		}
 		EE_System::instance()->load_core_configuration();
@@ -61,7 +61,7 @@ class EE_Register_Model_Test extends EE_UnitTestCase{
 			EE_Register_Model::register($this->_model_group, array(
 				'foobar'=>'1.0.0',
 				'model_paths'=> EE_MOCKS_DIR . 'core/db_models',
-				'class_paths'=> EE_MOCKS_DIR . 'core/db_class'
+				'class_paths'=> EE_MOCKS_DIR . 'core/db_classes'
 			));
 			$this->fail('We should have received a warning that the \'plugin_main_file\' is a required argument when registerign an addon');
 		}catch(EE_Error $e){

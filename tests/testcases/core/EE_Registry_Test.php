@@ -27,7 +27,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$model_b1 = EEM_Event::reset();
 		$this->assertNotSame( $model_a, $model_b1);
 		$model_b2 = EE_Registry::instance()->reset_model('Event');
-		$this->assertNotEquals( $model_a, $model_b2);
+		$this->assertNotSame( $model_a, $model_b2);
 	}
 }
 

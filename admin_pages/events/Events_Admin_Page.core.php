@@ -67,8 +67,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'espresso_events' => 'edit'
 			);
 
-		$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
-
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -519,9 +517,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('event-editor-css');
 
 		//scripts
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_script('event_editor_js');
 		wp_enqueue_script('event-datetime-metabox');
 
 		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
@@ -712,6 +708,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
+	 * _event_model
+	 * @return EEM_Event
+	 */
+	private function _event_model() {
+		if ( ! $this->_event_model instanceof EEM_Event ) {
+			$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
+		}
+		return $this->_event_model;
+	}
+
+
+
+
+
+	/**
 	 * Adds extra buttons to the WP CPT permalink field row.
 	 *
 	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
@@ -776,12 +787,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
+		$success = $this->_event_model()->update_by_ID( $event_values, $post_id );
 
 
-		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-		$get_one_where = array( $this->_event_model->primary_key_name() => $post_id, 'status' => $post->post_status );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $post_id, 'status' => $post->post_status );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
@@ -810,7 +821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _restore_cpt_item( $post_id, $revision_id ) {
 		//copy existing event meta to new post
-		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		$post_evt = $this->_event_model()->get_one_by_ID($post_id);
 
 		//meta revision restore
 		$post_evt->restore_revision($revision_id);
@@ -918,7 +929,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Registry::instance()->load_helper('DTT_Helper');
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
@@ -1017,7 +1028,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$TKT->save();
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
+			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
@@ -1127,8 +1138,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//handle datetime saves
 		$items = array();
 
-		$get_one_where = array( $this->_event_model->primary_key_name() => $postid );
-		$event = $this->_event_model->get_one( array($get_one_where) );
+		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
+		$event = $this->_event_model()->get_one( array($get_one_where) );
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
@@ -1383,7 +1394,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined, EEM_Registration::status_id_incomplete ), TRUE);
 
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
@@ -1463,7 +1474,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
 
-		$EEME = $this->_event_model;
+		$EEME = $this->_event_model();
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? NULL : $offset . ',' . $per_page;
@@ -1840,7 +1851,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//Message Template Groups
-		$this->_cpt_model_obj->delete_related_permanently('Message_Template_Group');
+		$this->_cpt_model_obj->_remove_relations( 'Message_Template_Group' );
 
 
 		//term taxonomies
@@ -1932,7 +1943,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
+		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(
+			// exclude array
+			array(
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
+				EEM_Registration::status_id_incomplete
+			),
+			// translated
+			TRUE
+		);
 		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : EEM_Registration::status_id_pending_payment;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
@@ -2038,7 +2058,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
 			'value' => EEH_Formatter::admin_format_content($this->_category->category_desc),
-			'class' => 'my_editor_custom'
+			'class' => 'my_editor_custom',
+			'wpeditor_args' => array('media_buttons' => FALSE )
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
 

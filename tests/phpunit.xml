@@ -11,6 +11,12 @@
 			<directory suffix=".php">./testcases/</directory>
 		</testsuite>
 	</testsuites>
+	<groups>
+        <exclude>
+            <group>ignore</group>
+			<group>live</group>
+        </exclude>
+    </groups>
 	<php>
 		<ini name="display_errors" value="1" />
 	</php>

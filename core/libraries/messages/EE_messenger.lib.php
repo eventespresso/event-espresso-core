@@ -264,7 +264,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.
-	 * @return void
+	 * @return bool | WP_Error
 	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
 	 */
 	abstract protected function _send_message();
@@ -277,6 +277,20 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string html body for message content.
 	 */
 	abstract protected function _preview();
+
+
+
+
+	/**
+	 * Used by messengers (or preview) for enqueueing any scripts or styles need in message generation.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_scripts_styles() {
+		do_action( 'AHEE__EE_messenger__enqueue_scripts_styles');
+	}
 
 
 
@@ -307,7 +321,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	private function _set_supports_labels_defaults() {
 		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
 		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
-		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundled structural changes for templates.', 'event_espresso');
 
 		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
 
@@ -351,7 +365,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function get_variation( EE_Messages_Template_Pack $pack, $message_type_name, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
 		$this->_tmp_pack = $pack;
-		return $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters );
+		$variation_path = apply_filters( 'EE_messenger__get_variation__variation', false, $pack, $this->name, $message_type_name, $url, $type, $variation, $skip_filters );
+		$variation_path = empty( $variation_path ) ? $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters ) : $variation_path;
+		return $variation_path;
+
 	}
 
 
@@ -474,6 +491,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 		foreach ( $global_templates as $mtpgID => $mtpg ) {
 			//verify this message type is supposed to show on this page
 			$mtp_obj = $mtpg->message_type_obj();
+			if ( ! $mtp_obj instanceof EE_message_type ) {
+				continue;
+			}
 			$mtp_obj->admin_registered_pages = (array) $mtp_obj->admin_registered_pages;
 			if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) )
 				continue;
@@ -558,11 +578,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * Sets up the message for sending.
 	 * @param  stdClass $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
+	 * @return bool | WP_Error
 	 */
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
 		$this->_incoming_message_type = $message_type;
-		$this->_send_message();
+		return $this->_send_message();
 	}
 
 
@@ -589,7 +610,33 @@ abstract class EE_messenger extends EE_Messages_Base {
 			}
 		}
 
+		//enqueue preview js so that any links/buttons on the page are disabled.
+		if ( ! $send ) {
+			//the below may seem liks duplication.  However, typically if a messenger enqueues scripts/styles, it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
+			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
+		}
+
 		return $send ? $this->_send_message() : $this->_preview();
+	}
+
+
+
+
+	/**
+	 * Callback for enqueue_scripts so that we setup the preview script for all previews.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function add_preview_script() {
+		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, true );
+
+		//error message
+		EE_Registry::$i18n_js_strings['links_disabled'] = __('All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso');
+		wp_localize_script( 'ee-messages-preview-js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 
 
@@ -681,7 +728,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_existing_test_settings() {
-		$settings = get_option('ee_active_messengers', true);
+		$settings = EEH_MSG_Template::get_active_messengers_in_db();
 		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
 	}
 
@@ -694,9 +741,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return bool 	success/fail
 	 */
 	public function set_existing_test_settings( $settings ) {
-		$existing = get_option('ee_active_messengers', true);
+		$existing = EEH_MSG_Template::get_active_messengers_in_db();
 		$existing[$this->name]['test_settings'] = $settings;
-		return update_option('ee_active_messengers', $existing);
+		return EEH_MSG_Template::update_active_messengers_in_db( $existing );
 	}
 
 

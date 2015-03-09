@@ -28,37 +28,11 @@ require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Message_Template_Group object
-	private static $_instance = NULL;
-
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Message_Template_Group object
-	 *
-	 *		@access public
-	 *		@return EEM_Question instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Message_Template_Group already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Message_Template_Group object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_MEssage_Template_Group
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
+	protected static $_instance = NULL;
 
 
 
-	protected function __construct() {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Message Template Group', 'event_espresso');
 		$this->plural_item = __('Message Template Groups', 'event_espresso');
 		$this->_tables = array(
@@ -68,7 +42,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'Message_Template_Group' => array(
 				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
 				'MTP_name' => new EE_Plain_Text_Field( 'MTP_name', __('The name of the temlpate group', 'event_espresso'), FALSE, '' ),
-				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_esrpresso' ), FALSE, '' ),
+				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_espresso' ), FALSE, '' ),
 				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, get_current_user_id() ),
 				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
@@ -83,7 +57,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'Event' => new EE_HABTM_Relation('Event_Message_Template')
 			);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 
@@ -120,7 +94,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 */
 	protected function _maybe_mtp_filters( $_where = array() ) {
 		//account for messenger or message type filters
-		if ( isset($_REQUEST['ee_messenger_filter_by'] ) && $_REQUEST['ee_messenger_filter_by'] != 'none_selected' ) {
+		if ( isset($_REQUEST['ee_messenger_filter_by'] ) && $_REQUEST['ee_messenger_filter_by'] != 'none_selected' && $_REQUEST['ee_messenger_filter_by'] != 'all'  ) {
 			$_where['MTP_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
 		}
 
@@ -172,39 +146,6 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		return $r_templates;
 	}
 
-
-
-
-	/**
-	 * get_all_global_message_template groups
-	 * @access public
-	 * @return EE_Message_Template_Group[] all message template groups that are global (i.e. non-event)
-	 */
-	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		$_where = $this->_maybe_mtp_filters( array('MTP_is_global' => TRUE ) );
-
-		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
-		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
-	}
-
-
-
-
-	/**
-	 * get_all_custom_message_templates
-	 * @access public
-	 * @return EE_Message_Template_Group[] all message template groups that are non-global and are event specific
-	 */
-	public function get_all_custom_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $user_check = FALSE ) {
-		$_where = $this->_maybe_mtp_filters( array( 'MTP_is_global' => FALSE  ) );
-
-		if  ( $user_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_others_messages', 'get_all_custom_message_templates' )  ) {
-			$_where['MTP_user_id'] = get_current_user_id();
-		}
-
-		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
-		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
-	}
 
 
 

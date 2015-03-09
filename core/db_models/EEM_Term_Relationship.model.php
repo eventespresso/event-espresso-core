@@ -26,35 +26,9 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Term_Relationship extends EEM_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Term_Relationship
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Term Relationship','event_espresso');
 		$this->plural_item = __('Term Relationships','event_espresso');
 		$this->_tables = array(
@@ -76,7 +50,7 @@ class EEM_Term_Relationship extends EEM_Base {
 			'PRIMARY'=>new EE_Primary_Key_Index(array('object_id','term_taxonomy_id'))
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 	/**
@@ -94,8 +68,8 @@ class EEM_Term_Relationship extends EEM_Base {
 		}else{
 			$second_operand = 'tr.term_taxonomy_id';
 		}
-		$rows_affected = $wpdb->query("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
-from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)");
+		$rows_affected = $this->_do_wpdb_query( 'query' , array("UPDATE {$wpdb->term_taxonomy} AS tt SET count = (select count(*) as proper_count
+from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_operand)" ) );
 		return $rows_affected;
 	}
 
@@ -117,10 +91,14 @@ from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_opera
 	 * all ok
 	 * @param array $fields_n_values see EEM_Base::update
 	 * @param array $query_params @see EEM_Base::get_all
+	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+	 * in this model's entity map according to $fields_n_values that match $query_params. This
+	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
+	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int
 	 */
-	public function update($fields_n_values, $query_params) {
-		$count = parent::update($fields_n_values, $query_params);
+	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE) {
+		$count = parent::update($fields_n_values, $query_params, $keep_model_objs_in_sync );
 		if( $count ){
 			$this->update_term_taxonomy_counts();
 		}

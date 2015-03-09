@@ -210,7 +210,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
 			//now, just so we can display the page correctly, make a error migraiton script stage object
 			//and also put the error on it. It only persists for the duration of this request
-			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
 			$exception_thrown = true;
 		}
@@ -221,7 +221,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					$most_recent_migration->is_borked()
 				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
-			$this->_template_args['reset_db_page_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
+			$this->_template_args[ 'support_url' ] = 'http://eventespresso.com/support/forums/';
+			$this->_template_args[ 'next_url' ] = EEH_URL::add_query_args_and_nonce(array( 'action' => 'confirm_migration_crash_report_sent', 'success' => '0' ), EE_MAINTENANCE_ADMIN_URL );
 		}elseif($addons_should_be_upgraded_first){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
@@ -256,7 +257,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
 			'script_names'=>$script_names,//array of names of scripts that have run
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
-			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
+			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
 			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 		));
@@ -359,6 +360,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$from = $this->_req_data['from'];
 		$from_name = $this->_req_data['from_name'];
 		$body = $this->_req_data['body'];
+		try{
 		$success = wp_mail(EE_SUPPORT_EMAIL,
 				'Migration Crash Report',
 				$body."/r/n<br>".  print_r(EEM_System_Status::instance()->get_system_stati(),true),
@@ -366,14 +368,30 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					"from:$from_name<$from>",
 //					'content-type:text/html charset=UTF-8'
 					));
+		}catch( Exception $e ){
+			$success = FALSE;
+		}
 		$this->_redirect_after_action($success, __("Migration Crash Report", "event_espresso"), __("sent", "event_espresso"),array('success'=>$success,'action'=>'confirm_migration_crash_report_sent'));
 	}
 
 
 
 	public function _confirm_migration_crash_report_sent(){
+		try{
+			$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
+		}catch(EE_Error $e){
+
+			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
+			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//and also put the error on it. It only persists for the duration of this request
+			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
+			$most_recent_migration->add_error($e->getMessage());
+		}
 		$success = $this->_req_data['success']=='1' ? true : false;
 		$this->_template_args['success'] = $success;
+		$this->_template_args[ 'most_recent_migration' ] = $most_recent_migration;
+		$this->_template_args['reset_db_action_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
+		$this->_template_args[ 'reset_db_page_url' ] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'data_reset'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_confirm_migration_crash_report_sent.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,$this->_template_args,TRUE);
 		$this->display_admin_page_with_sidebar();
@@ -391,11 +409,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _reset_db( $nuke_old_ee4_data = TRUE ){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+
 		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
 		}
-		EE_System::instance()->initialize_db_if_no_migrations_required();
+		//make sure when we reset the registry's config that it
+		//switches to using the new singleton
+		EE_Registry::instance()->CFG = EE_Registry::instance()->CFG->reset( TRUE );
+		EE_System::instance()->initialize_db_if_no_migrations_required( TRUE );
 		EE_System::instance()->redirect_to_about_ee();
 	}
 
@@ -411,6 +433,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::delete_all_espresso_tables_and_data();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
+		exit;
 	}
 
 	/**
@@ -460,7 +483,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		//scripts
 //		wp_enqueue_script('ee-text-links');
 	}
-
 
 
 

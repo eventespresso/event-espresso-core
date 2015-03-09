@@ -26,17 +26,23 @@ require_once( EE_CLASSES . 'EE_Question.class.php');
 
 class EEM_Question extends EEM_Soft_Delete_Base {
 
+	// constant used to indicate that the question type is COUNTRY
+	const QST_type_country = 'COUNTRY';
+
 	// constant used to indicate that the question type is DATE
 	const QST_type_date = 'DATE';
 
 	// constant used to indicate that the question type is DROPDOWN
 	const QST_type_dropdown = 'DROPDOWN';
 
-	// constant used to indicate that the question type is MULTIPLE
-	const QST_type_multiple = 'MULTIPLE';
+	// constant used to indicate that the question type is CHECKBOX
+	const QST_type_checkbox = 'CHECKBOX';
 
-	// constant used to indicate that the question type is SINGLE
-	const QST_type_single = 'SINGLE';
+	// constant used to indicate that the question type is RADIO_BTN
+	const QST_type_radio = 'RADIO_BTN';
+
+	// constant used to indicate that the question type is STATE
+	const QST_type_state = 'STATE';
 
 	// constant used to indicate that the question type is TEXT
 	const QST_type_text = 'TEXT';
@@ -47,33 +53,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Question instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	/**
-	 * resets the model and returns it
-	 * @return EEM_Question
-	 */
-	public static function reset(){
-		self::$_instance = NULL;
-		return self::instance();
-	}
 
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
@@ -82,14 +63,14 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	private $_allowed_question_types;
 	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
 	 * but they can be extended
 	 * @return string[]
 	 */
 	public function allowed_question_types(){
 		return $this->_allowed_question_types;
 	}
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
 		$this->_allowed_question_types=apply_filters(
@@ -97,10 +78,12 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Question::QST_type_text =>__('Text','event_espresso'),
 				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
-				EEM_Question::QST_type_single =>__('Radio Buttons','event_espresso'),
+				EEM_Question::QST_type_checkbox =>__('Checkboxes','event_espresso'),
+				EEM_Question::QST_type_radio =>__('Radio Buttons','event_espresso'),
 				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
-				EEM_Question::QST_type_multiple =>__('Checkboxes','event_espresso'),
-				EEM_Question::QST_type_date =>__('Date','event_espresso')
+				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
+				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
+				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
 			)
 		);
 
@@ -130,7 +113,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
 
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 

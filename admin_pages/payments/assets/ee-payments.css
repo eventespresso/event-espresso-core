@@ -34,7 +34,7 @@ img.ee_media_image{
 
 .form-table th {
 	width: 10%;
-	
+
 }
 
 .form-table textarea  {
@@ -43,4 +43,12 @@ img.ee_media_image{
 
 .form-table input {
 	/*width: 100%;*/
+}
+
+#espresso_Invoice_payment_settings table.form-table {
+	border: 1px #f1f1f1 solid;
+}
+
+#espresso_Invoice_payment_settings table.form-table td, #espresso_Invoice_payment_settings table.form-table th {
+	padding-left: 20px
 }

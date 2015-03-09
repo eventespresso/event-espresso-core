@@ -206,7 +206,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
@@ -474,7 +474,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}elseif( !empty($this->_req_data['QST_ID'])){
 			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
 		}else{
-			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")));
+			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
 	}
@@ -528,56 +528,62 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _insert_or_update_question_group( $new_question_group = TRUE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
-		if($new_question_group){
-			$ID=$this->_question_group_model->insert($set_column_values);
-			if($ID){
-				$success=1;
-			}else{
-				$success=0;
-			}
-		}else{
-			$ID=absint($this->_req_data['QSG_ID']);
-			$pk=$this->_question_group_model->primary_key_name();
-			$wheres=array($pk=>$ID);
-			unset($set_column_values[$pk]);
-			$success= $this->_question_group_model->update($set_column_values,array($wheres));
+		if ( $new_question_group ){
+			$QSG_ID = $this->_question_group_model->insert($set_column_values);
+			$success = $QSG_ID ? 1 : 0;
+		} else {
+			$QSG_ID = absint($this->_req_data['QSG_ID']);
+			unset( $set_column_values[ 'QSG_ID' ] );
+			$this->_question_group_model->show_next_x_db_queries(2);
+			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
-		//update the existing related questions
-		$question_group=$this->_question_group_model->get_one_by_ID($ID);
-		$questions=$question_group->questions();
-		foreach($questions as $question_ID => $question){
-			//first we always check for order.
-			if ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
+		// update the existing related questions
+		// BUT FIRST...  delete the phone question from the Question_Group_Question if it is being added to this question group (therefore removed from the existing group)
+		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ EEM_Attendee::phone_question_id ] )) {
+			// delete where QST ID = system phone question ID and Question Group ID is NOT this group
+			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => EEM_Attendee::phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
+		}
+		/** @type EE_Question_Group $question_group */
+		$question_group=$this->_question_group_model->get_one_by_ID( $QSG_ID );
+		$questions = $question_group->questions();
+		// make sure system phone question is added to list of questions for this group
+		if ( ! isset( $questions[ EEM_Attendee::phone_question_id ] )) {
+			$questions[ EEM_Attendee::phone_question_id ] = EEM_Question::instance()->get_one_by_ID( EEM_Attendee::phone_question_id );
+		}
+
+		foreach( $questions as $question_ID => $question ){
+			// first we always check for order.
+			if ( ! empty( $this->_req_data['question_orders'][ $question_ID ] ) ){
 				//update question order
-				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][ $question_ID ] );
 			}
 
-			//then we always check if adding or removing.
-			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
-				$question_group->add_question($question_ID);
-			}else {
-				//not found, remove it (but only if not a system question for the personal group)
-				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
-					continue;
-				$question_group->remove_question($question_ID);
+			// then we always check if adding or removing.
+			if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ] )) {
+				$question_group->add_question( $question_ID );
+			} else {
+				// not found, remove it (but only if not a system question for the personal group)
+				if ( ! ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal )) {
+					$question_group->remove_question( $question_ID );
+				}
 			}
 		}
-		//save new related questions
-		if(array_key_exists('questions',$this->_req_data)){
-			foreach(array_keys($this->_req_data['questions']) as $question_ID){
-				$question_group->add_question($question_ID);
-				if ( isset( $this->_req_data['question_orders'][$question_ID]))
-				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+		// save new related questions
+		if ( isset( $this->_req_data['questions'] )) {
+			foreach( $this->_req_data['questions'] as $QST_ID ){
+				$question_group->add_question( $QST_ID );
+				if ( isset( $this->_req_data['question_orders'][ $QST_ID ] )) {
+					$question_group->update_question_order( $QST_ID, $this->_req_data['question_orders'][ $QST_ID ] );
+				}
 			}
-		}/**/
-		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
+		}
+
 		if ( $success !== FALSE ) {
 			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
-		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
+		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
 	}
 
@@ -753,38 +759,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _reg_form_settings() {
-
 		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': '';
-
-		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
-		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
-
-		$this->_template_args['recaptcha_theme_options'] = array(
-				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
-				array('id'  => 'white','text'=> __('White', 'event_espresso')),
-				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
-				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
-
-		$this->_template_args['recaptcha_example'] = !empty( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
-
-		$this->_template_args['recaptcha_language_options'] = array(
-				array('id'  => 'en','text'=> __('English', 'event_espresso')),
-				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
-				array('id'  => 'nl','text'=> __('Dutch', 'event_espresso')),
-				array('id'  => 'fr','text'=> __('French', 'event_espresso')),
-				array('id'  => 'de','text'=> __('German', 'event_espresso')),
-				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
-				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
-				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
-
+		$this->_template_args = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args', $this->_template_args );
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
@@ -794,50 +770,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	protected function _display_recaptcha() {
-		if (!function_exists('recaptcha_get_html')) {
-			require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-		}
-		$content = '
-<script type="text/javascript">
-/* <! [CDATA [ */
-var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
-/*  ] ]>  */
-</script>
-<p id="spco-captcha" class="reg-page-form-field-wrap-pg">
-' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, NULL, is_ssl() ? true : false ) . '
-</p>
-';
-	return $content;
-	}
-
-
-
-
 	protected function _update_reg_form_settings() {
-
-		//userproofing recaptcha settings in here as well.  If Use reCAPTCHA is set to yes but we dont' have public or private keys then set Use reCAPTCHA to no and give error message.
-		if ( isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
-			if ( empty($this->_req_data['recaptcha_publickey']) || empty($this->_req_data['recaptcha_privatekey']) ) {
-				$this->_req_data['use_captcha'] = 0;
-				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso') );
-			}
-		}
-
-
-		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-
 		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
-
-		$what = 'Registration Options';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
-
+		$success = $this->_update_espresso_configuration( __('Registration Form Options', 'event_espresso'), EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, __('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
 	}
 
 }

@@ -44,7 +44,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field{
 	 *
 	 * @access protected
 	 * @param  array $new_stati statuses
-	 * @return void            
+	 * @return void
 	 */
 	protected function _register_new_stati( $new_stati ) {
 
@@ -84,17 +84,27 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field{
 
 	}
 
+	/**
+	 * Before calling parent, first double-checks our list of acceptable post
+	 * types is up-to-date
+	 * @param string $value_inputted_for_field_on_model_object
+	 * @return string
+	 */
+	public function prepare_for_set($value_inputted_for_field_on_model_object) {
+		$this->_set_allowed_enum_values();
+		return parent::prepare_for_set($value_inputted_for_field_on_model_object);
+	}
 
 
 
 	//helper methods for getting various $wp_post_statuses stuff.
-	
+
 	/**
 	 * This just returns the status object for the given status
 	 *
 	 *
 	 * @access public
-	 * @see    wp_register_post_status in wp-includes/post.php for a list of properties of the status object   
+	 * @see    wp_register_post_status in wp-includes/post.php for a list of properties of the status object
 	 * @param  string $status What status object you want
 	 * @return std_object         the status object or FALSE if it doesn't exist.
 	 */
