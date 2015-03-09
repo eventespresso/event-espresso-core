@@ -454,16 +454,12 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		/** @type EE_Payment $payment */
-		$payment = $extra_details[ 'last_payment' ] instanceof EE_Payment ? $extra_details[ 'last_payment' ] : false;
-		unset( $extra_details[ 'last_payment' ] );
 		self::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'payment' => $payment,
+				'reg_status_updated' => EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ),
 				'extra_details'   => $extra_details,
-				'reg_status_updated'   => EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ),
 			),
 			true
 		);
