@@ -439,6 +439,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$attendee->delete_permanently();
 		//if that didn't throw an error, we're good
 	}
+
 }
 
 // End of file EE_Base_Class_Test.php

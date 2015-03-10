@@ -49,7 +49,6 @@
 		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>
 
-
 	<a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text" rel="additional-transaction-session-info">
 		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional transaction session details', 'event_espresso' );?>
 	</a>
@@ -95,8 +94,8 @@
 					<th class="jst-cntr"></th>
 					<th class="jst-cntr"><?php _e( 'ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Date', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Source', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway Response', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'P.O. / S.O.&nbsp;#', 'event_espresso' );?></th>
@@ -135,7 +134,9 @@
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
 					</td>
 					<td class=" jst-cntr">
-						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo $payment->source();?></div>
+						<div id="payment-method-<?php echo $PAY_ID;?>">
+							<?php echo $payment->source();?>
+						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">
@@ -319,16 +320,16 @@
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-method-inp" class=""><?php _e( 'Method of Payment', 'event_espresso' );?></label>
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
-							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
 						<?php foreach ( $payment_methods as $method ) : ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
+							<?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>
 						<p class="description"><?php _e( 'Whether the payment was made via PayPal, Credit Card, Cheque, or Cash', 'event_espresso' );?></p>
 					</div>
 
-					<div class="mop-PP mop-CC mop-CHQ mop" style="display:none">
+					<div class="mop-PP mop-CC mop-CHQ mop">
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
 							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
@@ -346,7 +347,7 @@
 						</div>
 					</div>
 
-					<div class="mop-PP mop-CC mop" style="display:none">
+					<div class="mop-PP mop-CC mop">
 						<div class="txn-admin-apply-payment-status-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-status-inp" class=""><?php _e( 'Payment Status', 'event_espresso' );?></label>
 							<select name="txn_admin_payment[status]" id="txn-admin-payment-status-slct" class="txn-admin-apply-payment-slct" type="text" >
@@ -488,6 +489,42 @@
 	</div>
 
 	<?php endif; // $grand_raw_total > 0?>
+
+	<?php
+	if ( WP_DEBUG ) {
+		$delivered_messages = get_option( 'EED_Messages__payment', array() );
+		if ( isset( $delivered_messages[ $TXN_ID ] )) {
+			?>
+			<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-email-alt"></span><?php _e( 'Messages Sent to Primary Registrant', 'event_espresso' );?></h4>
+
+			<div class="admin-primary-mbox-tbl-wrap">
+				<table class="admin-primary-mbox-tbl">
+					<thead>
+						<tr>
+							<th class="jst-left"><?php _e( 'Date & Time', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Message Type', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Payment Status Upon Sending', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'TXN Status Upon Sending', 'event_espresso' );?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $delivered_messages[ $TXN_ID ] as $timestamp => $delivered_message ) :
+							?>
+							<tr>
+								<td class="jst-left"><?php echo gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['message_type'] ) ? $delivered_message['message_type'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['pay_status'] ) ? $delivered_message['pay_status'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['txn_status'] ) ? $delivered_message['txn_status'] : '';?></td>
+							</tr>
+						<?php endforeach; // $delivered_messages?>
+					</tbody>
+				</table>
+			</div>
+		<?php
+		}
+	}
+	?>
+
 
 </div>
 

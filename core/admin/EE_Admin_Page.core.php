@@ -1798,15 +1798,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
-	 * 		get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
-	*		@access public
-	*		@return array
-	*/
-	public function get_list_table_view_RLs() {
+	 * get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
+	 *
+	 * @param array $extra_query_args Optional. An array of extra query args to add to the generated
+	 *                                		          	urls.  The array should be indexed by the view it is being
+	 *                                		          	added to.
+	 *
+	 * @return array
+	 */
+	public function get_list_table_view_RLs( $extra_query_args = array() ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$query_args = array();
 
 		if ( empty( $this->_views )) {
 			$this->_views = array();
@@ -1814,11 +1819,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
+			$query_args = array();
 			// check for current view
 			$this->_views[ $key ]['class'] = $this->_view == $view['slug'] ? 'current' : '';
 			$query_args['action'] = $this->_req_action;
 			$query_args[$this->_req_action.'_nonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
+			//merge any other arguments sent in.
+			if ( isset( $extra_query_args[$view['slug']] ) ) {
+				$query_args = array_merge( $query_args, $extra_query_args[$view['slug']] );
+			}
 			$this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		}
 
@@ -2048,6 +2058,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$box_label = __('Publish', 'event_espresso');
 		}
 
+		$box_label = apply_filters( 'FHEE__EE_Admin_Page___publish_post_box__box_label', $box_label, $this->_req_action, $this );
+
 		add_meta_box( $meta_box_ref, $box_label, array( $this, 'editor_overview' ), $this->_current_screen->id, 'side', 'high' );
 
 	}
@@ -2067,6 +2079,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * Public wrapper for the protected method.  Allows plugins/addons to externally call the
+	 * protected method.
+	 *
+	 * @see $this->_set_publish_post_box_vars for param details
+	 * @since 4.6.0
+	 */
+	public function set_publish_post_box_vars( $name = null, $id = false, $delete = false, $save_close_redirect_URL = null, $both_btns = true ) {
+		$this->_set_publish_post_box_vars( $name, $id, $delete, $save_close_redirect_URL, $both_btns );
+	}
 
 
 	/**
@@ -2432,7 +2454,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string        html string of legend
 	 */
 	protected function _display_legend( $items ) {
-		$template_args['items'] = (array) $items;
+		$template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
 		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
 		return EEH_Template::display_template($legend_template, $template_args, TRUE);
 	}
@@ -2646,6 +2668,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !$both ) break;
 		}
 
+	}
+
+
+	/**
+	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
+	 *
+	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @since 4.6.0
+	 *
+	 */
+	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
+		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
 	}
 
 
@@ -2944,7 +2978,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param array $data array that will be assigned to template args.
 	 */
 	public function set_template_args( $data ) {
-		$this->_template_args = (array) $data;
+		$this->_template_args = array_merge( $this->_template_args, (array) $data );
 	}
 
 
@@ -3042,6 +3076,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function get_view() {
 		return $this->_view;
+	}
+
+
+
+
+	/**
+	 * getter for the protected $_views property
+	 *
+	 * @return array
+	 */
+	public function get_views() {
+		return $this->_views;
 	}
 
 

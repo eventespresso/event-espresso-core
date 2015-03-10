@@ -43,6 +43,7 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 				'paypal_id'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), $payment_method_type->get_help_tab_link()),
 					'html_help_text'=>  __("Typically payment@example-domain.com", 'event_espresso'),
+					'required' => true
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
 					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')

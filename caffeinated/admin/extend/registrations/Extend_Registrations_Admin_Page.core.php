@@ -324,7 +324,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'default'
 			);
 		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to )  ) {
-			if ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) {
+			if ( ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) || ( isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ) ) {
 				echo '';
 			} else {
 				$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
@@ -554,7 +554,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$ymax = 0;
 		$results = (array) $results;
 		foreach ( $results as $result ) {
-			$regs[] = array( $result->event_name, (int)$result->total );
+			$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int)$result->total );
 			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
 

@@ -61,11 +61,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	//test registering a bare minimum addon, and then deregistering it
 	function test_register_mock_addon_fail(){
 		//we're registering the addon WAAAY after EE_System has set thing up, so
-		//registering this first time should throw an E_USER_NOTICE
+		//registering this first time should throw an E_USER_DEPRECATED
 		try{
 			EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(PHPUnit_Framework_Error_Notice $e){
+		}catch(PHPUnit_Framework_Error_Deprecated $e){
 			$this->assertTrue(True);
 		}
 
@@ -338,6 +338,31 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			return FALSE;
 		}
 	}
+
+	public function test_effective_version(){
+		//use reflection to test this protected method
+		$method = new ReflectionMethod('EE_Register_Addon', '_effective_version');
+		$method->setAccessible(true);
+		$this->assertEquals( '4.3.0.dev.000', $method->invoke( null, '4.3.0' ) );
+		$this->assertEquals( '4.3.0.p.000', $method->invoke( null, '4.3.0.p' ) );
+		$this->assertEquals( '4.3.0.rc.123', $method->invoke( null, '4.3.0.rc.123' ) );
+	}
+
+	public function test_meets_min_core_version_requirement(){
+		//use reflection to test this protected method
+		$method = new ReflectionMethod('EE_Register_Addon', '_meets_min_core_version_requirement');
+		$method->setAccessible(true);
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.rc.032' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.4.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.rc.000', '4.3.0.p' ) );
+
+		$this->assertFalse( $method->invoke( null, '4.4.0', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.4.0.p', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.3.0.rc.123', '4.3.0.rc.001' ) );
+	}
+
 }
 
 // End of file EE_Register_Addon_Test.php

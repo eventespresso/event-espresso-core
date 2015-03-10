@@ -41,6 +41,11 @@ class EE_SPCO_JSON_Response {
 	/**
 	 * @var string
 	 */
+	protected $_registration_time_limit = '';
+
+	/**
+	 * @var string
+	 */
 	protected $_redirect_form = '';
 
 	/**
@@ -106,9 +111,17 @@ class EE_SPCO_JSON_Response {
 		if ( $this->success() ) {
 			$JSON_response['success'] = $this->success();
 		}
+		// but if NO notices are set... at least set the "success" as a key so that the JS knows everything worked
+		if ( ! isset( $JSON_response[ 'attention' ], $JSON_response[ 'errors' ], $JSON_response[ 'success' ] ) ) {
+			$JSON_response['success'] = null;
+		}
 		// set redirect_url, IF it exists
 		if ( $this->redirect_url() ) {
 			$JSON_response['redirect_url'] = $this->redirect_url();
+		}
+		// set registration_time_limit, IF it exists
+		if ( $this->registration_time_limit() ) {
+			$JSON_response['registration_time_limit'] = $this->registration_time_limit();
 		}
 		// grab generic return data
 		$return_data = $this->return_data();
@@ -286,6 +299,24 @@ class EE_SPCO_JSON_Response {
 	 */
 	public function redirect_url() {
 		return $this->_redirect_url;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function registration_time_limit() {
+		return $this->_registration_time_limit;
+	}
+
+
+
+	/**
+	 * @param string $registration_time_limit
+	 */
+	public function set_registration_time_limit( $registration_time_limit ) {
+		$this->_registration_time_limit = $registration_time_limit;
 	}
 
 

@@ -597,7 +597,14 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @param        mixed $item
 	 */
 	private function _strip_all_tags_within_array( &$item ) {
-		$item = wp_strip_all_tags( $item );
+		if( is_object( $item ) ) {
+			$item = (array) $item;
+		}
+		if( is_array( $item ) ){
+			array_walk_recursive( $item, array( $this, '_strip_all_tags_within_array' ) );
+		}else{
+			$item = wp_strip_all_tags( $item );
+		}
 	}
 
 	/**
@@ -614,6 +621,20 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}else{
 			return FALSE;
 		}
+	}
+
+	/**
+	 * Overrides parents' get_pretty() function just for legacy reasons
+	 * (to allow ticket https://events.codebasehq.com/projects/event-espresso/tickets/7420)
+	 * @param string $field_name
+	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
+	 * @return mixed
+	 */
+	public function get_pretty($field_name, $extra_cache_ref = NULL){
+		if( $field_name == 'PAY_gateway' ){
+			return $this->gateway();
+		}
+		return  $this->_get_cached_property( $field_name, TRUE, $extra_cache_ref );
 	}
 }
 

@@ -35,7 +35,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
+		$this->_template = SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php';
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please answer the following registration questions before proceeding.', 'event_espresso'));
@@ -81,8 +81,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		);
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
-			'registrations' =>array(),
-			'ticket_count' 	=>array()
+			'registrations' => array(),
+			'ticket_count' 	=> array()
 		);
 		// grab the saved registrations from the transaction
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
@@ -123,7 +123,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout(
 						array(
-							'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'layout_template_file' 	=> $this->_template, // layout_template
 							'template_args' 				=> $template_args
 						)
 					),
@@ -249,7 +249,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			)
 		);
 		// filter for additional content before questions
-		$form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '', $registration, $question_group, $this ));
 		// loop thru questions
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
@@ -257,10 +257,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_args['subsections'][ $identifier ] = $this->reg_form_question( $registration, $question );
 			}
 		}
+		$form_args['subsections'] = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__question_group_reg_form__subsections_array', $form_args['subsections'], $registration, $question_group, $this );
+
 		// filter for additional content after questions
-		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '', $registration, $question_group, $this ));
 //		d( $form_args );
-		return new EE_Form_Section_Proper( $form_args );
+		$question_group_reg_form = new EE_Form_Section_Proper( $form_args );
+		return apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', $question_group_reg_form, $registration, $question_group, $this );
 	}
 
 
@@ -471,7 +474,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
-			'html_label_text'		=> $question->display_text()
+			'html_label_text'		=> $question->display_text(),
+			'required_validation_error_message' => $question->required_text()
 		);
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
@@ -488,7 +492,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		switch ( $question->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				return new EE_Text_Input( $input_constructor_args );
+				if( $identifier == 'email' ){
+					return new EE_Email_Input( $input_constructor_args );
+				}else{
+					return new EE_Text_Input( $input_constructor_args );
+				}
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
@@ -504,11 +512,32 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				return new EE_State_Select_Input( NULL, $input_constructor_args );
+				$state_options = array();
+				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
+				if ( ! empty( $states )) {
+					foreach( $states as $state ){
+						if ( $state instanceof EE_State ) {
+							$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
+						}
+					}
+				}
+				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this );
+				return new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				return new EE_Country_Select_Input( NULL, $input_constructor_args );
+				$country_options = array();
+				// get possibly cached list of countries
+				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
+				if ( ! empty( $countries )) {
+					foreach( $countries as $country ){
+						if ( $country instanceof EE_Country ) {
+							$country_options[ $country->ID() ] = $country->name();
+						}
+					}
+				}
+				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this );
+				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
 			case EEM_Question::QST_type_checkbox :
@@ -654,6 +683,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					if ( ! $this->checkout->revisit ) {
 						$registration->save();
 					}
+
+					/**
+					 * This allows plugins to trigger a fail on processing of a
+					 * registration for any conditions they may have for it to pass.
+					 *
+					 * @var bool   if TRUE is returned by the plugin then the
+					 *      		registration processing is halted.
+					 */
+					if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process', FALSE, $att_nmbr, $registration, $registrations, $valid_data, $this ) ) {
+						return FALSE;
+					}
+
 					// Houston, we have a registration!
 					$att_nmbr++;
 					$this->_attendee_data[ $reg_url_link ] = array();
@@ -757,6 +798,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
+
+		// allow for plugins to hook in and do their own processing of the form input.
+		// For plugins to bypass normal processing here, they just need to return a boolean value.
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this ) ) {
+			return TRUE;
+		}
+
 		// grab related answer objects
 		$answers = $registration->answers();
 		// $answer_cache_id is the key used to find the EE_Answer we want
@@ -883,7 +931,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} else {
 			$existing_attendee = NULL;
 		}
-		return apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
+		return apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration, $attendee_data );
 	}
 
 

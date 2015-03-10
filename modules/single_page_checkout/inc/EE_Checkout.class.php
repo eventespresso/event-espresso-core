@@ -164,10 +164,17 @@ class EE_Checkout {
 	public $primary_attendee_obj = NULL;
 
 	/**
-	 *	$_payment_method - the payment method object for the selected method of payment
+	 *	$payment_method - the payment method object for the selected method of payment
 	 *	@type EE_Payment_Method
 	 */
 	public $payment_method = NULL;
+
+	/**
+	 * 	$payment - if a payment was successfully made during the reg process,
+	 * 	then here it is !!!
+	 *	@type EE_Payment
+	 */
+	public $payment = NULL;
 
 	/**
 	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
@@ -248,6 +255,13 @@ class EE_Checkout {
 	 */
 	public function remove_reg_step( $reg_step_slug = '' ) {
 		unset( $this->reg_steps[ $reg_step_slug  ] );
+		if ( $this->transaction instanceof EE_Transaction ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// now remove reg step from TXN and save
+			$transaction_processor->remove_reg_step( $this->transaction, $reg_step_slug );
+			$this->transaction->save();
+		}
 	}
 
 
@@ -406,8 +420,30 @@ class EE_Checkout {
 		$this->sort_reg_steps();
 		$this->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
 		$this->set_next_step();
+		// the text that appears on the reg step form submit button
+		$this->current_step->set_submit_button_text();
 		$this->set_reg_step_JSON_info();
 	}
+
+
+
+	/**
+	 *    get_registration_time_limit
+	 *
+	 * @access    public
+	 * @return        string
+	 */
+	public function get_registration_time_limit() {
+
+		$registration_time_limit = (float)( EE_Registry::instance()	->SSN->expiration() - time() );
+		$time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
+		$registration_time_limit = gmdate( $time_limit_format, $registration_time_limit );
+		return apply_filters(
+			'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
+			$registration_time_limit
+		);
+	}
+
 
 
 	/**
@@ -665,7 +701,7 @@ class EE_Checkout {
 	 */
 	public function refresh_all_entities() {
 		// verify the transaction
-		if ( $this->transaction instanceof EE_Transaction ) {
+		if ( $this->transaction instanceof EE_Transaction && $this->transaction->ID() ) {
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( $this->reg_cache_where_params, TRUE ) as $reg_cache_ID => $registration ) {
 				$this->_refresh_registration( $reg_cache_ID, $registration );
@@ -676,7 +712,9 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
+		if ( $this->cart instanceof EE_Cart ) {
+			$this->cart->get_grand_total()->get_model()->refresh_entity_map_with( $this->cart->get_grand_total()->ID(), $this->cart->get_grand_total() );
+		}
 		return TRUE;
 	}
 

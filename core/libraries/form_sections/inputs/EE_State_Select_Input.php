@@ -1,15 +1,10 @@
-<?php  if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit( 'No direct script access allowed' ); }
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_State_Select_Input
+ * EE_State_Select_Input
  *
- * Generates an HTML <select> form input
- * and populates it with a list of States from the wp_esp_state table
- *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
- *
+ * @package			Event Espresso
+ * @subpackage
+ * @author				Mike Nelson
  */
 class EE_State_Select_Input extends EE_Select_Input{
 
@@ -18,7 +13,11 @@ class EE_State_Select_Input extends EE_Select_Input{
 	 * @param array $input_settings
 	 */
 	function __construct( $state_options, $input_settings = array() ){
-		$state_options = $this->get_state_answer_options( $state_options );
+		$state_options = apply_filters(
+			'FHEE__EE_State_Select_Input____construct__state_options',
+			$this->get_state_answer_options( $state_options ),
+			$this
+		);
 		parent::__construct( $state_options, $input_settings );
 	}
 

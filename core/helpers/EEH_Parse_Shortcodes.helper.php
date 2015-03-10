@@ -245,14 +245,10 @@ class EEH_Parse_Shortcodes {
 				}
 
 
-				if ( $parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] ) ) {
-					$matched_code[] = $shortcode;
-					$sc_values[] = $parsed;
-				} else {
-					//let's just strip the ugly code. (usually in the case of list templates)
-					$matched_code[] = $shortcode;
-					$sc_values[] = '';
-				}
+				$parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] );
+
+				$matched_code[] = $shortcode;
+				$sc_values[] = $parsed;
 			}
 		}
 
