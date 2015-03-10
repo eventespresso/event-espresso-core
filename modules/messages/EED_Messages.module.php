@@ -416,14 +416,11 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 
-		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )) {
+
+		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
+			//no messages please
 			return;
 		}
-
-		//if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
-		//	//no messages please
-		//	return;
-		//}
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
@@ -467,7 +464,10 @@ class EED_Messages  extends EED_Module {
 			),
 			true
 		);
-
+		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
+			return true;
+		}
+		return false;
 		// first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
 		if (
