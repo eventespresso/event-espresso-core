@@ -1230,14 +1230,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _post_payment_processing( $payment = NULL ) {
 		// On-Site payment?
 		if ( $this->checkout->payment_method->is_on_site() ) {
-			if ( $this->_process_payment_status( $payment, EE_PMT_Base::onsite )) {
-				$this->_setup_redirect_for_next_step();
+			if ( ! $this->_process_payment_status( $payment, EE_PMT_Base::onsite )) {
+				//$this->_setup_redirect_for_next_step();
+				$this->checkout->continue_reg = false;
 			}
 			// Off-Site payment?
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
-				$this->checkout->redirect = TRUE;
+				//$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
 				// set JSON response
@@ -1250,6 +1251,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 			} else {
 				// not a payment
+				$this->checkout->continue_reg = false;
 				EE_Error::add_error(
 					sprintf(
 						__( 'It appears the Off Site Payment Method was not configured properly.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
@@ -1260,9 +1262,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 			// Off-Line payment?
 		} else if ( $payment === TRUE ) {
-			$this->_setup_redirect_for_next_step();
+			//$this->_setup_redirect_for_next_step();
 			return TRUE;
 		} else {
+			$this->checkout->continue_reg = false;
 			return FALSE;
 		}
 		return $payment;
@@ -1276,12 +1279,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	@access private
 	 * 	@return 	void
 	 */
-	private function _setup_redirect_for_next_step() {
-		$this->checkout->redirect = TRUE;
-		$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
+	//private function _setup_redirect_for_next_step() {
+		//$this->checkout->redirect = TRUE;
+		//$this->checkout->redirect_url = $this->checkout->next_step->reg_step_url();
 		// set JSON response
-		$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-	}
+		//$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+	//}
 
 
 
