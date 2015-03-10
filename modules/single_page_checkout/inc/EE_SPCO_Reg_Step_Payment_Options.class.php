@@ -1082,6 +1082,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment = null;
 		// DEBUG LOG
 		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		// get EE_Payment_Method object
+		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
+			$this->checkout->continue_reg = false;
+			return false;
+		}
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 			// get payment details and process results
@@ -1106,7 +1111,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
 			array( 'payment' => $payment )
 		);
-		$this->checkout->action = 'display_spco_reg_step';
 		$this->checkout->continue_reg = false;
 		return false;
 	}
@@ -1143,7 +1147,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return EE_Payment | FALSE
 	 */
 	private function _validate_payment( $payment = NULL ) {
-		if ( $this->checkout->payment_method->is_off_line() ) {
+		if (  $this->checkout->payment_method->is_off_line() ) {
 			return TRUE;
 		}
 		// verify payment object
