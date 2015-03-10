@@ -416,10 +416,14 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
 
-		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
-			//no messages please
+		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )) {
 			return;
 		}
+
+		//if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
+		//	//no messages please
+		//	return;
+		//}
 
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// send the message type matching the status if that message type is active.
