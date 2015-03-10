@@ -261,7 +261,12 @@ class EE_Checkout {
 	 * @return    void
 	 */
 	public function reset_for_current_request() {
-		$this->redirect = FALSE;
+		$this->continue_reg = apply_filters( 'FHEE__EE_Checkout___construct___continue_reg', true );
+		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
+		$this->continue_reg = true;
+		$this->redirect = false;
+		$this->redirect_form = '';
+		$this->redirect_url = '';
 		$this->json_response = new EE_SPCO_JSON_Response();
 		EE_Form_Section_Proper::reset_js_localization();
 	}
