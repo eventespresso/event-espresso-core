@@ -866,7 +866,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						$error_strings[] = sprintf('%1$s: %2$s', $label, $validation_error->getMessage() );
 					}
 				}
-//				printr($this->checkout->billing_form->get_validation_errors(), '$this->checkout->billing_form->get_validation_errors()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
 				EE_Error::add_error( sprintf( __( 'One or more billing form inputs are invalid and require correction before proceeding. %1$s %2$s', 'event_espresso' ), '<br/>', implode( '<br/>', $error_strings )  ), __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 				EE_Error::add_error( __( 'The billing form was not submitted or something prevented it\'s submission.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -1087,6 +1086,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 			// get payment details and process results
 			$payment = $this->checkout->transaction->last_payment();
+			$payment = $this->_process_cancelled_payments( $payment );
 			$payment = $this->_validate_payment( $payment );
 			// if payment was not declined by the payment gateway or cancelled by the registrant
 			if ( $this->_process_payment_status( $payment ) ) {
@@ -1114,6 +1114,28 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
+	 * _process_cancelled_payments
+	 * just makes sure that the payment status gets updated correctly
+	 * so tha tan error isn't generated during payment validation
+	 *
+	 * @access private
+	 * @param EE_Payment $payment
+	 * @return EE_Payment | FALSE
+	 */
+	private function _process_cancelled_payments( $payment = NULL ) {
+		if (
+			isset( $_REQUEST[ 'ee_cancel_payment' ] )
+			&& $payment instanceof EE_Payment
+			&& $payment->status() == EEM_Payment::status_id_failed
+		) {
+			$payment->set_status( EEM_Payment::status_id_cancelled );
+		}
+		return $payment;
+	}
+
+
+
+	/**
 	 * _validate_payment
 	 *
 	 * @access private
@@ -1126,7 +1148,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// verify payment object
 		if ( $payment instanceof EE_Payment ) {
-			if ( $payment->status() != EEM_Payment::status_id_approved && $payment->status() != EEM_Payment::status_id_pending && $payment->gateway_response() != '' ) {
+			if (
+				$payment->status() != EEM_Payment::status_id_approved
+				&& $payment->status() != EEM_Payment::status_id_pending
+				&& $payment->status() != EEM_Payment::status_id_cancelled
+				&& $payment->gateway_response() != ''
+			) {
 				EE_Error::add_error( $payment->gateway_response(), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		} else {
@@ -1242,7 +1269,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// don't wanna payment
 				case EEM_Payment::status_id_cancelled :
 					if ( empty( $msg )) {
-						$msg = __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' );
+						$msg = _n(
+							'Payment cancelled. Please try again.',
+							'Payment cancelled. Please try again or select another method of payment.',
+							count( $this->checkout->available_payment_methods ),
+							'event_espresso'
+						);
 					}
 					EE_Error::add_attention( $msg, __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;
@@ -1251,7 +1283,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// not enough payment
 				case EEM_Payment::status_id_declined :
 					if ( empty( $msg )) {
-						$msg = __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' );
+						$msg = _n(
+							'We\'re sorry but your payment was declined. Please try again.',
+							'We\'re sorry but your payment was declined. Please try again or select another method of payment.',
+							count( $this->checkout->available_payment_methods ),
+							'event_espresso'
+						);
 					}
 					EE_Error::add_attention( $msg, __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;
@@ -1265,13 +1302,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 		}
 		EE_Error::add_error(
-			sprintf(
-				__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-				'<br/>',
-				EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
-			),
-			__FILE__, __FUNCTION__, __LINE__
-		);
+				sprintf(
+					__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+					'<br/>',
+					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		return FALSE;
 	}
 
