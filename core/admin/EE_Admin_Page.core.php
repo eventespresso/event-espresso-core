@@ -77,6 +77,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_route;
 	protected $_route_config;
 
+	/**
+	 * Used to hold default query args for list table routes to help preserve stickiness of filters for carried out
+	 * actions.
+	 *
+	 * @since 4.6.x
+	 * @var array.
+	 */
+	protected $_default_route_query_args;
+
 	//set via request page and action args.
 	protected $_current_page;
 	protected $_current_view;
@@ -508,7 +517,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-
+		//let's include any referrer data in our default_query_args for this route for "stickiness".
+		if ( isset( $this->_req_data['wp_referer'] ) ) {
+			$this->_default_route_query_args['wp_referer'] = $this->_req_data['wp_referer'];
+		}
 
 		//for caffeinated and other extended functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
 		if ( method_exists( $this, '_extend_page_config' ) )
@@ -684,7 +696,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _set_defaults() {
 		$this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = $this->_template_path = $this->_column_template_path = NULL;
 
-		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
+		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config =  $this->_default_route_query_args = array();
 
 		$this->default_nav_tab_name = 'overview';
 
@@ -937,10 +949,27 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@access public
 	 *	@param array $args
 	 *	@param string $url
+	 *	@param bool $sticky if true, then the existing Request params will be appended to the generated
+	 *	                    		url in an associative array indexed by the key 'wp_referer';
 	 * 	@return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
+	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false ) {
 		EE_Registry::instance()->load_helper('URL');
+
+		//if there is a _wp_http_referer include the values from the request but only if sticky = true
+		if ( $sticky ) {
+			$request = $_REQUEST;
+			unset( $request['_wp_http_referer'] );
+			unset( $request['wp_referer'] );
+			foreach ( $request as $key => $value ) {
+				//do not add nonces
+				if ( strpos( $key, 'nonce' ) !== false ) {
+					continue;
+				}
+				$args['wp_referer[' . $key . ']'] = $value;
+			}
+		}
+
 		return EEH_URL::add_query_args_and_nonce($args, $url);
 	}
 
@@ -2799,6 +2828,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 			parse_str( $parsed_url['query'], $query_args );
 			// correct page and action will be in the query args now
 			$redirect_url = admin_url( 'admin.php' );
+		}
+
+		//merge any default query_args set in _default_route_query_args property
+		if ( ! empty( $this->_default_route_query_args ) && ! $this->_is_UI_request ) {
+			$args_to_merge = array();
+			foreach ( $this->_default_route_query_args as $query_param => $query_value ) {
+				//is there a wp_referer array in our _default_route_query_args property?
+				if ( $query_param == 'wp_referer'  ) {
+					$query_value = (array) $query_value;
+					foreach ( $query_value as $reference => $value ) {
+						if ( strpos( $reference, 'nonce' ) !== false ) {
+							continue;
+						}
+
+						//finally we will override any arguments in the referer with
+						//what might be set on the _default_route_query_args array.
+						if ( isset( $this->_default_route_query_args[$reference] ) ) {
+							$args_to_merge[$reference] = urlencode( $this->_default_route_query_args[$reference] );
+						} else {
+							$args_to_merge[$reference] = urlencode( $value );
+						}
+					}
+					continue;
+				}
+
+				$args_to_merge[$query_param] = $query_value;
+			}
+
+			//now let's merge these arguments but override with what was specifically sent in to the
+			//redirect.
+			$query_args = array_merge( $args_to_merge, $query_args );
 		}
 
 		$this->_process_notices($query_args);
