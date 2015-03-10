@@ -951,6 +951,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@param string $url
 	 *	@param bool $sticky if true, then the existing Request params will be appended to the generated
 	 *	                    		url in an associative array indexed by the key 'wp_referer';
+	 *	                    		Example usage:
+	 *
+	 *	                    		If the current page is:
+	 *	                    		http://mydomain.com/wp-admin/admin.php?page=espresso_registrations
+	 *	                    		&action=default&event_id=20&month_range=March%202015
+	 *	                    		&_wpnonce=5467821
+	 *
+	 *	                    		and you call:
+	 *
+	 *	                    		EE_Admin_Page::add_query_args_and_nonce(
+	 *	                    			array(
+	 *	                    				'action' => 'resend_something',
+	 *	                    				'page=>espresso_registrations'
+	 *	                    				),
+	 *	                    			$some_url,
+	 *	                    			true
+	 *	                    		 );
+	 *
+	 *	                    		It will produce a url in this structure:
+	 *
+	 *	                      		http://{$some_url}/?page=espresso_registrations&action=resend_something
+	 *	                        	&wp_referer[action]=default&wp_referer[event_id]=20&wpreferer[
+	 *	                        	month_range]=March%202015
 	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false ) {
