@@ -964,7 +964,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'delete_txn_reg_status_change' => $delete_txn_reg_status_change
 					);
 					if ( $delete_txn_reg_status_change ) {
-						$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+						$this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
+						//MAKE sure we also add the delete_txn_req_status_change to the
+						//$_REQUEST global because that's how messages will be looking
+						//for it.
+						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
 						$this->_process_registration_status_change( $payment->transaction() );
 					}
 				}
