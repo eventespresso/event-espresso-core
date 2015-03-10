@@ -1229,7 +1229,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return;
 		}
 
-		// if this is an ajax request AND a callback function exists
+		// if this is an ajax request
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			// DEBUG LOG
 			// DEBUG LOG
@@ -1262,7 +1262,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 			$this->unlock_transaction();
-			wp_safe_redirect( $this->checkout->redirect_url );
+			//wp_safe_redirect( $this->checkout->redirect_url );
+			wp_redirect( $this->checkout->redirect_url );
 			exit();
 		}
 //		d( $this->checkout );
