@@ -217,6 +217,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$filters[] = EEH_Form_Fields::select_input('_reg_status', $status, isset( $this->_req_data['_reg_status'] ) ? strtoupper( sanitize_key( $this->_req_data['_reg_status'] )) : '' );
 		}
 
+		if ( isset( $this->_req_data['event_id'] ) ) {
+			$filters[] = EEH_Form_Fields::hidden_input( 'event_id',  $this->_req_data['event_id'], 'reg_event_id' );
+		}
+
 		return $filters;
 	}
 
