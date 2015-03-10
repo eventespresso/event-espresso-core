@@ -403,6 +403,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
 			// and if it hasn't already been set as being started...
 			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			// send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		}
 		$transaction->save();
 		// DEBUG LOG
