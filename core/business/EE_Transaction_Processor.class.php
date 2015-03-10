@@ -228,7 +228,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param string $reg_step_slug
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	public function reg_step_completed( EE_Transaction $transaction, $reg_step_slug ) {
 		return $this->_reg_steps_completed( $transaction, $reg_step_slug, FALSE );
@@ -242,7 +242,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * returns TRUE if the finalize_registration reg step has been marked as completed
 	 *
 	 * @param EE_Transaction $transaction
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	public function final_reg_step_completed( EE_Transaction $transaction ) {
 		return $this->_reg_steps_completed( $transaction, 'finalize_registration', FALSE );
