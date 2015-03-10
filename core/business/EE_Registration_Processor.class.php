@@ -335,6 +335,17 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				)
 			);
 		} catch( Exception $e ) {
+			// DEBUG LOG
+			$this->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$registration->transaction(),
+				array(
+					'Exception' => $e->getCode(),
+					'Message' => $e->getMessage(),
+					'File' => $e->getFile(),
+					'Line' => $e->getLine(),
+				)
+			);
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
 		}
 		// DEBUG LOG
