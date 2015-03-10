@@ -58,7 +58,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 					'$this->checkout->current_step->slug()' 	=> $this->checkout->current_step->slug(),
 				)
 			);
-			$this->checkout->step = $_REQUEST['step'] = $this->checkout->current_step->slug();
+			$this->checkout->step = $_REQUEST['step'] = $this->slug();
 			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
 		}
@@ -95,28 +95,29 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			);
 			// this will result in the base session properties getting saved to the TXN_Session_data field
 			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
-			// you don't have to go home but you can't stay here !
-			$this->checkout->redirect = true;
-			// check if transaction has a primary registrant and that it has a related Attendee object
-			if ( $this->checkout->transaction_has_primary_registrant() ) {
-				// setup URL for redirect
-				$this->checkout->redirect_url = add_query_arg(
-					array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
-					$this->checkout->thank_you_page_url
-				);
-			} else {
-				EE_Error::add_error( __( 'A valid Primary Registration for this Transaction could not be found.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-			}
-			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 			// set a hook point
 			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
-			// mark this reg step as completed
-			$this->checkout->current_step->set_completed();
-			return true;
 		}
-		$this->checkout->redirect = false;
-		return false;
-
+		// check if transaction has a primary registrant and that it has a related Attendee object
+		if ( $this->checkout->transaction_has_primary_registrant() ) {
+			// setup URL for redirect
+			$this->checkout->redirect_url = add_query_arg(
+				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
+				$this->checkout->thank_you_page_url
+			);
+		} else {
+			EE_Error::add_error( __( 'A valid Primary Registration for this Transaction could not be found.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->checkout->redirect = false;
+			$this->checkout->continue_reg = false;
+			return false;
+		}
+		// you don't have to go home but you can't stay here !
+		$this->checkout->redirect = true;
+		$this->checkout->continue_reg = true;
+		$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+		// mark this reg step as completed
+		$this->checkout->current_step->set_completed();
+		return true;
 	}
 
 
