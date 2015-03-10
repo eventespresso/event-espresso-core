@@ -455,21 +455,10 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		if ( EE_Session::instance() instanceof EE_Session ) {
-			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {
-				$reg_status_updated = EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() );
-			} else {
-				$reg_status_updated = 'invalid checkout';
-			}
-		} else {
-			$reg_status_updated = 'invalid session';
-		}
-
 		self::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'reg_status_updated' => $reg_status_updated,
 				'extra_details'   => $extra_details,
 			),
 			true
@@ -503,8 +492,11 @@ class EED_Messages  extends EED_Module {
 			) {
 				return false;
 			}
-			// do NOT send messages if the reg status has NOT changed
-			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {
+			// DO NOT send messages if the reg status has NOT changed.
+			// On-Site and Off-line gateways can use the status tracking from the checkout
+			// Off-Site gateway IPNs have no access to the session, since they are on a different request...
+			// but fortunately, the reg statuses will have been updated in the same request as the IPN
+			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {				
 				if ( ! EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ) ) {
 					return false;
 				}
