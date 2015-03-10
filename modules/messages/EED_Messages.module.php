@@ -433,6 +433,7 @@ class EED_Messages  extends EED_Module {
 					__CLASS__, __FUNCTION__, __LINE__,
 					$registration->transaction(),
 					array(
+						'delivered'    => current_time( 'mysql' ),
 						'message_type' => $message_type,
 						'reg_status' => $registration->status_obj()->code( false, 'sentence' ),
 					)
@@ -501,14 +502,6 @@ class EED_Messages  extends EED_Module {
 				return false;
 			}
 		}
-		self::log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$registration->transaction(),
-			array(
-				'reg_status_updated' => EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ),
-				'send_messages' => true,
-			)
-		);
 		return true;
 	}
 
