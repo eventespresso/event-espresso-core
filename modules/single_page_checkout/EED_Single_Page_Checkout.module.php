@@ -1235,7 +1235,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// DEBUG LOG
 			$this->checkout->log(
 				__CLASS__, __FUNCTION__, __LINE__,
-				array( 'json_response_redirect_url' => $this->checkout->json_response->redirect_url() )
+				array(
+					'json_response_redirect_url' => $this->checkout->json_response->redirect_url(),
+					'redirect' => $this->checkout->redirect,
+					'continue_reg' => $this->checkout->continue_reg,
+				)
 			);
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
 			// just send the ajax (
@@ -1249,7 +1253,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// DEBUG LOG
 			$this->checkout->log(
 				__CLASS__, __FUNCTION__, __LINE__,
-				array( 'redirect_url' => $this->checkout->redirect_url )
+				array(
+					'redirect_url' => $this->checkout->redirect_url,
+					'redirect'     => $this->checkout->redirect,
+					'continue_reg' => $this->checkout->continue_reg,
+				)
 			);
 			// store notices in a transient
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
