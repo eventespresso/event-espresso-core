@@ -1087,6 +1087,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * process_gateway_response
+	 * this is the return point for Off-Site Payment Methods
+	 * It will attempt to "handle the IPN" if it appears that this has not already occurred,
+	 * otherwise, it will load up the last payment made for the TXN.
+	 * If the payment retrieved looks good, it will then either:
+	 *  	complete the current step and allow advancement to the next reg step
+	 * 		or present the payment options again
 	 *
 	 * @access private
 	 * @return EE_Payment | FALSE
@@ -1110,17 +1116,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		);
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			// get payment details and process results
-			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-			if ( ! $payment_processor instanceof EE_Payment_Processor ) {
-				return false;
-			}
 			try {
-				$payment = $payment_processor->process_ipn(
-					$_REQUEST,
-					$this->checkout->transaction,
-					$this->checkout->payment_method
-				);
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				// if TXN has not already been initialized/completed
+				if ( $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) !== false ) {
+					// get payment details and process results
+					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+					$payment = $payment_processor->process_ipn(
+						$_REQUEST,
+						$this->checkout->transaction,
+						$this->checkout->payment_method
+					);
+				} else {
+					$payment = $this->checkout->transaction->last_payment();
+				}
 			} catch ( Exception $e ) {
 				// let's just eat the exception and try to move on using any previously set payment info
 				$payment = $this->checkout->transaction->last_payment();
