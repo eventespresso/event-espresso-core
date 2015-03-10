@@ -1029,18 +1029,31 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->_get_return_url( $payment_method )
 			);
 		} catch( Exception $e ) {
-			EE_Error::add_error(
-				sprintf(
-					__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||The following Exception was thrown in %4$s on line %5$s:%1$s%3$s', 'event_espresso' ),
-					'<br/>',
-					EE_Registry::instance()->CFG->organization->get_pretty( 'email' ),
-					$e->getMessage(),
-					$e->getFile(),
-					$e->getLine()
-				), __FILE__, __FUNCTION__, __LINE__
-			);
+			$this->_handle_payment_processor_exception( $e );
 		}
 		return $payment;
+	}
+
+
+
+	/**
+	 * _handle_payment_processor_exception
+	 *
+	 * @access protected
+	 * @param \Exception $e
+	 * @return void
+	 */
+	protected function _handle_payment_processor_exception( Exception $e ) {
+		EE_Error::add_error(
+			sprintf(
+				__( 'The payment could not br processed due to a technical issue.%1$sPlease try again or contact %2$s for assistance.||The following Exception was thrown in %4$s on line %5$s:%1$s%3$s', 'event_espresso' ),
+				'<br/>',
+				EE_Registry::instance()->CFG->organization->get_pretty( 'email' ),
+				$e->getMessage(),
+				$e->getFile(),
+				$e->getLine()
+			), __FILE__, __FUNCTION__, __LINE__
+		);
 	}
 
 
@@ -1080,21 +1093,52 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function process_gateway_response() {
 		$payment = null;
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		// how have they chosen to pay?
+		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( true );
 		// get EE_Payment_Method object
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
 			$this->checkout->continue_reg = false;
 			return false;
 		}
+		// DEBUG LOG
+		$this->checkout->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			array(
+				'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
+				'payment_method' => $this->checkout->payment_method,
+			)
+		);
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 			// get payment details and process results
-			$payment = $this->checkout->transaction->last_payment();
+			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+			if ( ! $payment_processor instanceof EE_Payment_Processor ) {
+				return false;
+			}
+			try {
+				$payment = $payment_processor->process_ipn(
+					$_REQUEST,
+					$this->checkout->transaction,
+					$this->checkout->payment_method
+				);
+			} catch ( Exception $e ) {
+				// let's just eat the exception and try to move on using any previously set payment info
+				$payment = $this->checkout->transaction->last_payment();
+				// but if we STILL don't have a payment object
+				if ( ! $payment instanceof EE_Payment ) {
+					// then we'll object ! ( not object like a thing... but object like what a lawyer says ! )
+					$this->_handle_payment_processor_exception( $e );
+				}
+			}
+			// DEBUG LOG
+			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+				array( 'process_ipn_payment' => $payment )
+			);
 			$payment = $this->_process_cancelled_payments( $payment );
 			$payment = $this->_validate_payment( $payment );
+			//printr( $payment, '$payment', __FILE__, __LINE__ );
 			// if payment was not declined by the payment gateway or cancelled by the registrant
-			if ( $this->_process_payment_status( $payment ) ) {
+			if ( $this->_process_payment_status( $payment, EE_PMT_Base::offsite ) ) {
 				$this->_setup_redirect_for_next_step();
 				// store that for later
 				$this->checkout->payment = $payment;
@@ -1186,7 +1230,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _post_payment_processing( $payment = NULL ) {
 		// On-Site payment?
 		if ( $this->checkout->payment_method->is_on_site() ) {
-			if ( $this->_process_payment_status( $payment )) {
+			if ( $this->_process_payment_status( $payment, EE_PMT_Base::onsite )) {
 				$this->_setup_redirect_for_next_step();
 			}
 			// Off-Site payment?
@@ -1242,13 +1286,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * 	_process_payment_status
+	 *    _process_payment_status
 	 *
-	 * 	@access private
-	 * 	@type 	EE_Payment $payment
-	 * 	@return 	boolean
+	 * @access private
+	 * @type    EE_Payment $payment
+	 * @param string $payment_occurs
+	 * @return bool
+	 * @throws \EE_Error
 	 */
-	private function _process_payment_status( $payment ) {
+	private function _process_payment_status( $payment, $payment_occurs = EE_PMT_Base::offline ) {
+		// off-line payment? carry on
+		if ( $payment_occurs == EE_PMT_Base::offline ) {
+			return true;
+		}
 		// verify payment validity
 		if ( $payment instanceof EE_Payment ) {
 			$msg = $payment->gateway_response();
@@ -1304,6 +1354,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					break;
 
 			}
+		}
+		// off-site payment gateway responses are too unreliable, so let's just assume that
+		// the payment processing is just running slower than the registrant's request
+		if ( $payment_occurs == EE_PMT_Base::offsite ) {
+			return true;
 		}
 		EE_Error::add_error(
 				sprintf(
