@@ -1149,7 +1149,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			//printr( $payment, '$payment', __FILE__, __LINE__ );
 			// if payment was not declined by the payment gateway or cancelled by the registrant
 			if ( $this->_process_payment_status( $payment, EE_PMT_Base::offsite ) ) {
-				$this->_setup_redirect_for_next_step();
+				//$this->_setup_redirect_for_next_step();
 				// store that for later
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed
