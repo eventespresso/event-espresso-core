@@ -170,7 +170,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		) {
 			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) . '</a>';
 		} else {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime() .  '</a>';
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_i18n_datetime( 'TXN_timestamp' ) .  '</a>';
 		}
 		return $txn_date;
 	}
