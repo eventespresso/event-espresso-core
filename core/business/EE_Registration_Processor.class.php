@@ -290,7 +290,24 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		// DEBUG LOG
 		$this->log(
 			__CLASS__, __FUNCTION__, __LINE__,
-			$registration->transaction()
+			$registration->transaction(),
+			array_merge(
+			// defaults
+				array(
+					'checkout_or_payment' => false,
+					'manually_updated'    => false,
+					'payment_updates'     => false,
+					'status_updates'      => $this->reg_status_updated( $registration->ID() ),
+					'finalized'           => false,
+					'revisit'             => false,
+					'reg_steps'           => $registration->transaction()->reg_steps(),
+					'txn_status'          => $registration->transaction()->status_ID(),
+					'last_payment'        => null,
+					'old_reg_status'      => $this->old_reg_status( $registration->ID() ),
+					'new_reg_status'      => $this->new_reg_status( $registration->ID() )
+				),
+				$additional_details
+			)
 		);
 		try {
 			do_action(
