@@ -1003,12 +1003,14 @@ class EE_Checkout {
 			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
 			$default_data = array(
 				$class 		=> $func . '() : ' . $line,
-				'REQ' 		=> $display_request ? $_REQUEST : '',
-				'step' 		=> $this->step,
-				'action' 	=> $this->action,
-				'this->current_step->slug' => $this->current_step->slug(),
-				'this->current_step->completed' => $this->current_step->completed(),
+				'request->step' 		=> $this->step,
+				'request->action' 	=> $this->action,
+				'current_step->slug' => $this->current_step->slug(),
+				'current_step->completed' => $this->current_step->completed(),
+				'txn_status_updated' => $this->txn_status_updated,
+				'reg_status_updated' => $this->reg_status_updated,
 				'reg_url_link' => $this->reg_url_link,
+				'REQ' => $display_request ? $_REQUEST : '',
 			);
 			if ( $this->transaction instanceof EE_Transaction ) {
 				$default_data[ 'TXN_status' ] 		= $this->transaction->status_ID();
