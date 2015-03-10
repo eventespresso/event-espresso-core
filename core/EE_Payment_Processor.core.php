@@ -392,7 +392,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		// then this is kinda sorta a revisit with regards to payments at least
 		$transaction_processor->set_revisit( $revisit );
 		// let's consider the Payment Options Reg Step completed if not already
-		if ( $payment_options_step_completed !== true && $payment->is_approved() ) {
+		if ( $payment_options_step_completed !== true && ( $payment->is_approved() || $payment->is_pending() ) ) {
 			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		/** @type EE_Transaction_Payments $transaction_payments */
