@@ -45,7 +45,7 @@ class EE_Processor_Base {
 	 * @param bool $display_request
 	 */
 	function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		if ( WP_DEBUG && false ) {
+		if ( WP_DEBUG ) {
 			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
 			$default_data = array(
 				$class   => $func . '() : ' . $line,
