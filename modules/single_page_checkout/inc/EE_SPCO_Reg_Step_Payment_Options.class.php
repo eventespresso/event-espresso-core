@@ -1120,7 +1120,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				/** @type EE_Transaction_Processor $transaction_processor */
 				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 				// if TXN has not already been initialized/completed
-				if ( $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) !== false ) {
+				if ( $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) === false ) {
 					// get payment details and process results
 					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 					$payment = $payment_processor->process_ipn(
@@ -1128,12 +1128,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						$this->checkout->transaction,
 						$this->checkout->payment_method
 					);
+					$payment_source = 'process_ipn';
 				} else {
 					$payment = $this->checkout->transaction->last_payment();
+					$payment_source = 'last_payment';
 				}
 			} catch ( Exception $e ) {
 				// let's just eat the exception and try to move on using any previously set payment info
 				$payment = $this->checkout->transaction->last_payment();
+				$payment_source = 'last_payment after Exception';
 				// but if we STILL don't have a payment object
 				if ( ! $payment instanceof EE_Payment ) {
 					// then we'll object ! ( not object like a thing... but object like what a lawyer says ! )
@@ -1142,11 +1145,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 			// DEBUG LOG
 			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-				array( 'process_ipn_payment' => $payment )
+				array(
+					'process_ipn_payment' => $payment,
+					'payment_source' => $payment_source,
+				)
 			);
 			$payment = $this->_process_cancelled_payments( $payment );
 			$payment = $this->_validate_payment( $payment );
-			//printr( $payment, '$payment', __FILE__, __LINE__ );
 			// if payment was not declined by the payment gateway or cancelled by the registrant
 			if ( $this->_process_payment_status( $payment, EE_PMT_Base::offsite ) ) {
 				//$this->_setup_redirect_for_next_step();
