@@ -148,7 +148,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
 		$reg_steps = $transaction->reg_steps();
 		if ( ! is_array( $reg_steps ) || empty( $reg_steps )) {
-			return FALSE;
+			return false;
 		}
 		// loop thru reg steps array)
 		foreach ( $reg_steps as $slug => $reg_step_completed ) {
@@ -163,11 +163,17 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				}
 			}
 			// if any reg step is NOT completed (ignoring any specific steps), then just leave
-			if( $reg_step_completed !== true && $slug != $reg_step_slug ) {
-				return FALSE;
+			if ( $reg_step_completed !== true && $slug != $reg_step_slug ) {
+				return false;
+			} else if ( $slug == $reg_step_slug ) {
+				// if we reach this point, then we are testing all_reg_steps_completed_except()
+				// and since this is the reg step exception being tested
+				// we want to return true if this reg step is NOT completed
+				return $reg_step_completed !== true ? true : false;
 			}
 		}
-		return TRUE;
+
+		return true;
 	}
 
 
