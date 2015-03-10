@@ -496,7 +496,7 @@ class EED_Messages  extends EED_Module {
 			// On-Site and Off-line gateways can use the status tracking from the checkout
 			// Off-Site gateway IPNs have no access to the session, since they are on a different request...
 			// but fortunately, the reg statuses will have been updated in the same request as the IPN
-			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {				
+			if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {
 				if ( ! EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ) ) {
 					return false;
 				}
@@ -751,7 +751,7 @@ class EED_Messages  extends EED_Module {
 	 * @param bool $display_request
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		if ( WP_DEBUG ) {
+		if ( WP_DEBUG && false ) {
 			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
 			$default_data = array(
 				$class => $func . '() : ' . $line,
