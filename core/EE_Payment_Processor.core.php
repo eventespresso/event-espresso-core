@@ -73,7 +73,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				min( $amount, $transaction->remaining() ),//make sure we don't overcharge
 				$billing_form,
 				$return_url,
-				$return_url,
+				add_query_arg( array( 'ee_cancel_payment' => true ), $return_url ),
 				$method,
 				$by_admin
 			);
