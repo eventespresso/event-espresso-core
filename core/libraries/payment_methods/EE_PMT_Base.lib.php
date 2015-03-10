@@ -354,7 +354,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					EE_Config::instance()->core->cancel_page_url()
+					$fail_url
 				);
 
 			//  Onsite Gateway
