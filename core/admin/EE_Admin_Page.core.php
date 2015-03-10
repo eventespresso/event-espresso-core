@@ -874,6 +874,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			do_action( 'AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this );
 		}
 
+		//right before calling the route, let's remove _wp_http_referer from the $_SERVER[REQUEST_URI] global (its now in _req_data for route processing).
+		$_SERVER['REQUEST_URI'] = remove_query_arg( '_wp_http_referer', wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
 		if ( ! empty( $func )) {
 			$base_call = $addon_call = FALSE;
 			//try to access page route via this class
