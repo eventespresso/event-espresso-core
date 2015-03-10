@@ -947,7 +947,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$json_response_data = array( 'return_data' => FALSE );
 		$PAY_ID = isset( $this->_req_data['delete_txn_admin_payment'] ) && isset( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) ? absint( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) : 0;
-		$delete_txn_reg_status_change = isset( $this->_req_data['delete_txn_reg_status_change'] ) ? sanitize_text_field( $this->_req_data['delete_txn_reg_status_change'] ) : FALSE;
+		$delete_txn_reg_status_change = isset( $this->_req_data['delete_txn_reg_status_change'] ) ? $this->_req_data['delete_txn_reg_status_change']: FALSE;
 
 		if ( $PAY_ID ) {
 			$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
