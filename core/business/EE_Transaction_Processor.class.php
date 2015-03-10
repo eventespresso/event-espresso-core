@@ -166,7 +166,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			if ( $reg_step_completed !== true && $slug != $reg_step_slug ) {
 				return false;
 			} else if ( $slug == $reg_step_slug ) {
-				// if we reach this point, then we are testing all_reg_steps_completed_except()
+				// if we reach this point, then we are testing either:
+				// all_reg_steps_completed_except() or
+				// all_reg_steps_completed_except_final_step(),
 				// and since this is the reg step exception being tested
 				// we want to return true if this reg step is NOT completed
 				return $reg_step_completed !== true ? true : false;
@@ -181,7 +183,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed
 	 *
-	 * returns TRUE if ALL reg steps have been marked as completed
+	 * returns:
+	 *  	true if ALL reg steps have been marked as completed
+	 * 		or false if any step is not completed
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean
@@ -195,7 +199,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed_except
 	 *
-	 * returns TRUE if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 * returns:
+	 * 		true if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 * 		or false if any other step is not completed
+	 * 		or false if ALL steps are completed including the exception you are testing !!!
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param string $exception
@@ -210,7 +217,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed_except
 	 *
-	 * returns TRUE if ALL reg steps, except the final step, have been marked as completed
+	 * returns:
+	 * 		true if ALL reg steps, except the final step, have been marked as completed
+	 * 		or false if any step is not completed
+	 *  	or false if ALL steps are completed including the final step !!!
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean
@@ -224,7 +234,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * reg_step_completed
 	 *
-	 * returns TRUE if a specific reg step has been marked as completed
+	 * returns:
+	 *    true if a specific reg step has been marked as completed
+	 *    a Unix timestamp if it has been initialized but not yet completed,
+	 *    or false if it has not yet been initialized
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param string $reg_step_slug
@@ -239,7 +252,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * completed_final_reg_step
 	 *
-	 * returns TRUE if the finalize_registration reg step has been marked as completed
+	 * returns:
+	 *  	true if the finalize_registration reg step has been marked as completed
+	 *  	a Unix timestamp if it has been initialized but not yet completed,
+	 *  	or false if it has not yet been initialized
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean | int
