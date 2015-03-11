@@ -231,8 +231,17 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 
+		//update custom post type slugs and detect if we need to flush rewrite rules
+		$old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
+		EE_Registry::instance()->CFG->core->event_cpt_slug = empty( $this->_req_data['event_cpt_slug'] ) ? EE_Registry::instance()->CFG->core->event_cpt_slug : sanitize_title_with_dashes( $this->_req_data['event_cpt_slug'] );
+
 		$what = 'Template Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
+
+		if ( EE_Registry::instance()->CFG->core->event_cpt_slug != $old_slug ) {
+			update_option( 'ee_flush_rewrite_rules', true );
+		}
+
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 
 	}
