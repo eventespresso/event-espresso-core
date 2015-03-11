@@ -522,6 +522,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$update_params
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'update_params' => $update_params,
+			)
+		);
 		return $update_params;
 	}
 
