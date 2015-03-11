@@ -388,12 +388,28 @@ class EE_Checkout {
 	 * 	this simply returns the next step from reg_steps array
 	 *
 	 *  @access 	public
-	 *  @return 	EE_SPCO_Reg_Step
+	 *  @return 	EE_SPCO_Reg_Step | null
 	 */
 	public function get_next_reg_step() {
 		$next = next( $this->reg_steps );
 		prev( $this->reg_steps );
-		return $next;
+		return $next instanceof EE_SPCO_Reg_Step ? $next : null;
+	}
+
+
+
+
+	/**
+	 * get_prev_reg_step
+	 * 	this simply returns the previous step from reg_steps array
+	 *
+	 *  @access 	public
+	 *  @return 	EE_SPCO_Reg_Step | null
+	 */
+	public function get_prev_reg_step() {
+		$prev = prev( $this->reg_steps );
+		next( $this->reg_steps );
+		return $prev instanceof EE_SPCO_Reg_Step ? $prev : null;
 	}
 
 
