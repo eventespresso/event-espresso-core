@@ -1115,7 +1115,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			array(
 				'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
 				'payment_method' => $this->checkout->payment_method,
-			)
+			),
+			true
 		);
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
