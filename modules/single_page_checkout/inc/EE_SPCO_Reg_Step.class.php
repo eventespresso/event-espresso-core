@@ -370,6 +370,10 @@ abstract class EE_SPCO_Reg_Step {
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
 		}
+		// final step has no display 
+		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
+			$query_args[ 'action' ] = 'process_reg_step';
+		}
 		if( $this->checkout->revisit ) {
 			$query_args['revisit'] = TRUE;
 		}
