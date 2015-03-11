@@ -309,14 +309,15 @@ class EE_messages {
 
 		$error = FALSE;
 		$installed_message_types = $this->get_installed_message_types();
-
-		$TXN = null;
+		$debug_index = 'Messages: ' . $type;
 		foreach ( $vars as $var ) {
-			if ( $var instanceof EE_Transaction ) {
-				$TXN = $var;
+			if ( method_exists( $var, 'ID' ) ) {
+				$debug_index = get_class( $var ) .  '_ID: ' . $var->ID();
+				break;
+			} else if ( is_object( $var )) {
+				$debug_index = spl_object_hash( $var );
 			}
 		}
-		$debug_index = $TXN instanceof EE_Transaction ? 'TXN_ID: ' . $TXN->ID() : 'Messages: ' . $type;
 		EEH_Debug_Tools::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			array(
