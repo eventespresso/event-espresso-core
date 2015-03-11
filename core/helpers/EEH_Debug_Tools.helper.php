@@ -271,19 +271,20 @@ class EEH_Debug_Tools{
 	 */
 	public static function log( $class='', $func = '', $line = '', $info = array(), $display_request = false,  $debug_index = '', $debug_key = 'EE_DEBUG_SPCO' ) {
 		if ( WP_DEBUG ) {
-			$debug_data = get_option( $debug_key . EE_Session::instance()->id(), array() );
+			$debug_key = $debug_key . '_' . EE_Session::instance()->id();
+			$debug_data = get_option( $debug_key, array() );
 			$default_data = array(
 				$class => $func . '() : ' . $line,
 				'REQ'  => $display_request ? $_REQUEST : '',
 			);
 			// don't serialize objects
 			$info = self::strip_objects( $info );
-			$index = ! empty( $debug_index ) ? $debug_index : EE_Session::instance()->id();
+			$index = ! empty( $debug_index ) ? $debug_index : 0;
 			if ( ! isset( $debug_data[$index] ) ) {
 				$debug_data[$index] = array();
 			}
 			$debug_data[$index][microtime()] = array_merge( $default_data, $info );
-			update_option( $debug_key . EE_Session::instance()->id(), $debug_data );
+			update_option( $debug_key, $debug_data );
 		}
 	}
 
