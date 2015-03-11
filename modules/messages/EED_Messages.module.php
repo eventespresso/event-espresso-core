@@ -798,7 +798,7 @@ class EED_Messages  extends EED_Module {
 		if ( WP_DEBUG ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
-				$info = EEH_Debug_Tools::_strip_objects( $info );
+				$info = EEH_Debug_Tools::strip_objects( $info );
 				$info[ 'TXN_status' ] = $transaction->status_ID();
 				$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
 				if ( $transaction->ID() ) {
