@@ -428,6 +428,19 @@ class EED_Messages  extends EED_Module {
 			// verify message type is active
 			if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
 				self::_load_controller();
+
+				// DEBUG LOG
+				self::log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$registration->transaction(),
+					array(
+						'current_time'    => current_time( 'mysql' ),
+						'before_calling'    => 'EE_messages::send_message()',
+						'message_type' => $message_type,
+						'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+					)
+				);
+
 				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
 					// DEBUG LOG
 					self::log(
@@ -440,6 +453,15 @@ class EED_Messages  extends EED_Module {
 						)
 					);
 				}
+				// DEBUG LOG
+				self::log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$registration->transaction(),
+					array(
+						'current_time' => current_time( 'mysql' ),
+						'after_calling' => 'EE_messages::send_message()',
+					)
+				);
 			}
 		} catch ( Exception $e ) {
 			self::log(
