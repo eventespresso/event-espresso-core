@@ -1224,11 +1224,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step() {
-
 		if ( $this->checkout->admin_request || $this->checkout->action == 'redirect_form' ) {
 			return;
 		}
+		// AJAX response
+		$this->_handle_json_response();
+		// redirect to next step or the Thank You page
+		$this->_handle_html_redirects();
+		// hmmm... must be something wrong, so let's just display the form again !
+		$this->_display_spco_reg_form();
+	}
 
+
+
+	/**
+	 *   _handle_json_response
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _handle_json_response() {
 		// if this is an ajax request
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			// DEBUG LOG
@@ -1237,8 +1252,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				__CLASS__, __FUNCTION__, __LINE__,
 				array(
 					'json_response_redirect_url' => $this->checkout->json_response->redirect_url(),
-					'redirect' => $this->checkout->redirect,
-					'continue_reg' => $this->checkout->continue_reg,
+					'redirect'                   => $this->checkout->redirect,
+					'continue_reg'               => $this->checkout->continue_reg,
 				)
 			);
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
@@ -1246,8 +1261,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			$this->unlock_transaction();
 			echo $json_response;
-			die();
+			exit();
 		}
+	}
+
+
+
+	/**
+	 *   _handle_redirects
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _handle_html_redirects() {
 		// going somewhere ?
 		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
 			// DEBUG LOG
@@ -1260,18 +1286,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				)
 			);
 			// store notices in a transient
-			EE_Error::get_notices( FALSE, TRUE, TRUE );
+			EE_Error::get_notices( false, true, true );
 			$this->unlock_transaction();
 			//wp_safe_redirect( $this->checkout->redirect_url );
 			wp_redirect( $this->checkout->redirect_url );
 			exit();
 		}
-//		d( $this->checkout );
-		// hmmm... must be something wrong, so let's just display the form again !
-		$this->_display_spco_reg_form();
 	}
-
-
 
 }
 // End of file EED_Single_Page_Checkout.module.php
