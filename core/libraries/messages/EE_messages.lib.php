@@ -347,7 +347,8 @@ class EE_messages {
 				}
 			}
 		} else {
-			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		// add a success message
 		if ( ! $error ) {
