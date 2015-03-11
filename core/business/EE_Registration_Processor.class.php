@@ -290,29 +290,35 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 		ob_start();
 		try {
+			//do_action(
+			//	'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
+			//	$registration,
+			//	apply_filters(
+			//		'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
+			//		array_merge(
+			//		// defaults
+			//			array(
+			//				'checkout_or_payment' => false,
+			//				'manually_updated' 		=> false,
+			//				'payment_updates' 		=> false,
+			//				//'status_updates' 			=> $this->reg_status_updated( $registration->ID() ),
+			//				'finalized' 						=> false,
+			//				'revisit' 							=> false,
+			//				'reg_steps' 						=> $registration->transaction()->reg_steps(),
+			//				'txn_status' 						=> $registration->transaction()->status_ID(),
+			//				'last_payment'				=> null,
+			//				'old_reg_status' 				=> $this->old_reg_status( $registration->ID() ),
+			//				'new_reg_status' 			=> $this->new_reg_status( $registration->ID() )
+			//			),
+			//			$additional_details
+			//		)
+			//	)
+			//);
+
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
-				apply_filters(
-					'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
-					array_merge(
-					// defaults
-						array(
-							'checkout_or_payment' => false,
-							'manually_updated' 		=> false,
-							'payment_updates' 		=> false,
-							//'status_updates' 			=> $this->reg_status_updated( $registration->ID() ),
-							'finalized' 						=> false,
-							'revisit' 							=> false,
-							'reg_steps' 						=> $registration->transaction()->reg_steps(),
-							'txn_status' 						=> $registration->transaction()->status_ID(),
-							'last_payment'				=> null,
-							'old_reg_status' 				=> $this->old_reg_status( $registration->ID() ),
-							'new_reg_status' 			=> $this->new_reg_status( $registration->ID() )
-						),
-						$additional_details
-					)
-				)
+				array()
 			);
 
 		} catch( Exception $e ) {
@@ -335,8 +341,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'did_action' => did_action(
-					'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+				'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
 				'unexpected_output' => $unexpected_output
 			)
 		);
