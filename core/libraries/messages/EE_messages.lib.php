@@ -49,6 +49,9 @@ class EE_messages {
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
+
+		//load debug tools
+		EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
 	/**
@@ -306,6 +309,22 @@ class EE_messages {
 
 		$error = FALSE;
 		$installed_message_types = $this->get_installed_message_types();
+
+		EEH_Debug_Tools::log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			array(
+				'message_type' => $message_type,
+				'incoming_data' => $vars,
+				'sending_messenger' => $sending_messenger,
+				'generating_messenger' => $generating_messenger,
+				'context' => $context,
+				'send' => $send,
+				'installed_message_types' => $installed_message_types
+				),
+			false,
+			'Messages: ' . $message_type
+			);
+
 		// is that a real class ?
 		if ( isset(  $installed_message_types[$type] ) ) {
 			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
@@ -340,6 +359,18 @@ class EE_messages {
 						$send_messages[] = $success;
 					}
 				}
+
+				EEH_Debug_Tools::log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					array(
+						'message_type' => $message_type,
+						'active_messenger' => $this->_active_messengers,
+						'send_messages' => $send_messages,
+						'error' => $error
+						),
+					false,
+					'Messages: ' . $message_type
+					);
 
 				//return generated EE_Messages objects?
 				if ( ! $send ) {
