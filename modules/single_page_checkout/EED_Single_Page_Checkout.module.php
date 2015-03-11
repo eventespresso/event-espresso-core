@@ -456,7 +456,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
-//		$this->_display_request_vars();
+		//$this->_display_request_vars();
 	}
 
 
@@ -1283,6 +1283,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'redirect_url' => $this->checkout->redirect_url,
 					'redirect'     => $this->checkout->redirect,
 					'continue_reg' => $this->checkout->continue_reg,
+					'headers' => getallheaders()
 				)
 			);
 			// store notices in a transient
