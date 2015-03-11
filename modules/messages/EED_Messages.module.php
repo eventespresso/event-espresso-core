@@ -421,26 +421,39 @@ class EED_Messages  extends EED_Module {
 			//no messages please
 			return;
 		}
-
-		EE_Registry::instance()->load_helper('MSG_Template');
-		// send the message type matching the status if that message type is active.
-		$message_type = self::_get_reg_status_array( $registration->status_ID() );
-		// verify message type is active
-		if ( EEH_MSG_Template::is_mt_active( $message_type )) {
-			self::_load_controller();
-			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), NULL ) ) ) {
-				// DEBUG LOG
-				self::log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					$registration->transaction(),
-					array(
-						'delivered'    => current_time( 'mysql' ),
-						'message_type' => $message_type,
-						'reg_status' => $registration->status_obj()->code( false, 'sentence' ),
-					)
-				);
+		try {
+			EE_Registry::instance()->load_helper( 'MSG_Template' );
+			// send the message type matching the status if that message type is active.
+			$message_type = self::_get_reg_status_array( $registration->status_ID() );
+			// verify message type is active
+			if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+				self::_load_controller();
+				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
+					// DEBUG LOG
+					self::log(
+						__CLASS__, __FUNCTION__, __LINE__,
+						$registration->transaction(),
+						array(
+							'delivered'    => current_time( 'mysql' ),
+							'message_type' => $message_type,
+							'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+						)
+					);
+				}
 			}
+		} catch ( Exception $e ) {
+			self::log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$registration->transaction(),
+				array(
+					'getCode'    => $e->getCode(),
+					'getMessage'    => $e->getMessage(),
+					'getFile'    => $e->getFile(),
+					'getLine'    => $e->getLine(),
+				)
+			);
 		}
+
 	}
 
 
