@@ -996,6 +996,7 @@ jQuery(document).ready( function($) {
 				if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
 					payment_method_info.append( response.return_data.payment_method_info );
 				}
+				SPCO.enable_submit_buttons();
 				payment_method_info.slideDown( function() {
 					if ( typeof response.success !== 'undefined' ) {
 						SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, response, true  );
