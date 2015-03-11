@@ -253,6 +253,68 @@ class EEH_Debug_Tools{
 
 
 
+
+	/**
+	 * Logger helpers
+	 */
+
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param array $info
+	 * @param bool $display_request
+	 * @param string $debug_index
+	 * @param string $debug_key
+	 */
+	public static function log( $class='', $func = '', $line = '', $info = array(), $display_request = false,  $debug_index = '', $debug_key = 'EE_DEBUG_SPCO' ) {
+		if ( WP_DEBUG ) {
+			$debug_data = get_option( $debug_key . EE_Session::instance()->id(), array() );
+			$default_data = array(
+				$class => $func . '() : ' . $line,
+				'REQ'  => $display_request ? $_REQUEST : '',
+			);
+			// don't serialize objects
+			$info = self::strip_objects( $info );
+			$index = ! empty( $debug_index ) ? $debug_index : EE_Session::instance()->id();
+			if ( ! isset( $debug_data[$index] ) ) {
+				$debug_data[$index] = array();
+			}
+			$debug_data[$index][microtime()] = array_merge( $default_data, $info );
+			update_option( $debug_key . EE_Session::instance()->id(), $debug_data );
+		}
+	}
+
+
+
+	/**
+	 * strip_objects
+	 *
+	 * @param array $info
+	 * @return array
+	 */
+	public static function strip_objects( $info = array() ) {
+		foreach ( $info as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$info[ $key ] = self::strip_objects( $value );
+			} else if ( is_object( $value ) ) {
+				$object_class = get_class( $value );
+				$info[ $object_class ] = array();
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : 0;
+				if ( method_exists( $value, 'status' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status();
+				} else if ( method_exists( $value, 'status_ID' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status_ID();
+				}
+				unset( $info[ $key ] );
+			}
+		}
+		return (array)$info;
+	}
+
+
 }
 
 
