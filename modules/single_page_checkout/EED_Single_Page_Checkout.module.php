@@ -1283,7 +1283,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'redirect_url' => $this->checkout->redirect_url,
 					'redirect'     => $this->checkout->redirect,
 					'continue_reg' => $this->checkout->continue_reg,
-					'headers' => getallheaders()
+					'headers_sent' => headers_sent(),
+					'headers_list' => headers_list(),
 				)
 			);
 			// store notices in a transient
