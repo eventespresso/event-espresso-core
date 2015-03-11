@@ -60,4 +60,19 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 
 
 
+	/**
+	 * uses_separate_IPN_request
+	 *
+	 * return true or false for whether or not the gateway uses an IPN
+	 * that is sent in a separate request than the returning registrant
+	 * if false, then we need to process the payment results manually
+	 *
+	 * @return bool
+	 */
+	public function uses_separate_IPN_request() {
+		return false;
+	}
+
+
+
 }
