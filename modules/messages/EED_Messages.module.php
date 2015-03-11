@@ -469,18 +469,19 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
+		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
+			self::log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$registration->transaction(),
+				array( 'deliver_notifications?' => true )
+			);
+			return true;
+		}
 		self::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
-			array(
-				'extra_details'   => $extra_details,
-			),
-			true
+			array( 'deliver_notifications?' => false )
 		);
-		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
-			self::log( __CLASS__, __FUNCTION__, __LINE__, $registration->transaction() );
-			return true;
-		}
 		return false;
 		// first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages
