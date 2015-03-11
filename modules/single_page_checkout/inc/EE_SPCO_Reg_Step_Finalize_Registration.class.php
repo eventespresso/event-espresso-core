@@ -73,8 +73,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		if ( $this->checkout->save_all_data() ) {
 			// ensures that all details and statuses for transaction, registration, and payments are updated
 			$txn_update_params = $this->_finalize_transaction();
-			// this will result in the base session properties getting saved to the TXN_Session_data field
-			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
+
 			// you don't have to go home but you can't stay here !
 			$this->checkout->redirect = true;
 			// check if transaction has a primary registrant and that it has a related Attendee object
@@ -121,6 +120,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
+		// this will result in the base session properties getting saved to the TXN_Session_data field
+		$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
