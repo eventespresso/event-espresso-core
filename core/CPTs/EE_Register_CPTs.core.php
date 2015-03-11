@@ -145,7 +145,7 @@ class EE_Register_CPTs {
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
 				'singular_slug' => __("event", "event_espresso"),
-				'plural_slug' => __("events", "event_espresso"),
+				'plural_slug' => EE_Registry::instance()->CFG->core->event_cpt_slug,
 				'class_name' => 'EE_Event',
 				'args' => array(
 					'public'=> TRUE,
