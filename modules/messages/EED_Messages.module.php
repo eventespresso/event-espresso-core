@@ -794,58 +794,20 @@ class EED_Messages  extends EED_Module {
 	 * @param bool $display_request
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
+		EE_Registry::instance()->load_helper('Debug_Tools');
 		if ( WP_DEBUG ) {
-			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
-			$default_data = array(
-				$class => $func . '() : ' . $line,
-				'REQ'  => $display_request ? $_REQUEST : '',
-			);
 			if ( $transaction instanceof EE_Transaction ) {
-				$default_data[ 'TXN_status' ] = $transaction->status_ID();
-				$default_data[ 'TXN_reg_steps' ] = $transaction->reg_steps();
+				// don't serialize objects
+				$info = EEH_Debug_Tools::_strip_objects( $info );
+				$info[ 'TXN_status' ] = $transaction->status_ID();
+				$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
 				if ( $transaction->ID() ) {
-					$TXN_ID = 'TXN_ID: ' . $transaction->ID();
-					// don't serialize objects
-					$info = self::_strip_objects( $info );
-					if ( ! isset( $debug_data[ $TXN_ID ] ) ) {
-						$debug_data[ $TXN_ID ] = array();
-					}
-					$debug_data[ $TXN_ID ][ microtime() ] = array_merge(
-						$default_data,
-						$info
-					);
-					update_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), $debug_data );
+					$index = 'TXN_ID: ' . $transaction->ID();
+					EEH_Debug_Tools::log( $class, $func, $line, $info, $display_request, $index );
 				}
 			}
 		}
 
-	}
-
-
-
-	/**
-	 * _strip_objects
-	 *
-	 * @param array $info
-	 * @return array
-	 */
-	protected static function _strip_objects( $info = array() ) {
-		foreach ( $info as $key => $value ) {
-			if ( is_array( $value ) ) {
-				$info[ $key ] = self::_strip_objects( $value );
-			} else if ( is_object( $value ) ) {
-				$object_class = get_class( $value );
-				$info[ $object_class ] = array();
-				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : 0;
-				if ( method_exists( $value, 'status' ) ) {
-					$info[ $object_class ][ 'status' ] = $value->status();
-				} else if ( method_exists( $value, 'status_ID' ) ) {
-					$info[ $object_class ][ 'status' ] = $value->status_ID();
-				}
-				unset( $info[ $key ] );
-			}
-		}
-		return (array)$info;
 	}
 
 }
