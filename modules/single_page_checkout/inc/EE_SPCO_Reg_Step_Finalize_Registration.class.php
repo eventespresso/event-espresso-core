@@ -83,7 +83,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	public function process_reg_step() {
 //		printr( $this->checkout, '$this->checkout', __FILE__, __LINE__ );
 		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__, array(), true );
 		// ensure all data gets refreshed from the db
 		if ( $this->checkout->refresh_all_entities( true ) ) {
 			// ensures that all details and statuses for transaction, registration, and payments are updated
