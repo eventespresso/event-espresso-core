@@ -1407,6 +1407,10 @@ class EE_Core_Config extends EE_Config_Base {
 	public $thank_you_page_url;
 	public $cancel_page_url;
 
+	/**
+	 * The next vars relate to the custom slugs for EE CPT routes
+	 */
+	public $event_cpt_slug;
 
 
 	/**
@@ -1437,6 +1441,8 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = FALSE;
 		$this->thank_you_page_url = FALSE;
 		$this->cancel_page_url = FALSE;
+		//cpt slugs
+		$this->event_cpt_slug = __('events', 'event_espresso');
 
 		//ueip constant check
 		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
