@@ -465,7 +465,7 @@ class EED_Messages  extends EED_Module {
 			true
 		);
 		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
-			self::log( __CLASS__, __FUNCTION__, __LINE__ );
+			self::log( __CLASS__, __FUNCTION__, __LINE__, $registration->transaction() );
 			return true;
 		}
 		return false;
