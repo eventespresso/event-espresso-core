@@ -440,7 +440,7 @@ class EED_Messages  extends EED_Module {
 						'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
 					)
 				);
-
+				ob_start();
 				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
 					// DEBUG LOG
 					self::log(
@@ -453,6 +453,7 @@ class EED_Messages  extends EED_Module {
 						)
 					);
 				}
+				$unexpected_output = ob_get_clean();
 				// DEBUG LOG
 				self::log(
 					__CLASS__, __FUNCTION__, __LINE__,
@@ -460,6 +461,7 @@ class EED_Messages  extends EED_Module {
 					array(
 						'current_time' => current_time( 'mysql' ),
 						'after_calling' => 'EE_messages::send_message()',
+						'unexpected_output' => $unexpected_output,
 					)
 				);
 			}
