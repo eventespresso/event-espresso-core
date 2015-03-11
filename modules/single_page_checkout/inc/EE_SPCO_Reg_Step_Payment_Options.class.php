@@ -1065,7 +1065,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		switch ( $payment_method->type_obj()->payment_occurs() ) {
 
 			case EE_PMT_Base::offsite :
-				$return_url = add_query_arg( array( 'action' => 'process_gateway_response' ), $this->reg_step_url() );
+				$return_url = add_query_arg(
+					array(
+						'action' => 'process_gateway_response',
+						'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
+					),
+					$this->reg_step_url()
+				);
 				break;
 
 			case EE_PMT_Base::onsite :
@@ -1074,7 +1080,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 		}
-
 		return $return_url;
 	}
 
