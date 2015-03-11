@@ -312,7 +312,7 @@ class EE_messages {
 		$debug_index = 'Messages: ' . $type;
 		foreach ( $vars as $var ) {
 			if ( method_exists( $var, 'ID' ) ) {
-				$debug_index = get_class( $var ) .  '_ID: ' . $var->ID();
+				$debug_index = get_class( $var ) .  ': ' . $var->ID();
 				break;
 			} else if ( is_object( $var )) {
 				$debug_index = spl_object_hash( $var );

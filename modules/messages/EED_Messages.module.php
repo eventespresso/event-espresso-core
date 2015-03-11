@@ -802,7 +802,7 @@ class EED_Messages  extends EED_Module {
 				$info[ 'TXN_status' ] = $transaction->status_ID();
 				$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
 				if ( $transaction->ID() ) {
-					$index = 'TXN_ID: ' . $transaction->ID();
+					$index = 'EE_Transaction: ' . $transaction->ID();
 					EEH_Debug_Tools::log( $class, $func, $line, $info, $display_request, $index );
 				}
 			}

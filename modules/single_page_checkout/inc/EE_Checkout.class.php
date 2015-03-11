@@ -1024,7 +1024,7 @@ class EE_Checkout {
 					$default_data[ 'registrations' ][ $REG_ID ] = $registration->status_ID();
 				}
 				if ( $this->transaction->ID() ) {
-					$TXN_ID = 'TXN_ID: ' . $this->transaction->ID();
+					$TXN_ID = 'EE_Transaction: ' . $this->transaction->ID();
 					// don't serialize objects
 					$info = $this->_strip_objects( $info );
 					if ( ! isset( $debug_data[ $TXN_ID ] ) ) {

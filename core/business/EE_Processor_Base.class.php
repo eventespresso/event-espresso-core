@@ -53,7 +53,7 @@ class EE_Processor_Base {
 				if ( $transaction->ID() ) {
 					$info[ 'TXN_status' ] = $transaction->status_ID();
 					$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
-					$index = 'TXN_ID: ' . $transaction->ID();
+					$index = 'EE_Transaction: ' . $transaction->ID();
 					EEH_Debug_Tools::log( $class, $func, $line, $info, $display_request, $index );
 				}
 			}
