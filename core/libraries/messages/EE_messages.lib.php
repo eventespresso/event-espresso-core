@@ -310,6 +310,13 @@ class EE_messages {
 		$error = FALSE;
 		$installed_message_types = $this->get_installed_message_types();
 
+		$TXN = null;
+		foreach ( $vars as $var ) {
+			if ( $var instanceof EE_Transaction ) {
+				$TXN = $var;
+			}
+		}
+		$debug_index = $TXN instanceof EE_Transaction ? 'TXN_ID: ' . $TXN->ID() : 'Messages: ' . $type;
 		EEH_Debug_Tools::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			array(
@@ -322,8 +329,8 @@ class EE_messages {
 				'installed_message_types' => $installed_message_types
 				),
 			false,
-			'Messages: ' . $type
-			);
+			$debug_index
+		);
 
 		// is that a real class ?
 		if ( isset(  $installed_message_types[$type] ) ) {
@@ -369,7 +376,7 @@ class EE_messages {
 						'error' => $error
 						),
 					false,
-					'Messages: ' . $type
+					$debug_index
 					);
 
 				//return generated EE_Messages objects?
