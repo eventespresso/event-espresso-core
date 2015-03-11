@@ -588,8 +588,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// get cached registrations
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		// verify we got the goods
@@ -634,8 +632,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		return TRUE;
 
 	}
@@ -770,8 +766,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$registration->save();
 					// add relation between TXN and registration
 					$this->_associate_registration_with_transaction( $registration );
-					// DEBUG LOG
-					$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 
 				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 

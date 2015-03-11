@@ -421,63 +421,25 @@ class EED_Messages  extends EED_Module {
 			//no messages please
 			return;
 		}
-		try {
-			EE_Registry::instance()->load_helper( 'MSG_Template' );
-			// send the message type matching the status if that message type is active.
-			$message_type = self::_get_reg_status_array( $registration->status_ID() );
-			// verify message type is active
-			if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
-				self::_load_controller();
-
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		// send the message type matching the status if that message type is active.
+		$message_type = self::_get_reg_status_array( $registration->status_ID() );
+		// verify message type is active
+		if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+			self::_load_controller();
+			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
 				// DEBUG LOG
 				self::log(
 					__CLASS__, __FUNCTION__, __LINE__,
 					$registration->transaction(),
 					array(
-						'current_time'    => current_time( 'mysql' ),
-						'before_calling'    => 'EE_messages::send_message()',
+						'delivered'    => current_time( 'mysql' ),
 						'message_type' => $message_type,
 						'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
 					)
 				);
-				ob_start();
-				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
-					// DEBUG LOG
-					self::log(
-						__CLASS__, __FUNCTION__, __LINE__,
-						$registration->transaction(),
-						array(
-							'delivered'    => current_time( 'mysql' ),
-							'message_type' => $message_type,
-							'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-						)
-					);
-				}
-				$unexpected_output = ob_get_clean();
-				// DEBUG LOG
-				self::log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					$registration->transaction(),
-					array(
-						'current_time' => current_time( 'mysql' ),
-						'after_calling' => 'EE_messages::send_message()',
-						'unexpected_output' => $unexpected_output,
-					)
-				);
 			}
-		} catch ( Exception $e ) {
-			self::log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array(
-					'getCode'    => $e->getCode(),
-					'getMessage'    => $e->getMessage(),
-					'getFile'    => $e->getFile(),
-					'getLine'    => $e->getLine(),
-				)
-			);
 		}
-
 	}
 
 
@@ -494,18 +456,8 @@ class EED_Messages  extends EED_Module {
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
 		if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
-			self::log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array( 'deliver_notifications?' => true )
-			);
 			return true;
 		}
-		self::log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$registration->transaction(),
-			array( 'deliver_notifications?' => false )
-		);
 		return false;
 		// first we check if we're in admin and not doing front ajax and if we
 		// make sure appropriate admin params are set for sending messages

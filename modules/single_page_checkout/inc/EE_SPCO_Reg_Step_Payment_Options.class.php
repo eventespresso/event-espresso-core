@@ -694,11 +694,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 			default:
 				$payment_successful = $this->_process_payment();
-				// DEBUG LOG
-				$this->checkout->log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					array( 'payment' => $this->checkout->payment )
-				);
 				if ( $payment_successful ) {
 					$this->checkout->continue_reg = true;
 					$this->_maybe_set_completed( $this->checkout->payment_method );
