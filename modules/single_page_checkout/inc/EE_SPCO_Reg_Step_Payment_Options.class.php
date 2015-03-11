@@ -1069,6 +1069,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					array(
 						'action' => 'process_gateway_response',
 						'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
+						'spco_txn' => $this->checkout->transaction->ID(),
 					),
 					$this->reg_step_url()
 				);
@@ -1098,6 +1099,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return EE_Payment | FALSE
 	 */
 	public function process_gateway_response() {
+		$this->_validate_offsite_return();
 		$payment = null;
 		// how have they chosen to pay?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( true );
@@ -1145,6 +1147,85 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->checkout->continue_reg = false;
 		return false;
 	}
+
+
+
+	/**
+	 * _validate_return
+	 *
+	 * @access private
+	 * @return bool
+	 */
+	private function _validate_offsite_return() {
+		$TXN_ID = EE_Registry::instance()->REQ->get( 'spco_txn', 0 );
+		if ( $TXN_ID !== $this->checkout->transaction->ID() ) {
+			// Houston... we might have a problem
+			// first gather some info
+			$valid_TXN = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+			$primary_registrant = $valid_TXN instanceof EE_Transaction ? $valid_TXN->primary_registration() : null;
+			// let's start by retrieving the cart for this TXN
+			$cart = EE_Cart::get_cart_from_txn( $this->checkout->transaction );
+			if ( $cart instanceof EE_Cart ) {
+				// verify that the current cart has tickets
+				$tickets = $cart->get_tickets();
+				if ( empty( $tickets ) ) {
+					$this->_redirect_wayward_request( $primary_registrant );
+				}
+			} else {
+				$this->_redirect_wayward_request( $primary_registrant );
+			}
+			$valid_TXN_SID = $primary_registrant instanceof EE_Registration ? $primary_registrant->session_ID() : null;
+			// validate current Session ID and compare against valid TXN session ID
+			if ( EE_Session::instance()->id() === null ) {
+				$this->_redirect_wayward_request( $primary_registrant );
+			} else if ( EE_Session::instance()->id() === $valid_TXN_SID ) {
+				// WARNING !!!
+				// this could be PayPal sending back duplicate requests (ya they do that)
+				// or it **could** mean someone is simply registering AGAIN after having just done so
+				// so now we need to determine if this current TXN looks valid or not
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				// has this step even been started ?
+				if ( $transaction_processor->reg_step_completed( $this->checkout->transaction, $this->slug() === false )
+				) {
+					// really? you're half way through this reg step, but you never started it ?
+					$this->_redirect_wayward_request( $primary_registrant );
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * _redirect_wayward_request
+	 *
+	 * @access private
+	 * @param \EE_Registration $primary_registrant
+	 * @return bool
+	 */
+	private function _redirect_wayward_request( EE_Registration $primary_registrant ) {
+		if ( ! $primary_registrant instanceof EE_Registration ) {
+			// try redirecting based on the current TXN
+			$primary_registrant = $this->checkout->transaction instanceof EE_Transaction ? $this->checkout->transaction->primary_registration() : null;
+			if ( ! $primary_registrant instanceof EE_Registration ) {
+				EE_Error::add_error(
+					sprintf(
+						__( 'Invalid information was received from the Off-Site Payment Processor and your
+						Transaction details could not be retrieved from the database.%1$sPlease try again or contact
+						%2$s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+				return false;
+			}
+		}
+		wp_safe_redirect( $primary_registrant->reg_url_link() );
+		exit();
+	}
+
 
 
 
