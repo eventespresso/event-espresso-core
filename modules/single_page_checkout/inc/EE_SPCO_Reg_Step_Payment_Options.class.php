@@ -1106,6 +1106,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->checkout->continue_reg = false;
 			return false;
 		}
+		if ( ! $this->checkout->payment_method->is_off_site() ) {
+			return false;
+		}
 		// DEBUG LOG
 		$this->checkout->log(
 			__CLASS__, __FUNCTION__, __LINE__,
@@ -1116,40 +1119,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		);
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			try {
-				/** @type EE_Transaction_Processor $transaction_processor */
-				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				// if TXN has not already been initialized/completed
-				if ( $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) === false ) {
-					// get payment details and process results
-					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
-					$payment = $payment_processor->process_ipn(
-						$_REQUEST,
-						$this->checkout->transaction,
-						$this->checkout->payment_method
-					);
-					$payment_source = 'process_ipn';
-				} else {
-					$payment = $this->checkout->transaction->last_payment();
-					$payment_source = 'last_payment';
-				}
-			} catch ( Exception $e ) {
-				// let's just eat the exception and try to move on using any previously set payment info
-				$payment = $this->checkout->transaction->last_payment();
-				$payment_source = 'last_payment after Exception';
-				// but if we STILL don't have a payment object
-				if ( ! $payment instanceof EE_Payment ) {
-					// then we'll object ! ( not object like a thing... but object like what a lawyer says ! )
-					$this->_handle_payment_processor_exception( $e );
-				}
+			$gateway = $this->checkout->payment_method->type_obj()->get_gateway();
+			if ( ! $gateway instanceof EE_Offsite_Gateway ) {
+				$this->checkout->continue_reg = false;
+				return false;
 			}
-			// DEBUG LOG
-			$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-				array(
-					'process_ipn_payment' => $payment,
-					'payment_source' => $payment_source,
-				)
-			);
+			$payment = $this->_process_off_site_payment( $gateway );
 			$payment = $this->_process_cancelled_payments( $payment );
 			$payment = $this->_validate_payment( $payment );
 			// if payment was not declined by the payment gateway or cancelled by the registrant
@@ -1159,10 +1134,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed
 				$this->checkout->current_step->set_completed();
-				// DEBUG LOG
-				$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-					array( 'payment' => $payment )
-				);
 				return true;
 			}
 		}
@@ -1172,6 +1143,51 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		);
 		$this->checkout->continue_reg = false;
 		return false;
+	}
+
+
+
+	/**
+	 * _process_off_site_payment
+	 *
+	 * @access private
+	 * @param \EE_Offsite_Gateway $gateway
+	 * @return \EE_Payment
+	 */
+	private function _process_off_site_payment( EE_Offsite_Gateway $gateway ) {
+		try {
+			// if gateway uses_separate_IPN_request, then we don't have to process the IPN manually
+			if ( ! ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() )) {
+				// get payment details and process results
+				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+				$payment = $payment_processor->process_ipn(
+					$_REQUEST,
+					$this->checkout->transaction,
+					$this->checkout->payment_method
+				);
+				$payment_source = 'process_ipn';
+			} else {
+				$payment = $this->checkout->transaction->last_payment();
+				$payment_source = 'last_payment';
+			}
+		} catch ( Exception $e ) {
+			// let's just eat the exception and try to move on using any previously set payment info
+			$payment = $this->checkout->transaction->last_payment();
+			$payment_source = 'last_payment after Exception';
+			// but if we STILL don't have a payment object
+			if ( ! $payment instanceof EE_Payment ) {
+				// then we'll object ! ( not object like a thing... but object like what a lawyer says ! )
+				$this->_handle_payment_processor_exception( $e );
+			}
+		}
+		// DEBUG LOG
+		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+			array(
+				'process_ipn_payment' => $payment,
+				'payment_source'      => $payment_source,
+			)
+		);
+		return $payment;
 	}
 
 
