@@ -1290,7 +1290,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->unlock_transaction();
 			$this->checkout->log( 	__CLASS__, __FUNCTION__, __LINE__ );
 			//wp_safe_redirect( $this->checkout->redirect_url );
-			wp_redirect( $this->checkout->redirect_url );
+			//wp_redirect( $this->checkout->redirect_url );
+			header( 'Location: ' . $this->checkout->redirect_url );
 			exit();
 		}
 	}
