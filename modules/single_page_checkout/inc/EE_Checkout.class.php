@@ -1010,8 +1010,10 @@ class EE_Checkout {
 				$class 		=> $func . '() : ' . $line,
 				'request->step' 		=> $this->step,
 				'request->action' 	=> $this->action,
-				'current_step->slug' => $this->current_step->slug(),
-				'current_step->completed' => $this->current_step->completed(),
+				'current_step->slug' => $this->current_step instanceof EE_SPCO_Reg_Step ?
+					$this->current_step->slug() : '',
+				'current_step->completed' => $this->current_step instanceof EE_SPCO_Reg_Step ?
+					$this->current_step->completed() : '',
 				'txn_status_updated' => $this->txn_status_updated,
 				'reg_status_updated' => $this->reg_status_updated,
 				'reg_url_link' => $this->reg_url_link,
