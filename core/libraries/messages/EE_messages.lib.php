@@ -313,7 +313,7 @@ class EE_messages {
 		EEH_Debug_Tools::log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			array(
-				'message_type' => $message_type,
+				'message_type' => $type,
 				'incoming_data' => $vars,
 				'sending_messenger' => $sending_messenger,
 				'generating_messenger' => $generating_messenger,
@@ -322,7 +322,7 @@ class EE_messages {
 				'installed_message_types' => $installed_message_types
 				),
 			false,
-			'Messages: ' . $message_type
+			'Messages: ' . $type
 			);
 
 		// is that a real class ?
@@ -363,13 +363,13 @@ class EE_messages {
 				EEH_Debug_Tools::log(
 					__CLASS__, __FUNCTION__, __LINE__,
 					array(
-						'message_type' => $message_type,
+						'message_type' => $type,
 						'active_messenger' => $this->_active_messengers,
 						'send_messages' => $send_messages,
 						'error' => $error
 						),
 					false,
-					'Messages: ' . $message_type
+					'Messages: ' . $type
 					);
 
 				//return generated EE_Messages objects?
