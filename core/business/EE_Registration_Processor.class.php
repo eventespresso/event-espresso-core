@@ -287,28 +287,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return void
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
-		// DEBUG LOG
-		//$this->log(
-		//	__CLASS__, __FUNCTION__, __LINE__,
-		//	$registration->transaction(),
-		//	array_merge(
-		//	// defaults
-		//		array(
-		//			'checkout_or_payment' => false,
-		//			'manually_updated'    => false,
-		//			'payment_updates'     => false,
-		//			'status_updates'      => $this->reg_status_updated( $registration->ID() ),
-		//			'finalized'           => false,
-		//			'revisit'             => false,
-		//			'reg_steps'           => $registration->transaction()->reg_steps(),
-		//			'txn_status'          => $registration->transaction()->status_ID(),
-		//			'last_payment'        => null,
-		//			'old_reg_status'      => $this->old_reg_status( $registration->ID() ),
-		//			'new_reg_status'      => $this->new_reg_status( $registration->ID() )
-		//		),
-		//		$additional_details
-		//	)
-		//);
+
+		ob_start();
 		try {
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
@@ -334,6 +314,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 					)
 				)
 			);
+
 		} catch( Exception $e ) {
 			// DEBUG LOG
 			$this->log(
@@ -348,12 +329,15 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			);
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
 		}
+		$unexpected_output = ob_get_clean();
 		// DEBUG LOG
 		$this->log(
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' )
+				'did_action' => did_action(
+					'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+				'unexpected_output' => $unexpected_output
 			)
 		);
 	}
