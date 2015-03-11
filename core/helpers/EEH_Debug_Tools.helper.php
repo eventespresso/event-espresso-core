@@ -303,7 +303,10 @@ class EEH_Debug_Tools{
 			} else if ( is_object( $value ) ) {
 				$object_class = get_class( $value );
 				$info[ $object_class ] = array();
-				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : 0;
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : spl_object_hash( $value );
+				if ( method_exists( $value, 'ID' ) ) {
+					$info[ $object_class ][ 'ID' ] = $value->ID();
+				}
 				if ( method_exists( $value, 'status' ) ) {
 					$info[ $object_class ][ 'status' ] = $value->status();
 				} else if ( method_exists( $value, 'status_ID' ) ) {
