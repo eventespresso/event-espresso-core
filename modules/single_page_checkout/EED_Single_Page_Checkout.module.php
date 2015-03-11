@@ -381,8 +381,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->transaction->lock();
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// DEBUG LOG
@@ -423,6 +421,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
 			}
 		}
+		// DEBUG LOG
+		$checkout->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			array(
+				'current_step->slug()' => $checkout->current_step instanceof EE_SPCO_Reg_Step ?
+		$checkout->current_step->slug() : '',
+				'next_step->slug()' => $checkout->next_step instanceof EE_SPCO_Reg_Step
+					? $checkout->next_step->slug() : '',
+			)
+		);
+
 		// reset anything that needs a clean slate for each request
 		$checkout->reset_for_current_request();
 		return $checkout;
@@ -655,13 +664,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $transaction instanceof EE_Transaction ) {
 			// save it so that we have an ID for other objects to use
 			$transaction->save();
-			// DEBUG LOG
-			$this->checkout->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array(
-					'NEW transaction' => $transaction,
-				)
-			);
 			// and save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $transaction->ID() );
 		} else {
@@ -930,10 +932,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _process_form_action() {
-//		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
-//		d( $this->checkout );
-		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// what cha wanna do?
 		switch( $this->checkout->action ) {
 			// AJAX next step reg form
@@ -1247,7 +1245,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// if this is an ajax request
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			// DEBUG LOG
-			// DEBUG LOG
 			$this->checkout->log(
 				__CLASS__, __FUNCTION__, __LINE__,
 				array(
@@ -1283,6 +1280,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'redirect_url' => $this->checkout->redirect_url,
 					'redirect'     => $this->checkout->redirect,
 					'continue_reg' => $this->checkout->continue_reg,
+					'wp_redirect_has_filter' => has_filter( 'wp_redirect' ),
 					'headers_sent' => headers_sent(),
 					'headers_list' => headers_list(),
 				)
@@ -1290,6 +1288,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// store notices in a transient
 			EE_Error::get_notices( false, true, true );
 			$this->unlock_transaction();
+			$this->checkout->log( 	__CLASS__, __FUNCTION__, __LINE__ );
 			//wp_safe_redirect( $this->checkout->redirect_url );
 			wp_redirect( $this->checkout->redirect_url );
 			exit();
