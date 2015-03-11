@@ -354,5 +354,18 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 
+	/**
+	 * uses_separate_IPN_request
+	 *
+	 * return true or false for whether or not the gateway uses an IPN
+	 * that is sent in a separate request than the returning registrant
+	 * if false, then we meed to process the payment results manually
+	 *
+	 * @return bool
+	 */
+	public function uses_separate_IPN_request() {
+		return true;
+	}
+
 }
 // End of file EEG_Paypal_Standard.gateway.php
