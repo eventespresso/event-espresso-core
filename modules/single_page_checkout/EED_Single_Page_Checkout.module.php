@@ -423,15 +423,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			if ( $checkout->current_step->is_final_step() && $checkout->exit_spco() === true )  {
 				// DEBUG LOG
-				$this->checkout->log(
+				$checkout->log(
 					__CLASS__, __FUNCTION__, __LINE__,
 					array(
 						'headers_sent' => headers_sent(),
-						'redirect_url' => $this->checkout->redirect_url,
+						'redirect_url' => $checkout->redirect_url,
 						'headers_list' => headers_list(),
 					)
 				);
-				wp_safe_redirect( $this->checkout->redirect_url );
+				wp_safe_redirect( $checkout->redirect_url );
 				exit();
 			}
 		}
