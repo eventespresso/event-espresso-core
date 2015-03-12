@@ -449,7 +449,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		// make event espresso session data available to plugin
-		$this->_session_data = array_merge( $session_data, $this->_session_data );
+		$this->_session_data = array_merge( $this->_session_data, $session_data );
 		return TRUE;
 
 	}
@@ -632,7 +632,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		foreach ( $server_keys as $key ){
 			if ( isset( $_SERVER[ $key ] )) {
 				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] )) as $ip ) {
-					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ) {
+					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP ) !== FALSE ) {
 						$visitor_ip = $ip;
 					}
 				}
