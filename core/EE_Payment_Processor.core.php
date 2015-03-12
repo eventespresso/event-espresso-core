@@ -388,6 +388,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				'IPN'     => $IPN,
 				'payment' => $payment,
 				'payment_options_step_completed' => $payment_options_step_completed,
+				'deliver_notifications' => has_filter(
+					'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 			)
 		);
 		//ok, now process the transaction according to the payment
