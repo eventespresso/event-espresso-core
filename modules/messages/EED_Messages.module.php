@@ -415,8 +415,10 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-
-
+		self::log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$registration->transaction()
+		);
 		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
 			//no messages please
 			return;
@@ -473,9 +475,9 @@ class EED_Messages  extends EED_Module {
 		// frontend ?
 		if ( ! is_admin() || EE_FRONT_AJAX ) {
 			// need to send notifications for all Not-Approved registrants
-			if ( $registration->is_not_approved() ) {
-				return true;
-			}
+			//if ( $registration->is_not_approved() ) {
+			//	return true;
+			//}
 			if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
 				return false;
 			}
