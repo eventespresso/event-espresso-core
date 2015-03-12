@@ -157,11 +157,21 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		}
 		// check that notifications were not already sent
-		if ( did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ) ) {
-			// do NOT send out notifications
+		if ( did_action( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ) ) {
+			// do NOT send out notifications, including trigger that may have just been set
 			remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 11 );
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 		}
+		// DEBUG LOG
+		$this->checkout->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			array(
+				'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+				'did_action' => did_action( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+				'deliver_notifications' => apply_filters(
+					'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+			)
+		);
 		// this will result in the base session properties getting saved to the TXN_Session_data field
 		$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
 		// update the TXN if payment conditions have changed
