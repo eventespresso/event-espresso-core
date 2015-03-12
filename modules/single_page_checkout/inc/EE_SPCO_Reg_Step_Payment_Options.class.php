@@ -1099,7 +1099,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return EE_Payment | FALSE
 	 */
 	public function process_gateway_response() {
-		$this->_validate_offsite_return();
 		$payment = null;
 		// how have they chosen to pay?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( true );
@@ -1111,6 +1110,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_method->is_off_site() ) {
 			return false;
 		}
+		$this->_validate_offsite_return();
 		// DEBUG LOG
 		$this->checkout->log(
 			__CLASS__, __FUNCTION__, __LINE__,
@@ -1160,6 +1160,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$TXN_ID = EE_Registry::instance()->REQ->get( 'spco_txn', 0 );
 		if ( $TXN_ID !== $this->checkout->transaction->ID() ) {
 			// Houston... we might have a problem
+			$invalid_TXN = false;
 			// first gather some info
 			$valid_TXN = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 			$primary_registrant = $valid_TXN instanceof EE_Transaction ? $valid_TXN->primary_registration() : null;
@@ -1169,15 +1170,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// verify that the current cart has tickets
 				$tickets = $cart->get_tickets();
 				if ( empty( $tickets ) ) {
-					$this->_redirect_wayward_request( $primary_registrant );
+					$invalid_TXN = true;
 				}
 			} else {
-				$this->_redirect_wayward_request( $primary_registrant );
+				$invalid_TXN = true;
 			}
 			$valid_TXN_SID = $primary_registrant instanceof EE_Registration ? $primary_registrant->session_ID() : null;
 			// validate current Session ID and compare against valid TXN session ID
 			if ( EE_Session::instance()->id() === null ) {
-				$this->_redirect_wayward_request( $primary_registrant );
+				$invalid_TXN = true;
 			} else if ( EE_Session::instance()->id() === $valid_TXN_SID ) {
 				// WARNING !!!
 				// this could be PayPal sending back duplicate requests (ya they do that)
@@ -1189,8 +1190,26 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( $transaction_processor->reg_step_completed( $this->checkout->transaction, $this->slug() === false )
 				) {
 					// really? you're half way through this reg step, but you never started it ?
-					$this->_redirect_wayward_request( $primary_registrant );
+					$invalid_TXN = true;
 				}
+			}
+			if ( $invalid_TXN ) {
+				// is the valid TXN completed ?
+				if ( $valid_TXN instanceof EE_Transaction ) {
+					/** @type EE_Transaction_Processor $transaction_processor */
+					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+					// has this step even been started ?
+					$reg_step_completed = $transaction_processor->reg_step_completed( $valid_TXN, $this->slug() );
+					if ( $reg_step_completed !== false && $reg_step_completed !== true ) {
+						// so it **looks** like this is a double request from PayPal
+						// so let's try to pick up where we left off
+						$this->checkout->transaction = $valid_TXN;
+						$this->checkout->refresh_all_entities( true );
+						return;
+					}
+				}
+				// you appear to be lost?
+				$this->_redirect_wayward_request( $primary_registrant );
 			}
 		}
 	}
@@ -1222,7 +1241,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				return false;
 			}
 		}
-		wp_safe_redirect( $primary_registrant->reg_url_link() );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'e_reg_url_link' => $primary_registrant->reg_url_link(),
+				),
+				$this->checkout->thank_you_page_url
+			)
+		);
 		exit();
 	}
 
