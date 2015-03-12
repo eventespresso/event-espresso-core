@@ -85,17 +85,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// DEBUG LOG
 		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__, array(), true );
 		// ensure all data gets refreshed from the db
-		if ( $this->checkout->refresh_all_entities( true ) ) {
-			// ensures that all details and statuses for transaction, registration, and payments are updated
-			$txn_update_params = $this->_finalize_transaction();
-			// DEBUG LOG
-			$this->checkout->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array( 'txn_update_params' => $txn_update_params )
-			);
-			// set a hook point
-			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
-		}
+		$this->checkout->refresh_all_entities( true );
+		// ensures that all details and statuses for transaction, registration, and payments are updated
+		$txn_update_params = $this->_finalize_transaction();
+		// DEBUG LOG
+		$this->checkout->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			array( 'txn_update_params' => $txn_update_params )
+		);
+		// set a hook point
+		do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
 		// check if transaction has a primary registrant and that it has a related Attendee object
 		if ( $this->checkout->transaction_has_primary_registrant() ) {
 			// setup URL for redirect
