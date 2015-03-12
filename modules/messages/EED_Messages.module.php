@@ -472,6 +472,10 @@ class EED_Messages  extends EED_Module {
 		}
 		// frontend ?
 		if ( ! is_admin() || EE_FRONT_AJAX ) {
+			// need to send notifications for all Not-Approved registrants
+			if ( $registration->is_not_approved() ) {
+				return true;
+			}
 			if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
 				return false;
 			}
