@@ -63,6 +63,13 @@ class EE_Checkout {
 	public $txn_status_updated = FALSE;
 
 	/**
+	 * only triggered to true after absolutely everything has finished.
+	 *
+	 * @type bool
+	 */
+	protected $exit_spco = FALSE;
+
+	/**
 	 * tracks whether any of the TXN's Registrations statuses modified during this checkout
 	 * indexed by registration ID
 	 *
@@ -251,6 +258,31 @@ class EE_Checkout {
 	public function set_reg_status_updated( $REG_ID, $reg_status ) {
 		$this->reg_status_updated[ $REG_ID ] = $reg_status;
 	}
+
+
+
+	/**
+	 * exit_spco
+	 *
+	 * @return bool
+	 */
+	public function exit_spco() {
+		return $this->exit_spco;
+	}
+
+
+
+	/**
+	 * set_exit_spco
+	 * can ONLY be set by the  Finalize_Registration reg step
+	 */
+	public function set_exit_spco() {
+		if ( $this->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+			$this->exit_spco = true;
+		}
+	}
+
+
 
 
 
