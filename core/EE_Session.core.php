@@ -449,7 +449,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		// make event espresso session data available to plugin
-		$this->_session_data = array_merge( $session_data, $this->_session_data );
+		$this->_session_data = array_merge( $this->_session_data, $session_data );
 		return TRUE;
 
 	}
