@@ -821,6 +821,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 public function garbage_collection() {
 		 // only perform during regular requests
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
+			 /** @type WPDB $wpdb */
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
 			 $expiration = time();
@@ -862,7 +863,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 			 }
 		 }
-//		 printr( $this, 'EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	 }
 
