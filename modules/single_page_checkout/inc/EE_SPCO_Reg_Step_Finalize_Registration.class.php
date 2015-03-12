@@ -159,6 +159,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// check that notifications were not already sent
 		if ( did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ) ) {
 			// do NOT send out notifications
+			remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 11 );
 		}
 		// this will result in the base session properties getting saved to the TXN_Session_data field
