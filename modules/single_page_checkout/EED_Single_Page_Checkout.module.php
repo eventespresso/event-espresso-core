@@ -420,6 +420,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( ! $checkout instanceof EE_Checkout ) {
 				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
 			}
+		} else {
+			if ( $checkout->current_step->is_final_step() && $checkout->exit_spco() === true )  {
+				// DEBUG LOG
+				$this->checkout->log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					array(
+						'headers_sent' => headers_sent(),
+						'redirect_url' => $this->checkout->redirect_url,
+						'headers_list' => headers_list(),
+					)
+				);
+				wp_safe_redirect( $this->checkout->redirect_url );
+				exit();
+			}
 		}
 		// DEBUG LOG
 		$checkout->log(
@@ -1277,21 +1291,27 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->log(
 				__CLASS__, __FUNCTION__, __LINE__,
 				array(
-					'redirect_url' => $this->checkout->redirect_url,
 					'redirect'     => $this->checkout->redirect,
 					'continue_reg' => $this->checkout->continue_reg,
 					'wp_redirect_has_filter' => has_filter( 'wp_redirect' ),
-					'headers_sent' => headers_sent(),
-					'headers_list' => headers_list(),
+					'redirect_url' => $this->checkout->redirect_url,
 				)
 			);
 			// store notices in a transient
 			EE_Error::get_notices( false, true, true );
 			$this->unlock_transaction();
-			$this->checkout->log( 	__CLASS__, __FUNCTION__, __LINE__ );
-			//wp_safe_redirect( $this->checkout->redirect_url );
+			// DEBUG LOG
+			$this->checkout->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array(
+					'headers_sent' => headers_sent(),
+					'redirect_url'     => $this->checkout->redirect_url,
+					'headers_list'    => headers_list(),
+				)
+			);
+			wp_safe_redirect( $this->checkout->redirect_url );
 			//wp_redirect( $this->checkout->redirect_url );
-			header( 'Location: ' . $this->checkout->redirect_url );
+			//header( 'Location: ' . $this->checkout->redirect_url );
 			exit();
 		}
 	}
