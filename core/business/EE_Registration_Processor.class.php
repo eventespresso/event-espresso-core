@@ -240,6 +240,10 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( $save ) {
 				$registration->save();
 			}
+			if ( ! $this->_revisit ) {
+				// send out notifications
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -271,6 +275,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( $save ) {
 				$registration->save();
 			}
+			// send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			return TRUE;
 		}
 		return FALSE;
