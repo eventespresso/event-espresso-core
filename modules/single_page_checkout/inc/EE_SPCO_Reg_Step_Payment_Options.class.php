@@ -1265,10 +1265,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _process_off_site_payment( EE_Offsite_Gateway $gateway ) {
 		try {
 			// if gateway uses_separate_IPN_request, then we don't have to process the IPN manually
-			if ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() ) {
-				// do NOT send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 11 );
-			}
+			if ( ! ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() )) {
 				// get payment details and process results
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 				$payment = $payment_processor->process_ipn(
@@ -1277,10 +1274,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					$this->checkout->payment_method
 				);
 				$payment_source = 'process_ipn';
-			//} else {
-			//	$payment = $this->checkout->transaction->last_payment();
-			//	$payment_source = 'last_payment';
-			//}
+			} else {
+				$payment = $this->checkout->transaction->last_payment();
+				$payment_source = 'last_payment';
+			}
 		} catch ( Exception $e ) {
 			// let's just eat the exception and try to move on using any previously set payment info
 			$payment = $this->checkout->transaction->last_payment();
