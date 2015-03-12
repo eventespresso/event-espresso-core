@@ -60,7 +60,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 	/**
-	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
+	 * @return EEG_Paypal_Standard
+	 */
+	public function __construct() {
+		$this->set_uses_separate_IPN_request( true ) ;
+		parent::__construct();
+	}
+
+
+
+	/**
+	 * Also sets the gateway url class variable based on whether debug mode is enabled or not
 	 * @param array $settings_array
 	 */
 	public function set_settings($settings_array){
@@ -350,21 +360,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			'grand_total_needed_resaving' => $grand_total_needs_resaving,),
 
 				$payment);
-	}
-
-
-
-	/**
-	 * uses_separate_IPN_request
-	 *
-	 * return true or false for whether or not the gateway uses an IPN
-	 * that is sent in a separate request than the returning registrant
-	 * if false, then we meed to process the payment results manually
-	 *
-	 * @return bool
-	 */
-	public function uses_separate_IPN_request() {
-		return true;
 	}
 
 }
