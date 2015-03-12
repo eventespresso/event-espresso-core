@@ -140,17 +140,23 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
+		$notifications_already_delivered = did_action(
+			'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' );
 		// if an IPN or other payment hasn't already
 		if (
 			(
 				// first pass thru SPCO and an IPN or other payment hasn't already completed the TXN
 				! $this->checkout->revisit &&
-				! $transaction_processor->final_reg_step_completed( $this->checkout->transaction )
+				! $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) &&
+				! $notifications_already_delivered
+
+
 			)
 			|| (
 				// SPCO revisit but TXN status has changed due to a payment
 				$this->checkout->revisit &&
-				$this->checkout->txn_status_updated
+				$this->checkout->txn_status_updated &&
+				! $notifications_already_delivered
 			)
 		) {
 			// send out notifications
