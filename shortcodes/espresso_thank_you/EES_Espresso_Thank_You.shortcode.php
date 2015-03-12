@@ -626,6 +626,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function get_payment_row_html( $payment = NULL ) {
 		$html = '';
 		if ( $payment instanceof EE_Payment ) {
+			if (
+				$payment->payment_method() instanceof EE_Payment_Method
+				&& $payment->payment_method()->is_off_site()
+				&& $payment->status() === EEM_Payment::status_id_failed
+			) {
+				// considering the registrant has made it to the Thank You page,
+				// any failed payments may actually be pending and the IPN is just slow
+				// so let's
+				$payment->set_status( EEM_Payment::status_id_pending );
+			}
 			$payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined ? '<br /><span class="small-text">' . $payment->gateway_response() . '</span>' : '';
 			$html .= '
 				<tr>
