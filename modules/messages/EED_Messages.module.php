@@ -455,51 +455,28 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
 
-		if ( apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
-			return true;
+		 //first we check if we're in admin and not doing front ajax and if we
+		 //make sure appropriate admin params are set for sending messages
+		if (
+			( is_admin() && ! EE_FRONT_AJAX )
+			&&
+			( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
+		) {
+			//no messages sent please.
+			return false;
 		}
-		return false;
-		// first we check if we're in admin and not doing front ajax and if we
-		// make sure appropriate admin params are set for sending messages
-		//if (
-		//	( is_admin() && ! EE_FRONT_AJAX )
-		//	&&
-		//	( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
-		//) {
-		//	//no messages sent please.
-		//	return false;
-		//}
-		//
-		//// currently only using this to send messages for the primary registrant
-		//if ( ! $registration->is_primary_registrant() ) {
-		//	return false;
-		//}
-		//// frontend ?
-		//if ( ! is_admin() || EE_FRONT_AJAX ) {
-		//	// let's NOT send out notifications if the registration was NOT finalized.
-		//	if ( ! is_array( $extra_details ) || ! isset( $extra_details[ 'finalized' ] ) || empty( $extra_details[ 'finalized' ] ) ) {
-		//		return false;
-		//	}
-		//	if (
-		//		// do NOT send messages if the TXN status has NOT changed
-		//		isset( $extra_details[ 'old_txn_status' ], $extra_details[ 'new_txn_status' ] )
-		//		&& $extra_details[ 'old_txn_status' ] === $extra_details[ 'new_txn_status' ]
-		//	) {
-		//		return false;
-		//	}
-		//	// DO NOT send messages if the reg status has NOT changed.
-		//	// On-Site and Off-line gateways can use the status tracking from the checkout
-		//	// Off-Site gateway IPNs have no access to the session, since they are on a different request...
-		//	// but fortunately, the reg statuses will have been updated in the same request as the IPN
-		//	if ( EE_Session::instance()->checkout() instanceof EE_Checkout ) {
-		//		if ( ! EE_Session::instance()->checkout()->reg_status_updated( $registration->ID() ) ) {
-		//			return false;
-		//		}
-		//	} else if ( isset( $extra_details[ 'status_updates' ] ) && ! $extra_details[ 'status_updates' ] ) {
-		//		return false;
-		//	}
-		//}
-		//return true;
+
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return false;
+		}
+		// frontend ?
+		if ( ! is_admin() || EE_FRONT_AJAX ) {
+			if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 
