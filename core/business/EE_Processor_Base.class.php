@@ -14,11 +14,27 @@
 class EE_Processor_Base {
 
 	/**
-	 * Used to set whether SPCO is being revisited by registrant or not.
+	 * Used to indicate whether current request is for an IPN or not.
 	 *
 	 * @var bool
 	 */
-	protected $_revisit = FALSE;
+	protected static $IPN = false;
+
+	/**
+	 * Used to indicate whether SPCO is being revisited by registrant or not.
+	 *
+	 * @var bool
+	 */
+	protected $_revisit = false;
+
+
+
+	/**
+	 * @param boolean $IPN
+	 */
+	public static function set_IPN( $IPN ) {
+		self::$IPN = filter_var( $IPN, FILTER_VALIDATE_BOOLEAN );
+	}
 
 
 
@@ -28,7 +44,7 @@ class EE_Processor_Base {
 	 * @param bool $revisit
 	 * @return void
 	 */
-	public function set_revisit( $revisit = FALSE ) {
+	public function set_revisit( $revisit = false ) {
 		$this->_revisit = filter_var( $revisit, FILTER_VALIDATE_BOOLEAN );
 	}
 
