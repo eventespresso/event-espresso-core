@@ -201,7 +201,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
-		// is the registration currently incomplete
+		// is the registration currently incomplete ?
 		if ( $registration->status_ID() === EEM_Registration::status_id_incomplete ) {
 			// grab default reg status for the event, if set
 			$event_default_registration_status = $registration->event()->default_registration_status();
@@ -215,6 +215,17 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( $save ) {
 				$registration->save();
 			}
+			// otherwise, send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
+			// DEBUG LOG
+			$this->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$registration->transaction(),
+				array(
+					'IPN'                   => EE_Processor_Base::$IPN,
+					'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+				)
+			);
 		}
 	}
 
@@ -243,11 +254,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( $save ) {
 				$registration->save();
 			}
-			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
-			if ( ! EE_Processor_Base::$IPN ) {
-				// otherwise, send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-			}
+			// otherwise, send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			// DEBUG LOG
 			$this->log(
 				__CLASS__, __FUNCTION__, __LINE__,
@@ -288,11 +296,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( $save ) {
 				$registration->save();
 			}
-			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
-			if ( ! EE_Processor_Base::$IPN ) {
-				// otherwise, send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
-			}
+			// send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			// DEBUG LOG
 			$this->log(
 				__CLASS__, __FUNCTION__, __LINE__,
