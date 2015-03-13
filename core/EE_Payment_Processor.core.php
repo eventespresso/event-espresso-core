@@ -373,6 +373,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		) {
 			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
+		// DEBUG LOG
+		$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
@@ -386,6 +388,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			// send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			// DEBUG LOG
+			$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
 		}
 		$transaction->save();
 		// DEBUG LOG
