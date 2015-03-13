@@ -146,11 +146,11 @@ class EEH_Debug_Tools{
 		$filters = array();
 		global $wp_filter;
 		if ( isset( $wp_filter[ $hook_name ] ) ) {
-			$filters[ $wp_filter[ $hook_name ] ] = array();
+			$filters[ $hook_name ] = array();
 			foreach ( $wp_filter[ $hook_name ] as $priority => $callbacks ) {
-				$filters[ $wp_filter[ $hook_name ] ][ $priority ] = array();
+				$filters[ $hook_name ][ $priority ] = array();
 				foreach ( $callbacks as $callback ) {
-					$filters[ $wp_filter[ $hook_name ] ][ $priority ][] = $callback['function'];
+					$filters[ $hook_name ][ $priority ][] = $callback['function'];
 				}
 			}
 		}
