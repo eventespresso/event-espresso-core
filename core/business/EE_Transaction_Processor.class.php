@@ -190,7 +190,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return boolean
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, current_time( 'timestamp' ));
+		$current_time = (int)current_time( 'timestamp' );
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
 	}
 
 
@@ -238,42 +239,61 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 */
 	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
 		// validate status
-		$status = is_bool( $status ) || is_numeric( $status ) ? $status : FALSE;
+		$status = is_bool( $status ) || is_numeric( $status ) ? $status : false;
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
 		// if reg step does NOT exist
 		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] )) {
-			return FALSE;
+			return false;
 		}
 		// if  we're trying to complete a step that is already completed
-		if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
-			return FALSE;
+		if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
+			return true;
 		}
 		// if  we're trying to complete a step that hasn't even started
-		if ( $status === TRUE && $txn_reg_steps[ $reg_step_slug ] === FALSE ) {
-			return FALSE;
+		if ( $status === true && $txn_reg_steps[ $reg_step_slug ] === false ) {
+			return false;
 		}
 		// if current status value matches the incoming value (no change)
 		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
 			// this will happen in cases where multiple AJAX requests occur during the same step
-			return FALSE;
+			return true;
 		}
 		// if we're trying to set a start time
 		if ( is_numeric( $status )) {
 			// for an already completed step
-			if ( $txn_reg_steps[ $reg_step_slug ] === TRUE ) {
-				return FALSE;
+			if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
+				return true;
 			}
 			// but if the step has already been initialized...
 			if ( is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
 				// skip the update below, but don't return FALSE so that errors won't be displayed
-				return TRUE;
+				return true;
 			}
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
 		$transaction->set_reg_steps( $txn_reg_steps );
-		return TRUE;
+		$transaction->save();
+		return true;
+	}
+
+
+
+	/**
+	 * remove_reg_step
+	 * given a valid TXN_reg_step slug, this will remove (unset)
+	 * the reg step from the TXN reg step array
+	 *
+	 * @access public
+	 * @param \EE_Transaction $transaction
+	 * @param string $reg_step_slug
+	 * @return void
+	 */
+	public function remove_reg_step( EE_Transaction $transaction, $reg_step_slug ) {
+		// get reg steps array
+		$txn_reg_steps = $transaction->reg_steps();
+		unset( $txn_reg_steps[ $reg_step_slug ] );
 	}
 
 
@@ -377,6 +397,8 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
 		// array of details to aid in decision making by systems
@@ -388,36 +410,18 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
 			'last_payment'			=> $payment
 		);
-//		update_option(
-//			'ee_cron_finalize_abandoned_transactions',
-//			$update_params
-//		);
 		// now update the registrations and add the results to our $update_params
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
 			'update_registration_after_checkout_or_payment',
 			$transaction,
-			$registration_query_params,
+			$this->_registration_query_params,
 			$update_params
 		);
-//		update_option(
-//			'ee_cron_finalize_abandoned_transactions',
-//			serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	))
-//			. $update_params['status_updates']
-//		);
-
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
 		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
 		if ( is_numeric( $finalized ) && $finalized !== TRUE ) {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 		}
-//		update_option(
-//			'ee_cron_finalize_abandoned_transactions',
-//			serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	))
-//			. '$transaction->ID() = ' . $transaction->ID()
-//			. ' && $transaction->reg_steps(
-//			update_transaction_and_registrations_after_checkout_or_payment ) = '
-//			. serialize( $transaction->reg_steps() )
-//		);
 		$transaction->save();
 		return $update_params;
 	}
@@ -442,10 +446,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 		// check that method exists
 		if ( ! method_exists( $registration_processor, $method_name )) {
-//			update_option(
-//				'ee_cron_finalize_abandoned_transactions',
-//				'! method_exists EE_Registration_Processor::' . $method_name . '()'
-//			);
 			throw new EE_Error( __( 'Method does not exist.', 'event_espresso' ));
 		}
 		// make sure some query params are set for retrieving registrations
@@ -454,26 +454,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		foreach ( $transaction->registrations( $this->_registration_query_params ) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				if ( $additional_param ) {
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	))
-//						. serialize( array( __LINE__, $registration->ID(),
-//											   $additional_param ))
-//					);
 					$response = $registration_processor->$method_name( $registration, $additional_param ) ? TRUE : $response;
 				} else {
-//					update_option(
-//						'ee_cron_finalize_abandoned_transactions',
-//						serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	)) . serialize( array( __LINE__, $registration->ID(),
-//											  $additional_param ) )
-//					);
 					$response = $registration_processor->$method_name( $registration ) ? TRUE : $response;
 				}
-//				update_option(
-//					'ee_cron_finalize_abandoned_transactions',
-//					serialize(get_option( 'ee_cron_finalize_abandoned_transactions'	)) . '$registration->ID() = ' . $registration->ID() . '&&
-//					$response = ' . $response
-//				);
 			}
 		}
 		return $response;
