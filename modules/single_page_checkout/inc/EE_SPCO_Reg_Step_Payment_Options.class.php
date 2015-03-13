@@ -147,16 +147,32 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 			$payment_required = in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ? TRUE : $payment_required;
 		}
+		$subsections = array();
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
-			return $this->_sold_out_events( $sold_out_events );
-		} else if ( ! empty( $events_requiring_pre_approval )) {
-			return $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
-		} else if ( ! $payment_required ) {
-			return $this->_no_payment_required();
-		} else {
-			return $this->_display_payment_options( $reg_count );
+			$subsections['events_requiring_pre_approval'] = $this->_sold_out_events( $sold_out_events );
 		}
+		if ( ! empty( $events_requiring_pre_approval )) {
+			$subsections['events_requiring_pre_approval'] = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
+		}
+		if ( $payment_required ) {
+			$subsections[ 'payment_options' ] = $this->_display_payment_options( $reg_count );
+		} else {
+			$subsections[ 'no_payment_required' ] = $this->_no_payment_required();
+		}
+		// if not collecting payment, then we are done with this step
+		if ( ! isset( $subsections[ 'payment_options' ] )) {
+			// mark this reg step as completed
+			$this->checkout->current_step->set_completed();
+		}
+		return new EE_Form_Section_Proper(
+			array(
+				'name'            => $this->reg_form_name(),
+				'html_id'         => $this->reg_form_name(),
+				'subsections'  => $subsections,
+				'layout_strategy' => new EE_No_Layout()
+			)
+		);
 
 	}
 
@@ -177,8 +193,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> $this->reg_form_name(),
-				'html_id' 					=> $this->reg_form_name(),
+				//'name' 					=> $this->reg_form_name(),
+				//'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
@@ -217,8 +233,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> $this->reg_form_name(),
-				'html_id' 					=> $this->reg_form_name(),
+				//'name' 					=> $this->reg_form_name(),
+				//'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
@@ -254,8 +270,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// generate no_payment_required form
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> $this->reg_form_name(),
-				'html_id' 					=> $this->reg_form_name(),
+				//'name' 					=> $this->reg_form_name(),
+				//'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
@@ -296,8 +312,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// build payment options form
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 			=> $this->reg_form_name(),
-				'html_id' 			=> $this->reg_form_name(),
+				//'name' 			=> $this->reg_form_name(),
+				//'html_id' 			=> $this->reg_form_name(),
 				'subsections' 	=> array(
 					'payment_options' => $this->_setup_payment_options(),
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
