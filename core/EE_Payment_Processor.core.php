@@ -135,8 +135,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-//		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
+		EE_Processor_Base::set_IPN( true );
 		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
 		try{
 			/**
