@@ -155,7 +155,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			)
 		) {
 			// send out notifications
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			//add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		}
 		//// check that notifications were not already sent
 		//if ( did_action( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ) ) {
