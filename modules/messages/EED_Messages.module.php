@@ -419,8 +419,7 @@ class EED_Messages  extends EED_Module {
 			__CLASS__, __FUNCTION__, __LINE__,
 			$registration->transaction(),
 			array(
-				'deliver_notifications' => apply_filters(
-					'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
 			)
 		);
 		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
