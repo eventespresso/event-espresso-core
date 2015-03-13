@@ -478,7 +478,8 @@ class EED_Messages  extends EED_Module {
 		// frontend ?
 		if (
 			! ( is_admin() && ! EE_FRONT_AJAX ) &&
-			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )
+			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
+			$registration->status_ID() !== EEM_Registration::status_id_not_approved
 		) {
 			return false;
 		}
