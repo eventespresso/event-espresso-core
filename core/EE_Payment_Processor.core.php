@@ -399,6 +399,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 					'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 			)
 		);
+		if ( ! $IPN ) {
+			// block notifications being sent out, because that will be done during finalization
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+		}
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}
