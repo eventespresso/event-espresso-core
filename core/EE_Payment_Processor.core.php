@@ -397,7 +397,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				'payment'               => $payment,
 				'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
 		()->name() : 'off-line',
-				//'payment_options_step_completed' => $payment_options_step_completed,
+				'payment_options_step_completed' => $payment_options_step_completed,
 				'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 			)
 		);
