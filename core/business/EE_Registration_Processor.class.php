@@ -231,8 +231,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function toggle_registration_status_for_default_approved_events( EE_Registration $registration, $save = TRUE ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
-		// toggle reg status to approved IF the event default reg status is approved
-		if ( $registration->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
+		// if not already, toggle reg status to approved IF the event default reg status is approved
+		if (
+			$registration->status_ID() !== EEM_Registration::status_id_approved &&
+			$registration->event()->default_registration_status() == EEM_Registration::status_id_approved
+		) {
 			// set incoming REG_Status
 			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved
