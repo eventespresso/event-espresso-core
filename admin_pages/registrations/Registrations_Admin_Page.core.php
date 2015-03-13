@@ -1252,11 +1252,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_process_resend_registration();
 		}
 
-		if ( $this->_req_data['return'] != 'view_registration' ) {
+		if ( ! isset( $this->_req_data['return'] ) || $this->_req_data['return'] != 'view_registration' ) {
 			//unset nonces
 			foreach ( $this->_req_data as $ref => $value ) {
 				if ( strpos( $ref, 'nonce' ) !== false ) {
-					unset( $this->req_data[$ref] );
+					unset( $this->_req_data[$ref] );
 					continue;
 				}
 				$this->_req_data[$ref] = urlencode( $value );
