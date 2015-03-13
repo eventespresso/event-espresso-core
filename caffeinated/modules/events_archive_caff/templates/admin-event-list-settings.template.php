@@ -43,6 +43,9 @@ EE_Registry::instance()->load_helper('Form_Fields');
 				<td>
 					<p><?php echo site_url() . '/ ' . EEH_Form_Fields::text( 'not_used', EE_Registry::instance()->CFG->core->event_cpt_slug, 'event_cpt_slug', 'event_cpt_slug', 'regular' ); ?></p>
 					<p class="description"><?php _e('This allows you to configure what slug is used for the url of all event pages.', 'event_espresso'); ?></p>
+					<?php if ( has_filter( 'FHEE__EE_Register_CPTs__register_CPT__rewrite' ) ) : ?>
+						<p style="color:#D54E21;"><?php _e('Usage of the <code>FHEE__EE_Register_CPTs__register_CPT__rewrite</code> filter has been detected.  Please be aware that while this filter is being used, this setting has no affect.', 'event_espresso' );?></p>
+					<?php endif; ?>
 				</td>
 			</tr>
 
