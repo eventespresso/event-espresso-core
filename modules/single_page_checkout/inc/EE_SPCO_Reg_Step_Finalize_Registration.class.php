@@ -140,29 +140,29 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-		// if an IPN or other payment hasn't already
-		if (
-			(
-				// first pass thru SPCO ?
-				! $this->checkout->revisit &&
-				// TXN not already completed by an IPN or other payment ?
-				! $transaction_processor->final_reg_step_completed( $this->checkout->transaction )
-			)
-			|| (
-				// SPCO revisit but TXN status has changed due to a payment
-				$this->checkout->revisit &&
-				$this->checkout->txn_status_updated
-			)
-		) {
-			// send out notifications
-			//add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-		}
-		//// check that notifications were not already sent
-		//if ( did_action( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ) ) {
-		//	// do NOT send out notifications, including trigger that may have just been set
-		//	remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-		//	add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+		//// if an IPN or other payment hasn't already
+		//if (
+		//	(
+		//		// first pass thru SPCO ?
+		//		! $this->checkout->revisit &&
+		//		// TXN not already completed by an IPN or other payment ?
+		//		! $transaction_processor->final_reg_step_completed( $this->checkout->transaction )
+		//	)
+		//	|| (
+		//		// SPCO revisit but TXN status has changed due to a payment
+		//		$this->checkout->revisit &&
+		//		$this->checkout->txn_status_updated
+		//	)
+		//) {
+		//	// send out notifications
+		//	//add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		//}
+		// If the selected method of payment used an off-site gateway...
+		if ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) {
+			// do NOT trigger notifications because it was already done during the IPN
+			remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+		}
 		// DEBUG LOG
 		$this->checkout->log(
 			__CLASS__, __FUNCTION__, __LINE__,
