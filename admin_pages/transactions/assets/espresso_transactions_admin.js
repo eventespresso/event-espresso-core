@@ -277,6 +277,7 @@ jQuery(document).ready(function($) {
 				dialog_content.html(d_contents);
 				$('.admin-modal-dialog-h2').hide();
 				$('#del-admin-modal-dialog-options-ul a').hide();
+				$('#admin-modal-dialog-options-ul a').hide();
 			});
 	}
 
