@@ -243,7 +243,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
 			if ( ! EE_Processor_Base::$IPN ) {
 				// otherwise, send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			return TRUE;
 		}
@@ -279,7 +279,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			// don't trigger notifications during IPNs because they will get triggered by EE_Payment_Processor
 			if ( ! EE_Processor_Base::$IPN ) {
 				// otherwise, send out notifications
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			return TRUE;
 		}
