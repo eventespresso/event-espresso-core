@@ -379,16 +379,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
-		// if this is an IPN, check if enough Reg Steps have been completed to warrant finalizing the TXN
-		if (
-			$IPN &&
-			$transaction_processor->all_reg_steps_completed_except_final_step( $transaction )
-		) {
+		//check if enough Reg Steps have been completed to warrant finalizing the TXN
+		$finalized = $transaction_processor->all_reg_steps_completed_except_final_step( $transaction );
+		//  if this is an IPN and the final step has not been initiated
+		if ( $IPN && $finalized === false ) {
 			// and if it hasn't already been set as being started...
-			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 		}
 		// because the above will return false if the final step was not fully completed, we need to check again...
-		if ( $IPN && $transaction_processor->all_reg_steps_completed( $transaction ) ) {
+		if ( $IPN && $finalized ) {
 			// and if we are all good to go, then send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			// DEBUG LOG
@@ -401,10 +400,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction,
 			array(
 				'IPN'                   => $IPN,
+				'payment_options' => $payment_options_step_completed,
+				'finalize_registration' => $finalized,
 				'payment'               => $payment,
 				'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
 		()->name() : 'off-line',
-				'payment_options_step_completed' => $payment_options_step_completed,
 				'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 			)
 		);
