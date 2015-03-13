@@ -146,9 +146,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				// first pass thru SPCO ?
 				! $this->checkout->revisit &&
 				// TXN not already completed by an IPN or other payment ?
-				! $transaction_processor->final_reg_step_completed( $this->checkout->transaction ) &&
-				// not an on-site Payment Method ( which would have already triggered notices in it's request )
-				! $this->checkout->payment_method->is_on_site()
+				! $transaction_processor->final_reg_step_completed( $this->checkout->transaction )
 			)
 			|| (
 				// SPCO revisit but TXN status has changed due to a payment
