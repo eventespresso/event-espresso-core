@@ -91,8 +91,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			array(
 				'txn_update_params' => $txn_update_params,
 				'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-				'has_filter__deliver'   => has_filter(
-					'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' ),
+				'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks(
+					'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
 			)
 		);
