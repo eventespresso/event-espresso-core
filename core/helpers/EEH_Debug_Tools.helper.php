@@ -137,22 +137,24 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 *    print_filters_for
+	 *    registered_filter_callbacks
 	 *
 	 * @param string $hook_name
+	 * @return array
 	 */
-	public static function print_filters_for( $hook_name = '' ) {
+	public static function registered_filter_callbacks( $hook_name = '' ) {
+		$filters = array();
 		global $wp_filter;
 		if ( isset( $wp_filter[ $hook_name ] ) ) {
-			echo '<h5 style="color:#2EA2CC;">$hook_name : <span style="color:#E76700">' . $hook_name . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			$filters[ $wp_filter[ $hook_name ] ] = array();
 			foreach ( $wp_filter[ $hook_name ] as $priority => $callbacks ) {
-				echo '<h3 style="color:#E76700;line-height:1em;">priority ' . $priority . '<br/><span style="font-size:9px;font-weight:normal;color:#666">
-' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h3>';
+				$filters[ $wp_filter[ $hook_name ] ][ $priority ] = array();
 				foreach ( $callbacks as $callback ) {
-					printr( $callback, '$callback', __FILE__, __LINE__ );
+					$filters[ $wp_filter[ $hook_name ] ][ $priority ][] = $callback['function'];
 				}
 			}
 		}
+		return $filters;
 	}
 
 
