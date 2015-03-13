@@ -50,14 +50,14 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		if ( $this->is_current_step() ) {
 			//'display_spco_reg_step'
 			// DEBUG LOG
-			$this->checkout->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array(
-					'$this->checkout->step' 		=> $this->checkout->step,
-					'$this->checkout->action' 	=> $this->checkout->action,
-					'$this->checkout->current_step->slug()' 	=> $this->checkout->current_step->slug(),
-				)
-			);
+			//$this->checkout->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	array(
+			//		'$this->checkout->step' 		=> $this->checkout->step,
+			//		'$this->checkout->action' 	=> $this->checkout->action,
+			//		'$this->checkout->current_step->slug()' 	=> $this->checkout->current_step->slug(),
+			//	)
+			//);
 			$this->checkout->step = $_REQUEST['step'] = $this->slug();
 			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
@@ -91,7 +91,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			array(
 				'txn_update_params' => $txn_update_params,
 				'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-				'did_action__deliver'   => did_action( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+				'has_filter__deliver'   => has_filter(
+					'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' ),
 				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
 			)
 		);

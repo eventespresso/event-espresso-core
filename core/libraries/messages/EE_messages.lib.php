@@ -318,20 +318,20 @@ class EE_messages {
 				$debug_index = spl_object_hash( $var );
 			}
 		}
-		EEH_Debug_Tools::log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'message_type' => $type,
-				'incoming_data' => $vars,
-				'sending_messenger' => $sending_messenger,
-				'generating_messenger' => $generating_messenger,
-				'context' => $context,
-				'send' => $send,
-				'installed_message_types' => $installed_message_types
-				),
-			false,
-			$debug_index
-		);
+		//EEH_Debug_Tools::log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'message_type' => $type,
+		//		'incoming_data' => $vars,
+		//		'sending_messenger' => $sending_messenger,
+		//		'generating_messenger' => $generating_messenger,
+		//		'context' => $context,
+		//		'send' => $send,
+		//		'installed_message_types' => $installed_message_types
+		//		),
+		//	false,
+		//	$debug_index
+		//);
 
 		// is that a real class ?
 		if ( isset(  $installed_message_types[$type] ) ) {
@@ -368,17 +368,17 @@ class EE_messages {
 					}
 				}
 
-				EEH_Debug_Tools::log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					array(
-						'message_type' => $type,
-						'active_messenger' => $this->_active_messengers,
-						'send_messages' => $send_messages,
-						'error' => $error
-						),
-					false,
-					$debug_index
-					);
+				//EEH_Debug_Tools::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	array(
+				//		'message_type' => $type,
+				//		'active_messenger' => $this->_active_messengers,
+				//		'send_messages' => $send_messages,
+				//		'error' => $error
+				//		),
+				//	false,
+				//	$debug_index
+				//	);
 
 				//return generated EE_Messages objects?
 				if ( ! $send ) {

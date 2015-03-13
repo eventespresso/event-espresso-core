@@ -415,13 +415,13 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-		self::log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$registration->transaction(),
-			array(
-				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
-			)
-		);
+		//self::log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$registration->transaction(),
+		//	array(
+		//		'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+		//	)
+		//);
 		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
 			//no messages please
 			return;
@@ -459,8 +459,11 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
-
-		 //first we check if we're in admin and not doing front ajax and if we
+		// currently only using this to send messages for the primary registrant
+		if ( ! $registration->is_primary_registrant() ) {
+			return false;
+		}
+		//first we check if we're in admin and not doing front ajax and if we
 		 //make sure appropriate admin params are set for sending messages
 		if (
 			( is_admin() && ! EE_FRONT_AJAX )
@@ -471,19 +474,13 @@ class EED_Messages  extends EED_Module {
 			return false;
 		}
 
-		// currently only using this to send messages for the primary registrant
-		if ( ! $registration->is_primary_registrant() ) {
-			return false;
-		}
+		//EEH_Debug_Tools::print_filters_for( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
 		// frontend ?
-		if ( ! is_admin() || EE_FRONT_AJAX ) {
-			// need to send notifications for all Not-Approved registrants
-			//if ( $registration->is_not_approved() ) {
-			//	return true;
-			//}
-			if ( ! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) ) {
-				return false;
-			}
+		if (
+			! ( is_admin() && ! EE_FRONT_AJAX ) &&
+			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )
+		) {
+			return false;
 		}
 		return true;
 	}

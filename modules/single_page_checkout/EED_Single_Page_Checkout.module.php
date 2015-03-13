@@ -423,28 +423,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			if ( $checkout->current_step->is_final_step() && $checkout->exit_spco() === true )  {
 				// DEBUG LOG
-				$checkout->log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					array(
-						'headers_sent' => headers_sent(),
-						'redirect_url' => $checkout->redirect_url,
-						'headers_list' => headers_list(),
-					)
-				);
+				//$checkout->log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	array(
+				//		'headers_sent' => headers_sent(),
+				//		'redirect_url' => $checkout->redirect_url,
+				//		'headers_list' => headers_list(),
+				//	)
+				//);
 				wp_safe_redirect( $checkout->redirect_url );
 				exit();
 			}
 		}
 		// DEBUG LOG
-		$checkout->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'current_step->slug()' => $checkout->current_step instanceof EE_SPCO_Reg_Step ?
-		$checkout->current_step->slug() : '',
-				'next_step->slug()' => $checkout->next_step instanceof EE_SPCO_Reg_Step
-					? $checkout->next_step->slug() : '',
-			)
-		);
+		//$checkout->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'current_step->slug()' => $checkout->current_step instanceof EE_SPCO_Reg_Step ?
+		//$checkout->current_step->slug() : '',
+		//		'next_step->slug()' => $checkout->next_step instanceof EE_SPCO_Reg_Step
+		//			? $checkout->next_step->slug() : '',
+		//	)
+		//);
 
 		// reset anything that needs a clean slate for each request
 		$checkout->reset_for_current_request();
@@ -1287,16 +1287,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	protected function _handle_html_redirects() {
 		// going somewhere ?
 		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
-			// DEBUG LOG
-			$this->checkout->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array(
-					'redirect'     => $this->checkout->redirect,
-					'continue_reg' => $this->checkout->continue_reg,
-					'wp_redirect_has_filter' => has_filter( 'wp_redirect' ),
-					'redirect_url' => $this->checkout->redirect_url,
-				)
-			);
 			// store notices in a transient
 			EE_Error::get_notices( false, true, true );
 			$this->unlock_transaction();

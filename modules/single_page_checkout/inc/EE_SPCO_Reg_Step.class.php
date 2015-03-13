@@ -152,7 +152,7 @@ abstract class EE_SPCO_Reg_Step {
 	 */
 	public function set_completed() {
 		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		$this->_completed = TRUE;
 	}
 
@@ -370,7 +370,7 @@ abstract class EE_SPCO_Reg_Step {
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
 		}
-		// final step has no display 
+		// final step has no display
 		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
 			$query_args[ 'action' ] = 'process_reg_step';
 		}

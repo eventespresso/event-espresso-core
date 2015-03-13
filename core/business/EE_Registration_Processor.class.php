@@ -298,7 +298,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
 
-		ob_start();
+		//ob_start();
 		try {
 			//do_action(
 			//	'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
@@ -333,28 +333,28 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 		} catch( Exception $e ) {
 			// DEBUG LOG
-			$this->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array(
-					'Exception' => $e->getCode(),
-					'Message' => $e->getMessage(),
-					'File' => $e->getFile(),
-					'Line' => $e->getLine(),
-				)
-			);
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$registration->transaction(),
+			//	array(
+			//		'Exception' => $e->getCode(),
+			//		'Message' => $e->getMessage(),
+			//		'File' => $e->getFile(),
+			//		'Line' => $e->getLine(),
+			//	)
+			//);
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
 		}
-		$unexpected_output = ob_get_clean();
+		//$unexpected_output = ob_get_clean();
 		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$registration->transaction(),
-			array(
-				'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-				'unexpected_output' => $unexpected_output
-			)
-		);
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$registration->transaction(),
+		//	array(
+		//		'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+		//		//'unexpected_output' => $unexpected_output
+		//	)
+		//);
 	}
 
 

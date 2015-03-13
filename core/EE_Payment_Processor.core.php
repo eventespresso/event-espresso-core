@@ -324,6 +324,16 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+				// DEBUG LOG
+				$this->log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					$transaction,
+					array(
+						'IPN'                            => $IPN,
+						'payment'                        => $payment,
+						'deliver_notifications'          => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+					)
+				);
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
@@ -386,19 +396,19 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			// send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			// DEBUG LOG
+			$this->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$transaction,
+				array(
+					'IPN'                            => $IPN,
+					'payment'                        => $payment,
+					//'payment_options_step_completed' => $payment_options_step_completed,
+					'deliver_notifications'          => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+				)
+			);
 		}
 		$transaction->save();
-		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'IPN'     => $IPN,
-				'payment' => $payment,
-				'payment_options_step_completed' => $payment_options_step_completed,
-				'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-			)
-		);
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}

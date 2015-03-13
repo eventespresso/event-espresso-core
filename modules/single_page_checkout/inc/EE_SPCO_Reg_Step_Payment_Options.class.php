@@ -1112,14 +1112,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		$this->_validate_offsite_return();
 		// DEBUG LOG
-		$this->checkout->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
-				'payment_method' => $this->checkout->payment_method,
-			),
-			true
-		);
+		//$this->checkout->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
+		//		'payment_method' => $this->checkout->payment_method,
+		//	),
+		//	true
+		//);
 		// verify TXN
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 			$gateway = $this->checkout->payment_method->type_obj()->get_gateway();
@@ -1141,9 +1141,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 		}
 		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-			array( 'payment' => $payment )
-		);
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+		//	array( 'payment' => $payment )
+		//);
 		$this->checkout->continue_reg = false;
 		return false;
 	}
@@ -1289,12 +1289,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 		}
 		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'process_ipn_payment' => $payment,
-				'payment_source'      => $payment_source,
-			)
-		);
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'process_ipn_payment' => $payment,
+		//		'payment_source'      => $payment_source,
+		//	)
+		//);
 		return $payment;
 	}
 
