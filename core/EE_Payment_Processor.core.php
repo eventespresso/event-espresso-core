@@ -364,16 +364,23 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$revisit = $payment_options_step_completed !== false ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
 		$transaction_processor->set_revisit( $revisit );
-		// let's consider the Payment Options Reg Step completed if not already
-		if ( $payment_options_step_completed !== true && ( $payment->is_approved() || $payment->is_pending() ) ) {
+		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
+		if (
+			$IPN &&
+			$payment_options_step_completed !== true &&
+			( $payment->is_approved() || $payment->is_pending() )
+		) {
 			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
-		// check if enough Reg Steps have been completed to warrant finalizing the TXN
-		if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
+		// if this is an IPN, check if enough Reg Steps have been completed to warrant finalizing the TXN
+		if (
+			$IPN &&
+			$transaction_processor->all_reg_steps_completed_except_final_step( $transaction )
+		) {
 			// and if it hasn't already been set as being started...
 			$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			// send out notifications
