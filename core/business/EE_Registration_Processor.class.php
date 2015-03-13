@@ -247,7 +247,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				// DEBUG LOG
 				$this->log(
 					__CLASS__, __FUNCTION__, __LINE__,
-					$registration->transaction,
+					$registration->transaction(),
 					array(
 						'IPN' => EE_Processor_Base::$IPN,
 						'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
@@ -292,7 +292,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				// DEBUG LOG
 				$this->log(
 					__CLASS__, __FUNCTION__, __LINE__,
-					$registration->transaction,
+					$registration->transaction(),
 					array(
 						'IPN' => EE_Processor_Base::$IPN,
 						'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
