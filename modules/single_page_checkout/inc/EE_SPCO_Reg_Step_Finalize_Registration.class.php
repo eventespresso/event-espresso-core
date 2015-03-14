@@ -146,7 +146,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// if an IPN or other payment hasn't already
 		if (
 			// SPCO revisit but TXN status has changed due to a payment
-			$this->checkout->revisit &&
+			filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
 			$this->checkout->txn_status_updated
 		) {
 			// send out notifications
