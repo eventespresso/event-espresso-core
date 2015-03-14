@@ -87,22 +87,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return void
 	 */
 	public function initialize_reg_step() {
-		// don't need payment options for:
-		// 	registrations made via the admin
-		// 	completed transactions
-		// 	overpaid transactions
-		// 	$ 0.00 transactions (no payment required)
-		// but do NOT remove if current action being called belongs to this reg step
 		// TODO: if /when we implement donations, then this will need overriding
 		if (
+			// don't need payment options for:
+			// 	registrations made via the admin
+			// 	completed transactions
+			// 	overpaid transactions
+			// 	$ 0.00 transactions (no payment required)
 			! $this->checkout->payment_required()
+			// but do NOT remove if current action being called belongs to this reg step
 			&& ! is_callable( array( $this, $this->checkout->action ) )
 		) {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
 				$this->checkout->reset_reg_steps();
 				// DEBUG LOG
-				$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 				return;
 		}
 		// load EEM_Payment_Method
@@ -1289,15 +1289,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					$this->checkout->transaction,
 					$this->checkout->payment_method
 				);
-				$payment_source = 'process_ipn';
+				//$payment_source = 'process_ipn';
 			} else {
 				$payment = $this->checkout->transaction->last_payment();
-				$payment_source = 'last_payment';
+				//$payment_source = 'last_payment';
 			}
 		} catch ( Exception $e ) {
 			// let's just eat the exception and try to move on using any previously set payment info
 			$payment = $this->checkout->transaction->last_payment();
-			$payment_source = 'last_payment after Exception';
+			//$payment_source = 'last_payment after Exception';
 			// but if we STILL don't have a payment object
 			if ( ! $payment instanceof EE_Payment ) {
 				// then we'll object ! ( not object like a thing... but object like what a lawyer says ! )

@@ -1052,7 +1052,7 @@ class EE_Checkout {
 	 * @param bool $display_request
 	 */
 	function log( $class = '', $func = '', $line = '', $info = array(), $display_request = false ) {
-		if ( WP_DEBUG ) {
+		if ( WP_DEBUG && false ) {
 			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
 			$default_data = array(
 				$class 		=> $func . '() : ' . $line,

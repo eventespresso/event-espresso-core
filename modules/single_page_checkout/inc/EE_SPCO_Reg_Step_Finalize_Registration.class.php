@@ -48,16 +48,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 
 		// there's actually no reg form to process if this is the final step
 		if ( $this->is_current_step() ) {
-			//'display_spco_reg_step'
-			// DEBUG LOG
-			//$this->checkout->log(
-			//	__CLASS__, __FUNCTION__, __LINE__,
-			//	array(
-			//		'$this->checkout->step' 		=> $this->checkout->step,
-			//		'$this->checkout->action' 	=> $this->checkout->action,
-			//		'$this->checkout->current_step->slug()' 	=> $this->checkout->current_step->slug(),
-			//	)
-			//);
 			$this->checkout->step = $_REQUEST['step'] = $this->slug();
 			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
@@ -86,16 +76,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// ensures that all details and statuses for transaction, registration, and payments are updated
 		$txn_update_params = $this->_finalize_transaction();
 		// DEBUG LOG
-		$this->checkout->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'txn_update_params' => $txn_update_params,
-				'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-				'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks(
-					'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
-			)
-		);
+		//$this->checkout->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'txn_update_params' => $txn_update_params,
+		//		'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+		//		'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks(
+		//			'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+		//		'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+		//	)
+		//);
 		// set a hook point
 		do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
 		// check if transaction has a primary registrant and that it has a related Attendee object
@@ -143,9 +133,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-		// if an IPN or other payment hasn't already
+		// if SPCO revisit and TXN status has changed due to a payment
 		if (
-			// SPCO revisit but TXN status has changed due to a payment
 			filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
 			$this->checkout->txn_status_updated
 		) {

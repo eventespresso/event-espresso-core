@@ -336,15 +336,15 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$data = array( $transaction, null );
 		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
-			self::log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$transaction,
-				array(
-					'delivered'  			=> current_time( 'mysql' ),
-					'message_type' 	=> 'payment_reminder',
-					'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
-				)
-			);
+			//self::log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$transaction,
+			//	array(
+			//		'delivered'  			=> current_time( 'mysql' ),
+			//		'message_type' 	=> 'payment_reminder',
+			//		'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
+			//	)
+			//);
 		}
 	}
 
@@ -372,16 +372,16 @@ class EED_Messages  extends EED_Module {
 
 		if ( $message_type ) {
 			if ( self::$_EEMSG->send_message( $message_type, $data ) ) {
-				self::log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					$transaction,
-					array(
-						'delivered' 			=>  current_time( 'mysql' ),
-						'message_type' 	=> $message_type,
-						'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
-						'pay_status' 		=> $payment->status_obj()->code( false, 'sentence' ),
-					)
-				);
+				//self::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	$transaction,
+				//	array(
+				//		'delivered' 			=>  current_time( 'mysql' ),
+				//		'message_type' 	=> $message_type,
+				//		'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
+				//		'pay_status' 		=> $payment->status_obj()->code( false, 'sentence' ),
+				//	)
+				//);
 			}
 		}
 	}
@@ -415,13 +415,7 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	public static function maybe_registration( EE_Registration $registration, $extra_details = array() ) {
-		//self::log(
-		//	__CLASS__, __FUNCTION__, __LINE__,
-		//	$registration->transaction(),
-		//	array(
-		//		'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
-		//	)
-		//);
+
 		if ( ! self::_verify_registration_notification_send( $registration, $extra_details ) ) {
 			//no messages please
 			return;
@@ -434,15 +428,15 @@ class EED_Messages  extends EED_Module {
 			self::_load_controller();
 			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
 				// DEBUG LOG
-				self::log(
-					__CLASS__, __FUNCTION__, __LINE__,
-					$registration->transaction(),
-					array(
-						'delivered'    => current_time( 'mysql' ),
-						'message_type' => $message_type,
-						'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-					)
-				);
+				//self::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	$registration->transaction(),
+				//	array(
+				//		'delivered'    => current_time( 'mysql' ),
+				//		'message_type' => $message_type,
+				//		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+				//	)
+				//);
 			}
 		}
 	}
@@ -473,8 +467,6 @@ class EED_Messages  extends EED_Module {
 			//no messages sent please.
 			return false;
 		}
-
-		//EEH_Debug_Tools::print_filters_for( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
 		// frontend ?
 		if (
 			! ( is_admin() && ! EE_FRONT_AJAX ) &&
@@ -731,7 +723,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
 		EE_Registry::instance()->load_helper('Debug_Tools');
-		if ( WP_DEBUG ) {
+		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
 				$info = EEH_Debug_Tools::strip_objects( $info );

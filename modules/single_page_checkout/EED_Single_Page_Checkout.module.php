@@ -384,7 +384,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// DEBUG LOG
-		$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 		// get reg form
 		$this->_check_form_submission();
 		// checkout the action!!!
@@ -422,30 +422,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 		} else {
 			if ( $checkout->current_step->is_final_step() && $checkout->exit_spco() === true )  {
-				// DEBUG LOG
-				//$checkout->log(
-				//	__CLASS__, __FUNCTION__, __LINE__,
-				//	array(
-				//		'headers_sent' => headers_sent(),
-				//		'redirect_url' => $checkout->redirect_url,
-				//		'headers_list' => headers_list(),
-				//	)
-				//);
 				wp_safe_redirect( $checkout->redirect_url );
 				exit();
 			}
 		}
-		// DEBUG LOG
-		//$checkout->log(
-		//	__CLASS__, __FUNCTION__, __LINE__,
-		//	array(
-		//		'current_step->slug()' => $checkout->current_step instanceof EE_SPCO_Reg_Step ?
-		//$checkout->current_step->slug() : '',
-		//		'next_step->slug()' => $checkout->next_step instanceof EE_SPCO_Reg_Step
-		//			? $checkout->next_step->slug() : '',
-		//	)
-		//);
-
 		// reset anything that needs a clean slate for each request
 		$checkout->reset_for_current_request();
 		return $checkout;

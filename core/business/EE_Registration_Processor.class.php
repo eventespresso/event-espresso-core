@@ -221,14 +221,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
-			$this->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array(
-					'IPN'                   => EE_Processor_Base::$IPN,
-					'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-				)
-			);
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$registration->transaction(),
+			//	array(
+			//		'IPN'                   => EE_Processor_Base::$IPN,
+			//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+			//	)
+			//);
 		}
 	}
 
@@ -263,14 +263,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
-			$this->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array(
-					'IPN'                   => EE_Processor_Base::$IPN,
-					'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-				)
-			);
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$registration->transaction(),
+			//	array(
+			//		'IPN'                   => EE_Processor_Base::$IPN,
+			//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+			//	)
+			//);
 			return TRUE;
 		}
 		return FALSE;
@@ -308,14 +308,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 			// DEBUG LOG
-			$this->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$registration->transaction(),
-				array(
-					'IPN'                   => EE_Processor_Base::$IPN,
-					'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-				)
-			);
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$registration->transaction(),
+			//	array(
+			//		'IPN'                   => EE_Processor_Base::$IPN,
+			//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+			//	)
+			//);
 			return TRUE;
 		}
 		return FALSE;
@@ -333,7 +333,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
 
-		//ob_start();
 		try {
 			//do_action(
 			//	'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
@@ -363,33 +362,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
-				array()
+				$additional_details
 			);
 
 		} catch( Exception $e ) {
-			// DEBUG LOG
-			//$this->log(
-			//	__CLASS__, __FUNCTION__, __LINE__,
-			//	$registration->transaction(),
-			//	array(
-			//		'Exception' => $e->getCode(),
-			//		'Message' => $e->getMessage(),
-			//		'File' => $e->getFile(),
-			//		'Line' => $e->getLine(),
-			//	)
-			//);
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
 		}
-		//$unexpected_output = ob_get_clean();
-		// DEBUG LOG
-		//$this->log(
-		//	__CLASS__, __FUNCTION__, __LINE__,
-		//	$registration->transaction(),
-		//	array(
-		//		'did_action' => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-		//		//'unexpected_output' => $unexpected_output
-		//	)
-		//);
 	}
 
 
