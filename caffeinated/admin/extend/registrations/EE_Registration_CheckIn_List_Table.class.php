@@ -80,7 +80,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	function column_cb( EE_Checkin $item ) {
+	function column_cb($item ) {
 		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->ID() );
 	}
 

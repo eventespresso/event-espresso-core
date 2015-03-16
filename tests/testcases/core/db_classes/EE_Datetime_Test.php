@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Datetime_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/db_classes
  */
 class EE_Datetime_Test extends EE_UnitTestCase{
-	
+
 	function test_increase_sold(){
 		$d = EE_Datetime::new_instance();
 		$this->assertEquals($d->get('DTT_sold'),0);
@@ -42,14 +42,14 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertEquals($id,$d->ID());
 	}
 	function test_start(){
-		$start_time = 123456;//some random time
-		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>$start_time));
-		$this->assertEquals($start_time,$d->start());
+		$start_time = new DateTime("now");
+		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>$start_time->format('U')));
+		$this->assertEquals($start_time->format('U'),$d->start());
 	}
 	function test_end(){
-		$end_time = 234567;
-		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>$end_time));
-		$this->assertEquals($end_time,$d->end());
+		$end_time =new DateTime("now");
+		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>$end_time->format('U')));
+		$this->assertEquals($end_time->format('U'),$d->end());
 	}
 	function test_reg_limit(){
 		$d = EE_Datetime::new_instance(array('DTT_reg_limit'=>10));
@@ -89,13 +89,113 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$d->set('DTT_EVT_end',current_time('timestamp') + 1000);
 		$this->assertFalse($d->is_expired());
 	}
-	function test_datetime_display(){
-		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>1234567, 'DTT_EVT_end'=>23456781));
-		$this->assertEquals('Jan 15, 1970 6:56 am - Sep 29, 1970 11:46 am',$d->get_dtt_display_name());
+	function test_get_dtt_display_name(){
+		//test using actual dates because now could result in different results depending on what time of day it is
+		$base_date = date_create_from_format( 'Y-m-d H:i:s', '2015-01-01 00:00:00' );
+		$testing_date = clone $base_date;
+
+		//setup datetime with different months for start and end dates.
+		$testing_date->add( new DateInterval( 'P1M' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $base_date->format('M j\, Y g:i a') . ' - ' . $testing_date->format('M j\, Y g:i a'),$d->get_dtt_display_name());
 		$this->assertEquals('monkey time',$d->get_dtt_display_name(true));
+
+		//setup datetime with start date and end date with same month but different days.
+		$testing_date->sub( new DateInterval( 'P15D' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $base_date->format( 'M j\, g:i a') . ' - ' . $testing_date->format( 'M j\, g:i a Y' ), $d->get_dtt_display_name() );
+
+		//setup datetime with start date and end date the same day but different times.
+		$testing_date = clone $base_date;
+		$testing_date->add( new DateInterval( 'PT1H' ) );
+		$d = EE_Datetime::new_instance(array('DTT_name'=>'monkey time', 'DTT_EVT_start'=>$base_date->format('U'), 'DTT_EVT_end'=>$testing_date->format('U')));
+		$d->set_date_format( 'Y-m-d' );
+		$d->set_time_format( 'h:i a' );
+		$this->assertEquals( $base_date->format( 'F j\, Y' ) . ' @ ' . $base_date->format( 'g:i a') . ' - ' . $testing_date->format( 'g:i a' ), $d->get_dtt_display_name() );
 	}
-	
-	
+
+
+
+
+	/**
+	 * This tests the ticket_types_available_for_purchase method.
+	 * @since 4.6.0
+	 */
+	public function test_ticket_types_available_for_purchase() {
+		//setup some dates we'll use for testing with.
+		$timezone = new DateTimeZone( 'America/Toronto' );
+		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
+		$past_start_date = new DateTime( "now -2days", $timezone );
+		$current_end_date = new DateTime( "now +2days", $timezone );
+		$current = new DateTime( "now", $timezone );
+		$formats = array( 'Y-d-m',  'h:i a' );
+		$full_format = implode( ' ', $formats );
+
+		//create some tickets
+		$tickets = array(
+			'expired_ticket' => array( 'TKT_start_date' => $past_start_date->format($full_format), 'TKT_end_date' => $past_start_date->format($full_format), 'timezone' => 'America/Toronto', 'formats' =>$formats ),
+			'upcoming_ticket' => array( 'TKT_start_date' => $past_start_date->format( $full_format ), 'TKT_end_date' => $upcoming_start_date->format( $full_format ), 'timezone' => 'America/Toronto', 'formats' => $formats )
+			);
+
+		$datetimes = array(
+			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
+			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
+			);
+
+		//assign tickets to all datetimes
+		foreach ( $datetimes as $datetime ) {
+			foreach( $tickets as $ticket_args ) {
+				$tkt = $this->factory->ticket->create ( $ticket_args );
+				$datetime->_add_relation_to( $tkt, 'Ticket' );
+				$datetime->save();
+				$dtt_id = $datetime;
+			}
+		}
+
+		//okay NOW we have some objects for testing with.
+
+		//test expired_datetime
+		$this->assertEmpty( $datetimes['expired_datetime']->ticket_types_available_for_purchase() );
+
+		//test upcoming datetime
+		$tickets = $datetimes['upcoming_datetime']->ticket_types_available_for_purchase();
+		$this->assertEquals( 1, count( $tickets ) );
+		$this->assertInstanceOf( 'EE_Ticket', reset( $tickets ) );
+
+		//test active datetime
+		$tickets = $datetimes['active_datetime']->ticket_types_available_for_purchase();
+		$this->assertEquals( 1, count( $tickets ) );
+		$this->assertInstanceOf( 'EE_Ticket', reset( $tickets ) );
+
+		//test sold out datetime
+		$this->assertEmpty( $datetimes['sold_out_datetime']->ticket_types_available_for_purchase() );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_time_range() {
+		//setup a datetime for testing
+		$start_date = new DateTime( 'now' );
+		$end_date = new DateTime( 'now + 3 hours' );
+		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ), 'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+
+		//assert we have a datetime
+		$this->assertInstanceOf( 'EE_Datetime', $datetime );
+
+		//verify that the expected time format is generated.
+		$this->assertEquals( $start_date->format( 'H:i:s' ) . ' - ' . $end_date->format( 'H:i:s' ), $datetime->time_range() );
+	}
+
+
 }
 
 // End of file EE_Datetime_Test.php

@@ -409,7 +409,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//if we have ANY errors, then we want to make sure we return the values for ALL the fields so the user doesn't have to retype them all.
 		if ( !empty( $this->_errors ) ) {
 			foreach ( $this->_fields as $field => $value ) {
-				$this->_errors[$field]['value'] = $value;
+				$this->_errors[$field]['value'] = stripslashes($value);
 			}
 		}
 

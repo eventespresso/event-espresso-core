@@ -49,7 +49,6 @@
 		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>
 
-
 	<a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text" rel="additional-transaction-session-info">
 		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional transaction session details', 'event_espresso' );?>
 	</a>
@@ -490,6 +489,42 @@
 	</div>
 
 	<?php endif; // $grand_raw_total > 0?>
+
+	<?php
+	if ( WP_DEBUG ) {
+		$delivered_messages = get_option( 'EED_Messages__payment', array() );
+		if ( isset( $delivered_messages[ $TXN_ID ] )) {
+			?>
+			<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-email-alt"></span><?php _e( 'Messages Sent to Primary Registrant', 'event_espresso' );?></h4>
+
+			<div class="admin-primary-mbox-tbl-wrap">
+				<table class="admin-primary-mbox-tbl">
+					<thead>
+						<tr>
+							<th class="jst-left"><?php _e( 'Date & Time', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Message Type', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Payment Status Upon Sending', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'TXN Status Upon Sending', 'event_espresso' );?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $delivered_messages[ $TXN_ID ] as $timestamp => $delivered_message ) :
+							?>
+							<tr>
+								<td class="jst-left"><?php echo gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['message_type'] ) ? $delivered_message['message_type'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['pay_status'] ) ? $delivered_message['pay_status'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['txn_status'] ) ? $delivered_message['txn_status'] : '';?></td>
+							</tr>
+						<?php endforeach; // $delivered_messages?>
+					</tbody>
+				</table>
+			</div>
+		<?php
+		}
+	}
+	?>
+
 
 </div>
 

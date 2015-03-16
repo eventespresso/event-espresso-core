@@ -282,7 +282,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 * recheck here.
 		 */
 		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
-		EEM_Payment_Method::instance()->verify_button_urls( EEM_Payment_Method::instance()->get_all_active() );
+		EEM_Payment_Method::instance()->verify_button_urls();
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
@@ -868,6 +868,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//makes sure start date is the lowest value and vice versa
 			$start_date = min( $start_date, $end_date );
 			$end_date = max( $start_date, $end_date );
+
+			//convert for query
+			$start_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', $start_date, 'U' );
+			$end_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', $end_date, 'U' );
 
 			$query_params[0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
 

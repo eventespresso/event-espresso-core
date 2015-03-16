@@ -105,32 +105,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    nocache_headers_nginx
-	 *
-	 * @access    public
-	 * @param $headers
-	 * @return    array
-	 */
-	public static function nocache_headers_nginx ( $headers ) {
-		$headers['X-Accel-Expires'] = 0;
-		return $headers;
-	}
-
-
-
-	/**
-	 * 	nocache_headers
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function nocache_headers() {
-		nocache_headers();
-	}
-
-
-
-	/**
 	 * 	process ajax request
 	 * @param string $ajax_action
 	 */
@@ -433,12 +407,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->add_styles_and_scripts();
 		// kk... SPCO has successfully run
 		EED_Single_Page_Checkout::$_initialized = TRUE;
-		// add no cache headers
-		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
-		// plus a little extra for nginx
-		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
-		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
-		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+		// set no cache headers and constants
+		EE_System::do_not_cache();
 		// remove transaction lock
 		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
@@ -1010,7 +980,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// good registrant, you get to proceed
 						if ( $this->checkout->current_step->success_message() != '' ) {
-							EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							if ( apply_filters( 'FHEE__Single_Page_Checkout___process_form_action__display_success', false ) ) {
+								EE_Error::add_success( $this->checkout->current_step->success_message() . '<br />' . $this->checkout->next_step->_instructions() );
+							}
 						}
 						// pack it up, pack it in...
 						$this->_setup_redirect();

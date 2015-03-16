@@ -294,16 +294,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
+		$show_try_pay_again_link_default =  do_action( 'AHEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default', TRUE );
 		// txn status ?
 		if( $this->_current_txn->is_completed() ){
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		} else if ( $this->_current_txn->is_incomplete() && ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() )){
 			$this->_show_try_pay_again_link = TRUE;
 		} else if ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() ) {
 			// its pending
-			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : $show_try_pay_again_link_default;
 		} else {
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
 		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
 		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
@@ -321,6 +322,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
+		// set no cache headers and constants
+		EE_System::do_not_cache();
 
 	}
 

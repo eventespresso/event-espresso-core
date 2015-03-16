@@ -253,7 +253,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-		$sql_date = date("Y-m-d H:i:s", strtotime($period));
+		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
 		$where = array('REG_date'=>array('>=',$sql_date) );
 
 		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
@@ -284,7 +284,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
-		$date_sql = date("Y-m-d H:i:s", strtotime($period));
+		$date_sql = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period)), 'Y-m-d H:i:s', 'UTC' );
 		$where = array( 'REG_date'=>array('>=',$date_sql ) );
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();

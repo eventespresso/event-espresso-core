@@ -31,24 +31,27 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @param string $timezone
-	 * @return EE_Transaction
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 *
-	 * @param array $props_n_values
-	 * @param string $timezone
-	 * @return EE_Transaction
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -282,11 +285,12 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	/**
 	 *    datetime
 	 *
-	 *    Returns the transaction datetime as:
-	 * 			- unix timestamp format including the UTC (timezone) offset (default)
-	 * 			- formatted date string including the UTC (timezone) offset ($format = TRUE ($gmt has no affect with this option))
-	 * 			- unix timestamp format in UTC+0 (GMT) ($gmt = TRUE)
-	 *    Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *    Returns the transaction datetime as either:
+	 * 			- unix timestamp format ($format = false, $gmt = true)
+	 * 			- formatted date string including the UTC (timezone) offset ($format = true ($gmt
+	 * 			  has no affect with this option)), this also may include a timezone abbreviation if the
+	 * 			  set timezone in this class differs from what the timezone is on the blog.
+	 * 			- formatted date string including the UTC (timezone) offset (default).
 	 *
 	 * @access 	public
 	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string

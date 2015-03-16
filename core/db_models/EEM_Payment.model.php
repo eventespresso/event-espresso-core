@@ -141,27 +141,56 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 
 
 
+
+
 	/**
-	*		retrieve  all payments from db between two dates
-	*
-	* 		@access		public
-	* 		@param		string		$start_date
-	* 		@param		string		$end_date
-	*		@return 	EE_Payment[]
-	*/
-	public function get_payments_made_between_dates( $start_date = '', $end_date = '' ) {
-		// initial values
-		$start_date = ! empty( $start_date ) ? $start_date : date('Y-m-d',current_time('timestamp'));
-		$end_date = ! empty( $end_date ) ? $end_date : date('Y-m-d',current_time('timestamp'));
-		// make sure our timestamps start and end right at the boundaries for each day
-		$start_date = date( 'Y-m-d', strtotime( $start_date )) . ' 00:00:00';
-		$end_date = date( 'Y-m-d', strtotime( $end_date )) . ' 23:59:59';
-		// convert to timestamps
+	 * retrieve  all payments from db between two dates,
+	 *
+	 * @param string $start_date incoming start date. If empty the beginning of today is used.
+	 * @param string $end_date   incoming end date. If empty the end of today is used.
+	 * @param string $format  	If you include $start_date or $end_date then you must include the format string
+	 *                         		for the format your date is in.
+	 * @param string $timezone   If your range is in a different timezone then the current setting on this
+	 *                           		WordPress install, then include it here.
+	 * @throws EE_Error
+	 *
+	 * @return EE_Payment[]
+	 */
+	public function get_payments_made_between_dates( $start_date = '', $end_date = '', $format = '', $timezone = '' ) {
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+		//if $start_date or $end date, verify $format is included.
+		if ( ( ! empty( $start_date ) || ! empty( $end_date ) ) && empty( $format ) ) {
+			throw new EE_Error( __('You included a start date and/or a end date for this method but did not include a format string.  The format string is needed for setting up the query', 'event_espresso' ) );
+		}
+
+		if ( ! empty( $start_date ) ) {
+			$start_date = date_create_from_format( $format, $start_date, new DateTimeZone( $timezone ) );
+			$start_date = $start_date->setTimeZone( new DateTimeZone( $this->_timezone) )->format( 'Y-m-d' ) . ' 00:00:00';
+		} else {
+			$start_date = new DateTime( 'now' );
+			$start_date = $start_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format('Y-m-d') . ' 00:00:00';
+		}
+
+		if ( ! empty( $end_date ) ) {
+			$end_date = date_create_from_format( $format, $end_date, new DateTimeZone( $timezone ) );
+			$end_date = $end_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( 'Y-m-d' ) . ' 23:59:59';
+		} else {
+			$end_date = new DateTime( 'now' );
+			$end_date = $end_date->setTimeZone( new DateTimeZone( $this->_timezone ) )->format('Y-m-d') . ' 23:59:59';
+		}
+
 		$start_date = strtotime( $start_date );
 		$end_date = strtotime( $end_date );
+
 		// make sure our start date is the lowest value and vice versa
-		$start_date = min( $start_date, $end_date );
-		$end_date = max( $start_date, $end_date );
+		$start = min( $start_date, $end_date );
+		$end = max( $start_date, $end_date );
+
+		//yes we generated the date and time string in utc but we WANT this start date and time used in the set timezone on the model.
+		$start_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $start ) . ' 00:00:00', 'Y-m-d H:i:s', $this->get_timezone() );
+		$end_date = $this->convert_datetime_for_query( 'PAY_timestamp', date( 'Y-m-d', $end) . ' 23:59:59' , 'Y-m-d H:i:s', $this->get_timezone() );
+
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
 

@@ -376,6 +376,7 @@ class EEH_Activation {
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}
+		/** @var WPDB $wpdb */
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
 		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
@@ -394,20 +395,32 @@ class EEH_Activation {
 								TRUE );
 			}
 		}
-		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
-		//get $wpdb to echo errors, but buffer them. This way at least WE know an error
-		//happened. And then we can choose to tell the end user
-		$old_show_errors_policy = $wpdb->show_errors( TRUE );
-		$old_error_supression_policy = $wpdb->suppress_errors( FALSE );
-		ob_start();
-		dbDelta( $SQL );
-		$output = ob_get_contents();
-		ob_end_clean();
-		$wpdb->show_errors( $old_show_errors_policy );
-		$wpdb->suppress_errors( $old_error_supression_policy );
-		if( ! empty( $output ) ){
-			throw new EE_Error( $output	);
-		}
+// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
+if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
+	$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+	//get $wpdb to echo errors, but buffer them. This way at least WE know an error
+	//happened. And then we can choose to tell the end user
+	$old_show_errors_policy = $wpdb->show_errors( TRUE );
+	$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
+	ob_start();
+	dbDelta( $SQL );
+	$output = ob_get_contents();
+	ob_end_clean();
+	$wpdb->show_errors( $old_show_errors_policy );
+	$wpdb->suppress_errors( $old_error_suppression_policy );
+	if( ! empty( $output ) ){
+		throw new EE_Error( $output	);
+	}
+} else {
+	throw new EE_Error(
+		sprintf(
+			__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
+			'<br />',
+			$sql
+		)
+	);
+}
+
 	}
 
 
@@ -829,7 +842,7 @@ class EEH_Activation {
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
 		}else{
-			EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all());
+			EEM_Payment_Method::instance()->verify_button_urls();
 		}
 	}
 

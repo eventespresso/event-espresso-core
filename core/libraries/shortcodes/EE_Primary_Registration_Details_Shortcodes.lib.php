@@ -120,7 +120,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			case '[PRIMARY_REGISTRANT_REGISTRATION_DATE]' :
 				if ( ! $primary_registration->primary_reg_obj instanceof EE_Registration )
 					return '';
-				return date_i18n( get_option( 'date_format'), strtotime( $primary_registration->primary_reg_obj->date() ) );
+				return $primary_registration->primary_reg_obj->get_i18n_datetime( 'REG_date', get_option( 'date_format' ) );
 				break;
 
 			case '[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]' :

@@ -67,23 +67,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 *
-	 * @param array  $props_n_values
-	 * @param string $timezone
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
 	 * @return EE_Datetime
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values
-	 * @param null  $timezone
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
 	 * @return EE_Datetime
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = NULL ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -342,9 +346,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return        mixed        string on success, FALSE on fail
 	 */
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
-		$dt_frmt = !empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
-		$start = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'start', NULL, NULL ) ) ) );
-		$end = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'end', NULL, NULL ) ) ) );
+		$dt_frmt = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
+		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $dt_frmt ) );
+		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end', $dt_frmt ) );
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 
@@ -414,8 +418,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		$tm_format = !empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
-		$start = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'start', NULL, NULL ) ) ) );
-		$end = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'end', NULL, NULL ) ) ) );
+
+		$start = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_start', $tm_format ) );
+		$end = str_replace( ' ', '&nbsp;', $this->get_i18n_datetime( 'DTT_EVT_end',  $tm_format ) );
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 
@@ -739,10 +744,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 			return array();
 		}
 		if ( empty( $query_params ) ) {
-			$query_params = array( array( 'TKT_start_date' => array( '<=', current_time( 'mysql' ) ), 'TKT_end_date' => array( '>=', current_time( 'mysql' ) ), 'TKT_deleted' => FALSE ) );
+			$query_params = array( array( 'TKT_start_date' => array( '<=', EEM_Ticket::instance()->current_time_for_query( 'TKT_start_date' ) ), 'TKT_end_date' => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date') ), 'TKT_deleted' => FALSE ) );
 		}
-		//		$query_params[0]['TKT_start_date'] = array('<=',current_time('mysql'));
-		//		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
 		return $this->tickets( $query_params );
 	}
 
