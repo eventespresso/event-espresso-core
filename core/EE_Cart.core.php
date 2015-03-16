@@ -197,43 +197,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
-		EEH_Line_Item::add_ticket_purchase( $this->get_event_line_item_for_ticket( $ticket ), $ticket, $qty );
+		EEH_Line_Item::add_ticket_purchase( $this->get_grand_total(), $ticket, $qty );
 		return $this->save_cart() ? TRUE : FALSE;
-	}
-
-
-
-	 /**
-	  *    get_event_line_item_for_ticket
-	  *
-	  * @access public
-	  * @param EE_Ticket $ticket
-	  * @throws \EE_Error
-	  * @return EE_Line_Item
-	  */
-	public function get_event_line_item_for_ticket( EE_Ticket $ticket ) {
-
-		$event = $ticket->first_datetime()->event();
-		if ( ! $event instanceof EE_Event ) {
-			throw new EE_Error( __( 'The supplied ticket has no event data associated with it.','event_espresso' ));
-		}
-		$event_line_item = NULL;
-		foreach ( EEH_Line_Item::get_event_subtotals( $this->get_grand_total() ) as $event_line_item ) {
-			// default event subtotal, we should only ever find this the first time this method is called
-			if ( ! $event_line_item->OBJ_ID() ) {
-				// let's use this! but first... set the event details
-				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
-				break;
-			} else if ( $event_line_item->OBJ_ID() === $event->ID() ) {
-				// found existing line item for this event in the cart, so break out of loop and use this one
-				break;
-			} else {
-				$event_line_item = $this->add_subtotal_line_item_for_event( $event );
-				// found existing line item for this event in the cart, so break out of loop and use this one
-				break;
-			}
-		}
-		return $event_line_item;
 	}
 
 

@@ -82,12 +82,18 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
-	 * @param EE_Line_Item $event_line_item of type EEM_Line_Item::type_sub_total
+	 * @param EE_Line_Item $line_item grand total line item of type EEM_Line_Item::type_total OR
+	 *	event-sub-total of type EEM_Line_Item::type_sub_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
 	 * @return EE_Line_Item
 	 */
-	public static function add_ticket_purchase( EE_Line_Item $event_line_item, EE_Ticket $ticket, $qty = 1 ){
+	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		//make sure we're adding this to an EVENT sub-total
+		if( $total_line_item->type() == EEM_Line_Item::type_total ){
+			$total_line_item = self::get_event_line_item_for_ticket($total_line_item, $ticket);
+		}
+
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(
 			array(
@@ -129,7 +135,7 @@ class EEH_Line_Item {
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
 		}
-		self::add_item( $event_line_item, $line_item );
+		self::add_item( $total_line_item, $line_item );
 		return $line_item;
 	}
 
@@ -286,6 +292,45 @@ class EEH_Line_Item {
 	 */
 	public static function get_event_code( $event ) {
 		return 'event-' . ( $event instanceof EE_Event ? $event->ID() : '0' );
+	}
+
+	/**
+	  * Given the grand total line item and a ticket, finds the event sub-total
+	  * line item the ticket's purchase should be added onto
+	  *
+	  * @access public
+	  * @param EE_Line_Item $grand_total the grand total line item
+	  * @param EE_Ticket $ticket
+	  * @throws \EE_Error
+	  * @return EE_Line_Item
+	  */
+	public static function get_event_line_item_for_ticket( EE_Line_Item $grand_total, EE_Ticket $ticket ) {
+
+		$first_datetime = $ticket->first_datetime();
+		if( ! $first_datetime instanceof EE_Datetime ){
+			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no datetimes', 'event_espresso' ), $ticket->ID() ) );
+		}
+		$event = $first_datetime->event();
+		if ( ! $event instanceof EE_Event ) {
+			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no event data associated with it.','event_espresso' ), $ticket->ID() ) );
+		}
+		$event_line_item = NULL;
+		foreach ( EEH_Line_Item::get_event_subtotals( $grand_total ) as $event_line_item ) {
+			// default event subtotal, we should only ever find this the first time this method is called
+			if ( ! $event_line_item->OBJ_ID() ) {
+				// let's use this! but first... set the event details
+				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+				break;
+			} else if ( $event_line_item->OBJ_ID() === $event->ID() ) {
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			} else {
+				$event_line_item = $this->add_subtotal_line_item_for_event( $event );
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			}
+		}
+		return $event_line_item;
 	}
 
 
