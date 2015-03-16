@@ -268,7 +268,7 @@ class EEH_Line_Item {
 	 */
 	public static function create_event_subtotal( EE_Line_Item $pre_tax_line_item, $transaction = NULL, $event = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'	=> 'event',
+			'LIN_code'	=> self::get_event_code( $event ),
 			'LIN_name' 	=> __('Event', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total,
 			'OBJ_type' 	=> 'Event',
@@ -277,6 +277,15 @@ class EEH_Line_Item {
 		self::set_TXN_ID( $event_line_item, $transaction );
 		$pre_tax_line_item->add_child_line_item( $event_line_item );
 		return $event_line_item;
+	}
+
+	/**
+	 * Gets what the event ticket's code SHOULD be
+	 * @param EE_Event $event
+	 * @return string
+	 */
+	public static function get_event_code( $event ) {
+		return 'event-' . ( $event instanceof EE_Event ? $event->ID() : '0' );
 	}
 
 
