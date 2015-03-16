@@ -133,19 +133,21 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
-		// if SPCO revisit and TXN status has changed due to a payment
-		if (
-			filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
-			$this->checkout->txn_status_updated
-		) {
-			// send out notifications
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-		}
 		// If the selected method of payment used an off-site gateway...
-		if ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) {
-			// do NOT trigger notifications because it was already done during the IPN
-			remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
+			// if SPCO revisit and TXN status has changed due to a payment
+			//if (
+			//	filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
+			//	$this->checkout->txn_status_updated
+			//) {
+			//	// send out notifications
+			//	add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			//}
+			if ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) {
+				// do NOT trigger notifications because it was already done during the IPN
+				remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+			}
 		}
 		// this will result in the base session properties getting saved to the TXN_Session_data field
 		$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
