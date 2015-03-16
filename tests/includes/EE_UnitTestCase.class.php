@@ -734,7 +734,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
-			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
+			$ticket = $this->new_ticket( array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
 			foreach($taxes as $taxes_at_priority){
