@@ -1173,8 +1173,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 	private function _validate_offsite_return() {
-		$TXN_ID = EE_Registry::instance()->REQ->get( 'spco_txn', 0 );
-		if ( $TXN_ID !== $this->checkout->transaction->ID() ) {
+		$TXN_ID = (int)EE_Registry::instance()->REQ->get( 'spco_txn', 0 );
+		if ( $TXN_ID != $this->checkout->transaction->ID() ) {
 			// Houston... we might have a problem
 			$invalid_TXN = false;
 			// first gather some info
