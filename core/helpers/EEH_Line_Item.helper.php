@@ -349,6 +349,7 @@ class EEH_Line_Item {
 	 */
 	public static function set_event_subtotal_details( EE_Line_Item $event_line_item, EE_Event $event, $transaction = NULL ){
 		if ( $event instanceof EE_Event ) {
+			$event_line_item->set_code( self::get_event_code( $event ) );
 			$event_line_item->set_desc( $event->name() );
 			$event_line_item->set_OBJ_ID( $event->ID() );
 		}
