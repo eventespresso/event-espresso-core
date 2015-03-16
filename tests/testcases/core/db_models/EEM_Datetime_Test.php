@@ -29,6 +29,9 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		parent::tearDown();
 	}
 
+
+
+
 	/**
 	 * Tests the get_datetimes_for_event_ordered_by_DTT_order method.
 	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/6744 for bug being tested below.
@@ -41,13 +44,13 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	public function test_get_datetimes_for_event_ordered_by_DTT_order__different_timezone() {
 
 		//create an event and datetime
-		$event = $this->factory->event->create();
+		$event = $this->factory->event->create( array( 'EVT_timezone_string' =>  'Australia/Sydney' ) );
 
 		//for test we want a datetime begining one hour before now and ending now (-1min), and a datetime starting now and ending one hour from now.
-		$dtt1_start = (int) current_time('timestamp') - 60*60;
-		$dtt1_end = (int) current_time('timestamp') - 60;
+		$dtt1_start = (int) current_time('timestamp') - 60*60*24;
+		$dtt1_end = (int) current_time('timestamp') - 60*60;
 		$dtt2_start = $dtt1_start + 60*60;
-		$dtt2_end = $dtt1_end + 60*60;
+		$dtt2_end = $dtt1_end + 60*60*24;
 
 
 		$dtt1 = $this->factory->datetime->create( array( 'DTT_EVT_start' => $dtt1_start, 'DTT_EVT_end' => $dtt1_end ) );
@@ -265,6 +268,133 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		//first datetime returned should be dtt2 because dtt1 is expired.
 		$this->assertInstanceOf( 'EE_Datetime', $second_dtt_chk );
 		$this->assertEquals( $second_dtt_chk->ID(), $dtt2->ID() );
+	}
+
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_create_new_blank_datetime() {
+		//if timezone is empty string then the setUp didn't work correctly.  For the purpose of this test
+		//we want a high positive timezone, so let's force that if necessary
+		if ( get_option( 'timezone_string' ) != 'Australia/Sydney' ) {
+			update_option( 'timezone_string', 'Australia/Sydney' );
+			EEM_Datetime::reset();
+			EEM_Datetime::instance();
+		}
+
+		EE_Registry::instance()->load_helper('DTT_Helper');
+		//make sure now is in the timezone we want to test with.
+		$now =  new Datetime( "now +30 days", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+		$now->setTime( '8', '0', '0' );
+		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
+
+		//get the default datetime
+		$default_date = EEM_Datetime::instance()->create_new_blank_datetime();
+		$default_date = reset( $default_date );
+
+		//assert instance
+		$this->assertInstanceOf( 'EE_Datetime', $default_date );
+
+		//set its timezone to match our expected timezone
+		$default_date->set_timezone( 'America/Toronto' );
+		$actual = $default_date->get_raw_date( 'DTT_EVT_start');
+
+		$this->assertInstanceOf( 'DateTime', $actual );
+
+		//assert that we have the correct values on the date... we'll do each part separately to verify.
+		$this->assertEquals( $now->format('Y'), $actual->format('Y' ) );
+		$this->assertEquals( $now->format('m'), $actual->format( 'm' ) );
+		$this->assertEquals( $now->format('d'), $actual->format( 'd' ) );
+		$this->assertEquals( $now->format('H'), $actual->format( 'H' ) );
+		$this->assertEquals( $now->format('i'), $actual->format('i' ) );
+	}
+
+
+
+	public function test_get_dtt_months_and_years() {
+		//setup some dates we'll use for testing with.
+		$timezone = new DateTimeZone( 'America/Toronto' );
+		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
+		$past_start_date = new DateTime( "now -2days", $timezone );
+		$current_end_date = new DateTime( "now +2days", $timezone );
+		$current = new DateTime( "now", $timezone );
+		$formats = array( 'Y-d-m',  'h:i a' );
+		$full_format = implode( ' ', $formats );
+
+		//setup some datetimes to attach to events.
+		$datetimes = array(
+			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
+			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ), 'DTT_EVT_end' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'inactive_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
+			);
+
+
+		$events = $this->factory->event->create_many(5);
+
+		//add datetimes to the events.
+		$events[0]->_add_relation_to( $datetimes['expired_datetime'], 'Datetime' );
+		$events[0]->save();
+		$events[1]->_add_relation_to( $datetimes['upcoming_datetime'], 'Datetime' );
+		$events[1]->save();
+		$events[2]->_add_relation_to( $datetimes['active_datetime'], 'Datetime' );
+		$events[2]->save();
+		$events[3]->_add_relation_to( $datetimes['sold_out_datetime'], 'Datetime' );
+		$events[3]->save();
+		$events[4]->_add_relation_to( $datetimes['inactive_datetime'], 'Datetime' );
+		$events[4]->save();
+
+		foreach ( $events as $index => $event ) {
+			if ( $index !== 4 ) {
+				$event->set('status', 'publish' );
+				$event->save();
+			}
+		}
+
+		//run tests for various scenarios.
+		foreach ( $datetimes as $type => $datetime ) {
+			switch ( $type ) {
+				case 'expired_datetime' :
+					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'expired' );
+					$dtt = reset( $dtts );
+					$this->assertEquals( 1, count( $dtts ) );
+					$this->assertEquals( $past_start_date->format('Y'), $dtt->dtt_year );
+					$this->assertEquals( $past_start_date->format('F'), $dtt->dtt_month );
+					break;
+				case 'upcoming_datetime' :
+					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'upcoming' );
+					$dtt = reset( $dtts );
+					$this->assertEquals( 1, count( $dtts ) );
+					$this->assertEquals( $upcoming_start_date->format('Y'), $dtt->dtt_year );
+					$this->assertEquals( $upcoming_start_date->format('F'), $dtt->dtt_month );
+					break;
+				case 'active_datetime' :
+					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'active' );
+					$dtt = reset( $dtts );
+					$this->assertEquals( 1, count( $dtts ) );
+					$this->assertEquals( $current->format('Y'), $dtt->dtt_year );
+					$this->assertEquals( $current->format('F'), $dtt->dtt_month );
+					break;
+				case 'sold_out_datetime' :
+					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'upcoming' );
+					$dtt = reset( $dtts );
+					$this->assertEquals( 1, count( $dtts ) );
+					$this->assertEquals( $upcoming_start_date->format('Y'), $dtt->dtt_year );
+					$this->assertEquals( $upcoming_start_date->format('F'), $dtt->dtt_month );
+					break;
+				case 'inactive_datetime' :
+					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'inactive' );
+					$dtt = reset( $dtts );
+					$this->assertEquals( 1, count( $dtts ) );
+					$this->assertEquals( $current->format('Y'), $dtt->dtt_year );
+					$this->assertEquals( $current->format('F'), $dtt->dtt_month );
+					break;
+			}
+		}
 	}
 
 }

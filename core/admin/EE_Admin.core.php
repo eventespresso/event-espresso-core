@@ -674,6 +674,7 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
+		EE_Registry::instance()->load( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
@@ -687,22 +688,25 @@ final class EE_Admin {
 		}
 		// do we have a date_time format to check ?
 		if ( $date_time_format ) {
-			// because DateTime chokes on some formats, check first that strtotime can parse it
-			$date_string = strtotime( date( $date_time_format ));
-			// invalid date time formats will evaluate to either "0" or ""
-			if ( empty( $date_string )) {
+			$error_msg = EEH_DTT_Helper::validate_format_string( $date_time_format );
+
+			if ( is_array( $error_msg ) ) {
+				$msg = '<p>' . sprintf( __( 'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:', 'event_espresso' ), date( $date_time_format ) , $date_time_format  ) . '</p><p><ul>';
+
+
+				foreach ( $error_msg as $error ) {
+					$msg .= '<li>' . $error . '</li>';
+				}
+
+				$msg .= '</ul></p><p>' . sprintf( __( '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ), '<span style="color:#D54E21;">', '</span>' ) . '</p>';
+
 				// trigger WP settings error
 				add_settings_error(
 					'date_format',
 					'date_format',
-					sprintf(
-						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
-						date( $date_time_format ),
-						$date_time_format,
-						'<br /><span style="color:#D54E21;">',
-						'</span>'
-					)
+					$msg
 				);
+
 				// set format to something valid
 				switch ( $option ) {
 					case 'date_format' :

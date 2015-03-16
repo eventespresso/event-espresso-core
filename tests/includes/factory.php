@@ -28,6 +28,12 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 
 	/**
+	 * @var EE_UnitTest_Factory_For_Venue
+	 */
+	public $venue;
+
+
+	/**
 	 * @var EE_UnitTest_Factory_For_Datetime
 	 */
 	public $datetime;
@@ -84,11 +90,20 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 
 
+	/**
+	 *
+	 * @var EE_UnitTest_Factory_For_Payment
+	 */
+	public $payment;
+
+
+
 	public function __construct() {
 		parent::__construct();
 
 		//setup any properties containing various test factory objects. EE_Test_Factories should extend the WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/factory.php).
 		$this->event = new EE_UnitTest_Factory_For_Event( $this );
+		$this->venue = new EE_UnitTest_Factory_For_Venue( $this );
 		$this->datetime = new EE_UnitTest_Factory_For_Datetime( $this );
 		$this->datetime_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
 		$this->ticket = new EE_UnitTest_Factory_For_Ticket( $this );
@@ -104,6 +119,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->attendee = new EE_UnitTest_Factory_For_Attendee( $this );
 		$this->attendee_chained = new EE_UnitTest_Factory_For_Attendee( $this, true );
 		$this->status = new EE_UnitTest_Factory_For_Status( $this );
+		$this->payment = new EE_UnitTest_Factory_For_Payment( $this );
 	}
 }
 
@@ -184,6 +200,87 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 		return EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 	}
 }
+
+
+
+
+
+/**
+ * EE Factory Class for Venues
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Venue extends WP_UnitTest_Factory_For_Thing {
+
+	public function __construct( $factory = NULL ) {
+		parent::__construct( $factory );
+		//default args for creating events.
+		$this->default_generation_definitions = array(
+			'VNU_name' => new WP_UnitTest_Generator_Sequence( 'Venue %s' ),
+			'VNU_desc' => new WP_UnitTest_Generator_Sequence( 'Venue content %s' ),
+			'VNU_short_desc' => new WP_UnitTest_Generator_Sequence( 'Venue excerpt %s' ),
+		);
+	}
+
+
+	/**
+	 * used by factory to create venue object
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Venue|false
+	 */
+	public function create_object( $args ) {
+		$venue = EE_Venue::new_instance( $args );
+		$venID = $venue->save();
+		return $venID ? $venue : false;
+	}
+
+
+	/**
+	 * Update venue object for given venue
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int      $VNU_ID         Venue ID for the event to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Venue|false
+	 */
+	public function update_object( $VNU_ID, $cols_n_data ) {
+		//all the stuff for updating an event.
+		$venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+		if ( ! $venue instanceof EE_Venue )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$venue->set( $key, $val );
+		}
+		$success = $venue->save();
+		return $success ? $venue : false;
+	}
+
+
+
+	/**
+	 * return the venue object for a given venue ID
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int  $VNU_ID the venue id for the venue to attemp to retrieve
+	 *
+	 * @return mixed null|EE_Venue
+	 */
+	public function get_object_by_id( $VNU_ID ) {
+		return EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+	}
+}
+
+
 
 
 
@@ -303,7 +400,23 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['EVT_ID'] );
 		}
 
-		$dtt = EE_Datetime::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//dateformats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$dtt = EE_Datetime::new_instance( $args, $timezone, $formats );
 		$dttID = $dtt->save();
 		$dtt = $this->_maybe_chained( $dtt, $args );
 		return $dttID ? $dtt : false;
@@ -511,7 +624,23 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 			unset( $args['DTT_ID'] );
 		}
 
-		$tkt = EE_ticket::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+		$tkt = EE_Ticket::new_instance( $args, $timezone, $formats );
 		$tktID = $tkt->save();
 		$tkt = $this->_maybe_chained( $tkt, $args );
 		return $tktID ? $tkt : false;
@@ -1091,7 +1220,22 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 	 */
 	public function create_object( $args ) {
 		static $att_nmbr = 0;
-		$registration = EE_Registration::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+		$registration = EE_Registration::new_instance( $args, $timezone, $formats );
 		//some things have to be set after the registration has been instantiated.
 		$registration->set( 'REG_session', uniqid() );
 		$registrationID = $registration->save();
@@ -1291,7 +1435,22 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 	 * @return EE_Transaction|false
 	 */
 	public function create_object( $args ) {
-		$transaction = EE_Transaction::new_instance( $args );
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+		$transaction = EE_Transaction::new_instance( $args, $timezone, $formats );
 		$transactionID = $transaction->save();
 		$transaction = $this->_maybe_chained( $transaction, $args );
 		$transaction->save();
@@ -1580,5 +1739,99 @@ class EE_UnitTest_Factory_For_Status extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $STS_ID ) {
 		return EEM_Status::instance()->get_one_by_ID( $STS_ID );
+	}
+}
+
+
+
+
+
+
+/**
+ * EE Factory Class for EE_Payment
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Payment extends WP_UnitTest_Factory_For_Thing {
+
+	public function __construct( $factory = NULL ) {
+		parent::__construct( $factory );
+		//default args for creating payments.
+		$this->default_generation_definitions = array();
+	}
+
+
+	/**
+	 * used by factory to create payment object
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Payment|false
+	 */
+	public function create_object( $args ) {
+
+		//timezone?
+		if ( isset( $args['timezone'] ) ) {
+			$timezone = $args['timezone'];
+			unset( $args['timezone'] );
+		} else {
+			$timezone = null;
+		}
+
+		//date_formats?
+		if ( isset( $args['formats'] ) && is_array( $args['formats'] ) ){
+			$formats = $args['formats'];
+			unset( $args['formats'] );
+		} else {
+			$formats = array();
+		}
+
+
+		$payment = EE_Payment::new_instance( $args, $timezone, $formats );
+		$paymentID = $payment->save();
+		return $paymentID ? $payment : false;
+	}
+
+
+	/**
+	 * Update payment object for given payment
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int      $PMT_ID         Payment ID for the payment to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Payment|false
+	 */
+	public function update_object( $PMT_ID, $cols_n_data ) {
+		//all the stuff for updating an payment.
+		$payment = EEM_Payment::instance()->get_one_by_ID( $PMT_ID );
+		if ( ! $payment instanceof EE_Payment )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$payment->set( $key, $val );
+		}
+		$success = $payment->save();
+		return $success ? $payment : false;
+	}
+
+
+
+	/**
+	 * return the payment object for a given payment ID
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int  $PMT_ID the payment id for the payment to attemp to retrieve
+	 *
+	 * @return mixed null|EE_Payment
+	 */
+	public function get_object_by_id( $PMT_ID ) {
+		return EEM_Payment::instance()->get_one_by_ID( $PMT_ID );
 	}
 }

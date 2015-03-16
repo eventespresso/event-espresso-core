@@ -48,7 +48,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	}
 
 
-
 	/**
 	 *    class constructor
 	 *
@@ -567,6 +566,47 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
+	 * get_billing_form_html_for_payment_method
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_billing_form_html_for_payment_method() {
+		// how have they chosen to pay?
+		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
+		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
+			return FALSE;
+		}
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false ) ) {
+            EE_Error::add_success(
+                apply_filters(
+                    'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+                    sprintf(__('You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso'), $this->checkout->payment_method->name())
+                )
+            );
+        }
+		// now generate billing form for selected method of payment
+		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
+		// fill form with attendee info if applicable
+		if ( $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form && $this->checkout->transaction_has_primary_registrant() ) {
+			$payment_method_billing_form->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
+		}
+		// and debug content
+		if ( $payment_method_billing_form instanceof EE_Billing_Info_Form && $this->checkout->payment_method->type_obj() instanceof EE_PMT_Base ) {
+			$payment_method_billing_form = $this->checkout->payment_method->type_obj()->apply_billing_form_debug_settings( $payment_method_billing_form );
+		}
+		$billing_info = $payment_method_billing_form instanceof EE_Form_Section_Proper ? $payment_method_billing_form->get_html() : '';
+		$this->checkout->json_response->set_return_data( array( 'payment_method_info' => $billing_info ));
+		// localize validation rules for main form
+		$this->checkout->current_step->reg_form->localize_validation_rules();
+		$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
+		return TRUE;
+	}
+
+
+
+	/**
 	 * _get_billing_form_for_payment_method
 	 *
 	 * @access private
@@ -578,6 +618,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
 			if( $billing_form instanceof EE_Billing_Info_Form ) {
 				if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
+                if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
 					EE_Error::add_success(
 						apply_filters(
 							'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
@@ -829,12 +870,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			case 'payments_closed' :
-				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__payments_closed__display_success', false ) ) {
+					EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
 				return TRUE;
 				break;
 
 			case 'no_payment_required' :
-				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__no_payment_required__display_success', false ) ) {
+					EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
 				return TRUE;
 				break;
 

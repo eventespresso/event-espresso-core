@@ -38,7 +38,8 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		$this->_gateway = new EEG_AIM();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
-		$this->_has_billing_form = TRUE;
+		$this->_requires_https = true;
+		$this->_has_billing_form = true;
 		parent::__construct($pm_instance);
 	}
 
@@ -52,13 +53,18 @@ class EE_PMT_Aim extends EE_PMT_Base{
 			'name'=>'AIM_Form',
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(array(
-					'required'=>true
+					'required'=>true,
+					'html_label_text' => __( 'Card Number', 'event_espresso' )
 				)),
 				'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
-					'required'=>true
+					'required'=>true,
+					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
 				)),
-				'exp_year'=>new EE_Credit_Card_Year_Input(),
-				'cvv'=>new EE_CVV_Input(),
+				'exp_year'=>new EE_Credit_Card_Year_Input( array( '
+					required'=> true,
+					'html_label_text' => __( 'Expiry Year', 'event_espresso' ) ) ),
+				'cvv'=>new EE_CVV_Input( array(
+					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
 			)
 		));
 		return $this->apply_billing_form_debug_settings( $billing_form );

@@ -599,6 +599,22 @@ abstract class EEM_Base extends EE_Base{
 		return $results;
 	}
 
+	/**
+	 * Gets an array of rows from the database just like $wpdb->get_results would,
+	 * but you can use the $query_params like on EEM_Base::get_all() to more easily
+	 * take care of joins, field preparation etc.
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
+	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
+	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
+	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
+	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
+	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 */
+	public function  get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
+		return $this->_get_all_wpdb_results($query_params, $output, $columns_to_select);
+	}
 
 
 	/**
@@ -643,18 +659,21 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
+	 * If there is no primary key on this model, $id is treated as primary key string
 	 * @param mixed $id int or string, depending on the type of the model's primary key
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
-		}else{
+		}elseif( $this->has_primary_key_field ( ) ) {
 			$primary_key_name = $this->get_primary_key_field()->get_name();
 			return $this->get_one(array(array($primary_key_name => $id)));
+		}else{
+			//no primary key, so the $id must be from the get_index_primary_key_string()
+			return $this->get_one( array( $this->parse_index_primary_key_string( $id ) ) );
 		}
 	}
-
 
 
 	/**
@@ -686,8 +705,145 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	public function get_timezone() {
+		//first validate if timezone is set.  If not, then let's set it be whatever is set on the model fields.
+		if ( empty( $this->_timezone ) ) {
+			foreach( $this->_fields as $field ) {
+				if ( $field instanceof EE_Datetime_Field ) {
+					$this->set_timezone($field->get_timezone());
+					break;
+				}
+			}
+		}
+
+		//if timezone STILL empty then return the default timezone for the site.
+		if ( empty( $this->_timezone ) ) {
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$this->set_timezone( EEH_DTT_Helper::get_timezone() );
+		}
 		return $this->_timezone;
 	}
+
+
+
+	/**
+	 * This returns the date formats set for the given field name.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The name of the field the formats are being retrieved for.
+	 * @param bool   $pretty          Whether to return the pretty formats (true) or not (false).
+	 * @throws EE_Error   If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return array formats in an array with the date format first, and the time format last.
+	 */
+	public function get_formats_for( $field_name, $pretty = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then throw error
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
+		}
+
+		//while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
+		//the field.
+		$this->_timezone = $field_settings->get_timezone();
+
+		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
+	}
+
+
+
+	/**
+	 * This returns the current time in a format setup for a query on this model.
+	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
+	 * it will return:
+	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
+	 *  - or a unixtimestamp with the offset applied for the currently set timezone for NOW.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The field the currrent time is needed for.
+	 * @param bool   $timestamp  True means to return a unix timestamp with offset for the timezone applied. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will be returned.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 *
+	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
+	 */
+	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {
+		$formats = $this->get_formats_for( $field_name );
+
+		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
+
+		if ( $timestamp ) {
+			$offset = timezone_offset_get( new DateTimeZone( $this->_timezone ), $DateTime );
+			return $DateTime->format( 'U' ) + $offset;
+		}
+
+		//not returning timestamp, so return formatted string in timezone.
+		switch( $what ) {
+			case 'time' :
+				return $DateTime->format( $formats[1] );
+				break;
+			case 'date' :
+				return $DateTime->format( $formats[0] );
+				break;
+			default :
+				return $DateTime->format( implode( ' ', $formats ) );
+				break;
+		}
+	}
+
+
+
+
+
+	/**
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings for the model are.
+	 *
+	 * @param string $field_name The field being setup.
+	 * @param string $timestring   The date timestring being used.
+	 * @param string $incoming_format        The format for the time string.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
+	 *                           		the blog.  If this is not the case, then it can be specified here.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 */
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
+		$formats = $this->get_formats_for( $field_name );
+		$full_format = implode( ' ', $formats );
+
+		//if empty $timezone and incoming format is 'U'.  Then that means the incoming timestring is current_time('timestamp') which has an
+		//offset applied.  So let's REMOVE that offset so setting DateTime works correctly.
+		if ( empty( $timezone ) && $incoming_format == 'U' ) {
+			$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+			$timestring = $timestring - $offset;
+		}
+
+		//load EEH_DTT_Helper
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+
+		//first let's do comparisons and see if we even need to convert
+		if ( $set_timezone == $this->_timezone && $full_format == $incoming_format ) {
+			return $timestring;
+		}
+
+		//if made it here then that means conversion is necessary.
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
+
+		//return converted string
+		switch ( $what ) {
+			case 'time' :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[1] );
+				break;
+			case 'date' :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[0] );
+				break;
+			default :
+				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
+				break;
+		}
+	}
+
 
 
 
@@ -766,8 +922,12 @@ abstract class EEM_Base extends EE_Base{
 				// type cast stdClass as array
 				$wpdb_result = (array)$wpdb_result;
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
-				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
-				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
+				if( $this->has_primary_key_field() ){
+					$main_table_pk_value = $wpdb_result[ $this->get_primary_key_field()->get_qualified_column() ];
+				}else{
+					//if there's no primary key, we basically can't support having a 2nd table on the model (we could but it woudl be lots of work)
+					$main_table_pk_value = null;
+				}
 				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
 				//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
 				if(count($tables) > 1){
@@ -797,7 +957,19 @@ abstract class EEM_Base extends EE_Base{
 		//then we want to make sure we keep all the existing
 		//model objects in sync with the db
 		if( $keep_model_objs_in_sync && ! $this->_values_already_prepared_by_model_object ){
-			$model_objs_affected_ids = $this->get_col( $query_params );
+			if( $this->has_primary_key_field() ){
+				$model_objs_affected_ids = $this->get_col( $query_params );
+			}else{
+				//we need to select a bunch of columns and then combine them into the the "index primary key string"s
+				$models_affected_key_columns = $this->_get_all_wpdb_results($query_params, ARRAY_A );
+				$model_objs_affected_ids = array();
+				foreach( $models_affected_key_columns as $row ){
+					$combined_index_key = $this->get_index_primary_key_string( $row );
+					$model_objs_affected_ids[ $combined_index_key ] = $combined_index_key;
+				}
+
+			}
+
 			if( ! $model_objs_affected_ids ){
 				//wait wait wait- if nothing was affected let's stop here
 				return 0;
@@ -810,10 +982,13 @@ abstract class EEM_Base extends EE_Base{
 					}
 				}
 			}
-			//we already know what we want to update. So let's make the query simpler so it's a little more efficient
-			$query_params = array(
-				array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
-				'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
+			//if there is a primary key on this model, we can now do a slight optimization
+			if( $this->has_primary_key_field() ){
+				//we already know what we want to update. So let's make the query simpler so it's a little more efficient
+				$query_params = array(
+					array( $this->primary_key_name() => array( 'IN', $model_objs_affected_ids ) ),
+					'limit' => count( $model_objs_affected_ids ), 'default_where_conditions' => 'none' );
+			}
 		}
 
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
@@ -844,8 +1019,11 @@ abstract class EEM_Base extends EE_Base{
 
 		if( $field_to_select ){
 			$field = $this->field_settings_for( $field_to_select );
-		}else{
+		}elseif( $this->has_primary_key_field ( ) ){
 			$field = $this->get_primary_key_field();
+		}else{
+			//no primary key, just grab the first column
+			$field = reset( $this->field_settings());
 		}
 
 
@@ -1477,10 +1655,13 @@ abstract class EEM_Base extends EE_Base{
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
 	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
+	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
+	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
+	 * If true, it's also considered). Only works for INT primary key- STRING primary keys cannot be ignored
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
-	public function get_one_conflicting($obj_or_fields_array){
+	public function get_one_conflicting($obj_or_fields_array, $include_primary_key = true ){
 		if($obj_or_fields_array instanceof EE_Base_Class){
 			$fields_n_values = $obj_or_fields_array->model_field_array();
 		}elseif( is_array($obj_or_fields_array)){
@@ -1489,14 +1670,21 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("%s get_all_conflicting should be called with a model object or an array of field names and values, you provided %d", "event_espresso"),get_class($this),$obj_or_fields_array));
 		}
 		$query_params = array();
-		if($this->has_primary_key_field() && isset($fields_n_values[$this->primary_key_name()])){
+		if( $this->has_primary_key_field() &&
+				( $include_primary_key || $this->get_primary_key_field() instanceof EE_Primary_Key_String_Field) &&
+				isset($fields_n_values[$this->primary_key_name()])){
 			$query_params[0]['OR'][$this->primary_key_name()] = $fields_n_values[$this->primary_key_name()];
 		}
 		foreach($this->unique_indexes() as $unique_index_name=>$unique_index){
 			$uniqueness_where_params = array_intersect_key($fields_n_values, $unique_index->fields());
 			$query_params[0]['OR']['AND*'.$unique_index_name] = $uniqueness_where_params;
 		}
-		return $this->get_one($query_params);
+		//if there is nothing to base this search on, then we shouldn't find anything
+		if( empty( $query_params ) ){
+			return array();
+		}else{
+			return $this->get_one($query_params);
+		}
 	}
 
 	/**
@@ -1595,16 +1783,6 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_prepare_value_for_use_in_db( $unprepared_value, $field_obj);
 	}
 
-	/**
-	 * Used to build a primary key string (when the model has no primary key),
-	 * which can be used a unique string to identify this model object.
-	 * @param array $cols_n_values keys are field names, values are their values
-	 * @return string
-	 */
-	public function get_index_primary_key_string($cols_n_values){
-		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
-		return http_build_query($cols_n_values_for_primary_key_index);
-	}
 
 	/**
 	 * Consolidates code for preparing  a value supplied to the model for use int eh db. Calls the field's prepare_for_use_in_db method on the value,
@@ -2139,6 +2317,7 @@ abstract class EEM_Base extends EE_Base{
 				);
 			}
 		}
+
 		//check if it's a custom selection
 		elseif(array_key_exists($query_param,$this->_custom_selections)){
 			return;
@@ -2816,9 +2995,7 @@ abstract class EEM_Base extends EE_Base{
 			foreach($this->field_settings() as $field){
 //				if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
 				if( $field instanceof EE_Foreign_Key_Field_Base ){
-					if(is_array($field->get_model_name_pointed_to()) && in_array($model_name,$field->get_model_name_pointed_to())){
-						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
-					}elseif( ! is_array($field->get_model_name_pointed_to()) && $field->get_model_name_pointed_to() == $model_name){
+					if (in_array($model_name,$field->get_model_names_pointed_to() ) ) {
 						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
 					}
 				}
@@ -3346,6 +3523,52 @@ abstract class EEM_Base extends EE_Base{
 		return array($this->get_primary_key_field());
 	}
 
+	/**
+	 * Used to build a primary key string (when the model has no primary key),
+	 * which can be used a unique string to identify this model object.
+	 * @param array $cols_n_values keys are field names, values are their values
+	 * @return string
+	 */
+	public function get_index_primary_key_string($cols_n_values){
+		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
+		return http_build_query($cols_n_values_for_primary_key_index);
+	}
+
+
+	/**
+	 * Gets the field values from the primary key string
+	 * @see EEM_Base::get_combined_primary_key_fields() and EEM_Base::get_index_primary_key_string()
+	 * @param string $index_primary_key_string
+	 * @return null|array
+	 */
+	function parse_index_primary_key_string( $index_primary_key_string) {
+		$key_fields = $this->get_combined_primary_key_fields();
+		//check all of them are in the $id
+		$key_vals_in_combined_pk = array();
+		parse_str( $index_primary_key_string, $key_vals_in_combined_pk );
+		foreach( $key_fields as $key_field_name => $field_obj ) {
+			if( ! isset( $key_vals_in_combined_pk[ $key_field_name ] ) ){
+				return NULL;
+			}
+		}
+		return $key_vals_in_combined_pk;
+	}
+
+	/**
+	 * verifies that an array of key-value pairs for model fields has a key
+	 * for each field comprising the primary key index
+	 * @param array $key_vals
+	 * @return boolean
+	 */
+	function has_all_combined_primary_key_fields( $key_vals ) {
+		$keys_it_should_have = array_keys( $this->get_combined_primary_key_fields() );
+		foreach( $keys_it_should_have as $key ){
+			if( ! isset( $key_vals[ $key ] ) ){
+				return false;
+			}
+		}
+		return true;
+	}
 
 
 	/**

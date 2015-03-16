@@ -69,7 +69,6 @@ class EE_Register_Config implements EEI_Plugin_API {
 				'4.3'
 				);
 		}
-
 		//add incoming stuff to our registry property
 		self::$_ee_config_registry[ $config_class ] = array(
 			'section' => $setup_args['config_section'],
@@ -101,10 +100,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 					)
 				 );
 			}
-			$existing_config = $EE_Config->get_config( $settings['section'], $settings['name'], $config_class );
-			if ( $existing_config instanceof $config_class ) {
-				$EE_Config->set_config( $settings['section'], $settings['name'], $config_class, $existing_config );
-			}
+			$EE_Config->get_config( $settings['section'], $settings['name'], $config_class );
 		}
 	}
 

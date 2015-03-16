@@ -36,7 +36,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		$this->_gateway = new EEG_Paypal_Pro();
 		$this->_pretty_name = __("Paypal Pro", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
-		$this->_has_billing_form = TRUE;
+		$this->_requires_https = true;
+		$this->_has_billing_form = true;
 		parent::__construct($pm_instance);
 	}
 
@@ -101,13 +102,13 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Type', 'event_espresso' ))
 					),
 					'exp_month'=>new EE_Month_Input(
-						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __( 'Expiry Month', 'event_espresso' )  )
 					),
 					'exp_year'=>new EE_Credit_Card_Year_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn'  )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Expiry Year', 'event_espresso' )  )
 					),
 					'cvv'=>new EE_CVV_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'CVV', 'event_espresso' ) )
 					),
 				)
 			)

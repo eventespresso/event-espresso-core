@@ -45,6 +45,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	static protected $_js_localization = array();
 
+	/**
+	 * whether or not the form's localized validation JS vars have been set
+	 * @type boolean
+	 */
+	static protected $_scripts_localized = false;
+
 
 
 	/**
@@ -92,6 +98,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
 
 
 	}
@@ -398,8 +405,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		$this->localize_validation_rules();
-		add_action( 'wp_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ), -999 );
-		add_action( 'admin_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ) );
+		add_action( 'wp_footer', array( 'EE_Form_Section_Proper', 'localize_script_for_all_forms' ), 2 );
+		add_action( 'admin_footer', array( 'EE_Form_Section_Proper', 'localize_script_for_all_forms' ) );
 	}
 
 
@@ -417,6 +424,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				'validation_rules'=> $this->get_jquery_validation_rules(),
 				'errors'=> $this->subsection_validation_errors_by_html_name()
 			);
+			EE_Form_Section_Proper::$_scripts_localized = true;
 		}
 	}
 
@@ -468,6 +476,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
 		wp_enqueue_script( 'ee_form_section_validation' );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
+	}
+
+
+
+	/**
+	 * ensure_scripts_localized
+	 */
+	public function ensure_scripts_localized(){
+		if ( ! EE_Form_Section_Proper::$_scripts_localized ) {
+			$this->_enqueue_and_localize_form_js();
+		}
 	}
 
 

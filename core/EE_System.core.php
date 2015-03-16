@@ -589,9 +589,7 @@ final class EE_System {
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
-	 *                            If not provided, this function retrieves it from the database... so the parameter only exists for optimization
-	 * @internal param array $espresso_db_update_value the value of the wordpress option.
+	 * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
@@ -1039,6 +1037,59 @@ final class EE_System {
 	*/
 	public function set_hooks_for_shortcodes_modules_and_addons() {
 //		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+	}
+
+
+
+
+	/**
+	* do_not_cache
+	*
+	* sets no cache headers and defines no cache constants for WP plugins
+	*
+	* @access public
+	* @return void
+	*/
+	public static function do_not_cache() {
+		// set no cache constants
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
+			define( 'DONOTCACHCEOBJECT', true );
+		}
+		// add no cache headers
+		add_action( 'wp_head' , array( 'EE_System', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers' , array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
+	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
 	}
 
 

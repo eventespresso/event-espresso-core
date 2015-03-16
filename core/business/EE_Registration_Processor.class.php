@@ -274,17 +274,17 @@ class EE_Registration_Processor {
 					array_merge(
 					// defaults
 						array(
-							'checkout_or_payment' => FALSE,
-							'manually_updated' 		=> FALSE,
-							'payment_updates' 		=> FALSE,
-							'status_updates' 			=> FALSE,
-							'finalized' 						=> FALSE,
-							'revisit' 							=> FALSE,
+							'checkout_or_payment' => false,
+							'manually_updated' 		=> false,
+							'payment_updates' 		=> false,
+							'status_updates' 			=> $this->new_reg_status() !== $this->old_reg_status() ? true : false,
+							'finalized' 						=> false,
+							'revisit' 							=> false,
 							'reg_steps' 						=> array(),
-							'old_txn_status' 				=> NULL,
-							'last_payment'				=> NULL,
-							'old_reg_status' 				=> NULL,
-							'new_reg_status' 			=> NULL
+							'old_txn_status' 				=> null,
+							'last_payment'				=> null,
+							'old_reg_status' 				=> null,
+							'new_reg_status' 			=> null
 						),
 						$additional_details
 					)
@@ -312,7 +312,7 @@ class EE_Registration_Processor {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->status_ID() );
 		// if the registration status gets updated, then save the registration
-		if ( $this->toggle_registration_status_for_default_approved_events( $registration, FALSE ) || $this->toggle_registration_status_if_no_monies_owing( $registration, FALSE )) {
+		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
 			$registration->save();
 		}
 		// set new  REG_Status
@@ -323,13 +323,14 @@ class EE_Registration_Processor {
 			array_merge(
 				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
 				array(
-					'checkout_or_payment' 	=> TRUE,
+					'checkout_or_payment' 	=> true,
 					'old_reg_status' 					=> $this->old_reg_status(),
-					'new_reg_status' 				=> $this->new_reg_status()
+					'new_reg_status' 				=> $this->new_reg_status(),
+					'status_updates' 				=> $this->new_reg_status() !== $this->old_reg_status() ? true : false,
 				)
 			)
 		);
-		return $this->new_reg_status() == EEM_Registration::status_id_approved ? TRUE : FALSE;
+		return $this->new_reg_status() == EEM_Registration::status_id_approved ? true : false;
 	}
 
 

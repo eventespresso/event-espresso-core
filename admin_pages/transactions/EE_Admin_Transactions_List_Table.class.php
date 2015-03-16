@@ -97,8 +97,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 */
 	protected function _get_table_filters() {
 		$filters = array();
-		$start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
-		$end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+		$start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-10 year' ));
+		$end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'm/d/Y' );
 		ob_start();
 		?>
 		<label for="txn-filter-start-date">Display Transactions from </label>
@@ -148,7 +148,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * @param \EE_Transaction $item
 	 * @return string
 	 */
-	function column_cb( EE_Transaction $item ){
+	function column_cb($item ){
 		return sprintf( '<input type="checkbox" name="%1$s[]" value="%2$s" />', $this->_wp_list_args['singular'],  $item->ID());
 	}
 
@@ -163,14 +163,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		// is TXN less than 2 hours old ?
 		if (
 			(
-				( current_time( 'timestamp' ) - EE_Registry::instance()->SSN->lifespan() )
-				< strtotime( $item->datetime() )
+				( time() - EE_Registry::instance()->SSN->lifespan() )
+				< $item->datetime( false, true )
 			) &&
 			( $item->failed() || $item->is_abandoned() )
 		) {
 			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) . '</a>';
 		} else {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->datetime() .  '</a>';
+			$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_i18n_datetime( 'TXN_timestamp' ) .  '</a>';
 		}
 		return $txn_date;
 	}
