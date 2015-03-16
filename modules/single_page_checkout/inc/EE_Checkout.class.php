@@ -295,7 +295,7 @@ class EE_Checkout {
 		// verify instance
 		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
 			// we don't want to repeat completed steps if this is the first time through SPCO
-			if ( $this->current_step->completed() && ! $this->revisit ) {
+			if ( $this->continue_reg && $this->current_step->completed() && ! $this->revisit ) {
 				// so advance to the next step
 				$this->set_next_step();
 				// and attempt to set it as the current step
