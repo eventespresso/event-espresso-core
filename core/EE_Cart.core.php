@@ -203,25 +203,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	 /**
-	  *    get_cart_total_before_tax
-	  *
-	  * @access public
-	  * @param \EE_Event $event
-	  * @return EE_Line_Item
-	  */
-	public function add_subtotal_line_item_for_event( EE_Event $event ) {
-		// first find the pre-tax subtotal line item
-		$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $this->_grand_total );
-		// create a new "event" subtotal below that
-		$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, NULL, $event );
-		// and set the event details
-		EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
-		return $event_line_item;
-	}
-
-
-
 	/**
 	 *	get_cart_total_before_tax
 	 *	@access public

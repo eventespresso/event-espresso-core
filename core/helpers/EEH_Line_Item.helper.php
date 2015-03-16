@@ -325,7 +325,12 @@ class EEH_Line_Item {
 				// found existing line item for this event in the cart, so break out of loop and use this one
 				break;
 			} else {
-				$event_line_item = $this->add_subtotal_line_item_for_event( $event );
+				//there is no event sub-total yet, so add it
+				$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $grand_total );
+				// create a new "event" subtotal below that
+				$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, NULL, $event );
+				// and set the event details
+				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
 				// found existing line item for this event in the cart, so break out of loop and use this one
 				break;
 			}
