@@ -120,7 +120,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EE_Registry::instance()->load_helper( 'HTML' );
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'payments_closed';
-		$payment_required = FALSE;
+		$payment_required = array();
+		$registrations_for_free_events = array();
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
 		$reg_count = 0;
@@ -135,17 +136,36 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
 			if ( ! ( $this->checkout->revisit && $registration->status_ID() == EEM_Registration::status_id_approved )) {
-				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
+				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( true )) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = $registration->event();
+					do_action(
+						'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__sold_out_event',
+						$registration->event(),
+						$this
+					);
 				}
 				// event requires admin approval
 				if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+					do_action(
+						'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
+						$registration->event(),
+						$this
+					);
 				}
 			}
-			$payment_required = in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ? TRUE : $payment_required;
+			if ( in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ) {
+				$payment_required[ $registration->event()->ID() ] = $registration->event();
+				do_action(
+					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_payment',
+					$registration->event(),
+					$this
+				);
+			} else if ( $registration->status_ID() != EEM_Registration::status_id_not_approved ) {
+				$registrations_for_free_events[ $registration->event()->ID() ] = $registration;
+			}
 		}
 		$subsections = array();
 		// now decide which template to load
@@ -155,15 +175,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $events_requiring_pre_approval )) {
 			$subsections['events_requiring_pre_approval'] = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		}
-		if ( $payment_required ) {
+		if ( ! empty( $payment_required )) {
 			$subsections[ 'payment_options' ] = $this->_display_payment_options( $reg_count );
 		} else {
-			$subsections[ 'no_payment_required' ] = $this->_no_payment_required();
-		}
-		// if not collecting payment, then we are done with this step
-		if ( ! isset( $subsections[ 'payment_options' ] )) {
-			// mark this reg step as completed
-			$this->checkout->current_step->set_completed();
+			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
 		return new EE_Form_Section_Proper(
 			array(
@@ -229,7 +244,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 		$events_requiring_pre_approval = '';
 		foreach ( $events_requiring_pre_approval_array as $event_requiring_pre_approval ) {
-			$events_requiring_pre_approval .= EEH_HTML::li( EEH_HTML::span( $event_requiring_pre_approval->name(), '', 'dashicons dashicons-marker ee-icon-size-16 orange-text' ));
+			$events_requiring_pre_approval .= EEH_HTML::li(
+				EEH_HTML::span(
+					EEH_HTML::nbsp(1) . $event_requiring_pre_approval->name(),
+					'', 'dashicons dashicons-marker ee-icon-size-16 orange-text'
+				)
+			);
 		}
 		return new EE_Form_Section_Proper(
 			array(
@@ -262,16 +282,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * _no_payment_required
+	 *
+	 * @param \EE_Event[] $registrations_for_free_events
 	 * @return \EE_Form_Section_Proper
 	 */
-	private function _no_payment_required() {
+	private function _no_payment_required( $registrations_for_free_events = array() ) {
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'no_payment_required';
 		// generate no_payment_required form
 		return new EE_Form_Section_Proper(
 			array(
-				//'name' 					=> $this->reg_form_name(),
-				//'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
@@ -283,8 +303,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___no_payment_required__template_args',
 							array(
 								'revisit' 			=> $this->checkout->revisit,
-								'registrations' =>array(),
-								'ticket_count' 	=>array(),
+								'registrations' => array(),
+								'ticket_count' 	=> array(),
+								'registrations_for_free_events' 	=> $registrations_for_free_events,
 								'no_payment_required_msg' => EEH_HTML::p( __( 'This is a free event, so no billing will occur.', 'event_espresso' ))
 							)
 						),
@@ -691,6 +712,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_url = $this->checkout->cancel_page_url;
 				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
+				// mark this reg step as completed
+				$this->checkout->current_step->set_completed();
 				return FALSE;
 				break;
 
@@ -698,6 +721,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__payments_closed__display_success', false ) ) {
 					EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
+				// mark this reg step as completed
+				$this->checkout->current_step->set_completed();
 				return TRUE;
 				break;
 
@@ -705,6 +730,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__process_reg_step__no_payment_required__display_success', false ) ) {
 					EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
+				// mark this reg step as completed
+				$this->checkout->current_step->set_completed();
 				return TRUE;
 				break;
 
@@ -1035,7 +1062,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$payment = $payment_processor->process_payment(
 				$payment_method,
 				$this->checkout->transaction,
-				$this->checkout->transaction->remaining(),
+				$this->checkout->amount_owing,
 				$this->checkout->billing_form,
 				$this->_get_return_url( $payment_method )
 			);
