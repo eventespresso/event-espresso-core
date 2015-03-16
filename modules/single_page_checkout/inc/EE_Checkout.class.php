@@ -84,6 +84,14 @@ class EE_Checkout {
 	public $total_ticket_count = 0;
 
 	/**
+	 * corresponds loosely to EE_Transaction::remaining()
+	 * but can be modified by SPCO
+	 *
+	 * @type float
+	 */
+	public $amount_owing = 0;
+
+	/**
 	 * the reg step slug from the incoming request
 	 * @type string
 	 */
@@ -367,15 +375,15 @@ class EE_Checkout {
 		// verify instance
 		if ( $this->current_step instanceof EE_SPCO_Reg_Step ) {
 			// we don't want to repeat completed steps if this is the first time through SPCO
-			//if ( $this->current_step->completed() && ! $this->revisit ) {
-			//	// so advance to the next step
-			//	$this->set_next_step();
-			//	if ( $this->next_step instanceof EE_SPCO_Reg_Step ) {
-			//		// and attempt to set it as the current step
-			//		$this->set_current_step( $this->next_step->slug() );
-			//	}
-			//	return;
-			//}
+			if ( $this->current_step->completed() && ! $this->revisit ) {
+				// so advance to the next step
+				$this->set_next_step();
+				if ( $this->next_step instanceof EE_SPCO_Reg_Step ) {
+					// and attempt to set it as the current step
+					$this->set_current_step( $this->next_step->slug() );
+				}
+				return;
+			}
 			$this->current_step->set_is_current_step( TRUE );
 		} else {
 			EE_Error::add_error(
