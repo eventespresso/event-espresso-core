@@ -602,7 +602,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets an array of rows from the database just like $wpdb->get_results would,
 	 * but you can use the $query_params like on EEM_Base::get_all() to more easily
-	 * take care of joins, field preparation etc. 
+	 * take care of joins, field preparation etc.
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
 	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,

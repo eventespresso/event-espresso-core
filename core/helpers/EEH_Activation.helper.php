@@ -842,7 +842,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 			EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
 		}else{
-			EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all());
+			EEM_Payment_Method::instance()->verify_button_urls();
 		}
 	}
 

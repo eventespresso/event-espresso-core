@@ -98,7 +98,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_cb(EE_Question $item) {
+	public function column_cb($item) {
 		$system_question = $item->is_system_question();
 		$related_answer_count = $item->count_related('Answer');
 		$lock_icon = ( !$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? 'ee-lock-icon ee-alternate-color' : 'ee-lock-icon ee-system-lock';

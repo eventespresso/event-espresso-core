@@ -217,6 +217,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$filters[] = EEH_Form_Fields::select_input('_reg_status', $status, isset( $this->_req_data['_reg_status'] ) ? strtoupper( sanitize_key( $this->_req_data['_reg_status'] )) : '' );
 		}
 
+		if ( isset( $this->_req_data['event_id'] ) ) {
+			$filters[] = EEH_Form_Fields::hidden_input( 'event_id',  $this->_req_data['event_id'], 'reg_event_id' );
+		}
+
 		return $filters;
 	}
 
@@ -287,6 +291,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				$beginning_string,
 				$end_string
 		));
+		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
 
@@ -309,6 +314,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_start, 'Y-m-d H:i:s' ),
 				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_end, 'Y-m-d H:i:s' )
 		));
+		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
 
@@ -334,7 +340,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @param \EE_Registration $item
 	 * @return string
 	 */
-    function column_cb(EE_Registration $item){
+    function column_cb($item){
 	/** checkbox/lock **/
 	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
@@ -366,7 +372,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_set_related_details($item);
        		 //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=> $this->_transaction_details['id'] ), TXN_ADMIN_URL );
-		return EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . $this->_transaction_details['title_attr'] . '">' . $item->reg_date() . '</a>' : $item->reg_date();
+		return EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . $this->_transaction_details['title_attr'] . '">' . $item->get_i18n_datetime( 'REG_date' ) . '</a>' : $item->get_i18n_datetime( 'REG_date' );
 	}
 
 
@@ -408,7 +414,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$remove_defaults = array('default_where_conditions' => 'none');
 			$datetimes = $ticket->datetimes($remove_defaults);
 			foreach($datetimes as $datetime){
-				$datetime_strings[] = $datetime->start_date_and_time();
+				$datetime_strings[] = $datetime->get_i18n_datetime( 'DTT_EVT_start' );
 			}
 			return implode("<br />",$datetime_strings);
 		} else {
