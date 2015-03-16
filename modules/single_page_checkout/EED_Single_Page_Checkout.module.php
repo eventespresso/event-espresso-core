@@ -381,6 +381,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->transaction->lock();
 		// make sure all of our cached objects are added to their respective model entity mappers
 		$this->checkout->refresh_all_entities();
+		// set amount owing
+		$this->checkout->amount_owing = $this->checkout->transaction->remaining();
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// DEBUG LOG
