@@ -352,7 +352,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) && ! is_admin() ) {
-			$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text', __('Register Now', 'event_espresso' ));
+			$btn_text = apply_filters(
+				'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
+				__('Register Now', 'event_espresso' ),
+				self::$_event
+			);
 			return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
 		}
 		return '';
@@ -489,7 +493,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
 					} else {
