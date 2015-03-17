@@ -153,7 +153,7 @@ abstract class EE_SPCO_Reg_Step {
 	public function set_completed() {
 		// DEBUG LOG
 		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-		$this->_completed = TRUE;
+		$this->_completed = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', true, $this );
 	}
 
 
