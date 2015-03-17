@@ -120,6 +120,8 @@ jQuery(document).ready( function($) {
 		allow_enable_submit_buttons : true,
 		// override SPCO messages
 		override_messages : false,
+		// whether or not to proceed to the next step
+		get_next_step : true,
 
 
 
@@ -745,6 +747,10 @@ jQuery(document).ready( function($) {
 		* @param {object} prev_response
 		*/
 		get_next_reg_step : function( next_step, prev_response ){
+
+			if ( ! SPCO.get_next_step ) {
+				return;
+			}
 
 			var form_data = 'action=display_spco_reg_step';
 			form_data += '&step=' + next_step;

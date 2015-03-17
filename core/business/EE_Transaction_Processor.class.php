@@ -28,6 +28,20 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 */
 	private $_registration_query_params = array();
 
+	/**
+	 * initial txn status at the beginning of this request.
+	 *
+	 * @var string
+	 */
+	protected $_old_txn_status = null;
+
+	/**
+	 * txn status at the end of the request after all processing.
+	 *
+	 * @var string
+	 */
+	protected $_new_txn_status = null;
+
 
 
 	/**
@@ -68,6 +82,56 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * @return string
+	 */
+	public function old_txn_status() {
+		return $this->_old_txn_status;
+	}
+
+
+
+	/**
+	 * @param string $old_txn_status
+	 */
+	public function set_old_txn_status( $old_txn_status ) {
+		// only set the first time
+		if ( $this->_old_txn_status === null ) {
+			$this->_old_txn_status = $old_txn_status;
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function new_txn_status() {
+		return $this->_new_txn_status;
+	}
+
+
+
+	/**
+	 * @param string $new_txn_status
+	 */
+	public function set_new_txn_status( $new_txn_status ) {
+		$this->_new_txn_status = $new_txn_status;
+	}
+
+
+
+	/**
+	 * reg_status_updated
+	 *
+	 * @return bool
+	 */
+	public function txn_status_updated() {
+		return $this->_new_txn_status !== $this->_old_txn_status ? true : false;
+	}
+
+
+
+	/**
 	 * _reg_steps_completed
 	 *
 	 * if $check_all is TRUE, then returns TRUE if ALL reg steps have been marked as completed,
@@ -79,12 +143,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param EE_Transaction $transaction
 	 * @param string $reg_step_slug
 	 * @param bool   $check_all
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	private function _reg_steps_completed( EE_Transaction $transaction, $reg_step_slug = '', $check_all = TRUE ) {
 		$reg_steps = $transaction->reg_steps();
 		if ( ! is_array( $reg_steps ) || empty( $reg_steps )) {
-			return FALSE;
+			return false;
 		}
 		// loop thru reg steps array)
 		foreach ( $reg_steps as $slug => $reg_step_completed ) {
@@ -99,11 +163,19 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				}
 			}
 			// if any reg step is NOT completed (ignoring any specific steps), then just leave
-			if( ! $reg_step_completed && $slug != $reg_step_slug ) {
-				return FALSE;
+			if ( $reg_step_completed !== true && $slug != $reg_step_slug ) {
+				return false;
+			} else if ( $slug == $reg_step_slug ) {
+				// if we reach this point, then we are testing either:
+				// all_reg_steps_completed_except() or
+				// all_reg_steps_completed_except_final_step(),
+				// and since this is the reg step exception being tested
+				// we want to return true if this reg step is NOT completed
+				return $reg_step_completed !== true ? true : false;
 			}
 		}
-		return TRUE;
+
+		return true;
 	}
 
 
@@ -111,7 +183,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed
 	 *
-	 * returns TRUE if ALL reg steps have been marked as completed
+	 * returns:
+	 *  	true if ALL reg steps have been marked as completed
+	 * 		or false if any step is not completed
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean
@@ -125,7 +199,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed_except
 	 *
-	 * returns TRUE if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 * returns:
+	 * 		true if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 * 		or false if any other step is not completed
+	 * 		or false if ALL steps are completed including the exception you are testing !!!
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param string $exception
@@ -140,7 +217,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * all_reg_steps_completed_except
 	 *
-	 * returns TRUE if ALL reg steps, except the final step, have been marked as completed
+	 * returns:
+	 * 		true if ALL reg steps, except the final step, have been marked as completed
+	 * 		or false if any step is not completed
+	 *  	or false if ALL steps are completed including the final step !!!
 	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean
@@ -154,11 +234,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * reg_step_completed
 	 *
-	 * returns TRUE if a specific reg step has been marked as completed
+	 * returns:
+	 *    true if a specific reg step has been marked as completed
+	 *    a Unix timestamp if it has been initialized but not yet completed,
+	 *    or false if it has not yet been initialized
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param string $reg_step_slug
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	public function reg_step_completed( EE_Transaction $transaction, $reg_step_slug ) {
 		return $this->_reg_steps_completed( $transaction, $reg_step_slug, FALSE );
@@ -169,10 +252,13 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * completed_final_reg_step
 	 *
-	 * returns TRUE if the finalize_registration reg step has been marked as completed
+	 * returns:
+	 *  	true if the finalize_registration reg step has been marked as completed
+	 *  	a Unix timestamp if it has been initialized but not yet completed,
+	 *  	or false if it has not yet been initialized
 	 *
 	 * @param EE_Transaction $transaction
-	 * @return boolean
+	 * @return boolean | int
 	 */
 	public function final_reg_step_completed( EE_Transaction $transaction ) {
 		return $this->_reg_steps_completed( $transaction, 'finalize_registration', FALSE );
@@ -260,21 +346,23 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return true;
 		}
 		// if we're trying to set a start time
-		if ( is_numeric( $status )) {
-			// for an already completed step
-			if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
-				return true;
-			}
-			// but if the step has already been initialized...
-			if ( is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
-				// skip the update below, but don't return FALSE so that errors won't be displayed
-				return true;
-			}
+		if ( is_numeric( $status ) && is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
+			// skip the update below, but don't return FALSE so that errors won't be displayed
+			return true;
 		}
 		// update completed status
 		$txn_reg_steps[ $reg_step_slug ] = $status;
 		$transaction->set_reg_steps( $txn_reg_steps );
 		$transaction->save();
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'reg_step_slug' => $reg_step_slug,
+		//		'status' => $status,
+		//	)
+		//);
 		return true;
 	}
 
@@ -308,8 +396,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * 	@return 	boolean
 	 */
 	public function toggle_failed_transaction_status( EE_Transaction $transaction ) {
+		// set incoming TXN_Status
+		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status is still set as "failed"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code ) {
+			// set incoming TXN_Status
+			$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
 			$transaction->set_status( EEM_Transaction::abandoned_status_code );
 			return TRUE;
 		}
@@ -327,14 +419,19 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * 	@return 	boolean
 	 */
 	public function toggle_abandoned_transaction_status( EE_Transaction $transaction ) {
+		// set incoming TXN_Status
+		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
+			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			// if a contact record for the primary registrant has been created
 			if ( $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+				$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			} else {
 				// no contact record? yer abandoned!
 				$transaction->set_status( EEM_Transaction::abandoned_status_code );
+				$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
 			}
 			return TRUE;
 		}
@@ -403,14 +500,22 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return array
 	 */
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
+		// set incoming TXN_Status, and consider it new since old status should have been set
+		$this->set_new_txn_status( $transaction->status_ID() );
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
+		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
+		if ( is_numeric( $finalized ) && $finalized !== true ) {
+			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
+			$finalized = true;
+		}
+		$transaction->save();
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'old_txn_status' 			=> $transaction->status_ID(),
-			'reg_steps' 					=> $transaction->reg_steps(),
+			'old_txn_status' 			=> $this->old_txn_status(),
+			'new_txn_status' 		=> $this->new_txn_status(),
 			'finalized' 					=> $finalized,
 			'revisit' 						=> $this->_revisit,
 			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
@@ -424,11 +529,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$update_params
 		);
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
-		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
-		if ( is_numeric( $finalized ) && $finalized !== TRUE ) {
-			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
-		}
-		$transaction->save();
 		return $update_params;
 	}
 

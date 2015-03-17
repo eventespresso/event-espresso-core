@@ -137,6 +137,29 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 *    registered_filter_callbacks
+	 *
+	 * @param string $hook_name
+	 * @return array
+	 */
+	public static function registered_filter_callbacks( $hook_name = '' ) {
+		$filters = array();
+		global $wp_filter;
+		if ( isset( $wp_filter[ $hook_name ] ) ) {
+			$filters[ $hook_name ] = array();
+			foreach ( $wp_filter[ $hook_name ] as $priority => $callbacks ) {
+				$filters[ $hook_name ][ $priority ] = array();
+				foreach ( $callbacks as $callback ) {
+					$filters[ $hook_name ][ $priority ][] = $callback['function'];
+				}
+			}
+		}
+		return $filters;
+	}
+
+
+
+	/**
 	 * 	start_timer
 	 * @param null $timer_name
 	 */
@@ -251,6 +274,72 @@ class EEH_Debug_Tools{
 		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), E_USER_DEPRECATED );
 	}
 
+
+
+
+	/**
+	 * Logger helpers
+	 */
+
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param array $info
+	 * @param bool $display_request
+	 * @param string $debug_index
+	 * @param string $debug_key
+	 */
+	public static function log( $class='', $func = '', $line = '', $info = array(), $display_request = false,  $debug_index = '', $debug_key = 'EE_DEBUG_SPCO' ) {
+		if ( WP_DEBUG ) {
+			$debug_key = $debug_key . '_' . EE_Session::instance()->id();
+			$debug_data = get_option( $debug_key, array() );
+			$default_data = array(
+				$class => $func . '() : ' . $line,
+				'REQ'  => $display_request ? $_REQUEST : '',
+			);
+			// don't serialize objects
+			$info = self::strip_objects( $info );
+			$index = ! empty( $debug_index ) ? $debug_index : 0;
+			if ( ! isset( $debug_data[$index] ) ) {
+				$debug_data[$index] = array();
+			}
+			$debug_data[$index][microtime()] = array_merge( $default_data, $info );
+			update_option( $debug_key, $debug_data );
+		}
+	}
+
+
+
+	/**
+	 * strip_objects
+	 *
+	 * @param array $info
+	 * @return array
+	 */
+	public static function strip_objects( $info = array() ) {
+		foreach ( $info as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$info[ $key ] = self::strip_objects( $value );
+			} else if ( is_object( $value ) ) {
+				$object_class = get_class( $value );
+				$info[ $object_class ] = array();
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : spl_object_hash( $value );
+				if ( method_exists( $value, 'ID' ) ) {
+					$info[ $object_class ][ 'ID' ] = $value->ID();
+				}
+				if ( method_exists( $value, 'status' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status();
+				} else if ( method_exists( $value, 'status_ID' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status_ID();
+				}
+				unset( $info[ $key ] );
+			}
+		}
+		return (array)$info;
+	}
 
 
 }

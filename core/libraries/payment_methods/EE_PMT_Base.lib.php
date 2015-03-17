@@ -370,7 +370,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					empty( $cancel_url ) ? EE_Registry::instance()->CFG->core->cancel_page_url() : $cancel_url
+					$fail_url
 				);
 
 			//  Onsite Gateway
@@ -559,7 +559,7 @@ abstract class EE_PMT_Base{
 		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
 			return EE_PMT_Base::offsite;
 		}else{
-			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
 

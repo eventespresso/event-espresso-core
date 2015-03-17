@@ -89,7 +89,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'ticket_count' 	=> array()
 		);
 		// grab the saved registrations from the transaction
-		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
+		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		if ( $registrations ) {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
@@ -365,7 +365,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$copy_attendee_info_inputs = array();
 		$prev_ticket = NULL;
 		// grab the saved registrations from the transaction
-		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
+		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		foreach ( $registrations as $registration ) {
 			// for all  attendees other than the primary attendee
 			if ( $registration instanceof EE_Registration && ! $registration->is_primary_registrant() ) {
@@ -419,10 +419,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @param EE_Question     $question
 	 * @return 	EE_Form_Input_Base
 	 */
-	private function _reg_form_question( EE_Registration $registration, EE_Question $question ){
+	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
+
 		// if this question was for an attendee detail, then check for that answer
 		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
-		$answer = ( $registration->reg_url_link() || ! $answer_value ) && $registration->ID() != 0 ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
+		$answer = $answer_value === null
+				? EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() )	) )
+				: null;
 		// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
 		if( ! $registration->reg_url_link() || $answer_value || ! $answer instanceof EE_Answer ) {
 			// create an EE_Answer object for storing everything in
@@ -475,11 +478,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 
 		$input_constructor_args = array(
-			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
-			'html_id' 					=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
+			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
-			'html_label_id'		=> 'ee_reg_qstn-' . $registration->reg_url_link() . '-' . $identifier,
+			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
 			'html_label_text'		=> $question->display_text(),
 			'required_validation_error_message' => $question->required_text()
@@ -582,7 +585,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
-		// printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -594,7 +596,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// get cached registrations
-		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params, TRUE );
+		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		// verify we got the goods
 		if ( empty( $registrations )) {
 			EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -631,15 +633,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-//		 printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
 		// mark this reg step as completed
 		$this->checkout->current_step->set_completed();
 		$this->_set_success_message( __('The Attendee Information Step has been successfully completed.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
-
 		return TRUE;
 
 	}
@@ -656,8 +655,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _process_registrations( $registrations = array(), $valid_data = array() ) {
 		// load resources and set some defaults
 		EE_Registry::instance()->load_model( 'Attendee' );
-		/** @type EE_Registration_Processor $registration_processor */
-		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 		// holder for primary registrant attendee object
 		$this->checkout->primary_attendee_obj = NULL;
 		// array for tracking reg form data for the primary registrant
@@ -681,7 +678,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				return FALSE;
 			}
 			$reg_url_link = $registration->reg_url_link();
-			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// reg_url_link exists ?
 			if ( $reg_url_link ) {
 				// should this registration be processed during this visit ?
@@ -761,13 +757,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					}
 					// add relation to registration, set attendee ID, and cache attendee
 					$this->_associate_attendee_with_registration( $registration, $attendee );
-					//printr($attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto');
-
-					// d( $attendee );
 					if ( ! $registration->attendee() instanceof EE_Attendee ) {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return FALSE;
 					}
+					/** @type EE_Registration_Processor $registration_processor */
+					$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, FALSE );
 					/** @type EE_Transaction_Processor $transaction_processor */
@@ -776,10 +771,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
+					// add relation between TXN and registration
 					$this->_associate_registration_with_transaction( $registration );
-//					echo '<h5 style="color:#2EA2CC;">$registration->ID() : <span style="color:#E76700">' . $registration->ID() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-//					printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 
@@ -990,8 +983,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private function _associate_registration_with_transaction( EE_Registration $registration ) {
 		// add relation to attendee
-		$this->checkout->transaction->_add_relation_to( $registration, 'Registration', array(), $registration->reg_url_link() );
-		$this->checkout->transaction->update_cache_after_object_save( 'Registration', $registration, $registration->reg_url_link() );
+		$this->checkout->transaction->_add_relation_to( $registration, 'Registration' );
+		$this->checkout->transaction->update_cache_after_object_save( 'Registration', $registration );
 	}
 
 
