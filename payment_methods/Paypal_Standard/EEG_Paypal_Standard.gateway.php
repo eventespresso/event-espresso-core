@@ -60,7 +60,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 	/**
-	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
+	 * @return EEG_Paypal_Standard
+	 */
+	public function __construct() {
+		$this->set_uses_separate_IPN_request( true ) ;
+		parent::__construct();
+	}
+
+
+
+	/**
+	 * Also sets the gateway url class variable based on whether debug mode is enabled or not
 	 * @param array $settings_array
 	 */
 	public function set_settings($settings_array){
@@ -352,8 +362,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 				$payment);
 	}
-
-
 
 }
 // End of file EEG_Paypal_Standard.gateway.php
