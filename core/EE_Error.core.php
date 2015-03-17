@@ -119,7 +119,7 @@ class EE_Error extends Exception {
 			wp_mail( $to, $subject, $msg );
 		}
 		echo '<div id="message" class="espresso-notices error"><p>';
-		trigger_error( $message, $code );
+		echo $type . ': ' . $message . '<br />' . $file . ' line ' . $line;
 		echo '<br /></p></div>';
 	}
 
