@@ -139,7 +139,7 @@ class EE_Register_CPTs {
 	 *                               		        slug.  Otherwise if empty, then we'll return all cpt model names for cpts
 	 *                               		        registered in EE.
 	 *
-	 * @return boolarray 	       false, if a slug was passed in and there is no matching model name.  An array of model
+	 * @return array 	       Empty array if no matching model names for the given slug or an array of model
 	 *                                         names indexed by post type slug.
 	 */
 	public static function get_cpt_model_names( $post_type_slug = '' ) {
@@ -149,7 +149,7 @@ class EE_Register_CPTs {
 		if ( ! empty( $post_type_slug )  ) {
 			//match?
 			if ( ! isset( $cpts[$post_type_slug] ) || ( isset( $cpts[$post_type_slug] ) && empty( $cpts[$post_type_slug]['class_name'] ) ) ) {
-				return false;
+				return array();
 			}
 
 			//k let's get the model name for this cpt.
