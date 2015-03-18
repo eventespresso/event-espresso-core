@@ -310,7 +310,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP_Query ) {
-		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
+		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() && apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )) {
 			$this->_initialize();
 		}
 	}
@@ -326,9 +326,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public static function init( $WP_Query ) {
-		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
-			EED_Single_Page_Checkout::instance()->_initialize();
-		}
+		EED_Single_Page_Checkout::instance()->run( $WP_Query );
 	}
 
 
