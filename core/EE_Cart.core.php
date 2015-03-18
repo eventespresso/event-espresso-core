@@ -247,7 +247,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return EEH_Line_Item::delete_items($this->get_grand_total(), $line_item_codes );
-
 	}
 
 
@@ -255,12 +254,26 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *	@remove ALL items from cart and zero ALL totals
 	 *	@access public
-	 *	@return void
+	 *	@return bool
 	 */
 	public function empty_cart() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_grand_total = $this->_create_grand_total();
-		$this->save_cart( TRUE );
+		return $this->save_cart( TRUE );
+	}
+
+
+
+	/**
+	 *	@remove ALL items from cart and delete total as well
+	 *	@access public
+	 *	@return bool
+	 */
+	public function delete_cart() {
+		if ( EEH_Line_Item::delete_all_child_items( $this->_grand_total ) ) {
+			return $this->_grand_total->delete();
+		}
+		return false;
 	}
 
 
