@@ -35,7 +35,7 @@ class EEH_Line_Item {
 	 * @return boolean success
 	 */
 	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL  ){
-		$items_subtotal = self::get_items_subtotal( $parent_line_item );
+		$items_subtotal = self::get_pre_tax_subtotal( $parent_line_item );
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
