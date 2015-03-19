@@ -469,6 +469,21 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function admin_init() {
+
+		/**
+		 * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
+		 * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
+		 * - check if doing post processing.
+		 * - check if doing post processing of one of EE CPTs
+		 * - instantiate the corresponding EE CPT model for the post_type being processed.
+		 */
+		if ( isset( $_POST['action'] ) && $_POST['action'] == 'editpost' ) {
+			if ( isset( $_POST['post_type'] ) ) {
+				EE_Registry::instance()->load_core( 'Register_CPTs' );
+				EE_Register_CPTs::instantiate_cpt_models( $_POST['post_type'] );
+			}
+		}
+
 	}
 
 

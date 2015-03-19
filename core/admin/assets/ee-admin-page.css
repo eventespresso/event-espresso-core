@@ -637,8 +637,12 @@ label.error { display : block; color : #FE2A00 !important; }
 }
 
 .ee-status-strip-td {
-	display : inline;
-	padding : 400%; /** cancel out any td padding **/
+	height: 100%;
+	min-height: 20px;
+}
+
+.wp-list-table .ee-status-strip-td {
+	min-height: 125px;
 }
 
 .ee-table-wrap {
