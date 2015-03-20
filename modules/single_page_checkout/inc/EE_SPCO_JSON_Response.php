@@ -112,7 +112,7 @@ class EE_SPCO_JSON_Response {
 			$JSON_response['success'] = $this->success();
 		}
 		// but if NO notices are set... at least set the "success" as a key so that the JS knows everything worked
-		if ( ! isset( $JSON_response[ 'attention' ], $JSON_response[ 'errors' ], $JSON_response[ 'success' ] ) ) {
+		if ( ! isset( $JSON_response[ 'attention' ] ) && ! isset( $JSON_response[ 'errors' ] ) && ! isset( $JSON_response[ 'success' ] ) ) {
 			$JSON_response['success'] = null;
 		}
 		// set redirect_url, IF it exists
