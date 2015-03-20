@@ -99,7 +99,7 @@ final class EE_Module_Request_Router {
 				// check request for module route
 				if ( EE_Registry::instance()->REQ->is_set( $key )) {
 					//echo '<b style="color:#2EA2CC;">key : <span style="color:#E76700">' . $key . '</span></b><br />';
-					$current_route = EE_Registry::instance()->REQ->get( $key );
+					$current_route = sanitize_text_field( EE_Registry::instance()->REQ->get( $key ));
 					if ( $current_route ) {
 						$current_route = array( $key, $current_route );
 						//echo '<b style="color:#2EA2CC;">current_route : <span style="color:#E76700">' . $current_route . '</span></b><br />';
