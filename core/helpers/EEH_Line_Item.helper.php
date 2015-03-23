@@ -89,8 +89,11 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		$original_total_line_item = null;
 		//make sure we're adding this to an EVENT sub-total
 		if( $total_line_item->type() == EEM_Line_Item::type_total ){
+			//make sure that original total line item is preserved for recalcs on it as well.
+			$original_total_line_item = $total_line_item;
 			$total_line_item = self::get_event_line_item_for_ticket($total_line_item, $ticket);
 		}
 
@@ -136,6 +139,12 @@ class EEH_Line_Item {
 			$line_item->add_child_line_item( $sub_line_item );
 		}
 		self::add_item( $total_line_item, $line_item );
+
+		//recalculate totals on original line item
+		if ( $original_total_line_item instanceof EE_Line_Item ) {
+			$original_total_line_item->recalculate_total_including_taxes();
+		}
+
 		return $line_item;
 	}
 
