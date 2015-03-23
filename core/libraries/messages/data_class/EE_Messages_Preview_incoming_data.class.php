@@ -363,7 +363,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 
-		$cart = EE_Cart::instance();
+		$cart = EE_Cart::reset();
 
 
 		//add tickets to cart
