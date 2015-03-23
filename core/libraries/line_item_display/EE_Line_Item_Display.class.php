@@ -15,10 +15,13 @@ class EE_Line_Item_Display {
 
 	private $strategy = NULL;
 
+
+
 	/**
-	 * @param $context - where/how the line items are being displayed
+	 * @param string $context - where/how the line items are being displayed
+	 * @param string $other_line_item_display_strategy
 	 */
-	public function __construct( $context ) {
+	public function __construct( $context = '', $other_line_item_display_strategy = '' ) {
 		$context = strtolower( $context );
 		switch ( $context ) {
 			case 'invoice' :
@@ -31,7 +34,7 @@ class EE_Line_Item_Display {
 				$this->strategy = new EE_SPCO_Line_Item_Display_Strategy();
 				break;
 			default :
-				$this->strategy = new EE_Invoice_Line_Item_Display_Strategy();
+				$this->strategy = ! empty( $other_line_item_display_strategy ) ? new $other_line_item_display_strategy() : new EE_Invoice_Line_Item_Display_Strategy();
 		}
 	}
 
