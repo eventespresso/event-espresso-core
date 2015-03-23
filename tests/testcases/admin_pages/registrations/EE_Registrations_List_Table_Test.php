@@ -48,8 +48,8 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 		$now = new DateTime( 'now' );
 		$nowEST = new DateTime( 'now', new DateTimeZone( 'America/Toronto' ) );
 
-		//let's setup some registrations to test.
-		$registrations = $this->factory->registration->create_many( 4 );
+		//let's setup some registrations to test.  Setting status as not approved to avoid the incomplete exclusion on the method tested.
+		$registrations = $this->factory->registration->create_many( 4, array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
 
 		$this->assertEquals( 4, count( $registrations ) );
 
@@ -80,8 +80,8 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 		$now = new DateTime( 'now' );
 		$nowEST = new DateTime( 'now', new DateTimeZone( 'America/Toronto' ) );
 
-		//let's setup some registrations to test.
-		$registrations = $this->factory->registration->create_many( 4 );
+		//let's setup some registrations to test. Setting status as not approved to avoid the incomplete exclusion on the method tested.
+		$registrations = $this->factory->registration->create_many( 4, array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
 
 		$this->assertEquals( 4, count( $registrations ) );
 
