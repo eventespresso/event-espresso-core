@@ -133,7 +133,7 @@ jQuery(document).ready(function($) {
 
 
 		getOffset: function() {
-			var zone = moment.tz(this.timeZone).zone();
+			var zone = moment.tz(this.timeZone).utcOffset();
 			var positive = zone > 0 ? false : true;  //we have to flip the symbols later.
 			zone = zone/60; //get hours
 			zone = zone > 0 ? zone : zone*-1; //get rid of any possible - sign.
@@ -335,13 +335,13 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add('weeks', 1).hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
+						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add(1, 'weeks').hours(8).minutes(0).format(DTT_CONVERTED_FORMATS.moment) : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
 					case 'event-datetime-DTT_EVT_end' :
 						DTT_end_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, DTT_CONVERTED_FORMATS.moment).add('hours', 4 ).format(DTT_CONVERTED_FORMATS.moment) : DTT_end_time;
+						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, DTT_CONVERTED_FORMATS.moment).add(4, 'hours' ).format(DTT_CONVERTED_FORMATS.moment) : DTT_end_time;
 						$(this).val(DTT_end_time);
 						break;
 
@@ -1176,7 +1176,7 @@ jQuery(document).ready(function($) {
 					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
 						idref = 'add-new-ticket-TKT_start_date';
 						if ( $(this).val() === '' ) {
-							curval = tktHelper.eemoment().add('hours', 2).format(DTT_CONVERTED_FORMATS.moment);
+							curval = tktHelper.eemoment().add(2, 'hours').format(DTT_CONVERTED_FORMATS.moment);
 						}
 					}
 
