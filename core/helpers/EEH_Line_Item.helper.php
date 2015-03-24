@@ -285,6 +285,30 @@ class EEH_Line_Item {
 
 
 	/**
+	 * Deletes ALL children of the passed line item
+	 *
+	 * @param EE_Line_Item $parent_line_item
+	 * @return bool
+	 */
+	public static function delete_all_child_items( EE_Line_Item $parent_line_item ) {
+		$deleted = 0;
+		foreach ( $parent_line_item->children() as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				$deleted += EEH_Line_Item::delete_all_child_items( $child_line_item );
+				if ( $child_line_item->ID() ) {
+					$child_line_item->delete();
+				} else {
+					$parent_line_item->delete_child_line_item( $child_line_item->code() );
+				}
+				$deleted++;
+			}
+		}
+		return $deleted;
+	}
+
+
+
+	/**
 	 * Deletes the line items as indicated by the line item code(s) provided
 	 * @param EE_Line_Item      $total_line_item of type EEM_Line_Item::type_total
 	 * @param array|bool|string $line_item_codes
@@ -348,6 +372,8 @@ class EEH_Line_Item {
 		$total_line_item->recalculate_total_including_taxes();
 		return $new_tax;
 	}
+
+
 
 	/**
 	 * Prints out a representation of the line item tree
