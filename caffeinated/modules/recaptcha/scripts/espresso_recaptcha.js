@@ -22,6 +22,7 @@ jQuery(document).ready(function($) {
 	EE_RECAPTCHA = {
 
 		recaptcha_div : $('#espresso-recaptcha-dv'),
+		submitted : false,
 		not_a_robot : false,
 
 
@@ -53,7 +54,28 @@ jQuery(document).ready(function($) {
 				}
 				return;
 			}
+			EE_RECAPTCHA.set_listener_for_SPCO_process_next_step_button_click();
 			EE_RECAPTCHA.set_listener_for_SPCO_response();
+		},
+
+
+
+		/**
+		 * @function set_listener_for_SPCO_process_next_step_button_click
+		 */
+		set_listener_for_SPCO_process_next_step_button_click : function() {
+			// initialize if the SPCO reg step changes to "payment_options"
+			SPCO.main_container.on( 'process_next_step_button_click', function(  event ) {
+				if ( ! EE_RECAPTCHA.submitted ) {
+					SPCO.form_is_valid = false;
+					eei18n.ajax_submit = true;
+					SPCO.override_messages = false;
+					SPCO.reset_offset_from_top_modifier();
+					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.process_next_step_button_click() error', eei18n.recaptcha_fail ) );
+				} else {
+					eei18n.ajax_submit = EE_RECAPTCHA.not_a_robot;
+				}
+			});
 		},
 
 
@@ -157,6 +179,7 @@ var espresso_recaptcha_verification = function( response ) {
 					value : true
 				}
 			).appendTo( SPCO.main_container.find('form') );
+			EE_RECAPTCHA.submitted = true;
 		}
 	});
 };
