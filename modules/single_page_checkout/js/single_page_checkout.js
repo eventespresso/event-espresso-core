@@ -17,7 +17,9 @@ jQuery(document).ready( function($) {
 	*     offset_from_top_modifier: number,
 	*     display_debug: number,
 	*     allow_enable_submit_buttons: boolean,
-	*     override_messages: boolean
+	*     override_messages: boolean,
+	*     get_next_step: boolean,
+	*     form_is_valid: boolean
 	* }}
 	* @namespace eei18n
 	* @type {{
@@ -125,6 +127,8 @@ jQuery(document).ready( function($) {
 		override_messages : false,
 		// whether or not to proceed to the next step
 		get_next_step : true,
+		// whether form has been validated successfully
+		form_is_valid : false,
 
 
 
@@ -372,8 +376,9 @@ jQuery(document).ready( function($) {
 		set_listener_for_process_next_reg_step_button : function() {
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
 				SPCO.current_form_to_validate = $(this).parents('form:first');
-				var form_is_valid = SPCO.current_form_to_validate.valid();
-				if ( form_is_valid ){
+				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
+				SPCO.main_container.trigger( 'process_next_step_button_click' );
+				if ( SPCO.form_is_valid ){
 					SPCO.process_next_step( this );
 				} else {
 					SPCO.display_validation_errors();
