@@ -316,5 +316,22 @@ interface EEHI_Template{
 	 */
 	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = '', $cur_code_span_class = 'currency-code' );
 }
-// End of file EEI_Payment_Method_Interfaces.php
-// Location: /EEI_Payment_Method_Interfaces.php
+
+
+
+/**
+ * Interface EEI_Line_Item_Display
+ */
+interface EEI_Line_Item_Display {
+
+	/**
+	 * @param EE_Line_Item $line_item
+	 * @param array $options
+	 * @return mixed
+	 */
+	public function display_line_item( EE_Line_Item $line_item, $options = array() );
+
+}
+
+// End of file EEI_Interfaces.php
+// Location: /core/EEI_Interfaces.php
