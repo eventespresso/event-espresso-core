@@ -59,16 +59,8 @@ class EED_Recaptcha  extends EED_Module {
 		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
 			EED_Recaptcha::set_definitions();
 			EED_Recaptcha::enqueue_styles_and_scripts();
-			//add_action( 'wp', array( 'EED_Recaptcha', 'set_late_hooks' ), 1, 0 );
+			add_action( 'wp', array( 'EED_Recaptcha', 'set_late_hooks' ), 1, 0 );
 			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0 );
-			add_filter(
-				'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit',
-				array( 'EED_Recaptcha', 'not_a_robot' )
-			);
-			add_filter(
-				'FHEE__EED_Single_Page_Checkout___check_form_submission__process_form_submission',
-				array( 'EED_Recaptcha', 'not_a_robot' )
-			);
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
@@ -88,15 +80,6 @@ class EED_Recaptcha  extends EED_Module {
 		// use_captcha ?
 		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
 			EED_Recaptcha::enqueue_styles_and_scripts();
-			//add_action( 'wp', array( 'EED_Recaptcha', 'set_late_hooks' ), 1, 0 );
-			add_filter(
-				'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit',
-				array( 'EED_Recaptcha', 'not_a_robot' )
-			);
-			add_filter(
-				'FHEE__EED_Single_Page_Checkout___check_form_submission__process_form_submission',
-				array( 'EED_Recaptcha', 'not_a_robot' )
-			);
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
@@ -120,6 +103,21 @@ class EED_Recaptcha  extends EED_Module {
 		}
 		define( 'RECAPTCHA_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'RECAPTCHA_BASE_URL', plugin_dir_url( __FILE__ ));
+	}
+
+
+
+	/**
+	 * set_late_hooks
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public static function set_late_hooks() {
+		add_filter(
+			'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit',
+			array( 'EED_Recaptcha', 'not_a_robot' )
+		);
 	}
 
 
