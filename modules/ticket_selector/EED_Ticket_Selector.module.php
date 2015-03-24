@@ -336,7 +336,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
-		return '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html = '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
+		$html .= wp_nonce_field( 	'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, self::$_event );
+		return $html;
 	}
 
 
@@ -393,7 +396,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
-		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __('View Details', 'event_espresso' ));
+		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __('View Details', 'event_espresso' ), self::$_event );
 		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
 		$view_details_btn .= '</form>';
 		return $view_details_btn;
@@ -437,8 +440,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// do we have an event id?
-		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
-
+		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' ) ) {
 			// validate/sanitize data
 			$valid = self::_validate_post_data('add_event_to_cart');
 			// d( $valid );
