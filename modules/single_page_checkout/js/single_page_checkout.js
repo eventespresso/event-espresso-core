@@ -2,90 +2,93 @@ var SPCO;
 jQuery(document).ready( function($) {
 
 	/**
-	 * @namespace SPCO
-	 * @type {{
-		 *     main_container: object,
-		 *     methods_of_payment: object,
-		 *     current_form_to_validate: object,
-		 *     form_inputs: object,
-		 *     additional_post_data: string,
-		 *     require_values: object,
-		 *     multi_inputs_that_do_not_require_values: object,
-		 *     success_msgs: object,
-		 *     error_msgs: object,
-		 *     offset_from_top: number,
-		 *     offset_from_top_modifier: number,
-		 *     display_debug: number,
-		 *     allow_enable_submit_buttons: boolean,
-		 *     override_messages: boolean
-	 * }}
-	 * @namespace eei18n
-	 * @type {{
-		 *     ajax_url: string,
-		 *     reg_steps: object,
-		 *     reg_step_error: string,
-		 *     server_error: string,
-		 *     validation_error: string,
-		 *     invalid_coupon: string,
-		 *     required_field: string,
-		 *     required_multi_field: string,
-		 *     answer_required_questions: string,
-		 *     attendee_info_copied: string,
-		 *     attendee_info_copy_error: string,
-		 *     enter_valid_email: string,
-		 *     valid_email_and_questions: string,
-		 *     no_payment_method: string,
-		 *     invalid_payment_method: string,
-		 *     invalid_json_response: string,
-		 *     forwarding_to_offsite: string,
-		 *     process_registration: string,
-		 *     language: string,
-		 *     EESID: string,
-		 *     datepicker_yearRange: string,
-		 *     revisit: string,
-		 *     e_reg_url_link: string,
-		 *     timer_years: string,
-		 *     timer_months: string,
-		 *     timer_weeks, eei18n.days: string,
-		 *     timer_hours: string,
-		 *     timer_minutes: string,
-		 *     timer_seconds: string,
-		 *     timer_year, eei18n.month: string,
-		 *     timer_week: string,
-		 *     timer_day: string,
-		 *     timer_hour: string,
-		 *     timer_minute: string,
-		 *     timer_second: string,
-		 *     registration_expiration_notice: string
-		 * }}
-	 * @namespace response
-	 * @type {{
-		 *     inner_key: string,
-		 *     outer_key: string,
-		 *     recaptcha_passed: boolean,
-		 *     recaptcha_reload: boolean,
-		 *     reg_step_html: string,
-		 *     return_data: object
-		 *     billing_form_rules: object
-		 *     payment_method: string
-		 *     payment_method_info: string
-		 *     redirect_form: string
-		 *     redirect_url: string
-		 *     plz_select_method_of_payment: string
-		 * }}
-	 * @namespace ee_form_section_vars
-	 * @type {{
-		 *     form_data: object,
-		 *     form_section_id: string,
-		 *     validation_rules: object
-		 *     errors: object
-		 *     required: boolean
-		 *     localized_error_messages: object
-		 *     validUrl: string
-		 * }}
-	 *  @namespace EEFV
-	 *  @type object
-	 */
+	* @namespace SPCO
+	* @type {{
+	*     main_container: object,
+	*     methods_of_payment: object,
+	*     current_form_to_validate: object,
+	*     form_inputs: object,
+	*     additional_post_data: string,
+	*     require_values: object,
+	*     multi_inputs_that_do_not_require_values: object,
+	*     success_msgs: object,
+	*     error_msgs: object,
+	*     offset_from_top: number,
+	*     offset_from_top_modifier: number,
+	*     display_debug: number,
+	*     allow_enable_submit_buttons: boolean,
+	*     override_messages: boolean
+	* }}
+	* @namespace eei18n
+	* @type {{
+	*  		ajax_url: string,
+	* 		reg_steps: object,
+	*     reg_step_error: string,
+	*     server_error: string,
+	*     validation_error: string,
+	*     invalid_coupon: string,
+	*     required_field: string,
+	*     required_multi_field: string,
+	*     answer_required_questions: string,
+	*     attendee_info_copied: string,
+	*     attendee_info_copy_error: string,
+	*     enter_valid_email: string,
+	*     valid_email_and_questions: string,
+	*     no_payment_method: string,
+	*     invalid_payment_method: string,
+	*     invalid_json_response: string,
+	*     forwarding_to_offsite: string,
+	*     process_registration: string,
+	*     language: string,
+	*     EESID: string,
+	*     datepicker_yearRange: string,
+	*     revisit: string,
+	*     e_reg_url_link: string,
+	*     timer_years: string,
+	*     timer_months: string,
+	*     timer_weeks: string,
+	*     timer_days: string,
+	*     timer_hours: string,
+	*     timer_minutes: string,
+	*     timer_seconds: string,
+	*     timer_year: string,
+	*     timer_month: string,
+	*     timer_week: string,
+	*     timer_day: string,
+	*     timer_hour: string,
+	*     timer_minute: string,
+	*     timer_second: string,
+	*     registration_expiration_notice: string,
+	*     ajax_submit: bool
+	*  }}
+	* @namespace response
+	* @type {{
+	*     inner_key: string,
+	*     outer_key: string,
+	*     recaptcha_passed: boolean,
+	*     recaptcha_reload: boolean,
+	*     reg_step_html: string,
+	*     return_data: object
+	*     billing_form_rules: object
+	*     payment_method: string
+	*     payment_method_info: string
+	*     redirect_form: string
+	*     redirect_url: string
+	*     plz_select_method_of_payment: string
+	* }}
+	* @namespace ee_form_section_vars
+	* @type {{
+	*     form_data: object,
+	*     form_section_id: string,
+	*     validation_rules: object
+	*     errors: object
+	*     required: boolean
+	*     localized_error_messages: object
+	*     validUrl: string
+	* }}
+	*  @namespace EEFV
+	*  @type object
+	*/
 	SPCO = {
 
 		// main SPCO div
@@ -375,8 +378,10 @@ jQuery(document).ready( function($) {
 				} else {
 					SPCO.display_validation_errors();
 				}
-				e.preventDefault();
-				e.stopPropagation();
+				if ( eei18n.ajax_submit ) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
 			});
 			// set additional_post_data as empty string
 			SPCO.additional_post_data = '';
@@ -696,6 +701,11 @@ jQuery(document).ready( function($) {
 		 *  @param {string} form_to_check
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
+
+			if ( ! eei18n.ajax_submit ) {
+				return;
+			}
+
 
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&process_form_submission=1';
