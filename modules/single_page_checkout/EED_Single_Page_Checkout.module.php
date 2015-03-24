@@ -886,6 +886,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//does this request require the reg form to be generated ?
 		if ( $this->checkout->generate_reg_form ) {
 			// ever heard that song by Blue Rodeo ?
+			$this->checkout->process_form_submission = apply_filters( 'FHEE__EED_Single_Page_Checkout___check_form_submission__process_form_submission', $this->checkout->process_form_submission, $this->checkout );
 			try {
 				$this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
 				// if not displaying a form, then check for form submission
@@ -1041,6 +1042,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'</a>',
 			'</p>'
 		);
+		EE_Registry::$i18n_js_strings[ 'ajax_submit' ] = apply_filters( 'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true );
 	}
 
 
