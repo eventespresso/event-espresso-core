@@ -562,7 +562,7 @@ class EEH_Form_Fields {
 		$QST_required = $QFI->get('QST_required');
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
 		$use_html_entities = $QFI->get_meta( 'htmlentities' );
-		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : 'This field is required';
+		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : __( 'This field is required', 'event_espresso' );
 		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
 		$label_class = 'espresso-form-input-lbl';
 		$QST_options = $QFI->options(true,$answer);
