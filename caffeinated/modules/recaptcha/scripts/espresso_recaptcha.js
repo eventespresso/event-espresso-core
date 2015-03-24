@@ -149,6 +149,14 @@ var espresso_recaptcha_verification = function( response ) {
 	jQuery(document).ready(function($) {
 		if ( typeof response !== 'undefined' && response !== '' && typeof SPCO.additional_post_data !== 'undefined' && SPCO.additional_post_data.indexOf( 'g-recaptcha-response' ) === -1 ) {
 			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
+			$( '<input>' ).attr(
+				{
+					type : 'hidden',
+					id : 'process_form_submission',
+					name : 'process_form_submission',
+					value : true
+				}
+			).appendTo( SPCO.main_container.find('form') );
 		}
 	});
 };
