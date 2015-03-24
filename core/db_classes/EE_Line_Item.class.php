@@ -511,7 +511,7 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->get_one( array( array( 'LIN_parent' => $this->ID(), 'LIN_code' => $code ) ) );
 		} else {
-			return $this->_Line_Item[ $code ];
+			return isset( $this->_Line_Item[ $code ] ) ? $this->_Line_Item[ $code ] : null;
 		}
 	}
 
