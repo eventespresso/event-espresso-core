@@ -492,8 +492,10 @@ jQuery(document).ready( function($) {
 				$( primary_reg_questions ).each( function() {
 					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
 					//SPCO.console_log( 'copy_primary_registrant_information : new_input_id', new_input_id, true );
-					if ( $(new_input_id).length > 0 ){
-						//SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
+					var input_exists = $( new_input_id ).length;
+					//console.log( JSON.stringify( new_input_id + ' input exists: ' + input_exists, null, 4 ) );
+					if ( input_exists ){
+						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
 						$(new_input_id).trigger('change');
 					} else {
 						success = false;
