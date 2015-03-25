@@ -89,16 +89,18 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
-		//make sure we're adding this to an EVENT sub-total
-		if( $total_line_item->type() == EEM_Line_Item::type_total ){
-			$total_line_item = self::get_event_line_item_for_ticket($total_line_item, $ticket);
+		// add $ticket to cart
+		$datetime = $ticket->first_datetime();
+		if( $datetime instanceof EE_Datetime ){
+			$event_name = $datetime->event() instanceof EE_Datetime ? $datetime->event()->name() : __( 'Unknown', 'event_espresso' );
+		}else{
+			$event_name = __( 'Unknown', 'event_espresso' );
 		}
 
-		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(
 			array(
 				'LIN_name'			=> $ticket->name(),
-				'LIN_desc'			=> $ticket->description() . sprintf( __( 'ticket for %1$s', 'event_espresso' ), $ticket->first_datetime()->event()->name() ),
+				'LIN_desc'			=> $ticket->description() . sprintf( __( 'ticket for %1$s', 'event_espresso' ), $event_name ),
 				'LIN_unit_price'	=> $ticket->price(),
 				'LIN_quantity'		=> $qty,
 				'LIN_is_taxable'	=> $ticket->taxable(),
@@ -135,26 +137,31 @@ class EEH_Line_Item {
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
 		}
-		self::add_item( $total_line_item, $line_item );
+		$events_sub_total = self::get_event_line_item_for_ticket($total_line_item, $ticket);
+		if( ! $events_sub_total ){
+			throw new EE_Error( sprintf( __( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
+		}
+		$events_sub_total->add_child_line_item( $line_item );
+		$total_line_item->recalculate_total_including_taxes();
 		return $line_item;
 	}
 
 
 
 	/**
-	 * Adds the specified item in teh appropriate place in the line item tree
+	 * Adds the specified item under the pre-tax-sub-total line item
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
 	 */
 	public static function add_item( EE_Line_Item $total_line_item, EE_Line_Item $item ){
-		$order = $total_line_item instanceof EE_Line_Item ? count( $total_line_item->children() ) : 1;
-		$item->set_order( $order );
-		$success = $total_line_item->add_child_line_item( $item );
-		// recalculate cart totals based on new items
+		$pre_tax_subtotal = self::get_items_subtotal( $total_line_item );
+		if($pre_tax_subtotal){
+			$success = $pre_tax_subtotal->add_child_line_item($item);
+		}else{
+			return FALSE;
+		}
 		$total_line_item->recalculate_total_including_taxes();
-//		d( $total_line_item );
-//		d( $item );
 		return $success;
 	}
 

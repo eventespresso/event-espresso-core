@@ -47,7 +47,6 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 			'percent_surcharge' => 10,
 			'datetimes' => 2
 		)), 2);
-
 		$this->assertEquals( 33, $ticket_line_item->total() );
 		$this->assertEquals( 4.95, EEH_Line_Item::get_taxes_subtotal( $line_item )->total() );
 		$this->assertEquals( 33, EEH_Line_Item::get_pre_tax_subtotal( $line_item )->total() );
