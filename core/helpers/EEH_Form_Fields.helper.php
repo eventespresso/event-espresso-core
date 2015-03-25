@@ -354,7 +354,7 @@ class EEH_Form_Fields {
 
 		$field = '<select id="' . EEH_Formatter::ee_tep_output_string($name) . '" name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
-		//printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( EEH_Formatter::ee_tep_not_null($parameters))
 			$field .= ' ' . $parameters;
 		if ($autosize) {
@@ -404,7 +404,7 @@ class EEH_Form_Fields {
 		$after_question_group_questions = apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' );
 
 		if ( ! empty( $question_groups )) {
-			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
 			foreach ( $question_groups as $QSG ) {
 				// check that questions exist
@@ -419,7 +419,7 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $QSG['QSG_questions'] as $question ) {
-//						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//						EEH_Debug_Tools::printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$QFI = new EE_Question_Form_Input(
 							$question['qst_obj'],
 							$question['ans_obj'],
@@ -462,10 +462,10 @@ class EEH_Form_Fields {
 				'input_class' => ''
 		);
 		$q_meta = array_merge( $default_q_meta, $q_meta );
-		//printr( $q_meta, '$q_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $q_meta, '$q_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if ( ! empty( $question_groups )) {
-//			printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
 			foreach ( $question_groups as $QSG ) {
 				if ( $QSG instanceof EE_Question_Group ) {
@@ -517,7 +517,7 @@ class EEH_Form_Fields {
 									)),
 									$q_meta
 							);
-							//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							//EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							$html .= self::generate_form_input( $QFI );
 						}
 						$html .= $after_question_group_questions;
