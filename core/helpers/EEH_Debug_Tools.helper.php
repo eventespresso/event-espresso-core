@@ -342,6 +342,51 @@ class EEH_Debug_Tools{
 	}
 
 
+
+	/**
+	 *    @ print_r an array
+	 *    @ access public
+	 *    @ return void
+	 *
+	 * @param mixed $var
+	 * @param bool $var_name
+	 * @param string $file
+	 * @param int $line
+	 * @param string $height
+	 * @param bool $die
+	 */
+	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = false ) {
+		$print_r = false;
+		if ( is_object( $var ) ) {
+			$var_name = ! $var_name ? 'object' : $var_name;
+			$print_r = true;
+		} else if ( is_array( $var ) ) {
+			$var_name = ! $var_name ? 'array' : $var_name;
+			$print_r = true;
+		} else if ( is_numeric( $var ) ) {
+			$var_name = ! $var_name ? 'numeric' : $var_name;
+		} else if ( is_string( $var ) ) {
+			$var_name = ! $var_name ? 'string' : $var_name;
+		} else if ( is_null( $var ) ) {
+			$var_name = ! $var_name ? 'null' : $var_name;
+		}
+		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
+		ob_start();
+		echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
+		echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
+		$print_r ? print_r( $var ) : var_dump( $var );
+		echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+		$result = ob_get_clean();
+		if ( $die ) {
+			die( $result );
+		} else {
+			echo $result;
+		}
+	}
+
+
+
+
 }
 
 
@@ -378,44 +423,4 @@ if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
 		d($post);
 	}
 }
-/**
- *    @ print_r an array
- *    @ access public
- *    @ return void
- *
- * @param mixed  $var
- * @param bool   $var_name
- * @param string $file
- * @param int    $line
- * @param string $height
- * @param bool   $die
- */
-function printr( $var, $var_name = FALSE, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
-	$print_r = FALSE;
-	if ( is_object( $var )) {
-		$var_name = ! $var_name ? 'object' : $var_name;
-		$print_r = TRUE;
-	} else if ( is_array( $var )) {
-		$var_name = ! $var_name ? 'array' : $var_name;
-		$print_r = TRUE;
-	} else if ( is_numeric( $var )) {
-		$var_name = ! $var_name ? 'numeric' : $var_name;
-	} else if ( is_string( $var )) {
-		$var_name = ! $var_name ? 'string' : $var_name;
-	} else if ( is_null( $var )) {
-		$var_name = ! $var_name ? 'null' : $var_name;
-	}
-	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
-	ob_start();
-	echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
-	echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
-	$print_r ? print_r($var) : var_dump($var);
-	echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
-	$result = ob_get_clean();
 
-	if ( $die ) {
-		die( $result );
-	} else {
-		echo $result;
-	}
-}

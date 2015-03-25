@@ -8,7 +8,7 @@
 		</thead>
 		<tbody>
 		<?php
-		//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( $states ) {
 			foreach ( $states as $STA_ID => $state ) {
 		?>

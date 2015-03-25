@@ -487,11 +487,14 @@ jQuery(document).ready( function($) {
 			if ( clicked_checkbox.prop('checked')) {
 				// the targeted attendee question group
 				var targeted_attendee = clicked_checkbox.val();
-//				SPCO.console_log( 'copy_primary_registrant_information : targeted_attendee', targeted_attendee, false );
+				//SPCO.console_log( 'copy_primary_registrant_information : targeted_attendee', targeted_attendee, false );
 				// for each question in the targeted attendee question group
 				$( primary_reg_questions ).each( function() {
 					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
-					if ( $(new_input_id).length > 0 ){
+					//SPCO.console_log( 'copy_primary_registrant_information : new_input_id', new_input_id, true );
+					var input_exists = $( new_input_id ).length;
+					//console.log( JSON.stringify( new_input_id + ' input exists: ' + input_exists, null, 4 ) );
+					if ( input_exists ){
 						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
 						$(new_input_id).trigger('change');
 					} else {
@@ -511,7 +514,7 @@ jQuery(document).ready( function($) {
 		get_primary_reg_questions : function () {
 			// the primary attendee question group
 			var primary_reg_qstn_grp = $('#primary_registrant').val();
-//			SPCO.console_log( 'get_primary_reg_questions : primary_reg_qstn_grp = ', primary_reg_qstn_grp );
+			//SPCO.console_log( 'get_primary_reg_questions : primary_reg_qstn_grp = ', primary_reg_qstn_grp );
 			// find all of the primary attendee's questions for this event
 			return $( '#ee-registration-' + primary_reg_qstn_grp ).children( '.ee-reg-form-qstn-grp-dv' ).find(':input');
 		},
@@ -527,25 +530,25 @@ jQuery(document).ready( function($) {
 			var new_input_id = '';
 			// here we go again...
 			var input_id = $(primary_reg_input).attr('id');
-//			SPCO.console_log( 'calculate_target_attendee_input_id : input_id', input_id, true );
+			//SPCO.console_log( 'calculate_target_attendee_input_id : input_id', input_id, true );
 
 			if ( typeof input_id !== 'undefined' ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
-//				SPCO.console_log( 'calculate_target_attendee_input_id : input_id_array', input_id_array, false );
+				//SPCO.console_log( 'calculate_target_attendee_input_id : input_id_array', input_id_array, false );
 				// grab the current input's details
-				// var att_nmbr = input_id_array[1];
-				// var line_item_id = input_id_array[2];
-				var input_name = input_id_array[3];
-				var answer_id = input_id_array[4];
+				var qstn_base = input_id_array[0];
+				//var reg_id = input_id_array[1];
+				var input_name = input_id_array[2];
+				var answer_id = input_id_array[3];
 				// var input_value = $(this).eeInputValue();
-//				SPCO.console_log( 'calculate_target_attendee_input_id : input_name', input_name, false );
+				//SPCO.console_log( 'calculate_target_attendee_input_id : input_name', input_name, false );
 
-				new_input_id = '#ee_reg_qstn-' + targeted_attendee + '-' +  input_name;
+				new_input_id = '#' + qstn_base + '-' + targeted_attendee + '-' +  input_name;
 				if ( typeof answer_id !== 'undefined' ) {
 					new_input_id = new_input_id + '-' + answer_id;
 				}
-//				SPCO.console_log( 'calculate_target_attendee_input_id : new_input_id', new_input_id, false );
+				//SPCO.console_log( 'calculate_target_attendee_input_id : new_input_id', new_input_id, false );
 			}
 			return new_input_id;
 		},
@@ -1245,7 +1248,7 @@ jQuery(document).ready( function($) {
 		 * @param  {boolean} spacer
 		 */
 		console_log: function ( item_name, value, spacer ) {
-			if ( SPCO.display_debug ) {
+			if ( SPCO.display_debug === '1' ) {
 				if ( typeof value === 'object' ) {
 					SPCO.console_log_object( item_name, value, 0 );
 				} else {
@@ -1254,7 +1257,7 @@ jQuery(document).ready( function($) {
 					}
 					if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
 						console.log( item_name + ' = ' + value );
-					} else if ( SPCO.display_debug && typeof item_name !== 'undefined' ) {
+					} else if ( SPCO.display_debug === '1' && typeof item_name !== 'undefined' ) {
 						console.log( item_name );
 					}
 				}
@@ -1269,7 +1272,7 @@ jQuery(document).ready( function($) {
 		 * @param  {number} depth
 		 */
 		console_log_object: function ( obj_name, obj, depth ) {
-			if ( SPCO.display_debug ) {
+			if ( SPCO.display_debug === '1' ) {
 				depth = typeof depth !== 'undefined' ? depth : 0;
 				var spacer = '';
 				for ( var i = 0; i < depth; i++ ) {

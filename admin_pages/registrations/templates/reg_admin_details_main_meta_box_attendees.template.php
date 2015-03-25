@@ -1,7 +1,7 @@
 <a id="other-attendees"></a>
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	<br/>
-<?php //echo printr( $event_attendees, 'event_attendees' ); ?>
+<?php //echo EEH_Debug_Tools::printr( $event_attendees, 'event_attendees' ); ?>
 <?php echo $attendee_notice; ?>
 <?php if ( !empty($attendees) ) : ?>
 	<div class="admin-primary-mbox-tbl-wrap">

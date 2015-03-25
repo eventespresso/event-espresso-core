@@ -642,7 +642,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$reg_steps = '<ul>';
 		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
-//			printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
+//			EEH_Debug_Tools::printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
 			switch ( $reg_step_status ) {
 				case $reg_step_status === true :
 					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
