@@ -25,7 +25,7 @@
 					<td class="jst-left"><?php echo$att_nmbr;?></td>
 					<td class="jst-left"><?php echo $event_name;?></td>
 					<td class="jst-left">
-						<a href="<?php echo $attendee['att_link']; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
+						<a href="<?php echo $attendee['att_link']; ?>" title="<?php esc_attr_e( 'View details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee['fname'] . ' ' . $attendee['lname'];?>
 						</a>
 					</td>

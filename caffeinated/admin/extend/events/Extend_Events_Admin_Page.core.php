@@ -224,7 +224,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//make sure this is only when editing
 		if ( !empty( $id ) ) {
 			$href = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'duplicate_event', 'EVT_ID' => $id), $this->_admin_base_url );
-			$title = __('Duplicate Event', 'event_espresso');
+			$title = esc_attr__('Duplicate Event', 'event_espresso');
 			$return .= '<a href="' . $href . '" title="' . $title . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">' . $title  . '</button>';
 		}
 		return $return;
@@ -361,7 +361,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'EVT_ID' => $event->ID()
 				);
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
 		return $actionlinks;
 	}
