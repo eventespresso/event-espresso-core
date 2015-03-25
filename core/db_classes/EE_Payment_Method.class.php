@@ -430,7 +430,7 @@ class EE_Payment_Method extends EE_Base_Class{
 		return '
 		 <div id="' . $this->slug() . '-payment-option-dv" class="'. $payment_occurs .'-payment-gateway reg-page-payment-option-dv' . $css_class . '">
 			<a id="payment-gateway-button-' . $this->slug() . '" class="reg-page-payment-option-lnk" rel="' . $this->slug() . '" href="' . $url . '" >
-				<img src="' . $this->button_url() . '" alt="Pay using ' . $this->get_pretty('PMD_name','form_input') . '" />
+				<img src="' . $this->button_url() . '" alt="' . sprintf( esc_attr__( 'Pay using %s', 'event_espresso' ), $this->get_pretty('PMD_name','form_input') ) . '" />
 			</a>
 		</div>
 ';

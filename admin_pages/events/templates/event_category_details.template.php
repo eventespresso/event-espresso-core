@@ -4,7 +4,7 @@
 		<tr>
 			<th><label for="category_name">
 					<?php _e('Category Name', 'event_espresso'); ?>
-					<em title="<?php _e('This field is required', 'event_espresso') ?>"> *</em></label></th>
+					<em title="<?php esc_attr_e('This field is required', 'event_espresso') ?>"> *</em></label></th>
 			<td><input id="category_name" type="text" name="category_name" value="<?php echo $category->category_name;?>" /></td>
 		</tr>
 		<tr>
