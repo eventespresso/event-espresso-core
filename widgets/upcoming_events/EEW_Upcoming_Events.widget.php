@@ -298,7 +298,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 					echo '<ul class="ee-upcoming-events-widget-ul">';
 					foreach ( $events as $event ) {
 						if ( $event instanceof EE_Event && $post->ID != $event->ID() ) {
-							//printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							//EEH_Debug_Tools::printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							echo '<li id="ee-upcoming-events-widget-li-' . $event->ID() . '" class="ee-upcoming-events-widget-li">';
 							// how big is the event name ?
 							$name_length = strlen( $event->name() );
