@@ -1001,7 +1001,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
 				$first_registration = $registrations[0];
-				//printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				//EEH_Debug_Tools::printr( $registrations[0], '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				$event_name = $first_registration->event_obj()->name();
 				$event_date = $first_registration->date_obj()->start_date_and_time('l F j, Y,', 'g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
 				// edit event link
@@ -1459,7 +1459,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
 
-		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$this->_template_args['att_questions'] = EEH_Form_Fields::generate_question_groups_html( $question_groups );
@@ -1680,7 +1680,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$att_nmbr++;
 			}
 
-			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
+			//EEH_Debug_Tools::printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
 			$this->_template_args['event_name'] = $this->_registration->event_obj()->name();
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
