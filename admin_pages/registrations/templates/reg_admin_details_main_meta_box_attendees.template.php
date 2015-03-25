@@ -1,7 +1,7 @@
 <a id="other-attendees"></a>
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	<br/>
-<?php //echo printr( $event_attendees, 'event_attendees' ); ?>
+<?php //echo EEH_Debug_Tools::printr( $event_attendees, 'event_attendees' ); ?>
 <?php echo $attendee_notice; ?>
 <?php if ( !empty($attendees) ) : ?>
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -18,7 +18,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			
+
 			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
 
 				<tr>
@@ -34,12 +34,12 @@
 					<td class="jst-left"><?php echo $attendee['address'];?></td>
 					<!--<th class="jst-cntr">view</th>-->
 				</tr>
-				
+
 			<?php endforeach; // $attendees?>
-		
-			</tbody>	
+
+			</tbody>
 		</table>
 	</div>
-<?php endif; ?>			
-	
+<?php endif; ?>
+
 </div>

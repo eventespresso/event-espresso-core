@@ -180,7 +180,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 	function column_CNT_ISO($item) {
 		$countries = EEM_Country::instance()->get_all_countries();
-		//printr( $countries, '$countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $countries, '$countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country = isset( $countries[ $item->country_ID() ] ) ? $countries[ $item->country_ID() ]->get( 'CNT_name' ) : $item->country_ID();
 		return ! is_numeric( $country ) ? $country : '';
 	}
