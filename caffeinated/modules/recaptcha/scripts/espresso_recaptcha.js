@@ -33,6 +33,7 @@ jQuery(document).ready(function($) {
 
 			// already passed ?
 			if ( EE_RECAPTCHA.not_a_robot ) {
+				SPCO.get_next_step = true;
 				return;
 			}
 			// ensure that the SPCO js class is loaded
@@ -88,7 +89,10 @@ jQuery(document).ready(function($) {
 					// remove recaptcha
 					EE_RECAPTCHA.recaptcha_div.html('');
 					EE_RECAPTCHA.not_a_robot = true;
+					SPCO.get_next_step = true;
 				} else {
+					// do NOT pass go! do NOT collect $200
+					SPCO.get_next_step = false;
 					//alert( 'recaptcha failed' );
 					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.passed() error', eei18n.recaptcha_fail ));
 				}

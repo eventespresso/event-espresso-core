@@ -178,7 +178,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case 'image':
-				return '<img src="' . $venue->feature_image_url(array(200,200) ) . '" alt="' . $venue->get('VNU_name') . ' Feature Image" />';
+				return '<img src="' . $venue->feature_image_url(array(200,200) ) . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $venue->get('VNU_name') ) . '" />';
 				break;
 
 			case 'phone':
