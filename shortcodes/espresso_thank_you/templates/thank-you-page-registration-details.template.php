@@ -9,14 +9,15 @@
 
 <div class="ee-registration-details-dv">
 <?php
+$registrations = $transaction->registrations();
+$registrations = is_array( $registrations ) ? $registrations : array();
+$reg_count = count( $registrations );
 $reg_cntr = 0;
 $event_name = '';
-
-foreach ( $transaction->registrations() as $registration ) {
+foreach ( $registrations as $registration ) {
 	if ( $registration instanceof EE_Registration ) {
 		$reg_cntr++;
 		if ( $event_name != $registration->event_name() ) {
-			$event_name = $registration->event_name();
 	?>
 	<h5>
 		<span class="smaller-text grey-text"><?php _e('for','event_espresso');?>: </span> <?php echo htmlentities( $registration->event_name(), ENT_QUOTES, 'UTF-8' );?>
@@ -59,10 +60,11 @@ foreach ( $transaction->registrations() as $registration ) {
 			</tr>
             <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_table_row', $registration ); ?>
         <?php } ?>
-        <?php if (( $event_name != $registration->event_name() && $event_name != '' ) || $reg_cntr >= count( $transaction->registrations() )) {  ?>
+        <?php if (( $event_name != $registration->event_name() ) || $reg_cntr >= $reg_count ) {  ?>
 		</tbody>
 	</table>
 	<?php
+			$event_name = $registration->event_name();
 		}
 	}
 }
