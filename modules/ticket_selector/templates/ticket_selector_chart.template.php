@@ -342,7 +342,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 									<?php
 									$datetimes = $ticket->datetimes_ordered( $event_is_expired, FALSE );
-									$chart_column_width = $template_settings->show_ticket_sale_columns ? '12.5%' : '85%';
+									$chart_column_width = $template_settings->show_ticket_sale_columns ? '12.5%' : '50%';
 									if ( ! empty( $datetimes )) { ?>
 									<section class="tckt-slctr-tkt-datetimes-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_heading', __( 'Event Access', 'event_espresso' )); ?></h5>
