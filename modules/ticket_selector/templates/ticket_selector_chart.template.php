@@ -122,10 +122,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		?>
 					<td class="tckt-slctr-tbl-td-name">
 						<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-						<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )); ?>">
+						<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )) ); ?>">
 							<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>
 						</a>
-						<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title', __( 'click to hide additional ticket details', 'event_espresso' )); ?>" style="display:none;">
+						<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title', __( 'click to hide additional ticket details', 'event_espresso' )) ); ?>" style="display:none;">
 							<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 						</a>
 					<?php if ( $ticket->required() ) { ?>

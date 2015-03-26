@@ -146,7 +146,7 @@ var dttPickerHelper = {
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
 
-		this.endDate = this.endDate === '' ? this.startDate.clone().add(this.defaultRange.type, this.defaultRange.duration) : moment(this.endDate, this.momentFormat );
+		this.endDate = this.endDate === '' ? this.startDate.clone().add( this.defaultRange.duration, this.defaultRange.type ) : moment(this.endDate, this.momentFormat );
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
@@ -156,7 +156,7 @@ var dttPickerHelper = {
 		if ( !doingstart ) {
 			var minDateTime = this.startDate;
 			this.dttOptions.minDateTime = this.dttOptions.minDateTime === null ? minDateTime.toDate() : this.dttOptions.minDateTime;
-			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add('years', 100).toDate() : this.dttOptions.maxDateTime;
+			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add(100, 'years').toDate() : this.dttOptions.maxDateTime;
 		}
 
 

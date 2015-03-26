@@ -756,7 +756,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param array $options {
 	 *	@type int $dollar_surcharge the dollar surcharge to add to this ticket
 	 *	@type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
-	 *	@type int $datetimes the number of datetimes for this ticket
+	 *	@type int $datetimes the number of datetimes for this ticket,
+	 *	@type int $TKT_price set the TKT_price to this value.
+	 *	@type int $TKT_taxable set the TKT_taxable to this value.
 	 * }
 	 * @return EE_Ticket
 	 */
@@ -764,27 +766,44 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => '16.5', 'TKT_taxable' => TRUE ) );
 		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
 		$this->assertInstanceOf( 'EE_Price_Type', $base_price_type );
-		$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
-		$ticket->_add_relation_to( $base_price, 'Price' );
-		$this->assertArrayContains( $base_price, $ticket->prices() );
-		if( isset( $options[ 'dollar_surcharge'] ) ){
-			$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
-			$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
-			$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
-			$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
-			$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+
+		//only associate on the tickets if TKT_price is not included
+		if ( ! isset( $options['TKT_price'] ) ) {
+			$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
+			$ticket->_add_relation_to( $base_price, 'Price' );
+			$this->assertArrayContains( $base_price, $ticket->prices() );
+			if( isset( $options[ 'dollar_surcharge'] ) ){
+				$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
+				$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
+				$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
+				$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
+				$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+			}
+			if( isset( $options[ 'percent_surcharge' ] ) ){
+				$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
+				$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
+				$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
+				$ticket->_add_relation_to( $percent_surcharge, 'Price' );
+				$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
+			}
 		}
-		if( isset( $options[ 'percent_surcharge' ] ) ){
-			$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
-			$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
-			$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
-			$ticket->_add_relation_to( $percent_surcharge, 'Price' );
-			$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
-		}
+
 		if( isset( $options[ 'datetimes'] ) ){
 			$datetimes = $options[ 'datetimes' ];
 		}else{
 			$datetimes = 1;
+		}
+
+		if ( isset( $options[ 'TKT_price' ] ) ) {
+			$ticket->set( 'TKT_price', $options['TKT_price'] );
+			//set the base price
+			$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'TKT_price' ], 'PRT_ID' => $base_price_type->ID() ) );
+			$ticket->_add_relation_to( $base_price, 'Price' );
+			$this->assertArrayContains( $base_price, $ticket->prices() );
+		}
+
+		if ( isset( $options[ 'TKT_taxable'] ) ) {
+			$ticket->set( 'TKT_taxable', $options['TKT_taxable'] );
 		}
 
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
@@ -793,6 +812,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$ticket->_add_relation_to( $ddt, 'Datetime' );
 			$this->assertArrayContains( $ddt, $ticket->datetimes() );
 		}
+
+		//resave ticket to account for possible field value changes
+		$ticket->save();
+
 		return $ticket;
 	}
 }

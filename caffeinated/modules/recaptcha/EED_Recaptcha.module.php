@@ -53,7 +53,8 @@ class EED_Recaptcha  extends EED_Module {
 			EED_Recaptcha::set_definitions();
 			EED_Recaptcha::enqueue_styles_and_scripts();
 			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0 );
-			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
+			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
+			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
 			add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method' ), 10, 1 );
 		}
@@ -72,7 +73,8 @@ class EED_Recaptcha  extends EED_Module {
 		// use_captcha ?
 		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
 			EED_Recaptcha::enqueue_styles_and_scripts();
-			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
+			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
+			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
 		}
 		// admin settings
@@ -89,7 +91,9 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_definitions() {
-		EED_Recaptcha::$_not_a_robot = is_user_logged_in();
+		if ( is_user_logged_in() ) {
+			EED_Recaptcha::$_not_a_robot = true;
+		}
 		define( 'RECAPTCHA_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'RECAPTCHA_BASE_URL', plugin_dir_url( __FILE__ ));
 	}
@@ -121,6 +125,16 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {}
+
+
+
+	/**
+	 * not_a_robot
+	 *  @return boolean
+	 */
+	public static function not_a_robot() {
+		return is_bool( EED_Recaptcha::$_not_a_robot ) ? EED_Recaptcha::$_not_a_robot : EED_Recaptcha::recaptcha_passed();
+	}
 
 
 

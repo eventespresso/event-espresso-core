@@ -331,6 +331,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			if ( empty( $payment_method ) ) {
 				return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
 			}
+			return $payment_method;
 		}else{
 			//get the first payment method we can find
 			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));

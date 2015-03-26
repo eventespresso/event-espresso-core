@@ -35,7 +35,7 @@ class EEH_Line_Item {
 	 * @return boolean success
 	 */
 	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL  ){
-		$items_subtotal = self::get_items_subtotal( $parent_line_item );
+		$items_subtotal = self::get_pre_tax_subtotal( $parent_line_item );
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
@@ -82,12 +82,21 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
-	 * @param EE_Line_Item $event_line_item of type EEM_Line_Item::type_sub_total
+	 * @param EE_Line_Item $line_item grand total line item of type EEM_Line_Item::type_total OR
+	 *	event-sub-total of type EEM_Line_Item::type_sub_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
 	 * @return EE_Line_Item
 	 */
-	public static function add_ticket_purchase( EE_Line_Item $event_line_item, EE_Ticket $ticket, $qty = 1 ){
+	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		$original_total_line_item = null;
+		//make sure we're adding this to an EVENT sub-total
+		if( $total_line_item->type() == EEM_Line_Item::type_total ){
+			//make sure that original total line item is preserved for recalcs on it as well.
+			$original_total_line_item = $total_line_item;
+			$total_line_item = self::get_event_line_item_for_ticket($total_line_item, $ticket);
+		}
+
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(
 			array(
@@ -129,7 +138,13 @@ class EEH_Line_Item {
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
 		}
-		self::add_item( $event_line_item, $line_item );
+		self::add_item( $total_line_item, $line_item );
+
+		//recalculate totals on original line item
+		if ( $original_total_line_item instanceof EE_Line_Item ) {
+			$original_total_line_item->recalculate_total_including_taxes();
+		}
+
 		return $line_item;
 	}
 
@@ -268,7 +283,7 @@ class EEH_Line_Item {
 	 */
 	public static function create_event_subtotal( EE_Line_Item $pre_tax_line_item, $transaction = NULL, $event = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'	=> 'event',
+			'LIN_code'	=> self::get_event_code( $event ),
 			'LIN_name' 	=> __('Event', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total,
 			'OBJ_type' 	=> 'Event',
@@ -276,6 +291,59 @@ class EEH_Line_Item {
 		));
 		self::set_TXN_ID( $event_line_item, $transaction );
 		$pre_tax_line_item->add_child_line_item( $event_line_item );
+		return $event_line_item;
+	}
+
+	/**
+	 * Gets what the event ticket's code SHOULD be
+	 * @param EE_Event $event
+	 * @return string
+	 */
+	public static function get_event_code( $event ) {
+		return 'event-' . ( $event instanceof EE_Event ? $event->ID() : '0' );
+	}
+
+	/**
+	  * Given the grand total line item and a ticket, finds the event sub-total
+	  * line item the ticket's purchase should be added onto
+	  *
+	  * @access public
+	  * @param EE_Line_Item $grand_total the grand total line item
+	  * @param EE_Ticket $ticket
+	  * @throws \EE_Error
+	  * @return EE_Line_Item
+	  */
+	public static function get_event_line_item_for_ticket( EE_Line_Item $grand_total, EE_Ticket $ticket ) {
+
+		$first_datetime = $ticket->first_datetime();
+		if( ! $first_datetime instanceof EE_Datetime ){
+			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no datetimes', 'event_espresso' ), $ticket->ID() ) );
+		}
+		$event = $first_datetime->event();
+		if ( ! $event instanceof EE_Event ) {
+			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no event data associated with it.','event_espresso' ), $ticket->ID() ) );
+		}
+		$event_line_item = NULL;
+		foreach ( EEH_Line_Item::get_event_subtotals( $grand_total ) as $event_line_item ) {
+			// default event subtotal, we should only ever find this the first time this method is called
+			if ( ! $event_line_item->OBJ_ID() ) {
+				// let's use this! but first... set the event details
+				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+				break;
+			} else if ( $event_line_item->OBJ_ID() === $event->ID() ) {
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			} else {
+				//there is no event sub-total yet, so add it
+				$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $grand_total );
+				// create a new "event" subtotal below that
+				$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, NULL, $event );
+				// and set the event details
+				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+				// found existing line item for this event in the cart, so break out of loop and use this one
+				break;
+			}
+		}
 		return $event_line_item;
 	}
 
@@ -290,6 +358,7 @@ class EEH_Line_Item {
 	 */
 	public static function set_event_subtotal_details( EE_Line_Item $event_line_item, EE_Event $event, $transaction = NULL ){
 		if ( $event instanceof EE_Event ) {
+			$event_line_item->set_code( self::get_event_code( $event ) );
 			$event_line_item->set_desc( $event->name() );
 			$event_line_item->set_OBJ_ID( $event->ID() );
 		}

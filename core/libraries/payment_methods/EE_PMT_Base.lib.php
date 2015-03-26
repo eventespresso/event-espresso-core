@@ -317,13 +317,13 @@ abstract class EE_PMT_Base{
 	 * @param float                $amount
 	 * @param EE_Billing_Info_Form $billing_info
 	 * @param string               $return_url
-	 * @param string                 $cancel_url
+	 * @param string                 $fail_url
 	 * @param string               $method
 	 * @param bool           $by_admin
 	 * @return \EE_Base_Class|\EE_Payment|null
 	 * @throws EE_Error
 	 */
-	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$cancel_url = '', $method = 'CART', $by_admin = FALSE ){
+	function process_payment( EE_Transaction $transaction, $amount = null, $billing_info = null, $return_url = null,$fail_url = '', $method = 'CART', $by_admin = false ){
 		// @todo: add surcharge for the payment method, if any
 		if ( $this->_gateway ) {
 			//there is a gateway, so we're going to make a payment object
@@ -332,9 +332,9 @@ abstract class EE_PMT_Base{
 				'TXN_ID' => $transaction->ID(),
 				'STS_ID' => EEM_Payment::status_id_failed,
 				'PAY_source' => $method,
-				'PAY_amount' => $amount !== NULL ? $amount : $transaction->remaining(),
+				'PAY_amount' => $amount !== null ? $amount : $transaction->remaining(),
 				'PMD_ID' => $this->_pm_instance->ID(),
-				'PAY_gateway_response'=>NULL,
+				'PAY_gateway_response'=>null,
 			);
 			$payment = EEM_Payment::instance()->get_one( array( $duplicate_properties ));
 			//if we didn't already have a payment in progress for the same thing,
@@ -345,10 +345,10 @@ abstract class EE_PMT_Base{
 						$duplicate_properties,
 						array(
 							'PAY_timestamp' => current_time( 'timestamp' ),
-							'PAY_txn_id_chq_nmbr' => NULL,
-							'PAY_po_number' => NULL,
-							'PAY_extra_accntng' => NULL,
-							'PAY_details' => NULL
+							'PAY_txn_id_chq_nmbr' => null,
+							'PAY_po_number' => null,
+							'PAY_extra_accntng' => null,
+							'PAY_details' => null
 						)
 					)
 				);
@@ -370,7 +370,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					empty( $cancel_url ) ? EE_Registry::instance()->CFG->core->cancel_page_url() : $cancel_url
+					$fail_url
 				);
 
 			//  Onsite Gateway
@@ -382,7 +382,7 @@ abstract class EE_PMT_Base{
 			} else {
 				throw new EE_Error(
 					sprintf(
-						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)', 'event_espresso' ),
+						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or null (to indicate NO gateway)', 'event_espresso' ),
 						get_class($this),
 						gettype( $this->_gateway )
 					)
@@ -392,7 +392,7 @@ abstract class EE_PMT_Base{
 		} else {
 			//no gateway provided
 			//so create no payment. The payment processor will know how to handle this
-			$payment = NULL;
+			$payment = null;
 		}
 
 		// if there is billing info, clean it and save it now
@@ -559,7 +559,7 @@ abstract class EE_PMT_Base{
 		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
 			return EE_PMT_Base::offsite;
 		}else{
-			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
 

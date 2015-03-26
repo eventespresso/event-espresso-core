@@ -363,7 +363,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 
-		$cart = EE_Cart::instance();
+		$cart = EE_Cart::reset();
 
 
 		//add tickets to cart
@@ -455,14 +455,21 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		EEH_Line_Item::apply_taxes( $line_item_total );
 
 		//now we should be able to get the items we need from this object
-		$ticket_line_items = EEH_Line_Item::get_pre_tax_subtotal( $line_item_total )->children();
-
-		foreach ( $ticket_line_items as $line_id => $line_item ) {
-			if( $line_item->OBJ_ID() && $line_item->OBJ_type() ){
-				$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
-				$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
-				$line_items[$line_item->ID()]['children'] = $line_item->children();
-				$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+		$event_line_items = EEH_Line_Item::get_pre_tax_subtotal( $line_item_total )->children();
+		$line_items = array();
+		foreach ( $event_line_items as $line_id => $line_item ) {
+			if ( ! $line_item instanceof EE_Line_Item || $line_item->OBJ_type() !== 'Event' ) {
+				continue;
+			}
+			$ticket_line_items = EEH_Line_Item::get_ticket_line_items( $line_item );
+			foreach ( $ticket_line_items as $ticket_line_id => $ticket_line_item ) {
+				if ( ! $ticket_line_item instanceof EE_Line_Item ) {
+					continue;
+				}
+				$this->tickets[$ticket_line_item->OBJ_ID()]['line_item'] = $ticket_line_item;
+				$this->tickets[$ticket_line_item->OBJ_ID()]['sub_line_items'] = $ticket_line_item->children();
+				$line_items[$ticket_line_item->ID()]['children'] = $ticket_line_item->children();
+				$line_items[$ticket_line_item->ID()]['EE_Ticket'] = $this->tickets[$ticket_line_item->OBJ_ID()]['ticket'];
 			}
 		}
 
