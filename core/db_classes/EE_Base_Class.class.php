@@ -118,14 +118,14 @@ abstract class EE_Base_Class{
 		$model_fields = $model->field_settings( FALSE );
 		// ensure $fieldValues is an array
 		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
-		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! isset( $model_fields[ $field_name] ) ){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//if db model is instantiating
 		if( $bydb ){
@@ -635,6 +635,7 @@ abstract class EE_Base_Class{
 				$field_value = $field_value_from_db;
 			}
 			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_clear_cached_property( $field_name );
 		}
 	}
 
@@ -1224,20 +1225,28 @@ abstract class EE_Base_Class{
 	 * @return mixed (EE_Base_Class|bool)
 	 */
 	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
-		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if( self::_get_model( $classname )->has_primary_key_field()){
+			$primary_id_ref = self::_get_primary_key_name( $classname );
 
-		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
-			if ( $existing ) {
-				foreach ( $props_n_values as $property => $field_value ) {
-					$existing->set( $property, $field_value );
-				}
-				return $existing;
-			} else {
-				return FALSE;
+			if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+				$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			}else{
+				$existing = null;
 			}
+		}elseif( self::_get_model( $classname, $timezone )->has_all_combined_primary_key_fields(  $props_n_values ) ){
+			//no primary key on this model, but there's still a matching item in the DB
+				$existing = self::_get_model($classname, $timezone)->get_one_by_ID( self::_get_model($classname, $timezone)->get_index_primary_key_string( $props_n_values ) );
+		}else{
+			$existing = null;
 		}
-		return FALSE;
+		if ( $existing ) {
+			foreach ( $props_n_values as $property => $field_value ) {
+				$existing->set( $property, $field_value );
+			}
+			return $existing;
+		} else {
+			return FALSE;
+		}
 	}
 
 
@@ -1317,7 +1326,11 @@ abstract class EE_Base_Class{
 	 */
 	public function ID(){
 		//now that we know the name of the variable, use a variable variable to get its value and return its
-		return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		if( $this->get_model()->has_primary_key_field() ) {
+			return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		}else{
+			return $this->get_model()->get_index_primary_key_string( $this->_fields );
+		}
 	}
 
 

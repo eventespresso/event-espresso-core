@@ -60,7 +60,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 	/**
-	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
+	 * @return EEG_Paypal_Standard
+	 */
+	public function __construct() {
+		$this->set_uses_separate_IPN_request( true ) ;
+		parent::__construct();
+	}
+
+
+
+	/**
+	 * Also sets the gateway url class variable based on whether debug mode is enabled or not
 	 * @param array $settings_array
 	 */
 	public function set_settings($settings_array){
@@ -189,9 +199,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
-			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
-			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
 		}
 
@@ -213,6 +220,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
 				//echo "duplicated ipn! dont bother updating transaction foo!";
 				$this->log( array(
+					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ($_SERVER['HTTPS'] ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
 					'message' => sprintf( __( 'It appears we have received a duplicate IPN from paypal for payment %d', 'event_espresso' ), $payment->ID()),
 					'payment' => $payment->model_field_array(),
 					'IPN data' => $update_info ),
@@ -223,7 +231,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
 				$payment->set_details( $update_info );
+				$payment->set_txn_id_chq_nmbr( $update_info['txn_id'] );
 				$this->log( array(
+					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
 					'message' => sprintf( __( 'Updated payment either from IPN or as part of POST from paypal', 'event_espresso' )),
 					'payment' => $payment->model_field_array(),
 					'IPN_data' => $update_info ),
@@ -283,9 +293,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( ! is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 			return true;
 		}else{
+			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
+			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			$payment->set_gateway_response(sprintf(__("IPN Validation failed! Paypal responded with '%s'", "event_espresso"),$result['body']));
 			$payment->set_details(array('REQUEST'=>$update_info,'VALIDATION_RESPONSE'=>$result));
 			$payment->set_status(EEM_Payment::status_id_failed);
+			$this->log( array(
+				'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
+				'message' => $payment->gateway_response(),
+				'details' => $payment->details() ), $payment);
 			return false;
 		}
 	}
@@ -305,7 +321,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		if( ! is_array( $update_info ) || ! isset( $update_info[ 'mc_shipping' ] ) || ! isset( $update_info[ 'tax' ] ) ) {
 			$this->log(
-					array( 'message' => __( 'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from paypal', 'event_espresso' ),
+					array(
+						'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
+						'message' => __( 'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from paypal', 'event_espresso' ),
 				'payment' => $payment->model_field_array() ),
 					$payment );
 			return;
@@ -334,6 +352,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
 		}
 		$this->log( array(
+			'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
 			'message' => __( 'Updated transaction related to payment', 'event_espresso' ),
 			'transaction (updated)' => $transaction->model_field_array(),
 			'payment (updated)' => $payment->model_field_array(),
@@ -343,8 +362,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 				$payment);
 	}
-
-
 
 }
 // End of file EEG_Paypal_Standard.gateway.php

@@ -224,7 +224,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//make sure this is only when editing
 		if ( !empty( $id ) ) {
 			$href = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'duplicate_event', 'EVT_ID' => $id), $this->_admin_base_url );
-			$title = __('Duplicate Event', 'event_espresso');
+			$title = esc_attr__('Duplicate Event', 'event_espresso');
 			$return .= '<a href="' . $href . '" title="' . $title . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">' . $title  . '</button>';
 		}
 		return $return;
@@ -311,11 +311,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
 		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
-			$this->_views['all']['bulk_action']['export_events'] = $export_label;
-			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+//			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
 
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
-				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+//				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
 			}
 		}
 
@@ -325,7 +325,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('Today', 'event_espresso'),
 				'count' => $this->total_events_today(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
@@ -334,7 +334,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label' => __('This Month', 'event_espresso'),
 				'count' => $this->total_events_this_month(),
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
+//					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			)
@@ -348,7 +348,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _set_list_table_views_category_list() {
 		parent::_set_list_table_views_category_list();
-		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
+//		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 
@@ -361,7 +361,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'EVT_ID' => $event->ID()
 				);
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
 		return $actionlinks;
 	}

@@ -493,7 +493,7 @@ class EEH_HTML {
 		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
-		$attributes .= ! empty( $title ) ? ' title="' . $title . '"' : '';
+		$attributes .= ! empty( $title ) ? ' title="' . esc_attr( $title ) . '"' : '';
 		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
 		return '<a href="' . $href . '" ' . $attributes . '>'  . $link_text  . '</a>';
 	}

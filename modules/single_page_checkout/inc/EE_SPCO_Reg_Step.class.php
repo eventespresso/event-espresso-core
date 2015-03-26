@@ -151,7 +151,9 @@ abstract class EE_SPCO_Reg_Step {
 	 * set_completed - toggles $_completed to TRUE
 	 */
 	public function set_completed() {
-		$this->_completed = TRUE;
+		// DEBUG LOG
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		$this->_completed = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', true, $this );
 	}
 
 
@@ -200,9 +202,17 @@ abstract class EE_SPCO_Reg_Step {
 	 * @param string $submit_button_text
 	 */
 	public function set_submit_button_text( $submit_button_text = '' ) {
-		if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
-			$this->_submit_button_text = ! empty( $submit_button_text) ? $submit_button_text : 'Proceed to ' . $this->checkout->next_step->name();
+		if ( ! empty( $submit_button_text )) {
+			$this->_submit_button_text = $submit_button_text;
+		} else if ( $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			if ( $this->checkout->revisit ) {
+				$this->_submit_button_text = sprintf( __( 'Update %s', 'event_espresso' ), $this->checkout->current_step->name() );
+			} else {
+				$this->_submit_button_text = sprintf( __( 'Proceed to %s', 'event_espresso' ), $this->checkout->next_step->name() );
+			}
 		}
+		// filters the submit button text
+		$this->_submit_button_text = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text', $this->_submit_button_text, $this->checkout );
 	}
 
 
@@ -229,7 +239,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function is_final_step() {
-		return $this->slug() === 'finalize_registration' ? TRUE : FALSE;
+		return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
 	}
 
 
@@ -359,6 +369,10 @@ abstract class EE_SPCO_Reg_Step {
 		$query_args = array( 'step' => $this->slug() );
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
+		}
+		// final step has no display
+		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
+			$query_args[ 'action' ] = 'process_reg_step';
 		}
 		if( $this->checkout->revisit ) {
 			$query_args['revisit'] = TRUE;
