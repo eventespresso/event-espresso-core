@@ -164,7 +164,7 @@ class EE_Event_List_Query extends WP_Query {
 	 * @return \EE_Event_List_Query
 	 */
 	function __construct( $args = array() ) {
-//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
