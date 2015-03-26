@@ -447,13 +447,17 @@ class EEH_Line_Item {
 
 
 	/**
-	 * Deletes the line items as indicated by the line item code(s) provided
+	 * Deletes the line items as indicated by the line item code(s) provided,
+	 * regardless of where they're found in the line item tree
 	 * @param EE_Line_Item      $total_line_item of type EEM_Line_Item::type_total
 	 * @param array|bool|string $line_item_codes
 	 * @return int number of items successfully removed
 	 */
 	public static function delete_items( EE_Line_Item $total_line_item, $line_item_codes = FALSE ) {
 
+		if( $total_line_item->type() != EEM_Line_Item::type_total ){
+			EE_Error::doing_it_wrong('EEH_Line_Item::delete_items', __( 'This static method should only be called with a TOTAL line item, otherwise we won\'t recalculate the totals correctly', 'event_espresso' ), '4.6.18' );
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// check if only a single line_item_id was passed
@@ -461,15 +465,10 @@ class EEH_Line_Item {
 			// place single line_item_id in an array to appear as multiple line_item_ids
 			$line_item_codes = array ( $line_item_codes );
 		}
-
-		$items_line_item = self::get_pre_tax_subtotal( $total_line_item );
-		if( ! $items_line_item){
-			return 0;
-		}
 		$removals = 0;
 		// cycle thru line_item_ids
 		foreach ( $line_item_codes as $line_item_id ) {
-			$removals += $items_line_item->delete_child_line_item($line_item_id);
+			$removals += $total_line_item->delete_child_line_item($line_item_id);
 		}
 
 		if ( $removals > 0 ) {

@@ -561,16 +561,49 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * If this line item has been saved to the DB, deletes its child with LIN_code == $code. If this line
-	 * HAS NOT been saved to the DB, removes the child line item with index $code
+	 * HAS NOT been saved to the DB, removes the child line item with index $code.
+	 * Also searches through the child's children for a matching line item. However, once a line item has been found
+	 * and deleted, stops searching (so if there are line items with duplicate codes, only the first one found will be deleted)
 	 * @param string $code
 	 * @return int count of items deleted (or simply removed from the line item's cache, if not has not been saved to the DB yet)
 	 */
-	function delete_child_line_item( $code ) {
+	function delete_child_line_item( $code, $stop_search_once_found = true ) {
 		if ( $this->ID() ) {
-			return $this->get_model()->delete( array( array( 'LIN_code' => $code, 'LIN_parent' => $this->ID() ) ) );
+			$items_deleted = 0;
+			if( $this->code() == $code ) {
+				$items_deleted += EEH_Line_Item::delete_all_child_items( $this );
+				$items_deleted += intval( $this->delete() );
+				if( $stop_search_once_found ){
+					return $items_deleted;
+				}
+			}
+			foreach( $this->children() as $child_line_item ) {
+				$items_deleted += $child_line_item->delete_child_line_item( $code, $stop_search_once_found );
+			}
+			return $items_deleted;
 		} else {
-			unset( $this->_Line_Item[ $code ] );
-			return 1;
+			if( isset( $this->_Line_Item[ $code ] ) ) {
+				unset( $this->_Line_Item[ $code ] );
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}
+
+	/**
+	 * If this line item is in the database, is of the type subtotal, and
+	 * has no children, why do we have it? It should be deleted so this function
+	 * does that
+	 * @return boolean
+	 */
+	public function delete_if_childless_subtotal() {
+		if( $this->ID() &&
+				$this->type() == EEM_Line_Item::type_sub_total &&
+				! $this->children() ) {
+			return $this->delete();
+		} else {
+			return false;
 		}
 	}
 
