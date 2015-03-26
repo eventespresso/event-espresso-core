@@ -516,6 +516,7 @@ class EE_Line_Item extends EE_Base_Class {
 			if( $this->TXN_ID() ){
 				$line_item->set_TXN_ID( $this->TXN_ID() );
 			}
+			$line_item->set_order(  count( $this->children() ) );
 			return $line_item->save();
 		} else {
 			$this->_Line_Item[ $line_item->code() ] = $line_item;
