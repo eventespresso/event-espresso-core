@@ -283,7 +283,7 @@ class EEH_Venue_View extends EEH_Base {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
-			$venue_name = EEH_Venue_View::is_venue_private() ? EEH_Venue_View::$_venue->name() . "&nbsp;" . __( '(Private)', 'event_espresso' ) : EEH_Venue_View::$_venue->name();
+			$venue_name = apply_filters( 'FHEE__EEH_Venue__venue_name__append_private_venue_name', EEH_Venue_View::is_venue_private() ? EEH_Venue_View::$_venue->name() . "&nbsp;" . __( '(Private)', 'event_espresso' ) : EEH_Venue_View::$_venue->name(), EEH_Venue_View::$_venue );
 			$venue_name = EEH_Schema::name( $venue_name );
 			switch( $link_to ) {
 
