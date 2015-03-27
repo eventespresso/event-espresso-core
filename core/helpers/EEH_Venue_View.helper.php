@@ -40,13 +40,15 @@ class EEH_Venue_View extends EEH_Base {
 	 * @access    public
 	 * @param int  $VNU_ID
 	 * @param bool $look_in_event
+	 * @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
+	 *                             		     regardless of access.
 	 * @return EE_Venue | null
 	 */
-	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE ) {
+	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE, $privacy_check = true ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
-			return EEH_Venue_View::_get_venue();
+			return EEH_Venue_View::_get_venue( $privacy_check );
 		}
 		// international newspaper?
 		global $post;
@@ -105,7 +107,7 @@ class EEH_Venue_View extends EEH_Base {
 			// sigh... pull it from the db
 			EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 		}
-		return EEH_Venue_View::_get_venue();
+		return EEH_Venue_View::_get_venue( $privacy_check );
 	}
 
 
@@ -113,12 +115,13 @@ class EEH_Venue_View extends EEH_Base {
 	/**
 	 * 	return a single venue
 	 *
-	 *  @access 	public
+	 *  @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
+	 *                             		     regardless of access.
 	 *  @return 	EE_Venue
 	 */
-	protected static function _get_venue() {
+	protected static function _get_venue( $privacy_check = true ) {
 		// check for private venues.
-		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && $privacy_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
 			return null;
 		}
 		return EEH_Venue_View::$_venue instanceof EE_Venue ? EEH_Venue_View::$_venue : null;
@@ -140,6 +143,28 @@ class EEH_Venue_View extends EEH_Base {
 			}
 		}
 		return array();
+	}
+
+
+
+
+	/**
+	 * Simply checks whether a venue for the given ID (or the internally derived venue is private).
+	 *
+	 * Note: This will return true if its private, null if the venue doesn't exist, and false, if the venue exists but is not
+	 * 	  private.  So it is important to do explicit boolean checks when using this conditional.
+	 *
+	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
+	 *
+	 * @return bool|null
+	 */
+	public static function is_venue_private( $VNU_ID = false ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true );
+		if ( ! $venue instanceof EE_Venue ) {
+			return null;
+		}
+
+		return $venue->status() == 'private' ? true : false;
 	}
 
 

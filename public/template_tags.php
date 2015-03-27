@@ -892,6 +892,23 @@ if ( ! function_exists( 'espresso_venue_id' )) {
 
 
 
+if ( ! function_exists( 'espresso_venue_is_private' ) ) {
+	/**
+	 * Return whether a venue is private or not.
+	 * @see EEH_Venue_View::get_venue() for more info on expected return results.
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 *
+	 * @return bool | null
+	 */
+	function espresso_venue_is_private( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::is_venue_private( $VNU_ID );
+	}
+}
+
+
+
 
 if ( ! function_exists( 'espresso_venue_name' )) {
 	/**
