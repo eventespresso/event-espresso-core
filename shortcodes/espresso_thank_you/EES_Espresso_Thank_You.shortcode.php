@@ -175,7 +175,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$payments = $this->_current_txn->payments( $args );
 //		global $wpdb;
 //		echo $wpdb->last_query;
-//		printr( $payments, '$payments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $payments, '$payments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $payments;
 	}
 

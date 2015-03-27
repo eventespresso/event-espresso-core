@@ -509,11 +509,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function edit_message_template_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
-		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . __('Editor Title', 'event_espresso') . '" />';
-		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . __('Context Switcher and Preview', 'event_espresso') . '" />';
-		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . __('Message Template Form Fields', 'event_espresso') . '" />';
-		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . __('Shortcodes Metabox', 'event_espresso') . '" />';
-		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
+		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . esc_attr__('Editor Title', 'event_espresso') . '" />';
+		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . esc_attr__('Context Switcher and Preview', 'event_espresso') . '" />';
+		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . esc_attr__('Message Template Form Fields', 'event_espresso') . '" />';
+		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . esc_attr__('Shortcodes Metabox', 'event_espresso') . '" />';
+		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . esc_attr__('Publish Metabox', 'event_espresso') . '" />';
 		EEH_Template::display_template( $templatepath, $args);
 	}
 
@@ -536,8 +536,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function settings_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
-		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . __('Active Email Tab', 'event_espresso') . '" />';
-		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
+		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . esc_attr__('Active Email Tab', 'event_espresso') . '" />';
+		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . esc_attr__('Inactive Email Tab', 'event_espresso') . '" />';
 		$args['img3'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked"><label for="ee-on-off-toggle-on"></label>';
 		$args['img4'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox"><label for="ee-on-off-toggle-on"></label>';
 		EEH_Template::display_template( $templatepath, $args);
@@ -647,7 +647,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _custom_mtps_preview() {
 		$this->_admin_page_title = __('Custom Message Templates (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="Preview Custom Message Templates screenshot" />';
+		$this->_template_args['preview_img'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/custom_mtps_preview.png" alt="' . esc_attr__('Preview Custom Message Templates screenshot', 'event_espresso' ) . '" />';
 		$this->_template_args['preview_text'] = '<strong>'.__('Custom Message Templates is a feature that is only available in the caffeinated version of Event Espresso.  With the Custom Message Templates feature, you are able to create custom templates and set them per event.', 'event_espresso').'</strong>';
 		$this->display_admin_caf_preview_page( 'custom_message_types', FALSE );
 	}
