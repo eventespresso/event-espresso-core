@@ -111,17 +111,17 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
-	 * 	edit_event_link
+	 * 	return a single venue
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return 	EE_Venue
 	 */
 	protected static function _get_venue() {
 		// check for private venues.
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
-			return 'private_venue';
+			return null;
 		}
-		return EEH_Venue_View::$_venue;
+		return EEH_Venue_View::$_venue instanceof EE_Venue ? EEH_Venue_View::$_venue : null;
 	}
 
 
