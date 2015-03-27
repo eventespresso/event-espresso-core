@@ -154,7 +154,7 @@ class EEH_Line_Item {
 	 * @return boolean
 	 */
 	public static function add_item( EE_Line_Item $total_line_item, EE_Line_Item $item ){
-		$pre_tax_subtotal = self::get_items_subtotal( $total_line_item );
+		$pre_tax_subtotal = self::get_pre_tax_subtotal( $total_line_item );
 		if($pre_tax_subtotal){
 			$success = $pre_tax_subtotal->add_child_line_item($item);
 		}else{

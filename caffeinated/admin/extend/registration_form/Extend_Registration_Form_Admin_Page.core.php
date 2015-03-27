@@ -535,7 +535,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		} else {
 			$QSG_ID = absint($this->_req_data['QSG_ID']);
 			unset( $set_column_values[ 'QSG_ID' ] );
-			$this->_question_group_model->show_next_x_db_queries(2);
 			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
 		// update the existing related questions

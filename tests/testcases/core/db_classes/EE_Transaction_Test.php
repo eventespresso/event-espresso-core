@@ -77,7 +77,7 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 		$t->set( 'TXN_timestamp', $now->format( $t->get_format( $format_to_use ) ) );
 
 		//test getting pretty (should return formatted item in the correct timezone)
-		$this->assertEquals( $now->format( $format_to_use ) . '<span class="ee_dtt_timezone_string">(PST)</span>', $t->datetime( true ), 'datetime( true ) test' );
+		$this->assertEquals( $now->format( $format_to_use ) . '<span class="ee_dtt_timezone_string">(PDT)</span>', $t->datetime( true ), 'datetime( true ) test' );
 
 		//test getting raw unixtimestamp
 		$this->assertEquals( $now->format( 'U' ), $t->datetime( false, true ), 'datetime( false, true) test' );
