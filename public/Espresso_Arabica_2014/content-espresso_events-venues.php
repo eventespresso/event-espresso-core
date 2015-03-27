@@ -1,12 +1,16 @@
 <?php
 //echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-if (( is_single() && espresso_display_venue_in_event_details() ) || is_archive() && espresso_display_venue_in_event_list() ) :
+if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive() && espresso_display_venue_in_event_list() ) ) :
 	global $post;
 	do_action( 'AHEE_event_details_before_venue_details', $post );
 	$venue_name = espresso_venue_name( 0, 'details', FALSE );
+	if ( empty( $venue_name ) && espresso_is_venue_private() ) {
+		do_action( 'AHEE_event_details_after_venue_details', $post );
+		return '';
+	}
 ?>
 
-<div class="espresso-venue-dv">
+<div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? 'espresso-private-venue-dv' : ''; ?>">
 	<h3 class="event-venues-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
 	</h3>
