@@ -378,10 +378,12 @@ jQuery(document).ready( function($) {
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
 				SPCO.main_container.trigger( 'process_next_step_button_click' );
-				if ( SPCO.form_is_valid ){
-					SPCO.process_next_step( this );
-				} else {
+				//console.log( JSON.stringify( 'SPCO.form_is_valid: ' + SPCO.form_is_valid, null, 4 ) );
+				//console.log( JSON.stringify( 'eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
+				if ( ! SPCO.form_is_valid ){
 					SPCO.display_validation_errors();
+				} else if ( eei18n.ajax_submit ) {
+					SPCO.process_next_step( this );
 				}
 				if ( eei18n.ajax_submit ) {
 					e.preventDefault();
@@ -674,15 +676,14 @@ jQuery(document).ready( function($) {
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
 			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
 				var next_step = SPCO.get_next_step_slug( step );
-//				SPCO.console_log( 'process_next_step : step', step, true );
-//				SPCO.console_log( 'process_next_step : next_step', next_step, false );
+				SPCO.console_log( 'process_next_step : step', step, true );
+				SPCO.console_log( 'process_next_step : next_step', next_step, false );
 				// which form is being processed ?
 				var form_to_check = '#ee-spco-'+step+'-reg-step-form';
 				// not disabled? you are NOW!!!
 				SPCO.disable_submit_buttons();
 				SPCO.submit_reg_form ( step, next_step, form_to_check );
-				return false;
-
+				return true;
 			}
 			return false;
 		},
@@ -714,7 +715,9 @@ jQuery(document).ready( function($) {
 				return;
 			}
 
-
+			//console.log( JSON.stringify( 'step: ' + step, null, 4 ) );
+			//console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ) );
+			//console.log( JSON.stringify( 'form_to_check: ' + form_to_check, null, 4 ) );
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&process_form_submission=1';
 			form_data += '&ee_front_ajax=1';
@@ -724,7 +727,7 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
-			// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
+			//console.log( form_data );
 			// send form via AJAX POST
 			$.ajax({
 
@@ -744,7 +747,7 @@ jQuery(document).ready( function($) {
 				success: function( response ){
 					//SPCO.console_log( 'submit_reg_form : step', step, true );
 					//SPCO.console_log( 'submit_reg_form : next_step', next_step, false );
-					//SPCO.console_log_object( 'submit_reg_form : response', response );
+					//SPCO.console_log_object( 'submit_reg_form : response', response, 0 );
 					SPCO.process_response( next_step, response );
 				},
 
