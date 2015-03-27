@@ -10,7 +10,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 	}
 ?>
 
-<div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? 'espresso-private-venue-dv' : ''; ?>">
+<div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
 	<h3 class="event-venues-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
 	</h3>
