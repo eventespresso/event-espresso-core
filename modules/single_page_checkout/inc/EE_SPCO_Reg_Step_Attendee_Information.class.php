@@ -584,7 +584,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $this->checkout->transaction, '$this->checkout->transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( ! $this->checkout->transaction instanceof EE_Transaction || ! $this->checkout->continue_reg ) {
 			EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -701,7 +701,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						$copy_primary = isset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] ) === 0 ? TRUE : FALSE;
 						// filter form input data for this registration
 						$valid_data[ $reg_url_link ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $reg_url_link ] );
-						//printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]', __FILE__, __LINE__ );
+						//EEH_Debug_Tools::printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]', __FILE__, __LINE__ );
 						if ( isset( $valid_data['primary_attendee'] )) {
 							$primary_registrant['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 							unset( $valid_data['primary_attendee'] );

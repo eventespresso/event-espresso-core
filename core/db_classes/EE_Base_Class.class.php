@@ -118,14 +118,14 @@ abstract class EE_Base_Class{
 		$model_fields = $model->field_settings( FALSE );
 		// ensure $fieldValues is an array
 		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
-		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! isset( $model_fields[ $field_name] ) ){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//if db model is instantiating
 		if( $bydb ){

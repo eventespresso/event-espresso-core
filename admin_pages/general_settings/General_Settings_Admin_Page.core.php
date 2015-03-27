@@ -380,7 +380,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _template_settings() {
 		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="Template Settings Preview screenshot" />';
+		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="' . esc_attr__( 'Template Settings Preview screenshot', 'event_espresso' ) . '" />';
 		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
 		$this->display_admin_caf_preview_page( 'template_settings_tab' );
 	}
@@ -574,7 +574,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'append_qstn_id' => FALSE
 				)
 			);
-//		printr( $this->_template_args['countries'], 'countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $this->_template_args['countries'], 'countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
 		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
@@ -610,7 +610,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
 		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
-		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
 			'CNT_active' => array( 'type' => 'RADIO_BTN', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE  ),
 			'CNT_ISO' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
@@ -670,7 +670,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 //			echo '<h4>$CNT_ISO : ' . $CNT_ISO . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			global $wpdb;
 //			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			EEH_Debug_Tools::printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( $states ) {
 			foreach ( $states as $STA_ID => $state ) {
 				//STA_abbrev 	STA_name 	STA_active
@@ -686,7 +686,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		} else {
 			$this->_template_args['states'] = FALSE;
 		}
-//		printr( $this->_template_args['states'], 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $this->_template_args['states'], 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_template_args['add_new_state_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'add_new_state' ),  GEN_SET_ADMIN_URL );
 
 		$state_details_settings = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php', $this->_template_args, TRUE );
@@ -790,7 +790,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	protected function _update_country_settings() {
-//		printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
@@ -815,7 +815,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$cols_n_values['CNT_active'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) : FALSE;
 		// allow filtering of country data
 		$cols_n_values = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__cols_n_values', $cols_n_values );
-		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
 		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
 		// run the update
@@ -826,7 +826,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success !== FALSE ) {
 			// allow filtering of states data
 			$states = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__states', $this->_req_data['states'] );
-//			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			EEH_Debug_Tools::printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru state data ( looks like : states[75][STA_name] )
 			foreach( $states as $STA_ID => $state ) {
 				$cols_n_values = array(
