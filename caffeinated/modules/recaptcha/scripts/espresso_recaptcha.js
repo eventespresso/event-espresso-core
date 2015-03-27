@@ -10,7 +10,8 @@ jQuery(document).ready(function($) {
 	 * }}
 	 * @namespace SPCO_response
 	 * @type {{
-		 *     recaptcha_passed: boolean
+		 *     recaptcha_passed: boolean,
+		 *     bypass_recaptcha: boolean
 		 * }}
 	 * @namespace eei18n
 	 * @type {{
@@ -50,7 +51,7 @@ jQuery(document).ready(function($) {
 				// if WP_DEBUG is on, then display an error
 				if ( eei18n.wp_debug ) {
 					var msg = SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.initialize() error', eei18n.no_recaptcha_error );
-					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, SPCO.generate_message_object( '', msg, '' ));
+					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, SPCO.generate_message_object( '', msg, '' ), true );
 				}
 				return;
 			}
@@ -65,7 +66,7 @@ jQuery(document).ready(function($) {
 		 */
 		set_listener_for_SPCO_process_next_step_button_click : function() {
 			// initialize if the SPCO reg step changes to "payment_options"
-			SPCO.main_container.on( 'process_next_step_button_click', function(  event ) {
+			SPCO.main_container.on( 'process_next_step_button_click', function() {
 				if ( ! EE_RECAPTCHA.submitted ) {
 					SPCO.form_is_valid = false;
 					eei18n.ajax_submit = true;
@@ -129,7 +130,7 @@ jQuery(document).ready(function($) {
 		 */
 		display_error : function( msg ) {
 			SPCO.offset_from_top_modifier = -450;
-			SPCO.scroll_to_top_and_display_messages( EE_RECAPTCHA.recaptcha_div, SPCO.generate_message_object( '', msg, '' ));
+			SPCO.scroll_to_top_and_display_messages( EE_RECAPTCHA.recaptcha_div, SPCO.generate_message_object( '', msg, '' ), true );
 			// prevent anyone else from removing our error message
 			SPCO.override_messages = true;
 		},
