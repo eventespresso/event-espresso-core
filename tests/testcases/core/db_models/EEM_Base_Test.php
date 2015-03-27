@@ -274,6 +274,16 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Price', $fetched_price );
 		$this->assertEquals( null, $fetched_price->type_obj() );
 	}
+
+	/**
+	 * Should reproduce issue 7791
+	 * @group 7791
+	 */
+	function test_create_question_options(){
+		$question_option = $this->new_model_obj_with_dependencies('Question_Option');
+		$this->assertInstanceOf( 'EE_Question_Option', $question_option );
+		$question_options = EEM_Question_Option::reset()->get_all();
+	}
 }
 
 // End of file EEM_Base_Test.php
