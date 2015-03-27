@@ -40,7 +40,7 @@ class EEH_Venue_View extends EEH_Base {
 	 * @access    public
 	 * @param int  $VNU_ID
 	 * @param bool $look_in_event
-	 * @return object | null
+	 * @return EE_Venue | null
 	 */
 	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE ) {
 		$VNU_ID = absint( $VNU_ID );
@@ -127,10 +127,10 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
-	 * 	edit_event_link
+	 * 	get_event_venues
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return 	EE_Venue[]
 	 */
 	public static function get_event_venues() {
 		global $post;
@@ -139,6 +139,7 @@ class EEH_Venue_View extends EEH_Base {
 				return $post->EE_Event->venues();
 			}
 		}
+		return array();
 	}
 
 
@@ -221,7 +222,7 @@ class EEH_Venue_View extends EEH_Base {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, $type, $use_schema, $add_wrapper );
 		}
-		return NULL;
+		return '';
 	}
 
 
@@ -231,7 +232,7 @@ class EEH_Venue_View extends EEH_Base {
 	 * 	venue_has_address
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return 	string|bool
 	 */
 	public static function venue_has_address( $VNU_ID = FALSE ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
@@ -239,7 +240,7 @@ class EEH_Venue_View extends EEH_Base {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 		}
-		return NULL;
+		return false;
 	}
 
 
@@ -292,7 +293,7 @@ class EEH_Venue_View extends EEH_Base {
 		if ( $venue instanceof EE_Venue ) {
 			return EEH_Schema::url( get_permalink( $venue->ID() ), $text );
 		}
-		return NULL;
+		return '';
 	}
 
 
@@ -312,7 +313,7 @@ class EEH_Venue_View extends EEH_Base {
 			$text = ! empty( $text ) ? $text : $url;
 			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
 		}
-		return NULL;
+		return '';
 	}
 
 
@@ -331,7 +332,7 @@ class EEH_Venue_View extends EEH_Base {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
 		}
-		return NULL;
+		return '';
 	}
 
 
@@ -396,7 +397,7 @@ class EEH_Venue_View extends EEH_Base {
 			}
 		}
 
-		return FALSE;
+		return '';
 
 	}
 
@@ -455,6 +456,7 @@ class EEH_Venue_View extends EEH_Base {
 				return $before . apply_filters( 'edit_post_link', $link, $venue->ID() ) . $after;
 			}
 		}
+		return '';
 	}
 
 
