@@ -473,14 +473,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    array
 	 */
 	protected function _display_request_vars() {
-		printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
-		printr( $this->checkout->step, '$this->checkout->step', __FILE__, __LINE__ );
-		printr( $this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__ );
-		printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
-		printr( $this->checkout->reg_url_link, '$this->checkout->reg_url_link', __FILE__, __LINE__ );
-		printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
-		printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
-		printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->step, '$this->checkout->step', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->action, '$this->checkout->action', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->reg_url_link, '$this->checkout->reg_url_link', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->revisit, '$this->checkout->revisit', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->generate_reg_form, '$this->checkout->generate_reg_form', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->checkout->process_form_submission, '$this->checkout->process_form_submission', __FILE__, __LINE__ );
 	}
 
 
