@@ -272,10 +272,8 @@ class EEH_Venue_View extends EEH_Base {
 				default :
 					return $venue_name;
 			}
-		} elseif ( $venue == 'private_venue' ) {
-			return $venue;
 		}
-		return NULL;
+		return '';
 	}
 
 
