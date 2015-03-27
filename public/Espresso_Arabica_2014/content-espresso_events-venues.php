@@ -10,7 +10,6 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || is_archive()
 	<h3 class="event-venues-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
 	</h3>
-	<?php  if ( $venue_name != 'private_venue' ) : ?>
 	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php echo $venue_name; ?></strong></h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
 <?php  if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
@@ -43,10 +42,6 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || is_archive()
 	</p>
 			<?php endif;  ?>
 		<?php endif;  ?>
-	<?php else : ?>
-		<span class="important-notice"><?php echo apply_filters( 'AFEE_event_details_venue_details_private_venue_message', __( 'Private Venue : Please login to view details.', 'event_espresso' )); ?></span>
-	<?php endif;  ?>
-
 </div>
 <!-- .espresso-venue-dv -->
 <?php
