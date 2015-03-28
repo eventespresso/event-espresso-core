@@ -280,9 +280,13 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @group 7791
 	 */
 	function test_create_question_options(){
-		$question_option = $this->new_model_obj_with_dependencies('Question_Option');
-		$this->assertInstanceOf( 'EE_Question_Option', $question_option );
-		$question_options = EEM_Question_Option::reset()->get_all();
+		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name => $model_classname ){
+			$model = EE_Registry::instance()->load_model( $model_name );
+			$question_option = $this->new_model_obj_with_dependencies( $model_name );
+			$this->assertInstanceOf( 'EE_' . $model_name, $question_option );
+			$model->get_all();
+		}
+
 	}
 }
 
