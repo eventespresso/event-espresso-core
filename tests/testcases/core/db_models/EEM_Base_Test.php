@@ -284,6 +284,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			$model = EE_Registry::instance()->load_model( $model_name );
 			$question_option = $this->new_model_obj_with_dependencies( $model_name );
 			$this->assertInstanceOf( 'EE_' . $model_name, $question_option );
+			//make sure this model is queryable and when we fetch its items that there's no errors
 			$model->get_all();
 		}
 
