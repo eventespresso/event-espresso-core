@@ -240,7 +240,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		// load assets
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
-		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+
 	}
 
 
