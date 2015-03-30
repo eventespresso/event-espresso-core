@@ -336,8 +336,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 		$this->default_generation_definitions = array(
 			'DTT_name' => new WP_UnitTest_Generator_Sequence( 'Datetime %s' ),
 			'DTT_description' => new WP_UnitTest_Generator_Sequence( 'Datetime Description %s' ),
-			'DTT_EVT_start' => strtotime( '+1 month', current_time('timestamp') ),
-			'DTT_EVT_end' => strtotime( '+2 months', current_time('timestamp') )
+			'DTT_EVT_start' => strtotime( '+1 month' ),
+			'DTT_EVT_end' => strtotime( '+2 months' )
 		);
 	}
 
@@ -525,8 +525,8 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 		$this->default_generation_definitions = array(
 			'TKT_name' => new WP_UnitTest_Generator_Sequence( 'Ticket %s' ),
 			'TKT_description' => new WP_UnitTest_Generator_Sequence( 'Ticket Description %s' ),
-			'TKT_start_date' => strtotime( '+1 month', current_time('timestamp') ),
-			'TKT_end_date' => strtotime( '+2 months', current_time('timestamp') )
+			'TKT_start_date' => strtotime( '+1 month' ),
+			'TKT_end_date' => strtotime( '+2 months' )
 		);
 	}
 
@@ -755,7 +755,7 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 			'PRT_name' => 'Base Price Type',
 			'PRC_type' => 'base',
 			'PRC_type_is_percent' => false, //true if percent for price type, false if dollar
-			'TKT_end_date' => strtotime( '+2 months', current_time('timestamp') )
+			'TKT_end_date' => strtotime( '+2 months' )
 		);
 	}
 
