@@ -344,7 +344,7 @@ abstract class EE_PMT_Base{
 					array_merge(
 						$duplicate_properties,
 						array(
-							'PAY_timestamp' => current_time( 'timestamp' ),
+							'PAY_timestamp' => time(),
 							'PAY_txn_id_chq_nmbr' => null,
 							'PAY_po_number' => null,
 							'PAY_extra_accntng' => null,

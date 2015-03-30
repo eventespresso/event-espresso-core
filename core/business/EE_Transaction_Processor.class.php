@@ -276,7 +276,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return boolean
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		$current_time = (int)current_time( 'timestamp' );
+		$current_time = time();
 		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
 	}
 
