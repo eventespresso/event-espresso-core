@@ -92,10 +92,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
-
 		//add button for iframe code to event editor.
 		add_filter( 'get_sample_permalink_html', array( 'EED_Ticket_Selector', 'iframe_code_button' ), 10, 4 );
-
 		add_action( 'admin_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets_admin' ), 10 );
 	}
 
@@ -354,10 +352,10 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		EED_Ticket_Selector::set_event();
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
 		$html = '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
 		$html .= wp_nonce_field( 	'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
 		$html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, self::$_event );
 		return $html;
 	}
