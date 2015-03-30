@@ -46,21 +46,24 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 		$this->_load_mock();
 		//baseline dates
 		$now = new DateTime( 'now' );
-		$nowEST = new DateTime( 'now', new DateTimeZone( 'America/Toronto' ) );
 
 		//let's setup some registrations to test.  Setting status as not approved to avoid the incomplete exclusion on the method tested.
 		$registrations = $this->factory->registration->create_many( 4, array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
 
 		$this->assertEquals( 4, count( $registrations ) );
 
-		//let's modify the first registration so it happened last month.
+		//let's modify the first registration so it happened two months ago.  Note, the reason why I am doing this
+		//instead of one month is because if today's date is March 31st, March 30th, or March 29th.  There is
+		//wierd PHP behaviour where subtracting one month will result in a date remaining in March.
+		//@see http://php.net/manual/en/datetime.sub.php#example-2469
 		$first_registration = reset( $registrations );
-		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P1M') )->format('U') );
+		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P2M') )->format('U') );
 		$first_registration->save();
 
 		//modify the last registration so it happens next month.
 		$last_registration = end( $registrations );
-		$last_registration->set( 'REG_date', $now->add( new DateInterval('P2M') )-> format( 'U' ) );
+		$last_registration->set( 'REG_date', $now->add( new DateInterval('P3M') )-> format( 'U' ) );
+
 		$last_registration->save();
 
 		//now let's test the method.
