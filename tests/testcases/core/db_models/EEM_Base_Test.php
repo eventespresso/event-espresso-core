@@ -283,7 +283,6 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$now = new DateTime( "now" );
 		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
 		$timezoneTest = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
-		$testTimestampWithOffset = $now->format('U') + timezone_offset_get( $DateTimeZone, $timezoneTest );
 
 		//test getting default formatted string and default formatted unix timestamp.
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
@@ -295,8 +294,8 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->factory->datetime->create( array( 'formats' => array( 'Y-m-d', 'H:i:s' ), 'timezone' => 'America/Vancouver' ) );
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
 		$this->assertEquals( $timezoneTest->format( 'Y-m-d H:i:s' ), $formatted_string );
-		$timestamp_with_offset = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
-		$this->assertEquals( $testTimestampWithOffset, $timestamp_with_offset );
+		$unix_timestamp = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
+		$this->assertEquals( $timezoneTest->format('U'), $unix_timestamp );
 	}
 
 
@@ -340,8 +339,8 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $timezoneTest->format( 'Y-m-d H:i:s' ), 'Y-m-d H:i:s', 'America/Vancouver' );
 			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
 
-			//test getting correctly formatted string for current_time('timestamp') format (which has UTC offset).
-			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', current_time('timestamp'), 'U' );
+			//test getting correctly formatted string for unix_timestamp format.
+			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start',time(), 'U' );
 			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for current_time('mysql') format.
@@ -364,8 +363,8 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $now->format( 'U' ), 'U', 'UTC' );
 			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
 
-			//test getting correctly formatted string for current_time('timestamp') format (which has UTC offset).
-			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', current_time('timestamp'), 'U' );
+			//test getting correctly formatted string for time() format.
+			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', time(), 'U' );
 			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for current_time('mysql') format.

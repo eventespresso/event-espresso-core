@@ -195,7 +195,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 					// TEST: add $interval $period ( ie: add 1 year...  add 3 months...  add 34 seconds )
 					// setup some objects used for testing
 					$expected_datetime = $this->setup_DateTime_object();
-					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => current_time( 'timestamp' ) ));
+					$actual_datetime = EE_Datetime::new_instance( array( 'DTT_EVT_start' => time() ));
 					$expected_datetime->setTimeZone( new DateTimeZone( $actual_datetime->get_timezone() ) );
 					$period_interval = str_replace( '%', $interval, $designator );
 					// apply conditions to both objects
