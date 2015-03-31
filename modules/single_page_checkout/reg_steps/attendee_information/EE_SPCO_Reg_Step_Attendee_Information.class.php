@@ -883,7 +883,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					return FALSE;
 					break;
 			}
-		} else if ( $form_input == 'email' ) {
+		} else if ( $form_input === 'email' ) {
 			// clean the email address
 			$valid_email = sanitize_email( $input_value );
 			// check if it matches
