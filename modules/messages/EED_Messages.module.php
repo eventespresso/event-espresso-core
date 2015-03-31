@@ -421,22 +421,90 @@ class EED_Messages  extends EED_Module {
 			return;
 		}
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		// send the message type matching the status if that message type is active.
-		$message_type = self::_get_reg_status_array( $registration->status_ID() );
-		// verify message type is active
-		if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
-			self::_load_controller();
-			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
-				// DEBUG LOG
-				//self::log(
-				//	__CLASS__, __FUNCTION__, __LINE__,
-				//	$registration->transaction(),
-				//	array(
-				//		'delivered'    => current_time( 'mysql' ),
-				//		'message_type' => $message_type,
-				//		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-				//	)
-				//);
+
+		/**
+		 * 1. Get all registrations
+		 * 2. Loop through and check if all same status.  If true then we just send as normal.
+		 * 3. If any are different status then we send things differently.
+		 */
+		$all_registrations = $registration->get_all_other_registrations_in_group();
+		$original_status = $registration->status_ID();
+		$different_status = false;
+		foreach ( $all_registrations as $reg ) {
+			if ( $reg->status_ID() != $original_status ) {
+				$different_status = true;
+				break;
+			}
+		}
+
+		if ( $different_status ) {
+			//sending out individual registrations messages and then summary because we have
+			//different statuses.
+			//Note: this means that if a registration is a non-primary registration, their email does not
+			//MATCH the primary registration but is the same as other registrations, some users *may*
+			//receive multiple emails because they are receiving an email for EACH separate registration.
+
+			$primary_email = $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->email() : '';
+
+			foreach ( $all_registrations as $reg ) {
+				//if reg is primary skip or if email matches primary skip because primary's email will receive the summary.
+				$reg_email = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
+				if ( $reg->is_primary_registration() || $reg_email == $primary_email ) {
+					continue;
+				}
+				$message_type = self::_get_reg_status_array( $reg->status_ID() );
+				if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+					self::_load_controller();
+					if ( self::$_EEMSG->send_message( $message_type, $reg ) ) {
+						// DEBUG LOG
+						self::log(
+							__CLASS__, __FUNCTION__, __LINE__,
+							$registration->transaction(),
+							array(
+								'delivered'    => current_time( 'mysql' ),
+								'message_type' => $message_type,
+								'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+							)
+						);
+					}
+				}
+			}
+
+			//now send summary (registration_summary) if active
+			if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
+				self::_load_controller();
+				if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
+						// DEBUG LOG
+						self::log(
+							__CLASS__, __FUNCTION__, __LINE__,
+							$registration->transaction(),
+							array(
+								'delivered'    => current_time( 'mysql' ),
+								'message_type' => $message_type,
+								'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+							)
+						);
+					}
+			}
+		} else {
+			//just sending normal reg messages because all registration statuses are the same.
+			// send the message type matching the status if that message type is active.
+			$message_type = self::_get_reg_status_array( $registration->status_ID() );
+			// verify message type is active
+			if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+				self::_load_controller();
+				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
+					// DEBUG LOG
+					self::log(
+						__CLASS__, __FUNCTION__, __LINE__,
+						$registration->transaction(),
+						array(
+							'delivered'    => current_time( 'mysql' ),
+							'message_type' => $message_type,
+							'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+						)
+					);
+				}
 			}
 		}
 	}
