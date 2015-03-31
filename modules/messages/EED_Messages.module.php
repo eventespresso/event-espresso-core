@@ -427,7 +427,7 @@ class EED_Messages  extends EED_Module {
 		 * 2. Loop through and check if all same status.  If true then we just send as normal.
 		 * 3. If any are different status then we send things differently.
 		 */
-		$all_registrations = $registration->get_all_other_registrations_in_group();
+		$all_registrations = $registration->transaction()->registrations();
 		$original_status = $registration->status_ID();
 		$different_status = false;
 		foreach ( $all_registrations as $reg ) {
@@ -449,7 +449,7 @@ class EED_Messages  extends EED_Module {
 			foreach ( $all_registrations as $reg ) {
 				//if reg is primary skip or if email matches primary skip because primary's email will receive the summary.
 				$reg_email = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
-				if ( $reg->is_primary_registration() || $reg_email == $primary_email ) {
+				if ( $reg->is_primary_registrant() || $reg_email == $primary_email ) {
 					continue;
 				}
 				$message_type = self::_get_reg_status_array( $reg->status_ID() );
@@ -463,7 +463,8 @@ class EED_Messages  extends EED_Module {
 							array(
 								'delivered'    => current_time( 'mysql' ),
 								'message_type' => $message_type,
-								'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+								'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
+								'context' => 'in all registrations loop'
 							)
 						);
 					}
@@ -480,7 +481,7 @@ class EED_Messages  extends EED_Module {
 							$registration->transaction(),
 							array(
 								'delivered'    => current_time( 'mysql' ),
-								'message_type' => $message_type,
+								'message_type' => 'registration_summary',
 								'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
 							)
 						);
@@ -791,7 +792,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
 		EE_Registry::instance()->load_helper('Debug_Tools');
-		if ( WP_DEBUG && false ) {
+		if ( WP_DEBUG && true ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
 				$info = EEH_Debug_Tools::strip_objects( $info );
