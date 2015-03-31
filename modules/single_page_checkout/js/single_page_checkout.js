@@ -676,8 +676,8 @@ jQuery(document).ready( function($) {
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
 			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
 				var next_step = SPCO.get_next_step_slug( step );
-				SPCO.console_log( 'process_next_step : step', step, true );
-				SPCO.console_log( 'process_next_step : next_step', next_step, false );
+				//SPCO.console_log( 'process_next_step : step', step, true );
+				//SPCO.console_log( 'process_next_step : next_step', next_step, false );
 				// which form is being processed ?
 				var form_to_check = '#ee-spco-'+step+'-reg-step-form';
 				// not disabled? you are NOW!!!
