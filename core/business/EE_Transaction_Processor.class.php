@@ -521,6 +521,13 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$this->_registration_query_params,
 			$update_params
 		);
+
+		// send messages
+		EE_Registry::instance()->load_class( 'Registration_Processor' )->trigger_registration_update_notifications(
+			$transaction->primary_registration(),
+			$update_params
+		);
+
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
 		return $update_params;
 	}

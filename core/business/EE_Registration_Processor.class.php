@@ -458,14 +458,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		// send messages
-		$this->trigger_registration_update_notifications(
-			$registration,
-			array_merge(
-				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
-				array( 'checkout_or_payment' 	=> true )
-			)
-		);
 		return $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
