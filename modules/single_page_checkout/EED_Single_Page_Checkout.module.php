@@ -1041,6 +1041,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'</a>',
 			'</p>'
 		);
+		EE_Registry::$i18n_js_strings[ 'ajax_submit' ] = apply_filters( 'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true );
 	}
 
 
