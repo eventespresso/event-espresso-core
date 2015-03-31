@@ -360,7 +360,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				$registration->transaction()->is_completed() ||
 				$registration->transaction()->is_overpaid() ||
 				$registration->transaction()->is_free() ||
-				( $registration->ticket() instanceof EE_Ticket && $registration->ticket()->is_free() )
+				apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
 			)
 		) {
 			// track new REG_Status
