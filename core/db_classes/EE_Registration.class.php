@@ -1020,7 +1020,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 * Returns all other registrations in the same group as this registrant.
+	 * Returns all other registrations in the same group as this registrant who have the same ticket option.
+	 *
+	 * Note, if you want to just get all registrations in the same transaction (group), use:
+	 * 	$registration->transaction()->registrations();
 	 *
 	 * @since 4.5.0
 	 *
