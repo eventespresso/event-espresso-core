@@ -447,9 +447,11 @@ class EED_Messages  extends EED_Module {
 			$primary_email = $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->email() : '';
 
 			foreach ( $all_registrations as $reg ) {
-				//if reg is primary skip or if email matches primary skip because primary's email will receive the summary.
+				//if reg is primary skip or if email matches primary skip because primary's email will
+				//receive the summary.  Also skip if status is pending payment because currently only
+				//primary reg receives those notifications anyways!
 				$reg_email = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
-				if ( $reg->is_primary_registrant() || $reg_email == $primary_email ) {
+				if ( $reg->is_primary_registrant() || $reg_email == $primary_email || $reg->status_ID() == EEM_Registration::status_id_pending_payment ) {
 					continue;
 				}
 				$message_type = self::_get_reg_status_array( $reg->status_ID() );
@@ -539,6 +541,7 @@ class EED_Messages  extends EED_Module {
 		// frontend ?
 		if (
 			! ( is_admin() && ! EE_FRONT_AJAX ) &&
+			( ! isset( $extra_details['finalized'] ) || $extra_details['finalized'] !== true ) &&
 			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
 			$registration->status_ID() !== EEM_Registration::status_id_not_approved
 		) {
