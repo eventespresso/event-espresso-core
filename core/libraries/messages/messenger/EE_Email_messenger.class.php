@@ -306,7 +306,8 @@ class EE_Email_messenger extends EE_messenger  {
 			'payment_refund',
 			'registration',
 			'not_approved_registration',
-			'pending_approval'
+			'pending_approval',
+			'registration_summary'
 			);
 	}
 
@@ -327,6 +328,7 @@ class EE_Email_messenger extends EE_messenger  {
 			'declined_registration',
 			'cancelled_registration',
 			'pending_approval',
+			'registration_summary',
 			'payment_reminder',
 			'payment_declined',
 			'payment_refund'

@@ -191,7 +191,8 @@ class EE_Caf_Messages  {
 			'payment_cancelled',
 			'payment',
 			'payment_reminder',
-			'pending_approval'
+			'pending_approval',
+			'registration_summary'
 			);
 		if ( $msg instanceof EE_message_type && in_array( $msg->name, $include_with )) {
 			$contexts = array_keys($msg->get_contexts());
