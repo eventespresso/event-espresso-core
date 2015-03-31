@@ -476,16 +476,12 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( preg_match( '/[0-9]{10,}/', $date_string ) ) {
 			try {
 				/**
-				 * php DateTime() ignores incoming timezone when the value is a unix
-				 * timestamp.  In other words it does not consider the incoming timestamp
-				 * as having an offset.  So, for backward compat, we need to first remove the offset
-				 * that was applied on the timestamp.
+				 * This is operating under the assumption that the incomign unixtimestamp is
+				 * an ACTUAL unixtimestamp and not the calculated one output by
+				 * current_time('timestamp');
 				 *
 				 */
 				$DateTime =  new DateTime( "now", $this->_DateTimeZone );
-				$offset = timezone_offset_get( $this->_DateTimeZone, $DateTime );
-				$date_string = $date_string - $offset;
-
 				return $DateTime->setTimestamp( $date_string );
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue

@@ -319,7 +319,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 					array(
 						'TXN_ID' 					=> $transaction->ID(),
 						'STS_ID' 					=> EEM_Payment::status_id_pending,
-						'PAY_timestamp' 	=> current_time('timestamp'),
+						'PAY_timestamp' 	=> time(),
 						'PAY_amount' 		=> 0.00,
 						'PMD_ID' 				=> $transaction->payment_method_ID()
 					)

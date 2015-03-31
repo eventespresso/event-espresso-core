@@ -757,17 +757,19 @@ abstract class EEM_Base extends EE_Base{
 	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
 	 * it will return:
 	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
-	 *  - or a unixtimestamp with the offset applied for the currently set timezone for NOW.
+	 *  - or a unixtimestamp (equivalent to time())
 	 *
 	 * @since 4.6.x
 	 * @param string $field_name The field the currrent time is needed for.
-	 * @param bool   $timestamp  True means to return a unix timestamp with offset for the timezone applied. Otherwise a
-	 *                           		 formatted string matching the set format for the field in the set timezone will be returned.
+	 * @param bool   $timestamp  True means to return a unix timestamp. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will
+	 *                           		 be returned.
 	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
 	 *
 	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
 	 *
-	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error exception is triggered.
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+	 *                    	     exception is triggered.
 	 */
 	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {
 		$formats = $this->get_formats_for( $field_name );
@@ -775,8 +777,7 @@ abstract class EEM_Base extends EE_Base{
 		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
 
 		if ( $timestamp ) {
-			$offset = timezone_offset_get( new DateTimeZone( $this->_timezone ), $DateTime );
-			return $DateTime->format( 'U' ) + $offset;
+			return $DateTime->format( 'U' );
 		}
 
 		//not returning timestamp, so return formatted string in timezone.
@@ -798,7 +799,8 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings for the model are.
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
+	 * for the model are.
 	 *
 	 * @param string $field_name The field being setup.
 	 * @param string $timestring   The date timestring being used.
@@ -810,13 +812,6 @@ abstract class EEM_Base extends EE_Base{
 	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
 		$formats = $this->get_formats_for( $field_name );
 		$full_format = implode( ' ', $formats );
-
-		//if empty $timezone and incoming format is 'U'.  Then that means the incoming timestring is current_time('timestamp') which has an
-		//offset applied.  So let's REMOVE that offset so setting DateTime works correctly.
-		if ( empty( $timezone ) && $incoming_format == 'U' ) {
-			$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-			$timestring = $timestring - $offset;
-		}
 
 		//load EEH_DTT_Helper
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );

@@ -674,7 +674,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'today' => array(
 				'slug' => 'today',
-				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp', 0) ) ),
+				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp' ) ) ),
 				'count' => 0,
 				'bulk_action' => array_merge( $def_reg_status_actions,  array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')

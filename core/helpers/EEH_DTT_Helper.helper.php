@@ -311,6 +311,9 @@ class EEH_DTT_Helper {
 	 * If no unix timestamp is given then time() is used.  If no timezone is given then the set timezone string for
 	 * the site is used.
 	 *
+	 * This is used typically when using a unixtimestamp any core WP functions that expect their specially
+	 * computed timestamp (i.e. date_i18n() )
+	 *
 	 * @param int      $unix_timestamp   if 0, then time() will be used.
 	 * @param string $timezone_string timezone_string. If empty, then the current set timezone for the site will
 	 *                                		        be used.

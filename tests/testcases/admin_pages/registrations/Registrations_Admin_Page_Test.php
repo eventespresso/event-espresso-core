@@ -75,14 +75,17 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 			$event->save();
 		}
 
-		//let's modify the first registration so it happened last month.
+		//let's modify the first registration so it happened two months ago.  Note, the reason why I am doing this
+		//instead of one month is because if today's date is March 31st, March 30th, or March 29th.  There is
+		//wierd PHP behaviour where subtracting one month will result in a date remaining in March.
+		//@see http://php.net/manual/en/datetime.sub.php#example-2469
 		$first_registration = reset( $registrations );
-		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P1M') )->format('U') );
+		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P2M') )->format('U') );
 		$first_registration->save();
 
 		//modify the last registration so it happens next month.
 		$last_registration = end( $registrations );
-		$last_registration->set( 'REG_date', $now->add( new DateInterval('P2M') )-> format( 'U' ) );
+		$last_registration->set( 'REG_date', $now->add( new DateInterval('P3M') )-> format( 'U' ) );
 		$last_registration->save();
 
 		//let's test queries for today
