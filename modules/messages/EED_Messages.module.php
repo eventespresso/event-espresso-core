@@ -528,6 +528,9 @@ class EED_Messages  extends EED_Module {
 		if ( ! $registration->is_primary_registrant() ) {
 			return false;
 		}
+
+		var_dump($extra_details);
+		var_dump(apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ));
 		//first we check if we're in admin and not doing front ajax and if we
 		 //make sure appropriate admin params are set for sending messages
 		if (
