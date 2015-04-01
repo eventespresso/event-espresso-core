@@ -143,10 +143,12 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 			//	// send out notifications
 			//	add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			//}
-			if ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) {
+			if ( $this->checkout->payment_method->is_off_site() ) {
 				// do NOT trigger notifications because it was already done during the IPN
 				remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+			} else {
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
 		}
 		// this will result in the base session properties getting saved to the TXN_Session_data field
