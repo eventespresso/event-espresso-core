@@ -3105,7 +3105,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $cols_n_values
 	 * @return array
 	 */
-	protected function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
+	public function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
 		$this_model_fields_n_values = array();
 		foreach( $this->field_settings() as $field_name => $field_obj ){
 			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
