@@ -540,10 +540,10 @@ class EED_Messages  extends EED_Module {
 		}
 		// frontend ?
 		if (
-			! ( is_admin() && ! EE_FRONT_AJAX ) &&
-			( ! isset( $extra_details['finalized'] ) ||  $extra_details['finalized'] !== true  ) &&
-			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
-			$registration->status_ID() !== EEM_Registration::status_id_not_approved
+			( ( ( is_admin() && EE_FRONT_AJAX ) || ! is_admin() ) &&
+			( ( isset( $extra_details['finalized'] ) && $extra_details['finalized'] !== true ) || ! isset( $extra_details['finalized'] ) ) &&
+			$registration->status_ID() !== EEM_Registration::status_id_not_approved ) ||
+			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )
 		) {
 			return false;
 		}
