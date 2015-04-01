@@ -522,11 +522,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$update_params
 		);
 
-		var_dump('update_params in txn proc');
-		var_dump($transaction->reg_steps());
-		var_dump($update_params);
-		var_dump('-----------');
-
 		// send messages
 		EE_Registry::instance()->load_class( 'Registration_Processor' )->trigger_registration_update_notifications(
 			$transaction->primary_registration(),
