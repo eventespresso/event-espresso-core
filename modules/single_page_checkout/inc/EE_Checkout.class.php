@@ -859,10 +859,10 @@ class EE_Checkout {
 			$this->primary_attendee_obj = $this->_refresh_primary_attendee_obj_from_db( $this->transaction );
 			// update EE_Checkout's cached payment object
 			$payment = $this->transaction->last_payment();
-			$this->payment = $payment instanceof EE_Payment ? $payment : null;
+			$this->payment = $payment instanceof EE_Payment ? $payment : $this->payment;
 			// update EE_Checkout's cached payment_method object
 			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
-			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : null;
+			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : $this->payment_method;
 			//now refresh the cart, based on the TXN
 			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
 			// verify cart
