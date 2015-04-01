@@ -357,9 +357,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool           $IPN
 	 */
 	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment, $IPN = false ) {
-		var_dump('in_post_payment_processing');
-		var_dump($IPN);
-		var_dump('--------');
 
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
