@@ -153,12 +153,17 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		}
 		// this will result in the base session properties getting saved to the TXN_Session_data field
 		$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
+
+		var_dump( $this->checkout->transaction->reg_steps() );
+		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,
 			$this->checkout->payment,
 			$this->checkout->reg_cache_where_params
 		);
+
+		die();
 	}
 
 
