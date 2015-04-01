@@ -74,7 +74,7 @@ class EED_Messages  extends EED_Module {
 	public static function set_hooks() {
 		//actions
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
-		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 2 );
+		//add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 2 );
 		//filters
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
@@ -92,7 +92,7 @@ class EED_Messages  extends EED_Module {
 		//actions
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
-		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
+		//add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		//filters
@@ -420,6 +420,9 @@ class EED_Messages  extends EED_Module {
 			//no messages please
 			return;
 		}
+
+		//var_dump($extra_details);
+
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		/**
@@ -530,7 +533,12 @@ class EED_Messages  extends EED_Module {
 		}
 
 		var_dump($extra_details);
-		var_dump(apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ));
+		var_dump(apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ));/**/
+
+		//todo we need to consider if ANY registrations in the transaction group have not_approved status
+		//for skipping the normal conditional checks?
+
+
 		//first we check if we're in admin and not doing front ajax and if we
 		 //make sure appropriate admin params are set for sending messages
 		if (
