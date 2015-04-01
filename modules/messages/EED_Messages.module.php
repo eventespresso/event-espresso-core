@@ -421,7 +421,6 @@ class EED_Messages  extends EED_Module {
 			return;
 		}
 
-		//var_dump($extra_details);
 
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
