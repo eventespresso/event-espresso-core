@@ -529,8 +529,6 @@ class EED_Messages  extends EED_Module {
 			return false;
 		}
 
-		var_dump($extra_details);
-		var_dump(apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ));
 		//first we check if we're in admin and not doing front ajax and if we
 		 //make sure appropriate admin params are set for sending messages
 		if (
@@ -541,15 +539,22 @@ class EED_Messages  extends EED_Module {
 			//no messages sent please.
 			return false;
 		}
-		// frontend ?
+		// frontend request && TXN is NOT finalized ?
 		if (
-			( ( ( is_admin() && EE_FRONT_AJAX ) || ! is_admin() ) &&
-			( ( isset( $extra_details['finalized'] ) && $extra_details['finalized'] !== true ) || ! isset( $extra_details['finalized'] ) ) &&
-			$registration->status_ID() !== EEM_Registration::status_id_not_approved ) ||
-			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false )
+			! ( is_admin() && ! EE_FRONT_AJAX ) &&
+			( ! isset( $extra_details[ 'finalized' ] ) || $extra_details[ 'finalized' ] === false )
 		) {
 			return false;
 		}
+		// frontend request && NOT sending messages && reg status is something other than "Not-Approved"
+		if (
+			! ( is_admin() && ! EE_FRONT_AJAX ) &&
+			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
+			$registration->status_ID() !== EEM_Registration::status_id_not_approved
+		) {
+			return false;
+		}
+		// release the kraken
 		return true;
 	}
 
