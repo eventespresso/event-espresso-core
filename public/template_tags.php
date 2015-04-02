@@ -1135,8 +1135,9 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 	/**
 	 * espresso_edit_venue_link
 	 *
-	 * @param int  $VNU_ID
+	 * @param int $VNU_ID
 	 * @param bool $echo
+	 * @return string
 	 */
 	function espresso_edit_venue_link( $VNU_ID = 0, $echo = TRUE ) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
