@@ -141,7 +141,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			}
 
 			foreach ( $this->_recipient->questions as $ansid => $question ) {
-				if ( $question->get('QST_display_text') == $shortcode && isset( $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid] ) ) {
+				if ( $question instanceof EE_Question && $question->display_text() == $shortcode && isset( $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid] ) ) {
 					return $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid]->get_pretty( 'ANS_value', 'no_wpautop' );
 				}
 			}
@@ -180,7 +180,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		//k more than one registration so let's see if we can get specific to context
 		//are we parsing event_list?
 		if ( $this->_data instanceof EE_Event ) {
-			//loop through regsitrations for recipient and see if there is a match for this event
+			//loop through registrations for recipient and see if there is a match for this event
 			foreach ( $this->_registrations_for_recipient as $reg ) {
 				if ( $reg instanceof EE_Registration && $reg->event_ID() == $this->_data->ID() ) {
 					return $reg->reg_code();
