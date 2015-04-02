@@ -577,8 +577,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				}
 			}
 		}
-		$this->display_details_for_events( $events );
 		$this->display_details_for_events_requiring_pre_approval( $events_requiring_pre_approval );
+		$this->display_details_for_events( $events );
 	}
 
 
