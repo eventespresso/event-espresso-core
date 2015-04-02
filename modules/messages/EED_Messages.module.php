@@ -445,7 +445,7 @@ class EED_Messages  extends EED_Module {
 			 * different statuses.
 			 */
 
-			//will hold a cached array of email addresses that have been used to send (used to identify uniques contacts) - this still allows for other messengers that might be used with registration type messages.
+			//will hold a cached array of email addresses that have been used to send (used to identify unique contacts) - this still allows for other messengers that might be used with registration type messages.
 			$emails_sent = array();
 
 			//will hold a cached array of registrations statuses to notify via matching status registration
