@@ -47,7 +47,6 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= EEH_HTML::nl( -1, 'radio' ) . '</label>';
 
 		}
-		$html .= EEH_HTML::div( '', '', 'clear-float' );
 		return $html;
 	}
 
