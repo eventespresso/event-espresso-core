@@ -440,57 +440,93 @@ class EED_Messages  extends EED_Module {
 		}
 
 		if ( $different_status ) {
-			//sending out individual registrations messages and then summary because we have
-			//different statuses.
-			//Note: this means that if a registration is a non-primary registration, their email does not
-			//MATCH the primary registration but is the same as other registrations, some users *may*
-			//receive multiple emails because they are receiving an email for EACH separate registration.
+			/**
+			 * sending out individual registrations messages and then summary because we have
+			 * different statuses.
+			 */
 
-			$primary_email = $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->email() : '';
+			//will hold a cached array of email addresses that have been used to send (used to identify uniques contacts) - this still allows for other messengers that might be used with registration type messages.
+			$emails_sent = array();
 
+			//will hold a cached array of registrations statuses to notify via matching status registration
+			//message types that are not EEM_Registration::status_id_approved
+			$other_statuses_to_send = array();
+
+			//set up approved registration sends.  Other statuses currently only go to primary reg so we'll
+			//set that up separately.
 			foreach ( $all_registrations as $reg ) {
-				//if reg is primary skip or if email matches primary skip because primary's email will
-				//receive the summary.  Also skip if status is pending payment because currently only
-				//primary reg receives those notifications anyways!
-				$reg_email = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
-				if ( $reg->is_primary_registrant() || $reg_email == $primary_email || $reg->status_ID() == EEM_Registration::status_id_pending_payment ) {
+				if ( $reg->status_ID() != EEM_Registration::status_id_approved ) {
+					if ( ! in_array( $reg->status_ID(), $other_statuses_to_send ) ) {
+						$other_statuses_to_send[] = $reg->status_ID();
+					}
 					continue;
 				}
+
+				//get reg email.
+				$reg_email = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
+				if ( empty( $reg_email ) || in_array( $reg_email, $emails_sent ) ) {
+					continue;
+				}
+
 				$message_type = self::_get_reg_status_array( $reg->status_ID() );
 				if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
 					self::_load_controller();
-					if ( self::$_EEMSG->send_message( $message_type, $reg ) ) {
+					if ( self::$_EEMSG->send_message( $message_type, array( $reg, $reg->status_ID() ) ) ) {
 						// DEBUG LOG
-						self::log(
-							__CLASS__, __FUNCTION__, __LINE__,
-							$registration->transaction(),
-							array(
-								'delivered'    => current_time( 'mysql' ),
-								'message_type' => $message_type,
-								'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
-								'context' => 'in all registrations loop'
-							)
-						);
+						// self::log(
+						// 	__CLASS__, __FUNCTION__, __LINE__,
+						// 	$registration->transaction(),
+						// 	array(
+						// 		'delivered'    => current_time( 'mysql' ),
+						// 		'message_type' => $message_type,
+						// 		'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
+						// 		'context' => 'in all registrations loop'
+						// 	)
+						// );
+					}
+				}
+
+				$emails_sent[] = $reg_email;
+			}
+
+
+			//now send the other statuses that might need sent.
+			foreach ( $other_statuses_to_send as $status ) {
+				$message_type = self::_get_reg_status_array( $status );
+				if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+					self::_load_controller();
+					if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null, $status ) ) ) {
+						// DEBUG LOG
+						// self::log(
+						// 	__CLASS__, __FUNCTION__, __LINE__,
+						// 	$registration->transaction(),
+						// 	array(
+						// 		'delivered'    => current_time( 'mysql' ),
+						// 		'message_type' => $message_type,
+						// 		'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
+						// 		'context' => 'in all registrations loop'
+						// 	)
+						// );
 					}
 				}
 			}
 
 			//now send summary (registration_summary) if active
-			if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
-				self::_load_controller();
-				if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
-						// DEBUG LOG
-						self::log(
-							__CLASS__, __FUNCTION__, __LINE__,
-							$registration->transaction(),
-							array(
-								'delivered'    => current_time( 'mysql' ),
-								'message_type' => 'registration_summary',
-								'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-							)
-						);
-					}
-			}
+			// if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
+			// 	self::_load_controller();
+			// 	if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
+			// 			// DEBUG LOG
+			// 			self::log(
+			// 				__CLASS__, __FUNCTION__, __LINE__,
+			// 				$registration->transaction(),
+			// 				array(
+			// 					'delivered'    => current_time( 'mysql' ),
+			// 					'message_type' => 'registration_summary',
+			// 					'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+			// 				)
+			// 			);
+			// 		}
+			// }
 		} else {
 			//just sending normal reg messages because all registration statuses are the same.
 			// send the message type matching the status if that message type is active.

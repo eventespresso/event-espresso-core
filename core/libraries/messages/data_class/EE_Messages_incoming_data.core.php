@@ -61,6 +61,16 @@ abstract class EE_Messages_incoming_data {
 
 
 
+
+	/**
+	 * Some data handlers can set what reg status all the registrations are filtered by.
+	 * The status should match a EEM_Registration status constant.
+	 * @var string
+	 */
+	public $filtered_reg_status;
+
+
+
 	/**
 	 * will hold an array of events assembled from $reg_info
 	 * @var EE_Event[]
@@ -279,6 +289,11 @@ abstract class EE_Messages_incoming_data {
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array();
 			foreach ( $this->reg_objs as $reg ) {
+				//account for filtered registrations by status.
+				if ( ! empty( $this->filtered_reg_status ) && $this->filtered_reg_status !== $reg->status_ID() ) {
+					continue;
+				}
+
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
 				$relateddatetime = $ticket->datetimes();

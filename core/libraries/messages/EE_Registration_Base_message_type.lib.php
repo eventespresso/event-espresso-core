@@ -38,8 +38,14 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
-		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
+		if ( is_array( $this->_data ) ) {
+			$data_type = reset( $this->_data );
+			$this->_data_handler = $data_type instanceof EE_Registration ? 'REG' : 'Gateways';
+		} else {
+			$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
+		}
+
+		$this->_single_message = $this->_data_handler instanceof EE_Registration ? TRUE : FALSE;
 	}
 
 
