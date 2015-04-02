@@ -33,6 +33,8 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 	protected $_recipient;
 
+	protected $_registrations_for_recipient;
+
 
 	protected function _init_props() {
 		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
@@ -70,6 +72,8 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		if ( ! $attendee instanceof EE_Attendee )
 			return '';
 
+		$this->_registrations_for_recipient = isset( $this->_recipient->attendees[ $attendee->ID() ]['reg_objs'] ) ? $this->_recipient->attendees[ $attendee->ID() ]['reg_objs'] : array();
+
 		switch ( $shortcode ) {
 			case '[RECIPIENT_FNAME]' :
 				return $attendee->fname();
@@ -86,7 +90,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			case '[RECIPIENT_REGISTRATION_CODE]' :
 				if ( ! $this->_recipient->reg_obj instanceof EE_Registration )
 					return '';
-				return $this->_recipient->reg_obj->reg_code();
+				return $this->_get_reg_code();
 				break;
 
 			case '[RECIPIENT_EDIT_REGISTRATION_LINK]' :
@@ -156,6 +160,52 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 	 */
 	public function get_recipient() {
 		return $this->_recipient;
+	}
+
+
+
+	/**
+	 * returns the reg code for the recipient depending on the context and whether the recipient has multiple
+	 * registrations or not.
+	 *
+	 * @return string
+	 */
+	protected function _get_reg_code() {
+
+		//if only one related registration for the recipient then just return that reg code.
+		if ( count( $this->_registrations_for_recipient ) <= 1 )  {
+			return $this->_recipient->reg_obj->reg_code();
+		}
+
+		//k more than one registration so let's see if we can get specific to context
+		//are we parsing event_list?
+		if ( $this->_data instanceof EE_Event ) {
+			//loop through regsitrations for recipient and see if there is a match for this event
+			foreach ( $this->_registrations_for_recipient as $reg ) {
+				if ( $reg instanceof EE_Registration && $reg->event_ID() == $this->_data->ID() ) {
+					return $reg->reg_code();
+				}
+			}
+		}
+
+		//are we parsing ticket list?
+		if ( $this->_data instanceof EE_Ticket ) {
+			//loop through each registration for recipient and see if there is a match for this ticket
+			foreach ( $this->_registrations_for_recipient as $reg ) {
+				if ( $reg instanceof EE_Registration && $reg->ticket_ID() == $this->_data->ID() ) {
+					return $reg->reg_code();
+				}
+			}
+		}
+
+		//not able to determine the single reg code so let's return a comma delimited list of reg codes.
+		$reg_code = array();
+		foreach ( $this->_registrations_for_recipient as $reg ) {
+			if ( $reg instanceof EE_Registration ) {
+				$reg_code[] = $reg->reg_code();
+			}
+		}
+		return implode(', ', $reg_code );
 	}
 
 

@@ -322,26 +322,53 @@ class EE_Caf_Messages  {
 		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return $parsed;
 
-		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
-
 		switch ( $shortcode ) {
 			case '[RECIPIENT_QUESTION_LIST]' :
-				if ( ! $recipient->reg_obj instanceof EE_Registration || ! $recipient->att_obj instanceof EE_Attendee )
-					return '';
+				$att = $recipient->att_obj;
+				$registrations_on_attendee = $att instanceof EE_Attendee ? $recipient->attendees[$att->ID()]['reg_objs'] : array();
+				$registrations_on_attendee = empty( $registrations_on_attendee ) && $recipient->reg_obj instanceof EE_Registration ? array( $recipient->reg_obj ) : $registrations_on_attendee;
+				$answers = array();
 
-				$registration = $recipient->reg_obj;
-				$attendee = $recipient->att_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
 				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
-				$answers = !empty($recipient->registrations[$registration->ID()]['ans_objs']) ? $recipient->registrations[$registration->ID()]['ans_objs'] : array();
+
+				//if the context is main_content then get all answers for all registrations on this attendee
+				if ( $data['data'] instanceof EE_Messages_Addressee ) {
+					foreach ( $registrations_on_attendee as $reg ) {
+						if ( $reg instanceof EE_Registration ) {
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->regs[$reg->ID()]['ans_objs'] : array();
+							foreach( $anss as $ans ) {
+								if ( $ans instanceof EE_Answer ) {
+									$answers[$ans->ID()] = $ans;
+								}
+							}
+						}
+					}
+				}
+
+				//if the context is the event list parser, then let's return just the answers for all registrations attached to the recipient for that event.
+				if ( $data['data'] instanceof EE_Event ) {
+					$event = $data['data'];
+					foreach( $registrations_on_attendee as $reg ) {
+						if ( $reg instanceof EE_Registration && $reg->event_ID() == $event->ID() ) {
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->regs[$reg->ID()]['ans_objs'] : array();
+							foreach( $anss as $ans ) {
+								if ( $ans instanceof EE_Answer ) {
+									$answers[$ans->ID()] = $ans;
+								}
+							}
+						}
+					}
+				}
+
 				$question_list = '';
 				foreach ( $answers as $answer ) {
 					$question = $answer->question();
-					if ( $question instanceof EE_Question and $question->admin_only() ) {
+					if ( ! $question instanceof EE_Question || ( $question instanceof EE_Question && $question->admin_only() ) ) {
 						continue;
 					}
-					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
+					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
 				}
 				return $question_list;
 				break;
