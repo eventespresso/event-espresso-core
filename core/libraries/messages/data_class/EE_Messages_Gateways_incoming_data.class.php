@@ -37,9 +37,11 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	public $payment;
 
 
+
 	/**
 	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.
 	 * @param array $data
+	 * @throws \EE_Error
 	 */
 	public function __construct( $data ) {
 
@@ -63,9 +65,11 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	}
 
 
+
 	/**
 	 * This sets up an empty EE_Payment object for the purpose of shortcode parsing.  Note that this doesn't actually get saved to the db.
-	 * @return EE_Payment
+	 * @param \EE_Transaction $txn
+	 * @return \EE_Payment
 	 */
 	private function _get_empty_payment_obj( EE_Transaction $txn ) {
 		$PMT = EE_Payment::new_instance( array(
@@ -79,6 +83,10 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	}
 
 
+
+	/**
+	 * _setup_data
+	 */
 	protected function _setup_data() {
 
 		$this->reg_info = array();
