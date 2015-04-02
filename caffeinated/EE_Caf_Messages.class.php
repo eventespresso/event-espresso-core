@@ -336,7 +336,7 @@ class EE_Caf_Messages  {
 				if ( $data['data'] instanceof EE_Messages_Addressee ) {
 					foreach ( $registrations_on_attendee as $reg ) {
 						if ( $reg instanceof EE_Registration ) {
-							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->regs[$reg->ID()]['ans_objs'] : array();
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
 							foreach( $anss as $ans ) {
 								if ( $ans instanceof EE_Answer ) {
 									$answers[$ans->ID()] = $ans;
@@ -351,7 +351,7 @@ class EE_Caf_Messages  {
 					$event = $data['data'];
 					foreach( $registrations_on_attendee as $reg ) {
 						if ( $reg instanceof EE_Registration && $reg->event_ID() == $event->ID() ) {
-							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->regs[$reg->ID()]['ans_objs'] : array();
+							$anss = !empty($recipient->registrations[$reg->ID()]['ans_objs']) ? $recipient->registrations[$reg->ID()]['ans_objs'] : array();
 							foreach( $anss as $ans ) {
 								if ( $ans instanceof EE_Answer ) {
 									$answers[$ans->ID()] = $ans;
