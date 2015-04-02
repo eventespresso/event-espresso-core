@@ -203,6 +203,17 @@ abstract class EE_Messages_incoming_data {
 
 
 
+	/**
+	 * Holds the first related payment related for a transaction
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Payment
+	 */
+	public $payment;
+
+
+
 
 	/**
 	 * Will hold the label for the txn status
@@ -238,10 +249,19 @@ abstract class EE_Messages_incoming_data {
 
 
 
+	/**
+	 * This is just an internal object used for passing around the incoming data.
+	 * @var object
+	 */
+	public $incoming_data;
+
+
+
 
 	/**
 	 * constructor
-	 * @param mixed $data incoming data object|array.  Suggested that child classes use typehinting for expected data object.  But here parent will be generic because we don't know what's coming in.
+	 * @param mixed $data incoming data object|array.  Suggested that child classes use type hinting for expected
+	 * data object.  But here parent will be generic because we don't know what's coming in.
 	 */
 	public function __construct( $data ) {
 		$this->_data = $data;
@@ -270,9 +290,10 @@ abstract class EE_Messages_incoming_data {
 	}
 
 
+
 	/**
 	 * This helper method can be used by any incoming data handlers to setup the data correctly.  All that is required is that $this->reg_objs be set.
-	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _assemble_data() {
 		$regchk = array_values($this->reg_objs);
