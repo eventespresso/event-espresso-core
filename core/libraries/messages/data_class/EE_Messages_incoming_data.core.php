@@ -266,7 +266,7 @@ abstract class EE_Messages_incoming_data {
 	 */
 	protected function _assemble_data() {
 		$regchk = array_values($this->reg_objs);
-		$regchk = array_shift($regchk);
+		$regchk = reset($regchk);
 		//verify that reg_objs is set
 		if ( !is_array( $this->reg_objs) && ! $regchk instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
