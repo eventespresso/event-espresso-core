@@ -8,7 +8,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
- * Used to initialize all EE messages caffeianted functionality.
+ * Used to initialize all EE messages caffeinated functionality.
  *
  * @package        Event Espresso
  * @subpackage  messages
@@ -57,7 +57,7 @@ class EE_Caf_Messages  {
 		/**
 		 * @since 4.3.0
 		 */
-		//eat our own dogfood!
+		//eat our own dog food!
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_message_types' ) );
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_caf_shortcodes' ) );
 		do_action('EE_Brewing_Regular___messages_caf');
@@ -228,7 +228,7 @@ class EE_Caf_Messages  {
 		$registration = ! $registration instanceof EE_Registration && is_array( $extra_data ) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Registration ? $extra_data['data'] : $registration;
 
 		$aee = $data instanceof EE_Messages_Addressee ? $data : null;
-		$aee = ! $aee instanceof EE_Messages_Adressee && is_array( $extra_data ) && isset( $extra_data['data'] ) ? $extra_data['data'] : $aee;
+		$aee = ! $aee instanceof EE_Messages_Addressee && is_array( $extra_data ) && isset( $extra_data['data'] ) ? $extra_data['data'] : $aee;
 
 		if ( ! $registration instanceof EE_Registration || ! $aee instanceof EE_Messages_Addressee ) {
 			return $parsed;
@@ -236,7 +236,7 @@ class EE_Caf_Messages  {
 
 		//now let's figure out which question has this text.
 		foreach ( $aee->questions as $ansid => $question ) {
-			if ( $question->get('QST_display_text') == $shortcode && isset($aee->registrations[$registration->ID()]['ans_objs'][$ansid]) )
+			if ( $question instanceof EE_Question && $question->display_text() == $shortcode && isset($aee->registrations[$registration->ID()]['ans_objs'][$ansid]) )
 				return $aee->registrations[$registration->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
@@ -331,7 +331,6 @@ class EE_Caf_Messages  {
 
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
-				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
 
 				//if the context is main_content then get all answers for all registrations on this attendee
 				if ( $data['data'] instanceof EE_Messages_Addressee ) {
@@ -364,11 +363,13 @@ class EE_Caf_Messages  {
 
 				$question_list = '';
 				foreach ( $answers as $answer ) {
-					$question = $answer->question();
-					if ( ! $question instanceof EE_Question || ( $question instanceof EE_Question && $question->admin_only() ) ) {
-						continue;
+					if ( $answer instanceof EE_Answer ) {
+						$question = $answer->question();
+						if ( ! $question instanceof EE_Question || ( $question instanceof EE_Question && $question->admin_only() ) ) {
+							continue;
+						}
+						$question_list .= $shortcode_parser->get_shortcode_helper()->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
 					}
-					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
 				}
 				return $question_list;
 				break;
@@ -402,7 +403,6 @@ class EE_Caf_Messages  {
 			case '[RECIPIENT_QUESTION_LIST]' :
 				if ( ! $recipient->primary_att_obj instanceof EE_Attendee || ! $recipient->primary_reg_obj instanceof EE_Registration )
 					return '';
-				$attendee = $recipient->primary_att_obj;
 				$registration = $recipient->primary_reg_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
@@ -410,11 +410,13 @@ class EE_Caf_Messages  {
 				$answers = $recipient->registrations[$registration->ID()]['ans_objs'];
 				$question_list = '';
 				foreach ( $answers as $answer ) {
-					$question = $answer->question();
-					if ( $question instanceof EE_Question and $question->admin_only() ) {
-						continue;
+					if ( $answer instanceof EE_Answer ) {
+						$question = $answer->question();
+						if ( $question instanceof EE_Question and $question->admin_only() ) {
+							continue;
+						}
+						$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 					}
-					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
 				break;
