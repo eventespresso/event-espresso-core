@@ -510,23 +510,6 @@ class EED_Messages  extends EED_Module {
 					}
 				}
 			}
-
-			//now send summary (registration_summary) if active
-			// if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
-			// 	self::_load_controller();
-			// 	if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
-			// 			// DEBUG LOG
-			// 			self::log(
-			// 				__CLASS__, __FUNCTION__, __LINE__,
-			// 				$registration->transaction(),
-			// 				array(
-			// 					'delivered'    => current_time( 'mysql' ),
-			// 					'message_type' => 'registration_summary',
-			// 					'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-			// 				)
-			// 			);
-			// 		}
-			// }
 		} else {
 			//just sending normal reg messages because all registration statuses are the same.
 			// send the message type matching the status if that message type is active.
@@ -536,17 +519,34 @@ class EED_Messages  extends EED_Module {
 				self::_load_controller();
 				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
 					// DEBUG LOG
-					self::log(
-						__CLASS__, __FUNCTION__, __LINE__,
-						$registration->transaction(),
-						array(
-							'delivered'    => current_time( 'mysql' ),
-							'message_type' => $message_type,
-							'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-						)
-					);
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => $message_type,
+					// 		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+					// 	)
+					// );
 				}
 			}
+		}
+
+		//now send summary (registration_summary) if active
+		if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
+			self::_load_controller();
+			if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
+					// DEBUG LOG
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => 'registration_summary',
+					// 		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+					// 	)
+					// );
+				}
 		}
 	}
 
