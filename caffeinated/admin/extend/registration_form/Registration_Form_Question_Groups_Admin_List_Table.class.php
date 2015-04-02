@@ -157,21 +157,21 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 		if (  EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question_group', 'espresso_registration_form_edit_question_group', $item->ID() ) ) {
 			$actions = array(
-				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question Group', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+				'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Question Group', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
 		}
 		if ( $item->get('QSG_system') < 1 && $this->_view != 'trash' &&  EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_group', 'espresso_registration_form_trash_question_group', $item->ID() ) ) {
-			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Delete Question Group', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+			$actions['delete'] = '<a href="' . $trash_link . '" title="' . esc_attr__('Delete Question Group', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
 		if ( $this->_view == 'trash' ) {
 
 			if (  EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_group', 'espresso_registration_form_restore_question_group', $item->ID() ) ) {
-				$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question Group', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
+				$actions['restore'] = '<a href="' . $restore_link . '" title="' . esc_attr__('Restore Question Group', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
 			}
 
 			if ( !$item->has_questions_with_answers() &&  EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_group', 'espresso_registration_form_delete_question_group', $item->ID() ) ) {
-				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Group Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
 		}
 

@@ -116,12 +116,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -200,12 +200,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>

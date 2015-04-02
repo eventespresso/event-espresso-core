@@ -33,7 +33,8 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 					'required' => true
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
-					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
+					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso'),
+					'html_label_text' => __( 'Image URL', 'event_espresso' )
 				)),
 				'shipping_details'=>new EE_Select_Input(array(
 					EE_PMT_Paypal_Standard::shipping_info_none => __("Do not prompt for an address", 'event_espresso'),

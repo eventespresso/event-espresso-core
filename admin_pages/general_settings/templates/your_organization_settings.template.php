@@ -165,7 +165,7 @@
 						?>
 						<p id="default-logo-thumb">
 							<img id="current-image-thumb" src="<?php echo $organization_logo_url ?>" alt="" /><br />
-							<a id='remove-image' href='#' title='<?php _e('Remove Image', 'event_espresso'); ?>' onclick='return false;'>
+							<a id='remove-image' href='#' title='<?php esc_attr_e('Remove Image', 'event_espresso'); ?>' onclick='return false;'>
 								<?php _e('Remove Image', 'event_espresso'); ?>
 							</a>
 						</p>

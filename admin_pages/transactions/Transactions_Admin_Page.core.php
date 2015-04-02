@@ -465,7 +465,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transactions_overview_list_table() {
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$event = isset($this->_req_data['EVT_ID']) ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'] ) : NULL;
-		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . __('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
+		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . esc_attr__('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -642,7 +642,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$reg_steps = '<ul>';
 		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
-//			printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
+//			EEH_Debug_Tools::printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
 			switch ( $reg_step_status ) {
 				case $reg_step_status === true :
 					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
@@ -947,7 +947,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$json_response_data = array( 'return_data' => FALSE );
 		$PAY_ID = isset( $this->_req_data['delete_txn_admin_payment'] ) && isset( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) ? absint( $this->_req_data['delete_txn_admin_payment']['PAY_ID'] ) : 0;
-		$delete_txn_reg_status_change = isset( $this->_req_data['delete_txn_reg_status_change'] ) ? sanitize_text_field( $this->_req_data['delete_txn_reg_status_change'] ) : FALSE;
+		$delete_txn_reg_status_change = isset( $this->_req_data['delete_txn_reg_status_change'] ) ? $this->_req_data['delete_txn_reg_status_change']: FALSE;
 
 		if ( $PAY_ID ) {
 			$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
@@ -964,7 +964,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'delete_txn_reg_status_change' => $delete_txn_reg_status_change
 					);
 					if ( $delete_txn_reg_status_change ) {
-						$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+						$this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
+						//MAKE sure we also add the delete_txn_req_status_change to the
+						//$_REQUEST global because that's how messages will be looking
+						//for it.
+						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
 						$this->_process_registration_status_change( $payment->transaction() );
 					}
 				}

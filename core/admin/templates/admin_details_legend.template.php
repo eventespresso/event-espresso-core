@@ -17,7 +17,7 @@ $count = 1;
 				<?php $class = !empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
 				<span class="<?php echo $class; ?>">
 					<?php if ( !empty($details['icon']) ) : ?>
-					<img src="<?php echo $details['icon']; ?>" class="ee-legend-icon" alt="<?php echo $details['desc']; ?>" />
+					<img src="<?php echo $details['icon']; ?>" class="ee-legend-icon" alt="<?php echo esc_attr( $details['desc'] ); ?>" />
 					<?php endif; ?>
 				</span>
 				<span class="ee-legend-description"><?php echo $details['desc']; ?></span>

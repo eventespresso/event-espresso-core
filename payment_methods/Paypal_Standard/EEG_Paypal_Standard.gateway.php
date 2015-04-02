@@ -60,7 +60,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 	/**
-	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
+	 * @return EEG_Paypal_Standard
+	 */
+	public function __construct() {
+		$this->set_uses_separate_IPN_request( true ) ;
+		parent::__construct();
+	}
+
+
+
+	/**
+	 * Also sets the gateway url class variable based on whether debug mode is enabled or not
 	 * @param array $settings_array
 	 */
 	public function set_settings($settings_array){
@@ -221,6 +231,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_amount( floatval( $update_info[ 'mc_gross' ] ) );
 				$payment->set_gateway_response($gateway_response);
 				$payment->set_details( $update_info );
+				$payment->set_txn_id_chq_nmbr( $update_info['txn_id'] );
 				$this->log( array(
 					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
 					'message' => sprintf( __( 'Updated payment either from IPN or as part of POST from paypal', 'event_espresso' )),
@@ -351,8 +362,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 				$payment);
 	}
-
-
 
 }
 // End of file EEG_Paypal_Standard.gateway.php
