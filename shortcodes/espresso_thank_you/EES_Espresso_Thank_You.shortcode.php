@@ -556,38 +556,95 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	get_ajax_content
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return 	void
 	 */
 	public function get_ajax_content() {
-		if ( ! $this->_primary_registrant->is_not_approved() ) {
-?>
-	<div id="espresso-thank-you-page-ajax-content-dv">
-		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
-		<div id="espresso-thank-you-page-ajax-payment-dv"></div>
-		<div id="espresso-thank-you-page-ajax-loading-dv">
-			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
-				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
+		if ( ! $this->get_txn() ) {
+			return;
+		}
+		// first determine which event(s) require pre-approval or not
+		$events = array();
+		$events_requiring_pre_approval = array();
+		foreach ( $this->_current_txn->registrations() as $registration ) {
+			if ( $registration instanceof EE_Registration ) {
+				$event = $registration->event();
+				if ( $event instanceof EE_Event ) {
+					if ( $registration->is_not_approved() && $registration->event() instanceof EE_Event ) {
+						$events_requiring_pre_approval[ $event->ID() ] = $event;
+					} else {
+						$events[ $event->ID() ] = $event;
+					}
+				}
+			}
+		}
+		$this->display_details_for_events_requiring_pre_approval( $events_requiring_pre_approval );
+		$this->display_details_for_events( $events );
+	}
+
+
+
+	/**
+	 *    display_details_for_events
+	 *
+	 * @access    public
+	 * @param EE_Event[] $events
+	 * @return string
+	 */
+	public function display_details_for_events( $events = array() ) {
+		if ( ! empty( $events ) ) {
+			?>
+			<div id="espresso-thank-you-page-ajax-content-dv">
+				<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
+				<div id="espresso-thank-you-page-ajax-payment-dv"></div>
+				<div id="espresso-thank-you-page-ajax-loading-dv">
+					<div id="ee-ajax-loading-dv" class="left lt-blue-text">
+						<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' ); ?></span>
+					</div>
+					<?php if ( ! $this->_is_offline_payment_method ) : ?>
+						<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
+							<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ) ); ?>
+							<br/>
+							<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' ); ?>
+								<span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
+						</p>
+					<?php endif; ?>
+				</div>
+				<div class="clear"></div>
 			</div>
-			<?php if ( ! $this->_is_offline_payment_method ) : ?>
-			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
-				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
-				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
-			</p>
-			<?php endif; ?>
-		</div>
+		<?php
+		}
+	}
+
+
+
+	/**
+	 *    display_details_for_events_requiring_pre_approval
+	 *
+	 * @access    public
+	 * @param EE_Event[] $events
+	 * @return string
+	 */
+	public function display_details_for_events_requiring_pre_approval( $events = array() ) {
+		if ( ! empty( $events ) ) {
+?>
+	<div id = "espresso-thank-you-page-not-approved-message-dv" >
+		<h4 class="orange-text" ><?php _e( 'Important Notice:', 'event_espresso' );?></h4>
+		<p id="events-requiring-pre-approval-pg" class="small-text">
+			<?php echo apply_filters(
+				'AHEE__EES_Espresso_Thank_You__get_ajax_content__not_approved_message',
+				__( 'The following Event(s) you have registered for do not require payment at this time and will not be billed for during this transaction. Billing will only occur after all attendees have been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso' )
+			); ?>
+		</p>
+		<ul class="events-requiring-pre-approval-ul">
+			<?php foreach ( $events as $event ) {
+				if ( $event instanceof EE_Event ) {
+					echo '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>', $event->name(), '</li>';
+				}
+			} ?>
+		</ul>
 		<div class="clear"></div>
 	</div>
 <?php
-		} else {
-?>
-	<div id="espresso-thank-you-page-not-approved-message-dv">
-		<h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
-		<p id="events-requiring-pre-approval-pg" class="small-text">
-			<?php echo apply_filters( 'AHEE__EES_Espresso_Thank_You__get_ajax_content__not_approved_message', __('The Event you have registered for does not require payment at this time and was not billed for during this transaction. Billing will only occur after all attendees have been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso') ); ?>
-		</p>
-		<div class="clear"></div>
-	</div>
-		<?php
 		}
 	}
 
