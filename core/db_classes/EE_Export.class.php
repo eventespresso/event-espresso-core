@@ -368,6 +368,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 						$value = $registration->get_pretty($field_name,'localized_float');
 					}elseif( $field_name == 'REG_count' ){
 						$value = sprintf( __( '%s of %s', 'event_espresso' ), $registration->get_pretty( 'REG_count' ), $registration->get_pretty( 'REG_group_size'  ) );
+					}elseif( $field_name == 'REG_date' ) {
+						$value = $registration->get_pretty( $field->get_name(), 'no_html' );
 					}else{
 						$value = $registration->get_pretty($field->get_name());
 					}
