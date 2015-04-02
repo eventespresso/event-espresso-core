@@ -663,12 +663,15 @@ class EED_Messages  extends EED_Module {
 			return FALSE;
 		}
 
+		//get reg status
+		$status = $reg->status_ID();
+
 		self::_load_controller();
 
 		//get status_match_array
 		$status_match_array = self::_get_reg_status_array();
 		$active_mts = self::$_EEMSG->get_active_message_types();
-		if ( ! in_array( $status_match_array[ $reg->status_ID() ], $active_mts ) ) {
+		if ( ! in_array( $status_match_array[ $status ], $active_mts ) ) {
 			EE_Error::add_error(
 				sprintf(
 					__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
@@ -680,7 +683,7 @@ class EED_Messages  extends EED_Module {
 			return FALSE;
 		}
 
-		if ( self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) ) {
+		if ( self::$_EEMSG->send_message( $status_match_array[$status], array( $reg, $status ) ) ) {
 			EE_Error::overwrite_success();
 			EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
 			return TRUE;
