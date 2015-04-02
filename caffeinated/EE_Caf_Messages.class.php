@@ -362,13 +362,14 @@ class EE_Caf_Messages  {
 				}
 
 				$question_list = '';
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
 				foreach ( $answers as $answer ) {
 					if ( $answer instanceof EE_Answer ) {
 						$question = $answer->question();
 						if ( ! $question instanceof EE_Question || ( $question instanceof EE_Question && $question->admin_only() ) ) {
 							continue;
 						}
-						$question_list .= $shortcode_parser->get_shortcode_helper()->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
+						$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $extra_data);
 					}
 				}
 				return $question_list;
