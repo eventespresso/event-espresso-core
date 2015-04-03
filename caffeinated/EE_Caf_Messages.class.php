@@ -187,6 +187,8 @@ class EE_Caf_Messages  {
 			'declined_registration',
 			'not_approved_registration',
 			'payment_declined',
+			'payment_failed',
+			'payment_cancelled',
 			'payment',
 			'payment_reminder',
 			'pending_approval'
@@ -451,6 +453,25 @@ class EE_Caf_Messages  {
 			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'cancelled_registration', $setup_args );
+
+
+		//register payment failed message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Failed_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_failed/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_failed', $setup_args );
+
+		//register payment declined message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Cancelled_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_cancelled/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_cancelled', $setup_args );
 	}
 
 

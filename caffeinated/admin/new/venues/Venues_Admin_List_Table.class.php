@@ -127,12 +127,12 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_venue', 'espresso_venues_edit', $item->ID() ) ) {
 			$actions = array(
-				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+				'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 				);
 		}
 
 		if ( $item->count_related('Event') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_venue', 'espresso_venues_delete_venue', $item->ID() ) ) {
-			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+			$actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 		}
 
 		$statuses = EEM_Venue::instance()->get_status_array();

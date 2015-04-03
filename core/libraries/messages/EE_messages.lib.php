@@ -49,6 +49,9 @@ class EE_messages {
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
+
+		//load debug tools
+		EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
 	/**
@@ -306,6 +309,30 @@ class EE_messages {
 
 		$error = FALSE;
 		$installed_message_types = $this->get_installed_message_types();
+		$debug_index = 'Messages: ' . $type;
+		foreach ( $vars as $var ) {
+			if ( method_exists( $var, 'ID' ) ) {
+				$debug_index = get_class( $var ) .  ': ' . $var->ID();
+				break;
+			} else if ( is_object( $var )) {
+				$debug_index = spl_object_hash( $var );
+			}
+		}
+		//EEH_Debug_Tools::log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'message_type' => $type,
+		//		'incoming_data' => $vars,
+		//		'sending_messenger' => $sending_messenger,
+		//		'generating_messenger' => $generating_messenger,
+		//		'context' => $context,
+		//		'send' => $send,
+		//		'installed_message_types' => $installed_message_types
+		//		),
+		//	false,
+		//	$debug_index
+		//);
+
 		// is that a real class ?
 		if ( isset(  $installed_message_types[$type] ) ) {
 			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
@@ -341,13 +368,26 @@ class EE_messages {
 					}
 				}
 
+				//EEH_Debug_Tools::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	array(
+				//		'message_type' => $type,
+				//		'active_messenger' => $this->_active_messengers,
+				//		'send_messages' => $send_messages,
+				//		'error' => $error
+				//		),
+				//	false,
+				//	$debug_index
+				//	);
+
 				//return generated EE_Messages objects?
 				if ( ! $send ) {
 					return $send_messages;
 				}
 			}
 		} else {
-			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		// add a success message
 		if ( ! $error ) {

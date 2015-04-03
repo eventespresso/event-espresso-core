@@ -237,6 +237,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//and make sure p's cache was updated to be the same as p2's
 		$this->assertEquals( $p2->get_all_from_cache( 'Transaction' ), $p->get_all_from_cache( 'Transaction' ) );
 	}
+
 }
 
 // End of file EEM_Base_Test.php
