@@ -319,10 +319,8 @@ abstract class EE_Messages_incoming_data {
 	 * @throws \EE_Error
 	 */
 	protected function _assemble_data() {
-		$regchk = array_values($this->reg_objs);
-		$regchk = reset($regchk);
 		//verify that reg_objs is set
-		if ( !is_array( $this->reg_objs) && ! $regchk instanceof EE_Registration )
+		if ( !is_array( $this->reg_objs) && ! reset( $this->reg_objs ) instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
 
 		//get all attendee and events associated with the registrations in this transaction
