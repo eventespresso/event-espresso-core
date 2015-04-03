@@ -25,8 +25,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public static function set_hooks() {
 		add_action( 'wp_ajax_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'spco_billing_form' ));
 		add_action( 'wp_ajax_nopriv_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'spco_billing_form' ));
-		add_action( 'wp_ajax_get_get_transaction_details_for_gateways', array( 'EED_Single_Page_Checkout', 'get_transaction_details_for_gateways' ) );
-		add_action( 'wp_ajax_nopriv_get_transaction_details_for_gateways', array( 'EED_Single_Page_Checkout', 'get_transaction_details_for_gateways' ) );
+		add_action( 'wp_ajax_get_transaction_details_for_gateways', array( 'EE_SPCO_Reg_Step_Payment_Options', 'get_transaction_details' ) );
+		add_action( 'wp_ajax_nopriv_get_transaction_details_for_gateways', array( 'EE_SPCO_Reg_Step_Payment_Options', 'get_transaction_details' ) );
 		add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EE_SPCO_Reg_Step_Payment_Options', 'bypass_recaptcha_for_load_payment_method' ), 10, 1 );
 	}
 
@@ -38,6 +38,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public static function spco_billing_form() {
 		EED_Single_Page_Checkout::process_ajax_request( 'get_billing_form_html_for_payment_method' );
+	}
+
+
+
+
+	/**
+	 * 	ajax get_transaction_details
+	 */
+	public static function get_transaction_details() {
+		EED_Single_Page_Checkout::process_ajax_request( 'get_transaction_details_for_gateways' );
 	}
 
 
@@ -1566,7 +1576,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @access    public
 	 * @return    int
 	 */
-	public static function get_transaction_details_for_gateways() {
+	public function get_transaction_details_for_gateways() {
 		$txn_details = array();
 		// ya gotta make a choice man
 		if ( empty( $this->checkout->selected_method_of_payment ) ) {
@@ -1575,13 +1585,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			);
 		}
 		// get EE_Payment_Method object
-		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
+		if (
+			empty( $txn_details ) &&
+			! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment()
+		) {
 			$txn_details = array(
+				'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
 				'error' => __( 'A valid Payment Method could not be determined.', 'event_espresso' )
 			);
 		}
-		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			$return_url = $this->_get_return_url( $this->checkout->payment_method )
+		if ( empty( $txn_details ) && $this->checkout->transaction instanceof EE_Transaction ) {
+			$return_url = $this->_get_return_url( $this->checkout->payment_method );
 			$txn_details = array(
 				'TXN_ID'        			=> $this->checkout->transaction->ID(),
 				'TXN_timestamp' 	=> $this->checkout->transaction->datetime(),
@@ -1597,6 +1611,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						'e_reg_url_link'    			=> $this->checkout->transaction->primary_registration()->reg_url_link(),
 						'ee_payment_method' 	=> $this->checkout->payment_method->slug()
 					)
+				)
 			);
 		}
 		echo json_encode( $txn_details );
