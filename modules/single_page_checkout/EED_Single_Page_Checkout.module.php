@@ -97,8 +97,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_action( 'wp_ajax_nopriv_display_spco_reg_step', array( 'EED_Single_Page_Checkout', 'display_reg_step' ));
 		add_action( 'wp_ajax_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
 		add_action( 'wp_ajax_nopriv_update_reg_step', array( 'EED_Single_Page_Checkout', 'update_reg_step' ));
-		add_action( 'wp_ajax_get_spco_transaction_details', array( 'EED_Single_Page_Checkout', 'get_spco_transaction_details' ));
-		add_action( 'wp_ajax_nopriv_get_spco_transaction_details', array( 'EED_Single_Page_Checkout', 'get_spco_transaction_details' ));
 	}
 
 
@@ -300,35 +298,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		return FALSE;
 	}
-
-
-
-	/**
-	 *    get_spco_transaction_details
-	 *
-	 * @access    public
-	 * @return    int
-	 */
-	public static function get_spco_transaction_details() {
-		// setup the EE_Checkout object
-		$checkout = EED_Single_Page_Checkout::instance()->_initialize_checkout();
-		if ( $checkout->transaction instanceof EE_Transaction ) {
-			$txn_details = array(
-				'TXN_ID' => $checkout->transaction->ID(),
-				'TXN_timestamp' => $checkout->transaction->datetime(),
-				'TXN_total' => $checkout->transaction->total(),
-				'TXN_paid' => $checkout->transaction->paid(),
-				'TXN_reg_steps' => $checkout->transaction->reg_steps(),
-				'STS_ID' => $checkout->transaction->status_ID(),
-				'PMD_ID' => $checkout->transaction->payment_method_ID(),
-			);
-		} else {
-			$txn_details = array();
-		}
-		echo json_encode( $txn_details );
-		exit();
-	}
-
 
 
 
