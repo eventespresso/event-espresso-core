@@ -307,7 +307,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
-		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
+		$this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
 		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
@@ -359,7 +359,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary && $this->_payments_closed && ! $this->_current_txn->is_free() ) {
+ 		if ( $this->_is_primary && ! $this->_payments_closed && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 
