@@ -238,11 +238,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				if ( $save ) {
 					$registration->save();
 				}
-				// send messages
-				$this->trigger_registration_update_notifications(
-					$registration,
-					array( 'manually_updated' 	=> true )
-				);
 			}
 			return TRUE;
 		}
