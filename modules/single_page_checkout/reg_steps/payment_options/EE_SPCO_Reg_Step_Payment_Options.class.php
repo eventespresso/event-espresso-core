@@ -103,7 +103,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			! $this->checkout->payment_required()
 			// but do NOT remove if current action being called belongs to this reg step
 			&& ! is_callable( array( $this, $this->checkout->action ) )
-			&& ! $this->completed() 
+			&& ! $this->completed()
 		) {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
@@ -670,22 +670,23 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
 			if( $billing_form instanceof EE_Billing_Info_Form ) {
 				if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
-                if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
-					EE_Error::add_success(
-						apply_filters(
-							'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-							sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $payment_method->name() )
-						)
+					if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
+						EE_Error::add_success(
+							apply_filters(
+								'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+								sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $payment_method->name() )
+							)
+						);
+					}
+					return apply_filters(
+						'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
+						$billing_form
 					);
 				}
-				return apply_filters(
-					'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
-					$billing_form
-				);
 			}
+			// no actual billing form, so return empty HTML form section
+			return new EE_Form_Section_HTML();
 		}
-		// no actual billing form, so return empty HTML form section
-		return new EE_Form_Section_HTML();
 	}
 
 
