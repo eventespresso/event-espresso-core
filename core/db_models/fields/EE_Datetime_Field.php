@@ -372,7 +372,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				if( $schema === 'no_html' ){
 					$timezone_string = ' (' . $DateTime->format( 'T' )  . ')';
 				}else{
-					$timezone_string = '<span class="ee_dtt_timezone_string">(' . $DateTime->format( 'T' ) . ')</span>';
+					$timezone_string = ' <span class="ee_dtt_timezone_string">(' . $DateTime->format( 'T' ) . ')</span>';
 				}
 			} else {
 				$timezone_string = '';
