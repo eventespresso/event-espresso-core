@@ -368,8 +368,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$DateTime->setTimeZone( $this->_DateTimeZone );
 		if ( $schema ) {
 			if( $this->_display_timezone() ) {
-				if( $schema == 'no_html' ){
-					$timezone_string = '(' . $DateTime->format( 'T' )  . ')';
+				//must be explict because schema could equal true.
+				if( $schema === 'no_html' ){
+					$timezone_string = ' (' . $DateTime->format( 'T' )  . ')';
 				}else{
 					$timezone_string = '<span class="ee_dtt_timezone_string">(' . $DateTime->format( 'T' ) . ')</span>';
 				}
