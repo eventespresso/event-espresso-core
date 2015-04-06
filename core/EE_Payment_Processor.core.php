@@ -387,14 +387,16 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// and if it hasn't already been set as being started...
 			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 		}
+		$transaction->save();
 		// because the above will return false if the final step was not fully completed, we need to check again...
 		if ( $IPN && $finalized ) {
 			// and if we are all good to go, then send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			// DEBUG LOG
 			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+			//ok, now process the transaction according to the payment
+			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 		}
-		$transaction->save();
 		// DEBUG LOG
 		//$this->log(
 		//	__CLASS__, __FUNCTION__, __LINE__,
@@ -409,8 +411,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 		//	)
 		//);
-		//ok, now process the transaction according to the payment
-		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}
 
 
