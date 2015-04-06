@@ -1251,7 +1251,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart );
 					if ( ! empty( $available_payment_methods ) ) {
 						$PMD_ID = 0;
-						$first_payment_method = reset( $available_payment_methods );
 						foreach( $available_payment_methods as $available_payment_method ) {
 							if ( $available_payment_method instanceof EE_Payment_Method && $available_payment_method->open_by_default() ) {
 								$PMD_ID = $available_payment_method->ID();
@@ -1259,6 +1258,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 							}
 						}
 						if ( ! $PMD_ID ) {
+							$first_payment_method = reset( $available_payment_methods );
 							if ( $first_payment_method instanceof EE_Payment_Method ) {
 								$PMD_ID = $first_payment_method->ID();
 							} else {
