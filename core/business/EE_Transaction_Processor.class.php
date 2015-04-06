@@ -445,7 +445,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	public function manually_update_registration_statuses( EE_Transaction $transaction, $new_reg_status = '', $registration_query_params = array() ) {
 		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'manually_update_registration_status', $transaction, $registration_query_params, $new_reg_status );
 		// send messages
-		$this->trigger_registration_update_notifications(
+		EE_Registry::instance()->load_class( 'Registration_Processor' )->trigger_registration_update_notifications(
 			$transaction->primary_registration(),
 			array( 'manually_updated' 	=> true )
 		);
