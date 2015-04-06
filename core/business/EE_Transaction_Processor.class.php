@@ -575,6 +575,73 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	}
 
 
+
+	/**
+	 * set_transaction_payment_method_based_on_registration_statuses
+	 *
+	 * sets or unsets the PMD_ID field on the TXN based on the related REG statuses
+	 * basically if ALL Registrations are "Not Approved", then the EE_Transaction.PMD_ID is set to null,
+	 * but if any Registration has a different status, then EE_Transaction.PMD_ID is set to either:
+	 * 		the first "default" Payment Method
+	 * 		the first active Payment Method
+	 * 	whichever is found first.
+	 *
+	 * @param  EE_Registration $edited_registration
+	 * @return void
+	 */
+	public function set_transaction_payment_method_based_on_registration_statuses(
+		EE_Registration $edited_registration
+	) {
+		if ( $edited_registration instanceof EE_Registration ) {
+			$transaction = $edited_registration->transaction();
+			if ( $transaction instanceof EE_Transaction ) {
+				$all_not_approved = true;
+				foreach ( $transaction->registrations() as $registration ) {
+					if ( $registration instanceof EE_Registration ) {
+						// if any REG != "Not Approved" then toggle to false
+						$all_not_approved = $registration->is_not_approved() ? $all_not_approved : false;
+					}
+				}
+				// if ALL Registrations are "Not Approved"
+				if ( $all_not_approved ) {
+					$transaction->set_payment_method_ID( null );
+					$transaction->save();
+				} else {
+					$available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart );
+					if ( ! empty( $available_payment_methods ) ) {
+						$PMD_ID = 0;
+						foreach ( $available_payment_methods as $available_payment_method ) {
+							if ( $available_payment_method instanceof EE_Payment_Method && $available_payment_method->open_by_default() ) {
+								$PMD_ID = $available_payment_method->ID();
+								break;
+							}
+						}
+						if ( ! $PMD_ID ) {
+							$first_payment_method = reset( $available_payment_methods );
+							if ( $first_payment_method instanceof EE_Payment_Method ) {
+								$PMD_ID = $first_payment_method->ID();
+							} else {
+								EE_Error::add_error(
+									__( 'A valid Payment Method could not be determined. Please ensure that at least
+									one Payment Method is activated.',
+										'event_espresso' ),
+									__FILE__, __LINE__, __FUNCTION__
+								);
+							}
+						}
+						$transaction->set_payment_method_ID( $PMD_ID );
+						$transaction->save();
+					} else {
+						EE_Error::add_error(
+							__( 'Please activate at least one Payment Method in order for things to operate correctly.', 'event_espresso' ),
+							__FILE__, __LINE__, __FUNCTION__
+						);
+					}
+				}
+			}
+		}
+	}
+
 }
 
 
