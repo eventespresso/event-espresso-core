@@ -295,7 +295,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
-		$show_try_pay_again_link_default =  do_action( 'AHEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default', TRUE );
+		$show_try_pay_again_link_default =  apply_filters( 'AFEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default',	TRUE );
 		// txn status ?
 		if( $this->_current_txn->is_completed() ){
 			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
