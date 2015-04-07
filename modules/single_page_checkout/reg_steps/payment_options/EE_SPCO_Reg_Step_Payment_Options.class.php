@@ -574,7 +574,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _payment_method_billing_info( EE_Payment_Method $payment_method ) {
 		$currently_selected = $this->checkout->selected_method_of_payment == $payment_method->slug() ? TRUE : FALSE;
 		// generate the billing form for payment method
-		$billing_form = $this->_get_billing_form_for_payment_method( $payment_method );
+		$billing_form = $currently_selected ? $this->_get_billing_form_for_payment_method( $payment_method ) : new EE_Form_Section_HTML();
 		$this->checkout->billing_form = $currently_selected ? $billing_form : $this->checkout->billing_form;
 		// it's all in the details
 		$info_html = EEH_HTML::h3 ( __( 'Important information regarding your payment', 'event_espresso' ), '', 'spco-payment-method-hdr' );
@@ -662,7 +662,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( $payment_method->type_obj()->has_billing_form() ) {
 			$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
 			if( $billing_form instanceof EE_Billing_Info_Form ) {
-				if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
+				if ( EE_Registry::instance()->REQ->is_set( 'payment_method' ) || EE_Registry::instance()->REQ->is_set( 'selected_method_of_payment' ) ) {
 					if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
 						EE_Error::add_success(
 							apply_filters(
