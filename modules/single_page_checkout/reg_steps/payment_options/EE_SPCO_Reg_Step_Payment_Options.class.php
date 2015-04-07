@@ -131,12 +131,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$registrations_for_free_events = array();
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
-		// these reg statuses do NOT require payment
-		$no_payment_required = array(
-			EEM_Registration::status_id_not_approved,
-			EEM_Registration::status_id_cancelled,
-			EEM_Registration::status_id_declined
-		);
 		$reg_count = 0;
 		// these reg statuses require payment (if event is not free)
 		$requires_payment = array(
@@ -482,7 +476,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// loop through payment methods
 		foreach( $this->checkout->available_payment_methods as $payment_method ) {
 			if ( $payment_method instanceof EE_Payment_Method ) {
-
 				$payment_method_button = EEH_HTML::img( $payment_method->button_url(), $payment_method->name(), 'spco-payment-method-' . $payment_method->slug() . '-btn-img', 'spco-payment-method-btn-img' );
 				// check if any payment methods are set as default
 				// if payment method is already selected OR nothing is selected and this payment method should be open_by_default
@@ -684,9 +677,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					);
 				}
 			}
-			// no actual billing form, so return empty HTML form section
-			return new EE_Form_Section_HTML();
 		}
+		// no actual billing form, so return empty HTML form section
+		return new EE_Form_Section_HTML();
 	}
 
 
@@ -810,11 +803,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * save_payer_details_via_ajax
-	 * @return boolean
+	 * @return void
 	 */
 	public function save_payer_details_via_ajax() {
 		if ( ! $this->_verify_payment_method_is_set() ) {
-			return FALSE;
+			return;
 		}
 		// generate billing form for selected method of payment if it hasn't been done already
 		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
