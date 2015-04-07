@@ -18,34 +18,25 @@
 
 
 /**
- * EE_Term class
+ * EE_WP_User class
  *
  * @package 			Event Espresso
- * @subpackage 	includes/classes/EE_Term.class.php
+ * @subpackage 	includes/classes/EE_WP_User.class.php
  * @author 				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-class EE_Term extends EE_Base_Class {
+class EE_WP_User extends EE_Base_Class {
 
 	/**
-	 * Sets some dynamic defaults
-	 * @param array $fieldValues
-	 * @param bool $bydb
-	 * @param string $timezone
+	 *
+	 * @var WP_User
 	 */
-	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ) {
-		if ( ! isset( $fieldValues[ 'slug' ] ) ) {
-			$fieldValues[ 'slug' ] = $fieldValues[ 'name' ];
-		}
-		parent::__construct( $fieldValues, $bydb, $timezone );
-	}
-
-
+	protected $_wp_user_obj;
 
 	/**
 	 * @param array $props_n_values
-	 * @return EE_Term|mixed
+	 * @return EE_WP_User|mixed
 	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -56,52 +47,21 @@ class EE_Term extends EE_Base_Class {
 
 	/**
 	 * @param array $props_n_values
-	 * @return EE_Term
+	 * @return EE_WP_User
 	 */
 	public static function new_instance_from_db( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
 
-
-
 	/**
-	 * Gets name
-	 * @return string
+	 * Return a normal WP_User object (caches the object for future calls)
+	 * @return WP_User
 	 */
-	function name() {
-		return $this->get( 'name' );
-	}
-
-
-
-	/**
-	 * Sets name
-	 * @param string $name
-	 * @return boolean
-	 */
-	function set_name( $name ) {
-		$this->set( 'name', $name );
-	}
-
-
-
-	/**
-	 * Gets slug
-	 * @return string
-	 */
-	function slug() {
-		return $this->get( 'slug' );
-	}
-
-
-
-	/**
-	 * Sets slug
-	 * @param string $slug
-	 * @return boolean
-	 */
-	function set_slug( $slug ) {
-		$this->set( 'slug', $slug );
+	public function wp_user_obj() {
+		if( ! $this->_wp_user_obj ) {
+			$this->_wp_user_obj = get_user_by('ID', $this->ID() );
+		}
+		return $this->_wp_user_obj;
 	}
 }
 

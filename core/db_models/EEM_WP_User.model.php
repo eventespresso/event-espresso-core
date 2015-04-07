@@ -14,36 +14,20 @@
  * ------------------------------------------------------------------------
  */
 /**
- * Attendee Model
+ * WP User Model. Not intended to replace WP_User, but this just allows
+ * for EE model queries to more easily integrate with the WP User table
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
  * @author				Michael Nelson
  */
-class EEM_Answer extends EEM_Base {
+class EEM_WP_User extends EEM_Base {
 
 	/**
-	 * private instance of the EEM_Answer object
-	 * @type EEM_Answer
+	 * private instance of the EEM_WP_User object
+	 * @type EEM_WP_User
 	 */
 	protected static $_instance = NULL;
-
-	/**
-	 * Mapping from system question ids to attendee field names
-	 * @type array
-	 */
-	protected $_question_id_to_att_field_map = array(
-		EEM_Attendee::fname_question_id => 'ATT_fname',
-		EEM_Attendee::lname_question_id => 'ATT_lname',
-		EEM_Attendee::email_question_id => 'ATT_email',
-		EEM_Attendee::address_question_id => 'ATT_address',
-		EEM_Attendee::address2_question_id => 'ATT_address2',
-		EEM_Attendee::city_question_id => 'ATT_city',
-		EEM_Attendee::state_question_id => 'STA_ID',
-		EEM_Attendee::country_question_id => 'CNT_ISO',
-		EEM_Attendee::zip_question_id => 'ATT_zip',
-		EEM_Attendee::phone_question_id => 'ATT_phone'
-	);
 
 
 
@@ -51,98 +35,37 @@ class EEM_Answer extends EEM_Base {
 	 * 	constructor
 	 */
 	protected function __construct( $timezone = NULL ){
-		$this->singular_item = __('Answer','event_espresso');
-		$this->plural_item = __('Answers','event_espresso');
+		$this->singular_item = __('WP_User','event_espresso');
+		$this->plural_item = __('WP_Users','event_espresso');
 		$this->_tables = array(
-			'Answer'=> new EE_Primary_Table('esp_answer', 'ANS_ID')
+			'WP_User'=> new EE_Primary_Table('users', 'ID')
 		);
 		$this->_fields = array(
-			'Answer'=>array(
-				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID','event_espresso')),
-				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0, 'Registration'),
-				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
-				'ANS_value'=>new EE_Maybe_Serialized_Text_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
+			'WP_User'=>array(
+				'ID'=> new EE_Primary_Key_Int_Field('ID', __('WP_User ID','event_espresso')),
+				'user_login'=>new EE_Plain_Text_Field('user_login', __('User Login','event_espresso'), false, '' ),
+				'user_pass'=>new EE_Plain_Text_Field('user_pass', __('User Password','event_espresso'), false, '' ),
+				'user_nicename'=>new EE_Plain_Text_Field('user_nicename', __(' User Nice Name','event_espresso'), false, ''),
+				'user_email' => new EE_Email_Field('user_email', __( 'User Email', 'event_espresso' ), false),
+				'user_registered' => new EE_Datetime_Field( 'user_registered', __( 'Date User Registered', 'event_espresso' ), false, current_time('timestamp'), $timezone ),
+				'user_activation_key' => new EE_Plain_Text_Field( 'user_activation_key', __( 'User Activation Key', 'event_espresso' ), false, '' ),
+				'user_status' => new EE_Integer_Field( 'user_status', __( 'User Status', 'event_espresso' ), false, 0 ),
+				'display_name' => new EE_Plain_Text_Field( 'display_name', __( 'Display Name', 'event_espresso' ), false, '' )
 			));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Belongs_To_Relation(),
-			'Question'=>new EE_Belongs_To_Relation()
+			'Change_Log' => new EE_Has_Many_Relation(),
+			'Event'=>new EE_Has_Many_Relation(),
+			'Payment_Method' => new EE_Has_Many_Relation(),
+			'Price' => new EE_Has_Many_Relation(),
+			'Price_Type' => new EE_Has_Many_Relation(),
+			'Question'=>new EE_Has_Many_Relation(),
+			'Question_Group' => new EE_Has_Many_Relation(),
+			'Ticket' => new EE_Has_Many_Relation(),
+			'Venue' => new EE_Has_Many_Relation(),
 		);
 
 		parent::__construct( $timezone );
 	}
-
-
-
-	/**
-	 * Gets the string answer to the question for this registration (it could either be stored
-	 * on the attendee or in the answer table. This function finds its value regardless)
-	 * @param EE_Registration $registration
-	 * @param int $question_id
-	 * @param boolean $pretty_answer whether to call 'pretty_value' or just 'value'
-	 * @return string
-	 */
-	public function get_answer_value_to_question( EE_Registration $registration, $question_id = NULL,$pretty_answer = FALSE ){
-		$value = $this->get_attendee_property_answer_value( $registration, $question_id, $pretty_answer );
-		if (  $value === NULL ){
-			$answer_obj = $this->get_registration_question_answer_object( $registration, $question_id, $pretty_answer );
-			if( $answer_obj instanceof EE_Answer ){
-				if($pretty_answer){
-					$value = $answer_obj->pretty_value();
-				}else{
-					$value = $answer_obj->value();
-				}
-			}
-		}
-		return apply_filters( 'FHEE__EEM_Answer__get_answer_value_to_question__answer_value', $value, $registration, $question_id );
-	}
-
-
-
-	/**
-	 * Gets the EE_Answer object for the question for this registration (if it exists)
-	 * @param EE_Registration $registration
-	 * @param int $question_id
-	 * @return EE_Answer
-	 */
-	public function get_registration_question_answer_object( EE_Registration $registration, $question_id = NULL){
-		$answer_obj = $this->get_one( array( array( 'QST_ID'=>$question_id, 'REG_ID'=>$registration->ID() )));
-		return apply_filters( 'FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id );
-	}
-
-
-
-	/**
-	 * Gets the string answer to the question for this registration's attendee
-	 * @param EE_Registration $registration
-	 * @param int $question_id
-	 * @param boolean $pretty_answer
-	 * @return string
-	 */
-	public function get_attendee_property_answer_value( EE_Registration $registration, $question_id = NULL, $pretty_answer = FALSE ){
-		$field_name = NULL;
-		$value = NULL;
-		//only bother checking if the registration has an attendee
-		if( $registration->attendee() instanceof EE_Attendee && isset($this->_question_id_to_att_field_map[$question_id])){
-			$field_name = $this->_question_id_to_att_field_map[$question_id];
-			if($pretty_answer){
-				if($field_name == 'STA_ID'){
-					$state = $registration->attendee()->state_obj();
-					$value = $state instanceof EE_State ? $state->name() : sprintf(__('Unknown State (%s)', 'event_espresso'),$registration->attendee()->state_ID());
-				}else if($field_name == 'CNT_ISO'){
-					$country = $registration->attendee()->country_obj();
-					$value = $country instanceof EE_Country ? $country->name() : sprintf(__('Unknown Country (%s)', "event_espresso"),$registration->attendee()->country_ID());
-				}else{
-					$value = $registration->attendee()->get_pretty($field_name);
-				}
-			}else{
-				$value = $registration->attendee()->get($field_name);
-			}
-		}
-		return apply_filters( 'FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id );
-	}
-
-
-
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// End of file EEM_WP_User.model.php
+// Location: /includes/models/EEM_WP_User.model.php

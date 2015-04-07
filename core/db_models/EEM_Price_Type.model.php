@@ -99,11 +99,12 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage','event_espresso'), false, false),
 				'PRT_order'=>new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ','event_espresso'), false, 0),
 				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed','event_espresso'), false, false),
-				'PRT_wp_user' => new EE_Integer_Field('PRT_wp_user', __('User who created this price type.', 'event_espresso'), FALSE, get_current_user_id() ),
+				'PRT_wp_user' => new EE_Foreign_Key_Int_Field('PRT_wp_user', __('User who created this price type.', 'event_espresso'), FALSE, get_current_user_id(), 'WP_User' ),
 			)
 		);
 		$this->_model_relations = array(
 			'Price'=>new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 
 		parent::__construct( $timezone );
