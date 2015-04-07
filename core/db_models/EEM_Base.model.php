@@ -802,11 +802,15 @@ abstract class EEM_Base extends EE_Base{
 	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
 	 * for the model are.
 	 *
+	 * Note: a gotcha for when you send in unixtimestamp.  Remember a unixtimestamp is already timezone agnostic,
+	 * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is ignored.
+	 *
 	 * @param string $field_name The field being setup.
 	 * @param string $timestring   The date timestring being used.
 	 * @param string $incoming_format        The format for the time string.
 	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
-	 *                           		the blog.  If this is not the case, then it can be specified here.
+	 *                           		the blog.  If this is not the case, then it can be specified here.  If incoming format is
+	 *                           		'U', this is ignored.
 	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
 	 */
 	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
