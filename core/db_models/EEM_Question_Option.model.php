@@ -51,6 +51,8 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 			'Question'=>new EE_Belongs_To_Relation()
 		);
 
+		$this->_model_chain_to_wp_user = 'Question';
+
 		parent::__construct( $timezone );
 	}
 
