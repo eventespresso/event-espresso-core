@@ -427,17 +427,16 @@ class EEH_Event_View extends EEH_Base {
 	 * @param null $limit
 	 * @return EE_Datetime[]
 	 */
-	public static function get_all_date_obj( $EVT_ID = 0, $include_expired = NULL, $include_deleted = false, $limit = NULL ) {
+	public static function get_all_date_obj( $EVT_ID = 0, $include_expired = null, $include_deleted = false, $limit = NULL ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		if($include_expired === NULL){
-			if($event->is_expired()){
-				$include_expired = TRUE;
+		if($include_expired === null){
+			if($event instanceof EE_Event && $event->is_expired()){
+				$include_expired = true;
 			}else{
-				$include_expired = FALSE;
+				$include_expired = false;
 			}
-		}else{
-			$include_expired = TRUE;
 		}
+
 		if ( $event instanceof EE_Event ) {
 			return $event->datetimes_ordered($include_expired, $include_deleted, $limit);
 		} else {
