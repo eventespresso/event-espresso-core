@@ -47,8 +47,8 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$event = $this->factory->event->create( array( 'EVT_timezone_string' =>  'Australia/Sydney' ) );
 
 		//for test we want a datetime begining one hour before now and ending now (-1min), and a datetime starting now and ending one hour from now.
-		$dtt1_start = (int) current_time('timestamp') - 60*60*24;
-		$dtt1_end = (int) current_time('timestamp') - 60*60;
+		$dtt1_start = time() - 60*60*24;
+		$dtt1_end = time() - 60*60;
 		$dtt2_start = $dtt1_start + 60*60;
 		$dtt2_end = $dtt1_end + 60*60*24;
 
@@ -103,8 +103,8 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$event = $this->factory->event->create();
 
 		//let's create three datetimes ( one that started one hour ago and ended now(-1min), one that starts now and ends one hour from now, and one that starts one hour from now and ends two hours from now)
-		$dtt1start = (int) current_time( 'timestamp' ) - 60*60;
-		$dtt1end = (int) current_time( 'timestamp' ) - 60;
+		$dtt1start = time() - 60*60;
+		$dtt1end = time() - 60;
 
 		$dtt2start = $dtt1start + 60*60;
 		$dtt2end = $dtt1end + 60*60;
@@ -164,8 +164,8 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$ticket = $this->factory->ticket->create();
 
 		//let's create three datetimes ( one that started one hour ago and ended now (-1min), one that starts now and ends one hour from now, and one that starts one hour from now and ends two hours from now)
-		$dtt1start = (int) current_time( 'timestamp' ) - 60*60;
-		$dtt1end = (int) current_time( 'timestamp' ) - 60;
+		$dtt1start = time() - 60*60;
+		$dtt1end = time() - 60;
 
 		$dtt2start = $dtt1start + 60*60;
 		$dtt2end = $dtt1end + 60*60;
@@ -225,8 +225,8 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$ticket = $this->factory->ticket->create();
 
 		//for test we want a datetime begining one hour before now and ending now (-1min), and a datetime starting now and ending one hour from now.
-		$dtt1_start = (int) current_time('timestamp') - 60*60;
-		$dtt1_end = (int) current_time('timestamp') - 60;
+		$dtt1_start = time() - 60*60;
+		$dtt1_end = time() - 60;
 		$dtt2_start = $dtt1_start + 60*60;
 		$dtt2_end = $dtt1_end + 60*60;
 

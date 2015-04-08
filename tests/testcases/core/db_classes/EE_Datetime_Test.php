@@ -72,21 +72,21 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertEquals(15,$d->spaces_remaining());
 	}
 	function test_is_upcoming(){
-		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>current_time('timestamp') + 1000 ));
+		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>time() + 1000 ));
 		$this->assertTrue($d->is_upcoming());
-		$d->set('DTT_EVT_start',current_time('timestamp') - 1000 );
+		$d->set('DTT_EVT_start',time() - 1000 );
 		$this->assertFalse($d->is_upcoming());
 	}
 	function test_is_active(){
-		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>current_time('timestamp') - 1000, 'DTT_EVT_end'=>current_time('timestamp') + 1000));
+		$d = EE_Datetime::new_instance(array('DTT_EVT_start'=>time() - 1000, 'DTT_EVT_end'=>time() + 1000));
 		$this->assertTrue($d->is_active());
-		$d->set('DTT_EVT_start',current_time('timestamp') + 500);
+		$d->set('DTT_EVT_start',time() + 500);
 		$this->assertFalse($d->is_active());
 	}
 	function test_is_expired(){
-		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>current_time('timestamp') - 1000));
+		$d = EE_Datetime::new_instance(array('DTT_EVT_end'=>time() - 1000));
 		$this->assertTrue($d->is_expired());
-		$d->set('DTT_EVT_end',current_time('timestamp') + 1000);
+		$d->set('DTT_EVT_end',time() + 1000);
 		$this->assertFalse($d->is_expired());
 	}
 	function test_get_dtt_display_name(){
