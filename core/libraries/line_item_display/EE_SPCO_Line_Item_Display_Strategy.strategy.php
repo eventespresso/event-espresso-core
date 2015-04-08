@@ -109,8 +109,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
 		// name && desc
-		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
+		$name_and_desc = apply_filters( 'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name', $line_item->name(), $line_item );
+		$name_and_desc .= apply_filters( 'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name_and_desc', $options['show_desc'] ? ' : ' . $line_item->desc() : '', $line_item );
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
 		// quantity td
