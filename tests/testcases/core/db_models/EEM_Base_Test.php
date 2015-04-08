@@ -426,6 +426,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			//make sure this model is queryable and when we fetch its items that there's no errors
 			$model->get_all();
 		}
+	}
 
 }
 
