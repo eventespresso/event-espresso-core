@@ -257,6 +257,35 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 
 
 
+
+
+	/**
+	 *  @since 4.7.0
+	 */
+	public function test_dates_represent_one_24_hour_date() {
+		$midnight_start = new DateTime( '2015-01-25 00:00:00' );
+		$midnight_end = new DateTime( '2015-01-26 00:00:00' );
+		$midday_start = new DateTime( '2015-01-25 12:00:00' );
+		$midday_end = new DateTime( '2015-01-26 12:00:00' );
+		$midnight_next_day = new DateTime( '2015-01-27 00:00:00' );
+
+		//first test nulls
+		$this->assertFalse( EEH_DTT_Helper::dates_represent_one_24_hour_date( null, $midnight_end ) );
+		$this->assertFalse( EEH_DTT_Helper::dates_represent_one_24_hour_date( $midnight_start, null ) );
+
+		//test non midnights
+		$this->assertFalse( EEH_DTT_Helper::dates_represent_one_24_hour_date( $midnight_start, $midday_end ) );
+		$this->assertFalse( EEH_DTT_Helper::dates_represent_one_24_hour_date( $midday_start, $midnight_end ) );
+
+		//test midnights but not 24 hours difference
+		$this->assertFalse( EEH_DTT_Helper::dates_represent_one_24_hour_date( $midnight_start, $midnight_next_day ) );
+
+		//test correct range
+		$this->assertTrue( EEH_DTT_Helper::dates_represent_one_24_hour_date( $midnight_start, $midnight_end ) );
+
+	}
+
+
 }
 // End of file EEH_DTT_Helper_Test.php
 // Location: /EEH_DTT_Helper_Test.php

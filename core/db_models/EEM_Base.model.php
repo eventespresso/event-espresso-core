@@ -802,11 +802,15 @@ abstract class EEM_Base extends EE_Base{
 	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
 	 * for the model are.
 	 *
+	 * Note: a gotcha for when you send in unixtimestamp.  Remember a unixtimestamp is already timezone agnostic,
+	 * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is ignored.
+	 *
 	 * @param string $field_name The field being setup.
 	 * @param string $timestring   The date timestring being used.
 	 * @param string $incoming_format        The format for the time string.
 	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
-	 *                           		the blog.  If this is not the case, then it can be specified here.
+	 *                           		the blog.  If this is not the case, then it can be specified here.  If incoming format is
+	 *                           		'U', this is ignored.
 	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
 	 */
 	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
@@ -3070,6 +3074,9 @@ abstract class EEM_Base extends EE_Base{
 				return array();
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
+			if( ! $classInstance ) {
+				throw new EE_Error( sprintf( __( 'Could not create instance of class %s from row %s', 'event_espresso' ), $this->get_this_model_name(), http_build_query( $row ) ) );
+			}
 			//set the timezone on the instantiated objects
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
@@ -3243,18 +3250,40 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected function _deduce_fields_n_values_from_cols_n_values( $cols_n_values ){
 		$this_model_fields_n_values = array();
-		foreach( $this->field_settings() as $field_name => $field_obj ){
-			$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
-				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-				//does the field on the model relate to this column retrieved from the db?
-				//or is it a db-only field? (not relating to the model)
-				if( isset( $cols_n_values[ $field_obj->get_qualified_column() ] ) ){
-					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_qualified_column() ];
-				}elseif( isset( $cols_n_values[ $field_obj->get_table_column() ] ) ){
-					$this_model_fields_n_values[$field_name] = $cols_n_values[ $field_obj->get_table_column() ];
+		foreach( $this->get_tables() as $table_alias => $table_obj ) {
+			$table_pk_value = $this->_get_column_value_with_table_alias_or_not($cols_n_values, $table_obj->get_fully_qualified_pk_column(), $table_obj->get_pk_column() );
+			//there is a primary key on this table and its not set. Use defaults for all its columns
+			if( $table_obj->get_pk_column() && $table_pk_value === NULL ){
+				foreach( $this->_get_fields_for_table( $table_alias ) as $field_name => $field_obj ) {
+					if( ! $field_obj->is_db_only_field() ){
+						$this_model_fields_n_values[$field_name] = $field_obj->get_default_value();
+					}
+				}
+			}else{
+				//the table's rows existed. Use their values
+				foreach( $this->_get_fields_for_table( $table_alias ) as $field_name => $field_obj ) {
+					if( ! $field_obj->is_db_only_field() )
+					$this_model_fields_n_values[$field_name] = $this->_get_column_value_with_table_alias_or_not($cols_n_values, $field_obj->get_qualified_column(), $field_obj->get_table_column() );
 				}
 			}
+		}
 		return $this_model_fields_n_values;
+	}
+
+	protected function _get_column_value_with_table_alias_or_not( $cols_n_values, $qualified_column, $regular_column ){
+		//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+		//does the field on the model relate to this column retrieved from the db?
+		//or is it a db-only field? (not relating to the model)
+		if( isset( $cols_n_values[ $qualified_column ] ) ){
+			$value = $cols_n_values[ $qualified_column ];
+
+		}elseif( isset( $cols_n_values[ $regular_column ] ) ){
+			$value = $cols_n_values[ $regular_column ];
+		}else{
+			$value = NULL;
+		}
+
+		return $value;
 	}
 
 

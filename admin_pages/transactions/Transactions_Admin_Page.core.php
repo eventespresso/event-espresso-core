@@ -1055,8 +1055,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$TXN = EEM_Transaction::instance();
 
-	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
-	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-10 year' ));
+	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'm/d/Y' );
 
 	    //make sure our timestamps start and end right at the boundaries for each day
 	    $start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
@@ -1072,8 +1072,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $end_date = max( $start_date, $end_date );
 
 	    //convert to correct format for query
-	$start_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', $start_date, 'U' );
-	$end_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', $end_date, 'U' );
+	$start_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', $start_date ), 'Y-m-d H:i:s' );
+	$end_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', $end_date ), 'Y-m-d H:i:s' );
+
 
 
 	    //set orderby

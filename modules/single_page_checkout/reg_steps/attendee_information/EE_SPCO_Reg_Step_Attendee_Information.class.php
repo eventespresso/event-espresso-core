@@ -261,7 +261,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
 				$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
-				$form_args['subsections'][ $identifier ] = $this->_reg_form_question( $registration, $question );
+				$form_args['subsections'][ $identifier ] = $this->reg_form_question( $registration, $question );
 			}
 		}
 		$form_args['subsections'] = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__question_group_reg_form__subsections_array', $form_args['subsections'], $registration, $question_group, $this );

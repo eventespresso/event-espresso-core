@@ -795,4 +795,32 @@ class EEH_DTT_Helper {
 	}
 
 
+
+
+
+
+	/**
+
+	 *
+	 * 	 If the the first date starts at midnight on one day, and the next date ends at midnight on the
+	 * 	 very next day then this method will return true.
+	 *
+	 * 	If $date_1 = 2015-12-15 00:00:00 and $date_2 = 2015-12-16 00:00:00 then this function will return true.
+	 * 	If $date_1 = 2015-12-15 03:00:00 and $date_2 = 2015-12_16 03:00:00 then this function will return false.
+	 * 	If $date_1 = 2015-12-15 00:00:00 and $date_2 = 2015-12-15 00:00:00 then this function will return true.
+	 *
+	 * @param mixed $date_1
+	 * @param mixed $date_2
+	 * @return bool
+	 */
+	public static function dates_represent_one_24_hour_date( $date_1, $date_2 ) {
+
+		if ( ( ! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime ) || ( $date_1->format( 'H:i:s' ) != '00:00:00' || $date_2->format( 'H:i:s' ) != '00:00:00' ) ) {
+			return false;
+		}
+		return $date_2->format('U') - $date_1->format('U') == 86400 ? true : false;
+	}
+
+
+
 }// end class EEH_DTT_Helper
