@@ -210,9 +210,20 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}elseif($update_info['payment_status']=='Pending'){
 			$status = $this->_pay_model->pending_status();//approved
 			$gateway_response = __('Your payment is in progress. Another message will be sent when payment is approved.', 'event_espresso');
-		}else{
+		}elseif( in_array( $update_info['payment_status'], array( 'Denied', 'Canceled_Reversal', 'Expired', 'Failed'   ) ) ){
 			$status = $this->_pay_model->declined_status();//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
+		}else{
+			//it must be  'Partially_Refunded', 'Refunded', 'Reversed', or 'Voided'
+			//we don't handle refunds yet.
+			//throw an exception so unit tests can work on this
+			$this->log( array(
+					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
+					'message' => sprintf( __( 'Refund IPN sent', 'event_espresso' )),
+					'payment' => $payment->model_field_array(),
+					'IPN_data' => $update_info ),
+						$payment);
+			throw new EE_Error( sprintf( __( '%s are not yet supported by Event Espresso Paypal Standard inetgration', 'event_espresso' ), $update_info['payment_status'] ) );
 		}
 		//check if we've already processed this payment
 		if( ! empty($payment)){
