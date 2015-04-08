@@ -798,6 +798,42 @@ class EEH_DTT_Helper {
 
 
 
+
+	/**
+	 * get_interval
+	 * returns a DateInterval object for two dates
+	 *
+	 * @param mixed $date_1
+	 * @param mixed $date_2
+	 * @return bool|\DateInterval
+	 */
+	public static function get_interval( $date_1, $date_2 ) {
+		$date_1 = $date_1 instanceof DateTime ? $date_1 : new DateTime( $date_1 );
+		$date_2 = $date_2 instanceof DateTime ? $date_2 : new DateTime( $date_2 );
+		return $date_1->diff( $date_2 );
+	}
+
+
+
+	/**
+	 * 	dates_represent_one_24_hour_day
+	 *
+	 * 	 returns TRUE if the the first date starts at midnight on one day, and the next date ends at midnight on the
+	 * 	 very next day, this means the date can safely be displayed as: gmdate( 'Y-m-d', $date_1 ) to indicate a full
+	 * 	 24 hour day
+	 *
+	 * @param mixed $date_1
+	 * @param mixed $date_2
+	 * @return bool
+	 */
+	public static function dates_represent_one_24_hour_day( $date_1, $date_2 ) {
+		return $date_1 == $date_2 || ( gmdate( 'H:i:s', strtotime( $date_1 )) === '00:00:00' && ( strtotime( $date_2 ) -  strtotime( $date_1 )) == DAY_IN_SECONDS ) ? TRUE : FALSE;
+	}
+
+
+
+
+
 	/**
 	 * 	process_start_date
 	 *
