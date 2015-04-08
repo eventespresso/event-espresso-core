@@ -43,7 +43,8 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="test-use-captcha-0" id="test-use-captcha-0-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0">&nbsp;No
 </label>
-<div class="clear-float">', $form->get_input( 'use_captcha' )->get_html_for_input() );
+<div class="clear-float">
+</div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 
 		$form->populate_defaults( array( 'use_captcha' => 0 ) );
 		//the first option should be selected now
@@ -56,7 +57,8 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="test-use-captcha-0" id="test-use-captcha-0-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-0" name="test[use_captcha]" class="" style="" type="radio" value="0" checked="checked">&nbsp;No
 </label>
-<div class="clear-float">', $form->get_input( 'use_captcha' )->get_html_for_input() );
+<div class="clear-float">
+</div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 	}
 
 	/**
@@ -87,7 +89,8 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="test-use-captcha-nomaam" id="test-use-captcha-nomaam-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-nomaam" name="test[use_captcha]" class="" style="" type="radio" value="no ma&#039;am">&nbsp;No
 </label>
-<div class="clear-float"></div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
+<div class="clear-float">
+</div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 
 		$form->populate_defaults( array( 'use_captcha' => "no ma'am" ) );
 		//the first option should be selected now
@@ -100,7 +103,8 @@ class EE_Radio_Button_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="test-use-captcha-nomaam" id="test-use-captcha-nomaam-lbl" class="ee-radio-label-after micro-lbl">
 	<input id="test-use-captcha-nomaam" name="test[use_captcha]" class="" style="" type="radio" value="no ma&#039;am" checked="checked">&nbsp;No
 </label>
-<div class="clear-float"></div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
+<div class="clear-float">
+</div>', $form->get_input( 'use_captcha' )->get_html_for_input() );
 	}
 
 }
