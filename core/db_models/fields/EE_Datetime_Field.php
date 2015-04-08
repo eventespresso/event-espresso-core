@@ -424,6 +424,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 		// datetime strings from the db should ALWAYS be in UTC+0, so use UTC_DateTimeZone when creating
 		$DateTime = empty( $datetime_string ) ? new DateTime( 'now', $this->get_UTC_DateTimeZone() ) : DateTime::createFromFormat( 'Y-m-d H:i:s', $datetime_string, $this->get_UTC_DateTimeZone() );
+
+		if ( ! $DateTime instanceof DateTime ) {
+			//if still no datetime object, then let's just use now
+			$DateTime = new DateTime( 'now', $this->get_UTC_DateTimeZone() );
+		}
 		// THEN apply the field's set DateTimeZone
 		$DateTime->setTimezone( $this->_DateTimeZone );
 		return $DateTime;
