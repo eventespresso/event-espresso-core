@@ -111,7 +111,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 </div>
 
 <div id="group-questions" class="edit-group padding question-group-questions-container postbox">
-    <div class="handlediv" title="Click to toggle"><br></div>
+    <div class="handlediv" title="<?php esc_attr_e( 'Click to toggle', 'event_espresso' ); ?>"><br></div>
     <h2 class="handle"><?php _e('Questions','event_espresso');?></h2>
 	<div class="form-table question-group-questions inside">
         <div class="padding">

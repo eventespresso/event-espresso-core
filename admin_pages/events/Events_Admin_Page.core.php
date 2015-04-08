@@ -944,9 +944,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//no dtts get deleted so we don't do any of that logic here.
 		//update tickets next
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
-		$update_prices = false;
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
-
+			$update_prices = false;
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
 
 			$TKT_values = array(
@@ -984,7 +983,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
 
-				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
+				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
@@ -1005,6 +1004,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
+					$TKT = clone $TKT;
 					$TKT->set( 'TKT_ID', 0 );
 					$TKT->set( 'TKT_deleted', 0 );
 					$TKT->set( 'TKT_price', $ticket_price );

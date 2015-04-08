@@ -110,7 +110,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
 						<input value="' . $QSG->ID() . '" type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' />
-						<a href="' . $edit_link . '" title="Edit ' . $QSG->get('QSG_name') . ' Group" target="_blank">' . $QSG->get('QSG_name') . '</a>
+						<a href="' . $edit_link . '" title="' . sprintf( esc_attr__( 'Edit %s Group', 'event_espresso' ),  $QSG->get('QSG_name') ) . '" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
 				}
 				$html .= count( $QSGs ) > 10 ? '</div>' : '';

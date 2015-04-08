@@ -45,11 +45,14 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
+
 		// there's actually no reg form to process if this is the final step
-		if ( $this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
-			$this->checkout->action = 'process_reg_step';
+		if ( $this->is_current_step() ) {
+			$this->checkout->step = $_REQUEST['step'] = $this->slug();
+			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
 		}
+
 	}
 
 
@@ -68,35 +71,44 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function process_reg_step() {
-//		printr( $this->checkout, '$this->checkout', __FILE__, __LINE__ );
-		// ensure all data gets saved to the db and all model object relations get updated
-		if ( $this->checkout->save_all_data() ) {
-			// ensures that all details and statuses for transaction, registration, and payments are updated
-			$txn_update_params = $this->_finalize_transaction();
-			// this will result in the base session properties getting saved to the TXN_Session_data field
-			$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
-			// you don't have to go home but you can't stay here !
-			$this->checkout->redirect = true;
-			// check if transaction has a primary registrant and that it has a related Attendee object
-			if ( $this->checkout->transaction_has_primary_registrant() ) {
-				// setup URL for redirect
-				$this->checkout->redirect_url = add_query_arg(
-					array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
-					$this->checkout->thank_you_page_url
-				);
-			} else {
-				EE_Error::add_error( __( 'A valid Primary Registration for this Transaction could not be found.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-			}
-			$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
-			// set a hook point
-			do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
-			return true;
+		// ensure all data gets refreshed from the db
+		$this->checkout->refresh_all_entities( true );
+		// ensures that all details and statuses for transaction, registration, and payments are updated
+		$txn_update_params = $this->_finalize_transaction();
+		// DEBUG LOG
+		//$this->checkout->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'txn_update_params' => $txn_update_params,
+		//		'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+		//		'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks(
+		//			'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+		//		'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+		//	)
+		//);
+		// set a hook point
+		do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
+		// check if transaction has a primary registrant and that it has a related Attendee object
+		if ( $this->checkout->transaction_has_primary_registrant() ) {
+			// setup URL for redirect
+			$this->checkout->redirect_url = add_query_arg(
+				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
+				$this->checkout->thank_you_page_url
+			);
+		} else {
+			EE_Error::add_error( __( 'A valid Primary Registration for this Transaction could not be found.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->checkout->redirect = false;
+			$this->checkout->continue_reg = false;
+			return false;
 		}
-		$this->checkout->redirect = false;
+		// you don't have to go home but you can't stay here !
+		$this->checkout->redirect = true;
+		$this->checkout->continue_reg = true;
+		$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 		// mark this reg step as completed
 		$this->checkout->current_step->set_completed();
-		return false;
-
+		$this->checkout->set_exit_spco();
+		return true;
 	}
 
 
@@ -121,6 +133,24 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
 		$transaction_payments->update_transaction_status_based_on_total_paid( $this->checkout->transaction, false );
+		// If the selected method of payment used an off-site gateway...
+		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
+			// if SPCO revisit and TXN status has changed due to a payment
+			//if (
+			//	filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
+			//	$this->checkout->txn_status_updated
+			//) {
+			//	// send out notifications
+			//	add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			//}
+			if ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) {
+				// do NOT trigger notifications because it was already done during the IPN
+				remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+			}
+		}
+		// this will result in the base session properties getting saved to the TXN_Session_data field
+		$this->checkout->transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data( null, true ));
 		// update the TXN if payment conditions have changed
 		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
 			$this->checkout->transaction,

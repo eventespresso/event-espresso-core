@@ -249,7 +249,7 @@ class EE_Payment_Method_Manager {
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
 			$messages->ensure_message_type_is_active( 'invoice', 'html' );
 			$messages->ensure_messenger_is_active( 'pdf' );
-			EE_Error::add_attention( sprintf( __( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'ee-saas-solution' ), '<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">', '</a>' ) );
+			EE_Error::add_attention( sprintf( __( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ), '<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">', '</a>' ) );
 		}
 		return $payment_method;
 	}
