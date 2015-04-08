@@ -3256,7 +3256,9 @@ abstract class EEM_Base extends EE_Base{
 			if( $table_obj->get_pk_column() && $table_pk_value === NULL ){
 				foreach( $this->_get_fields_for_table( $table_alias ) as $field_name => $field_obj ) {
 					if( ! $field_obj->is_db_only_field() ){
-						$this_model_fields_n_values[$field_name] = $field_obj->get_default_value();
+						//prepare field as if its coming from db
+						$prepared_value = $field_obj->prepare_for_set( $field_obj->get_default_value() );
+						$this_model_fields_n_values[$field_name] = $field_obj->prepare_for_use_in_db( $prepared_value );
 					}
 				}
 			}else{
