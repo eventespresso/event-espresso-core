@@ -184,7 +184,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	 */
 	public function state() {
 		if ( apply_filters( 'FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj() ) ) {
-			return $this->state_obj()->abbrev();
+			return $this->state_abbrev();
 		} else {
 			return $this->state_name();
 		}
