@@ -795,4 +795,90 @@ class EEH_DTT_Helper {
 	}
 
 
+
+
+
+	/**
+	 * 	process_start_date
+	 *
+	 * 	if the passed datetime starts at midnight, then it will remove the time formatting from the returned
+	 * 	datetime string
+	 *
+	 * @param mixed  $start_date
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @return bool
+	 */
+	public static function process_start_date( $start_date, $date_format = '', $time_format = '' ) {
+		// set and filter date and time formats when a range is returned
+		$date_format = EEH_DTT_Helper::set_date_format( $date_format );
+		$time_format = EEH_DTT_Helper::set_time_format( $time_format );
+		$start_date = strtotime( $start_date );
+		return gmdate( 'H:i:s', $start_date ) === '00:00:00' ? date_i18n( $date_format , $start_date ) : date_i18n( $date_format . ' ' . $time_format, $start_date );
+	}
+
+
+
+
+	/**
+	 * 	process_end_date
+	 *
+	 * 	if the passed datetime starts at midnight, then it will remove the time formatting from the returned
+	 * 	datetime string
+	 * 	as well, if $bump_to_previous_day is TRUE (default) and the passed datetime starts at midnight, it
+	 * 	will get bumped to the previous date
+	 *
+	 * @param        $end_date
+	 * @param bool   $bump_to_previous_day
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @internal param mixed $start_date
+	 * @return bool
+	 */
+	public static function process_end_date( $end_date, $bump_to_previous_day = TRUE, $date_format = '', $time_format = '' ) {
+		// set and filter date and time formats when a range is returned
+		$date_format = EEH_DTT_Helper::set_date_format( $date_format );
+		$time_format = EEH_DTT_Helper::set_time_format( $time_format );
+		$end_date = strtotime( $end_date );
+		if ( gmdate( 'H:i:s', $end_date ) === apply_filters( 'FHEE__EEH_DTT_Helper__process_end_date__end_of_day_H_i_s', '00:00:00' )) {
+			if ( $bump_to_previous_day ) {
+				$end_date = $end_date - DAY_IN_SECONDS;
+			}
+			return date_i18n( $date_format , $end_date );
+		} else {
+			return date_i18n( $date_format . ' ' . $time_format, $end_date );
+		}
+	}
+
+
+
+
+
+	/**
+	 *    set_date_format
+	 *
+	 * @param string $date_format
+	 * @return bool
+	 */
+	public static function set_date_format( $date_format = '' ) {
+		// set and filter date format
+		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
+		return apply_filters( 'FHEE__EEH_DTT_Helper__set_date_format__date_format', $date_format );
+	}
+
+
+
+	/**
+	 *    set_time_format
+	 *
+	 * @param string $time_format
+	 * @return bool
+	 */
+	public static function set_time_format( $time_format = '' ) {
+		// set and filter time format
+		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
+		return apply_filters( 'FHEE__EEH_DTT_Helper__set_time_format__time_format', $time_format );
+	}
+
+
 }// end class EEH_DTT_Helper
