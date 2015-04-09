@@ -1,19 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- */
-/**
  * WP User Model. Not intended to replace WP_User, but this just allows
  * for EE model queries to more easily integrate with the WP User table
  *
@@ -32,7 +18,9 @@ class EEM_WP_User extends EEM_Base {
 
 
 	/**
-	 * 	constructor
+	 *    constructor
+	 * @param null $timezone
+	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('WP_User','event_espresso');
@@ -68,4 +56,4 @@ class EEM_WP_User extends EEM_Base {
 	}
 }
 // End of file EEM_WP_User.model.php
-// Location: /includes/models/EEM_WP_User.model.php
+// Location: /core/db_models/EEM_WP_User.model.php
