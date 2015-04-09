@@ -19,6 +19,12 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+
+	/**
+	 * @var EE_UnitTest_Factory
+	 */
+	protected $factory;
+
 	/**
 	 * Should be used to store the global $wp_actions during a test
 	 * so that it can be restored afterwards to keep tests from interfere with each other
