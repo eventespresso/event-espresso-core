@@ -947,7 +947,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			return EEM_Price_Type::instance()->get_all_deleted_and_undeleted($query_params);
 		}
 
-		//printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 

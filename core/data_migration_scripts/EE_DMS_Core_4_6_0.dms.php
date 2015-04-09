@@ -439,7 +439,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_state';
 		$sql = "STA_ID smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
-					  STA_abbrev VARCHAR(6) COLLATE utf8_bin NOT NULL,
+					  STA_abbrev VARCHAR(24) COLLATE utf8_bin NOT NULL,
 					  STA_name VARCHAR(100) COLLATE utf8_bin NOT NULL,
 					  STA_active TINYINT(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID)";
