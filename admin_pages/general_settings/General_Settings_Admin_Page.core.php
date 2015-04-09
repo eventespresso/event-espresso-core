@@ -675,8 +675,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			foreach ( $states as $STA_ID => $state ) {
 				//STA_abbrev 	STA_name 	STA_active
 				$state_input_types = array(
-					'STA_abbrev' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'small-text' ),
-					'STA_name' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'regular-text' ),
+					'STA_abbrev' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'mid-text' ),
+					'STA_name' => array( 'type' => 'TEXT', 'input_name' => 'states[' . $STA_ID . ']', 'class' => 'medium-text' ),
 					'STA_active' => array( 'type' => 'RADIO_BTN', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values, 'use_desc_4_label' => TRUE )
 				);
 				$this->_template_args['states'][ $STA_ID ]['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $state, $state_input_types );
