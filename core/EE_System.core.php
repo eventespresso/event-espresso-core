@@ -1060,6 +1060,9 @@ final class EE_System {
 		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
 			define( 'DONOTCACHCEOBJECT', true );
 		}
+		if ( ! defined( 'DONOTCACHEDB' ) ) {
+			define( 'DONOTCACHEDB', true );
+		}
 		// add no cache headers
 		add_action( 'send_headers' , array( 'EE_System', 'nocache_headers' ), 10 );
 		// plus a little extra for nginx
