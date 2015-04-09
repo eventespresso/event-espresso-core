@@ -297,13 +297,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param  EE_Event         $evtobj     Event object being updated
 	 * @param  EE_Datetime[]    $saved_dtts an array of datetime ids being updated
 	 * @param  array            $data       incoming request data
-	 * @return bool                 		success or fail
+	 * @return EE_Ticket[]
 	 */
 	protected function _update_tkts( $evtobj, $saved_dtts, $data ) {
 		//stripslashes because WP filtered the $_POST ($data) array to add slashes
 		$data = stripslashes_deep($data);
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
-		$success = TRUE;
 		$saved_tickets = $dtts_on_existing = array();
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
