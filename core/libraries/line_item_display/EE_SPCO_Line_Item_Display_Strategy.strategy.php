@@ -115,7 +115,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$line_item
 		);
 		$name_and_desc .= apply_filters(
-			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name_and_desc',
+			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__desc',
 			( $options['show_desc'] ? ' : ' . $line_item->desc() : '' ),
 			$line_item,
 			$options
