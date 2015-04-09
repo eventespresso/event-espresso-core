@@ -273,11 +273,12 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			$after_widget = '';
 			// but NOT an events archives page, cuz that would be like two event lists on the same page
 			$show_everywhere = isset( $instance['show_everywhere'] ) ? (bool) absint( $instance['show_everywhere'] ) : TRUE;
-			printr( $show_everywhere, '$show_everywhere', __FILE__, __LINE__ );
-			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {
+			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {	
 				// let's use some of the event helper functions'
 				EE_Registry::instance()->load_helper( 'Event_View' );
 				// make separate vars out of attributes
+
+
 				extract($args);
 
 				// add function to make the title a link
