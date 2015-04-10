@@ -309,8 +309,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
 
-#adminmenuwrap { z-index : 1001; }
-
 
 .validate-error,
 input.validate-error {
