@@ -2,22 +2,6 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
-
-/**
  * EE_WP_User class
  *
  * @package 			Event Espresso
@@ -65,5 +49,5 @@ class EE_WP_User extends EE_Base_Class {
 	}
 }
 
-/* End of file EE_Answer.class.php */
-/* Location: /includes/classes/EE_Answer.class.php */
+/* End of file EE_WP_User.class.php */
+/* Location: /core/db_classes/EE_WP_User.class.php */
