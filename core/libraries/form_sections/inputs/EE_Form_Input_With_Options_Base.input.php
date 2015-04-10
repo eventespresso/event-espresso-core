@@ -70,6 +70,22 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 
 
 	/**
+	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it.
+	 * Please note that almost all client code should instead use the normalized_value;
+	 * or possibly raw_value_in_form (which prepares the string for displaying in an HTML attribute on a tag,
+	 * mostly by escaping quotes)
+	 * Note, we do not store the exact original value sent in the user's request because
+	 * it may have malicious content, and we MIGHT want to store the form input in a transient or something...
+	 * in which case, we would have stored the malicious content to our database.
+	 * @return array
+	 */
+	function raw_value() {
+		return (array)$this->_raw_value;
+	}
+
+
+
+	/**
 	 * Sets the allowed options for this input. Also has the side-effect of
 	 * updating the normalization strategy to match the keys provided in the array
 	 * @param array $answer_options
