@@ -426,6 +426,46 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			//make sure this model is queryable and when we fetch its items that there's no errors
 			$model->get_all();
 		}
+		}
+	public function test_alter_query_params_to_only_include_mine__logged_in() {
+		global $current_user;
+		//setup our user and set as current user.
+		$user = $this->factory->user->create_and_get();
+		$this->assertInstanceOf( 'WP_User', $user );
+		$user->add_role( 'administrator' );
+		$current_user = $user;
+
+		$this->assertTrue( is_user_logged_in() );
+		$this->assertEquals(
+				array( array(
+					'QST_wp_user' => get_current_user_id()
+				) ),
+				EEM_Question::instance()->alter_query_params_to_only_include_mine() );
+	}
+
+	public function test_alter_query_params_to_only_include_mine__not_logged_in() {
+		$this->assertFalse( is_user_logged_in() );
+		$this->assertEquals(
+				array( array(
+					'QST_wp_user' => get_current_user_id()
+				) ),
+				EEM_Question::instance()->alter_query_params_to_only_include_mine() );
+	}
+	public function test_alter_query_params_to_only_include_mine__across_model_chain_once() {
+		$this->assertFalse( is_user_logged_in() );
+		$this->assertEquals(
+				array( array(
+					'Event.EVT_wp_user' => get_current_user_id()
+				) ),
+				EEM_Registration::instance()->alter_query_params_to_only_include_mine() );
+	}
+	public function test_alter_query_params_to_only_include_mine__across_model_chain_twice() {
+		$this->assertFalse( is_user_logged_in() );
+		$this->assertEquals(
+				array( array(
+					'Registration.Event.EVT_wp_user' => get_current_user_id()
+				) ),
+				EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
 	}
 
 }

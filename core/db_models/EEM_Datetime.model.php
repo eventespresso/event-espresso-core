@@ -63,6 +63,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation(),
 		);
+		$this->_model_chain_to_wp_user = 'Event';
 
 		parent::__construct( $timezone );
 	}
