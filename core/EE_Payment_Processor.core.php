@@ -389,7 +389,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		}
 		$transaction->save();
 		// because the above will return false if the final step was not fully completed, we need to check again...
-		if ( $IPN && $finalized ) {
+		if ( $IPN && $finalized !== false ) {
 			// and if we are all good to go, then send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			// DEBUG LOG
