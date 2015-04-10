@@ -27,6 +27,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		$html = '';
+		$input_raw_value = (array)$this->_input->raw_value();
 		foreach( $this->_input->options() as $value => $display_text ){
 			$option_value_as_string = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $option_value_as_string ) : $this->_input->html_id();
@@ -39,7 +40,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= ' class="' . $this->_input->html_class() . '"';
 			$html .= ' style="' . $this->_input->html_style() . '"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
-			$html .= $this->_input->raw_value() && in_array( $value, $this->_input->raw_value() ) ? ' checked="checked"' : '';
+			$html .= ! empty( $input_raw_value ) && in_array( $value, $input_raw_value ) ? ' checked="checked"' : '';
 			$html .= '>&nbsp;';
 			$html .= $display_text;
 			$html .= EEH_HTML::nl( -1, 'checkbox' ) . '</label>';
