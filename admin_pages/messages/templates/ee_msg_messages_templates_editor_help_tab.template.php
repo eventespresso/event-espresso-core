@@ -18,7 +18,7 @@
 	<?php echo $img4; ?><?php _e('The "Valid Shortcodes" metabox contains a list of all the shortcodes that can be used for the displayed template. This list is dynamic and will vary between templates.', 'event_espresso'); ?>
 </p>
 <p><?php _e('This box is at a fixed height, but contents are scrollable. You can click the question mark to find out what the given shortcode will parse to when used in your template.', 'event_espresso'); ?></p>
-<p><?php printf( __('%An important note:%s The system has been designed so that when you save the template, checks will be performed on each field to make sure that only valid shortcodes (or values) are used within them.  You will get a warning box with clear instructions if you\'ve tried to use a particular shortcode in a field that does not support it.  Also, you\'ll want to try the Preview button if you\'ve made any changes to the template to see if the changes are as you expected!', 'event_espresso'), '<strong>', '</strong>' ); ?>
+<p><?php printf( __('%sAn important note:%s The system has been designed so that when you save the template, checks will be performed on each field to make sure that only valid shortcodes (or values) are used within them.  You will get a warning box with clear instructions if you\'ve tried to use a particular shortcode in a field that does not support it.  Also, you\'ll want to try the Preview button if you\'ve made any changes to the template to see if the changes are as you expected!', 'event_espresso'), '<strong>', '</strong>' ); ?>
 </p>
 <div style="clear:both"></div>
 <h3><?php _e('5. Override All Custom', 'event_espresso'); ?></h3>

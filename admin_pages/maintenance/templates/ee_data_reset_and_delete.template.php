@@ -34,7 +34,7 @@
 	<ol>
 		<li><?php  _e('First, click the button below to permanently delete all Event Espresso tables, records, and options from your WordPress database', 'event_espresso');?></li>
 		<li><?php printf( __('Then, locate Event Espresso on the WordPress Plugins page, and click on %sDelete%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
-        <li><?php printf( __('Once you are on the Delete Plugin page, click on %Yes, Delete these files and data%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
+        <li><?php printf( __('Once you are on the Delete Plugin page, click on %sYes, Delete these files and data%s', 'event_espresso'), '<strong>', '</strong>' ); ?></li>
 	</ol>
 	<div class="float-right"><a href="<?php echo $delete_db_url; ?>" id="delete-all-data-btn" class="button-primary"><?php _e('Permanently Delete All Event Espresso Data', 'event_espresso');?></a></div>
 	<div class="clear"></div>
