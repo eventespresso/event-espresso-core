@@ -359,9 +359,18 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string
 	 * @throws \EE_Error
 	 */
-	protected function _prepare_for_display( DateTime $DateTime, $schema = false ) {
-		if ( ! $DateTime instanceof DateTime ) {
-			throw new EE_Error( __('EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $datetime_value argument.', 'event_espresso' ) );
+	protected function _prepare_for_display( $DateTime, $schema = false ) {
+		if ( ! $DateTime instanceof DateTime  ) {
+			if ( $this->_nullable ) {
+				return '';
+			} else {
+				if ( WP_DEBUG ) {
+					throw new EE_Error( sprintf( __('EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.', 'event_espresso' ), $this->_nicename ) );
+				} else {
+					$DateTime = new DateTime( "now" );
+					EE_Error::add_error( sprintf( __('EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.  When WP_DEBUG is false, the value is set to "now" instead of throwing an exception.', 'event_espresso' ), $this->_nicename ) );
+				}
+			}
 		}
 		$format_string = $this->_get_date_time_output( $schema );
 		//make sure datetime_value is in the correct timezone (in case that's been updated).
