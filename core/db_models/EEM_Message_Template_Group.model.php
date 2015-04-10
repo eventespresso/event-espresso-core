@@ -43,7 +43,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
 				'MTP_name' => new EE_Plain_Text_Field( 'MTP_name', __('The name of the temlpate group', 'event_espresso'), FALSE, '' ),
 				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_espresso' ), FALSE, '' ),
-				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, get_current_user_id() ),
+				'MTP_user_id'=> new EE_WP_User_Field('MTP_user_id', __('Template Creator ID', 'event_espresso'), FALSE, get_current_user_id() ),
 				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
 				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
@@ -54,7 +54,8 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			);
 		$this->_model_relations = array(
 			'Message_Template' => new EE_Has_Many_Relation(),
-			'Event' => new EE_HABTM_Relation('Event_Message_Template')
+			'Event' => new EE_HABTM_Relation('Event_Message_Template'),
+			'WP_User' => new EE_Belongs_To_Relation(),
 			);
 
 		parent::__construct( $timezone );
