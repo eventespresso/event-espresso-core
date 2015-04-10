@@ -84,6 +84,8 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 			$this->_current_txn = NULL;
 		}
 		if ( $this->_current_txn instanceof EE_Transaction ) {
+			EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true, 	'EE_Transaction: ' . $this->_current_txn->ID() );
 			$payment_method_slug = EE_Registry::instance()->REQ->get( 'ee_payment_method', NULL );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
