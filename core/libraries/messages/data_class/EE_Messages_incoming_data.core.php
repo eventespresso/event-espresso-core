@@ -276,7 +276,6 @@ abstract class EE_Messages_incoming_data {
 		$attendees = array();
 		$total_ticket_count = 0;
 
-
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array();
 			foreach ( $this->reg_objs as $reg ) {
@@ -336,15 +335,14 @@ abstract class EE_Messages_incoming_data {
 
 			//let's loop through the unique event=>reg items and setup data on them
 
-
 			if ( !empty( $eventsetup) ) {
-				foreach ( $eventsetup as $eid => $items ) {
+				foreach ( $eventsetup as $evt_id => $items ) {
 					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID()), 'default_where_conditions' => 'none'));
-					$events[$eid] = array(
-						'ID' => $eid,
-						'event' => $evtcache[$eid],
+					$events[$evt_id] = array(
+						'ID' => $evt_id,
+						'event' => $evtcache[$evt_id],
 						'name' => $event->name(),
-						'total_attendees' => $event_attendee_count[$eid],
+						'total_attendees' => $event_attendee_count[$evt_id],
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],
 						'att_objs' => $items['att_objs'],

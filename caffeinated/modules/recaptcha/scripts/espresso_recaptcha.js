@@ -10,7 +10,8 @@ jQuery(document).ready(function($) {
 	 * }}
 	 * @namespace SPCO_response
 	 * @type {{
-		 *     recaptcha_passed: boolean
+		 *     recaptcha_passed: boolean,
+		 *     bypass_recaptcha: boolean
 		 * }}
 	 * @namespace eei18n
 	 * @type {{
@@ -22,6 +23,7 @@ jQuery(document).ready(function($) {
 	EE_RECAPTCHA = {
 
 		recaptcha_div : $('#espresso-recaptcha-dv'),
+		submitted : false,
 		not_a_robot : false,
 
 
@@ -49,11 +51,32 @@ jQuery(document).ready(function($) {
 				// if WP_DEBUG is on, then display an error
 				if ( eei18n.wp_debug ) {
 					var msg = SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.initialize() error', eei18n.no_recaptcha_error );
-					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, SPCO.generate_message_object( '', msg, '' ));
+					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, SPCO.generate_message_object( '', msg, '' ), true );
 				}
 				return;
 			}
+			EE_RECAPTCHA.set_listener_for_SPCO_process_next_step_button_click();
 			EE_RECAPTCHA.set_listener_for_SPCO_response();
+		},
+
+
+
+		/**
+		 * @function set_listener_for_SPCO_process_next_step_button_click
+		 */
+		set_listener_for_SPCO_process_next_step_button_click : function() {
+			// initialize if the SPCO reg step changes to "payment_options"
+			SPCO.main_container.on( 'process_next_step_button_click', function() {
+				if ( ! EE_RECAPTCHA.submitted ) {
+					SPCO.form_is_valid = false;
+					eei18n.ajax_submit = true;
+					SPCO.override_messages = false;
+					SPCO.reset_offset_from_top_modifier();
+					EE_RECAPTCHA.display_error( SPCO.tag_message_for_debugging( 'EE_RECAPTCHA.process_next_step_button_click() error', eei18n.recaptcha_fail ) );
+				} else {
+					eei18n.ajax_submit = EE_RECAPTCHA.not_a_robot;
+				}
+			});
 		},
 
 
@@ -107,7 +130,7 @@ jQuery(document).ready(function($) {
 		 */
 		display_error : function( msg ) {
 			SPCO.offset_from_top_modifier = -450;
-			SPCO.scroll_to_top_and_display_messages( EE_RECAPTCHA.recaptcha_div, SPCO.generate_message_object( '', msg, '' ));
+			SPCO.scroll_to_top_and_display_messages( EE_RECAPTCHA.recaptcha_div, SPCO.generate_message_object( '', msg, '' ), true );
 			// prevent anyone else from removing our error message
 			SPCO.override_messages = true;
 		},
@@ -149,6 +172,15 @@ var espresso_recaptcha_verification = function( response ) {
 	jQuery(document).ready(function($) {
 		if ( typeof response !== 'undefined' && response !== '' && typeof SPCO.additional_post_data !== 'undefined' && SPCO.additional_post_data.indexOf( 'g-recaptcha-response' ) === -1 ) {
 			SPCO.additional_post_data = '&g-recaptcha-response=' + response;
+			$( '<input>' ).attr(
+				{
+					type : 'hidden',
+					id : 'process_form_submission',
+					name : 'process_form_submission',
+					value : true
+				}
+			).appendTo( SPCO.main_container.find('form') );
+			EE_RECAPTCHA.submitted = true;
 		}
 	});
 };

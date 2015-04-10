@@ -54,6 +54,24 @@ class EE_Line_Item_Display {
 		return $this->strategy->display_line_item( $line_item, $options );
 	}
 
+
+
+	/**
+	 * @return float
+	 */
+	public function grand_total() {
+		return $this->strategy->grand_total();
+	}
+
+
+
+	/**
+	 * @return float
+	 */
+	public function total_items() {
+		return $this->strategy->total_items();
+	}
+
 }
 
 

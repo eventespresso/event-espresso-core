@@ -16,6 +16,11 @@ $reg_cntr = 0;
 $event_name = '';
 foreach ( $registrations as $registration ) {
 	if ( $registration instanceof EE_Registration ) {
+		if ( $event_name != $registration->event_name() && ! empty( $event_name )) { ?>
+		</tbody>
+	</table>
+		<?php
+		}
 		$reg_cntr++;
 		if ( $event_name != $registration->event_name() ) {
 	?>
@@ -37,8 +42,9 @@ foreach ( $registrations as $registration ) {
 			</tr>
 		</thead>
 		<tbody>
-	<?php } ?>
-	<?php if ( $is_primary || ( ! $is_primary && $reg_url_link == $registration->reg_url_link() )) { ?>
+	<?php
+		}
+		if ( $is_primary || ( ! $is_primary && $reg_url_link == $registration->reg_url_link() )) { ?>
 			<tr>
 				<td width="40%">
 				<?php
@@ -47,8 +53,8 @@ foreach ( $registrations as $registration ) {
 					}
 				?>
 					<p class="tiny-text" style="margin: .75em 0 0;">
-						<a class="ee-icon-only-lnk" href="<?php echo $registration->edit_attendee_information_url();?>" title="<?php _e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></span><?php _e('edit info', 'event_espresso');?></a>
-						<a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="<?php echo add_query_arg( array( 'token'=>$registration->reg_url_link(), 'resend_reg_confirmation' => 'true' ), EE_Registry::instance()->CFG->core->thank_you_page_url() );?>" title="<?php _e('Click here to resend the Registration Confirmation email', 'event_espresso');?>" rel="<?php echo $registration->reg_url_link();?>"><span class="dashicons dashicons-email-alt"></span><?php _e('resend email', 'event_espresso');?></a>
+						<a class="ee-icon-only-lnk" href="<?php echo $registration->edit_attendee_information_url();?>" title="<?php esc_attr_e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></span><?php _e('edit info', 'event_espresso');?></a>
+						<a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="<?php echo add_query_arg( array( 'token'=>$registration->reg_url_link(), 'resend_reg_confirmation' => 'true' ), EE_Registry::instance()->CFG->core->thank_you_page_url() );?>" title="<?php esc_attr_e('Click here to resend the Registration Confirmation email', 'event_espresso');?>" rel="<?php echo $registration->reg_url_link();?>"><span class="dashicons dashicons-email-alt"></span><?php _e('resend email', 'event_espresso');?></a>
 					</p>
 				</td>
 				<td width="25%" class="jst-left">
@@ -59,12 +65,15 @@ foreach ( $registrations as $registration ) {
 				</td>
 			</tr>
             <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_table_row', $registration ); ?>
-        <?php } ?>
-        <?php if (( $event_name != $registration->event_name() ) || $reg_cntr >= $reg_count ) {  ?>
-		</tbody>
-	</table>
-	<?php
+        <?php
 			$event_name = $registration->event_name();
+
+		}
+		if ( $reg_cntr >= $reg_count ) {
+			?>
+			</tbody>
+			</table>
+		<?php
 		}
 	}
 }

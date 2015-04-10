@@ -63,6 +63,69 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * generate_ONE_registration_from_line_item
+	 *
+	 * Although a ticket line item may have a quantity greater than 1,
+	 * this method will ONLY CREATE ONE REGISTRATION !!!
+	 * Regardless of the ticket line item quantity.
+	 * This means that any code calling this method is responsible for ensuring
+	 * that the final registration count matches the ticket line item quantity.
+	 * This was done to make it easier to match the number of registrations
+	 * to the number of tickets in the cart, when the cart has been edited
+	 * after SPCO has already been initialized. So if an additional ticket was added to the cart, you can simply pass
+	 * the line item to this method to add a second ticket, and in this case, you would not want to add 2 tickets.
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @param \EE_Transaction $transaction
+	 * @param int $att_nmbr
+	 * @param int $total_ticket_count
+	 * @return \EE_Registration | null
+	 * @throws \EE_Error
+	 */
+	public function generate_ONE_registration_from_line_item( EE_Line_Item $line_item, EE_Transaction $transaction, $att_nmbr = 1, $total_ticket_count = 1 ) {
+		// grab the related ticket object for this line_item
+		$ticket = $line_item->ticket();
+		if ( ! $ticket instanceof EE_Ticket ) {
+			EE_Error::add_error( sprintf( __( "Line item %s did not contain a valid ticket", "event_espresso" ), $line_item->ID() ), __FILE__, __FUNCTION__, __LINE__ );
+			return null;
+		}
+		$first_datetime = $ticket->get_first_related( 'Datetime' );
+		if ( ! $first_datetime instanceof EE_Datetime ) {
+			EE_Error::add_error( sprintf( __( "The ticket (%s) is not associated with any valid datetimes.", "event_espresso" ), $ticket->name() ), __FILE__, __FUNCTION__, __LINE__ );
+			return null;
+		}
+		$event = $first_datetime->get_first_related( 'Event' );
+		if ( ! $event instanceof EE_Event ) {
+			EE_Error::add_error( sprintf( __( "The ticket (%s) is not associated with a valid event.", "event_espresso" ), $ticket->name() ), __FILE__, __FUNCTION__, __LINE__ );
+			return null;
+		}
+		$reg_url_link = $this->generate_reg_url_link( $att_nmbr, $line_item );
+		// now create a new registration for the ticket
+		$registration = EE_Registration::new_instance(
+			array(
+				'EVT_ID'          => $event->ID(),
+				'TXN_ID'          => $transaction->ID(),
+				'TKT_ID'          => $ticket->ID(),
+				'STS_ID'          => EEM_Registration::status_id_incomplete,
+				'REG_date'        => $transaction->datetime(),
+				'REG_final_price' => $ticket->price(),
+				'REG_session'     => EE_Registry::instance()->SSN->id(),
+				'REG_count'       => $att_nmbr,
+				'REG_group_size'  => $total_ticket_count,
+				'REG_url_link'    => $reg_url_link
+			)
+		);
+		$registration->set_reg_code( $this->generate_reg_code( $registration ) );
+		$registration->save();
+		$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
+		$registration->_add_relation_to( $line_item->ticket(), 'Ticket', array(), $line_item->ticket()->ID() );
+		$transaction->_add_relation_to( $registration, 'Registration' );
+		return $registration;
+	}
+
+
+
+	/**
 	 * generates reg_url_link
 	 *
 	 * @param int           $att_nmbr
@@ -293,9 +356,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			// REG status is pending payment
 			$registration->status_ID() == EEM_Registration::status_id_pending_payment
 			// AND no monies are owing
-			&& ( $registration->transaction()->is_completed() || $registration->transaction()->is_overpaid() || $registration->transaction()->is_free() )
+			&& (
+				$registration->transaction()->is_completed() ||
+				$registration->transaction()->is_overpaid() ||
+				$registration->transaction()->is_free() ||
+				apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
+			)
 		) {
-			// set incoming REG_Status
+			// track new REG_Status
 			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved
 			$registration->set_status( EEM_Registration::status_id_approved );

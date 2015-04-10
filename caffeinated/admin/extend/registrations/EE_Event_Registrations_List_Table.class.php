@@ -207,7 +207,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
 		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
 
 		$actions = array();
@@ -216,7 +216,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		if ( !empty($DTT_ID) && EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
+			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
@@ -246,7 +246,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	function column__REG_code(EE_Registration $item){
 		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
-		return EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>' : $item->get('REG_code');
+		return EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>' : $item->get('REG_code');
 	}
 
 
@@ -256,7 +256,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_Event(EE_Registration $item) {
 		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
 		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
-		$event_label = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
+		$event_label = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . esc_attr__( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
 		return $event_label;
 	}
 
@@ -297,7 +297,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?  '
 				<span class="reg-pad-rght">
-					<a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
+					<a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . esc_attr__( 'View Transaction', 'event_espresso' ) . '">
 						' . $item->transaction()->pretty_paid(). '
 					</a>
 				<span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_paid() . '</span>';
@@ -320,7 +320,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->get('REG_count') == 1 ) {
 			$line_total_obj = $txn->total_line_item();
 			$txn_total = $line_total_obj instanceof EE_Line_Item ? $line_total_obj->get_pretty('LIN_total') : __('View Transaction', 'event_espresso');
-			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="' . $view_txn_url . '" title="' . __('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>' : '<span class="reg-pad-rght">' . $txn_total . '</span>';
+			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="' . $view_txn_url . '" title="' . esc_attr__('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>' : '<span class="reg-pad-rght">' . $txn_total . '</span>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}

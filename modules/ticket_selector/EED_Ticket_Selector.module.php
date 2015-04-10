@@ -92,10 +92,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
-
 		//add button for iframe code to event editor.
 		add_filter( 'get_sample_permalink_html', array( 'EED_Ticket_Selector', 'iframe_code_button' ), 10, 4 );
-
 		add_action( 'admin_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets_admin' ), 10 );
 	}
 
@@ -199,30 +197,49 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *    creates buttons for selecting number of attendees for an event
 	 *
 	 * @access 	public
+	 * @param 	mixed $event
+	 * @return 	bool
+	 */
+	protected static function set_event( $event = null ) {
+		if( $event === null ) {
+			global $post;
+			$event = $post;
+		}
+		//		d( $event );
+		if ( $event instanceof EE_Event ) {
+			self::$_event = $event;
+		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
+			self::$_event = $event->EE_Event;
+		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event ) ) {
+			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
+			self::$_event = $event->EE_Event;
+		} else {
+			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
+			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
+			return null;
+		}
+		return true;
+	}
+
+
+
+
+
+
+	/**
+	 *    creates buttons for selecting number of attendees for an event
+	 *
+	 * @access 	public
 	 * @param 	object $event
 	 * @param 	bool 	$view_details
 	 * @return 	string
 	 */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		//		d( $event );
-		if ( $event instanceof EE_Event ) {
-			self::$_event = $event;
-			$event_post = $event->ID();
-		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
-			self::$_event = $event->EE_Event;
-			$event_post = $event;
-		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event )) {
-			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
-			self::$_event = $event->EE_Event;
-			$event_post = $event;
-		} else {
-			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
-			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+		if ( ! EED_Ticket_Selector::set_event( $event )) {
+			return false;
 		}
+		$event_post = self::$_event instanceof EE_Event ? self::$_event->ID() : $event;
 		// grab event status
 		$_event_active_status = self::$_event->get_active_status();
 		if (
@@ -334,10 +351,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
+		EED_Ticket_Selector::set_event();
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
 		$html = '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
 		$html .= wp_nonce_field( 	'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
 		$html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, self::$_event );
 		return $html;
 	}
@@ -360,7 +378,9 @@ class EED_Ticket_Selector extends  EED_Module {
 				__('Register Now', 'event_espresso' ),
 				self::$_event
 			);
-			return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
+			return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"
+			class="ticket-selector-submit-btn ticket-selector-submit-ajax" type="submit" value="' . $btn_text . '"
+			/><div class="clear"><br/></div>';
 		}
 		return '';
 	}
@@ -397,7 +417,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
 		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __('View Details', 'event_espresso' ), self::$_event );
-		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
+		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"
+		class="ticket-selector-submit-btn view-details-btn" type="submit" value="' . $btn_text . '" /><div
+		class="clear"><br/></div>';
 		$view_details_btn .= '</form>';
 		return $view_details_btn;
 	}

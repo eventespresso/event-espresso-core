@@ -176,7 +176,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$subsections['events_requiring_pre_approval'] = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		}
 		if ( ! empty( $payment_required )) {
-			$subsections[ 'payment_options' ] = $this->_display_payment_options( $reg_count );
+			$subsections[ 'payment_options' ] = $this->_display_payment_options( $reg_count, $events_requiring_pre_approval );
 		} else {
 			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
@@ -253,8 +253,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return new EE_Form_Section_Proper(
 			array(
-				//'name' 					=> $this->reg_form_name(),
-				//'html_id' 					=> $this->reg_form_name(),
 				'subsections' 			=> array(
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs()
@@ -319,10 +317,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * _display_payment_options
+	 *
 	 * @param int $reg_count
+	 * @param array $events_requiring_pre_approval
 	 * @return \EE_Form_Section_Proper
 	 */
-	private function _display_payment_options( $reg_count = 0 ) {
+	private function _display_payment_options( $reg_count = 0, $events_requiring_pre_approval = array() ) {
 		// reset in case someone changes their mind
 		$this->_reset_selected_method_of_payment();
 		// has method_of_payment been set by no-js user?
@@ -330,23 +330,26 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// autoload Line_Item_Display classes
 		EEH_Autoloader::register_line_item_display_autoloaders();
 		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
+		$transaction_details = $Line_Item_Display->display_line_item(
+			$this->checkout->cart->get_grand_total(),
+			array( 'events_requiring_pre_approval' => $events_requiring_pre_approval )
+		);
+		$this->checkout->amount_owing = $Line_Item_Display->grand_total();
 		// build payment options form
 		return new EE_Form_Section_Proper(
 			array(
-				//'name' 			=> $this->reg_form_name(),
-				//'html_id' 			=> $this->reg_form_name(),
 				'subsections' 	=> array(
 					'payment_options' => $this->_setup_payment_options(),
 					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
 					'extra_hidden_inputs' 		=> $this->_extra_hidden_inputs( FALSE )
 				),
 				'layout_strategy'		=> new EE_Template_Layout( array(
-						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php', // layout_template
+						'layout_template_file' 	=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'payment_options_main.template.php',
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_options__template_args',
 							array(
-								'reg_count' 					=> $reg_count,
-								'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
+								'reg_count' 					=> $Line_Item_Display->total_items(),
+								'transaction_details' 	=> $transaction_details,
 								'available_payment_methods' => array()
 							)
 						),

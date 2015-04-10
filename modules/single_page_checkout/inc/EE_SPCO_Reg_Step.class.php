@@ -492,9 +492,10 @@ abstract class EE_SPCO_Reg_Step {
 			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
+		$sbmt_btn_html = $sbmt_btn->get_html_for_input();
 		EE_Registry::instance()->load_helper('HTML');
 		$html .= EEH_HTML::div(
-			$sbmt_btn->get_html_for_input(),
+			apply_filters( 'FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', $sbmt_btn_html, $this ),
 			'spco-' . $this->slug() . '-whats-next-buttons-dv',
 			'spco-whats-next-buttons'
 		);
