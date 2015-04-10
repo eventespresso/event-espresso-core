@@ -151,7 +151,9 @@ abstract class EE_SPCO_Reg_Step {
 	 * set_completed - toggles $_completed to TRUE
 	 */
 	public function set_completed() {
-		$this->_completed = TRUE;
+		// DEBUG LOG
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		$this->_completed = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', true, $this );
 	}
 
 
@@ -237,7 +239,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function is_final_step() {
-		return $this->slug() === 'finalize_registration' ? TRUE : FALSE;
+		return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
 	}
 
 
@@ -367,6 +369,10 @@ abstract class EE_SPCO_Reg_Step {
 		$query_args = array( 'step' => $this->slug() );
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
+		}
+		// final step has no display
+		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
+			$query_args[ 'action' ] = 'process_reg_step';
 		}
 		if( $this->checkout->revisit ) {
 			$query_args['revisit'] = TRUE;

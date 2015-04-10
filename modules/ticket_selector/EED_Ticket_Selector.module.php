@@ -298,10 +298,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			//display notice to admin that registration is external
 			$ticket_selector .= ! is_admin() ? '' : __( 'Registration is at an external URL for this event.', 'event_espresso' );
 		}
-
 		// submit button and form close tag
 		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() ) : '';
 		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_close() : '';
+		// set no cache headers and constants
+		EE_System::do_not_cache();
 
 		return $ticket_selector;
 	}

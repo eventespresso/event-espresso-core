@@ -46,9 +46,9 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_ID' => new EE_Primary_Key_Int_Field( 'PMD_ID', __( "ID", 'event_espresso' ) ),
 				'PMD_type' => new EE_Plain_Text_Field( 'PMD_type', __( "Payment Method Type", 'event_espresso' ), FALSE, 'Admin_Only' ),
 				'PMD_name' => new EE_Plain_Text_Field( 'PMD_name', __( "Name", 'event_espresso' ), FALSE ),
-				'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
+				'PMD_desc' => new EE_Post_Content_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
 				'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ),
-				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
+				'PMD_admin_desc' => new EE_Post_Content_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
 				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ),
 				'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
@@ -228,19 +228,31 @@ class EEM_Payment_Method extends EEM_Base {
 
 	/**
 	 * Verifies the button urls on all the passed payment methods have a valid button url. If not, resets them to their default.
-	 * @param EE_Payment_Method[] $payment_methods
+	 * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
 	 */
-	function verify_button_urls( $payment_methods ) {
+	function verify_button_urls( $payment_methods = NULL ) {
 		EE_Registry::instance()->load_helper( 'URL' );
-		$payment_methods = is_array( $payment_methods ) && ! empty( $payment_methods ) ? $payment_methods : $this->get_all_active();
+		$payment_methods = is_array( $payment_methods ) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
 		foreach ( $payment_methods as $payment_method ) {
 			try {
-				//send an HTTP HEAD request to quickly verify the file exists
-				if ( $payment_method->type_obj() instanceof EE_PMT_Base &&
-						$payment_method->type_obj()->default_button_url() &&
-						! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
-					EE_Error::add_attention( sprintf( __( "Payment Method '%s' had a broken button url, so it was reset", "event_espresso" ), $payment_method->name() ) );
-					$payment_method->save( array( 'PMD_button_url' => $payment_method->type_obj()->default_button_url() ) );
+				$current_button_url = $payment_method->button_url();
+				$buttons_urls_to_try = array(
+					'current_ssl' => str_replace( "http://", "https://", $current_button_url ),
+					'current' => str_replace( "https://", "http://", $current_button_url ),
+					'default_ssl' => str_replace( "http://", "https://", $payment_method->type_obj()->default_button_url() ),
+					'default' => str_replace( "https://", "http://", $payment_method->type_obj()->default_button_url() ),
+				);
+				foreach( $buttons_urls_to_try as $button_url_to_try ) {
+					if( $button_url_to_try &&
+						EEH_URL::remote_file_exists( $button_url_to_try )	) {
+						if( $current_button_url != $button_url_to_try ){
+							$payment_method->save( array( 'PMD_button_url' => $button_url_to_try ) );
+							EE_Error::add_attention( sprintf( __( "Payment Method %s's button url was set to %s, because the old image either didnt exist or SSL was recently enabled.", "event_espresso" ), $payment_method->name(), $button_url_to_try ) );
+						}
+						//this image exists. So if wasn't set before, now it is;
+						//or if it was already set, we have nothing to do
+						break;
+					}
 				}
 			}
 			catch ( EE_Error $e ) {

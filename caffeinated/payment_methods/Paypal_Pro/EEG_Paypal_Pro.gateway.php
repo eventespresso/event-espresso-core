@@ -418,12 +418,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$ack = strtoupper($PayPalResult['ACK']);
 			$approved = ( $ack == 'SUCCESS' || $ack == 'SUCCESSWITHWARNING' || $ack == 'PARTIALSUCCESS' ) ? TRUE : FALSE;
 		}
-		// check if CVV2 code matches
-		if (isset($PayPalResult['CVV2MATCH']) && !empty($PayPalResult['CVV2MATCH'])) {
-			$cvv2_matches = $PayPalResult['CVV2MATCH'] == 'M' ? TRUE : FALSE;
-		}
 
-		return $approved && $cvv2_matches ? TRUE : FALSE;
+		return $approved;
 	}
 
 	private function _GetErrors($DataArray) {
