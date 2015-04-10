@@ -101,7 +101,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
 				'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
 				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
-				'QST_wp_user'=>new EE_Foreign_Key_Int_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false, get_current_user_id(), 'WP_User' ),
+				'QST_wp_user'=>new EE_WP_User_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false ),
 				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
 		);

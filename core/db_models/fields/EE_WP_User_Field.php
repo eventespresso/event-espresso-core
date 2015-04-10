@@ -34,8 +34,7 @@ class EE_WP_User_Field extends EE_Foreign_Key_Int_Field{
 	 * @param boolean $nullable
 	 */
 	function __construct($table_column, $nicename, $nullable){
-		$this->_model_name_pointed_to = 'WP_User';
-		parent::__construct($table_column, $nicename, $nullable);
+		parent::__construct($table_column, $nicename, $nullable, null, 'WP_User' );
 	}
 
 	/**
