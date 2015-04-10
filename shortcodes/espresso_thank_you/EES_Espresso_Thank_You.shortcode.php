@@ -346,8 +346,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			return EE_Error::get_notices();
 		}
 		EE_Registry::instance()->load_helper( 'Debug_Tools' );
-		EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true,
-			'EE_Transaction: ' . $this->_current_txn->ID() );
+		EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true, 	'EE_Transaction: ' . $this->_current_txn->ID() );
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 		if ( ! empty( $template_args['TXN_receipt_url'] )) {
