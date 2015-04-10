@@ -41,6 +41,7 @@ class EEM_WP_User extends EEM_Base {
 				'display_name' => new EE_Plain_Text_Field( 'display_name', __( 'Display Name', 'event_espresso' ), false, '' )
 			));
 		$this->_model_relations = array(
+			'Attendee' => new EE_Has_Many_Relation(),
 			'Change_Log' => new EE_Has_Many_Relation(),
 			'Event'=>new EE_Has_Many_Relation(),
 			'Payment_Method' => new EE_Has_Many_Relation(),
