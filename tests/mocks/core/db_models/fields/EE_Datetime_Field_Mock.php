@@ -31,4 +31,9 @@ class EE_Datetime_Field_Mock extends EE_Datetime_Field {
 	public function set_nullable() {
 		$this->_nullable = true;
 	}
+
+
+	public function prepare_for_display( $DateTime, $schema = false ) {
+		return $this->_prepare_for_display( $DateTime, $schema );
+	}
 }
