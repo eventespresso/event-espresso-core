@@ -225,7 +225,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				),
 				$payment
 			);
-			throw new EE_Error( sprintf( __( '%s are not yet supported by Event Espresso Paypal Standard integration', 'event_espresso' ), $update_info['payment_status'] ) );
+			throw new EE_Error( sprintf( __( '%s IPNs are not yet supported by Event Espresso Paypal Standard integration', 'event_espresso' ), $update_info['payment_status'] ) );
 
 		}else{
 			//it must be 'Denied', 'Canceled_Reversal', 'Expired', or 'Failed'
