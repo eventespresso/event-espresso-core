@@ -242,6 +242,65 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 
 
+	/**
+	 * Tests EE_Datetime_Field prepare_for_display method when it receives a
+	 * invalid DateTime object on a non-nullable field and WP_DEBUG is true.
+	 *
+	 * @since 4.7.0
+	 * @expectedException  	EE_Error
+	 * @expectedExceptionMessage	EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the Start Date field is not nullable.
+	 */
+	public function test_prepare_for_display_with_exception() {
+		$this->_set_dtt_field_object();
+		if ( defined( 'WP_DEBUG' ) && ! WP_DEBUG ) {
+			$this->markTestSkipped( 'Unable to complete test because WP_DEBUG is already defined and is set to false' );
+		} else {
+			if ( ! defined( 'WP_DEBUG' ) ) {
+				define( 'WP_DEBUG' , true );
+			}
+		}
+
+		$this->_datetime_field->prepare_for_display(null);
+	}
+
+
+	/**
+	 * Tests EE_Datetime_Field prepare_for_display method when it receives an invalid DateTime object on a
+	 * non-nullabel field and WP_DEBUG is false.
+	 *
+	 * @since 4.7.0
+	 */
+	public function test_prepare_for_display_with_EE_Error() {
+		if ( defined( 'WP_DEBUG') && WP_DEBUG ) {
+			$this->markTestSkipped( 'Unable to complete test because WP_DEBUG is already defined and is set to true' );
+		}
+		$this->_set_dtt_field_object();
+		$this->_datetime_field->prepare_for_display(null);
+		//have error notice?
+		$notice = EE_Error::get_notices(false);
+		$notice = $notice['errors'];
+		$expected = 'An error has occurred:<br />EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the Start Date field is not nullable.  When WP_DEBUG is false, the value is set to "now" instead of throwing an exception.';
+		$this->assertEquals( $expected, $notice );
+		EE_Error::reset_notices();
+	}
+
+	/**
+	 * @since 4.7.0
+	 */
+	public function test_prepare_for_display() {
+		$this->_set_dtt_field_object();
+
+		//set nullable allowed (non nullable allowed are in other tests).
+		$this->_datetime_field->set_nullable();
+
+		//test null value.
+		$this->assertEmpty( $this->_datetime_field->prepare_for_display(null) );
+
+		//non null values are tested by prepare_for_get_test
+	}
+
+
+
 
 	/**
 	 * This tests the prepare_for_use_in_db method on EE_Datetime_Field
@@ -283,6 +342,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 		//test getting the correct value for the set UTC mysql timestamp
 		$this->assertEquals( $this->_expected_unixtimestamp, $this->_datetime_field->prepare_for_set_from_db( $this->_expected_mysqltimestamp )->format('U') );
 	}
+
 
 
 
