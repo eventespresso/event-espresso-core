@@ -421,7 +421,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			//		)
 			//	)
 			//);
-
+			EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), true, 'EE_Transaction: ' . $registration->transaction()->ID() );
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
