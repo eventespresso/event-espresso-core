@@ -372,7 +372,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_options_step_completed !== true &&
 			( $payment->is_approved() || $payment->is_pending() )
 		) {
-			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+			$payment_options_step_completed = $transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		// DEBUG LOG
 		$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
