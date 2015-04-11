@@ -113,6 +113,36 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 				continue;
 			}
 			foreach ( $setup['cap_maps'] as $cap_class => $args ) {
+				/**
+				 * account for cases where capability maps may be indexed
+				 * numerically to allow for the same map classto be utilzed
+				 * In those cases, maps will be setup in an array like:
+				 *
+				 * array(
+				 * 	0 => array( 'EE_Meta_Capability' => array(
+				 * 		'ee_edit_cap', array( 'Object_Name',
+				 * 		'ee_edit_published_cap',
+				 * 		'ee_edit_others_cap', 'ee_edit_private_cap' )
+				 * 		) )
+				 * 	1 => ...
+				 * )
+				 *
+				 * instead of:
+				 *
+				 * array(
+				 * 	'EE_Meta_Capability' => array(
+				 * 		'ee_edit_cap', array( 'Object_Name',
+				 * 		'ee_edit_published_cap',
+				 * 		'ee_edit_others_cap', 'ee_edit_private_cap' )
+				 * 		),
+				 * 	...
+				 * )
+				 */
+				if ( is_numeric( $cap_class ) ) {
+					$cap_class = key( $args );
+					$args = $args[$cap_class];
+				}
+
 				if ( ! class_exists( $cap_class ) ) {
 					throw new EE_Error( sprintf( __( 'An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments', 'event_espresso' ), $cap_reference ) );
 				}
