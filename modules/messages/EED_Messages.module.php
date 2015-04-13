@@ -515,9 +515,8 @@ class EED_Messages  extends EED_Module {
 			}
 			// return visit but nothing changed ???
 			if (
-				isset( $extra_details[ 'revisit' ], $extra_details[ 'old_txn_status' ], $extra_details[ 'new_txn_status' ] ) &&
-				$extra_details[ 'revisit' ] &&
-				$extra_details[ 'old_txn_status' ] === $extra_details[ 'new_txn_status' ]
+				isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) &&
+				$extra_details[ 'revisit' ] && ! $extra_details[ 'status_updates' ]
 			) {
 				return false;
 			}
