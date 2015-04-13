@@ -250,6 +250,20 @@ class EE_Checkout {
 
 
 	/**
+	 * returns true if ANY reg status was updated during checkout
+	 * @return array
+	 */
+	public function any_reg_status_updated() {
+		foreach ( $this->reg_status_updated as $reg_status ) {
+			if ( $reg_status ) {
+				return true;
+			}
+		}
+	}
+
+
+
+	/**
 	 * @param $REG_ID
 	 * @return array
 	 */
@@ -264,7 +278,7 @@ class EE_Checkout {
 	 * @param $reg_status
 	 */
 	public function set_reg_status_updated( $REG_ID, $reg_status ) {
-		$this->reg_status_updated[ $REG_ID ] = $reg_status;
+		$this->reg_status_updated[ $REG_ID ] = filter_var( $reg_status, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
