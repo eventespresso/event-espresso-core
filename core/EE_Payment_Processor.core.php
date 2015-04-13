@@ -372,9 +372,9 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			)
 		);
 		// if the Payment Options Reg Step is completed...
-		//$revisit = $payment_options_step_completed !== false ? true : false;
+		$revisit = $payment_options_step_completed === true ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
-		//$transaction_processor->set_revisit( $revisit );
+		$transaction_processor->set_revisit( $revisit );
 		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
 		if (
 			$IPN &&
