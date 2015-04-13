@@ -326,6 +326,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
+			// if this is an IPN, then we want to know the initial TXN status prior to updating the TXN
+			// so that we know whether the status has changed and notifications should be triggered
+			if ( $IPN ) {
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->set_old_txn_status( $transaction->status_ID() );
+			}
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
