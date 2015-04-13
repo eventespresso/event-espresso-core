@@ -1182,7 +1182,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// store that for later
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed
-				$this->checkout->current_step->set_completed();
+				//$this->checkout->current_step->set_completed();
 				return true;
 			}
 		}
