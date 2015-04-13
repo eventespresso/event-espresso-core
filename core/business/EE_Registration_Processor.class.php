@@ -454,7 +454,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		return $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
 
