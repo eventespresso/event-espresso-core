@@ -398,10 +398,20 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
 		//check if enough Reg Steps have been completed to warrant finalizing the TXN
 		$finalized = $transaction_processor->all_reg_steps_completed_except_final_step( $transaction );
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'IPN'       => $IPN,
+				'finalized' => $finalized,
+			)
+		);
 		//  if this is an IPN and the final step has not been initiated
 		if ( $IPN && $finalized === false ) {
 			// and if it hasn't already been set as being started...
 			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			// DEBUG LOG
 			$this->log(
 				__CLASS__, __FUNCTION__, __LINE__,
 				$transaction,
