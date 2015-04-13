@@ -126,7 +126,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return bool
 	 */
 	public function txn_status_updated() {
-		return $this->_new_txn_status !== $this->_old_txn_status ? true : false;
+		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
 	}
 
 
