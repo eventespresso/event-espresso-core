@@ -362,10 +362,19 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// is the Payment Options Reg Step completed ?
 		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
+		// DEBUG LOG
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'IPN'             => $IPN,
+				'payment_options' => $payment_options_step_completed,
+			)
+		);
 		// if the Payment Options Reg Step is completed...
-		$revisit = $payment_options_step_completed !== false ? true : false;
+		//$revisit = $payment_options_step_completed !== false ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
-		$transaction_processor->set_revisit( $revisit );
+		//$transaction_processor->set_revisit( $revisit );
 		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
 		if (
 			$IPN &&
@@ -375,7 +384,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_options_step_completed = $transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		// DEBUG LOG
-		$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+		$this->log(
+			__CLASS__, __FUNCTION__, __LINE__,
+			$transaction,
+			array(
+				'IPN'             => $IPN,
+				'payment_options' => $payment_options_step_completed,
+			)
+		);
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
@@ -386,6 +402,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( $IPN && $finalized === false ) {
 			// and if it hasn't already been set as being started...
 			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			$this->log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				$transaction,
+				array(
+					'IPN'                   => $IPN,
+					'finalized'             => $finalized,
+				)
+			);
 		}
 		$transaction->save();
 		// because the above will return false if the final step was not fully completed, we need to check again...
@@ -403,7 +427,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$transaction,
 			array(
 				'IPN'  => $IPN,
-				'payment_options' => $payment_options_step_completed,
 				'finalized' => $finalized,
 				'payment' => $payment,
 				'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
