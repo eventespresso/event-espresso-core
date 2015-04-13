@@ -137,16 +137,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// If the selected method of payment used an off-site gateway...
 		if ( $this->checkout->payment_method instanceof EE_Payment_Method ) {
 			// if SPCO revisit and TXN status has changed due to a payment
-			if (
+			if ( $this->checkout->payment_method->is_off_site() ) {
+				// do NOT trigger notifications because it was already done during the IPN
+				remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+			} else if (
 				filter_var( $this->checkout->revisit, FILTER_VALIDATE_BOOLEAN ) &&
 				( $this->checkout->txn_status_updated || $this->checkout->any_reg_status_updated() )
 			) {
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-			} else if ( $this->checkout->payment_method->is_off_site() ) {
-				// do NOT trigger notifications because it was already done during the IPN
-				remove_all_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' );
-				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 			} else {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
 			}
