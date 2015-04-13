@@ -17,6 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core
  * @group agg
  * @group addons
+ * @group caps
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_mock_addon_path;
@@ -128,7 +129,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 
 
-		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+		//just to make this test truly test the "eea-new-addon", use its own addon params
+		//this way we're more likely to keep the EE_New_Addon up-to-date
+		require_once( EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php' );
+		require_once( EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php' );
+		EE_New_Addon::register_addon();
 
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		//check DMSs were setup properly too
@@ -152,6 +157,39 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//check that the model extension was registerd properly
 		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
 		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
+
+		//check that the caps maps were registered properly too
+		$this->_pretend_capabilities_registered();
+		$current_user = $this->factory->user->create_and_get();
+		$other_user = $this->factory->user->create_and_get();
+		//give user administrator role for test!
+		$current_user->add_role('administrator');
+		$a_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array( 'NEW_wp_user' => $current_user->ID ));
+		$others_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array( 'NEW_wp_user' => $other_user->ID ));
+		$this->assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $a_thing->ID() ) );
+		$this->assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $others_thing->ID() ) );
+	}
+
+	/**
+	 * Utility function to just setup valid capabilities for tests in this suite.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function _pretend_capabilities_registered() {
+		EE_Registry::instance()->load_core( 'Capabilities' );
+		EE_Capabilities::instance()->init_caps();
+
+		//validate caps were registered and init saved.
+		$admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
+		$this->assertArrayContains( 'edit_thing', $admin_caps_init );
+
+		//verify new caps are in the role
+		$role = get_role( 'administrator' );
+		$this->assertContains(
+				array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
+				$role->capabilities );
 	}
 
 	/**
