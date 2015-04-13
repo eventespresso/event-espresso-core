@@ -517,7 +517,7 @@ class EED_Messages  extends EED_Module {
 			if (
 				isset( $extra_details[ 'revisit' ], $extra_details[ 'old_txn_status' ], $extra_details[ 'new_txn_status' ] ) &&
 				$extra_details[ 'revisit' ] &&
-				$extra_details[ 'old_txn_status' ] !== $extra_details[ 'new_txn_status' ]
+				$extra_details[ 'old_txn_status' ] === $extra_details[ 'new_txn_status' ]
 			) {
 				return false;
 			}
