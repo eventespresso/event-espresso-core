@@ -55,11 +55,11 @@ Class  EE_New_Addon extends EE_Addon {
 					),
 				'capabilities' => array(
 					'administrator' => array(
-						'read_addon', 'edit_addon', 'edit_others_addon', 'edit_private_addon'
+						'edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'
 						),
 					),
 				'capability_maps' => array(
-					'EE_Meta_Capability_Map_Edit' => array( 'edit_addon', array( 'Event', '', 'edit_others_addon', 'edit_private_addon' ) )
+					'EE_Meta_Capability_Map_Edit' => array( 'edit_thing', array( 'New_Addon_Thing', 'edit_things', 'edit_others_things', 'edit_private_things' ) )
 					),
 				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
 				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
