@@ -310,7 +310,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 		//register capability related stuff.
 		if ( ! empty( self::$_settings[ $addon_name ]['capabilities'] ) ) {
-			EE_Register_Capabilities::register( $addon_name . '_caps', array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
+			EE_Register_Capabilities::register( $addon_name , array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
 		}
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
@@ -470,6 +470,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
 					EE_Register_Message_Type::deregister( $message_type );
 				}
+			}
+			if ( ! empty( self::$_settings[$addon_name]['capabilities']) || ! empty( self::$_settings[$addon_name]['capability_maps'])) {
+				EE_Register_Capabilities::deregister( $addon_name );
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			remove_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( EE_Registry::instance()->addons->$class_name, 'initialize_db_if_no_migrations_required' ) );
