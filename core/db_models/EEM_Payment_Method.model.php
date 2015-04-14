@@ -236,12 +236,12 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				$current_button_url = $payment_method->button_url();
-				$buttons_urls_to_try = array(
+				$buttons_urls_to_try = apply_filters( 'FHEE__EEM_Payment_Method__verify_button_urls__button_urls_to_try', array(
 					'current_ssl' => str_replace( "http://", "https://", $current_button_url ),
 					'current' => str_replace( "https://", "http://", $current_button_url ),
 					'default_ssl' => str_replace( "http://", "https://", $payment_method->type_obj()->default_button_url() ),
 					'default' => str_replace( "https://", "http://", $payment_method->type_obj()->default_button_url() ),
-				);
+				) );
 				foreach( $buttons_urls_to_try as $button_url_to_try ) {
 					if( $button_url_to_try &&
 						EEH_URL::remote_file_exists( $button_url_to_try )	) {
