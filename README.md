@@ -1,6 +1,13 @@
 EE4 core
 ===================
-Note: for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occuring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically don't include new features.  Releases including new features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-released version.  "p" in the versino number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
+
+[![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
+[![GitHub release](https://img.shields.io/badge/Stable-v4.6.19-brightgreen.svg?style=flat)](https://github.com/eventespresso/event-espresso-core)
+[![WordPress](https://img.shields.io/wordpress/v/akismet.svg)](http://eventespresso.com/)
+[![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
+
+
+Note: for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occuring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically don't include new features.  Releases including new features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-released version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
 ***
 
@@ -18,8 +25,8 @@ This is the Core for Event Espresso 4. This README.md file is targeted for displ
 ## Event Espresso Releases
 At Event Espresso we follow a set pattern for releases:
 
-1. Active development for new features happens on a **FET-{ticketnum}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
-2. Bug fixes etc. are done on a **BUG-{ticketnum}** branch.  Same methodology is used as with Feature branches.
+1. Active development for new features happens on a **FET-{ticket-number}** branch.  We continually merge master into the feature branch while its in development.  Once its complete, then testing is done on it and its merged back to master ready for release.
+2. Bug fixes etc. are done on a **BUG-{ticket-number}** branch.  Same methodology is used as with Feature branches.
 3. Stable releases are tagged both with a tests folder and without the tests folder.
 4. Master is technically always production ready and release ready but may not be equal to what the current stable release is (that is what tags are for).
 
@@ -37,7 +44,7 @@ For all testers on github, please take note of the following when reporting issu
 
 	iii. Feel free to use screenshots/screencasts to illustrate
 
-	iv. Use url's for the page the issue to place on where possible.
+	iv. Use URLs for the page the issue to place on where possible.
 
 4. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
 
