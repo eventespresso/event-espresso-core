@@ -293,7 +293,7 @@ class EEH_Debug_Tools{
 	 * @param string $debug_key
 	 */
 	public static function log( $class='', $func = '', $line = '', $info = array(), $display_request = false,  $debug_index = '', $debug_key = 'EE_DEBUG_SPCO' ) {
-		if ( WP_DEBUG ) {
+		if ( WP_DEBUG && false ) {
 			$debug_key = $debug_key . '_' . EE_Session::instance()->id();
 			$debug_data = get_option( $debug_key, array() );
 			$default_data = array(

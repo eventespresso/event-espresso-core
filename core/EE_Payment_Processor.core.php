@@ -326,6 +326,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
+			// if this is an IPN, then we want to know the initial TXN status prior to updating the TXN
+			// so that we know whether the status has changed and notifications should be triggered
+			if ( $IPN ) {
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->set_old_txn_status( $transaction->status_ID() );
+			}
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
@@ -362,8 +369,17 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// is the Payment Options Reg Step completed ?
 		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'             => $IPN,
+		//		'payment_options' => $payment_options_step_completed,
+		//	)
+		//);
 		// if the Payment Options Reg Step is completed...
-		$revisit = $payment_options_step_completed !== false ? true : false;
+		$revisit = $payment_options_step_completed === true ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
 		$transaction_processor->set_revisit( $revisit );
 		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
@@ -372,45 +388,69 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_options_step_completed !== true &&
 			( $payment->is_approved() || $payment->is_pending() )
 		) {
-			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+			$payment_options_step_completed = $transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
-		// DEBUG LOG
-		//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
-		/** @type EE_Transaction_Payments $transaction_payments */
-		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		// maybe update status, but don't save transaction just yet
-		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
-		//check if enough Reg Steps have been completed to warrant finalizing the TXN
-		$finalized = $transaction_processor->all_reg_steps_completed_except_final_step( $transaction );
-		//  if this is an IPN and the final step has not been initiated
-		if ( $IPN && $finalized === false ) {
-			// and if it hasn't already been set as being started...
-			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
-		}
-		// because the above will return false if the final step was not fully completed, we need to check again...
-		if ( $IPN && $finalized ) {
-			// and if we are all good to go, then send out notifications
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-			// DEBUG LOG
-			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
-		}
-		$transaction->save();
 		// DEBUG LOG
 		//$this->log(
 		//	__CLASS__, __FUNCTION__, __LINE__,
 		//	$transaction,
 		//	array(
-		//		'IPN'                   => $IPN,
+		//		'IPN'             => $IPN,
 		//		'payment_options' => $payment_options_step_completed,
-		//		'finalize_registration' => $finalized,
-		//		'payment'               => $payment,
+		//	)
+		//);
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		// maybe update status, but don't save transaction just yet
+		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
+		// check if 'finalize_registration' step has been completed...
+		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'       => $IPN,
+		//		'finalized' => $finalized,
+		//	)
+		//);
+		//  if this is an IPN and the final step has not been initiated
+		if ( $IPN && $payment_options_step_completed && $finalized === false ) {
+			// and if it hasn't already been set as being started...
+			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			// DEBUG LOG
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$transaction,
+			//	array(
+			//		'IPN'                   => $IPN,
+			//		'finalized'             => $finalized,
+			//	)
+			//);
+		}
+		$transaction->save();
+		// because the above will return false if the final step was not fully completed, we need to check again...
+		if ( $IPN && $finalized !== false ) {
+			// and if we are all good to go, then send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			// DEBUG LOG
+			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+			//ok, now process the transaction according to the payment
+			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
+		}
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'  => $IPN,
+		//		'finalized' => $finalized,
+		//		'payment' => $payment,
 		//		'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
 		//()->name() : 'off-line',
 		//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 		//	)
 		//);
-		//ok, now process the transaction according to the payment
-		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}
 
 

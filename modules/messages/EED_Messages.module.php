@@ -491,35 +491,42 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
+		 //self::log(
+		 //	__CLASS__, __FUNCTION__, __LINE__,
+		 //	$registration->transaction(),
+		 //	array( '$extra_details' => $extra_details )
+		 //);
 		// currently only using this to send messages for the primary registrant
 		if ( ! $registration->is_primary_registrant() ) {
 			return false;
 		}
-
-		//first we check if we're in admin and not doing front ajax and if we
-		 //make sure appropriate admin params are set for sending messages
-		if (
-			( is_admin() && ! EE_FRONT_AJAX )
-			&&
-			( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
-		) {
-			//no messages sent please.
-			return false;
-		}
-		// frontend request && TXN is NOT finalized ?
-		if (
-			! ( is_admin() && ! EE_FRONT_AJAX ) &&
-			( ! isset( $extra_details[ 'finalized' ] ) || $extra_details[ 'finalized' ] === false )
-		) {
-			return false;
-		}
-		// frontend request && NOT sending messages && reg status is something other than "Not-Approved"
-		if (
-			! ( is_admin() && ! EE_FRONT_AJAX ) &&
-			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
-			$registration->status_ID() !== EEM_Registration::status_id_not_approved
-		) {
-			return false;
+		// first we check if we're in admin and not doing front ajax
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
+			//make sure appropriate admin params are set for sending messages
+			if ( empty( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) || ! absint( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
+				//no messages sent please.
+				return false;
+			}
+		} else {
+			// frontend request (either regular or via AJAX)
+			// TXN is NOT finalized ?
+			if ( ! isset( $extra_details[ 'finalized' ] ) || $extra_details[ 'finalized' ] === false ) {
+				return false;
+			}
+			// return visit but nothing changed ???
+			if (
+				isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) &&
+				$extra_details[ 'revisit' ] && ! $extra_details[ 'status_updates' ]
+			) {
+				return false;
+			}
+			// NOT sending messages && reg status is something other than "Not-Approved"
+			if (
+				! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
+				$registration->status_ID() !== EEM_Registration::status_id_not_approved
+			) {
+				return false;
+			}
 		}
 		// release the kraken
 		return true;
@@ -773,7 +780,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
 		EE_Registry::instance()->load_helper('Debug_Tools');
-		if ( WP_DEBUG && true ) {
+		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
 				$info = EEH_Debug_Tools::strip_objects( $info );

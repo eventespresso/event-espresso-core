@@ -192,7 +192,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 	 */
 	public function no_items() {
 		if ( $this->_view !== 'trashed' )
-			_e( '<strong>No Custom Templates found.</strong>  To create your first custom message template, go to the "Default Message Templates" tab and click the "Create Custom" button next to the template you want to use as a base for the new one.', 'event_espresso');
+			printf( __('%sNo Custom Templates found.%s To create your first custom message template, go to the "Default Message Templates" tab and click the "Create Custom" button next to the template you want to use as a base for the new one.', 'event_espresso'), '<strong>', '</strong>' );
 		else
 			parent::no_items();
 	}
