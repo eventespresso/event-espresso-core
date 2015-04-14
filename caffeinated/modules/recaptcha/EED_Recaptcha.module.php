@@ -60,7 +60,7 @@ class EED_Recaptcha  extends EED_Module {
 			EED_Recaptcha::set_definitions();
 			EED_Recaptcha::enqueue_styles_and_scripts();
 			add_action( 'wp', array( 'EED_Recaptcha', 'set_late_hooks' ), 1, 0 );
-			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0 );
+			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 3 );
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
@@ -161,17 +161,18 @@ class EED_Recaptcha  extends EED_Module {
 
 
 
-
-
 	/**
 	 * display_recaptcha
 	 *
 	 * @access public
-	 * @return void
+	 * @param string $current_step
+	 * @param string $next_step
+	 * @param \EE_Checkout $checkout
 	 */
-	public static function display_recaptcha() {
+	public static function display_recaptcha( $current_step = '', $next_step = '', EE_Checkout $checkout ) {
 		// logged in means you have already passed a turing test of sorts
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() || ( $current_step == 'payment_options' && ! empty( $checkout->reg_url_link ) ) ) {
+			EED_Recaptcha::$_not_a_robot = true;
 			return;
 		}
 		// don't display if not using recaptcha or user is logged in
