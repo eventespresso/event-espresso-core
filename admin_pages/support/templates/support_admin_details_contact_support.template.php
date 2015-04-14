@@ -9,7 +9,7 @@
 		<?php _e('As with most open source programs (and closed licensed programs), the possibility exists that you may find the occasional bug or discover that something is not working as expected. Please don\'t panic! We are here to help you.', 'event_espresso'); ?>
 	</p>
 	<p>
-		<?php echo sprintf( __('If your problems are not urgent, please post in our  %ssupport forums%s. If you need immediate help, please purchase a support token and you\'ll be able to schedule one-on-one time with a member of our team.', 'event_espresso'), '<a href="http://eventespresso.com/support/forums/" target="_blank">', '</a>' ); ?>
+		<?php printf( __('If your problems are not urgent, please post in our %ssupport forums%s. If you need immediate help, please purchase a support token and you\'ll be able to schedule one-on-one time with a member of our team.', 'event_espresso'), '<a href="http://eventespresso.com/support/forums/" target="_blank">', '</a>' ); ?>
 	</p>
 	<p class="ee-attention">
 		<strong class="red_text">
@@ -30,6 +30,6 @@
 		<?php _e('A support token can be used towards receiving support for a single incident. Support is provided up to 30 minutes via phone call, instant message, or priority email support. Here are examples of how support tokens can be used: how-to questions, best practices questions, technical issues, advising on custom development.', 'event_espresso'); ?>
 	</p>
 	<p>
-		<?php echo sprintf( __('You can learn more about support tokens and purchase one by %sclicking here%s.', 'event_espresso'),'<a href="http://eventespresso.com/product/priority-support-tokens/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=help_support_tab&utm_content=support_token" target="_blank">','</a>'); ?>
+		<?php printf( __('You can learn more about support tokens and purchase one by %sclicking here%s.', 'event_espresso'),'<a href="http://eventespresso.com/product/priority-support-tokens/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=help_support_tab&utm_content=support_token" target="_blank">','</a>'); ?>
 	</p>
 </div>

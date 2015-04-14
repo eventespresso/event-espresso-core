@@ -6,7 +6,7 @@
 <?php _e('Shows if a message template is in use for all events or a specific events.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Message Type', 'event_espresso'); ?></strong><br />
+<strong><?php _e('Message Type', 'event_espresso'); ?></strong><br />
 <?php _e('The following message types are available: Resend Registration, Registration, Pending Approval, Payment, Payment Reminder, and Declined Payment. ', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
