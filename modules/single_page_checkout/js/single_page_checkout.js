@@ -153,6 +153,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
 				SPCO.set_listener_close_notifications();
+				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
 		},
@@ -429,6 +430,19 @@ jQuery(document).ready( function($) {
 			$('body').on( 'click', function() {
 				SPCO.hide_notices();
 			});
+		},
+
+
+
+		/**
+		 * @function auto_submit_gateway_form
+		 */
+		auto_submit_gateway_form : function() {
+			var gateway_form = $( 'form[name="gateway_form"]' );
+			if ( gateway_form.length > 0 ) {
+				$( '#espresso-ajax-loading' ).show();
+				gateway_form.submit();
+			}
 		},
 
 
