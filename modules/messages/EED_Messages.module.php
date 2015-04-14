@@ -445,16 +445,16 @@ class EED_Messages  extends EED_Module {
 				//send away, send away, uhhuh
 				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null, $reg->status_ID() ) ) ) {
 					// DEBUG LOG
-					 self::log(
-					 	__CLASS__, __FUNCTION__, __LINE__,
-					 	$registration->transaction(),
-					 	array(
-					 		'delivered'    => current_time( 'mysql' ),
-					 		'message_type' => $message_type,
-					 		'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
-					 		'context' => 'in all registrations loop'
-					 	)
-					 );
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => $message_type,
+					// 		'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
+					// 		'context' => 'in all registrations loop'
+					// 	)
+					// );
 				}
 			}
 
@@ -466,15 +466,15 @@ class EED_Messages  extends EED_Module {
 			self::_load_controller();
 			if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
 					// DEBUG LOG
-					 self::log(
-					 	__CLASS__, __FUNCTION__, __LINE__,
-					 	$registration->transaction(),
-					 	array(
-					 		'delivered'    => current_time( 'mysql' ),
-					 		'message_type' => 'registration_summary',
-					 		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-					 	)
-					 );
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => 'registration_summary',
+					// 		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+					// 	)
+					// );
 				}
 		}
 	}
@@ -491,11 +491,11 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
-		 self::log(
-		 	__CLASS__, __FUNCTION__, __LINE__,
-		 	$registration->transaction(),
-		 	array( '$extra_details' => $extra_details )
-		 );
+		 //self::log(
+		 //	__CLASS__, __FUNCTION__, __LINE__,
+		 //	$registration->transaction(),
+		 //	array( '$extra_details' => $extra_details )
+		 //);
 		// currently only using this to send messages for the primary registrant
 		if ( ! $registration->is_primary_registrant() ) {
 			return false;
@@ -780,7 +780,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
 		EE_Registry::instance()->load_helper('Debug_Tools');
-		if ( WP_DEBUG ) {
+		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
 				$info = EEH_Debug_Tools::strip_objects( $info );

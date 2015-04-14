@@ -76,15 +76,15 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		// ensures that all details and statuses for transaction, registration, and payments are updated
 		$txn_update_params = $this->_finalize_transaction();
 		// DEBUG LOG
-		$this->checkout->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array(
-				'txn_update_params' => $txn_update_params,
-				'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
-				'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-				'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
-			)
-		);
+		//$this->checkout->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'txn_update_params' => $txn_update_params,
+		//		'did_action__trigger'   => did_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications' ),
+		//		'notifications_callbacks'   => EEH_Debug_Tools::registered_filter_callbacks( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+		//		'deliver_notifications' => apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ),
+		//	)
+		//);
 		// set a hook point
 		do_action( 'AHEE__EE_SPCO_Reg_Step_Finalize_Registration__process_reg_step__completed', $this->checkout, $txn_update_params );
 		// check if transaction has a primary registrant and that it has a related Attendee object

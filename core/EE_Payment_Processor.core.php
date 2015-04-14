@@ -370,14 +370,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		// is the Payment Options Reg Step completed ?
 		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
 		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'IPN'             => $IPN,
-				'payment_options' => $payment_options_step_completed,
-			)
-		);
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'             => $IPN,
+		//		'payment_options' => $payment_options_step_completed,
+		//	)
+		//);
 		// if the Payment Options Reg Step is completed...
 		$revisit = $payment_options_step_completed === true ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
@@ -391,14 +391,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_options_step_completed = $transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
 		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'IPN'             => $IPN,
-				'payment_options' => $payment_options_step_completed,
-			)
-		);
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'             => $IPN,
+		//		'payment_options' => $payment_options_step_completed,
+		//	)
+		//);
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 		// maybe update status, but don't save transaction just yet
@@ -406,27 +406,27 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		// check if 'finalize_registration' step has been completed...
 		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
 		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'IPN'       => $IPN,
-				'finalized' => $finalized,
-			)
-		);
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'       => $IPN,
+		//		'finalized' => $finalized,
+		//	)
+		//);
 		//  if this is an IPN and the final step has not been initiated
 		if ( $IPN && $payment_options_step_completed && $finalized === false ) {
 			// and if it hasn't already been set as being started...
 			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
 			// DEBUG LOG
-			$this->log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				$transaction,
-				array(
-					'IPN'                   => $IPN,
-					'finalized'             => $finalized,
-				)
-			);
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$transaction,
+			//	array(
+			//		'IPN'                   => $IPN,
+			//		'finalized'             => $finalized,
+			//	)
+			//);
 		}
 		$transaction->save();
 		// because the above will return false if the final step was not fully completed, we need to check again...
@@ -434,23 +434,23 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// and if we are all good to go, then send out notifications
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 			// DEBUG LOG
-			$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
 			//ok, now process the transaction according to the payment
 			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 		}
 		// DEBUG LOG
-		$this->log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			$transaction,
-			array(
-				'IPN'  => $IPN,
-				'finalized' => $finalized,
-				'payment' => $payment,
-				'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
-		()->name() : 'off-line',
-				'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
-			)
-		);
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'  => $IPN,
+		//		'finalized' => $finalized,
+		//		'payment' => $payment,
+		//		'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
+		//()->name() : 'off-line',
+		//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+		//	)
+		//);
 	}
 
 
