@@ -1305,8 +1305,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//	)
 			//);
 			wp_safe_redirect( $this->checkout->redirect_url );
-			//wp_redirect( $this->checkout->redirect_url );
-			//header( 'Location: ' . $this->checkout->redirect_url );
 			exit();
 		}
 	}
