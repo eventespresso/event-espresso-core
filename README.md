@@ -4,6 +4,7 @@
 [![GitHub release](https://img.shields.io/badge/Stable-v4.6.19.p-brightgreen.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
 
 
 Note: for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically don't include new features.  Releases including new features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-released version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
