@@ -301,7 +301,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 *    run
 	 *
