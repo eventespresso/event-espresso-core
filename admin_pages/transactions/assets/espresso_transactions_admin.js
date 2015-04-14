@@ -66,6 +66,10 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var paymentAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( paymentAmount );
+
+		//make sure payment status selector shows
+		$('.txn-admin-apply-payment-status-dv').show();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -93,6 +97,9 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var refundAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( refundAmount );
+		//don't show payment status selector
+		$('.txn-admin-apply-payment-status-dv').hide();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -270,6 +277,7 @@ jQuery(document).ready(function($) {
 				dialog_content.html(d_contents);
 				$('.admin-modal-dialog-h2').hide();
 				$('#del-admin-modal-dialog-options-ul a').hide();
+				$('#admin-modal-dialog-options-ul a').hide();
 			});
 	}
 

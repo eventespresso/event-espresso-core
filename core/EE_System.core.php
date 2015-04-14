@@ -1041,6 +1041,62 @@ final class EE_System {
 
 
 
+
+	/**
+	* do_not_cache
+	*
+	* sets no cache headers and defines no cache constants for WP plugins
+	*
+	* @access public
+	* @return void
+	*/
+	public static function do_not_cache() {
+		// set no cache constants
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
+			define( 'DONOTCACHCEOBJECT', true );
+		}
+		if ( ! defined( 'DONOTCACHEDB' ) ) {
+			define( 'DONOTCACHEDB', true );
+		}
+		// add no cache headers
+		add_action( 'send_headers' , array( 'EE_System', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+		add_filter( 'nocache_headers', array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
+	}
+
+
+
+	/**
+	 *    nocache_headers_nginx
+	 *
+	 * @access    public
+	 * @param $headers
+	 * @return    array
+	 */
+	public static function nocache_headers_nginx ( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
+	}
+
+
+
+	/**
+	 * 	nocache_headers
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function nocache_headers() {
+		nocache_headers();
+	}
+
+
+
 	/**
 	 *    espresso_toolbar_items
 	 *

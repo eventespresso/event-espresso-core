@@ -25,6 +25,10 @@
  */
 class EEH_Venue_View extends EEH_Base {
 
+	/**
+	 * @access    private
+	 * @var EE_Venue
+	 */
 	private static $_venue = NULL;
 
 
@@ -34,14 +38,17 @@ class EEH_Venue_View extends EEH_Base {
 	 *    attempts to retrieve an EE_Venue object any way it can
 	 *
 	 * @access    public
-	 * @param int $VNU_ID
-	 * @return    object
+	 * @param int  $VNU_ID
+	 * @param bool $look_in_event
+	 * @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
+	 *                             		     regardless of access.
+	 * @return EE_Venue | null
 	 */
-	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE ) {
+	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE, $privacy_check = true ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
-			return EEH_Venue_View::$_venue;
+			return EEH_Venue_View::_get_venue( $privacy_check );
 		}
 		// international newspaper?
 		global $post;
@@ -76,10 +83,12 @@ class EEH_Venue_View extends EEH_Base {
 						if ( $VNU_ID ) {
 							// loop thru the related venues
 							foreach( $venues as $venue ) {
-								// until we find the venue we're looking for
-								if ( $venue->ID() == $VNU_ID ) {
-									EEH_Venue_View::$_venue = $venue;
-									break;
+								if ( $venue instanceof EE_Venue ) {
+									// until we find the venue we're looking for
+									if ( $venue->ID() == $VNU_ID ) {
+										EEH_Venue_View::$_venue = $venue;
+										break;
+									}
 								}
 								// if the venue being asked for is not related to the global event post,
 								// still return the venue being asked for
@@ -100,16 +109,33 @@ class EEH_Venue_View extends EEH_Base {
 			// sigh... pull it from the db
 			EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 		}
-		return EEH_Venue_View::$_venue;
+		return EEH_Venue_View::_get_venue( $privacy_check );
 	}
 
 
 
 	/**
-	 * 	edit_event_link
+	 * 	return a single venue
+	 *
+	 *  @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
+	 *                             		     regardless of access.
+	 *  @return 	EE_Venue
+	 */
+	protected static function _get_venue( $privacy_check = true ) {
+		// check for private venues.
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && $privacy_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+			return null;
+		}
+		return EEH_Venue_View::$_venue instanceof EE_Venue ? EEH_Venue_View::$_venue : null;
+	}
+
+
+
+	/**
+	 * 	get_event_venues
 	 *
 	 *  @access 	public
-	 *  @return 	string
+	 *  @return 	EE_Venue[]
 	 */
 	public static function get_event_venues() {
 		global $post;
@@ -118,19 +144,41 @@ class EEH_Venue_View extends EEH_Base {
 				return $post->EE_Event->venues();
 			}
 		}
+		return array();
 	}
 
 
 
 
+	/**
+	 * Simply checks whether a venue for the given ID (or the internally derived venue is private).
+	 *
+	 * Note: This will return true if its private, null if the venue doesn't exist, and false, if the venue exists but is not
+	 * 	  private.  So it is important to do explicit boolean checks when using this conditional.
+	 *
+	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
+	 *
+	 * @return bool|null
+	 */
+	public static function is_venue_private( $VNU_ID = false ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true );
+		if ( ! $venue instanceof EE_Venue ) {
+			return null;
+		}
+
+		return $venue->status() == 'private' ? true : false;
+	}
+
+
 
 	/**
-	 * 	venue_description
+	 *    venue_description
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @return string
 	 */
-	public static function venue_description( $VNU_ID = FALSE ) {
+	public static function venue_description( $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			return$venue->description();
@@ -140,14 +188,14 @@ class EEH_Venue_View extends EEH_Base {
 
 
 
-
 	/**
-	 * 	venue_excerpt
+	 *    venue_excerpt
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @return string
 	 */
-	public static function venue_excerpt( $VNU_ID = FALSE ) {
+	public static function venue_excerpt( $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			$excerpt = $venue->excerpt() != NULL && $venue->excerpt() ? $venue->excerpt() : $venue->description();
@@ -159,14 +207,15 @@ class EEH_Venue_View extends EEH_Base {
 
 
 
-
 	/**
-	 * 	venue_categories
+	 *    venue_categories
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @param bool $hide_uncategorized
+	 * @return string
 	 */
-	public static function venue_categories( $VNU_ID = FALSE, $hide_uncategorized = TRUE ) {
+	public static function venue_categories( $VNU_ID = 0, $hide_uncategorized = TRUE ) {
 		$category_links = array();
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
@@ -186,57 +235,65 @@ class EEH_Venue_View extends EEH_Base {
 
 
 
-
-
 	/**
-	 * 	venue_address
+	 *    venue_address
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param string $type
+	 * @param int $VNU_ID
+	 * @param bool $use_schema
+	 * @param bool $add_wrapper
+	 * @return string
 	 */
-	public static function venue_address( $type = 'multiline', $VNU_ID = FALSE, $use_schema = TRUE, $add_wrapper = TRUE ) {
+	public static function venue_address( $type = 'multiline', $VNU_ID = 0, $use_schema = TRUE, $add_wrapper = TRUE ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, $type, $use_schema, $add_wrapper );
 		}
-		return NULL;
+		return '';
 	}
 
 
 
-
 	/**
-	 * 	venue_has_address
+	 *    venue_has_address
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @return bool|string
 	 */
-	public static function venue_has_address( $VNU_ID = FALSE ) {
+	public static function venue_has_address( $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 		}
-		return NULL;
+		return false;
 	}
 
 
 
-
-
 	/**
-	 * 	venue_name
+	 *    venue_name
 	 *
-	 *  @access 	public
-	 *  @param 	string 	$link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
-	 *  @return 	string
+	 * @access    public
+	 * @param    string $link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
+	 * @param int $VNU_ID
+	 * @return string
 	 */
-	public static function venue_name( $link_to = 'details', $VNU_ID = FALSE ) {
+	public static function venue_name( $link_to = 'details', $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
-			$venue_name = EEH_Schema::name( EEH_Venue_View::$_venue->name() );
+			$venue_name = apply_filters(
+				'FHEE__EEH_Venue__venue_name__append_private_venue_name',
+				EEH_Venue_View::is_venue_private()
+					? EEH_Venue_View::$_venue->name() . "&nbsp;" . __( '(Private)', 'event_espresso' )
+					: EEH_Venue_View::$_venue->name(),
+				EEH_Venue_View::$_venue
+			);
+			$venue_name = EEH_Schema::name( $venue_name );
 			switch( $link_to ) {
 
 				case 'details' :
@@ -251,37 +308,38 @@ class EEH_Venue_View extends EEH_Base {
 					return $venue_name;
 			}
 		}
-		return NULL;
+		return '';
 	}
 
 
 
-
 	/**
-	 * 	venue_details_link
+	 *    venue_details_link
 	 *
-	 *  @access 	public
-	 *  @param	string $text
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @param    string $text
+	 * @return string
 	 */
-	public static function venue_details_link( $VNU_ID = FALSE, $text = '' ) {
+	public static function venue_details_link( $VNU_ID = 0, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			return EEH_Schema::url( get_permalink( $venue->ID() ), $text );
 		}
-		return NULL;
+		return '';
 	}
 
 
 
 	/**
-	 * 	venue_website_link
+	 *    venue_website_link
 	 *
-	 *  @access 	public
-	 *  @param	string $text
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @param    string $text
+	 * @return string
 	 */
-	public static function venue_website_link( $VNU_ID = FALSE, $text = '' ) {
+	public static function venue_website_link( $VNU_ID = 0, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
@@ -289,41 +347,40 @@ class EEH_Venue_View extends EEH_Base {
 			$text = ! empty( $text ) ? $text : $url;
 			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
 		}
-		return NULL;
+		return '';
 	}
 
 
 
-
 	/**
-	 * 	venue_phone
+	 *    venue_phone
 	 *
-	 *  @access 	public
-	 *  @param	string $text
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @return string
 	 */
-	public static function venue_phone( $VNU_ID = FALSE) {
+	public static function venue_phone( $VNU_ID = 0) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
 		}
-		return NULL;
+		return '';
 	}
 
 
 
 	/**
-	 * 	venue_gmap
+	 *    venue_gmap
 	 *
-	 *  @access 	public
-	 *  @param	string $map_ID a unique identifier for this map
-	 *  @param	array $gmap map options
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @param bool|string $map_ID a unique identifier for this map
+	 * @param    array $gmap map options
+	 * @return string
 	 */
-	public static function venue_gmap( $VNU_ID = FALSE, $map_ID = FALSE, $gmap = array() ) {
+	public static function venue_gmap( $VNU_ID = 0, $map_ID = FALSE, $gmap = array() ) {
 
-		static $static_map_id = 0;
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			// check for global espresso_events post and use it's ID if no map_ID is set
@@ -340,8 +397,6 @@ class EEH_Venue_View extends EEH_Base {
 				$details_page = is_single();
 				$options = array();
 				$options['map_ID'] = $map_ID && $map_ID != $venue->ID() ? $map_ID . '-' . $venue->ID()/* . '-' . $static_map_id*/ : $venue->ID()/* . '-' . $static_map_id*/;
-//				$static_map_id++;
-//				echo '<h1>$static_map_id: ' . $static_map_id  .'  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 
 				$options['location'] = EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 
@@ -373,7 +428,7 @@ class EEH_Venue_View extends EEH_Base {
 			}
 		}
 
-		return FALSE;
+		return '';
 
 	}
 
@@ -405,15 +460,17 @@ class EEH_Venue_View extends EEH_Base {
 
 
 
-
-
 	/**
-	 * 	edit_venue_link
+	 *    edit_venue_link
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @param string $link
+	 * @param string $before
+	 * @param string $after
+	 * @return string
 	 */
-	public static function edit_venue_link( $VNU_ID = FALSE, $link = '', $before = '<p class="edit-venue-lnk small-txt">', $after = '</p>' ) {
+	public static function edit_venue_link( $VNU_ID = 0, $link = '', $before = '<p class="edit-venue-lnk small-txt">', $after = '</p>' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			// can the user edit this post ?
@@ -432,6 +489,7 @@ class EEH_Venue_View extends EEH_Base {
 				return $before . apply_filters( 'edit_post_link', $link, $venue->ID() ) . $after;
 			}
 		}
+		return '';
 	}
 
 

@@ -5,19 +5,19 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>Name</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Name', 'event_espresso'); ?></strong><br />
 <?php _e('Shows the name of the contact.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Email</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Email', 'event_espresso'); ?></strong><br />
 <?php _e('Shows the email for the contact.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Phone #</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Phone #', 'event_espresso'); ?></strong><br />
 <?php _e('Shows the phone number for contact.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Address</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Address', 'event_espresso'); ?></strong><br />
 <?php _e('Shows the address for the contact.', 'event_espresso'); ?>
 </li>
 </ul>
