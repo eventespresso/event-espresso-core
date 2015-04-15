@@ -305,7 +305,10 @@ class EE_Checkout {
 		$this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
 		$this->continue_reg = true;
 		$this->redirect = false;
-		$this->redirect_form = '';
+		// don't reset the cached redirect form if we're about to be asked to display it !!!
+		if ( EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_step' ) !== 'redirect_form' ) {
+			$this->redirect_form = '';
+		}
 		$this->redirect_url = '';
 		$this->json_response = new EE_SPCO_JSON_Response();
 		EE_Form_Section_Proper::reset_js_localization();

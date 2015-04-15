@@ -94,6 +94,17 @@ abstract class EEM_Base extends EE_Base{
 	protected $_default_where_conditions_strategy;
 
 	/**
+	 * String describing how to find the "owner" of this model's objects.
+	 * When there is a foreign key on this model to the wp_users table, this isn't needed.
+	 * But when there isn't, this indicates which related model, or transiently-related model,
+	 * has the foreign key to the wp_users table.
+	 * Eg, for EEM_Registration this would be 'Event' because registrations are directly
+	 * related to events, and events have a foreign key to wp_users.
+	 * On EEM_Transaction, this would be 'Transaction.Event'
+	 * @var string
+	 */
+	protected $_model_chain_to_wp_user = '';
+	/**
 	 * This is a flag typically set by updates so that we don't load the where strategy on updates because updates don't need it (particularly CPT models)
 	 * @var bool
 	 */
@@ -567,6 +578,64 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL));
 	}
 
+	/**
+	 * Modifies the query parameters so we only get back model objects
+	 * that "belong" to the current user
+	 * @param array $query_parms @see EEM_Base::get_all()
+	 * @return array like EEM_Base::get_all
+	 */
+	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
+		try {
+			if( ! empty( $this->_model_chain_to_wp_user ) ) {
+				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
+				$last_model_name = end( $models_to_follow_to_wp_users );
+				$model_with_fk_to_wp_users = EE_Registry::instance()->load_model( $last_model_name );
+				$model_chain_to_wp_user = $this->_model_chain_to_wp_user . '.';
+			}else{
+				$model_with_fk_to_wp_users = $this;
+				$model_chain_to_wp_user = '';
+			}
+			$wp_user_field = $model_with_fk_to_wp_users->get_foreign_key_to( 'WP_User' );
+			$query_parms[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
+			return $query_parms;
+		} catch( EE_Error $e ) {
+			//if there's no foreign key to WP_User, then they own all of them?
+			return $query_parms;
+		}
+	}
+
+	/**
+	 * Returns the _model_chain_to_wp_user string, which indicates which related model
+	 * (or transiently-related model) has a foreign key to the wp_users table;
+	 * useful for finding if model objects of this type are 'owned' by the current user.
+	 * This is an empty string when the foreign key is on this model and when it isn't,
+	 * but is only non-empty when this model's ownership is indicated by a RELATED model
+	 * (or transietly-related model)
+	 * @return string
+	 */
+	public function model_chain_to_wp_user(){
+		return $this->_model_chain_to_wp_user;
+	}
+
+	/**
+	 * Whether this model is 'owned' by a specific wordpress user (even indirectly,
+	 * like how registrations don't have a foreign key to wp_users, but the
+	 * events they are for are), or is unrelated to wp users.
+	 * generally available
+	 * @return boolean
+	 */
+	public function is_owned() {
+		if( $this->model_chain_to_wp_user() ){
+			return true;
+		}else{
+			try{
+				$this->get_foreign_key_to( 'WP_User' );
+				return true;
+			}catch( EE_Error $e ){
+				return false;
+			}
+		}
+	}
 
 
 	/**
@@ -3097,6 +3166,17 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+	/**
+	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
+	 * 
+	 * Given an array where keys are column (or column alias) names and values,
+	 * returns an array of their corresponding field names and database values
+	 * @param array $cols_n_values
+	 * @return array
+	 */
+	public function deduce_fields_n_values_from_cols_n_values( $cols_n_values ) {
+		return $this->_deduce_fields_n_values_from_cols_n_values( $cols_n_values );
+	}
 
 
 	/**
