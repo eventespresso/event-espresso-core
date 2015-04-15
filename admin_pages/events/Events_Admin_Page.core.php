@@ -777,7 +777,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_ticket_selector' => !empty( $this->_req_data['display_ticket_selector'] ) ? 1 : 0,
-			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
+			'EVT_additional_limit' => min(
+					apply_filters( 'FHEE__EE_Events_Admin__insert_update_cpt_item__EVT_additional_limit_max', 255 ),
+					!empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL ),
 			'EVT_default_registration_status' => !empty( $this->_req_data['EVT_default_registration_status'] ) ? $this->_req_data['EVT_default_registration_status'] : EE_Registry::instance()->CFG->registration->default_STS_ID,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
