@@ -661,8 +661,9 @@ jQuery(document).ready( function($) {
 		 * @function enable_submit_buttons
 		 */
 		enable_submit_buttons : function() {
+			console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).removeAttr('disabled').removeClass( 'disabled spco-disabled-submit-btn' );
+				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn' );
 			});
 		},
 
@@ -672,8 +673,9 @@ jQuery(document).ready( function($) {
 		 * @function disable_submit_buttons
 		 */
 		disable_submit_buttons : function() {
+			console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).attr('disabled','disabled').addClass('disabled spco-disabled-submit-btn');
+				$(this).prop( 'disabled', true ).addClass('disabled spco-disabled-submit-btn');
 			});
 		},
 
@@ -725,13 +727,14 @@ jQuery(document).ready( function($) {
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
+			console.log( JSON.stringify( '**submit_reg_form**', null, 4 ) );
 			if ( ! eei18n.ajax_submit ) {
 				return;
 			}
 
-			//console.log( JSON.stringify( 'step: ' + step, null, 4 ) );
-			//console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ) );
-			//console.log( JSON.stringify( 'form_to_check: ' + form_to_check, null, 4 ) );
+			console.log( JSON.stringify( 'step: ' + step, null, 4 ) );
+			console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ) );
+			console.log( JSON.stringify( 'form_to_check: ' + form_to_check, null, 4 ) );
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&process_form_submission=1';
 			form_data += '&ee_front_ajax=1';
