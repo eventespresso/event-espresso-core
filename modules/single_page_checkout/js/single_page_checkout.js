@@ -661,7 +661,7 @@ jQuery(document).ready( function($) {
 		 * @function enable_submit_buttons
 		 */
 		enable_submit_buttons : function() {
-			console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
+			console.log( JSON.stringify( '**enable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
 				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn' );
 			});
