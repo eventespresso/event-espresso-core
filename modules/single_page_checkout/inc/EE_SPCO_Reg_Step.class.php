@@ -494,7 +494,7 @@ abstract class EE_SPCO_Reg_Step {
 			return '';
 		}
 		ob_start();
-		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
+		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug(), $this->checkout );
 		$html = ob_get_clean();
 		// generate submit button
 		$sbmt_btn = new EE_Submit_Input( array(
