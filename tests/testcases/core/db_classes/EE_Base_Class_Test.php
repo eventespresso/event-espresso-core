@@ -503,6 +503,49 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		update_option( 'timezone_string', $original_timezone );
 	}
 
+
+	/**
+	 * @since 4.7.0
+	 * Note: in this test we're using EE_Datetime methods that utilize this method on
+	 * EE_Base_Class
+	 */
+	public function test_set_date_time() {
+		//setup a datetime object with some known values for testing with.
+		$original_timezone = get_option('timezone_string' );
+		update_option( 'timezone_string', 'America/Toronto' );
+		$dateTimeZone = new DateTimeZone( 'America/Toronto' );
+		$currentTime = new DateTime( "now", $dateTimeZone );
+		$futureTime = clone $currentTime;
+		$futureTime->add( new DateInterval( 'P2D' ) );
+
+		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $futureTime->format( 'Y-m-d H:i:s' ), 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+
+		$this->assertInstanceOf( 'EE_Datetime', $datetime );
+
+		//create a second datetime for polluting the formats on EE_Datetime_Field.
+		// Note: the purpose of this is to test that when th EE_Datetime_Field gets the new formats from this object, that they are NOT persisting to the original datetime created that has different formats (but utilizes the same EE_Date)
+		$pollution = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'd/m/Y g:i a' ), 'DTT_EVT_end' => $futureTime->format( 'd/m/Y g:i a' ), 'formats' => array( 'd/m/Y', 'g:i a' ) ) );
+
+		//test setting the time to 8am using a time string.
+		$datetime->set_start_time( '8:00:00' );
+		$this->assertEquals( $currentTime->setTime( 8,0,0 )->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
+
+		//test setting the time to 11pm using a date object
+		$currentTime->setTime( 23,0,0 );
+		$datetime->set_start_time( $currentTime );
+		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
+
+		//test setting the date to 12-31-2012 on start date using a date string.
+		$currentTime->setDate( '2012', '12', '31' );
+		$datetime->set_start_date( '2012-12-31' );
+		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
+
+		//test setting the date to 12-15 using a date object.
+		$currentTime->setDate( '2012', '12', '15' );
+		$datetime->set_start_date( $currentTime );
+		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
+	}
+
 }
 
 // End of file EE_Base_Class_Test.php

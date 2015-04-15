@@ -178,6 +178,13 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_time( $DTToffset->format( $format ), $this->_defaultDTT );
 			$this->assertEquals( $expected, $new_time_string->format('U'), sprintf( 'Time Format is %s. Date format is %s.', $format, $this->_datetime_field->get_date_format() ) );
 		}
+
+		//loop again except this time just send in the DateTime object.
+		foreach ( $timestrings['time'] as $format ) {
+			$this->_datetime_field->set_time_format( $format );
+			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_time( $DTToffset, $this->_defaultDTT );
+			$this->assertEquals( $expected, $new_time_string->format('U'), sprintf( 'Time Format is %s. Date format is %s.', $format, $this->_datetime_field->get_date_format() ) );
+		}
 	}
 
 
@@ -202,6 +209,14 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 			$this->_datetime_field->set_date_format( $format );
 			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_date( $DTToffset->format( $format ), $this->_defaultDTT );
 			$this->assertEquals( $expected, $new_time_string->format('U'),  sprintf( 'Format is %s', $format ) );
+		}
+
+
+		//loop again except this time just send in the DateTime object.
+		foreach ( $timestrings['date'] as $format ) {
+			$this->_datetime_field->set_date_format( $format );
+			$new_time_string = $this->_datetime_field->prepare_for_set_with_new_date( $DTToffset, $this->_defaultDTT );
+			$this->assertEquals( $expected, $new_time_string->format('U'), sprintf( 'Format is %s.', $format ) );
 		}
 	}
 

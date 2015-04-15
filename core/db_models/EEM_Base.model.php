@@ -795,7 +795,8 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * This returns the date formats set for the given field name.
+	 * This returns the date formats set for the given field name and also ensures that
+	 * $this->_timezone property is set correctly.
 	 *
 	 * @since 4.6.x
 	 * @param string $field_name The name of the field the formats are being retrieved for.
@@ -869,7 +870,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
-	 * for the model are.
+	 * for the model are.  Returns a DateTime object.
 	 *
 	 * Note: a gotcha for when you send in unixtimestamp.  Remember a unixtimestamp is already timezone agnostic,
 	 * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is ignored.
@@ -880,36 +881,20 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
 	 *                           		the blog.  If this is not the case, then it can be specified here.  If incoming format is
 	 *                           		'U', this is ignored.
-	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 * @return DateTime
 	 */
-	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '', $what = 'both' ) {
-		$formats = $this->get_formats_for( $field_name );
-		$full_format = implode( ' ', $formats );
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+
+		//just using this to ensure the timezone is set correctly internally
+		$this->get_formats_for( $field_name );
 
 		//load EEH_DTT_Helper
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
 
-		//first let's do comparisons and see if we even need to convert
-		if ( $set_timezone == $this->_timezone && $full_format == $incoming_format ) {
-			return $timestring;
-		}
-
-		//if made it here then that means conversion is necessary.
 		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
 
-		//return converted string
-		switch ( $what ) {
-			case 'time' :
-				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[1] );
-				break;
-			case 'date' :
-				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $formats[0] );
-				break;
-			default :
-				return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) )->format( $full_format );
-				break;
-		}
+		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) );
 	}
 
 
@@ -3308,7 +3293,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
-	 * 
+	 *
 	 * Given an array where keys are column (or column alias) names and values,
 	 * returns an array of their corresponding field names and database values
 	 * @param array $cols_n_values

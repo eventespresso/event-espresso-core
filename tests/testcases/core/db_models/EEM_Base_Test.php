@@ -328,23 +328,23 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			//test getting correctly formatted string for matching incoming format with defaults in WP
 			//options
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $now->format( 'F j, Y g:i a' ), 'F j, Y g:i a', 'UTC' );
-			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted->format( 'F j, Y g:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for different incoming format in same timezone.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $now->format( 'Y-m-d H:i:s' ), 'Y-m-d H:i:s', 'UTC' );
-			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted->format( 'F j, Y g:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for different incoming format in different incoming timezone.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $timezoneTest->format( 'Y-m-d H:i:s' ), 'Y-m-d H:i:s', 'America/Vancouver' );
-			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted->format( 'F j, Y g:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for unix_timestamp format.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start',time(), 'U' );
-			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted->format( 'F j, Y g:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for current_time('mysql') format.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', current_time('mysql'), 'Y-m-d H:i:s' );
-			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $now->format( 'F j, Y g:i a' ), $converted->format( 'F j, Y g:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//repeat above tests when internals on EE_Datetime_Field have been modified by new
 			//datetime creation.
@@ -352,23 +352,23 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			//test getting correctly formatted string for matching incoming format with what is currently
 			//set
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $timezoneTest->format( 'U' ), 'U', 'America/Vancouver' );
-			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted->format( 'd/m/Y h:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for different incoming format in same timezone.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $timezoneTest->format( 'Y-m-d H:i:s' ), 'Y-m-d H:i:s', 'America/Vancouver' );
-			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted->format( 'd/m/Y h:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for different incoming format in different incoming timezone.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $now->format( 'U' ), 'U', 'UTC' );
-			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted->format( 'd/m/Y h:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for time() format.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', time(), 'U' );
-			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted->format( 'd/m/Y h:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 
 			//test getting correctly formatted string for current_time('mysql') format.
 			$converted = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', current_time('mysql'), 'Y-m-d H:i:s' );
-			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted, sprintf( 'Timezone tested: %s', $timezone ) );
+			$this->assertEquals( $timezoneTest->format( 'd/m/Y h:i a' ), $converted->format( 'd/m/Y h:i a' ), sprintf( 'Timezone tested: %s', $timezone ) );
 		}
 
 		update_option( 'timezone_string', $original_timezone );
