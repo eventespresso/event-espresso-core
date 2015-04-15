@@ -19,7 +19,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	/**
 	 * This will hold the _datetime_field object for all tests.
 	 *
-	 * @var EE_Datetime_Field
+	 * @var EE_Datetime_Field_Mock
 	 */
 	protected $_datetime_field;
 
@@ -49,12 +49,20 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 
 
-
 	/**
 	 * Used to set the _datetime_field property for tests with the provided params and set with defaults
 	 * if none provided.
 	 *
 	 * @see EE_Datetime_Field for docs on params
+	 * @param string $table_column
+	 * @param string $nice_name
+	 * @param bool $nullable
+	 * @param string $default_value
+	 * @param null $timezone
+	 * @param null $date_format
+	 * @param null $time_format
+	 * @param null $pretty_date_format
+	 * @param null $pretty_time_format
 	 */
 	protected function _set_dtt_field_object( $table_column = 'DTT_EVT_start', $nice_name = 'Start Date', $nullable = false, $default_value = '', $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ) {
 		$this->_datetime_field = new EE_Datetime_Field_Mock( $table_column, $nice_name, $nullable, $default_value, $timezone, $date_format, $time_format, $pretty_date_format, $pretty_time_format );
@@ -65,12 +73,6 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	/**
 	 * This returns a common set of time strings for testing indexed by format.
 	 *
-	 * @param string $date_offset_test This is the offset used in offset tests.
-	 *     It should be included as an accepted DateInterval interval_spec
-	 *     value (@see http:// php.net/manual/en/dateinterval.construct.php)
-	 * @param string $time_offset_test This works the same as the
-	 *     $date_offset_test except will be applied for time offsets.
-	 * @since
 	 * @return array
 	 */
 	protected function _get_time_strings_for_testing() {
@@ -281,7 +283,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 
 	/**
 	 * Tests EE_Datetime_Field prepare_for_display method when it receives an invalid DateTime object on a
-	 * non-nullabel field and WP_DEBUG is false.
+	 * non-nullable field and WP_DEBUG is false.
 	 *
 	 * @since 4.7.0
 	 */
@@ -323,7 +325,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_use_in_db() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_time_strings_for_testing();
+		$this->_get_time_strings_for_testing();
 
 		//test if not nullable and datestring is empty, then we should get back current_time in utc in mysql timestamp.
 		$this->assertEquals( date( 'Y-m-d H:i:s' ), $this->_datetime_field->prepare_for_use_in_db(null) );
@@ -345,7 +347,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase {
 	 */
 	public function test_prepare_for_set_from_db() {
 		$this->_set_dtt_field_object();
-		$timestrings = $this->_get_time_strings_for_testing();
+		$this->_get_time_strings_for_testing();
 
 		//test if not nullable and datestring is empty, then we should get back datetime object.
 		$this->assertInstanceOf( 'DateTime', $this->_datetime_field->prepare_for_set_from_db('') );

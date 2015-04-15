@@ -99,7 +99,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	/**
 	 * this prepares any incoming date data and make sure its converted to a utc unix timestamp
 	 * @param  string|int $value_inputted_for_field_on_model_object could be a string formatted date time or int unix timestamp
-	 * @return int                                           unix timestamp (utc)
+	 * @return DateTime
 	 */
 	public function prepare_for_set( $value_inputted_for_field_on_model_object ) {
 		return $this->_get_date_object( $value_inputted_for_field_on_model_object );
@@ -295,7 +295,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * Only sets the time portion of the datetime.
 	 * @param string $time_to_set_string     like 8am,
 	 * @param DateTime    $current current DateTime object for the datetime field
-	 * @return int updated timestamp
+	 * @return DateTime
 	 */
 	public function prepare_for_set_with_new_time( $time_to_set_string, DateTime $current ){
 		//if $time_to_set_string is datetime object, then let's use it to set the parse array.  Otherwise parse the string.
@@ -321,7 +321,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * Only sets the date portion of the datetime.
 	 * @param string $date_to_set_string     like Friday, January 8th,
 	 * @param DateTime    $current current DateTime object for the datetime field
-	 * @return int updated timestamp
+	 * @return DateTime
 	 */
 	public function prepare_for_set_with_new_date( $date_to_set_string, DateTime $current ){
 		//if $time_to_set_string is datetime object, then let's use it to set the parse array.  Otherwise parse the string.
@@ -347,7 +347,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	/**
 	 * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).  When the datetime gets to this stage it should ALREADY be in UTC time
-	 * @param  int $datetime_value unix timestamp in UTC
+	 * @param  DateTime $DateTime
 	 * @return string formatted date time for given timezone
 	 */
 	public function prepare_for_get( $DateTime ) {
@@ -399,7 +399,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$DateTime->setTimeZone( $this->_DateTimeZone );
 		if ( $schema ) {
 			if( $this->_display_timezone() ) {
-				//must be explict because schema could equal true.
+				//must be explicit because schema could equal true.
 				if( $schema === 'no_html' ){
 					$timezone_string = ' (' . $DateTime->format( 'T' )  . ')';
 				}else{
@@ -528,8 +528,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( preg_match( '/[0-9]{10,}/', $date_string ) ) {
 			try {
 				/**
-				 * This is operating under the assumption that the incomign unixtimestamp is
-				 * an ACTUAL unixtimestamp and not the calculated one output by
+				 * This is operating under the assumption that the incoming Unix timestamp is
+				 * an ACTUAL Unix timestamp and not the calculated one output by
 				 * current_time('timestamp');
 				 *
 				 */
