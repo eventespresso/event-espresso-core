@@ -295,7 +295,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
-		$show_try_pay_again_link_default =  do_action( 'AHEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default', TRUE );
+		$show_try_pay_again_link_default =  apply_filters( 'AFEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default',	TRUE );
 		// txn status ?
 		if( $this->_current_txn->is_completed() ){
 			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
@@ -307,7 +307,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
-		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
+		$this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
 		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
@@ -345,9 +345,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			return EE_Error::get_notices();
 		}
-		EE_Registry::instance()->load_helper( 'Debug_Tools' );
-		EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true,
-			'EE_Transaction: ' . $this->_current_txn->ID() );
+		//EE_Registry::instance()->load_helper( 'Debug_Tools' );
+		//EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true, 	'EE_Transaction: ' . $this->_current_txn->ID() );
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 		if ( ! empty( $template_args['TXN_receipt_url'] )) {
@@ -359,7 +358,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary && $this->_payments_closed && ! $this->_current_txn->is_free() ) {
+ 		if ( $this->_is_primary && ! $this->_payments_closed && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 

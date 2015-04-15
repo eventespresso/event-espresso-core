@@ -808,7 +808,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 
 			//note the FIRST reg object in this array is the one we'll use for this attendee as the primary registration for this attendee.
-			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_objs']);
+			$aee['reg_obj'] = reset($this->_data->attendees[$att_id]['reg_objs']);
 
 			$aee['attendees'] = $this->_data->attendees;
 

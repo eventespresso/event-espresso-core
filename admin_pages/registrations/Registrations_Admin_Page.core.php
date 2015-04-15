@@ -820,7 +820,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * This sets the _registration property for the registration details screen
 	 *
 	 * @access private
-	 * @return void
+	 * @return bool
 	 */
 	private function _set_registration_object() {
 		//get out if we've already set the object
@@ -1211,6 +1211,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			if ( $registration instanceof EE_Registration ) {
 				$registration->set_status( $status );
 				$success = $registration->save();
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->set_transaction_payment_method_based_on_registration_statuses( $registration );
 			}
 			//make sure we don't just get 0 updated
 			$success = $success === FALSE ? FALSE : TRUE;
@@ -1222,7 +1225,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
 	}
-
 
 
 

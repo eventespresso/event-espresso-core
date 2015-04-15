@@ -238,11 +238,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				if ( $save ) {
 					$registration->save();
 				}
-				// send messages
-				$this->trigger_registration_update_notifications(
-					$registration,
-					array( 'manually_updated' 	=> true )
-				);
 			}
 			return TRUE;
 		}
@@ -426,7 +421,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			//		)
 			//	)
 			//);
-
+			EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
@@ -458,15 +454,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		// send messages
-		$this->trigger_registration_update_notifications(
-			$registration,
-			array_merge(
-				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
-				array( 'checkout_or_payment' 	=> true )
-			)
-		);
-		return $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
 
