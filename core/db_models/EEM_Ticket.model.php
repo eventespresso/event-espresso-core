@@ -102,7 +102,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		foreach ( $tickets as $ticket ) {
 			$ticket->set('TKT_start_date', $this->current_time_for_query('TKT_start_date', true) );
 			$ticket->set('TKT_end_date', $this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
-			$ticket->set_end_time( $this->convert_datetime_for_query( 'TKT_end_date', '11:59 pm', 'g:i a', $this->_timezone, 'time' ) );
+			$ticket->set_end_time( $this->convert_datetime_for_query( 'TKT_end_date', '11:59 pm', 'g:i a', $this->_timezone ) );
 		}
 
 		return $tickets;
