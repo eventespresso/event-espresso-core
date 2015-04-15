@@ -404,7 +404,7 @@ jQuery(document).ready( function($) {
 		set_listener_for_display_payment_method : function() {
 			SPCO.main_container.on( 'click', '.spco-payment-method', function() {
 				//SPCO.console_log( 'set_listener_for_display_payment_method', $(this ).attr('id'), false );
-				SPCO.display_payment_method( this );
+				SPCO.display_payment_method( $( this ) );
 			});
 		},
 
@@ -416,7 +416,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-					$(this ).valid();
+					$(this).valid();
 			});
 		},
 
