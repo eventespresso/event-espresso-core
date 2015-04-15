@@ -1014,6 +1014,8 @@ abstract class EE_Base_Class{
 	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$field->set_timezone( $this->_timezone );
+		$field->set_date_format( $this->_dt_frmt );
+		$field->set_time_format( $this->_tm_frmt );
 
 		switch ( $what ) {
 			case 'T' :
