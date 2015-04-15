@@ -448,7 +448,6 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 * @access    public
 	 * @param int $EVT_ID
-	 * @internal  param string $text
 	 * @return    string
 	 */
 	public static function event_link_url( $EVT_ID = 0 ) {
@@ -467,7 +466,6 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 * @access    public
 	 * @param int $EVT_ID
-	 * @internal  param string $text
 	 * @return    string
 	 */
 	public static function event_phone( $EVT_ID = 0 ) {

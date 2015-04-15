@@ -322,7 +322,7 @@
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 						<?php foreach ( $payment_methods as $method ) : ?>
 							<?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo sanitize_key( $method->admin_desc() ) ? substr( $method->admin_desc(), 0, 128) : $method->admin_name() ; ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>
@@ -380,7 +380,7 @@
 						<?php echo $status_change_select; ?>
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 
@@ -389,7 +389,7 @@
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('By default a payment message %sis%s sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 					<div class="clear"></div>
@@ -450,7 +450,7 @@
 						<?php echo $delete_status_change_select; ?>
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 

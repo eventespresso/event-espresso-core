@@ -279,6 +279,57 @@ class EEM_Base_Test extends EE_UnitTestCase{
 				EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
 	}
 
+	/**
+	 * Tests that when we get rows from the database and a secondary table has no row,
+	 * but the primary one does, that the fields for the secondary table are given
+	 * DEFAULT values instead of NULLs
+	 * @group 7634
+	 */
+	public function test_if_no_meta_row_use_defaults_not_nulls(){
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		//now use wpdb to directly delete its meta row
+		global $wpdb;
+		$deletions = $wpdb->delete( EEM_Event::instance()->second_table(), array( 'EVT_ID' => $e->ID() ), array( '%d' ) );
+		$this->assertEquals( 1, $deletions );
+		//now forget about the old event object we had, we want to see what happens when we fetch it again
+		EEM_Event::reset();
+		$incomplete_e = EEM_Event::instance()->get_one_by_ID( $e->ID() );
+		$actual_row = EEM_Event::instance()->get_all_wpdb_results( array( array( 'EVT_ID' => $e->ID() ) ) );
+		$a_field_from_meta_table = EEM_Event::instance()->field_settings_for( 'EVT_display_ticket_selector' );
+		$another_field_from_meta_table = EEM_Event::instance()->field_settings_for( 'EVT_additional_limit' );
+		$this->assertEquals( $a_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_display_ticket_selector' ) );
+		$this->assertTrue( NULL !== $incomplete_e->get( 'EVT_display_ticket_selector' ) );
+		$this->assertEquals( $another_field_from_meta_table->get_default_value(), $incomplete_e->get( 'EVT_additional_limit' ) );
+	}
+
+	/**
+	 * Tests that if we are joining to a table that has no entries matching the query,
+	 * but the primary table does that we don't create model objects for the non-existent
+	 * row, but we do still create model objects for the row that did exist.
+	 * @group 7634
+	 */
+	function test_get_all_if_related_model_blank_use_nulls(){
+		$price_sans_price_type = EE_Price::new_instance( array ( 'PRC_name' => 'original', 'PRT_ID' => EEM_Price_Type::instance()->count() + 1 ) );
+		$price_sans_price_type->save();
+		$fetched_price = EEM_Price::reset()->get_one( array( array( 'PRC_ID' => $price_sans_price_type->ID() ), 'force_join' => array( 'Price_Type' ) ) );
+		$this->assertInstanceOf( 'EE_Price', $fetched_price );
+		$this->assertEquals( null, $fetched_price->type_obj() );
+	}
+
+	/**
+	 * Should reproduce issue 7791
+	 * @group 7791
+	 */
+	function test_create_question_options(){
+		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name => $model_classname ){
+			$model = EE_Registry::instance()->load_model( $model_name );
+			$question_option = $this->new_model_obj_with_dependencies( $model_name );
+			$this->assertInstanceOf( 'EE_' . $model_name, $question_option );
+			//make sure this model is queryable and when we fetch its items that there's no errors
+			$model->get_all();
+		}
+
+	}
 }
 
 // End of file EEM_Base_Test.php
