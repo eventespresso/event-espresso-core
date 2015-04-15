@@ -847,7 +847,6 @@ jQuery(document).ready( function($) {
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
-				SPCO.enable_submit_buttons();
 				return;
 			}
 			var form_data = 'step=payment_options';
@@ -878,7 +877,6 @@ jQuery(document).ready( function($) {
 
 				success: function( response ){
 					//SPCO.console_log_object( 'display_payment_method : response', response );
-					SPCO.enable_submit_buttons();
 					if ( typeof response !== 'undefined' && typeof response !== null ) {
 						if ( typeof response.return_data === 'undefined' ) {
 							response.return_data = {};
@@ -892,7 +890,7 @@ jQuery(document).ready( function($) {
 				},
 
 				error: function() {
-					SPCO.submit_reg_form_server_error();
+					return SPCO.submit_reg_form_server_error();
 				}
 
 			});
