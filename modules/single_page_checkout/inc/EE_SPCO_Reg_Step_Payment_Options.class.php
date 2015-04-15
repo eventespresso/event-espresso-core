@@ -798,8 +798,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// attempt payment via payment method
 			$success = $this->process_reg_step();
 		}
-		if ( $success ) {
-//			$this->checkout->transaction->save();
+		if ( $success && ! $this->checkout->redirect ) {
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
 			 // set return URL
 			$this->checkout->redirect_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
@@ -1432,7 +1431,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
-				//$this->checkout->redirect = TRUE;
+				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
 				// set JSON response

@@ -88,6 +88,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 			'Status'=> new EE_Belongs_To_Relation(),
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
+		$this->_model_chain_to_wp_user = 'Payment_Method';
 		parent::__construct( $timezone );
 	}
 
