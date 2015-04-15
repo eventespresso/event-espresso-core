@@ -404,7 +404,7 @@ jQuery(document).ready( function($) {
 		set_listener_for_display_payment_method : function() {
 			SPCO.main_container.on( 'click', '.spco-payment-method', function() {
 				//SPCO.console_log( 'set_listener_for_display_payment_method', $(this ).attr('id'), false );
-				SPCO.display_payment_method( $( this ) );
+				SPCO.display_payment_method( $(this).val() );
 			});
 		},
 
@@ -831,18 +831,19 @@ jQuery(document).ready( function($) {
 
 		/**
 		 *  @function
-		 *  @param {object} item
+		 *  @param {string} payment_method
 		 */
-		display_payment_method: function ( item ) {
+		display_payment_method: function ( payment_method ) {
 
 			if ( SPCO.methods_of_payment === null ) {
 				SPCO.methods_of_payment = $( '#methods-of-payment' );
 			}
-			var payment_method = $(item).val();
 			//SPCO.console_log( 'display_payment_method', payment_method, false );
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
+				SPCO.enable_submit_buttons();
+				return;
 			}
 			var form_data = 'step=payment_options';
 			form_data += '&action=spco_billing_form';
@@ -872,6 +873,7 @@ jQuery(document).ready( function($) {
 
 				success: function( response ){
 					//SPCO.console_log_object( 'display_payment_method : response', response );
+					SPCO.enable_submit_buttons();
 					if ( typeof response !== 'undefined' && typeof response !== null ) {
 						if ( typeof response.return_data === 'undefined' ) {
 							response.return_data = {};
@@ -885,10 +887,11 @@ jQuery(document).ready( function($) {
 				},
 
 				error: function() {
-					return SPCO.submit_reg_form_server_error();
+					SPCO.submit_reg_form_server_error();
 				}
 
 			});
+
 		},
 
 
