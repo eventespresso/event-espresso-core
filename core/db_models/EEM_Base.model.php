@@ -795,7 +795,8 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * This returns the date formats set for the given field name.
+	 * This returns the date formats set for the given field name and also ensures that
+	 * $this->_timezone property is set correctly.
 	 *
 	 * @since 4.6.x
 	 * @param string $field_name The name of the field the formats are being retrieved for.
@@ -883,6 +884,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return DateTime
 	 */
 	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+
+		//just using this to ensure the timezone is set correctly internally
+		$this->get_formats_for( $field_name );
 
 		//load EEH_DTT_Helper
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
