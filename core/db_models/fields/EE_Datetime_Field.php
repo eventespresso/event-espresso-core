@@ -298,8 +298,18 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_time( $time_to_set_string, DateTime $current ){
-		//parse incoming string
-		$parsed = date_parse_from_format( $this->_time_format, $time_to_set_string );
+		//if $time_to_set_string is datetime object, then let's use it to set the parse array.  Otherwise parse the string.
+		if ( $time_to_set_string instanceof DateTime ) {
+			$parsed = array(
+				'hour' => $time_to_set_string->format('H'),
+				'minute' => $time_to_set_string->format('i'),
+				'second' => $time_to_set_string->format('s')
+				);
+		} else {
+			//parse incoming string
+			$parsed = date_parse_from_format( $this->_time_format, $time_to_set_string );
+		}
+
 		//make sure $current is in the correct timezone.
 		$current->setTimeZone( $this->_DateTimeZone );
 		return $current->setTime( $parsed['hour'], $parsed['minute'], $parsed['second'] );
@@ -314,12 +324,24 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int updated timestamp
 	 */
 	public function prepare_for_set_with_new_date( $date_to_set_string, DateTime $current ){
-		//parse incoming string
-		$parsed = date_parse_from_format( $this->_date_format, $date_to_set_string );
+		//if $time_to_set_string is datetime object, then let's use it to set the parse array.  Otherwise parse the string.
+		if ( $date_to_set_string instanceof DateTime ) {
+			$parsed = array(
+				'year' => $date_to_set_string->format('Y'),
+				'month' => $date_to_set_string->format('m'),
+				'day' => $date_to_set_string->format('d')
+				);
+		} else {
+			//parse incoming string
+			$parsed = date_parse_from_format( $this->_date_format, $date_to_set_string );
+		}
+
 		//make sure $current is in the correct timezone
 		$current->setTimeZone( $this->_DateTimeZone );
 		return $current->setDate( $parsed['year'], $parsed['month'], $parsed['day'] );
 	}
+
+
 
 
 
@@ -477,8 +499,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * EE passes around DateTime objects because they are MUCH easier to manipulate and deal
 	 * with.
 	 *
-	 * @param int|string $date_string This should be the incoming date string.  It's assumed to be in
-	 *                                		      the format that is set on the date_field!
+	 * @param int|string|DateTime $date_string This should be the incoming date string.  It's assumed to be in
+	 *                                		       		the format that is set on the date_field (or DateTime object)!
 	 *
 	 * @return DateTime
 	 */
@@ -487,11 +509,19 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( $this->_nullable && empty( $date_string ) ) {
 			return null;
 		}
+
+		// if incoming date
+		if ( $date_string instanceof DateTime ) {
+			$date_string->setTimeZone( $this->_DateTimeZone );
+			return $date_string;
+		}
+
 		// if empty date_string and made it here.
 		// Return a datetime object for now in the given timezone.
 		if ( empty( $date_string ) ) {
 			return new DateTime( "now", $this->_DateTimeZone );
 		}
+
 		// if $date_string is matches something that looks like a Unix timestamp let's just use it.
 		// The pattern we're looking for is if only the characters 0-9 are found and there are only
 		// 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 );
