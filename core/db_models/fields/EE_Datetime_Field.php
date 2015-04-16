@@ -25,6 +25,16 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	const mysql_timestamp_format = 'Y-m-d H:i:s';
 
 	/**
+	 * @type string mysql_date_format
+	 */
+	const mysql_date_format = 'Y-m-d';
+
+	/**
+	 * @type string mysql_time_format
+	 */
+	const mysql_time_format = 'H:i:s';
+
+	/**
 	 * The following properties hold the default formats for date and time.
 	 * Defaults are set via the constructor and can be overridden on class instantiation.
 	 * However they can also be overridden later by the set_format() method
