@@ -127,6 +127,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Answer'=>new EE_Has_Many_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation()
 		);
+		$this->_model_chain_to_wp_user = 'Event';
 
 		parent::__construct( $timezone );
 	}
