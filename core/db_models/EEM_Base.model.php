@@ -257,13 +257,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_entity_map;
 
-	/**
-	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
-	 * table column, and one for just the table column). This is primarily only used to speed up querying
-	 *
-	 * @var EE_Model_Field_Base[]
-	 */
-	private $_model_fields_sorted_by_db_col = NULL;
 
 
 
@@ -558,10 +551,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Modifies the query parameters so we only get back model objects
 	 * that "belong" to the current user
-	 * @param array $query_parms @see EEM_Base::get_all()
+	 * @param array $query_params @see EEM_Base::get_all()
 	 * @return array like EEM_Base::get_all
 	 */
-	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
+	function alter_query_params_to_only_include_mine( $query_params = array() ) {
 		try {
 			if( ! empty( $this->_model_chain_to_wp_user ) ) {
 				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
@@ -573,11 +566,11 @@ abstract class EEM_Base extends EE_Base{
 				$model_chain_to_wp_user = '';
 			}
 			$wp_user_field = $model_with_fk_to_wp_users->get_foreign_key_to( 'WP_User' );
-			$query_parms[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
-			return $query_parms;
+			$query_params[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
+			return $query_params;
 		} catch( EE_Error $e ) {
 			//if there's no foreign key to WP_User, then they own all of them?
-			return $query_parms;
+			return $query_params;
 		}
 	}
 
