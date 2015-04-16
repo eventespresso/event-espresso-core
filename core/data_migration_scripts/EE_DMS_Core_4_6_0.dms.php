@@ -408,8 +408,8 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					  REG_session VARCHAR(45) COLLATE utf8_bin NOT NULL,
 					  REG_code VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
 					  REG_url_link VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
-					  REG_count TINYINT(4) DEFAULT '1',
-					  REG_group_size TINYINT(4) DEFAULT '1',
+					  REG_count TINYINT UNSIGNED DEFAULT '1',
+					  REG_group_size TINYINT UNSIGNED DEFAULT '1',
 					  REG_att_is_going TINYINT(1) DEFAULT '0',
 					  REG_deleted TINYINT(1) DEFAULT '0',
 					  PRIMARY KEY  (REG_ID),
@@ -439,7 +439,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_state';
 		$sql = "STA_ID smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  CNT_ISO VARCHAR(2) COLLATE utf8_bin NOT NULL,
-					  STA_abbrev VARCHAR(6) COLLATE utf8_bin NOT NULL,
+					  STA_abbrev VARCHAR(24) COLLATE utf8_bin NOT NULL,
 					  STA_name VARCHAR(100) COLLATE utf8_bin NOT NULL,
 					  STA_active TINYINT(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID)";

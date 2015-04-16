@@ -17,7 +17,7 @@
 					<td>
 						<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
 						<p class="description">
-							<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons. If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key.'); ?>
+							<?php printf( __('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed add-ons. If this is a Development or Test site, %sDO NOT%s enter your Support License Key.', 'event_espresso'), '<strong>', '</strong>' ); ?>
 						</p>
 					</td>
 				</tr>
@@ -210,7 +210,7 @@
 			<tr>
 				<th>
 					<label for="organization_linkedin">
-						<?php _e('Linkedin', 'event_espresso'); ?>
+						<?php _e('LinkedIn', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>

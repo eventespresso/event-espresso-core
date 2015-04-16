@@ -55,6 +55,7 @@ class EEM_Ticket_Template extends EEM_Base {
 		$this->_model_relations = array(
 			'Ticket'=>new EE_Has_Many_Relation()
 		);
+		$this->_model_chain_to_wp_user = 'Ticket';
 
 		parent::__construct( $timezone );
 	}
