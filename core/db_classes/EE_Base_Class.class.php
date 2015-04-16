@@ -321,7 +321,7 @@ abstract class EE_Base_Class{
 	 */
 	public function set_date_format( $format ) {
 		$this->_dt_frmt = $format;
-		//clear cached_properties becuase they won't be relevant now.
+		//clear cached_properties because they won't be relevant now.
 		$this->_clear_cached_properties();
 	}
 
@@ -333,11 +333,11 @@ abstract class EE_Base_Class{
 	 * class internally instead of wp set time format options.
 	 *
 	 * @since 4.6
-	 * @param string $format shoudl be a format recognizable by PHP date() functions.
+	 * @param string $format should be a format recognizable by PHP date() functions.
 	 */
 	public function set_time_format( $format ) {
 		$this->_tm_frmt = $format;
-		//clear cached_properties becuase they won't be relevant now.
+		//clear cached_properties because they won't be relevant now.
 		$this->_clear_cached_properties();
 	}
 
