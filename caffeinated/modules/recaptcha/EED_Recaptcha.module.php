@@ -204,7 +204,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_passed() {
-		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		// logged in means you have already passed a turing test of sorts
 		if ( is_user_logged_in() || EED_Recaptcha::_bypass_recaptcha() ) {
 			return TRUE;
@@ -233,7 +232,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_response( $recaptcha_response = array() ) {
-		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		if ( EED_Recaptcha::_bypass_recaptcha() ) {
 			$recaptcha_response['bypass_recaptcha'] = TRUE;
 			$recaptcha_response['recaptcha_passed'] = TRUE;
@@ -253,7 +251,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * 	@return 	boolean
 	 */
 	private static function _bypass_recaptcha() {
-		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		// an array of key value pairs that must match exactly with the incoming request, in order to bypass recaptcha for the current request ONLY
 		$bypass_request_params_array = apply_filters( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array() );
 		// does $bypass_request_params_array have any values ?
@@ -279,7 +276,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * 	@return 	boolean
 	 */
 	private static function _get_recaptcha_response() {
-		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		EED_Recaptcha::$_recaptcha_response = EE_Registry::instance()->REQ->get( 'g-recaptcha-response', false );
 	}
 
@@ -293,7 +289,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * 	@return 	boolean
 	 */
 	private static function _process_recaptcha_response() {
-		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		// verify library is loaded
 		if ( ! class_exists( 'ReCaptcha' )) {
 			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );
