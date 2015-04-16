@@ -529,7 +529,7 @@ abstract class EE_Base_Class{
 	 * if you intend to use $clear_all = TRUE, or the relation only has 1 object anyways (ie, it's a BelongsToRelation)
 	 * @param bool   $clear_all                            This flags clearing the entire cache relation property if this is HasMany or HABTM.
 	 * @throws EE_Error
-	 * @return EE_Base_Class from which was cleared from the cache, or true if we requested to remove a relation from all
+	 * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a relation from all
 	 */
 	public function clear_cache($relationName, $object_to_remove_or_index_into_array = NULL, $clear_all = FALSE){
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
