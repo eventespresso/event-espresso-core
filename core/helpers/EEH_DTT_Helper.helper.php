@@ -285,12 +285,11 @@ class EEH_DTT_Helper {
 						}
 
 						if ($found) {
-							echo ' ';
 							$message = $tr['isdst'] ?
-											__('Daylight saving time begins on: <code>%s</code>.') :
-											__('Standard time begins  on: <code>%s</code>.');
+											__(' Daylight saving time begins on: %s.' ) :
+											__(' Standard time begins  on: %s.');
 							// Add the difference between the current offset and the new offset to ts to get the correct transition time from date_i18n().
-							printf( $message, date_i18n( $datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])));
+							printf( $message, '<code >' . date_i18n( $datetime_format, $tr['ts'] + ( $tz_offset - $tr['offset'] ) ). '</code >' );
 						} else {
 							_e('This timezone does not observe daylight saving time.');
 						}
@@ -311,7 +310,7 @@ class EEH_DTT_Helper {
 	 * If no unix timestamp is given then time() is used.  If no timezone is given then the set timezone string for
 	 * the site is used.
 	 *
-	 * This is used typically when using a unixtimestamp any core WP functions that expect their specially
+	 * This is used typically when using a Unix timestamp any core WP functions that expect their specially
 	 * computed timestamp (i.e. date_i18n() )
 	 *
 	 * @param int      $unix_timestamp   if 0, then time() will be used.
@@ -346,10 +345,10 @@ class EEH_DTT_Helper {
 		// grab current datetime format
 		$current_format = $obj->get_format();
 		// set new full timestamp format
-		$obj->set_date_format( 'Y-m-d' );
-		$obj->set_time_format( 'H:i:s' );
+		$obj->set_date_format( EE_Datetime_Field::mysql_date_format );
+		$obj->set_time_format( EE_Datetime_Field::mysql_time_format );
 		// set the new date value using a full timestamp format so that no data is lost
-		$obj->set( $datetime_field_name, $DateTime->format( 'Y-m-d H:i:s' ) );
+		$obj->set( $datetime_field_name, $DateTime->format( EE_Datetime_Field::mysql_timestamp_format ) );
 		// reset datetime formats
 		$obj->set_date_format( $current_format[0] );
 		$obj->set_time_format( $current_format[1] );
@@ -459,7 +458,7 @@ class EEH_DTT_Helper {
 	 * @throws \EE_Error
 	 */
 	protected static function _modify_timestamp( $timestamp, $period = 'years', $value = 1, $operand = '+' ) {
-		if ( ! preg_match( '/[0-9]{10,}/', $timestamp ) ) {
+		if ( ! preg_match( EE_Datetime_Field::unix_timestamp_regex, $timestamp ) ) {
 			throw new EE_Error(
 				sprintf(
 					__( 'Expected a Unix timestamp, but instead received %1$s', 'event_espresso' ),
@@ -512,7 +511,7 @@ class EEH_DTT_Helper {
 	public static function calc_date( $DateTime_or_timestamp, $period = 'years', $value = 1, $operand = '+' ) {
 		if ( $DateTime_or_timestamp instanceof DateTime ) {
 			return EEH_DTT_Helper::_modify_datetime_object( $DateTime_or_timestamp, $period, $value, $operand );
-		} else if ( preg_match( '/[0-9]{10,}/', $DateTime_or_timestamp )) {
+		} else if ( preg_match( EE_Datetime_Field::unix_timestamp_regex, $DateTime_or_timestamp )) {
 			return EEH_DTT_Helper::_modify_timestamp( $DateTime_or_timestamp, $period, $value, $operand );
 		} else {
 			//error
@@ -815,7 +814,10 @@ class EEH_DTT_Helper {
 	 */
 	public static function dates_represent_one_24_hour_date( $date_1, $date_2 ) {
 
-		if ( ( ! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime ) || ( $date_1->format( 'H:i:s' ) != '00:00:00' || $date_2->format( 'H:i:s' ) != '00:00:00' ) ) {
+		if (
+			( ! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime ) ||
+			( $date_1->format( EE_Datetime_Field::mysql_time_format ) != '00:00:00' || $date_2->format( EE_Datetime_Field::mysql_time_format ) != '00:00:00' )
+		) {
 			return false;
 		}
 		return $date_2->format('U') - $date_1->format('U') == 86400 ? true : false;
