@@ -42,7 +42,7 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey( 'ee_read_others_events', $restrictions );
 		$this->assertInstanceOf( 'EE_Owner_Only_Where_Conditions', $restrictions['ee_read_others_events' ] );
 		$this->assertArrayHasKey( 'ee_read_private_events', $restrictions );
-		$this->assertInstanceOf( 'EE_Default_Where_Conditions', $restrictions['ee_read_private_events' ] );
+		$this->assertInstanceOf( 'EE_Owner_Only_Where_Conditions_Test', $restrictions['ee_read_private_events' ] );
 		$this->assertEquals( 3, count( $restrictions ) );
 	}
 }

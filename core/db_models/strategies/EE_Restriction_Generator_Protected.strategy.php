@@ -35,12 +35,7 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base{
 				//does the private cap exist (eg 'ee_read_others_private_events')
 				if( self::is_cap( $model, $action . '_private' ) && $model instanceof EEM_CPT_Base ){
 					//if they have basic and others, but not private, restrict them to see theirs and others' that aren't private
-					$restrictions[ self::get_cap_name($model, $action . '_private' ) ] = new EE_Default_Where_Conditions( array(
-							'OR*private' => array(
-								$model->get_foreign_key_to( 'WP_User' )->get_name() => get_current_user_id(),
-								'status' => array( 'IN', array( 'publish', 'private' ) ) )
-							)
-					);
+					$restrictions[ self::get_cap_name($model, $action . '_private' ) ] = new EE_Owner_And_Others_Where_Conditions(array( 'status' => array( 'IN', array( 'publish' ) ) ) );
 				}
 			}
 		}else{
