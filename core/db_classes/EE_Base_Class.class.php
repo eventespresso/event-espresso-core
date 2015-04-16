@@ -748,7 +748,7 @@ abstract class EE_Base_Class{
 	 *                    				     just null is returned (because that indicates that likely
 	 *                    				     this field is nullable).
 	 */
-	public function get_raw_date( $field_name ) {
+	public function get_DateTime_object( $field_name ) {
 		$field_settings = $this->get_model()->field_settings_for( $field_name );
 
 		if ( ! $field_settings instanceof EE_Datetime_Field ) {
