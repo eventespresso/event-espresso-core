@@ -1,7 +1,14 @@
-<?php
-
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
+ * EE_Datetime_Field
+ *
  * Text_Fields is a base class for any fields which are have integer value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
+ *
+ * @package 			Event Espresso
+ * @subpackage 	/core/db_models/fields/EE_Datetime_Field.php
+ * @author 				Darren Ethier
  */
 class EE_Datetime_Field extends EE_Model_Field_Base {
 
