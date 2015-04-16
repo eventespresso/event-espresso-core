@@ -207,7 +207,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 						$actual_datetime = EEH_DTT_Helper::date_time_subtract( $actual_datetime, 'DTT_EVT_start', $period, $interval );
 					}
 					$expected = $expected_datetime->format( 'Y-m-d H:i:s' );
-					$actual = $actual_datetime->get_raw_date( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
+					$actual = $actual_datetime->get_DateTime_object( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
 					// compare
 					if ( $expected !== $actual ) {
 						$this->fail(
