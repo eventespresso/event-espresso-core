@@ -95,6 +95,7 @@ class EEM_Transaction extends EEM_Base {
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
+		$this->_model_chain_to_wp_user = 'Registration.Event';
 		parent::__construct( $timezone );
 
 	}
@@ -138,7 +139,7 @@ class EEM_Transaction extends EEM_Base {
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
 
-		$SQL = 'SELECT post_name as event_name, SUM(TXN_paid) AS revenue';
+		$SQL = 'SELECT post_title as event_name, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
 		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';

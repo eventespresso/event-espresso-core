@@ -30,7 +30,7 @@
 <?php _e('This shows the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Answer Options (for applicable question types)</strong>', 'event_espresso');?></strong>
+<strong><?php _e('Answer Options (for applicable question types)', 'event_espresso');?></strong>
 <strong><?php _e('Values do not allow any HTML, however, descriptions do allow HTML.', 'event_espresso');?></strong>
 </li>
 <li>

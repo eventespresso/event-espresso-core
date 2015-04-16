@@ -161,7 +161,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					'post' => $item->ID()
 				);
 			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
-			$actions['edit'] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>';
+			$actions['edit'] = '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>';
 
 		}
 
@@ -171,7 +171,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					'event_id' => $item->ID()
 				);
 			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
-			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
+			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . esc_attr__('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
 		}
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
@@ -200,20 +200,20 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$view_link = get_permalink($item->ID());
 
-		$actions['view'] = '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>';
+		$actions['view'] = '<a href="' . $view_link . '" title="' . esc_attr__('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>';
 
 		switch ( $item->get( 'status' ) ) {
 			case 'trash' :
 					if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_restore_event', $item->ID() ) ) {
-						$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
+						$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . esc_attr__('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
 					}
 					if ( $item->count_related('Registration') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
-						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 					}
 				break;
 			default :
 					if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
-						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . esc_attr__('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 					}
 		}
 		return $actions;
@@ -232,7 +232,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'EVT_wp_user' => $item->wp_user()
 			);
 		$filter_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, EVENTS_ADMIN_URL );
-		return $gravatar . '  <a href="' . $filter_url . '" title="' . __('Click to filter events by this author.', 'event_espresso') . '">' . $event_author->display_name . '</a>';
+		return $gravatar . '  <a href="' . $filter_url . '" title="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">' . $event_author->display_name . '</a>';
 	}
 
 
@@ -299,7 +299,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$view_link = get_permalink($item->ID());
 
-		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
+		$actionlinks[] = '<a href="' .  $view_link . '" title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ) {
@@ -308,7 +308,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					'post' => $item->ID()
 				);
 			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
-			$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
+			$actionlinks[] = '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
 		}
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
@@ -317,7 +317,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'event_id' => $item->ID()
 			);
 			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
-			$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
+			$actionlinks[] = '<a href="' . $attendees_link . '" title="' . esc_attr__('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 		}
 
 		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );

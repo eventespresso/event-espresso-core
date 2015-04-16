@@ -138,7 +138,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			case '[EVENT_IMAGE]' :
 				$image = $this->_event->feature_image_url(array(600,300) );
 				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
-				return !empty( $image ) ? '<img src="' . $image . '" alt="' . $this->_event->get('EVT_name') . ' Feature Image" />' : '';
+				return !empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '" />' : '';
 				break;
 
 			case '[EVENT_FACEBOOK_URL]' :
