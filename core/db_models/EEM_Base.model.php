@@ -25,6 +25,32 @@
  */
 abstract class EEM_Base extends EE_Base{
 
+		//admin posty
+	//basic -> grants access to mine -> if they don't have it, select none
+	//*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
+	//*_private -> grants full access -> if dont have it, select all mine and others' non-private
+	//*_published -> grants access to published -> if they dont have it, select non-published
+	//*_global/default/system -> grants access to global items -> if they don't have it, select non-global
+	//publish_{thing} -> can change status TO publish; SPECIAL CASE
+
+
+	//frontend posty
+	//by default has access to published
+	//basic -> grants access to mine that arent published, and all published
+	//*_others ->grants access to others that arent private, all mine
+	//*_private -> grants full access
+
+	//frontend non-posty
+	//like admin posty
+
+	//category-y
+	//assign -> grants access to join-table
+	//(delete, edit)
+
+	//payment-method-y
+	//for each registered payment method,
+	//ee_payment_method_{pmttype} -> if they don't have it, select all where they aren't of that type
+
 	/**
 	 * Flag to indicate whether the values provided to EEM_Base have already been prepared
 	 * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
@@ -111,6 +137,48 @@ abstract class EEM_Base extends EE_Base{
 	protected $_ignore_where_strategy = FALSE;
 
 	/**
+	 * String used in caps relating to this model. Eg, if the caps relating to this
+	 * model are 'ee_edit_events', 'ee_read_events', etc, it would be 'events'.
+	 * @var string. If null it hasn't been initialized yet. If false then we
+	 * have indicated capabilities don't apply to this
+	 */
+	protected $_caps_slug = null;
+
+	/**
+	 * 2d array where top-level keys are one of the consts EEM_Base::caps_*,
+	 * and next-level keys are capability names, and each's value is a
+	 * EE_Default_Where_Condition. If the requestor requests to apply caps to the query,
+	 * they specify which context to use (ie, frontend, backend, edit or delete)
+	 * and then each capability in the corresponding sub-array that they're missing
+	 * adds the where conditions onto the query.
+	 * @var array
+	 */
+	protected $_cap_restrictions = array(
+		self::caps_frontend => array(),
+		self::caps_backend => array(),
+		self::caps_edit => array(),
+		self::caps_delete => array() );
+
+	/**
+	 * Array defining which cap restriction generators to use to create default
+	 * cap restrictions to put in EEM_Base::_cap_restrictions.
+	 *
+	 * Array-keys are one of EEM_Base::caps_*, and values are the classname of a child of
+	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
+	 * automatically set this to an empty array.
+	 * @var array
+	 */
+	protected $_cap_restriction_generators = null;
+
+	/**
+	 * consts used to categorize capability restrictions on EEM_Base::_caps_restrictions
+	 */
+	const caps_frontend = 'read_frontend';
+	const caps_backend = 'read_backend';
+	const caps_edit = 'edit';
+	const caps_delete = 'delete';
+
+	/**
 	 * Timezone
 	 * This gets set via the constructor so that we know what timezone incoming strings|timestamps are in when there are EE_Datetime_Fields in use.  This can also be used before a get to set what timezone you want strings coming out of the created objects.  NOT all EEM_Base child classes use this property but any that use a EE_Datetime_Field data type will have access to it.
 	 * @var string
@@ -148,6 +216,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @var boolean
 	 */
 	protected $_has_primary_key_field=null;
+
+	/**
+	 * Whether or not this model is based off a table in WP core only (CPTs should set
+	 * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
+	 * @var boolean
+	 */
+	protected $_wp_core_model = false;
 
 	/**
 	 *	List of valid operators that can be used for querying.
@@ -294,7 +369,9 @@ abstract class EEM_Base extends EE_Base{
 					get_class( $this )
 				)
 			);
-		}		/**
+		}
+
+		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
@@ -359,6 +436,27 @@ abstract class EEM_Base extends EE_Base{
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
 		}
 		$this->_default_where_conditions_strategy->_finalize_construct($this);
+
+		//if the cap slug hasn't been set, and we haven't set it to false on purpose
+		//to indicate to NOT set it, set it to the logical default
+		if( $this->_caps_slug === null ) {
+			$this->_caps_slug = EE_Inflector::pluralize_and_lower( $this->get_this_model_name() );
+		}
+		//the model didn't define any cap restriction generators, make some defaults
+		if( $this->_cap_restriction_generators === null ) {
+			$this->_cap_restriction_generators = array(
+				self::caps_frontend => 'EE_Restriction_Generator_Protected',
+				self::caps_backend => 'EE_Restriction_Generator_Protected',
+				self::caps_edit => 'EE_Restriction_Generator_Protected',
+				self::caps_delete => 'EE_Restriction_Generator_Protected'
+			);
+		}
+		//if there are cap restriction generators, use them to make the default cap restrictions
+		foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
+			$action = in_array( $context, array( self::caps_frontend, self::caps_backend ) ) ? 'read' : $context;
+
+			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
+		}
 		do_action('AHEE__'.get_class($this).'__construct__end');
 	}
 
@@ -420,8 +518,6 @@ abstract class EEM_Base extends EE_Base{
 		static::$_instance = NULL;
 		return self::instance( $timezone );
 	}
-
-
 
 	/**
 	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
@@ -3165,7 +3261,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
-	 * 
+	 *
 	 * Given an array where keys are column (or column alias) names and values,
 	 * returns an array of their corresponding field names and database values
 	 * @param array $cols_n_values
@@ -3607,5 +3703,40 @@ abstract class EEM_Base extends EE_Base{
 			$names[$obj->ID()] = $obj->name();
 		}
 		return $names;
+	}
+
+	/**
+	 * Returns the string used in capabilities relating to this model. If there
+	 * are no capabilities that relate to this model returns false
+	 * @return string|false
+	 */
+	public function cap_slug(){
+		return $this->_caps_slug;
+	}
+
+	/**
+	 * Returns the capability-restrictions array (@see EEM_Base::_cap_restrictions).
+	 *
+	 * If $context is provided (which should be set to one of EEM_Base::caps_* constants)
+	 * only returns the cap restrictions array in that context (ie, the array
+	 * at that key)
+	 * @param string $context
+	 * @return array @see EEM_Base::_cap_restrictions if $context is null (default)
+	 * or a sub-array of EEM_Base::_cap_restrictions if $context is provided
+	 */
+	public function cap_restrictions( $context = null ) {
+		if( $context == null ) {
+			return $this->_cap_restrictions;
+		}else{
+			return $this->_cap_restrictions[ $context ];
+		}
+	}
+
+	/**
+	 * Indicating whether or not this model thinks its a wp core model
+	 * @return boolean
+	 */
+	public function is_wp_core_model(){
+		return $this->_wp_core_model;
 	}
 }
