@@ -369,6 +369,87 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertEquals( $others_private_e, $second_event_i_can_see );
 	}
 
+	/**
+	 * Checks that we can correctly apply backend read caps where there are three
+	 * caps controlling access to the model: the basic cap (eg 'ee_read_events')
+	 * and the 'others' cap (eg 'ee_read_others_events' ) and the
+	 * 'private' cap (eg 'ee_read_private_events')
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_frontend_read__basic_others_and_private(){
+		$others_public_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 45678, 'status' => 'publish' ) );
+		$others_private_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 3456, 'status' => 'private' ) );
+		$others_draft_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 1234, 'status' => 'draft' ) );
+		//although there are 3 events, the current user shouldn't have permission to see any in the admin
+		$this->assertEquals( 3, EEM_Event::instance()->count() );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_frontend ) );
+		$this->assertEquals( 1, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+
+		//ok great. now let's authenticate and create some events for the authenticated user
+		$current_user = $this->_ensure_current_user_set();
+		//ok give them the cap to view their own
+		$current_user->add_cap( 'ee_read_events' );
+		$my_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID, 'status' => 'publish' ) );
+		$my_private_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID, 'status' => 'private' ) );
+		$this->assertEquals( 5, EEM_Event::instance()->count() );
+
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_frontend, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
+		$this->assertEquals( 3, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $third_event_i_can_see );
+
+
+		//ok great. give them the cap to view others
+		$current_user->add_cap( 'ee_read_others_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_frontend, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
+		$this->assertEquals( 4, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fourth_event_i_can_see );
+
+
+		//ok now allowthem to see others, but not others private events
+		$current_user->add_cap( 'ee_read_others_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_frontend, 'order_by' => array( 'EVT_ID' => 'ASC'  ) ) );
+		$this->assertEquals( 4, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fourth_event_i_can_see );
+
+
+		//ok now allowthem to see others private events
+		$current_user->add_cap( 'ee_read_private_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_frontend, 'order_by' => array( 'EVT_ID' => 'ASC'  ) ) );
+		$this->assertEquals( 5, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_private_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $fourth_event_i_can_see );
+		$fifth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fifth_event_i_can_see );
+
+	}
+
 
 	/**
 	 * Makes sure the current user global is set and returns whoever that is

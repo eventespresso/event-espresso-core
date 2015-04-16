@@ -165,10 +165,10 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * Array-keys are one of EEM_Base::caps_*, and values are the classname of a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
-	 * automatically set this to an empty array.
+	 * automatically set this to false.
 	 * @var array
 	 */
-	protected $_cap_restriction_generators = null;
+	protected $_cap_restriction_generators = array();
 
 	/**
 	 * consts used to categorize capability restrictions on EEM_Base::_caps_restrictions
@@ -455,20 +455,21 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->_caps_slug === null ) {
 			$this->_caps_slug = EE_Inflector::pluralize_and_lower( $this->get_this_model_name() );
 		}
-		//the model didn't define any cap restriction generators, make some defaults
-		if( $this->_cap_restriction_generators === null ) {
-			$this->_cap_restriction_generators = array(
-				self::caps_frontend => 'EE_Restriction_Generator_Protected',
-				self::caps_backend => 'EE_Restriction_Generator_Protected',
-				self::caps_edit => 'EE_Restriction_Generator_Protected',
-				self::caps_delete => 'EE_Restriction_Generator_Protected'
-			);
+		//the model didn't define any cap restriction generators for any not explicitly defined
+		if( $this->_cap_restriction_generators !== false ){
+			foreach( $this->_cap_contexts_to_cap_action_map as $cap_context => $action ){
+				if( ! isset( $this->_cap_restriction_generators[ $cap_context ] ) ) {
+					$this->_cap_restriction_generators[ $cap_context ] = 'EE_Restriction_Generator_Protected';
+				}
+			}
 		}
 		//if there are cap restriction generators, use them to make the default cap restrictions
-		foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
-			$action = in_array( $context, array( self::caps_frontend, self::caps_backend ) ) ? 'read' : $context;
+		if( $this->_cap_restriction_generators !== false ){
+			foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
+				$action = in_array( $context, array( self::caps_frontend, self::caps_backend ) ) ? 'read' : $context;
 
-			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
+				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
+			}
 		}
 		foreach( $this->_cap_restrictions as $context => $cap_restrictions ) {
 			foreach( $cap_restrictions as $where_conditions_obj ) {

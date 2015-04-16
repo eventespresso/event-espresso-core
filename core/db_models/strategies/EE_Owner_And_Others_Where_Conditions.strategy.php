@@ -29,7 +29,8 @@ class EE_Owner_And_Others_Where_Conditions extends EE_Owner_Only_Where_Condition
 	 */
 	function get_default_where_conditions( $model_relation_chain = '' ){
 		$where_conditions = array_replace_recursive(  $this->_get_default_where_conditions(), $this->get_where_conditions_provided() );
-		return $this->add_model_relation_chain_onto_where_conditions( array( 'OR*owner_and_others' => $where_conditions ), $model_relation_chain );
+		//we don't want our OR query param to overwrite others set by other default where condition classes, to keep it consistent that we're usually just ORing
+		return $this->add_model_relation_chain_onto_where_conditions( array( 'OR*owner_or_other' . wp_generate_password( 4, false, false ) => $where_conditions ), $model_relation_chain );
 	}
 
 }
