@@ -579,6 +579,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
+		EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -598,6 +600,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		// extract attendee info from form data and save to model objects
 		$registrations_processed = $this->_process_registrations( $registrations, $valid_data );
+		die();
 		// if first pass thru SPCO, then let's check processed registrations against the total number of tickets in the cart
 		if ( $registrations_processed === FALSE ) {
 			// but return immediately if the previous step exited early due to errors
@@ -729,6 +732,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							}
 						}  // end of foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs )
 					}
+					EEH_Debug_Tools::printr( $this->_attendee_data, '$this->_attendee_data', __FILE__, __LINE__ );
 					// this registration does not require additional attendee information ?
 					if ( $copy_primary && $att_nmbr > 1 && $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 						// just copy the primary registrant
@@ -749,6 +753,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							$this->checkout->primary_attendee_obj = $attendee;
 						}
 					}
+					EEH_Debug_Tools::printr( $attendee, '$attendee', __FILE__, __LINE__ );
 					// add relation to registration, set attendee ID, and cache attendee
 					$this->_associate_attendee_with_registration( $registration, $attendee );
 					if ( ! $registration->attendee() instanceof EE_Attendee ) {
@@ -792,7 +797,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	private function _save_registration_form_input( EE_Registration $registration, $form_input = '', $input_value = '' ) {
-
+		echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		EEH_Debug_Tools::printr( $form_input, '$form_input', __FILE__, __LINE__ );
 		// allow for plugins to hook in and do their own processing of the form input.
 		// For plugins to bypass normal processing here, they just need to return a boolean value.
 		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input', FALSE, $registration, $form_input, $input_value, $this ) ) {
@@ -809,9 +815,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 			case 'state' :
 			case 'STA_ID' :
+				EEH_Debug_Tools::printr( $input_value, '$input_value', __FILE__, __LINE__ );
 				$attendee_property = TRUE;
 				$form_input = 'STA_ID';
-				break;
+				EEH_Debug_Tools::printr( $answer_cache_id, '$answer_cache_id', __FILE__, __LINE__ );
+				EEH_Debug_Tools::printr( $attendee_property, '$attendee_property', __FILE__, __LINE__ );
+				EEH_Debug_Tools::printr( $answer_is_obj, '$answer_is_obj', __FILE__, __LINE__ );
+			break;
 
 			case 'country' :
 			case 'CNT_ISO' :
@@ -820,14 +830,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 
 			default :
-				$attendee_property = EEM_Attendee::instance()->has_field( 'ATT_' . $form_input ) ? TRUE : FALSE;
+				$ATT_input = 'ATT_' . $form_input;
+				EEH_Debug_Tools::printr( $ATT_input, '$ATT_input', __FILE__, __LINE__ );
+				$attendee_property = EEM_Attendee::instance()->has_field( $ATT_input ) ? TRUE : FALSE;
 				$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 		}
-
-//		echo '<br /><br /><b>$answer_cache_id : ' . $answer_cache_id . '</b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
-//		echo '<b>attendee_property: ' . $attendee_property . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
-//		echo '<b>$answer_is_obj : ' . $answer_is_obj . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
-//		echo '<b>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  </b><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span><br />';
 		// if this form input has a corresponding attendee property
 		if ( $attendee_property ) {
 			$this->_attendee_data[ $registration->reg_url_link() ][ $form_input ] = $input_value;
@@ -849,6 +856,420 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		return FALSE;
+		REQUEST
+Array
+(
+	[ step ] => attendee_information
+    [ee_reg_qstn] => Array
+		(
+			[ 619 ] => Array
+			(
+				[ fname ] => Thelonious
+                    [lname] => Monk
+                    [ email ] => tmonk@pyfo . ca
+                    [ address ] => 243 West 63rd Street, Manhattan
+                    [ address2 ] =>
+                    [ city ] => New York City
+                    [ state ] => 37
+                    [ add_new_state ] => 0
+                    [ new_state_country ] => AF
+                    [ new_state_name ] =>
+                    [ new_state_abbrv ] =>
+                    [ country ] => US
+                    [ zip ] => 10019
+                    [ phone ] =>
+                )
+
+        )
+
+    [ ee - spco - attendee_information - reg - step - form ] => Array
+		(
+			[ 1 - b0f0f4d3fda2ec57dcd7d34160dbd77f ] => Array
+			(
+				[ additional_attendee_reg_info ] => 1
+                    [primary_registrant] => 1 - b0f0f4d3fda2ec57dcd7d34160dbd77f
+                )
+
+        )
+
+    [ action ] => process_reg_step
+    [ next_step ] => finalize_registration
+    [ e_reg_url_link ] =>
+    [ revisit ] =>
+    [ g - recaptcha - response ] => 03AHJ_VuupEqQFjoBLL_g_l9Gt0uFE5hF4PWXRrUyX66mLT - iGyAl - xpst_zfwZ8i4XQ5aZQDzqlxDEZhYY55LNFItFNgPSWNXCRfCZO - _sOJxU_z406K - G67TyQkGb8N0DqpC48lnOlXl3Rw8Ei64iOHixD8VpCUiuJ35RKjG7JHYFTYJwN_9g9_nsBsd03nwopmfklP5ucISJu7iIGopdmL3TrFKNsZHZZHFq77VWLXjphy_cHvlL7TTY_x_ - efXGyEotc57Tk4qCiaug5N7DFVoAQL - zWCTncbT2jqLc69kloFRVtuaMBO5OhO23 - dOd - ju6rAHkLWLGFaOy_EnZ0nzWuCYJ52ZyA
+    [ process_form_submission ] => true
+)
+
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 582
+
+Valid Data
+Array
+(
+	[ default_hidden_inputs ] => Array
+	(
+		[ action ] => process_reg_step
+            [next_step] => finalize_registration
+            [ e_reg_url_link ] =>
+            [ revisit ] =>
+        )
+
+    [ 1 - b0f0f4d3fda2ec57dcd7d34160dbd77f ] => Array
+		(
+			[ personal - information - 1420055821 ] => Array
+			(
+				[ fname ] => Thelonious
+                    [lname] => Monk
+                    [ email ] => tmonk@pyfo . ca
+                )
+
+            [ additional_attendee_reg_info ] => 1
+            [ address - information - 1420055821 ] => Array
+		(
+			[ address ] => 243 West 63rd Street, Manhattan
+                    [ address2 ] =>
+                    [ city ] => New York City
+                    [ state ] => 37
+                    [ 0 ] => Array
+		(
+			[ add_new_state ] => 0
+                            [new_state_country] => AF
+                            [ new_state_name ] =>
+                            [ new_state_abbrv ] =>
+                        )
+
+                    [ country ] => US
+                    [ zip ] => 10019
+                    [ phone ] =>
+                )
+
+            [ primary_registrant ] => 1 - b0f0f4d3fda2ec57dcd7d34160dbd77f
+        )
+
+)
+
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 583
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'fname' ( length = 5 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_fname' ( length = 9 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'lname' ( length = 5 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_lname' ( length = 9 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'email' ( length = 5 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_email' ( length = 9 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'address' ( length = 7 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_address' ( length = 11 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'address2' ( length = 8 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_address2' ( length = 12 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'city' ( length = 4 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_city' ( length = 8 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'state' ( length = 5 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+Input Value
+
+string '37' ( length = 2 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 818
+
+Answer Cache Id
+
+string 'state-1-b0f0f4d3fda2ec57dcd7d34160dbd77f' ( length = 40 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 821
+
+Attendee Property
+
+boolean true
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 822
+
+Answer Is Obj
+
+boolean true
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 823
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+int 0
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+Input Value
+Array
+(
+	[ add_new_state ] => 0
+    [new_state_country] => AF
+    [ new_state_name ] =>
+    [ new_state_abbrv ] =>
+)
+
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 818
+
+Answer Cache Id
+
+string '0-1-b0f0f4d3fda2ec57dcd7d34160dbd77f' ( length = 36 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 821
+
+Attendee Property
+
+boolean true
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 822
+
+Answer Is Obj
+
+boolean false
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 823
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'country' ( length = 7 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'zip' ( length = 3 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_zip' ( length = 7 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+EE_SPCO_Reg_Step_Attendee_Information::_save_registration_form_input()
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php 800
+
+Form Input
+
+string 'phone' ( length = 5 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 801
+
+ATT Input
+
+string 'ATT_phone' ( length = 9 )
+		/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 834
+
+This-> Attendee Data
+Array
+(
+	[ 1 - b0f0f4d3fda2ec57dcd7d34160dbd77f ] => Array
+	(
+		[ ATT_fname ] => Thelonious
+            [ATT_lname] => Monk
+            [ ATT_email ] => tmonk@pyfo . ca
+            [ ATT_address ] => 243 West 63rd Street, Manhattan
+            [ ATT_address2 ] =>
+            [ ATT_city ] => New York City
+            [ STA_ID ] => Array
+		(
+			[ add_new_state ] => 0
+                    [new_state_country] => AF
+                    [ new_state_name ] =>
+                    [ new_state_abbrv ] =>
+                )
+
+            [ CNT_ISO ] => US
+            [ ATT_zip ] => 10019
+            [ ATT_phone ] =>
+        )
+
+)
+
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 735
+
+Attendee
+EE_Attendee Object
+		(
+			[ _feature_image:protected] => Array
+		()
+
+		[ _props_n_values_provided_in_constructor:protected] => Array
+		(
+			[ ATT_ID ] => 84
+            [ATT_full_name] => Thelonious Monk
+            [ ATT_bio ] => No Biography Provided
+            [ ATT_slug ] => thelonious - monk
+            [ ATT_created ] => 2015 - 04 - 07 19:40:00
+            [ ATT_short_bio ] => No Biography Provided
+            [ ATT_modified ] => 2015 - 04 - 07 19:40:00
+            [ ATT_author ] => 1
+            [ status ] => publish
+            [ comment_status ] => open
+            [ ping_status ] => open
+            [ ATT_fname ] => Thelonious
+            [ ATT_lname ] => Monk
+            [ ATT_address ] => 243 West 63rd Street, Manhattan
+            [ ATT_address2 ] =>
+            [ ATT_city ] => New York City
+            [ STA_ID ] => 1
+            [ CNT_ISO ] => US
+            [ ATT_zip ] => 10019
+            [ ATT_email ] => tmonk@pyfo . ca
+            [ ATT_phone ] =>
+        )
+
+    [ _timezone:protected] => America / Vancouver
+    [ _dt_frmt:protected] => F j, Y
+    [ _tm_frmt:protected] => g:i a
+    [ _cached_properties:protected] => Array
+		()
+
+		[ _model_relations:protected] => Array
+		(
+			[ Registration ] =>
+				[ State ] =>
+            [ Country ] =>
+            [ Event ] =>
+            [ WP_User ] =>
+            [ Term_Taxonomy ] =>
+            [ Extra_Meta ] =>
+            [ Change_Log ] =>
+        )
+
+    [ _fields:protected] => Array
+		(
+			[ ATT_ID ] => 84
+            [ATT_full_name] => Thelonious Monk
+            [ ATT_bio ] => No Biography Provided
+            [ ATT_slug ] => thelonious - monk
+            [ ATT_created ] => 1428435600
+            [ ATT_short_bio ] => No Biography Provided
+            [ ATT_modified ] => 1428435600
+            [ ATT_author ] => 1
+            [ status ] => publish
+            [ comment_status ] => open
+            [ ping_status ] => open
+            [ ATT_fname ] => Thelonious
+            [ ATT_lname ] => Monk
+            [ ATT_address ] => 243 West 63rd Street, Manhattan
+            [ ATT_address2 ] =>
+            [ ATT_city ] => New York City
+            [ STA_ID ] => 1
+            [ CNT_ISO ] => US
+            [ ATT_zip ] => 10019
+            [ ATT_email ] => tmonk@pyfo . ca
+            [ ATT_phone ] =>
+        )
+
+)
+
+/var/www / wp - dev . dev / src / wp - content / plugins / ee4 / modules / single_page_checkout / inc / EE_SPCO_Reg_Step_Attendee_Information .class.php
+line no: 756
+
+DB_NAME: wp_default_dev
+
+
+
+
+
+
+
+
+
 	}
 
 
