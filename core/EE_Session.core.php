@@ -227,7 +227,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 * @retrieve session data
 	 * @access	public
-	 * @return	array
+	 * @return	string
 	 */
 	public function id() {
 		return $this->_sid;
@@ -449,7 +449,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		// make event espresso session data available to plugin
-		$this->_session_data = array_merge( $session_data, $this->_session_data );
+		$this->_session_data = array_merge( $this->_session_data, $session_data );
 		return TRUE;
 
 	}
@@ -603,7 +603,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
+		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_lifespan ) ? TRUE : FALSE;
 
 	}
 
@@ -632,7 +632,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		foreach ( $server_keys as $key ){
 			if ( isset( $_SERVER[ $key ] )) {
 				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] )) as $ip ) {
-					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ) {
+					if ( $ip === '127.0.0.1' || filter_var( $ip, FILTER_VALIDATE_IP ) !== FALSE ) {
 						$visitor_ip = $ip;
 					}
 				}
@@ -821,9 +821,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 public function garbage_collection() {
 		 // only perform during regular requests
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
+			 /** @type WPDB $wpdb */
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
 			 $expiration = time();
+			 $too_far_in_the_the_future = $expiration + ( $this->_lifespan * 2 );
 			 // filter the query limit. Set to 0 to turn off garbage collection
 			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
 			 // non-zero LIMIT means take out the trash
@@ -833,7 +835,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					FROM {$wpdb->options}
 					WHERE option_name
 					LIKE '\_transient\_timeout\_ee\_ssn\_%'
-					AND option_value < {$expiration}
+					AND ( option_value < {$expiration}
+					OR option_value > {$too_far_in_the_the_future} )
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
 				 $expired_sessions = $wpdb->get_col( $SQL );
@@ -860,7 +863,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 			 }
 		 }
-//		 printr( $this, 'EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	 }
 

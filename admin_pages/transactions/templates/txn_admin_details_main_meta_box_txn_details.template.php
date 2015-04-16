@@ -49,7 +49,6 @@
 		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>
 
-
 	<a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text" rel="additional-transaction-session-info">
 		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional transaction session details', 'event_espresso' );?>
 	</a>
@@ -117,12 +116,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -201,12 +200,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -323,7 +322,7 @@
 						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 						<?php foreach ( $payment_methods as $method ) : ?>
 							<?php $selected = $method->slug() == 'cash' ? ' selected="selected"' : ''; ?>
-							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo sanitize_key( $method->admin_desc() ) ? substr( $method->admin_desc(), 0, 128) : $method->admin_name() ; ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
 						<br/>
@@ -381,7 +380,7 @@
 						<?php echo $status_change_select; ?>
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 
@@ -390,7 +389,7 @@
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('By default a payment message %sis%s sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 					<div class="clear"></div>
@@ -451,7 +450,7 @@
 						<?php echo $delete_status_change_select; ?>
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
 						<label></label>
 					</div>
 
@@ -490,6 +489,42 @@
 	</div>
 
 	<?php endif; // $grand_raw_total > 0?>
+
+	<?php
+	if ( WP_DEBUG ) {
+		$delivered_messages = get_option( 'EED_Messages__payment', array() );
+		if ( isset( $delivered_messages[ $TXN_ID ] )) {
+			?>
+			<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-email-alt"></span><?php _e( 'Messages Sent to Primary Registrant', 'event_espresso' );?></h4>
+
+			<div class="admin-primary-mbox-tbl-wrap">
+				<table class="admin-primary-mbox-tbl">
+					<thead>
+						<tr>
+							<th class="jst-left"><?php _e( 'Date & Time', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Message Type', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'Payment Status Upon Sending', 'event_espresso' );?></th>
+							<th class="jst-left"><?php _e( 'TXN Status Upon Sending', 'event_espresso' );?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $delivered_messages[ $TXN_ID ] as $timestamp => $delivered_message ) :
+							?>
+							<tr>
+								<td class="jst-left"><?php echo gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['message_type'] ) ? $delivered_message['message_type'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['pay_status'] ) ? $delivered_message['pay_status'] : '';?></td>
+								<td class="jst-left"><?php echo isset( $delivered_message['txn_status'] ) ? $delivered_message['txn_status'] : '';?></td>
+							</tr>
+						<?php endforeach; // $delivered_messages?>
+					</tbody>
+				</table>
+			</div>
+		<?php
+		}
+	}
+	?>
+
 
 </div>
 

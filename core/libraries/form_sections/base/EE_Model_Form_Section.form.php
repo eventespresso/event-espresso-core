@@ -188,6 +188,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					case 'EE_Money_Field':
 						throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 						break;
+					case 'EE_Post_Content_Field':
+						$input_class = 'EE_Text_Area_Input';
+						break;
 					case 'EE_Plain_Text_Field':
 						$input_class = 'EE_Text_Input';
 						break;

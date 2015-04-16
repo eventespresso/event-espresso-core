@@ -448,6 +448,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::delete_all_espresso_tables_and_data();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
+		exit;
 	}
 
 	/**

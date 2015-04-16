@@ -124,11 +124,11 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_VENUES_ADMIN_URL );
 
 		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+			'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
 
 
-		$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+		$actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get('name') . '</a></strong>';
 		$content .= $this->row_actions($actions);
@@ -149,7 +149,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_count( $item ) {
 		$e_args = array(
 			'action' => 'default',
-			'category' => $item->get_first_related('Term')->get('slug')
+			'category' => $item->get_first_related('Term')->ID()
 			);
 		$e_link = EE_Admin_Page::add_query_args_and_nonce( $e_args, EE_VENUES_ADMIN_URL );
 		$content = '<a href="' . $e_link . '">' . $item->get('term_count') . '</a>';

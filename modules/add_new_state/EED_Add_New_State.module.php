@@ -356,7 +356,7 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function save_new_state_to_db ( $props_n_values = array() ) {
-//		printr( $props_n_values, '$props_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $props_n_values, '$props_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$existing_state = EEM_State::instance()->get_all( array( $props_n_values, 'limit' => 1 ));
 		if ( ! empty( $existing_state )) {
 			return array_pop( $existing_state );

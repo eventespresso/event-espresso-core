@@ -147,7 +147,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		$TXN = EEM_Transaction::instance();
 
 		$results = $TXN->get_revenue_per_day_report( $period );
-		//printr( $results, '$registrations_per_day' );
+		//EEH_Debug_Tools::printr( $results, '$registrations_per_day' );
 		$revenue = array();
 		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
 		$xmax = 0;
@@ -206,7 +206,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 		$results = $TXN->get_revenue_per_event_report( $period );
 
-		//printr( $results, '$registrations_per_event' );
+		//EEH_Debug_Tools::printr( $results, '$registrations_per_event' );
 		$revenue = array();
 		$results = (array) $results;
 		foreach ( $results as $result ) {
