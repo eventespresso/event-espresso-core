@@ -976,7 +976,7 @@ abstract class EE_Base_Class{
 	 * sets the time on a datetime property
 	 *
 	 * @access protected
-	 * @param string $time      a valid time string for php datetime functions
+	 * @param string|Datetime $time      a valid time string for php datetime functions (or DateTime object)
 	 * @param string $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
 	 */
 	protected function _set_time_for( $time, $fieldname ) {
@@ -991,7 +991,7 @@ abstract class EE_Base_Class{
 	 * sets the date on a datetime property
 	 *
 	 * @access protected
-	 * @param string $date      a valid date string for php datetime functions
+	 * @param string|DateTime $date      a valid date string for php datetime functions ( or DateTime object)
 	 * @param string $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
 	 */
 	protected function _set_date_for( $date, $fieldname ) {
@@ -1008,7 +1008,7 @@ abstract class EE_Base_Class{
 	 *
 	 * @access protected
 	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
-	 * @param string $datetime_value A valid Date or Time string
+	 * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
 	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {

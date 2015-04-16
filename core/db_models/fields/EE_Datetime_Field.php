@@ -293,7 +293,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	/**
 	 * Only sets the time portion of the datetime.
-	 * @param string $time_to_set_string     like 8am,
+	 * @param string|DateTime $time_to_set_string     like 8am OR a DateTime object.
 	 * @param DateTime    $current current DateTime object for the datetime field
 	 * @return DateTime
 	 */
@@ -319,7 +319,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	/**
 	 * Only sets the date portion of the datetime.
-	 * @param string $date_to_set_string     like Friday, January 8th,
+	 * @param string|DateTime $date_to_set_string     like Friday, January 8th or a DateTime object.
 	 * @param DateTime    $current current DateTime object for the datetime field
 	 * @return DateTime
 	 */
