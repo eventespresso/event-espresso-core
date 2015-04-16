@@ -371,7 +371,7 @@ class EEH_DTT_Helper {
 	 */
 	public static function date_time_add( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date.
-		$DateTime = $obj->get_raw_date( $datetime_field_name );
+		$DateTime = $obj->get_DateTime_object( $datetime_field_name );
 		$DateTime = EEH_DTT_Helper::calc_date( $DateTime, $period, $value );
 		return EEH_DTT_Helper::_set_date_time_field( $obj, $DateTime, $datetime_field_name );
 	}
@@ -390,7 +390,7 @@ class EEH_DTT_Helper {
 	 */
 	public static function date_time_subtract( EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1 ) {
 		//get the raw UTC date
-		$DateTime = $obj->get_raw_date( $datetime_field_name );
+		$DateTime = $obj->get_DateTime_object( $datetime_field_name );
 		$DateTime = EEH_DTT_Helper::calc_date( $DateTime, $period, $value, '-' );
 		return EEH_DTT_Helper::_set_date_time_field( $obj, $DateTime, $datetime_field_name );
 	}
