@@ -220,7 +220,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
 				//echo "duplicated ipn! dont bother updating transaction foo!";
 				$this->log( array(
-					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? ($_SERVER['HTTPS'] ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
+					'url' =>  isset( $_SERVER["HTTP_HOST"],  $_SERVER["REQUEST_URI"] ) ? (is_ssl() ? 'https://' : 'http://' ) . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] : 'unknown',
 					'message' => sprintf( __( 'It appears we have received a duplicate IPN from paypal for payment %d', 'event_espresso' ), $payment->ID()),
 					'payment' => $payment->model_field_array(),
 					'IPN data' => $update_info ),

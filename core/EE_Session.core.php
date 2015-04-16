@@ -835,8 +835,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					FROM {$wpdb->options}
 					WHERE option_name
 					LIKE '\_transient\_timeout\_ee\_ssn\_%'
-					AND option_value < {$expiration}
-					OR option_value > {$too_far_in_the_the_future}
+					AND ( option_value < {$expiration}
+					OR option_value > {$too_far_in_the_the_future} )
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
 				 $expired_sessions = $wpdb->get_col( $SQL );
