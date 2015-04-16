@@ -559,6 +559,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$currentTime->setDate( '2012', '12', '15' );
 		$datetime->set_start_date( $currentTime );
 		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
+		//reset timezone_string back to original
+		update_option( 'timezone_string', $original_timezone );
 	}
 
 }
