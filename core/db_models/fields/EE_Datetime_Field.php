@@ -6,16 +6,56 @@
 class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	/**
-	 * These properties hold the default formats for date and time.  Defaults are set via the constructor and can be overridden on class instantiation.  However they can also be overridden later by the set_format() method (and corresponding set_date_format, set_time_format methods);
-	 * @var
+	 * The pattern we're looking for is if only the characters 0-9 are found and there are only
+	 * 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 )
+	 * @type string unix_timestamp_regex
 	 */
-	protected $_date_format = NULL;
-	protected $_time_format = NULL;
-	protected $_pretty_date_format = NULL;
-	protected $_pretty_time_format = NULL;
-	// timezone objects
+	const unix_timestamp_regex = '/[0-9]{10,}/';
+
+	/**
+	 * @type string mysql_timestamp_format
+	 */
+	const mysql_timestamp_format = 'Y-m-d H:i:s';
+
+	/**
+	 * The following properties hold the default formats for date and time.
+	 * Defaults are set via the constructor and can be overridden on class instantiation.
+	 * However they can also be overridden later by the set_format() method
+	 * (and corresponding set_date_format, set_time_format methods);
+	 */
+	/**
+	 * @type string $_date_format
+	 */
+	protected $_date_format = '';
+
+	/**
+	 * @type string $_time_format
+	 */
+	protected $_time_format = '';
+
+	/**
+	 * @type string $_pretty_date_format
+	 */
+	protected $_pretty_date_format = '';
+
+	/**
+	 * @type string $_pretty_time_format
+	 */
+	protected $_pretty_time_format = '';
+
+	/**
+	 * @type DateTimeZone $_DateTimeZone
+	 */
 	protected $_DateTimeZone = NULL;
+
+	/**
+	 * @type DateTimeZone $_UTC_DateTimeZone
+	 */
 	protected $_UTC_DateTimeZone = NULL;
+
+	/**
+	 * @type DateTimeZone $_blog_DateTimeZone
+	 */
 	protected $_blog_DateTimeZone = NULL;
 
 
@@ -431,7 +471,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		if ( $datetime_value instanceof DateTime ) {
-			return $datetime_value->setTimeZone( $this->get_UTC_DateTimeZone() )->format( 'Y-m-d H:i:s' );
+			return $datetime_value->setTimeZone( $this->get_UTC_DateTimeZone() )->format( EE_Datetime_Field::mysql_timestamp_format );
 		}
 
 		// if $datetime_value is empty, and ! $this->_nullable, use current_time() but set the GMT flag to true
@@ -454,7 +494,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			return null;
 		}
 		// datetime strings from the db should ALWAYS be in UTC+0, so use UTC_DateTimeZone when creating
-		$DateTime = empty( $datetime_string ) ? new DateTime( 'now', $this->get_UTC_DateTimeZone() ) : DateTime::createFromFormat( 'Y-m-d H:i:s', $datetime_string, $this->get_UTC_DateTimeZone() );
+		$DateTime = empty( $datetime_string ) ? new DateTime( 'now', $this->get_UTC_DateTimeZone() ) : DateTime::createFromFormat( EE_Datetime_Field::mysql_timestamp_format, $datetime_string, $this->get_UTC_DateTimeZone() );
 
 		if ( ! $DateTime instanceof DateTime ) {
 			//if still no datetime object, then let's just use now
@@ -523,9 +563,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		// if $date_string is matches something that looks like a Unix timestamp let's just use it.
-		// The pattern we're looking for is if only the characters 0-9 are found and there are only
-		// 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 );
-		if ( preg_match( '/[0-9]{10,}/', $date_string ) ) {
+		if ( preg_match( EE_Datetime_Field::unix_timestamp_regex, $date_string ) ) {
 			try {
 				/**
 				 * This is operating under the assumption that the incoming Unix timestamp is
@@ -560,7 +598,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return mixed
 	 */
 	public function get_timezone_offset( DateTimeZone $DateTimeZone, $time = null ) {
-		$time = preg_match( '/[0-9]{10,}/', $time ) ? $time : time();
+		$time = preg_match( EE_Datetime_Field::unix_timestamp_regex, $time ) ? $time : time();
 		$transitions = $DateTimeZone->getTransitions( $time );
 		return $transitions[0]['offset'];
 	}
