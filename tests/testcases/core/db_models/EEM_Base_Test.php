@@ -279,6 +279,49 @@ class EEM_Base_Test extends EE_UnitTestCase{
 				EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
 	}
 
+	/**
+	 * Checks that we can correctly apply backend read caps where there is only
+	 * one cap controlling access to the model
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_backend_read__basic(){
+		$this->assertEquals( 0, EEM_Transaction::instance()->count() );
+		$this->new_typical_transaction();
+		$current_user = $this->_ensure_current_user_set();
+		//let's test first on transactions, which just have a single cap controlling access
+		//which the current user doesn't have so nothing should be found
+		$this->assertEquals( 0, EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_backend ) ) );
+		//now give the user permission to access transactions and make sure he can
+		$current_user->add_cap( 'ee_read_transactions' );
+		$this->assertEquals( EEM_Transaction::instance()->count(), EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_backend ) ) );
+	}
+
+	/**
+	 * Checks that we can correctly apply backend read caps where there are two
+	 * caps controlling access to the model: the basic cap (eg 'ee_read_registrations')
+	 * and the 'others' cap (eg 'ee_read_others_registrations' )
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_backend_read__basic_and_others(){
+		//@todo
+		);
+		$this->assertEquals( EEM_Transaction::instance()->count(), EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_backend ) ) );
+	}
+
+
+	/**
+	 * Makes sure the current user global is set and returns whoever that is
+	 * @global WP_User $current_user
+	 * @return WP_User
+	 */
+	protected function _ensure_current_user_set() {
+		global $current_user;
+		if( ! $current_user instanceof WP_User ) {
+			$current_user = $this->factory->user->create_and_get();
+		}
+		return $current_user;
+	}
+
 }
 
 // End of file EEM_Base_Test.php

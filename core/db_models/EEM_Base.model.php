@@ -179,6 +179,19 @@ abstract class EEM_Base extends EE_Base{
 	const caps_delete = 'delete';
 
 	/**
+	 * Keys are all the cap contexsts (ie consts EEM_Base::_caps_*) and values are their 'action'
+	 * as how they'd be used in capability names. Eg EEM_Base::caps_frontend ('read_frontend')
+	 * maps to 'read' because when looking for revelevant permissions we're going to use
+	 * 'read' in teh capabilities names like 'ee_read_events' etc.
+	 * @var array
+	 */
+	protected $_cap_contexts_to_cap_action_map = array(
+		self::caps_frontend => 'read',
+		self::caps_backend => 'read',
+		self::caps_edit => 'edit',
+		self::caps_delete => 'delete' );
+
+	/**
 	 * Timezone
 	 * This gets set via the constructor so that we know what timezone incoming strings|timestamps are in when there are EE_Datetime_Fields in use.  This can also be used before a get to set what timezone you want strings coming out of the created objects.  NOT all EEM_Base child classes use this property but any that use a EE_Datetime_Field data type will have access to it.
 	 * @var string
@@ -296,7 +309,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions', 'caps');
 
 	/**
 	 * All the data types that can be used in $wpdb->prepare statements.
@@ -456,6 +469,11 @@ abstract class EEM_Base extends EE_Base{
 			$action = in_array( $context, array( self::caps_frontend, self::caps_backend ) ) ? 'read' : $context;
 
 			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
+		}
+		foreach( $this->_cap_restrictions as $context => $cap_restrictions ) {
+			foreach( $cap_restrictions as $where_conditions_obj ) {
+				$where_conditions_obj->_finalize_construct( $this );
+			}
 		}
 		do_action('AHEE__'.get_class($this).'__construct__end');
 	}
@@ -643,6 +661,10 @@ abstract class EEM_Base extends EE_Base{
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
+	 *	@var string $caps controls what capability requirements to apply to the query; ie, should we just NOT
+	 *		apply cany capabilities/permissions/restrictions and return everything? Or should we only show the
+	 *		current user items they should be able to view on the frontend, backend, edit, or delete?
+	 *		can be set to 'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
 	 * }
 	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
 	 * Some full examples:
@@ -2025,16 +2047,22 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
+		if( isset( $query_params[0] ) ) {
+			$where_query_params = $query_params[0];
+		}else{
+			$where_query_params = array();
+		}
+		//first check if we should alter the query to account for caps or not
+		//because the caps might require us to do extra joins
+		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
+			$where_query_params = array_replace_recursive( $where_query_params, $this->_get_caps_where_conditions( $query_params[ 'caps' ] ) );
+		}
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
 		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
-		if(array_key_exists(0,$query_params)){
-			$where_query_params = $query_params[0];
-		}else{
-			$where_query_params = array();
-		}
+
 		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
 		foreach($where_query_params as $key => $value){
 			if(is_int($key)){
@@ -2142,6 +2170,31 @@ abstract class EEM_Base extends EE_Base{
 		if ( empty( $main_model_join_sql ) )
 			$query_object->set_main_model_join_sql($this->_construct_internal_join());
 		return $query_object;
+	}
+
+	/**
+	 * Gets the where conditions that should be imposed on the query based on the
+	 * context (eg reading frontend, backend, edit or delete).
+	 * @param string $context one of EEM_Base::caps_* consts
+	 * @return array like EEM_Base::get_all() 's $query_params[0]
+	 */
+	protected function _get_caps_where_conditions( $context = self::caps_frontend ) {
+		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
+			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
+		}
+		$cap_where_conditions = array();
+		if( isset( $this->_cap_restrictions[ $context ] ) ) {
+			$cap_restrictions = $this->_cap_restrictions[ $context ];
+			/**
+			 * @var $cap_restrictions EE_Default_Where_Conditions[]
+			 */
+			foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
+				if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
+					$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
+				}
+			}
+		}
+		return $cap_where_conditions;
 	}
 
 
