@@ -303,9 +303,26 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @group model_caps
 	 */
 	public function test_get_all__caps_backend_read__basic_and_others(){
-		//@todo
-		);
-		$this->assertEquals( EEM_Transaction::instance()->count(), EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_backend ) ) );
+		$current_user = $this->_ensure_current_user_set();
+		$mtg_mine = $this->new_model_obj_with_dependencies( 'Message_Template_Group', array( 'MTP_user_id' => $current_user->ID, 'MTP_is_global' => false ) );
+		$mtg_others = $this->new_model_obj_with_dependencies( 'Message_Template_Group', array( 'MTP_user_id' => $current_user->ID + 1,  'MTP_is_global' => false ) );
+		//current user can't access messages
+		$this->assertEquals( 0, EEM_Message_Template_Group::instance()->count( array( 'caps' => EEM_Base::caps_backend ) ) );
+		//ok now allow them to see their own messages
+		$current_user->add_cap( 'ee_read_messages' );
+		$mtgs_i_can_see_now = EEM_Message_Template_Group::instance()->get_all( array( 'caps' => EEM_Base::caps_backend ) );
+		$this->assertEquals( 1, count( $mtgs_i_can_see_now ) );
+		$first_mtg_i_can_see_now = reset( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_mine, $first_mtg_i_can_see_now );
+
+		//ok now allowthem to see others non-global messages (tesing global-related-caps should happen on EEM_Message_template_Group_Test)
+		$current_user->add_cap( 'ee_read_others_messages' );
+		$mtgs_i_can_see_now = EEM_Message_Template_Group::instance()->get_all( array( 'caps' => EEM_Base::caps_backend, array( 'MTP_is_global' => false ) ) );
+		$this->assertEquals( 2, count( $mtgs_i_can_see_now ) );
+		$first_mtg_i_can_see_now = reset( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_mine, $first_mtg_i_can_see_now );
+		$last_mtg_i_can_see_now = end( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_others, $last_mtg_i_can_see_now );
 	}
 
 

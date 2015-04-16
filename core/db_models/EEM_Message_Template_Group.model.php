@@ -57,6 +57,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'Event' => new EE_HABTM_Relation('Event_Message_Template'),
 			'WP_User' => new EE_Belongs_To_Relation(),
 			);
+		$this->_caps_slug = 'messages';
 
 		parent::__construct( $timezone );
 	}

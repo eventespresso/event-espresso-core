@@ -57,6 +57,7 @@ class EEM_Message_Template extends EEM_Base {
 			'Message_Template_Group' => new EE_Belongs_To_Relation()
 			);
 		$this->_model_chain_to_wp_user = 'Message_Template_Group';
+		$this->_caps_slug = 'messages';
 		parent::__construct( $timezone );
 	}
 
