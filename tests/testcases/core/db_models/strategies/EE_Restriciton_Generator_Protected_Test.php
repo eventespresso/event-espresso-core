@@ -37,7 +37,6 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase{
 		//currently events have the 'ee_read_events', 'ee_read_others_events', and 'ee_read_others_private_events' caps
 		//if that changes, this will need to be updated
 		$restrictions = EE_Restriction_Generator_Protected::generate_restrictions(  EEM_Event::instance(), 'read' );
-		echo "restrictions:";var_dump($restrictions);
 		$this->assertArrayHasKey( 'ee_read_events', $restrictions );
 		$this->assertInstanceOf( 'EE_Return_None_Where_Conditions', $restrictions['ee_read_events' ] );
 		$this->assertArrayHasKey( 'ee_read_others_events', $restrictions );
