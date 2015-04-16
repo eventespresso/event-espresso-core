@@ -300,7 +300,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 		//set its timezone to match our expected timezone
 		$default_date->set_timezone( 'America/Toronto' );
-		$actual = $default_date->get_raw_date( 'DTT_EVT_start');
+		$actual = $default_date->get_DateTime_object( 'DTT_EVT_start');
 
 		$this->assertInstanceOf( 'DateTime', $actual );
 
