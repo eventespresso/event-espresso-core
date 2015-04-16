@@ -520,14 +520,26 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$currentTime = new DateTime( "now", $dateTimeZone );
 		$futureTime = clone $currentTime;
 		$futureTime->add( new DateInterval( 'P2D' ) );
-
-		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $futureTime->format( 'Y-m-d H:i:s' ), 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+		/** @type EE_Datetime $datetime */
+		$datetime = $this->factory->datetime->create(
+			array(
+				'DTT_EVT_start' 	=> $currentTime->format( 'Y-m-d H:i:s' ),
+				'DTT_EVT_end'   	=> $futureTime->format( 'Y-m-d H:i:s' ),
+				'formats'       		=> array( 'Y-m-d', 'H:i:s' )
+			)
+		);
 
 		$this->assertInstanceOf( 'EE_Datetime', $datetime );
 
 		//create a second datetime for polluting the formats on EE_Datetime_Field.
 		// Note: the purpose of this is to test that when th EE_Datetime_Field gets the new formats from this object, that they are NOT persisting to the original datetime created that has different formats (but utilizes the same EE_Date)
-		$pollution = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'd/m/Y g:i a' ), 'DTT_EVT_end' => $futureTime->format( 'd/m/Y g:i a' ), 'formats' => array( 'd/m/Y', 'g:i a' ) ) );
+		$this->factory->datetime->create(
+			array(
+				'DTT_EVT_start' 	=> $currentTime->format( 'd/m/Y g:i a' ),
+				'DTT_EVT_end' 	=> $futureTime->format( 'd/m/Y g:i a' ),
+				'formats' 				=> array( 'd/m/Y', 'g:i a' )
+			)
+		);
 
 		//test setting the time to 8am using a time string.
 		$datetime->set_start_time( '8:00:00' );
