@@ -344,6 +344,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 *
 	 */
 	function test_set_primary_key_clear_relations() {
+		/** @type EE_Event $event */
 		$event = $this->factory->event->create();
 		$datetime = $this->factory->datetime->create();
 		$event->_add_relation_to( $datetime, 'Datetime' );
@@ -362,6 +363,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$orig_dtts = $evt_from_db->get_many_related('Datetime');
 		$this->assertEquals( 1, count( $orig_dtts ) );
 		foreach ( $orig_dtts as $orig_dtt ) {
+			/** @type EE_Datetime $new_datetime */
 			$new_datetime = clone $orig_dtt;
 			$new_datetime->set('DTT_ID', 0);
 			$new_datetime->set('EVT_ID', $new_event->ID() );
@@ -370,6 +372,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 
 		//k now for the tests. first $new_event should NOT have the original datetime as a relation by default.  When an object's id is set to 0 its relations should be cleared.
 		//get from db
+		/** @type EE_Event $test_cloned_event_from_db */
 		$test_cloned_event_from_db = EEM_Event::instance()->get_one_by_ID( $new_event->ID() );
 		$dtt_relation_on_clone = $test_cloned_event_from_db->first_datetime();
 
@@ -456,7 +459,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertTrue( null === $l2_from_db->get_raw( 'LIN_quantity' ) );
 	}
 	/**
-	 * Tests when we set a field to INIFINITY, it stays that way even after we re-fetch it from the db
+	 * Tests when we set a field to INFINITY, it stays that way even after we re-fetch it from the db
 	 * @group 7358
 	 */
 	public function test_infinite_fields_stay_that_way() {
@@ -479,7 +482,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$currentTime = new DateTime( "now", $dateTimeZone );
 		$futureTime = clone $currentTime;
 		$futureTime->add( new DateInterval( 'P2D' ) );
-
+		/** @type EE_Datetime $datetime */
 		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $currentTime->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $futureTime->format( 'Y-m-d H:i:s' ), 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
 
 		$this->assertInstanceOf( 'EE_Datetime', $datetime );
@@ -490,7 +493,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals( $futureTime->format( 'Y-m-d H:i:s' ), $datetime->get_i18n_datetime( 'DTT_EVT_end' ) );
 
 		$id = $datetime->ID();
-		//test when retreived from the database.
+		//test when retrieved from the database.
 		EEM_Datetime::reset();
 		$dbDatetime = EEM_Datetime::instance()->get_one_by_ID( $id );
 		//set formats to match expected
