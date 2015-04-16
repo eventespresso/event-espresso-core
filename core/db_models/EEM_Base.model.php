@@ -154,8 +154,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @var array
 	 */
 	protected $_cap_restrictions = array(
-		self::caps_frontend => array(),
-		self::caps_backend => array(),
+		self::caps_read => array(),
+		self::caps_read_admin => array(),
 		self::caps_edit => array(),
 		self::caps_delete => array() );
 
@@ -173,21 +173,21 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * consts used to categorize capability restrictions on EEM_Base::_caps_restrictions
 	 */
-	const caps_frontend = 'read_frontend';
-	const caps_backend = 'read_backend';
+	const caps_read = 'read';
+	const caps_read_admin = 'read_admin';
 	const caps_edit = 'edit';
 	const caps_delete = 'delete';
 
 	/**
 	 * Keys are all the cap contexsts (ie consts EEM_Base::_caps_*) and values are their 'action'
-	 * as how they'd be used in capability names. Eg EEM_Base::caps_frontend ('read_frontend')
+	 * as how they'd be used in capability names. Eg EEM_Base::caps_read ('read_frontend')
 	 * maps to 'read' because when looking for revelevant permissions we're going to use
 	 * 'read' in teh capabilities names like 'ee_read_events' etc.
 	 * @var array
 	 */
 	protected $_cap_contexts_to_cap_action_map = array(
-		self::caps_frontend => 'read',
-		self::caps_backend => 'read',
+		self::caps_read => 'read',
+		self::caps_read_admin => 'read',
 		self::caps_edit => 'edit',
 		self::caps_delete => 'delete' );
 
@@ -466,7 +466,7 @@ abstract class EEM_Base extends EE_Base{
 		//if there are cap restriction generators, use them to make the default cap restrictions
 		if( $this->_cap_restriction_generators !== false ){
 			foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
-				$action = in_array( $context, array( self::caps_frontend, self::caps_backend ) ) ? 'read' : $context;
+				$action = in_array( $context, array( self::caps_read, self::caps_read_admin ) ) ? 'read' : $context;
 
 				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
 			}
@@ -2179,7 +2179,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $context one of EEM_Base::caps_* consts
 	 * @return array like EEM_Base::get_all() 's $query_params[0]
 	 */
-	protected function _get_caps_where_conditions( $context = self::caps_frontend ) {
+	protected function _get_caps_where_conditions( $context = self::caps_read ) {
 		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
 			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
 		}
