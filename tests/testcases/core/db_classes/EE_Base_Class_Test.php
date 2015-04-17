@@ -280,7 +280,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($r,$r_removed);
 		$this->assertArrayContains($r2,$t->get_all_from_cache('Registration'));
 		$this->assertArrayDoesNotContain($r, $t->get_all_from_cache('Registration'));
-		//now check if we clear the cache for an item that isn't in the cahce, it returns null
+		//now check if we clear the cache for an item that isn't in the cache, it returns null
 		$r3 = EE_Registration::new_instance(array('REG_code'=>'mystery monkey'));
 		$r_null = $t->clear_cache('Registration', $r3);
 		$this->assertNull($r_null);
@@ -346,6 +346,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	function test_set_primary_key_clear_relations() {
 		/** @type EE_Event $event */
 		$event = $this->factory->event->create();
+		/** @type EE_Datetime $datetime */
 		$datetime = $this->factory->datetime->create();
 		$event->_add_relation_to( $datetime, 'Datetime' );
 		$event->save();
@@ -360,16 +361,17 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$new_event->save();
 
 		//now let's set the a clone of the dtt relation manually to the new event by cloning the dtt (which should work)
-		$orig_dtts = $evt_from_db->get_many_related('Datetime');
-		$this->assertEquals( 1, count( $orig_dtts ) );
-		foreach ( $orig_dtts as $orig_dtt ) {
-			/** @type EE_Datetime $new_datetime */
+		$orig_datetimes = $evt_from_db->get_many_related('Datetime');
+		$this->assertEquals( 1, count( $orig_datetimes ) );
+		/** @type EE_Datetime $new_datetime */
+		$new_datetime = null;
+		foreach ( $orig_datetimes as $orig_dtt ) {
 			$new_datetime = clone $orig_dtt;
 			$new_datetime->set('DTT_ID', 0);
 			$new_datetime->set('EVT_ID', $new_event->ID() );
 			$new_datetime->save();
 		}
-
+		$this->assertInstanceOf( 'EE_Datetime', $new_datetime );
 		//k now for the tests. first $new_event should NOT have the original datetime as a relation by default.  When an object's id is set to 0 its relations should be cleared.
 		//get from db
 		/** @type EE_Event $test_cloned_event_from_db */
@@ -380,6 +382,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals( $new_datetime->ID(), $dtt_relation_on_clone->ID() );
 
 		//test that the original event still has its relation to original EE_Datetime
+		/** @type EE_Event $orig_evt */
 		$orig_evt = EEM_Event::instance()->get_one_by_ID( $evt_from_db->ID() );
 		$dtt_relation_on_orig = $orig_evt->first_datetime();
 		$this->assertInstanceOf( 'EE_Datetime', $dtt_relation_on_orig );
@@ -463,11 +466,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 * @group 7358
 	 */
 	public function test_infinite_fields_stay_that_way() {
-		$dtt = $this->new_model_obj_with_dependencies( 'Datetime' );
-		$dtt->set_reg_limit( INF );
-		$dtt->save();
-		$dtt_from_db = EEM_Datetime::reset()->get_one_by_ID( $dtt->ID() );
-		$this->assertEquals( $dtt->reg_limit(), $dtt_from_db->reg_limit() );
+		/** @type EE_Datetime $datetime */
+		$datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
+		$datetime->set_reg_limit( INF );
+		$datetime->save();
+		/** @type EE_Datetime $datetime_from_db */
+		$datetime_from_db = EEM_Datetime::reset()->get_one_by_ID( $datetime->ID() );
+		$this->assertEquals( $datetime->reg_limit(), $datetime_from_db->reg_limit() );
 	}
 
 
