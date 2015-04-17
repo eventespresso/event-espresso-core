@@ -350,6 +350,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
 		// load the reg steps array
 		if ( ! $this->_load_and_instantiate_reg_steps() ) {
+			EED_Single_Page_Checkout::$_initialized = true;
 			return;
 		}
 		// set the current step
@@ -365,6 +366,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// add some style and make it dance
 				$this->checkout->transaction = EE_Transaction::new_instance();
 				$this->add_styles_and_scripts();
+				EED_Single_Page_Checkout::$_initialized = true;
 				return;
 			}
 			// and the registrations for the transaction
@@ -372,6 +374,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// verify that everything has been setup correctly
 		if ( ! $this->_final_verifications() ) {
+			EED_Single_Page_Checkout::$_initialized = true;
 			return;
 		}
 		// lock the transaction
@@ -800,6 +803,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			EE_Error::add_error( __( 'We\'re sorry but the registration process can not proceed because one or more registration steps were not setup correctly. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+		if ( ! empty( $this->checkout->reg_url_link )) {
+			$valid_registrant = $this->checkout->transaction->primary_registration();
+			if ( ! $valid_registrant instanceof EE_Registration ) {
+				EE_Error::add_error( __( 'We\'re sorry but there appears to be an error with the "reg_url_link" or the primary registrant for this transaction. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
+			}
+			$valid_registrant = null;
+			foreach ( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) as $registration ) {
+				if ( $registration instanceof EE_Registration ) {
+					if ( $registration->reg_url_link() == $this->checkout->reg_url_link ) {
+						$valid_registrant = $registration;
+					}
+				}
+			}
+			if ( ! $valid_registrant instanceof EE_Registration ) {
+				EE_Error::add_error( __( 'We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return false;
+			}
+		}
 		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		return true;
 	}
@@ -865,7 +887,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// clear out any old data in case this step is being run again
 					$this->checkout->current_step->set_valid_data( array() );
 					// capture submitted form data
-					$this->checkout->current_step->reg_form->receive_form_submission();
+					$this->checkout->current_step->reg_form->receive_form_submission(
+						apply_filters( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout )
+					);
 					// validate submitted form data
 					if ( ! $this->checkout->current_step->reg_form->is_valid() || ! $this->checkout->continue_reg ) {
 						// thou shall not pass !!!
@@ -1255,8 +1279,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//	)
 			//);
 			wp_safe_redirect( $this->checkout->redirect_url );
-			//wp_redirect( $this->checkout->redirect_url );
-			//header( 'Location: ' . $this->checkout->redirect_url );
 			exit();
 		}
 	}
