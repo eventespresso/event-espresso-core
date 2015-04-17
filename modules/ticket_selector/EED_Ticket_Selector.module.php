@@ -205,8 +205,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		//		d( $event );
+		// reset filter for displaying submit button
+		remove_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
+		// poke and prod incoming event till it tells us what it is
 		if ( $event instanceof EE_Event ) {
 			self::$_event = $event;
 			$event_post = $event->ID();
