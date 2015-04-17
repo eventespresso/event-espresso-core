@@ -35,6 +35,8 @@ class EE_State_Select_Input extends EE_Select_Input{
 			// get possibly cached list of states
 			$states = EEM_State::instance()->get_all_active_states();
 			if ( ! empty( $states )) {
+				//set the default
+				$state_options[''][''] = '';
 				foreach( $states as $state ){
 					if ( $state instanceof EE_State ) {
 						$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();

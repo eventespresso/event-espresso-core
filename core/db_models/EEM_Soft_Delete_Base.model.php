@@ -152,6 +152,15 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param array $query_params
 	 * @return array
 	 */
+	public function alter_query_params_so_deleted_and_undeleted_items_included($query_params){
+		return $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
+	}
+
+	/**
+	 * Alters the query params so each item's deleted status is ignored.
+	 * @param array $query_params
+	 * @return array
+	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
 		$query_params['default_where_conditions'] = 'other_models_only';
 		return $query_params;
