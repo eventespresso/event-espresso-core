@@ -13,7 +13,7 @@
 <?php _e('This is the unique name for a venue category.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Category Description</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Category Description', 'event_espresso'); ?></strong><br />
 <?php _e('The rich text editor can be used to create a description for your venue category.', 'event_espresso'); ?>
 </li>
 </ul>

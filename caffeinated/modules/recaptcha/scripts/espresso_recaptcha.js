@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 		 */
 		set_listener_for_SPCO_process_next_step_button_click : function() {
 			// initialize if the SPCO reg step changes to "payment_options"
-			SPCO.main_container.on( 'process_next_step_button_click', function() {
+			SPCO.main_container.on( 'process_next_step_button_click', function()  {
 				if ( ! EE_RECAPTCHA.submitted ) {
 					SPCO.form_is_valid = false;
 					eei18n.ajax_submit = true;
@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
 			if ( typeof SPCO_response.recaptcha_passed !== 'undefined' ) {
 				// bypass recaptcha ?
 				if ( SPCO_response.bypass_recaptcha ) {
-					//  you're still not a robot
+					//  you're still a robot
 					EE_RECAPTCHA.not_a_robot = false;
 				} else if ( SPCO_response.recaptcha_passed ) {
 					// remove recaptcha
