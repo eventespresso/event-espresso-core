@@ -15,7 +15,6 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group payment_methods
- * @group agg
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
@@ -66,6 +65,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
 		/** @type EE_Payment $payment */
 		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_approved, 'PAY_amount' => 10,  ), FALSE );
+		$reg = $this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'REG_count' => 1 ) );
 		$this->assertEquals( 0, $payment->ID() );
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 
@@ -186,6 +186,8 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' );
 		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made' );
 		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful' );
+		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment' );
+
 
 	}
 	public function tearDown(){
