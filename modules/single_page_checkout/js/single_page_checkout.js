@@ -153,6 +153,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
 				SPCO.set_listener_close_notifications();
+				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
 		},
@@ -374,6 +375,7 @@ jQuery(document).ready( function($) {
 		 * submit registration form - submit form and proceed to next step
 		 */
 		set_listener_for_process_next_reg_step_button : function() {
+			//console.log( JSON.stringify( '**set_listener_for_process_next_reg_step_button**', null, 4 ) );
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
@@ -403,7 +405,7 @@ jQuery(document).ready( function($) {
 		set_listener_for_display_payment_method : function() {
 			SPCO.main_container.on( 'click', '.spco-payment-method', function() {
 				//SPCO.console_log( 'set_listener_for_display_payment_method', $(this ).attr('id'), false );
-				SPCO.display_payment_method( this );
+				SPCO.display_payment_method( $(this).val() );
 			});
 		},
 
@@ -415,7 +417,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-					$(this ).valid();
+					$(this).valid();
 			});
 		},
 
@@ -429,6 +431,19 @@ jQuery(document).ready( function($) {
 			$('body').on( 'click', function() {
 				SPCO.hide_notices();
 			});
+		},
+
+
+
+		/**
+		 * @function auto_submit_gateway_form
+		 */
+		auto_submit_gateway_form : function() {
+			var gateway_form = $( 'form[name="gateway_form"]' );
+			if ( gateway_form.length > 0 ) {
+				$( '#espresso-ajax-loading' ).show();
+				gateway_form.submit();
+			}
 		},
 
 
@@ -647,8 +662,9 @@ jQuery(document).ready( function($) {
 		 * @function enable_submit_buttons
 		 */
 		enable_submit_buttons : function() {
+			//console.log( JSON.stringify( '**enable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).removeAttr('disabled').removeClass( 'disabled spco-disabled-submit-btn' );
+				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn' );
 			});
 		},
 
@@ -658,8 +674,9 @@ jQuery(document).ready( function($) {
 		 * @function disable_submit_buttons
 		 */
 		disable_submit_buttons : function() {
+			//console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
-				$(this).attr('disabled','disabled').addClass('disabled spco-disabled-submit-btn');
+				$(this).prop( 'disabled', true ).addClass('disabled spco-disabled-submit-btn');
 			});
 		},
 
@@ -671,6 +688,7 @@ jQuery(document).ready( function($) {
 		 *  @param {object} next_step_btn
 		 */
 		process_next_step : function( next_step_btn ) {
+			//console.log( JSON.stringify( '**process_next_step**', null, 4 ) );
 			var step = $(next_step_btn).attr('rel');
 			// add trigger point so other JS can join the party
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
@@ -711,6 +729,7 @@ jQuery(document).ready( function($) {
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
+			//console.log( JSON.stringify( '**submit_reg_form**', null, 4 ) );
 			if ( ! eei18n.ajax_submit ) {
 				return;
 			}
@@ -817,18 +836,18 @@ jQuery(document).ready( function($) {
 
 		/**
 		 *  @function
-		 *  @param {object} item
+		 *  @param {string} payment_method
 		 */
-		display_payment_method: function ( item ) {
+		display_payment_method: function ( payment_method ) {
 
 			if ( SPCO.methods_of_payment === null ) {
 				SPCO.methods_of_payment = $( '#methods-of-payment' );
 			}
-			var payment_method = $(item).val();
 			//SPCO.console_log( 'display_payment_method', payment_method, false );
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
+				return;
 			}
 			var form_data = 'step=payment_options';
 			form_data += '&action=spco_billing_form';
@@ -875,6 +894,7 @@ jQuery(document).ready( function($) {
 				}
 
 			});
+
 		},
 
 
