@@ -145,7 +145,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		}else{
 			$obj_for_log = null;
 		}
-		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
+		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $obj_for_log);
 		try{
 			/**
 			 * @var EE_Payment $payment
