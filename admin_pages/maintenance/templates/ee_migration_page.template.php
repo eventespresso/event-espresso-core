@@ -152,7 +152,7 @@ if ( $show_backup_db_text ) { ?>
 						<span class="dashicons dashicons-star-half ee-icon-size-22"></span>
 						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
 					</h3>
-			<?php } elseif ( $most_recent_migration->is_borked() ) {
+			<?php } elseif ( $most_recent_migration->is_broken() ) {
 					//tell the user the migration failed and they should notify EE?>
 					<h3 class="espresso-header">
 						<span class="dashicons dashicons-no ee-icon-size-22"></span>

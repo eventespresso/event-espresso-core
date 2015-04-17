@@ -263,7 +263,7 @@ abstract class EE_Base_Class{
 			//let's unset any cache for this field_name from the $_cached_properties property.
 			$this->_clear_cached_property( $field_name );
 		}else{
-			echo "\r\n\r\nSAAAY WHAT?? $field_name doesnt have a field???";
+			throw new EE_Error( sprintf( __( "A valid EE_Model_Field_Base could not be found for the given field name: %s", "event_espresso" ), $field_name  ) );
 		}
 
 	}
@@ -321,7 +321,7 @@ abstract class EE_Base_Class{
 	 */
 	public function set_date_format( $format ) {
 		$this->_dt_frmt = $format;
-		//clear cached_properties becuase they won't be relevant now.
+		//clear cached_properties because they won't be relevant now.
 		$this->_clear_cached_properties();
 	}
 
@@ -333,11 +333,11 @@ abstract class EE_Base_Class{
 	 * class internally instead of wp set time format options.
 	 *
 	 * @since 4.6
-	 * @param string $format shoudl be a format recognizable by PHP date() functions.
+	 * @param string $format should be a format recognizable by PHP date() functions.
 	 */
 	public function set_time_format( $format ) {
 		$this->_tm_frmt = $format;
-		//clear cached_properties becuase they won't be relevant now.
+		//clear cached_properties because they won't be relevant now.
 		$this->_clear_cached_properties();
 	}
 
@@ -529,7 +529,7 @@ abstract class EE_Base_Class{
 	 * if you intend to use $clear_all = TRUE, or the relation only has 1 object anyways (ie, it's a BelongsToRelation)
 	 * @param bool   $clear_all                            This flags clearing the entire cache relation property if this is HasMany or HABTM.
 	 * @throws EE_Error
-	 * @return EE_Base_Class from which was cleared from the cache, or true if we requested to remove a relation from all
+	 * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a relation from all
 	 */
 	public function clear_cache($relationName, $object_to_remove_or_index_into_array = NULL, $clear_all = FALSE){
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
@@ -748,7 +748,7 @@ abstract class EE_Base_Class{
 	 *                    				     just null is returned (because that indicates that likely
 	 *                    				     this field is nullable).
 	 */
-	public function get_raw_date( $field_name ) {
+	public function get_DateTime_object( $field_name ) {
 		$field_settings = $this->get_model()->field_settings_for( $field_name );
 
 		if ( ! $field_settings instanceof EE_Datetime_Field ) {
@@ -976,7 +976,7 @@ abstract class EE_Base_Class{
 	 * sets the time on a datetime property
 	 *
 	 * @access protected
-	 * @param string $time      a valid time string for php datetime functions
+	 * @param string|Datetime $time      a valid time string for php datetime functions (or DateTime object)
 	 * @param string $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
 	 */
 	protected function _set_time_for( $time, $fieldname ) {
@@ -991,7 +991,7 @@ abstract class EE_Base_Class{
 	 * sets the date on a datetime property
 	 *
 	 * @access protected
-	 * @param string $date      a valid date string for php datetime functions
+	 * @param string|DateTime $date      a valid date string for php datetime functions ( or DateTime object)
 	 * @param string $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
 	 */
 	protected function _set_date_for( $date, $fieldname ) {
@@ -1008,7 +1008,7 @@ abstract class EE_Base_Class{
 	 *
 	 * @access protected
 	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
-	 * @param string $datetime_value A valid Date or Time string
+	 * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
 	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {

@@ -257,13 +257,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_entity_map;
 
-	/**
-	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
-	 * table column, and one for just the table column). This is primarily only used to speed up querying
-	 *
-	 * @var EE_Model_Field_Base[]
-	 */
-	private $_model_fields_sorted_by_db_col = NULL;
 
 
 
@@ -364,30 +357,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-
-
-	/**
-	 * This sets the _timezone property after model object has been instantiated.
-	 * @param string $timezone valid PHP DateTimeZone timezone string
-	 */
-	public function set_timezone( $timezone ) {
-		if($timezone !== NULL){
-			$this->_timezone = $timezone;
-		}
-
-		//note we need to loop through relations and set the timezone on those objects as well.
-		foreach ( $this->_model_relations as $relation ) {
-			$relation->set_timezone($timezone);
-		}
-
-		//and finally we do the same for any datetime fields
-		foreach ( $this->_fields as $field ) {
-			if ( $field instanceof EE_Datetime_Field ) {
-				$field->set_timezone( $timezone );
-			}
-		}
-	}
-
 	/**
 	 *		This function is a singleton method used to instantiate the Espresso_model object
 	 *
@@ -414,6 +383,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * resets the model and returns it
+	 * @param null | string $timezone
 	 * @return static
 	 */
 	public static function reset(  $timezone = NULL ){
@@ -581,10 +551,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Modifies the query parameters so we only get back model objects
 	 * that "belong" to the current user
-	 * @param array $query_parms @see EEM_Base::get_all()
+	 * @param array $query_params @see EEM_Base::get_all()
 	 * @return array like EEM_Base::get_all
 	 */
-	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
+	function alter_query_params_to_only_include_mine( $query_params = array() ) {
 		try {
 			if( ! empty( $this->_model_chain_to_wp_user ) ) {
 				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
@@ -596,11 +566,11 @@ abstract class EEM_Base extends EE_Base{
 				$model_chain_to_wp_user = '';
 			}
 			$wp_user_field = $model_with_fk_to_wp_users->get_foreign_key_to( 'WP_User' );
-			$query_parms[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
-			return $query_parms;
+			$query_params[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
+			return $query_params;
 		} catch( EE_Error $e ) {
 			//if there's no foreign key to WP_User, then they own all of them?
-			return $query_parms;
+			return $query_params;
 		}
 	}
 
@@ -648,7 +618,7 @@ abstract class EEM_Base extends EE_Base{
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
 	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
-	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		//remember the custom selections, if any
@@ -762,6 +732,28 @@ abstract class EEM_Base extends EE_Base{
 			return null;
 		}else{
 			return array_shift($items);
+		}
+	}
+
+
+
+	/**
+	 * This sets the _timezone property after model object has been instantiated.
+	 * @param null | string $timezone valid PHP DateTimeZone timezone string
+	 */
+	public function set_timezone( $timezone ) {
+		if ( $timezone !== null ) {
+			$this->_timezone = $timezone;
+		}
+		//note we need to loop through relations and set the timezone on those objects as well.
+		foreach ( $this->_model_relations as $relation ) {
+			$relation->set_timezone( $timezone );
+		}
+		//and finally we do the same for any datetime fields
+		foreach ( $this->_fields as $field ) {
+			if ( $field instanceof EE_Datetime_Field ) {
+				$field->set_timezone( $timezone );
+			}
 		}
 	}
 
@@ -1097,6 +1089,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string of SQL
 	 */
 	function _construct_update_sql($fields_n_values){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		$cols_n_values = array();
 		foreach($fields_n_values as $field_name => $value){
@@ -1378,6 +1371,7 @@ abstract class EEM_Base extends EE_Base{
 		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.", "event_espresso")));
 		}
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
@@ -1848,6 +1842,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _prepare_value_for_use_in_db($value, $field){
 		if($field && $field instanceof EE_Model_Field_Base){
 			switch( $this->_values_already_prepared_by_model_object ){
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case self::not_prepared_by_model_object:
 					$value = $field->prepare_for_set($value);
 					//purposefully left out "return"
@@ -2709,6 +2704,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return false|null|string
 	 */
 	private function _wpdb_prepare_using_field($value,$field_obj){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if($field_obj instanceof EE_Model_Field_Base){
 			return $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
@@ -3111,12 +3107,13 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	*		cycle though array of attendees and create objects out of each item
-	*
-	* 		@access		private
-	* 		@param		array		$rows of results of $wpdb->get_results($query,ARRAY_A)
-	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
-	*/
+	 *        cycle though array of attendees and create objects out of each item
+	 *
+	 * @access        private
+	 * @param        array $rows of results of $wpdb->get_results($query,ARRAY_A)
+	 * @return \EE_Base_Class[] array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
+	 * @throws \EE_Error
+	 */
 	protected function _create_objects( $rows = array() ) {
 		$array_of_objects=array();
 		if(empty($rows)){
@@ -3182,23 +3179,6 @@ abstract class EEM_Base extends EE_Base{
 	}
 
 
-
-	/**
-	 * _get_cached_acceptable_table_columns
-	 * @return EE_Model_Field_Base[]|null
-	 */
-	private function _get_cached_acceptable_table_columns(){
-		if( $this->_model_fields_sorted_by_db_col === NULL ){
-			foreach( $this->field_settings() as $field_obj ){
-				if( ! $field_obj->is_db_only_field() ){
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_qualified_column() ] = $field_obj;
-//					$this->_model_fields_sorted_by_db_col[ $field->get_table_column() ] = $field_obj;
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_table_column() ] = $field_obj;
-				}
-			}
-		}
-		return $this->_model_fields_sorted_by_db_col;
-	}
 
 	/**
 	 *

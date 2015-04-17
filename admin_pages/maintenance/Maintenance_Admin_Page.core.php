@@ -117,7 +117,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				'func' => '_reset_capabilities',
 				'capability' => 'manage_options',
 				'noheader' => true
-				)
+				),
+			'reattempt_migration' => array(
+				'func' => '_reattempt_migration',
+				'capability' => 'manage_options',
+				'noheader' => true
+			)
 		);
 	}
 	protected function _set_page_config() {
@@ -217,8 +222,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		if($exception_thrown ||
 				(	$most_recent_migration &&
-					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
-					$most_recent_migration->is_borked()
+					$most_recent_migration instanceof EE_Data_Migration_Script_Base &&
+					$most_recent_migration->is_broken()
 				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
 			$this->_template_args[ 'support_url' ] = 'http://eventespresso.com/support/forums/';
@@ -227,7 +232,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
 			if($most_recent_migration &&
-					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+					$most_recent_migration instanceof EE_Data_Migration_Script_Base  &&
 					$most_recent_migration->can_continue()){
 				$show_backup_db_text = false;
 				$show_continue_current_migration_script = true;
@@ -342,6 +347,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'data_reset' ), TRUE );
 	}
 
+	/**
+	 * resets the DMSs so we can attempt to continue migrating after a fatal error
+	 * (only a good idea when someone has somehow tried ot fix whatever caused
+	 * the fatal error in teh first place)
+	 */
+	protected function _reattempt_migration() {
+		EE_Data_Migration_Manager::instance()->reattempt();
+		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'default' ), TRUE );
+	}
 
 
 
@@ -385,7 +399,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}catch(EE_Error $e){
 
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
-			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//now, just so we can display the page correctly, make a error migration script stage object
 			//and also put the error on it. It only persists for the duration of this request
 			$most_recent_migration = new EE_DMS_Unknown_1_0_0();
 			$most_recent_migration->add_error($e->getMessage());
@@ -395,6 +409,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args[ 'most_recent_migration' ] = $most_recent_migration;
 		$this->_template_args['reset_db_action_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_args[ 'reset_db_page_url' ] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'data_reset'), EE_MAINTENANCE_ADMIN_URL);
+		$this->_template_args[ 'reattempt_action_url' ] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'reattempt_migration'), EE_MAINTENANCE_ADMIN_URL );
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_confirm_migration_crash_report_sent.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,$this->_template_args,TRUE);
 		$this->display_admin_page_with_sidebar();

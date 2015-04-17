@@ -314,15 +314,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 					throw $e;
 				}
 				//check that the migration stage didn't mark itself as having a fatal error
-				if($stage->is_borked()){
-					$this->set_borked();
+				if($stage->is_broken()){
+					$this->set_broken();
 					throw new EE_Error($stage->get_last_error());
 				}
 			}
 			//once we've migrated all the number we intended to (possibly from different stages), stop migrating
 			//or if we had a fatal error
 			//or if the current script stopped early- its not done, but it's done all it thinks we should do on this step
-			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_borked() || $stage->has_more_to_do()){
+			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_broken() || $stage->has_more_to_do()){
 				break;
 			}
 		}
@@ -682,7 +682,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$this->_migrating = $migrating;
 	}
 
-
-	
+	/**
+	 * Marks that we think this migration class can continue to migrate
+	 */
+	public function reattempt(){
+		parent::reattempt();
+		//also, we want to reattempt any stages that were marked as borked
+		foreach( $this->stages() as $stage ) {
+			if( $stage->is_broken() ) {
+				$stage->reattempt();
+			}
+		}
+	}
 }
+
+
 // end of file: /core/EE_Data_Migration_Script_Base.core.php

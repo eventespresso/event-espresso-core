@@ -344,6 +344,15 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 
 
 	/**
+	 * @return string
+	 */
+	public function state_abbrev() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : __( 'Unknown', 'event_espresso' );
+	}
+
+
+
+	/**
 	 * Gets the state set to this attendee
 	 * @return EE_State
 	 */
@@ -360,6 +369,22 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 			return $this->state_obj()->name();
 		}else{
 			return __( 'Unknown', 'event_espresso' );
+		}
+	}
+
+
+
+	/**
+	 * either displays the state abbreviation or the state name, as determined
+	 * by the "FHEE__EEI_Address__state__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function state() {
+		if ( apply_filters( 'FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj() ) ) {
+			return $this->state_abbrev();
+		} else {
+			return $this->state_name();
 		}
 	}
 
@@ -392,6 +417,22 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 			return $this->country_obj()->name();
 		}else{
 			return __( 'Unknown', 'event_espresso' );
+		}
+	}
+
+
+
+	/**
+	 * either displays the country ISO2 code or the country name, as determined
+	 * by the "FHEE__EEI_Address__country__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function country() {
+		if ( apply_filters( 'FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj() ) ) {
+			return $this->country_ID();
+		} else {
+			return $this->country_name();
 		}
 	}
 
