@@ -136,6 +136,15 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
 		EE_Processor_Base::set_IPN( true );
+		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
+			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
+		}elseif( $payment_method instanceof EE_Payment ){
+			$obj_for_log = $payment_method;
+		}elseif( $transaction instanceof EE_Transaction ){
+			$obj_for_log = $transaction;
+		}else{
+			$obj_for_log = null;
+		}
 		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
 		try{
 			/**
