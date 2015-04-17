@@ -7,7 +7,6 @@
  * @subpackage 	tests
  */
 
-require_once EE_TESTS_DIR . 'includes/factory.php';
 
 
 /**
@@ -86,7 +85,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		add_filter( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true' );
 		add_filter( 'FHEE__EEH_Activation__drop_index__short_circuit', '__return_true' );
 
-		//factor
+		// load factories
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_TESTS_DIR . 'includes' . DS . 'factories' );
 		$this->factory = new EE_UnitTest_Factory;
 		EE_Registry::reset();
 	}
