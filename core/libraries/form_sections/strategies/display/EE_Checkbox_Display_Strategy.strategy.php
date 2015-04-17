@@ -27,7 +27,18 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		$html = '';
-		$input_raw_value = (array)$this->_input->raw_value();
+		if ( ! is_array( $this->_input->raw_value() )) {
+			$input_raw_value = (array)$this->_input->raw_value();
+			EE_Error::doing_it_wrong(
+				'EE_Checkbox_Display_Strategy::display()',
+				sprintf(
+					__( 'Input values for checkboxes should be an array of values, but the value for input "%1$s" is not. Please verify that the input name is exactly "%2$s"', 'event_espresso'),
+					$this->_input->html_id(),
+					$this->_input->html_name() . '[]'
+				),
+				'4.6.21'
+			);
+		}
 		foreach( $this->_input->options() as $value => $display_text ){
 			$option_value_as_string = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $option_value_as_string ) : $this->_input->html_id();
