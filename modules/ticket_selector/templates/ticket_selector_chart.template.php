@@ -6,16 +6,16 @@
 $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
-	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">
+	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
 		<thead>
 			<tr>
-				<th scope="col" width="">
-					<span class="ee-icon ee-icon-tickets"></span><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?>
+				<th scope="col" class="ee-ticket-selector-ticket-details-th">
+					<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?> <span class="ee-icon ee-icon-tickets"></span>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> </th>
+				<th scope="col" class="ee-ticket-selector-ticket-price-th"><?php _e( 'Price', 'event_espresso' ); ?> </th>
 				<?php } ?>
-				<th scope="col" width="17.5%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
+				<th scope="col" class="ee-ticket-selector-ticket-qty-th"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
