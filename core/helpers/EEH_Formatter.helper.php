@@ -627,7 +627,7 @@ class EE_Generic_Address implements EEI_Address {
 	 * @return \EE_State
 	 */
 	private function _get_state_obj() {
-		return $this->_state_obj !== NULL ? $this->_state_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_state_ID );
+		return $this->_state_obj instanceof EE_State ? $this->_state_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_state_ID );
 	}
 
 
@@ -685,7 +685,7 @@ class EE_Generic_Address implements EEI_Address {
 	 * @return EE_Country
 	 */
 	private function _get_country_obj() {
-		return ! empty( $this->_country_obj ) ? $this->_country_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_country_ID );
+		return $this->_country_obj instanceof EE_Country ? $this->_country_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_country_ID );
 	}
 
 
