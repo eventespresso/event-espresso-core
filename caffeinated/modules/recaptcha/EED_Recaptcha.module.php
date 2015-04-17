@@ -303,7 +303,6 @@ class EED_Recaptcha  extends EED_Module {
 	 * 	@return 	boolean
 	 */
 	private static function _process_recaptcha_response() {
-
 		// verify library is loaded
 		if ( ! class_exists( 'ReCaptcha' )) {
 			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );

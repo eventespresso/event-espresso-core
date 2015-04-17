@@ -949,7 +949,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// clear out any old data in case this step is being run again
 					$this->checkout->current_step->set_valid_data( array() );
 					// capture submitted form data
-					$this->checkout->current_step->reg_form->receive_form_submission();
+					$this->checkout->current_step->reg_form->receive_form_submission(
+						apply_filters( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', EE_Registry::instance()->REQ->params(), $this->checkout )
+					);
 					// validate submitted form data
 					if ( ! $this->checkout->current_step->reg_form->is_valid() || ! $this->checkout->continue_reg ) {
 						// thou shall not pass !!!
