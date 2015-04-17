@@ -286,7 +286,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @throws \EE_Error
 	 */
 	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $IPN = false ){
-		$do_action = FALSE;
+		$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful';
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		// can we freely update the TXN at this moment?
@@ -340,6 +340,12 @@ class EE_Payment_Processor extends EE_Processor_Base {
 					do_action( $do_action, $transaction, $payment );
 				}
 			}
+			// granular hook for others to use.
+			do_action( $do_action, $transaction, $payment );
+
+			//global hook for others to use.
+			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
+
 		}
 	}
 
