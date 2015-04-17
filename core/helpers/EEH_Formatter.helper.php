@@ -114,8 +114,14 @@ class EEH_Formatter {
 	 * @param string $date
 	 * @param string $format - format for the date
 	 * @return string
+	 * @deprecated v4.6.21
 	 */
 	static public function event_date_display( $date, $format = '' ) {
+		EE_Error::doing_it_wrong(
+			'EEH_Formatter::event_date_display()',
+			__( 'This method is deprecated. If you wish to display an Event date in a theme template, then there are better alternatives such as EEH_Event_View::the_event_date() which can be found in \core\helpers\EEH_Event_View.helper.php', 'event_espresso' ),
+			'4.6.21'
+		);
 		if ( empty( $date )) {
 			return '';
 		} else {
