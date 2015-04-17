@@ -19,6 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
+
 	public function test_process_payment__onsite__success(){
 		//setup all the $_REQUEST globals etc because messages require them
 		$this->go_to('http://localhost/');
@@ -166,6 +167,10 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			)
 		));
 		EE_Payment_Method_Manager::instance()->reset();
+		//remove all actions that have been added by messages because we aren't testing them here.
+		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' );
+		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made' );
+		remove_all_actions( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful' );
 
 	}
 	public function tearDown(){
