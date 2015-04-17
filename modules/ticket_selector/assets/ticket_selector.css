@@ -81,7 +81,18 @@
 	color: #EB574D;
 }
 
-
+.ee-ticket-selector-ticket-details-th,
+.ee-ticket-selector-ticket-price-th,
+.ee-ticket-selector-ticket-qty-th {
+}
+.ee-ticket-selector-ticket-price-th {
+	text-align: center;
+	width: 25%;
+}
+.ee-ticket-selector-ticket-qty-th {
+	text-align: center;
+	width: 17.5%;
+}
 
 
 .tkt-slctr-tbl tr.ticket-sales-expired {
@@ -247,7 +258,7 @@
 .tckt-slctr-tkt-details-tbl .ttl-lbl-td {
 	display: table-cell;
 }
-.tckt-slctr-tkt-details-tbl th, 
+.tckt-slctr-tkt-details-tbl th,
 .tckt-slctr-tkt-details-tbl td {
 	display: table-cell;
 	padding: .25em .5em;
@@ -297,6 +308,6 @@
 	}
 	.tckt-slctr-tkt-details-dv .smaller-text {
 		display: inline;
-		font-size: inherit; 
+		font-size: inherit;
 	}
 }
