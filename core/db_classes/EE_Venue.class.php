@@ -151,12 +151,25 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 		return $this->get( 'STA_ID' );
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function state_abbrev() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : __( 'Unknown', 'event_espresso' );
+	}
+
+
+
 	/**
 	 * @return string
 	 */
 	public function state_name() {
 		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  __( 'Unknown', 'event_espresso' );
 	}
+
+
 
 	/**
 	 * Gets the state for this venue
@@ -169,12 +182,30 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 
 
 	/**
+	 * either displays the state abbreviation or the state name, as determined
+	 * by the "FHEE__EEI_Address__state__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function state() {
+		if ( apply_filters( 'FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj() ) ) {
+			return $this->state_abbrev();
+		} else {
+			return $this->state_name();
+		}
+	}
+
+
+
+	/**
 	 * country_ID
 	 * @return string
 	 */
 	function country_ID() {
 		return $this->get( 'CNT_ISO' );
 	}
+
+
 
 	/**
 	 * @return string
@@ -183,6 +214,8 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  __( 'Unknown', 'event_espresso' );
 	}
 
+
+
 	/**
 	 * Gets the country of this venue
 	 * @return EE_Country
@@ -190,6 +223,23 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	function country_obj() {
 		return $this->get_first_related( 'Country' );
 	}
+
+
+
+	/**
+	 * either displays the country ISO2 code or the country name, as determined
+	 * by the "FHEE__EEI_Address__country__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function country() {
+		if ( apply_filters( 'FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj() ) ) {
+			return $this->country_ID();
+		} else {
+			return $this->country_name();
+		}
+	}
+
 
 
 	/**

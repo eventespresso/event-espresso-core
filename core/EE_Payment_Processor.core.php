@@ -338,10 +338,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( $update_txn ) {
 					$this->_post_payment_processing( $transaction, $payment, $IPN );
 				}
-				// and set a hook point for others to use?
-				if ( $do_action ) {
-					do_action( $do_action, $transaction, $payment );
-				}
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
