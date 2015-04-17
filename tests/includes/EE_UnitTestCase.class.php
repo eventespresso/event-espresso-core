@@ -69,6 +69,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
+		EE_Error::reset_notices();
 		EE_Registry::reset();
 	}
 
