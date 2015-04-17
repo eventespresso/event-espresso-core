@@ -245,7 +245,7 @@ class EEH_Venue_View extends EEH_Base {
 	 * @param bool $add_wrapper
 	 * @return string
 	 */
-	public static function venue_address( $type = 'multiline', $VNU_ID = 0, $use_schema = TRUE, $add_wrapper = TRUE ) {
+	public static function venue_address( $type = 'multiline', $VNU_ID = 0, $use_schema = true, $add_wrapper = true ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
@@ -447,9 +447,9 @@ class EEH_Venue_View extends EEH_Base {
 					'id' => $venue->ID(),
 					'address' => $venue->get('VNU_address'),
 					'city' => $venue->get('VNU_city'),
-					'state' => $state ? $state->name() : '',
+					'state' => $state instanceof EE_State ? $state->name() : '',
 					'zip' => $venue->get('VNU_zip'),
-					'country' => $country ? $country->name() : '',
+					'country' => $country instanceof EE_Country ? $country->name() : '',
 					'type' => 'map',
 					'map_w' => 200,
 					'map_h' => 200
