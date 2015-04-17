@@ -54,6 +54,7 @@ abstract class EE_Messages_incoming_data {
 	 * @var string $init_access
 	 */
 	public $init_access;
+	public $last_access;
 
 	/**
 	 * Unix timestamp
@@ -404,7 +405,7 @@ abstract class EE_Messages_incoming_data {
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],
 						'att_objs' => $items['att_objs'],
-						'dtt_objs' => $items['dtt_objs'],
+						'dtt_objs' => isset( $items['dtt_objs'] ) ? $items['dtt_objs'] : array(),
 						'line_items' => $ticket_line_items_for_event
 					);
 

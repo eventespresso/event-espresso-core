@@ -430,7 +430,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			);
 
 		} catch( Exception $e ) {
-			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
+			EE_Error::add_error( $e->getMessage(), $e->getFile(), 'function_added_from_exception', $e->getLine() );
 		}
 	}
 
