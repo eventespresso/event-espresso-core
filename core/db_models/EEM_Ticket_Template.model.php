@@ -56,7 +56,9 @@ class EEM_Ticket_Template extends EEM_Base {
 			'Ticket'=>new EE_Has_Many_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Ticket';
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_caps_slug = 'tickets';
 		parent::__construct( $timezone );
 	}
 } //end EEM_Ticket_Template class

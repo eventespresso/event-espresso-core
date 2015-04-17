@@ -55,6 +55,10 @@ class EEM_Ticket_Price extends EEM_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Price'=>new EE_Belongs_To_Relation()
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		//follow the caps of the ticket
+		$this->_caps_slug = 'tickets';
 		parent::__construct( $timezone );
 
 	}

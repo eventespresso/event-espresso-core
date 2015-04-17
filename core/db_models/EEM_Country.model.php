@@ -73,6 +73,8 @@ class EEM_Country extends EEM_Base {
 			'State'=>new EE_Has_Many_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
+		//only anyone to view, but only those with the default role can do anything
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
 
 		parent::__construct( $timezone );
 	}

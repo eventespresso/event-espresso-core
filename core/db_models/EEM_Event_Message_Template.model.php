@@ -47,6 +47,7 @@ class EEM_Event_Message_Template extends EEM_Base {
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Message_Template_Group'=>new EE_Belongs_To_Relation()
 		);
+		$this->_caps_slug = 'events';
 
 		parent::__construct( $timezone );
 	}

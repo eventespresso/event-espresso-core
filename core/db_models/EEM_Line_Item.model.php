@@ -145,6 +145,7 @@ class EEM_Line_Item extends EEM_Base {
 			'Price'				=>new EE_Belongs_To_Any_Relation(),
 		);
 		$this->_model_chain_to_wp_user = 'Transaction.Registration.Event';
+		$this->_caps_slug = 'transactions';
 		parent::__construct( $timezone );
 	}
 

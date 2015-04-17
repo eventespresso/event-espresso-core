@@ -39,6 +39,7 @@ class EEM_Term extends EEM_Base {
 		$this->_indexes = array(
 			'slug'=>new EE_Unique_Index(array('slug'))
 		);
+		//@todo: account for all these termy models
 
 		parent::__construct( $timezone );
 	}

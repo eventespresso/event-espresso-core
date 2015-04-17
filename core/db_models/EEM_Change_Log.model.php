@@ -103,7 +103,12 @@ class EEM_Change_Log extends EEM_Base{
 				$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 			}
 		}
-
+		//use completely custom caps for this
+		$this->_cap_restriction_generators = false;
+		//caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
+		foreach( $this->_cap_contexts_to_cap_action_map as $cap_context => $action ) {
+			$this->_cap_restrictions[ $cap_context ][ EE_Restriction_Generator_Base::get_default_restrictions_cap() ] = new EE_Return_None_Where_Conditions();
+		}
 		parent::__construct( $timezone );
 	}
 

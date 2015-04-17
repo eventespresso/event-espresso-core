@@ -466,6 +466,12 @@ abstract class EEM_Base extends EE_Base{
 		//if there are cap restriction generators, use them to make the default cap restrictions
 		if( $this->_cap_restriction_generators !== false ){
 			foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
+				if( ! $generator_name ){
+					continue;
+				}
+				if( ! class_exists( $generator_name ) ){
+					throw new EE_Error( sprintf( __( 'There is no EE_Restriction_Generator_Base child named "%s". Please look in %s to see what classes are available', 'event_espresso' ), $generator_name, 'event-espresoso-core/core/db_models/strategies' ) );
+				}
 				$action = in_array( $context, array( self::caps_read, self::caps_read_admin ) ) ? 'read' : $context;
 
 				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );

@@ -47,6 +47,8 @@ class EEM_Currency extends EEM_Base{
 		$this->_model_relations = array(
 			'Payment_Method'=>new EE_HABTM_Relation('Currency_Payment_Method'),
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
 
 		parent::__construct( $timezone );
 	}

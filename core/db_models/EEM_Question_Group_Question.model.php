@@ -52,6 +52,8 @@ class EEM_Question_Group_Question extends EEM_Base {
 			'Question_Group'=>new EE_Belongs_To_Relation(),
 			'Question'=>new EE_Belongs_To_Relation()
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
 		parent::__construct( $timezone );
 	}
 

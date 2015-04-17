@@ -63,7 +63,7 @@ abstract class EE_Restriction_Generator_Base {
 	 * @return string
 	 */
 	public static function get_default_restrictions_cap() {
-		return apply_filters( 'FHEE__EE_Restriction_Generator_Base__default_restrictions_cap', 'administrator' );
+		return apply_filters( 'FHEE__EE_Restriction_Generator_Base__default_restrictions_cap', 'manage_options' );
 	}
 }
 

@@ -113,7 +113,9 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			//for QST_order column
 			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		//@todo: account for system questions
 		parent::__construct( $timezone );
 	}
 

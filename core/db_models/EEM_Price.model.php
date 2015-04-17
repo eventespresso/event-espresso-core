@@ -67,10 +67,12 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Price_Type'=>new EE_Belongs_To_Relation(),
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		//and editable if you have the event caps
+		$this->_caps_slug = 'events';
+		//@todo: account for default prices
 		parent::__construct( $timezone );
-
-		require_once ( EE_CLASSES . 'EE_Price.class.php' );
-
 	}
 
 
