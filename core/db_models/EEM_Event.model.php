@@ -112,7 +112,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Description', 'event_espresso' ), FALSE,'' ),
 				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
-				'EVT_wp_user'=>new EE_Integer_Field( 'post_author', __( 'Wordpress User ID', 'event_espresso'), FALSE, get_current_user_id() ),
+				'EVT_wp_user'=>new EE_WP_User_Field( 'post_author', __( 'Event Creator ID', 'event_espresso'), FALSE),
 				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), FALSE, 0 ),
 				'EVT_order'=>new EE_Integer_Field( 'menu_order', __( 'Event Menu Order', 'event_espresso' ), FALSE, 1 ),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_events'),// EE_Plain_Text_Field( 'post_type', __( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
@@ -145,6 +145,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
 			'Attendee'=>new EE_HABTM_Relation('Registration'),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');

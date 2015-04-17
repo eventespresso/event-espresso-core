@@ -14,7 +14,10 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @since                4.0
  *
  */
-abstract class EE_Data_Migration_Class_Base {
+
+
+
+abstract class EE_Data_Migration_Class_Base{
 	/**
 	 * @var $records_to_migrate int count of all that have been migrated
 	 */
@@ -123,12 +126,23 @@ abstract class EE_Data_Migration_Class_Base {
 	/**
 	 * Adds an error to the array of errors on this class.
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
+	 * @param boolean $force force the error to be added (because otherwise we have a limit). If forcing and errors are already at their limit, we will purposefully forget the first half
 	 */
-	public function add_error($error){
-		//bandaid fix because somehow _errors becomes a string...
-		$this->_errors = (array) $this->_errors;
-		if(count($this->_errors) >= 50){
-			$this->_errors[50] = 'More, but limit reached...';
+	public function add_error($error, $force = FALSE ){
+		if( ! defined( 'EE_DMS_ERROR_LIMIT' ) ){
+			$limit = 50;
+		}else{
+			$limit = EE_DMS_ERROR_LIMIT;
+		}
+		if(count($this->_errors) >= $limit ){
+			if( $force ){
+				//get rid of the first half of the errors and any above the limit
+				$this->_errors = array_slice( $this->_errors, $limit / 2, $limit / 2 );
+				$this->_errors[] = "Limit reached; removed first half of errors to save space";
+				$this->_errors[] = $error;
+			}else{
+				$this->_errors[ $limit ] = 'More, but limit reached...';
+			}
 		}else{
 			$this->_errors[] = $error;
 		}
@@ -138,14 +152,29 @@ abstract class EE_Data_Migration_Class_Base {
 	 * Indicates there was a fatal error and the migration cannot possibly continue
 	 * @return boolean
 	 */
-	public function is_borked(){
+	public function is_broken(){
 		return $this->get_status() == EE_Data_Migration_Manager::status_fatal_error;
+	}
+	/**
+	 * @deprecated since 4.6.12
+	 */
+	public function is_borked(){
+		EE_Error::doing_it_wrong('is_borked', __( 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"', 'event_espresso' ), '4.6.12');
+		return $this->is_broken();
 	}
 	/**
 	 * Sets the status to as having a fatal error
 	 */
-	public function set_borked(){
+	public function set_broken(){
 		$this->_status = EE_Data_Migration_Manager::status_fatal_error;
+	}
+	/**
+	 *
+	 * @deprecated since 4.6.12
+	 */
+	public function set_borked(){
+		EE_Error::doing_it_wrong('is_borked', __( 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"', 'event_espresso' ), '4.6.12');
+		return $this->set_broken();
 	}
 	/**
 	 * Checks if this thing believes it is completed
@@ -166,6 +195,14 @@ abstract class EE_Data_Migration_Class_Base {
 	 */
 	public function set_completed(){
 		$this->_status = EE_Data_Migration_Manager::status_completed;
+	}
+
+	/**
+	 * Marks that we think this migration class can continue to migrate
+	 */
+	public function reattempt(){
+		$this->_status = EE_Data_Migration_Manager::status_continue;
+		$this->add_error( __( 'Reattempt migration', 'event_espresso' ), TRUE );
 	}
 
 	/**
@@ -237,8 +274,5 @@ abstract class EE_Data_Migration_Class_Base {
 		}
 		return json_encode($fields_to_include);
 	}
-
-
-
 }
 // end of file: /core/EE_Data_Migration_Class_Base.core.php

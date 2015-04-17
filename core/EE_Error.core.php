@@ -728,7 +728,7 @@ class EE_Error extends Exception {
 		$error_messages = '';
 		$print_scripts = FALSE;
 
-		// printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// either save notices to the db
 		if ( $save_to_transient ) {

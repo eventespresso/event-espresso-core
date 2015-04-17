@@ -465,7 +465,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transactions_overview_list_table() {
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$event = isset($this->_req_data['EVT_ID']) ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'] ) : NULL;
-		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . __('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
+		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . esc_attr__('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -618,7 +618,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 //		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 
 		// process payment details
-		$this->_template_args['payments'] = $this->_transaction->get_many_related('Payment');
+		$payments = $this->_transaction->get_many_related('Payment');
+		$this->_template_args['payments'] = $payments;
 		if ( empty( $this->_template_args['payments'] )) {
 			$this->_template_args['payments'] = FALSE;
 		}
@@ -642,7 +643,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$reg_steps = '<ul>';
 		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
-//			printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
+//			EEH_Debug_Tools::printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
 			switch ( $reg_step_status ) {
 				case $reg_step_status === true :
 					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
@@ -664,7 +665,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_details']['reg_steps']['label'] = __( 'Registration Step Progress', 'event_espresso' );
 
 
-		$this->_get_payment_methods();
+		$this->_get_payment_methods( $payments );
 		$this->_get_payment_status_array();
 		$this->_get_reg_status_selection(); //sets up the template args for the reg status array for the transaction.
 
@@ -703,11 +704,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * 	_get_payment_methods
-	*	@access private
-	*	@return void
-	*/
-	private function _get_payment_methods() {
-		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all_active(EEM_Payment_Method::scope_admin);
+	 * Gets all the payment methods available generally, or the ones that are already
+	 * selected on these payments (in case their payment methods are no longer active).
+	 * Has the side-effect of updating the template args' payment_methods item
+	 *	@access private
+	 * @param EE_Payment[] to show on this page
+	 *	@return void
+	 */
+	private function _get_payment_methods( $payments = array() ) {
+		$payment_methods_of_payments = array();
+		foreach( $payments as $payment ){
+			if( $payment instanceof EE_Payment ){
+				$payment_methods_of_payments[] = $payment->get( 'PMD_ID' );
+			}
+		}
+		if( $payment_methods_of_payments ){
+			$query_args = array( array( 'OR*payment_method_for_payment' => array(
+					'PMD_ID' => array( 'IN', $payment_methods_of_payments ),
+					'PMD_scope' => array( 'LIKE', '%' . EEM_Payment_Method::scope_admin . '%' ) ) ) );
+		}else{
+			$query_args = array( array( 'PMD_scope' => array( 'LIKE', '%' . EEM_Payment_Method::scope_admin . '%' ) ) );
+		}
+		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all( $query_args );
 	}
 
 
