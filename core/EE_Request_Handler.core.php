@@ -152,6 +152,7 @@ final class EE_Request_Handler {
 		if ( ! $post_name && isset( $wp->request ) && ! empty( $wp->request )) {
 			$possible_post_name = basename( $wp->request );
 			if ( ! is_numeric( $possible_post_name )) {
+				/** @type WPDB $wpdb */
 				global $wpdb;
 				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
@@ -161,6 +162,7 @@ final class EE_Request_Handler {
 			}
 		}
 		if ( ! $post_name && $this->get( 'post_id' )) {
+			/** @type WPDB $wpdb */
 			global $wpdb;
 			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
@@ -251,6 +253,16 @@ final class EE_Request_Handler {
 	 */
 	public function is_espresso_page() {
 		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : FALSE;
+	}
+
+
+
+	/**
+	 * returns contents of $_REQUEST
+	 * @return array
+	 */
+	public function params() {
+		return $this->_params;
 	}
 
 
