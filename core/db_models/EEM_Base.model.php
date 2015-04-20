@@ -710,7 +710,22 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array like EEM_Base::get_all
 	 */
 	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
-		try {
+		$wp_user_field_name = $this->wp_user_field_name();
+		if( $wp_user_field_name ){
+			$query_parms[0][ $wp_user_field_name ] = get_current_user_id();
+		}
+		return $query_parms;
+	}
+
+	/**
+	 * Returns the name of the field's name that points to the WP_User table
+	 *  on this model (or follows the _model_chain_to_wp_user and uses that model's
+	 * foreign key to the WP_User table)
+	 * @return string|boolean string on success, boolean false when there is no
+	 * foreign key to the WP_User table
+	 */
+	function wp_user_field_name() {
+		try{
 			if( ! empty( $this->_model_chain_to_wp_user ) ) {
 				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
 				$last_model_name = end( $models_to_follow_to_wp_users );
@@ -721,11 +736,9 @@ abstract class EEM_Base extends EE_Base{
 				$model_chain_to_wp_user = '';
 			}
 			$wp_user_field = $model_with_fk_to_wp_users->get_foreign_key_to( 'WP_User' );
-			$query_parms[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
-			return $query_parms;
-		} catch( EE_Error $e ) {
-			//if there's no foreign key to WP_User, then they own all of them?
-			return $query_parms;
+			return $model_chain_to_wp_user . $wp_user_field->get_name();
+		}catch( EE_Error $e ) {
+			return false;
 		}
 	}
 
