@@ -52,7 +52,7 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ),
 				'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
-				'PMD_wp_user' => new EE_Integer_Field( 'PMD_wp_user', __( "User ID", 'event_espresso' ), FALSE, 1 ),
+				'PMD_wp_user' => new EE_WP_User_Field( 'PMD_wp_user', __( "Payment Method Creator ID", 'event_espresso' ), FALSE ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
 				'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
 		) );
@@ -60,7 +60,9 @@ class EEM_Payment_Method extends EEM_Base {
  //			'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
 			'Payment' => new EE_Has_Many_Relation(),
 			'Currency' => new EE_HABTM_Relation( 'Currency_Payment_Method' ),
-			'Transaction' => new EE_Has_Many_Relation(),);
+			'Transaction' => new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
+		);
 		parent::__construct( $timezone );
 	}
 
@@ -236,12 +238,12 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach ( $payment_methods as $payment_method ) {
 			try {
 				$current_button_url = $payment_method->button_url();
-				$buttons_urls_to_try = array(
+				$buttons_urls_to_try = apply_filters( 'FHEE__EEM_Payment_Method__verify_button_urls__button_urls_to_try', array(
 					'current_ssl' => str_replace( "http://", "https://", $current_button_url ),
 					'current' => str_replace( "https://", "http://", $current_button_url ),
 					'default_ssl' => str_replace( "http://", "https://", $payment_method->type_obj()->default_button_url() ),
 					'default' => str_replace( "https://", "http://", $payment_method->type_obj()->default_button_url() ),
-				);
+				) );
 				foreach( $buttons_urls_to_try as $button_url_to_try ) {
 					if( $button_url_to_try &&
 						EEH_URL::remote_file_exists( $button_url_to_try )	) {
