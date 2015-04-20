@@ -12,19 +12,27 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author				Mike Nelson
  *
  * @group default_where_conditions
+ * @group core/db_models
  */
 class EE_Default_Where_Conditions_Test extends EE_UnitTestCase{
 	function test_add_model_relation_chain_onto_where_conditions(){
+		global $current_user;
+		$current_user = $this->factory->user->create_and_get();
 		$value1 = 12;
 		$value2 = 23;
 		$value3= array( 1,2,3);
 		$value4 = 'eee';
-		$default_where_conditions = new EE_Default_Where_Conditions( array( 'OR*' => array( 'EVT_ID' => $value1, 'Datetime.DTT_ID' => $value2 ), 'AND' => array( 'EVT_name' => array( 'IN', $value3 ) ) ) );
+		$default_where_conditions = new EE_Default_Where_Conditions();
 		$default_where_conditions->_finalize_construct( EEM_Event::instance() );
 		$this->assertEquals(
-				array( 'OR*' => array( 'Event.EVT_ID' => $value1, 'Event.Datetime.DTT_ID' => $value2 ), 'AND' => array( 'Event.EVT_name' => array( 'IN', $value3 ), 'Event.Datetime.DTT_name' => $value4 ) ),
-				$default_where_conditions->add_model_relation_chain_onto_where_conditions(
-						array( 'OR*' => array( 'EVT_ID' => $value1, 'Datetime.DTT_ID' => $value2 ), 'AND' => array( 'EVT_name' => array( 'IN', $value3 ), 'Datetime.DTT_name' => $value4 ) ), 'Event.' ));
+				array( 'OR*' => array( 'Event.EVT_ID' => $value1, 'Event.Datetime.DTT_ID' => $value2 ), 'AND' => array( 'Event.EVT_name' => array( 'IN', $value3 ), 'Event.Datetime.DTT_name' => $value4 ), 'Event.EVT_wp_user' => $current_user->ID ),
+				$default_where_conditions->prepare_where_conditions_for_querying(
+						array( 'OR*' => array( 'EVT_ID' => $value1, 'Datetime.DTT_ID' => $value2 ), 'AND' => array( 'EVT_name' => array( 'IN', $value3 ), 'Datetime.DTT_name' => $value4 ), EEM_Event::instance()->wp_user_field_name() => EE_Default_Where_Conditions::current_user_placeholder ), 'Event.' ));
+	}
+	function test_wp_user_field_name(){
+		$this->assertEquals( 'EVT_wp_user', EEM_Event::instance()->wp_user_field_name() );
+		$this->assertEquals( 'Registration.Event.EVT_wp_user', EEM_Transaction::instance()->wp_user_field_name() );
+		$this->assertEquals( 'TKT_wp_user', EEM_Ticket::instance()->wp_user_field_name() );
 	}
 
 	/**

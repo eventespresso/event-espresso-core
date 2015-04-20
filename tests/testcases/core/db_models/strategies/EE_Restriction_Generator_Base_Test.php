@@ -10,6 +10,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group core/db_models
  *
  */
 class EE_Restriction_Generator_Base_Test extends EE_UnitTestCase{

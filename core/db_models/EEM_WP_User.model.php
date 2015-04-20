@@ -52,7 +52,7 @@ class EEM_WP_User extends EEM_Base {
 			'Ticket' => new EE_Has_Many_Relation(),
 			'Venue' => new EE_Has_Many_Relation(),
 		);
-		//@todo: try to follow WP caps for this model
+		$this->_wp_core_model = true;
 
 		parent::__construct( $timezone );
 	}

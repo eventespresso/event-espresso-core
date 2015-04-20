@@ -70,7 +70,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
 		//and editable if you have the event caps
-		$this->_caps_slug = 'events';
+		$this->_caps_slug = 'tickets';
 		//@todo: account for default prices
 		parent::__construct( $timezone );
 	}

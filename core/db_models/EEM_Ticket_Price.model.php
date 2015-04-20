@@ -55,6 +55,7 @@ class EEM_Ticket_Price extends EEM_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Price'=>new EE_Belongs_To_Relation()
 		);
+		$this->_model_chain_to_wp_user = 'Ticket';
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
 		//follow the caps of the ticket

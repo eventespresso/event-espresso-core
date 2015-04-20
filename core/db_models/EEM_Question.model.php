@@ -115,7 +115,19 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
-		//@todo: account for system questions
+		//users need the 'ee_edit_system_questions' to edit system questions eh
+		$this->_cap_restrictions[ EEM_Base::caps_edit ] = array(
+			'ee_edit_system_questions' => new EE_Default_Where_Conditions( array(
+				'QST_system' => ''
+			))
+		);
+		//if users don't have the 'ee_delete_system_questions', restrict them to only deleting non-system questions
+		//and because 'ee_deleete_system_questions' isn't assigned to admins, no one should have it
+		$this->_cap_restrictions[ EEM_Base::caps_delete ] = array(
+			'ee_delete_system_questions' => new EE_Default_Where_Conditions( array(
+				'QST_system' => ''
+			))
+		);
 		parent::__construct( $timezone );
 	}
 

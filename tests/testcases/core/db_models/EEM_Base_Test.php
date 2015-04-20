@@ -359,7 +359,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 
 		//ok now allowthem to see others private events
 		$current_user->add_cap( 'ee_read_private_events' );
-		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin ) );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
 		$this->assertEquals( 3, count( $events_i_can_see ) );
 		$first_event_i_can_see = reset( $events_i_can_see );
 		$this->assertEquals( $my_e, $first_event_i_can_see );
@@ -370,7 +370,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
-	 * Checks that we can correctly apply backend read caps where there are three
+	 * Checks that we can correctly apply FRONTEND  read caps where there are three
 	 * caps controlling access to the model: the basic cap (eg 'ee_read_events')
 	 * and the 'others' cap (eg 'ee_read_others_events' ) and the
 	 * 'private' cap (eg 'ee_read_private_events')
