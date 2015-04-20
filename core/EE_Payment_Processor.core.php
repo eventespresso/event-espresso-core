@@ -136,7 +136,16 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
 		EE_Processor_Base::set_IPN( true );
-		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
+		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
+			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
+		}elseif( $payment_method instanceof EE_Payment ){
+			$obj_for_log = $payment_method;
+		}elseif( $transaction instanceof EE_Transaction ){
+			$obj_for_log = $transaction;
+		}else{
+			$obj_for_log = null;
+		}
+		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $obj_for_log);
 		try{
 			/**
 			 * @var EE_Payment $payment
@@ -286,7 +295,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @throws \EE_Error
 	 */
 	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $IPN = false ){
-		$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful';
+		$do_action = FALSE;
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		// can we freely update the TXN at this moment?
@@ -335,13 +344,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( $update_txn ) {
 					$this->_post_payment_processing( $transaction, $payment, $IPN );
 				}
+				// and set a hook point for others to use?
+				if ( $do_action ) {
+					do_action( $do_action, $transaction, $payment );
+				}
 			}
-			// granular hook for others to use.
-			do_action( $do_action, $transaction, $payment );
-
-			//global hook for others to use.
-			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
-
 		}
 	}
 
