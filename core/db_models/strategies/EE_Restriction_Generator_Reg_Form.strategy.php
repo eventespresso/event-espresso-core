@@ -52,8 +52,10 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 					//I need to be the owner, or it must be a system question
 					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $model, $action . '_others' ) => array(
 						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-						$system_field_name => array( 'NOT_IN', array( '', 0 ) ),
-						$system_field_name . '*' => array( 'IS_NOT_NULL',)
+						'AND*allow-system-questions-so-far' => array(
+							$system_field_name => array( 'NOT_IN', array( '', 0 ) ),
+							$system_field_name . '*' => array( 'IS_NOT_NULL',)
+						)
 				) ) ),
 				EE_Restriction_Generator_Base::get_cap_name(  $model, $action . '_system' ) => new EE_Default_Where_Conditions( array(
 					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name(  $model, $action . '_system' ) => array(

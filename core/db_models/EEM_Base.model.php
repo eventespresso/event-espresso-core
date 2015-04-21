@@ -2075,7 +2075,7 @@ abstract class EEM_Base extends EE_Base{
 		//first check if we should alter the query to account for caps or not
 		//because the caps might require us to do extra joins
 		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
-			$where_query_params = array_replace_recursive( $where_query_params, $this->_get_caps_where_conditions( $query_params[ 'caps' ] ) );
+			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->_get_caps_where_conditions( $query_params[ 'caps' ] ) );
 		}
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
