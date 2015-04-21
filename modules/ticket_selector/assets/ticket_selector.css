@@ -300,12 +300,12 @@
 	display: table-cell;
 	padding: .25em .5em;
 }
-.tckt-slctr-tkt-details-tbl th:first-child, .tckt-slctr-tkt-details-tbl td:first-child {
-	padding-left: 0;
-}
-.tckt-slctr-tkt-details-tbl th:last-child, .tckt-slctr-tkt-details-tbl td:last-child {
-	padding-right: 0;
-}
+/*.tckt-slctr-tkt-details-tbl th:first-child, .tckt-slctr-tkt-details-tbl td:first-child {*/
+	/*padding-left: 0;*/
+/*}*/
+/*.tckt-slctr-tkt-details-tbl th:last-child, .tckt-slctr-tkt-details-tbl td:last-child {*/
+	/*padding-right: 0;*/
+/*}*/
 
 @media (max-width: 600px) {
 
