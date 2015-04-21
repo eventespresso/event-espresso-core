@@ -177,6 +177,15 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
+	 * @return array
+	 */
+	public function get_CPT_taxonomies() {
+		return $this->_CPT_taxonomies;
+	}
+
+
+
+	/**
 	 *    _set_CPT_terms
 	 *
 	 * @access private
