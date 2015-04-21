@@ -49,8 +49,6 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 	public function populate_from_attendee( $attendee ){
 		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
 		/** @var $attendee EE_Attendee */
-		$state = $attendee->state_obj();
-		$country = $attendee->country_obj();
 		$this->populate_defaults(array(
 			'first_name'=>$attendee->fname(),
 			'last_name'=>$attendee->lname(),
@@ -58,8 +56,8 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 			'address'=>$attendee->address(),
 			'address2'=>$attendee->address2(),
 			'city'=>$attendee->city(),
-			'state'=> $state ? $attendee->state_obj()->name() : '',
-			'country'=> $country ? $attendee->country_obj()->name() : '',
+			'state'=> $attendee->state_ID(),
+			'country'=> $attendee->country_ID(),
 			'zip'=>$attendee->zip(),
 			'phone'=>$attendee->phone(),
 		));

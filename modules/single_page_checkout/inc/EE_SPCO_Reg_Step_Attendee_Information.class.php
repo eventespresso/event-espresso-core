@@ -516,7 +516,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				$state_options = array();
+				$state_options = array( '' => array( '' => ''));
 				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
 				if ( ! empty( $states )) {
 					foreach( $states as $state ){
@@ -530,7 +530,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				$country_options = array();
+				$country_options = array( '' => '' );
 				// get possibly cached list of countries
 				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
 				if ( ! empty( $countries )) {
