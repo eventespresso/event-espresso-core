@@ -54,7 +54,6 @@ abstract class EE_Messages_incoming_data {
 	 * @var string $init_access
 	 */
 	public $init_access;
-	public $last_access;
 
 	/**
 	 * Unix timestamp
