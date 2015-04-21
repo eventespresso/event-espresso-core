@@ -81,10 +81,47 @@
 	color: #EB574D;
 }
 
+.ee-sixth-width {
+	width: 16.7%;
+}
+.ee-fifth-width {
+	width: 20%;
+}
+.ee-fourth-width {
+	width: 25%;
+}
+.ee-third-width {
+	width: 33%;
+}
+.ee-half-width {
+	width: 50%;
+}
+
+.tckt-slctr-tkt-details-date-th,
+.tckt-slctr-tkt-details-date-td {
+
+}
+
+.tckt-slctr-tkt-details-td {
+	padding: 0 !important;
+	border-top: none !important;;
+}
+
 .ee-ticket-selector-ticket-details-th,
 .ee-ticket-selector-ticket-price-th,
 .ee-ticket-selector-ticket-qty-th {
 }
+
+.tckt-slctr-tkt-details-date-th,
+.tckt-slctr-tkt-details-date-td,
+.tckt-slctr-tkt-details-time-th,
+.tckt-slctr-tkt-details-this-ticket-sold-th,
+.tckt-slctr-tkt-details-this-ticket-left-th,
+.tckt-slctr-tkt-details-total-tickets-sold-th,
+.tckt-slctr-tkt-details-total-tickets-left-th {
+	vertical-align: middle;
+}
+
 .ee-ticket-selector-ticket-price-th {
 	text-align: center;
 	width: 25%;
