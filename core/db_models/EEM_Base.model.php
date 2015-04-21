@@ -165,7 +165,7 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * Array-keys are one of EEM_Base::caps_*, and values are the classname of a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
-	 * automatically set this to false.
+	 * automatically set this to false (not just null).
 	 * @var array
 	 */
 	protected $_cap_restriction_generators = array();
@@ -472,7 +472,7 @@ abstract class EEM_Base extends EE_Base{
 				if( ! class_exists( $generator_name ) ){
 					throw new EE_Error( sprintf( __( 'There is no EE_Restriction_Generator_Base child named "%s". Please look in %s to see what classes are available', 'event_espresso' ), $generator_name, 'event-espresoso-core/core/db_models/strategies' ) );
 				}
-				$action = in_array( $context, array( self::caps_read, self::caps_read_admin ) ) ? 'read' : $context;
+				$action = $this->_cap_contexts_to_cap_action_map[ $context ];
 
 				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
 			}

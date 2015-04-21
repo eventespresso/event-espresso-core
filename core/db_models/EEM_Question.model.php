@@ -115,20 +115,39 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
-		//users need the 'ee_edit_system_questions' to edit system questions eh
-		$this->_cap_restrictions[ EEM_Base::caps_edit ] = array(
-			'ee_edit_system_questions' => new EE_Default_Where_Conditions( array(
-				'QST_system' => ''
-			))
-		);
-		//if users don't have the 'ee_delete_system_questions', restrict them to only deleting non-system questions
-		//and because 'ee_deleete_system_questions' isn't assigned to admins, no one should have it
-		$this->_cap_restrictions[ EEM_Base::caps_delete ] = array(
-			'ee_delete_system_questions' => new EE_Default_Where_Conditions( array(
-				'QST_system' => ''
-			))
-		);
+		//customize restrictions for editing and deleting because of system questions
+		$contexts_and_actions_that_use_system_caps = array_intersect_key( $this->_cap_contexts_to_cap_action_map, array_flip( array( EEM_Base::caps_edit, EEM_Base::caps_delete ) ) );
+//		//init caps slug here because we need it indirectly for setting the custom restrictions
+//		$this->_caps_slug = 'questions';
+		foreach( $contexts_and_actions_that_use_system_caps as $context => $action ) {
+			$this->_cap_restriction_generators[ $context ] = false;
+//			//users need the 'ee_edit_system_questions' to edit system questions eh
+//			$this->_cap_restrictions[ $context ] = array(
+//			EE_Restriction_Generator_Base::get_cap_name(  $this, $action ) => new EE_Return_None_Where_Conditions(),
+//				EE_Restriction_Generator_Base::get_cap_name(  $this, $action . '_others' ) => new EE_Default_Where_Conditions( array(
+//					//I need to be the owner, or it must be a system question
+//					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this, $action . '_others' ) => array(
+//						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+//						'QST_system' => array( '!=', '' ),
+//						'QST_system*' => array( 'IS_NOT_NULL' )
+//				) ) ),
+//				EE_Restriction_Generator_Base::get_cap_name(  $this, $action . '_system' ) => new EE_Default_Where_Conditions( array(
+//					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name(  $this, $action . '_system' ) => array(
+//						'QST_system' => '',
+//						'QST_system' => array('IS_NULL'))
+//				)
+//			) );
+		}
+
 		parent::__construct( $timezone );
+		//call the reg form generator manually because we want to provide another argument
+		foreach( $contexts_and_actions_that_use_system_caps as $context => $action ) {
+			$this->_cap_restriction_generators[ $context ] = 'EE_Restriction_Generator_Reg_Form';
+			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], EE_Restriction_Generator_Reg_Form::generate_restrictions( $this, $action, 'QST_system' ) );
+			foreach( $this->_cap_restrictions[ $context ] as $cap => $restriction_obj ) {
+				$restriction_obj->_finalize_construct( $this );
+			}
+		}
 	}
 
 

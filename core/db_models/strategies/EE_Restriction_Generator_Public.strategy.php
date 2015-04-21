@@ -28,7 +28,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base{
 			if( $model instanceof EEM_CPT_Base ){
 				$restrictions[ self::get_cap_name($model, $action) ] = new EE_Default_Where_Conditions( array( 'status' => 'publish' ) );
 			}elseif( $model instanceof EEM_Soft_Delete_Base ) {
-				$restrictions[ self::get_cap_name($model, $action) ] = new EE_Default_Where_Conditions( array( 'deleted' => false ) );
+				$restrictions[ self::get_cap_name($model, $action) ] = new EE_Default_Where_Conditions( array( $model->deleted_field_name() => false ) );
 			}else{
 				//dont impose any restrictions if they don't have the basic reading cap
 			}
@@ -47,7 +47,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base{
 							array(
 								'OR*' . self::get_cap_name($model, $action . '_others' ) => array(
 									EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-									'deleted' => false ) ) );
+									$model->deleted_field_name() => false ) ) );
 				}else{
 					//again, if they don't have the others cap, continue showing all because there are no inherently hidden ones
 				}
