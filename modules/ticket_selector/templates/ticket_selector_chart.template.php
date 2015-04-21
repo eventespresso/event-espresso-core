@@ -222,7 +222,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				</tr>
 				<?php if ( $template_settings->show_ticket_details ) : ?>
 					<tr class="tckt-slctr-tkt-details-tr <?php echo espresso_get_object_css_class( $ticket, '', 'details' );?>">
-						<td class="tckt-slctr-tkt-details-td" colspan="4" style="padding: 0;border-top:none;">
+						<td class="tckt-slctr-tkt-details-td" colspan="4" >
 							<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
 								<section class="tckt-slctr-tkt-details-sctn">
@@ -236,9 +236,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<table class="tckt-slctr-tkt-details-tbl">
 												<thead>
 													<tr>
-														<th width="30%" class=""><span class="small-text"><?php _e( 'Name', 'event_espresso' ); ?></span></th>
-														<th width="" class="jst-cntr"><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
-														<th width="25%" class="jst-rght"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
+														<th class="ee-third-width"><span class="small-text"><?php _e( 'Name', 'event_espresso' ); ?></span></th>
+														<th class="jst-cntr"><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
+														<th class="ee-fourth-width jst-rght"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
 													</tr>
 												</thead>
 												<tbody>
@@ -342,7 +342,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 									<?php
 									$datetimes = $ticket->datetimes_ordered( $event_is_expired, FALSE );
-									$chart_column_width = $template_settings->show_ticket_sale_columns ? '12.5%' : '50%';
+									$chart_column_width = $template_settings->show_ticket_sale_columns ? ' ee-fourth-width' : ' ee-half-width';
 									if ( ! empty( $datetimes )) { ?>
 									<section class="tckt-slctr-tkt-datetimes-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_heading', __( 'Event Access', 'event_espresso' )); ?></h5>
@@ -351,23 +351,23 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<table class="tckt-slctr-tkt-details-tbl">
 												<thead>
 													<tr>
-														<th valign="middle">
+														<th class="tckt-slctr-tkt-details-date-th">
 															<span class="dashicons dashicons-calendar"></span><span class="small-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date', __( 'Event Date ', 'event_espresso' )); ?></span>
 														</th>
-														<th width="<?php echo $chart_column_width; ?>" valign="middle" class="">
+														<th class="tckt-slctr-tkt-details-time-th <?php echo $chart_column_width; ?>">
 															<span class="dashicons dashicons-clock"></span><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span>
 														</th>
 														<?php if ( $template_settings->show_ticket_sale_columns ) : ?>
-															<th width="12.5%" valign="middle" class="cntr">
+															<th class="tckt-slctr-tkt-details-this-ticket-sold-th ee-fourth-width cntr">
 																<span class="smaller-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold', sprintf( __( 'This Ticket%sSold', 'event_espresso' ), '<br/>' )); ?></span>
 															</th>
-															<th width="12.5%" valign="middle" class="cntr">
+															<th class="tckt-slctr-tkt-details-this-ticket-left-th ee-fourth-width cntr">
 																<span class="smaller-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', sprintf( __( 'This Ticket%sLeft', 'event_espresso' ), '<br/>' )); ?></span>
 															</th>
-															<th width="12.5%" valign="middle" class="cntr">
+															<th class="tckt-slctr-tkt-details-total-tickets-sold-th ee-fourth-width cntr">
 																<span class="smaller-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', sprintf( __( 'Total Tickets%sSold', 'event_espresso' ), '<br/>' )); ?></span>
 															</th>
-															<th width="12.5%" valign="middle" class="cntr">
+															<th class="tckt-slctr-tkt-details-total-tickets-left-th ee-fourth-width cntr">
 																<span class="smaller-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left', sprintf( __( 'Total Spaces%sLeft', 'event_espresso' ), '<br/>' )); ?></span>
 															</th>
 														<?php endif; //end $template_settings->show_ticket_sale_columns conditional ?>
