@@ -39,7 +39,7 @@ class EEH_URL{
 		//finally, let's always add a return address (if present) :)
 		$args = !empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
 
-		return add_query_arg( $args, $url );
+		return esc_url_raw( add_query_arg( $args, $url ));
 
 	}
 
