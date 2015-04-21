@@ -222,7 +222,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				</tr>
 				<?php if ( $template_settings->show_ticket_details ) : ?>
 					<tr class="tckt-slctr-tkt-details-tr <?php echo espresso_get_object_css_class( $ticket, '', 'details' );?>">
-						<td class="tckt-slctr-tkt-details-td" colspan="4" >
+						<td class="tckt-slctr-tkt-details-td" colspan="3" >
 							<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
 								<section class="tckt-slctr-tkt-details-sctn">
