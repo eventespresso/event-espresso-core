@@ -59,7 +59,10 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = 'EE_Restriction_Generator_Reg_Form';
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = 'EE_Restriction_Generator_Reg_Form';
 		parent::__construct( $timezone );
+
 	}
 
 

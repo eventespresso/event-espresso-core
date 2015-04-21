@@ -54,6 +54,10 @@ class EEM_Question_Group_Question extends EEM_Base {
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = 'EE_Restriction_Generator_Reg_Form';
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = 'EE_Restriction_Generator_Reg_Form';
+		//use the caps for question groups
+		$this->_caps_slug = 'question_groups';
 		parent::__construct( $timezone );
 	}
 

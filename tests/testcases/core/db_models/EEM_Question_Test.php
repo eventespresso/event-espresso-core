@@ -61,8 +61,6 @@ class EEM_Question_Test extends EE_UnitTestCase{
 		$this->assertEquals( $q3_others, next( $i_can_edit ) );
 		$this->assertEquals( $q4_others_system, next( $i_can_edit ) );;
 		$this->assertEquals( 4, count( $i_can_edit ) );
-
-		//now if we remove their ability to edit system questions
 	}
 }
 

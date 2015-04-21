@@ -18,12 +18,26 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 	 *
 	 * @param EEM_CPT_Base $model
 	 * @param type $action
-	 * @param string $system_field_name the name of the field used to indicate system-ness. (You can specify the field on a related model too eh,
-	 * eg "QST_system" is valid, but so is "Question.QST_system".)
 	 * @return \EE_Default_Where_Conditions
 	 */
-	public static function generate_restrictions( $model, $action, $system_field_name ) {
+	public static function generate_restrictions( $model, $action ) {
 
+		switch( $model->get_this_model_name() ){
+			case 'Question':
+				$system_field_name = 'QST_system';
+				break;
+			case 'Question_Group':
+				$system_field_name = 'QSG_system';
+				break;
+			case 'Question_Group_Question':
+				$system_field_name = 'Question_Group.QSG_system';
+				break;
+			case 'Question_Option':
+				$system_field_name = 'Question.QST_system';
+				break;
+			default:
+				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Reg_Form. Please add a switch case for it in EE_Restriction_Generator_Reg_Form::generate_restrictions', 'event_espresso' ), $model->get_this_model_name() ) );
+		}
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
 		if( ! $model->cap_slug() ) {
