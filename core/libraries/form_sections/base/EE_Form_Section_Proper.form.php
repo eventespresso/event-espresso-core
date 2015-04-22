@@ -707,7 +707,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Adds the listed subsections to the form section. If $subsection_name_to_add_before is provided,
 	 * adds them all directly before that subsection, otherwise onto the end.
 	 * @param EE_Form_Section_Base[] $new_subsections where keys are their names
-	 * @param string $subsection_name_to_add_before name of the section to add these subsections in front of, or null to indicate it should be added it should be before NO other section- ie, at the very end. (However if you set $add_before to FALSE, they will instead be added to the very beginning)
+	 * @param string $subsection_name_to_add_before name of the section to add these $new_subsections in front of, or null to indicate it should be added before NO other section- ie, at the very end. (However if you set $add_before to FALSE, $new_subsections will be added AFTER $subsection_name_to_add_before. If $subsection_name_to_add_before is null, then $new_subsections are added to the end.)
 	 * @param boolean $add_before whether to add before $subsection_name_to_add_before, or whether to actually add AFTER.
 	 * @return void
 	 */
