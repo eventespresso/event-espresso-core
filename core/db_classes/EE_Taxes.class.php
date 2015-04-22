@@ -70,22 +70,33 @@ class EE_Taxes extends EE_BASE {
 	 */
 	private static function _get_subtotal_for_admin( EE_Ticket $ticket ) {
 		$subtotal = 0;
+		$totals_to_calc = array();
 		//get all prices
-		$prices = $ticket->get_many_related( 'Price', array( 'default_where_conditions' => 'none', 'order_by' => array( 'PRC_order' => 'ASC' ) ) );
-		//let's loop through them (base price is always the first item)
+		$prices = $ticket->get_many_related( 'Price', array( 'default_where_conditions' => 'none', 'order_by' => array( 'Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC' ) ) );
+		//let's loop through them (base price is always the first item) and setup the prices for calculations
 		foreach ( $prices as $price ) {
 			if ( $price instanceof EE_Price ) {
-				switch ( $price->type_obj()->base_type() ) {
-					case 1: // base price
-					case 3: // surcharges
-						$subtotal += $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
-						break;
-					case 2: // discounts
-						$subtotal -= $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
-						break;
+				if ( $price->type_obj()->base_type() == EEM_Price_Type::base_type_base_price ) {
+					$subtotal = $price->get( 'PRC_amount' );
+				} else {
+					$totals_to_calc[$price->type_order()][] = $price;
 				}
 			}
 		}
+
+		//now let's loop through and calculate the prices according to price type order
+		foreach ( $totals_to_calc as $price_type_order => $prices ) {
+			$startingtotal = $subtotal;
+			foreach( $prices as $price ) {
+				$basetype = $price->type_obj()->base_type();
+				if ( $basetype == EEM_Price_Type::base_type_discount ) {
+					$subtotal -= $price->is_percent() ? $startingtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+				} else {
+					$subtotal += $price->is_percent() ? $startingtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+				}
+			}
+		}
+		
 		$TKT_ID = $ticket->ID();
 		self::$_subtotal = array( $TKT_ID => $subtotal );
 		return $subtotal;
