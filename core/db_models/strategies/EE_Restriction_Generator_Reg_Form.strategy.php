@@ -14,6 +14,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 
+
 	/**
 	 *
 	 * @param EEM_CPT_Base $model
