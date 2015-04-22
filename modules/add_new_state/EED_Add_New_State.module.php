@@ -258,7 +258,7 @@ class EED_Add_New_State  extends EED_Module {
 					)
 				)
 			);
-			$question_group_reg_form->add_subsections( array( 'new_state_micro_form' => $new_state_micro_form ), 'country' );
+			$question_group_reg_form->add_subsections( array( 'new_state_micro_form' => $new_state_micro_form ), 'state', false );
 		}
 		return $question_group_reg_form;
 	}
