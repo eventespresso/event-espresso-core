@@ -31,6 +31,88 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$form->receive_form_submission( $data );
 		$this->assertEquals( $data, $form->input_values() );
 	}
+	public function test_add_subsection__before(){
+		$input1 = new EE_Text_Input();
+		$input2 = new EE_Text_Input();
+		$input3 = new EE_Text_Input();
+		$input4 = new EE_Text_Input();
+		$input5 = new EE_Text_Input();
+		$parent_form = new EE_Form_Section_Proper( array(
+			'name' => 'form',
+			'subsections' => array(
+				'input1' => $input1,
+				'input2' => $input2,
+			)
+		));
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//ok now add a subsection before the first one
+		$parent_form->add_subsections( array( 'input3' => $input3 ), 'input1' );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//now add a subsection in the middle
+		$parent_form->add_subsections( array( 'input4' => $input4 ), 'input1' );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input4, next($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//lastly adda  subsection onto the very end
+		$parent_form->add_subsections( array( 'input5' => $input5 ) );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input3, reset($inputs) );
+		$this->assertEquals( $input4, next($inputs) );
+		$this->assertEquals( $input1, next( $inputs ) );
+		$this->assertEquals( $input2, next( $inputs ) );
+		$this->assertEquals( $input5, next( $inputs ) );
+	}
+	public function test_add_subsection__after(){
+		$input1 = new EE_Text_Input();
+		$input2 = new EE_Text_Input();
+		$input3 = new EE_Text_Input();
+		$input4 = new EE_Text_Input();
+		$input5 = new EE_Text_Input();
+		$parent_form = new EE_Form_Section_Proper( array(
+			'name' => 'form',
+			'subsections' => array(
+				'input1' => $input1,
+				'input2' => $input2,
+			)
+		));
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+
+		//ok now add a subsection after the last one
+		$parent_form->add_subsections( array( 'input3' => $input3 ), 'input2', false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+
+		//now add a subsection in the middle
+		$parent_form->add_subsections( array( 'input4' => $input4 ), 'input2', false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input1, reset($inputs) );
+		$this->assertEquals( $input2, next($inputs) );
+		$this->assertEquals( $input4, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+
+		//lastly adda  subsection onto the very beginning
+		$parent_form->add_subsections( array( 'input5' => $input5 ), null, false );
+		$inputs = $parent_form->inputs();
+		$this->assertEquals( $input5, reset($inputs) );
+		$this->assertEquals( $input1, next($inputs) );
+		$this->assertEquals( $input2, next($inputs) );
+		$this->assertEquals( $input4, next( $inputs ) );
+		$this->assertEquals( $input3, next( $inputs ) );
+	}
 	public function test_add_subsection__weird_subsection_names(){
 		$grandparent_form = new EE_Form_Section_Proper(array(
 			'name'=>'grandparent',
