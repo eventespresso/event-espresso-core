@@ -26,11 +26,9 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base {
 		switch ( $model->get_this_model_name() ) {
 			case 'Message_Template':
 				$global_field_name	 = 'Message_Template_Group.MTP_is_global';
-				$cap_qualifier = 'global';
 				break;
 			case 'Message_Template_Group':
 				$global_field_name	 = 'MTP_is_global';
-				$cap_qualifier = 'global';
 				break;
 
 			default:
@@ -52,7 +50,7 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base {
 					EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
 					$global_field_name => true
 				) ) ),
-			EE_Restriction_Generator_Base::get_cap_name( $model, $action . '_' . $cap_qualifier ) => new EE_Default_Where_Conditions( array(
+			EE_Restriction_Generator_Base::get_cap_name( $model, $action . '_global' ) => new EE_Default_Where_Conditions( array(
 				//it mustn't be global
 				$global_field_name => false )
 			) );
