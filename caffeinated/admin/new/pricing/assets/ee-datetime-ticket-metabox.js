@@ -1541,28 +1541,52 @@ jQuery(document).ready(function($) {
 		 * @return {fixed} The total amount by decimal.
 		 */
 		getTotalPrice: function( dotaxes ) {
-			var runningtotal = 0, priceAmount, operator, is_percent, totals=[];
+			var runningtotal = 0, startingtotal = 0, priceModification = 0, priceAmount, operator, is_percent, prtOrder, totals=[];
 			dotaxes = typeof(dotaxes) === 'undefined' ? true : false;
+            totals_to_calc = [];
 
 			//first get the baseprice amount to kick off the running total.
-			runningtotal = accounting.unformat($('.edit-ticket-TKT_base_price', '#display-ticketrow-' + this.ticketRow ).val() );
+			runningtotal = startingtotal = accounting.unformat($('.edit-ticket-TKT_base_price', '#display-ticketrow-' + this.ticketRow ).val() );
 
-			//loop through all the prices for a given ticket
-			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
-				priceAmount = accounting.unformat($('.edit-price-PRC_amount', this).val());
-				operator = $('.ee-price-selected-operator', this).val();
-				is_percent = $('.ee-price-selected-is-percent', this ).val();
-				is_percent = parseInt(is_percent, 10);
 
-				if ( typeof( priceAmount ) === 'undefined' || typeof( operator ) === 'undefined' || typeof( is_percent) === 'undefined' || isNaN(priceAmount) )
-					return 0;
+            //first loop through and setup our totals by prt and prc order
+            $('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function(i) {
+                priceAmount = accounting.unformat($('.edit-price-PRC_amount', this).val());
+                operator = $('.ee-price-selected-operator', this).val();
+                is_percent = $('.ee-price-selected-is-percent', this ).val();
+                is_percent = parseInt(is_percent, 10);
+                prtOrder = $('.ee-price-selected-prt-order', this).val();
 
-				if ( is_percent ) {
-					runningtotal = operator == '+' ? runningtotal + (runningtotal*(priceAmount/100)) : runningtotal - (runningtotal*(priceAmount/100));
-				} else {
-					runningtotal = operator == '+' ? runningtotal + priceAmount : runningtotal - priceAmount;
-				}
-			});
+                if ( typeof totals_to_calc[prtOrder] === 'undefined' ) {
+                    totals_to_calc[prtOrder] = [];
+                }
+                totals_to_calc[prtOrder].push({
+                        'operator': operator,
+                        'priceAmount': priceAmount,
+                        'is_percent': is_percent
+                });
+
+            });
+
+            //now let's loop through our totals_to_calc and do the calculations
+            _.each( totals_to_calc, function( prices, prtOrder, calctotals ){
+                startingtotal = runningtotal;
+                //loop through prices on the price type.
+                _.each( prices, function( pricedetails, prcOrder, priceTotals ) {
+                    priceModification = 0;
+                    if ( typeof( pricedetails.priceAmount ) === 'undefined' || typeof( pricedetails.operator ) === 'undefined' || typeof( pricedetails.is_percent) === 'undefined' || isNaN(pricedetails.priceAmount) ) {
+                        return 0;
+                    }
+
+                    if ( pricedetails.is_percent ) {
+                        priceModification = pricedetails.operator == '+' ? priceModification + (startingtotal*(pricedetails.priceAmount/100)) : priceModification - (startingtotal*(pricedetails.priceAmount/100));
+                    } else {
+                        priceModification = pricedetails.operator == '+' ? priceModification + pricedetails.priceAmount : priceModification - pricedetails.priceAmount;
+                    }
+                    //now add priceModification to runningtotal
+                    runningtotal = runningtotal + priceModification;
+                });
+            });
 
 			totals.subtotal = accounting.formatNumber(runningtotal);
 
@@ -2213,10 +2237,12 @@ jQuery(document).ready(function($) {
 		var selected = $(this).find(':selected').val();
 		var operator = $('#price-option-' + selected, parent).find('.ee-price-operator').text();
 		var is_percent = parseInt($('#price-option-' + selected, parent).find('.ee-PRT_is_percent').text(), 10);
+        var prtOrder = parseInt( $('#price-option-' + selected, parent).find( '.ee-PRT_order').text(), 10);
 
 		//now set selected operator
 		$('.ee-price-selected-operator', parent).val(operator);
 		$('.ee-price-selected-is-percent', parent).val(is_percent);
+        $('.ee-price-selected-prt-order', parent).val(prtOrder);
 
 		//set display
 		$('.ticket-price-info-display', parentContainer).hide();

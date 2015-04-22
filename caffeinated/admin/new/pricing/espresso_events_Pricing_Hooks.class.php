@@ -1045,7 +1045,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$spanargs = array(
 				'PRT_ID' => $price_type->ID(),
 				'PRT_operator' => $price_type->is_discount() ? '-' : '+',
-				'PRT_is_percent' => $price_type->get('PRT_is_percent') ? 1 : 0
+				'PRT_is_percent' => $price_type->get('PRT_is_percent') ? 1 : 0,
+				'PRT_order' => $price_type->order()
 				);
 			$price_option_spans .= EEH_Template::display_template($price_option_span_template, $spanargs, TRUE );
 		}
@@ -1063,6 +1064,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'price_option_spans' => $price_option_spans,
 			'price_selected_operator' => $default && empty( $price ) ? '' : ( $price->is_discount() ? '-' : '+' ),
 			'price_selected_is_percent' => $default && empty( $price ) ? '' : ( $price->is_percent() ? 1 : 0 ),
+			'price_selected_prt_order' => $default && empty( $price ) ? '' : $price->type_order(),
 			'disabled' => $disabled
 			);
 

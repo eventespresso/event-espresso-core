@@ -6,8 +6,10 @@
 <div class="ee-price-type-option-info hidden">
 	<?php echo $price_option_spans; ?>
 </div>
-<input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>]" class="ee-price-selected-operator" value="<?php echo $price_selected_operator; ?>">
-<input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>]" class="ee-price-selected-is-percent" value="<?php echo $price_selected_is_percent; ?>">
+<input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][operator]" class="ee-price-selected-operator" value="<?php echo $price_selected_operator; ?>">
+<input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][is_percent]" class="ee-price-selected-is-percent" value="<?php echo $price_selected_is_percent; ?>">
+<input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRT_order]" class="ee-price-selected-prt-order" value="<?php echo $price_selected_prt_order; ?>">
+
 
 <?php
 /**
@@ -19,6 +21,7 @@
  * $price_option_spans;
  * $price_selected_operator
  * $price_selected_is_percent
+ * $price_selected_prt_order
  * $main_name
  * $selected_price_type_id
  * $disabled
