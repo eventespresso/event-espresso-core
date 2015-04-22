@@ -384,6 +384,7 @@ jQuery(document).ready( function($) {
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
 				SPCO.main_container.trigger( 'process_next_step_button_click' );
+				console.log( JSON.stringify( 'FINISHED "process_next_step_button_click" event', null, 4 ) );
 				//console.log( JSON.stringify( 'SPCO.form_is_valid: ' + SPCO.form_is_valid, null, 4 ) );
 				console.log( JSON.stringify( 'eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
 				if ( ! SPCO.form_is_valid ){
@@ -752,7 +753,10 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
-			//console.log( form_data );
+
+
+			console.log( '** SUBMIT REG FORM !!! ** form_data:' );
+			console.log( form_data );
 			// send form via AJAX POST
 			$.ajax({
 
