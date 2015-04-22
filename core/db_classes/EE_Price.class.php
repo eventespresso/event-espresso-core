@@ -230,6 +230,17 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	}
 
 
+	/**
+	 * Return the order of the price type object associated with the price.
+	 * @since 4.6.x
+	 * @return int
+	 */
+	public function type_order() {
+		$type_obj = $this->type_obj();
+		return $type_obj instanceof EE_Price_Type ? $type_obj->order() : 0;
+	}
+
+
 
 	/**
 	 * Simply indicates whether this price increases or decreases the total
