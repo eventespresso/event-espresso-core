@@ -80,4 +80,35 @@ class EEH_Array extends EEH_Base {
 		return isset( $arr[ $index ] ) ? $arr[ $index ] : $default;
 	}
 
+
+
+	/**
+	 * insert_into_array
+	 *
+	 * @param array $target_array 		the array to insert new data into
+	 * @param array $array_to_insert	the new data to be inserted
+	 * @param int | string $offset 			a known key within $target_array where new data will be inserted
+	 * @param bool $add_before			whether to add new data before or after the offset key
+	 * @return array
+	 */
+	public static function insert_into_array( $target_array = array(), $array_to_insert = array(), $offset = '', $add_before = true ) {
+		// ensure incoming arrays are actually arrays
+		$target_array 		= (array)$target_array;
+		$array_to_insert	= (array)$array_to_insert;
+		// if no offset key was supplied
+		if ( empty( $offset )) {
+			// then simply add the new data to the beginning or the end of the target array
+			return $add_before ? $array_to_insert + $target_array : $target_array + $array_to_insert;
+		}
+		// if offset key is a string, then find the corresponding numeric location for that element
+		$offset = is_int( $offset ) ? $offset : array_search( $offset, array_keys( $target_array ) );
+		// add one to the offset if adding after
+		$offset = $add_before ? $offset : $offset + 1;
+		// but ensure offset does not exceed the length of the array
+		$offset = $offset >= count( $target_array ) ? count( $target_array ) - 1 : $offset;
+		// take a slice of the target array from the beginning till the offset,
+		// then add the new data, then add another slice that starts at the offset and goes till the end
+		return array_slice( $target_array, 0, $offset, true ) + $array_to_insert + array_slice( $target_array, $offset, null, true );
+	}
+
 } //end EEH_Template class
