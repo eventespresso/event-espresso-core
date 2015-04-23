@@ -105,7 +105,7 @@ class EEH_Array extends EEH_Base {
 		// add one to the offset if adding after
 		$offset = $add_before ? $offset : $offset + 1;
 		// but ensure offset does not exceed the length of the array
-		$offset = $offset >= count( $target_array ) ? count( $target_array ) - 1 : $offset;
+		$offset = $offset > count( $target_array ) ? count( $target_array ) : $offset;
 		// take a slice of the target array from the beginning till the offset,
 		// then add the new data, then add another slice that starts at the offset and goes till the end
 		return array_slice( $target_array, 0, $offset, true ) + $array_to_insert + array_slice( $target_array, $offset, null, true );
