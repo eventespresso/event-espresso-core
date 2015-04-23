@@ -390,7 +390,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array( 'Venues_Categories_Help_Tour' ),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				)
 		);

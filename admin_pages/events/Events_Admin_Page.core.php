@@ -223,8 +223,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _set_page_config() {
 
-		$default_espresso_boxes = $this->_default_espresso_metaboxes;
-		$default_espresso_boxes[] = '_espresso_sponsors_post_box';
+
 
 		$this->_page_config = array(
 			'default' => array(
@@ -380,7 +379,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Default Settings', 'event_espresso'),
 					'order' => 40
 				),
-				'metaboxes' => array_merge($default_espresso_boxes, array('_publish_post_box')),
+				'metaboxes' => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
@@ -457,7 +456,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Categories_Help_Tour'
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				),
 		);

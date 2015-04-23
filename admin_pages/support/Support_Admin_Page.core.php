@@ -77,33 +77,18 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			/*'installation' => array(
-				'nav' => array(
-					'label' => __('Installation', 'event_espresso'),
-					'order' => 10),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'require_nonce' => FALSE
-				),*/
-			/*'resources' => array(
-				'nav' => array(
-					'label' => __('Resources', 'event_espresso'),
-					'order' => 20
-					),
-				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'require_nonce' => FALSE
-				),*/
 			'default' => array(
 				'nav' => array(
 					'label' => __('Shortcodes', 'event_espresso'),
 					'order' => 30),
-				'metaboxes' => array('_shortcodes_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_shortcodes_boxes' ) ),
 				'require_nonce' => FALSE
 				),
 			'contact_support' => array(
 				'nav' => array(
 					'label' => __('Support', 'event_espresso'),
 					'order' => 40),
-				'metaboxes' => array('_support_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_support_boxes' ) ),
 				'require_nonce' => FALSE
 				),
 			);
