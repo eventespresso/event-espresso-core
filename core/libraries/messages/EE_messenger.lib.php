@@ -519,7 +519,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$default_value = empty( $default_value ) ? $mtpgID : $default_value;
 
 			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
-			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ) );
+			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ), admin_url( 'admin.php' ) );
 
 			$st_args['mt_name'] = ucwords( $mtp_obj->label['singular'] );
 			$st_args['mt_slug'] = $mtpg->message_type();
