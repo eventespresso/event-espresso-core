@@ -704,14 +704,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Adds the listed subsections to the form section. If $subsection_name_to_add_before is provided,
+	 * Adds the listed subsections to the form section. If $subsection_name_to_target is provided,
 	 * adds them all directly before that subsection, otherwise onto the end.
 	 * @param EE_Form_Section_Base[] $new_subsections where keys are their names
-	 * @param string $subsection_name_to_add_before name of the section to add these subsections in front of, or null to indicate it should be added it should be before NO other section- ie, at the very end. (However if you set $add_before to FALSE, they will instead be added to the very beginning)
-	 * @param boolean $add_before whether to add before $subsection_name_to_add_before, or whether to actually add AFTER.
+	 * @param string $subsection_name_to_target name of the section to add these subsections in front of, or null to indicate it should be added it should be before NO other section- ie, at the very end. (However if you set $add_before to FALSE, they will instead be added to the very beginning)
+	 * @param boolean $add_before whether to add before $subsection_name_to_target, or whether to actually add AFTER.
 	 * @return void
 	 */
-	public function add_subsections($new_subsections,$subsection_name_to_add_before = NULL, $add_before = true ){
+	public function add_subsections( $new_subsections, $subsection_name_to_target = NULL, $add_before = true ){
 		foreach($new_subsections as $subsection_name => $subsection){
 			if( ! $subsection instanceof EE_Form_Section_Base){
 				EE_Error::add_error(
@@ -727,16 +727,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 
 		EE_Registry::instance()->load_helper( 'Array' );
-		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_add_before, $add_before );
+		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_target, $add_before );
 
 		/*$subsections_before = array();
-		if( $subsection_name_to_add_before ){
+		if( $subsection_name_to_target ){
 			foreach( $this->_subsections as $subsection_name => $subsection ) {
-				if ( $add_before && $subsection_name == $subsection_name_to_add_before ) {
+				if ( $add_before && $subsection_name == $subsection_name_to_target ) {
 					break;
 				}
 				$subsections_before[$subsection_name] = $subsection;
-				if ( ! $add_before && $subsection_name == $subsection_name_to_add_before ) {
+				if ( ! $add_before && $subsection_name == $subsection_name_to_target ) {
 					break;
 				}
 			}
