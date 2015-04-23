@@ -108,7 +108,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
 				// generate hidden input
 				if ( isset( $subsections[ $primary_registrant ] ) && $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper ) {
-					$subsections[ $primary_registrant ]->add_subsections( $copy_options );
+					$subsections[ $primary_registrant ]->add_subsections( $copy_options, 'primary_registrant', false );
 				}
 			}
 
