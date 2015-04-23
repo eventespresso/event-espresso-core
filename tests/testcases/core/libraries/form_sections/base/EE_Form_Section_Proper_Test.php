@@ -63,8 +63,8 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertEquals( $input1, next( $inputs ) );
 		$this->assertEquals( $input2, next( $inputs ) );
 
-		//lastly adda  subsection onto the very end
-		$parent_form->add_subsections( array( 'input5' => $input5 ) );
+		//lastly add a subsection onto the very end
+		$parent_form->add_subsections( array( 'input5' => $input5 ), null, false );
 		$inputs = $parent_form->inputs();
 		$this->assertEquals( $input3, reset($inputs) );
 		$this->assertEquals( $input4, next($inputs) );
@@ -104,8 +104,8 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertEquals( $input4, next( $inputs ) );
 		$this->assertEquals( $input3, next( $inputs ) );
 
-		//lastly adda  subsection onto the very beginning
-		$parent_form->add_subsections( array( 'input5' => $input5 ), null, false );
+		//lastly add a subsection onto the very beginning
+		$parent_form->add_subsections( array( 'input5' => $input5 ) );
 		$inputs = $parent_form->inputs();
 		$this->assertEquals( $input5, reset($inputs) );
 		$this->assertEquals( $input1, next($inputs) );
