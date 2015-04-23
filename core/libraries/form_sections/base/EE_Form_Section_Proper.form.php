@@ -725,7 +725,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				unset($new_subsections[$subsection_name]);
 			}
 		}
-		$subsections_before = array();
+
+		EE_Registry::instance()->load_helper( 'Array' );
+		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_add_before, $add_before );
+
+		/*$subsections_before = array();
 		if( $subsection_name_to_add_before ){
 			foreach( $this->_subsections as $subsection_name => $subsection ) {
 				if ( $add_before && $subsection_name == $subsection_name_to_add_before ) {
@@ -753,7 +757,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				}
 				$this->_subsections = $new_subsections;
 			}
-		}
+		}*/
 		if( $this->_construction_finalized ){
 			foreach($this->_subsections as $name => $subsection){
 				$subsection->_construct_finalize($this, $name);
