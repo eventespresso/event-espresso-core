@@ -5,14 +5,16 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  *
- * EEM_Ticket_Test
+ * EEM_Ticket_Test_Caps
+ * Test capability-related stuff on this model
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  *
  */
-class EEM_Ticket_Test extends EE_UnitTestCase{/**
+class EEM_Ticket_Caps_Test extends EE_UnitTestCase{
+	/**
 	 *
 	 * @var WP_User
 	 */

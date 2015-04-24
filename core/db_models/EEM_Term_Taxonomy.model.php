@@ -54,6 +54,11 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		$this->_indexes = array(
 			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
 		);
+		$path_to_tax_model = '';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
 
 		parent::__construct( $timezone );
 	}

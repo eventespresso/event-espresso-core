@@ -39,7 +39,11 @@ class EEM_Term extends EEM_Base {
 		$this->_indexes = array(
 			'slug'=>new EE_Unique_Index(array('slug'))
 		);
-		//@todo: account for all these termy models
+		$path_to_tax_model = 'Term_Taxonomy';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
 
 		parent::__construct( $timezone );
 	}
