@@ -53,11 +53,13 @@ class EEM_WP_User extends EEM_Base {
 			'Venue' => new EE_Has_Many_Relation(),
 		);
 		$this->_wp_core_model = true;
-		//by default users can see themselves, and edit themselves, but not delete themselves
-		//list_users controls whether they can see other users
-		//edit_users control whether they can edit others
-		//delete_users controls whether they can
-		//create_users controls whether they can create users at all
+		$this->_caps_slug = 'users';
+		$this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
+		$this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read_admin ] = 'list';
+		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ) {
+			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_WP_User();
+		}
+		//@todo: account for create_users controls whether they can create users at all
 
 		parent::__construct( $timezone );
 	}
