@@ -56,7 +56,6 @@ class EEM_Datetime_Ticket extends EEM_Base {
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
-		$this->_caps_slug = 'events';
 		parent::__construct( $timezone );
 	}
 } //end EEM_Datetime_Ticket class

@@ -53,8 +53,29 @@ class EEM_WP_User extends EEM_Base {
 			'Venue' => new EE_Has_Many_Relation(),
 		);
 		$this->_wp_core_model = true;
+		//by default users can see themselves, and edit themselves, but not delete themselves
+		//list_users controls whether they can see other users
+		//edit_users control whether they can edit others
+		//delete_users controls whether they can
+		//create_users controls whether they can create users at all
 
 		parent::__construct( $timezone );
+	}
+
+	/**
+	 * We don't need a foreign key to the WP_User model, we just need its primary key
+	 * @return string
+	 */
+	public function wp_user_field_name() {
+		return $this->primary_key_name();
+	}
+
+	/**
+	 * This WP_User model IS owned, even though it doesn't have a foreign key to itself
+	 * @return boolean
+	 */
+	public function is_owned() {
+		return true;
 	}
 }
 // End of file EEM_WP_User.model.php

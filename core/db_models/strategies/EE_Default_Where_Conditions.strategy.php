@@ -81,6 +81,9 @@ class EE_Default_Where_Conditions{
 	 */
 	public function prepare_where_conditions_for_querying( $where_conditions, $model_relation_chain ) {
 		$where_conditions_with_model_relation_chain_prefixes = array();
+		if( ! is_array( $where_conditions ) ){
+			$where_conditions = array();
+		}
 		foreach( $where_conditions as $key => $value ) {
 			if( in_array( $key, array( 'OR', 'AND', 'NOT' ) ) ||
 			strpos( $key, 'OR*' )  !== false ||

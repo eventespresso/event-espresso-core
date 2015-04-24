@@ -74,17 +74,13 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Registration' => new EE_Has_Many_Relation(),
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
+
 		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Default_Public';
 		//account for default tickets in the caps
-		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ) {
-			$this->_cap_restrictions[ $context ] = array(
-			'ee_' . $action . '_default_tickets' => new EE_Default_Where_Conditions( array( 'TKT_is_default' => false ) ),
-			'ee_' . $action .'_others_default_tickets' => new EE_Default_Where_Conditions( array(
-				'OR*no_ee_read_others_default_tickets' => array( 'TKT_is_default' => false,
-				EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder ) ) ),
-		);
-		}
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = 'EE_Restriction_Generator_Default_Protected';
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = 'EE_Restriction_Generator_Default_Protected';
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = 'EE_Restriction_Generator_Default_Protected';
 		parent::__construct( $timezone );
 	}
 

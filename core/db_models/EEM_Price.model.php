@@ -68,10 +68,11 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
-		//and editable if you have the event caps
-		$this->_caps_slug = 'tickets';
-		//@todo: account for default prices
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Default_Public';
+		//account for default tickets in the caps
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = 'EE_Restriction_Generator_Default_Protected';
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = 'EE_Restriction_Generator_Default_Protected';
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = 'EE_Restriction_Generator_Default_Protected';
 		parent::__construct( $timezone );
 	}
 

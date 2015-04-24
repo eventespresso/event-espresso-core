@@ -2075,7 +2075,7 @@ abstract class EEM_Base extends EE_Base{
 		//first check if we should alter the query to account for caps or not
 		//because the caps might require us to do extra joins
 		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
-			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->_get_caps_where_conditions( $query_params[ 'caps' ] ) );
+			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->get_caps_where_conditions( $query_params[ 'caps' ] ) );
 		}
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
@@ -2086,7 +2086,7 @@ abstract class EEM_Base extends EE_Base{
 		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
 		foreach($where_query_params as $key => $value){
 			if(is_int($key)){
-				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, $value,get_class($this)));
+				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. All the query params provided were '%s' Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, var_export( $value, true ), var_export( $query_params, true ), get_class($this)));
 			}
 		}
 		if( array_key_exists( 'default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'] )){
@@ -2198,23 +2198,35 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $context one of EEM_Base::caps_* consts
 	 * @return array like EEM_Base::get_all() 's $query_params[0]
 	 */
-	protected function _get_caps_where_conditions( $context = self::caps_read ) {
+	public function get_caps_where_conditions( $context = self::caps_read ) {
 		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
 			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
 		}
 		$cap_where_conditions = array();
-		if( isset( $this->_cap_restrictions[ $context ] ) ) {
-			$cap_restrictions = $this->_cap_restrictions[ $context ];
-			/**
-			 * @var $cap_restrictions EE_Default_Where_Conditions[]
-			 */
-			foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
-				if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
-					$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
-				}
+		$cap_restrictions = $this->get_cap_restrictions( $context );
+		/**
+		 * @var $cap_restrictions EE_Default_Where_Conditions[]
+		 */
+		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
+			if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
+				$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
 			}
 		}
 		return $cap_where_conditions;
+	}
+
+	/**
+	 * Gets all the restrictions that could be imposed on queries to this model in
+	 * the given context.
+	 * @param string $context one of EEM_Base::caps_* consts
+	 * @return EE_Default_Where_Conditions[]
+	 */
+	public function get_cap_restrictions( $context ) {
+		if( isset( $this->_cap_restrictions[ $context ] ) ) {
+			return $this->_cap_restrictions[ $context ];
+		}else{
+			return array();
+		}
 	}
 
 
