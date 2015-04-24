@@ -420,7 +420,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_event->set( 'EVT_ID', 0 );
 		$new_name = $new_event->name() . ' ' . __('**DUPLICATE**', 'event_espresso');
 		$new_event->set( 'EVT_name',  $new_name );
-		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
+		$new_event->set( 'EVT_slug',  wp_unique_post_slug( sanitize_title( $orig_event->name() ), 0, 'publish', 'espresso_events', 0 ) );
 		$new_event->set( 'status', 'draft' );
 
 		//duplicate discussion settings
