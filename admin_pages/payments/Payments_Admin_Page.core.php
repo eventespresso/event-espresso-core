@@ -133,7 +133,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'label' => __('Payment Methods', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
                 'help_tabs' => array_merge(
 			array(
 					'payment_methods_overview_help_tab' => array(
@@ -203,7 +203,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						)
 					),
 				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 			'payment_log'=>array(
@@ -212,7 +212,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'order'=>30,
 				),
 				'list_table'=>'Payment_Log_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce'=> FALSE
 			)
 			);
