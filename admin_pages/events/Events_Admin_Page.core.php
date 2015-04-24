@@ -92,7 +92,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'create_new' => __('Save New Event', 'event_espresso'),
 				'edit' => __('Update Event', 'event_espresso'),
 				'add_category' => __('Save New Category', 'event_espresso'),
-				'edit_category' => __('Update Category', 'event_espresso')
+				'edit_category' => __('Update Category', 'event_espresso'),
+				'template_settings' => __( 'Update Settings', 'event_espresso' )
 				)
 		);
 	}
@@ -177,6 +178,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_update_default_event_settings',
 				'capability' => 'manage_options',
 				'noheader' => TRUE,
+				),
+			'template_settings' => array(
+				'func' => '_template_settings',
+				'capability' => 'manage_options'
 				),
 			//event category tab related
 			'add_category' => array(
@@ -394,6 +399,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
+				'require_nonce' => FALSE
+			),
+			//template settings
+			'template_settings' => array(
+				'nav' => array(
+					'label' => __('Templates', 'event_espresso'),
+					'order' => 30
+				),
+				'metaboxes' => $this->_default_espresso_metaboxes,
+				'help_tabs' => array(
+					'general_settings_templates_help_tab' => array(
+						'title' => __('Templates', 'event_espresso'),
+						'filename' => 'general_settings_templates'
+					)
+				),
+				'help_tour' => array( 'Templates_Help_Tour' ),
 				'require_nonce' => FALSE
 			),
 			//event category stuff
@@ -1974,6 +1995,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$what = 'Default Event Settings';
 		$success = $this->_update_espresso_configuration($what, EE_Config::instance(), __FILE__, __FUNCTION__, __LINE__);
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
+	}
+
+
+
+
+	/*************		Templates 		*************/
+
+
+	protected function _template_settings() {
+		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
+		$this->_template_args['preview_img'] = '<img src="' . EVENTS_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="' . esc_attr__( 'Template Settings Preview screenshot', 'event_espresso' ) . '" />';
+		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
+		$this->display_admin_caf_preview_page( 'template_settings_tab' );
 	}
 
 
