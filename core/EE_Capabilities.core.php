@@ -152,7 +152,7 @@ final class EE_Capabilities extends EE_Base {
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
 
 		//add filter for map_meta_caps but only if models can query.
-		if ( EE_Maintenance_Mode::instance()->models_can_query() ) {
+		if ( EE_Maintenance_Mode::instance()->models_can_query() && ! has_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ) ) ) {
 			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
 		}
 	}
@@ -181,9 +181,9 @@ final class EE_Capabilities extends EE_Base {
 			if ( ! $meta_map instanceof EE_Meta_Capability_Map ) {
 				continue;
 			}
-			$meta_map->_ensure_is_model();
+			$meta_map->ensure_is_model();
 
-			$caps = $this->map_meta_caps( $caps, $cap, $user_id, $args );
+			$caps = $meta_map->map_meta_caps( $caps, $cap, $user_id, $args );
 		}
 		return $caps;
 	}
@@ -595,7 +595,7 @@ abstract class EE_Meta_Capability_Map {
 	 *
 	 * @return void
 	 */
-	public function _ensure_is_model() {
+	public function ensure_is_model() {
 		//is it already instantiated?
 		if ( $this->_model instanceof EEM_Base ) {
 			return;
