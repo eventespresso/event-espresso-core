@@ -19,7 +19,9 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase {
 	function test_generate_restrictions__basic_only() {
 		//currently transactions only have the basic cap
 		//if they get an 'ee_edit_others_transactions' cap, this test will need updating
-		$restrictions = EE_Restriction_Generator_Protected::generate_restrictions( EEM_Transaction::instance(), 'read' );
+		$generator = new EE_Restriction_Generator_Protected();
+		$generator->_construct_finalize( EEM_Transaction::instance(), EEM_Base::caps_read );
+		$restrictions = $generator->generate_restrictions();
 		foreach ( $restrictions as $default_where_conditions ) {
 			$default_where_conditions->_finalize_construct( EEM_Registration::instance() );
 		}
@@ -33,7 +35,9 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase {
 		$current_user = $this->factory->user->create_and_get();
 		//currently registrations have the 'ee_read_registrations' and 'ee_read_others_registrations' permissions
 		//if that changes, this will need to be updated
-		$restrictions = EE_Restriction_Generator_Protected::generate_restrictions( EEM_Registration::instance(), 'read' );
+		$generator = new EE_Restriction_Generator_Protected();
+		$generator->_construct_finalize( EEM_Registration::instance(), EEM_Base::caps_read );
+		$restrictions = $generator->generate_restrictions();
 		foreach ( $restrictions as $default_where_conditions ) {
 			$default_where_conditions->_finalize_construct( EEM_Registration::instance() );
 		}
@@ -48,7 +52,9 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase {
 	function test_generate_restrictions__basic_and_others_and_private() {
 		//currently events have the 'ee_read_events', 'ee_read_others_events', and 'ee_read_others_private_events' caps
 		//if that changes, this will need to be updated
-		$restrictions = EE_Restriction_Generator_Protected::generate_restrictions( EEM_Event::instance(), 'read' );
+		$generator = new EE_Restriction_Generator_Protected();
+		$generator->_construct_finalize( EEM_Event::instance(), EEM_Base::caps_read );
+		$restrictions = $generator->generate_restrictions();
 		foreach ( $restrictions as $default_where_conditions ) {
 			$default_where_conditions->_finalize_construct( EEM_Event::instance() );
 		}

@@ -53,9 +53,9 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
 		$this->_model_chain_to_wp_user = 'Question';
 		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
-		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = 'EE_Restriction_Generator_Reg_Form';
-		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = 'EE_Restriction_Generator_Reg_Form';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form();
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form();
 		$this->_caps_slug = 'questions';
 		parent::__construct( $timezone );
 	}

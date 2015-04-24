@@ -150,7 +150,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 		parent::__construct( $timezone );
 	}
 

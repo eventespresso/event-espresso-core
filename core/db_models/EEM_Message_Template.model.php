@@ -57,10 +57,10 @@ class EEM_Message_Template extends EEM_Base {
 			'Message_Template_Group' => new EE_Belongs_To_Relation()
 			);
 		$this->_model_chain_to_wp_user = 'Message_Template_Group';
-		$this->_caps_slug = 'messages';
 		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ){
-			$this->_cap_restriction_generators[ $context ] = 'EE_Restriction_Generator_Global';
+			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_Global( 'Message_Template_Group.MTP_is_global');
 		}
+		$this->_caps_slug = 'messages';
 		parent::__construct( $timezone );
 	}
 

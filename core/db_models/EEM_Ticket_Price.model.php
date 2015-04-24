@@ -57,7 +57,7 @@ class EEM_Ticket_Price extends EEM_Base {
 		);
 		$this->_model_chain_to_wp_user = 'Ticket';
 		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = 'EE_Restriction_Generator_Public';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 		//follow the caps of the ticket
 		$this->_caps_slug = 'tickets';
 		parent::__construct( $timezone );

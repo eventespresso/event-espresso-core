@@ -163,10 +163,10 @@ abstract class EEM_Base extends EE_Base{
 	 * Array defining which cap restriction generators to use to create default
 	 * cap restrictions to put in EEM_Base::_cap_restrictions.
 	 *
-	 * Array-keys are one of EEM_Base::caps_*, and values are the classname of a child of
+	 * Array-keys are one of EEM_Base::caps_*, and values are a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
 	 * automatically set this to false (not just null).
-	 * @var array
+	 * @var EE_Restriction_Generator_Base
 	 */
 	protected $_cap_restriction_generators = array();
 
@@ -459,22 +459,24 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->_cap_restriction_generators !== false ){
 			foreach( $this->_cap_contexts_to_cap_action_map as $cap_context => $action ){
 				if( ! isset( $this->_cap_restriction_generators[ $cap_context ] ) ) {
-					$this->_cap_restriction_generators[ $cap_context ] = 'EE_Restriction_Generator_Protected';
+					$this->_cap_restriction_generators[ $cap_context ] = new EE_Restriction_Generator_Protected();
 				}
 			}
 		}
 		//if there are cap restriction generators, use them to make the default cap restrictions
 		if( $this->_cap_restriction_generators !== false ){
-			foreach( $this->_cap_restriction_generators as $context => $generator_name ) {
-				if( ! $generator_name ){
+			foreach( $this->_cap_restriction_generators as $context => $generator_object ) {
+				if( ! $generator_object ){
 					continue;
 				}
-				if( ! class_exists( $generator_name ) ){
-					throw new EE_Error( sprintf( __( 'There is no EE_Restriction_Generator_Base child named "%s". Please look in %s to see what classes are available', 'event_espresso' ), $generator_name, 'event-espresoso-core/core/db_models/strategies' ) );
+				if( !  $generator_object instanceof EE_Restriction_Generator_Base ){
+					throw new EE_Error( sprintf( __( 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.', 'event_espresso' ), $context, $this->get_this_model_name()  ) );
 				}
 				$action = $this->_cap_contexts_to_cap_action_map[ $context ];
-
-				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ], call_user_func_array(array( $generator_name, 'generate_restrictions' ), array( $this, $action ) ) );
+				if( ! $generator_object->construction_finalized() ){
+					$generator_object->_construct_finalize( $this, $action );
+				}
+				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ],  $generator_object->generate_restrictions() );
 			}
 		}
 		foreach( $this->_cap_restrictions as $context => $cap_restrictions ) {
