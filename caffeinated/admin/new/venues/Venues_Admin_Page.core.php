@@ -860,7 +860,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	protected function _trash_or_restore_venue( $venue_stats = 'trash', $redirect_after = TRUE ) {
+	protected function _trash_or_restore_venue( $venue_status = 'trash', $redirect_after = TRUE ) {
 		$VNU_ID = isset( $this->_req_data['VNU_ID'] ) ? absint( $this->_req_data['VNU_ID'] ) : FALSE;
 
 		//loop thru venues
