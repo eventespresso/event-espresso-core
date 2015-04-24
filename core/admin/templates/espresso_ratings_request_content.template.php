@@ -1,0 +1,5 @@
+<div class="padding">
+	<p><?php _e( 'We need your help to continue maintaining and providing this plugin for free. You can help by leaving a positive review in the WordPress plugin directory. 5 star ratings bring Event Espresso Decaf to the attention of more users which increases our support and features for this version of Event Espresso.', 'event_espresso' ); ?></p>
+	<p><?php _e( 'Rate it five stars today!', 'event_espresso' ); ?></p><span class="ee-wp-blue dashicons dashicons-star-filled"></span><span class="ee-wp-blue dashicons dashicons-star-filled"></span><span class="ee-wp-blue dashicons dashicons-star-filled"></span><span class="ee-wp-blue dashicons dashicons-star-filled"></span><span class="ee-wp-blue dashicons dashicons-star-filled"></span>
+	<p><a class="button button-primary" href="https://wordpress.org/plugins/event-espresso-decaf/"><?php _e( 'Rate It!', 'event_espresso' ); ?></a></p>
+</div>
