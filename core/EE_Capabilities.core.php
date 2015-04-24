@@ -147,6 +147,42 @@ final class EE_Capabilities extends EE_Base {
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
+
+		//add filter for map_meta_caps but only if models can query.
+		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
+			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
+		}
+	}
+
+
+
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
+	 * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
+	 *
+	 * The actual logic is carried out by implementer classes in their definition of _map_meta_caps.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int    $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
+	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		//loop through our _meta_caps array
+		foreach ( $this->_meta_caps as $meta_map ) {
+			if ( ! $meta_map instanceof EE_Meta_Capability_Map ) {
+				continue;
+			}
+			$meta_map->_ensure_is_model();
+
+			$caps = $this->map_meta_caps( $caps, $cap, $user_id, $args );
+		}
+		return $caps;
 	}
 
 
@@ -543,34 +579,9 @@ abstract class EE_Meta_Capability_Map {
 		$this->published_cap = (string) $map_values[1];
 		$this->others_cap = (string) $map_values[2];
 		$this->private_cap = (string) $map_values[3];
-
-		//add filter for map_meta_caps but only if models can query.
-		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
-			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
-		}
 	}
 
 
-
-	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
-	 *
-	 * The actual logic is carried out by implementer classes in their definition of _map_meta_caps.
-	 *
-	 * @since 4.5.0
-	 * @see  wp-includes/capabilities.php
-	 *
-	 * @param array  $caps    actual users capabilities
-	 * @param string $cap     initial capability name that is being checked (the "map" key)
-	 * @param int     $user_id The user id
-	 * @param array  $args    Adds context to the cap. Typically the object ID.
-	 *
-	 * @return array   actual users capabilities
-	 */
-	final public function map_meta_caps( $caps, $cap, $user_id, $args ) {
-		$this->_ensure_is_model();
-		return $this->_map_meta_caps( $caps, $cap, $user_id, $args );
-	}
 
 
 	/**
@@ -581,7 +592,7 @@ abstract class EE_Meta_Capability_Map {
 	 *
 	 * @return void
 	 */
-	private function _ensure_is_model() {
+	public function _ensure_is_model() {
 		//is it already instantiated?
 		if ( $this->_model instanceof EEM_Base ) {
 			return;
@@ -597,6 +608,22 @@ abstract class EE_Meta_Capability_Map {
 		if ( ! $this->_model instanceof EEM_Base ) {
 			throw new EE_Error( sprintf( __('This string passed in to %s to represent a EEM_Base model class was not able to be used to instantiate the class.   Please ensure that the string is a match for the EEM_Base model name (not including the EEM_ part). This was given: %s', 'event_espresso'), get_class($this), $this->_model ) );
 		}
+	}
+
+
+	/**
+	 *
+	 * @see EE_Meta_Capability_Map::_map_meta_caps() for docs on params.
+	 * @since 4.6.x
+	 * @param $caps
+	 * @param $cap
+	 * @param $user_id
+	 * @param $args
+	 *
+	 * @return array
+	 */
+	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		return $this->_map_meta_caps( $caps, $cap, $user_id, $args );
 	}
 
 
