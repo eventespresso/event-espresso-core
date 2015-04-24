@@ -14,7 +14,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base{
-	public function generate_restrictions() {
+	protected function _generate_restrictions() {
 		//if there are no standard caps for this model, then for allow full access
 		if( ! $this->model()->cap_slug() ) {
 			return array(

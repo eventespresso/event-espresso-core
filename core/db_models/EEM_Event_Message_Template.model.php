@@ -47,8 +47,10 @@ class EEM_Event_Message_Template extends EEM_Base {
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Message_Template_Group'=>new EE_Belongs_To_Relation()
 		);
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
-		$this->_caps_slug = 'events';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public( 'Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected( 'Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected( 'Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected( 'Event' );
 
 		parent::__construct( $timezone );
 	}

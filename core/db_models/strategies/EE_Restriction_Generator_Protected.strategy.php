@@ -17,7 +17,7 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base{
 	/**
 	 * @return \EE_Default_Where_Conditions
 	 */
-	public function generate_restrictions() {
+	protected function _generate_restrictions() {
 
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this

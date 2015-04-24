@@ -476,17 +476,26 @@ abstract class EEM_Base extends EE_Base{
 				if( ! $generator_object->construction_finalized() ){
 					$generator_object->_construct_finalize( $this, $action );
 				}
-				$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ],  $generator_object->generate_restrictions() );
-			}
-		}
-		foreach( $this->_cap_restrictions as $context => $cap_restrictions ) {
-			foreach( $cap_restrictions as $where_conditions_obj ) {
-				$where_conditions_obj->_finalize_construct( $this );
+
 			}
 		}
 		do_action('AHEE__'.get_class($this).'__construct__end');
 	}
 
+	/**
+	 * Generates the cap restrictions for the given context, or if they were
+	 * already generated just gets what's cached
+	 * @param string $context like EEM_Base::caps_* consts
+	 * @return EE_Default_Where_Conditions[]
+	 */
+	protected function _generate_cap_restrictions( $context ){
+		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
+				$this->_cap_contexts_to_cap_action_map[ $context ] instanceof EE_Restriction_Generator_Base ) {
+			return $this->_cap_contexts_to_cap_action_map[ $context ]->generate_restrictions();
+		}else{
+			return array();
+		}
+}
 
 
 
@@ -2205,7 +2214,7 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
 		}
 		$cap_where_conditions = array();
-		$cap_restrictions = $this->get_cap_restrictions( $context );
+		$cap_restrictions = $this->cap_restrictions( $context );
 		/**
 		 * @var $cap_restrictions EE_Default_Where_Conditions[]
 		 */
@@ -2216,22 +2225,6 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $cap_where_conditions;
 	}
-
-	/**
-	 * Gets all the restrictions that could be imposed on queries to this model in
-	 * the given context.
-	 * @param string $context one of EEM_Base::caps_* consts
-	 * @return EE_Default_Where_Conditions[]
-	 */
-	public function get_cap_restrictions( $context ) {
-		if( isset( $this->_cap_restrictions[ $context ] ) ) {
-			return $this->_cap_restrictions[ $context ];
-		}else{
-			return array();
-		}
-	}
-
-
 
 	/**
 	 * Verifies that $should_be_order_string is in $this->_allowed_order_values,
@@ -3808,15 +3801,21 @@ abstract class EEM_Base extends EE_Base{
 	 * only returns the cap restrictions array in that context (ie, the array
 	 * at that key)
 	 * @param string $context
-	 * @return array @see EEM_Base::_cap_restrictions if $context is null (default)
-	 * or a sub-array of EEM_Base::_cap_restrictions if $context is provided
+	 * @return array @see EEM_Base::_cap_restrictions a sub-array of EEM_Base::_cap_restrictions if $context is provided
 	 */
-	public function cap_restrictions( $context = null ) {
-		if( $context == null ) {
-			return $this->_cap_restrictions;
-		}else{
-			return $this->_cap_restrictions[ $context ];
+	public function cap_restrictions( $context = EEM_Base::caps_read ) {
+		//check if we ought to run the restriction generator first
+		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
+				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base &&
+				! $this->_cap_restriction_generators[ $context ]->has_generated_cap_restrictions() ) {
+			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ],  $this->_cap_restriction_generators[ $context ]->generate_restrictions() );
 		}
+		//and make sure we've finalized the construction of each restriction
+		foreach( $this->_cap_restrictions[ $context ] as $where_conditions_obj ) {
+			$where_conditions_obj->_finalize_construct( $this );
+		}
+
+		return $this->_cap_restrictions[ $context ];
 	}
 
 	/**

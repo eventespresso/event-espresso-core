@@ -21,24 +21,27 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Generator_Base {
 
 	/**
+	 * Path to the event model from the model this restriction generator will be applied to;
+	 * including the event model itself. Eg "Ticket.Datetime.Event"
+	 * @var string
+	 */
+	protected $_path_to_event_model;
+	/**
+	 *
+	 * @param type $path_to_event_model
+	 */
+	public function __construct( $path_to_event_model ) {
+		if( substr( $path_to_event_model, -1, 1 ) != '.' ) {
+			$path_to_event_model .= '.';
+		}
+		$this->_path_to_event_model = $path_to_event_model;
+	}
+
+	/**
 	 *
 	 * @return \EE_Default_Where_Conditions
 	 */
-	public function generate_restrictions() {
-
-		switch ( $this->model()->get_this_model_name() ) {
-			case 'Ticket':
-				$path_to_events = 'Datetime.Event.';
-				break;
-			case 'Price':
-				$path_to_events = 'Ticket.Datetime.Event.';
-				break;
-			case 'Datetime':
-				$path_to_events = 'Event.';
-				break;
-			default:
-				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Global. Please add a switch case for it in EE_Restriction_Generator_Global::generate_restrictions', 'event_espresso' ), $this->model()->get_this_model_name() ) );
-		}
+	protected function _generate_restrictions() {
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
 		if ( !$this->model()->cap_slug() ) {
@@ -55,12 +58,12 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
 			self::get_cap_name($event_model, $this->action()) => new EE_Return_None_Where_Conditions(),
 			//if they don't have the others event cap, they can't access others' non-default items
 			self::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
-					$path_to_events . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder ) ),
+					$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder ) ),
 			//if they have basic and others, but not private, they can't access others' private non-default items
 			self::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
 				'OR*no_' .self::get_cap_name($event_model, $this->action() . '_private' ) => array(
-				$path_to_events . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
-				$path_to_events . 'status' => array( '!=', 'private' ) ) ) ),
+				$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+				$this->_path_to_event_model . 'status' => array( '!=', 'private' ) ) ) ),
 			 );
 	}
 

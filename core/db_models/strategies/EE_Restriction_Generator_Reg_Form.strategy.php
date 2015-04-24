@@ -19,7 +19,7 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 	 *
 	 * @return \EE_Default_Where_Conditions
 	 */
-	public function generate_restrictions() {
+	protected function _generate_restrictions() {
 
 		switch( $this->model()->get_this_model_name() ){
 			case 'Question':
@@ -35,7 +35,7 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 				$system_field_name = 'Question.QST_system';
 				break;
 			default:
-				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Reg_Form. Please add a switch case for it in EE_Restriction_Generator_Reg_Form::generate_restrictions', 'event_espresso' ), $this->model()->get_this_model_name() ) );
+				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Reg_Form. Please add a switch case for it in EE_Restriction_Generator_Reg_Form::_generate_restrictions', 'event_espresso' ), $this->model()->get_this_model_name() ) );
 		}
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
