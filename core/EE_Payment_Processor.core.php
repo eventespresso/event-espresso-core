@@ -348,8 +348,18 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
 
-			//global hook for others to use.
-			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
+			$trigger_global_notifications_hook = true;
+			// check the type of payment method used
+			if ( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ) {
+				if ( $payment->payment_method()->type_obj()->payment_occurs() == EE_PMT_Base::offsite && ! $IPN ) {
+					// don't trigger payment notifications for off-site payments unless this is an IPN
+					$trigger_global_notifications_hook = false;
+				}
+			}
+			if ( $trigger_global_notifications_hook ) {
+				//global hook for others to use.
+				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
+			}
 
 		}
 	}
