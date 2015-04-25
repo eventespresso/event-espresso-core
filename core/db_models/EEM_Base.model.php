@@ -767,6 +767,156 @@ abstract class EEM_Base extends EE_Base{
 
 
 
+
+	/**
+	 * Returns the next x number of items in sequence from the given value as
+	 * found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 */
+	public function next_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		return $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the previous x number of items in sequence from the given value
+	 * as found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 */
+	public function previous_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		return $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+	/**
+	 * Returns the next item in sequence from the given value as found in the
+	 * database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an EE_Base_Class
+	 *                                      object is returned, otherwise you
+	 *                                      can indicate just the columns you
+	 *                                      want and a single array indexed by
+	 *                                      the columns will be returned.
+	 *
+	 * @return EE_Base_Class|null|array()
+	 */
+	public function next( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$results = $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, 1, $query_params, $columns_to_select );
+		return empty( $results ) ? array() : reset( $results );
+	}
+
+
+
+
+	/**
+	 * Returns the previous item in sequence from the given value as found in
+	 * the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an EE_Base_Class
+	 *                                      object is returned, otherwise you
+	 *                                      can indicate just the columns you
+	 *                                      want and a single array indexed by
+	 *                                      the columns will be returned.
+	 *
+	 * @return EE_Base_Class|null|array()
+	 */
+	public function previous( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$results = $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, 1, $query_params, $columns_to_select );
+		return empty( $results ) ? null : reset( $results );
+	}
+
+
+
+
+
+	/**
+	 * Returns the a consecutive number of items in sequence from the given
+	 * value as found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param string $operand               What operand is used for the
+	 *                                      sequence.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 */
+	protected function _get_consecutive( $current_field_value, $operand = '>', $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		//if $field_to_order_by is empty then let's assume we're ordering by the primary key.
+		if ( empty( $field_to_order_by ) ) {
+			if ( $this->has_primary_key_field() ) {
+				$field_to_order_by = $this->get_primary_key_field()->get_table_column();
+			} else {
+				EE_Error::add_error( __( 'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).', 'event_espresso' ) );
+				return array();
+			}
+		}
+
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::_get_consecutive', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
+
+		//let's add the where query param for consecutive look up.
+		$query_params[0][ $field_to_order_by ] = array( $operand, $current_field_value );
+		$query_params['limit'] = $limit;
+
+		//set direction
+		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' ) : array( $field_to_order_by => 'DESC' );
+
+		//if $columns_to_select is empty then that means we're returning EE_Base_Class objects
+		if ( empty( $columns_to_select ) ) {
+			return $this->get_all( $query_params );
+		} else {
+			//getting just the fields
+			return $this->_get_all_wpdb_results( $query_params, ARRAY_A, $columns_to_select );
+		}
+	}
+
+
+
+
 	/**
 	 * This just returns whatever is set for the current timezone.
 	 *
