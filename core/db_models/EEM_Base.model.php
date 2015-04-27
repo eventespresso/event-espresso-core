@@ -3802,6 +3802,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Default_Where_Conditions[] indexed by associated capability
 	 */
 	public function cap_restrictions( $context = EEM_Base::caps_read ) {
+		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
+			throw new EE_Error( sprintf( __( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ), $context, implode(',', array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
+		}
 		//check if we ought to run the restriction generator first
 		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
 				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base &&
@@ -3848,5 +3851,18 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function cap_contexts_to_cap_action_map() {
 		return $this->_cap_contexts_to_cap_action_map;
+	}
+
+	/**
+	 * Returns all the capability contexts whcih are valid when querying models
+	 * @return array
+	 */
+	static public function valid_cap_contexts() {
+		return apply_filters( 'FHEE__EEM_Base__valid_cap_contexts', array(
+			self::caps_read,
+			self::caps_read_admin,
+			self::caps_edit,
+			self::caps_delete
+		));
 	}
 }
