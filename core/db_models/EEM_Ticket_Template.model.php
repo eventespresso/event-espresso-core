@@ -56,9 +56,11 @@ class EEM_Ticket_Template extends EEM_Base {
 			'Ticket'=>new EE_Has_Many_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Ticket';
-		//this model is generally available for reading
-		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
-		$this->_caps_slug = 'tickets';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('Ticket.TKT_is_default', 'Ticket.Datetime.Event' );
+		//account for default tickets in the caps
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
 		parent::__construct( $timezone );
 	}
 } //end EEM_Ticket_Template class

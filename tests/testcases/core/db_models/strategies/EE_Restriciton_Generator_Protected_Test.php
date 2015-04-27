@@ -71,7 +71,7 @@ class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase {
 		$this->assertEquals( array(
 			'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( EEM_Event::instance(), 'read_private' ) => array(
 				EEM_Event::instance()->wp_user_field_name()	 => get_current_user_id(),
-				'status'									 => 'publish' ) ), $restrictions[ 'ee_read_private_events' ]->get_default_where_conditions() );
+				'status'									 => array( '!=', 'private' ) ) ), $restrictions[ 'ee_read_private_events' ]->get_default_where_conditions() );
 		$this->assertEquals( 3, count( $restrictions ) );
 	}
 

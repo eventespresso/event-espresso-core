@@ -13,7 +13,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author				Mike Nelson
  *
  */
-class EEM_Message_Template_Test extends EE_UnitTestCase{
+class EEM_Message_Template_Caps_Test extends EE_UnitTestCase{
 /**
 	 * Test that message templates are controlled properly by caps
 	 * and then you can edit others if you have that cap,

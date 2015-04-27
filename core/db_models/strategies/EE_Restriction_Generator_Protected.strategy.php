@@ -42,7 +42,7 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base{
 					$restrictions[ self::get_cap_name($this->model(), $this->action() . '_private' ) ] = new EE_Default_Where_Conditions(array(
 						'OR*no_' .self::get_cap_name($this->model(), $this->action() . '_private' ) => array(
 						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-						'status' => 'publish' ) ) );
+						'status' => array( '!=', 'private' ) ) ) );
 				}
 			}
 		}else{
