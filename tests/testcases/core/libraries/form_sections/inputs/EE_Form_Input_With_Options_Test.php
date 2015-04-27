@@ -34,6 +34,26 @@ class EE_Form_Input_With_Options_Test extends EE_UnitTestCase{
 		$this->assertFalse( $form->is_valid() );
 	}
 
+	/**
+	 * Verifies we don't change these options into booleans
+	 * @group 8006
+	 */
+	function test_double_valued_with_blank(){
+		EEM_Country::instance()->update( array( 'CNT_active' => false ), array() );
+		EEM_Country::instance()->update( array( 'CNT_active' => true), array( 'limit' => 1 ) );
+		$active_countries =  EEM_Country::instance()->get_all( array( array( 'CNT_active' => true ) ) );
+		$this->assertEquals( 1, count( $active_countries ) );
+		$active_country = reset( $active_countries );
+		$country_input = new EE_Country_Select_Input();
+		$this->assertEquals(
+		array(
+			'' => '',
+			$active_country->ID() => $active_country->name()
+		),
+		$country_input->options() );
+		$this->assertInstanceOf( 'EE_Text_Normalization', $country_input->get_normalization_strategy() );
+	}
+
 	function test_many_valued(){
 		//create a form with radio button in it.
 		$form = new EE_Form_Section_Proper(array(

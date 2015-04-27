@@ -807,19 +807,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this registration.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
 			$primary_att = EEM_Attendee::instance()->create_default_object();
 		}
-		$this->_template_args['ATT_ID'] 							= $primary_att->get('ATT_ID');
-		$this->_template_args['prime_reg_fname'] 		= $primary_att->get('ATT_fname');
-		$this->_template_args['prime_reg_lname'] 		= $primary_att->get('ATT_lname');
-		$this->_template_args['prime_reg_email'] 			= $primary_att->get('ATT_email');
-		$this->_template_args['prime_reg_address'] 		= $primary_att->get('ATT_address');
-		$this->_template_args['prime_reg_address2'] 	= $primary_att->get('ATT_address2');
-		$this->_template_args['prime_reg_city'] 			= $primary_att->get('ATT_city');
-		$this->_template_args['prime_reg_zip'] 				= $primary_att->get('ATT_zip');
-		$this->_template_args['prime_reg_phone'] 		= $primary_att->get('ATT_phone');
-		$state = $primary_att->state_obj();
-		$this->_template_args['prime_reg_state'] 			= $state instanceof EE_State ? $state->get('STA_name' ) : '';
-		$this->_template_args['prime_reg_country'] 		= $primary_att->get('CNT_ISO');
-		$this->_template_args['registrant_form_url'] 		= add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );
+		$this->_template_args['ATT_ID'] 						= $primary_att->ID();
+		$this->_template_args['prime_reg_fname']		= $primary_att->fname();
+		$this->_template_args['prime_reg_lname']		= $primary_att->lname();
+		$this->_template_args['prime_reg_email'] 		= $primary_att->email();
+		$this->_template_args['prime_reg_phone'] 	= $primary_att->phone();
+		$this->_template_args['edit_attendee_url'] 	= EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $primary_att->ID()  ), REG_ADMIN_URL );
+		// get formatted address for registrant
+		EE_Registry::instance()->load_helper( 'Formatter' );
+		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $primary_att );
 		echo EEH_Template::display_template( TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php', $this->_template_args, TRUE );
 	}
 
