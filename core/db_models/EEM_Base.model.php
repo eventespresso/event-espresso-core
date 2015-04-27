@@ -2086,7 +2086,7 @@ abstract class EEM_Base extends EE_Base{
 		//first check if we should alter the query to account for caps or not
 		//because the caps might require us to do extra joins
 		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
-			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->get_caps_where_conditions( $query_params[ 'caps' ] ) );
+			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->caps_where_conditions( $query_params[ 'caps' ] ) );
 		}
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
@@ -2209,19 +2209,17 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $context one of EEM_Base::caps_* consts
 	 * @return array like EEM_Base::get_all() 's $query_params[0]
 	 */
-	public function get_caps_where_conditions( $context = self::caps_read ) {
+	public function caps_where_conditions( $context = self::caps_read ) {
 		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
 			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
 		}
 		$cap_where_conditions = array();
-		$cap_restrictions = $this->cap_restrictions( $context );
+		$cap_restrictions = $this->caps_missing( $context );
 		/**
 		 * @var $cap_restrictions EE_Default_Where_Conditions[]
 		 */
 		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
-			if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
 				$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
-			}
 		}
 		return $cap_where_conditions;
 	}
@@ -3801,7 +3799,7 @@ abstract class EEM_Base extends EE_Base{
 	 * only returns the cap restrictions array in that context (ie, the array
 	 * at that key)
 	 * @param string $context
-	 * @return array @see EEM_Base::_cap_restrictions a sub-array of EEM_Base::_cap_restrictions if $context is provided
+	 * @return EE_Default_Where_Conditions[] indexed by associated capability
 	 */
 	public function cap_restrictions( $context = EEM_Base::caps_read ) {
 		//check if we ought to run the restriction generator first
@@ -3824,5 +3822,31 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function is_wp_core_model(){
 		return $this->_wp_core_model;
+	}
+
+	/**
+	 * Gets all the caps that are missing which impose a restriction on
+	 * queries made in this context
+	 * @param string $context one of EEM_Base::caps_ consts
+	 * @return EE_Default_Where_Conditions[] indexed by capability name
+	 */
+	public function caps_missing( $context = EEM_Base::caps_read ) {
+		$missing_caps = array();
+		$cap_restrictions = $this->cap_restrictions( $context );
+		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
+			if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
+				$missing_caps[ $cap ] = $restriction_if_no_cap;
+			}
+		}
+		return $missing_caps;
+	}
+
+	/**
+	 * Gets the mapping from capability contexsts to action strings used in capability names
+	 * @return array keys are consts like EEM_Base::caps_*, and values are usually
+	 * one of 'read', 'edit', or 'delete'
+	 */
+	public function cap_contexts_to_cap_action_map() {
+		return $this->_cap_contexts_to_cap_action_map;
 	}
 }

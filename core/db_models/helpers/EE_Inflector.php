@@ -47,6 +47,10 @@ class EE_Inflector{
 	static function pluralize_and_lower( $word ){
 		return strtolower( self::pluralize( $word ) );
 	}
+
+	static function singularize_and_upper( $word ) {
+		return str_replace( ' ', '_', self::humanize( self::singularize( $word ), 'all' ) );
+	}
     /**
      * Pluralizes English nouns.
      *
