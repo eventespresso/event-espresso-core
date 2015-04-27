@@ -886,7 +886,7 @@ abstract class EEM_Base extends EE_Base{
 		//if $field_to_order_by is empty then let's assume we're ordering by the primary key.
 		if ( empty( $field_to_order_by ) ) {
 			if ( $this->has_primary_key_field() ) {
-				$field_to_order_by = $this->get_primary_key_field()->get_table_column();
+				$field_to_order_by = $this->get_primary_key_field()->get_name();
 			} else {
 				EE_Error::add_error( __( 'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).', 'event_espresso' ) );
 				return array();
