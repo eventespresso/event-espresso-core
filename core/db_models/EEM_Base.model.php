@@ -1274,6 +1274,8 @@ abstract class EEM_Base extends EE_Base{
 			if( ! empty( $wpdb->last_error ) ){
 				throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
 			}
+		}elseif( $result === false ) {
+			EE_Error::add_error( sprintf( __( 'A database error has occurred. Turn on WP_DEBUG for more information.', 'event_espresso' )), __FILE__, __FUNCTION__, __LINE__);
 		}
 		return $result;
 	}
@@ -3168,7 +3170,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
-	 * 
+	 *
 	 * Given an array where keys are column (or column alias) names and values,
 	 * returns an array of their corresponding field names and database values
 	 * @param array $cols_n_values
