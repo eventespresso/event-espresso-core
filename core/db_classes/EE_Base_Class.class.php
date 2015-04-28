@@ -707,7 +707,7 @@ abstract class EE_Base_Class{
 		if ( empty( $field ) || empty( $current_value ) ) {
 			return array();
 		}
-		return $this->get_model()->previous_x( $current_value, $field, $query_params, $columns_to_select );
+		return $this->get_model()->previous( $current_value, $field, $query_params, $columns_to_select );
 	}
 
 
