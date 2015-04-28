@@ -870,7 +870,11 @@ abstract class EEM_Base extends EE_Base{
 						//if there is no private key for this table on the results, it means there's no entry
 						//in this table, right? so insert a row in the current table, using any fields available
 						if( ! ( array_key_exists( $this_table_pk_column, $wpdb_result) && $wpdb_result[ $this_table_pk_column ] )){
-							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							$success = $this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							//if we died here, report the error
+							if( ! $success ) {
+								return false;
+							}
 						}
 					}
 				}
