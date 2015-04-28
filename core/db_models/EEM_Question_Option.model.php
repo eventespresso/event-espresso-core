@@ -35,7 +35,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Question Options','event_espresso');
 
 		$this->_tables = array(
-			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSG_ID')
+			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSO_ID')
 		);
 		$this->_fields = array(
 			'Question_Option'=>array(

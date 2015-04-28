@@ -43,11 +43,12 @@
 
 			<tr>
 				<td class="general-settings-country-state-input-td">
-					<label for="STA_abbrev_XXX"><?php _e( 'Code', 'event_espresso' );?></label>
-					<input id="STA_abbrev-XXX" class="STA_abbrev small-text " type="text" title="" value="" name="STA_abbrev_XXX">
+					<label for="STA_abbrev_XXX"><?php _e( 'Code', 'event_espresso' );?></label><br />
+					<input id="STA_abbrev-XXX" class="STA_abbrev mid-text " type="text" title="" value=""
+						   name="STA_abbrev_XXX">
 				</td>
 				<td class="general-settings-country-state-input-td">
-					<label for="STA_name_XXX"><?php _e( 'Name', 'event_espresso' );?></label>
+					<label for="STA_name_XXX"><?php _e( 'Name', 'event_espresso' );?></label><br/>
 					<input id="STA_name-XXX" class="STA_name regular-text " type="text" title="" value="" name="STA_name_XXX">
 				</td>
 			</tr>
