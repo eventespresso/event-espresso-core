@@ -232,7 +232,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 				LIN_code VARCHAR(245) NOT NULL DEFAULT '',
 				TXN_ID INT(11) DEFAULT NULL,
 				LIN_name VARCHAR(245) NOT NULL DEFAULT '',
-				LIN_desc VARCHAR(245) DEFAULT NULL,
+				LIN_desc TEXT DEFAULT NULL,
 				LIN_unit_price DECIMAL(10,3) DEFAULT NULL,
 				LIN_percent DECIMAL(10,3) DEFAULT NULL,
 				LIN_is_taxable TINYINT(1) DEFAULT 0,
