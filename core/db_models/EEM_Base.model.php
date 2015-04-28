@@ -1545,8 +1545,10 @@ abstract class EEM_Base extends EE_Base{
 		if($this->_satisfies_unique_indexes($field_n_values)){
 			$main_table = $this->_get_main_table();
 			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
-			foreach($this->_get_other_tables() as $other_table){
-				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+			if( $new_id !== false ) {
+				foreach($this->_get_other_tables() as $other_table){
+					$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+				}
 			}
 			/**
 			 * Done just after attempting to insert a new model object
@@ -1654,7 +1656,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
 	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
-	 * @return int ID of new row inserted
+	 * @return int ID of new row inserted, or FALSE on failure
 	 */
 	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
@@ -1681,7 +1683,10 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		if( $result === false ) {
+			return false;
+		}
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){
