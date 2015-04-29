@@ -80,12 +80,12 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		//wierd PHP behaviour where subtracting one month will result in a date remaining in March.
 		//@see http://php.net/manual/en/datetime.sub.php#example-2469
 		$first_registration = reset( $registrations );
-		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P2M') )->format('U') );
+		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P31D') )->format('U') );
 		$first_registration->save();
 
 		//modify the last registration so it happens next month.
 		$last_registration = end( $registrations );
-		$last_registration->set( 'REG_date', $now->add( new DateInterval('P3M') )-> format( 'U' ) );
+		$last_registration->set( 'REG_date', $now->add( new DateInterval('P62D') )-> format( 'U' ) );
 		$last_registration->save();
 
 		//let's test queries for today
