@@ -194,7 +194,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 *    creates buttons for selecting number of attendees for an event
+	 *    finds and sets the EE_Event object for use throughout class
 	 *
 	 * @access 	public
 	 * @param 	mixed $event
@@ -217,7 +217,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
 			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return null;
+			return false;
 		}
 		return true;
 	}
