@@ -15,13 +15,10 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group payment_methods
+ * @group agg
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
-	/**
-	 *
-	 * @group 7753
-	 */
 	public function test_process_payment__onsite__success(){
 		//setup all the $_REQUEST globals etc because messages require them
 		$this->go_to('http://localhost/');
@@ -39,24 +36,12 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		global $wp_actions;
 		EE_Registry::instance()->load_helper( 'Array' );
 		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
-		$payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', 0 );
-		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( $this, 'assert_payment_message_trigger_for_success'), 10, 2 );
 		/** @type EE_Payment_Processor $payment_processor */
 		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
 		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, $billing_form, 'success', 'CART', TRUE, TRUE );
 		$this->assertInstanceOf( 'EE_Payment', $payment );
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' ] );
-		$this->assertEquals( $payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment' ] );
-	}
-
-	/**
-	 * Asserts that the payment's status is approved when the hook is called
-	 * @param EE_Payment $transaction
-	 * @param EE_Payment $payment
-	 */
-	function assert_payment_message_trigger_for_success( $transaction, $payment ) {
-		$this->assertEquals( EEM_Payment::status_id_approved, $payment->get('STS_ID') );
 	}
 
 	public function test_update_txn_based_on_payment(){

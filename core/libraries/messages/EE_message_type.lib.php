@@ -878,12 +878,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
 
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
-			//get out because we can't process anything, there are no message template groups
-			// and thus some sort of bad setup issues.
-			return false;
-		}
-
 		$this->_GRP_ID = $mtpg->ID();
 
 		$templates = $mtpg->context_templates();
@@ -940,12 +934,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
 		if ( ( isset( $this->_templates['to'][$context] ) && empty( $this->_templates['to'][$context] ) ) && !$this->_preview )
 			return false;
-
-		if ( empty( $this->_templates ) ) {
-			//unable to setup any messages because there are no templates.  Some sort of catastrophic setup
-			//issue exists
-			return false;
-		}
 
 		foreach ( $this->_templates as $field => $ctxt ) {
 			//let's setup the valid shortcodes for the incoming context.
