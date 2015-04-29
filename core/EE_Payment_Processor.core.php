@@ -77,8 +77,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$method,
 				$by_admin
 			);
-			//offline gateways DON'T return a payment object, so check it
-			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			// check if payment method uses an off-site gateway
+			if ( $payment->payment_method()->type_obj()->payment_occurs() !== EE_PMT_Base::offsite ) {
+				// don't trigger payment notifications for off-site payments unless this is an IPN
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			}
 			return $payment;
 		} else {
 			EE_Error::add_error(
@@ -229,6 +232,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool 	$update_txn  whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
 	 * @return EE_Payment
+	 * @deprecated 4.6.24
 	 */
 	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
 		/** @var $transaction EE_Transaction */
@@ -348,18 +352,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
 
-			$trigger_global_notifications_hook = true;
-			// check the type of payment method used
-			if ( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ) {
-				if ( $payment->payment_method()->type_obj()->payment_occurs() == EE_PMT_Base::offsite && ! $IPN ) {
-					// don't trigger payment notifications for off-site payments unless this is an IPN
-					$trigger_global_notifications_hook = false;
-				}
-			}
-			if ( $trigger_global_notifications_hook ) {
-				//global hook for others to use.
-				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
-			}
+			//global hook for others to use.
+			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
 
 		}
 	}
