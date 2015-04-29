@@ -15,7 +15,6 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  */
 class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
-	const help_tab_link = 'ee_new_payment_method_onsite_help';
 
 	/**
 	 *
@@ -27,6 +26,20 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		$this->_gateway = new EEG_New_Payment_Method_Onsite();
 		$this->_pretty_name = __("New Payment Method Onsite", 'event_espresso');
 		parent::__construct($pm_instance);
+	}
+
+	/**
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array
+	 */
+	public function help_tabs_config(){
+		return array(
+			$this->get_help_tab_name() => array(
+				'title' => __('New Payment Method Onsite Settings', 'event_espresso'),
+				'filename' => 'new_payment_method_onsite'
+				),
+		);
 	}
 
 	/**
@@ -60,11 +73,9 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_link))
+					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"), $this->get_help_tab_link() )
 				)))));
 		return $form;
 	}
-
 }
-
 // End of file EE_PMT_Onsite.php
