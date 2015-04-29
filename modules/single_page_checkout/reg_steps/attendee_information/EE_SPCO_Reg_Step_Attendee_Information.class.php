@@ -481,7 +481,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$input_constructor_args = array(
 			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-			'html_class' 			=> 'ee-reg-qstn',
+			'html_class' 			=> 'ee-reg-qstn ee-reg-qstn-' . $identifier,
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
