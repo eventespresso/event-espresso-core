@@ -111,7 +111,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 						STA_ID INT(10) DEFAULT	NULL,
 						CNT_ISO VARCHAR(45) DEFAULT	NULL,
 						ATT_zip VARCHAR(12) DEFAULT	NULL,
-						ATT_email VARCHAR(100) NOT NULL,
+						ATT_email VARCHAR(255) NOT NULL,
 						ATT_phone VARCHAR(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
