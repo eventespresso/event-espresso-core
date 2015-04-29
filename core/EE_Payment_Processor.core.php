@@ -78,8 +78,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$by_admin
 			);
 			// check if payment method uses an off-site gateway
-			if ( $payment->payment_method()->type_obj()->payment_occurs() !== EE_PMT_Base::offsite ) {
-				// don't trigger payment notifications for off-site payments unless this is an IPN
+			if ( $payment_method->type_obj()->payment_occurs() != EE_PMT_Base::offsite ) {
+				// don't process payments for off-site gateways yet because no payment has occurred yet
 				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
 			}
 			return $payment;
@@ -232,7 +232,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool 	$update_txn  whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
 	 * @return EE_Payment
-	 * @deprecated 4.6.24
+	 * @deprecated 4.6.24 method is no longer used. Instead it is up to client code, like SPCO, to call handle_ipn() for offsite gateways that don't receive separate IPNs
 	 */
 	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
 		/** @var $transaction EE_Transaction */
