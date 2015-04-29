@@ -833,7 +833,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function next( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
 		$results = $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, 1, $query_params, $columns_to_select );
-		return empty( $results ) ? array() : reset( $results );
+		return empty( $results ) ? null : reset( $results );
 	}
 
 
@@ -881,6 +881,7 @@ abstract class EEM_Base extends EE_Base{
 	 *                                      columns you want returned.
 	 *
 	 * @return EE_Base_Class[]|array
+	 * @throws EE_Error
 	 */
 	protected function _get_consecutive( $current_field_value, $operand = '>', $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
 		//if $field_to_order_by is empty then let's assume we're ordering by the primary key.
@@ -888,7 +889,11 @@ abstract class EEM_Base extends EE_Base{
 			if ( $this->has_primary_key_field() ) {
 				$field_to_order_by = $this->get_primary_key_field()->get_name();
 			} else {
-				EE_Error::add_error( __( 'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).', 'event_espresso' ) );
+
+				if ( WP_DEBUG ) {
+					throw new EE_Error( __( 'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).', 'event_espresso' ) );
+				}
+				EE_Error::add_error( __('There was an error with the query.', 'event_espresso') );
 				return array();
 			}
 		}
@@ -903,7 +908,8 @@ abstract class EEM_Base extends EE_Base{
 		$query_params['limit'] = $limit;
 
 		//set direction
-		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' ) : array( $field_to_order_by => 'DESC' );
+		$incoming_orderby = isset( $query_params['order_by'] ) ? $query_params['orderby'] : array();
+		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' + $incoming_orderby ) : array( $field_to_order_by => 'DESC' + $incoming_orderby );
 
 		//if $columns_to_select is empty then that means we're returning EE_Base_Class objects
 		if ( empty( $columns_to_select ) ) {
