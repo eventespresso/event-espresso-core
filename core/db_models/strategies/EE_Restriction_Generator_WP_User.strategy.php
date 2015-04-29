@@ -24,7 +24,7 @@ class EE_Restriction_Generator_WP_User extends EE_Restriction_Generator_Base{
 
 		return array(
 			//if they can't access users, they can still access themselves
-			self::get_cap_name( $this->model(), $this->action() ) => new EE_Default_Where_Conditions( array(
+			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() ) => new EE_Default_Where_Conditions( array(
 				EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder
 			)),
 

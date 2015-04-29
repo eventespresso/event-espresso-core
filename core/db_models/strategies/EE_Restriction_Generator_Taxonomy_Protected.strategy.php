@@ -16,13 +16,13 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Restriction_Generator_Taxonomy_Protected extends EE_Restriction_Generator_Base{
 
 	/**
-	 * Model chain/path to taxonomy model, including the termtaxonomy model itself
+	 * Model chain/path to taxonomy model, including the term_taxonomy model itself
 	 * @var string
 	 */
 	protected $_path_to_taxonomy_model;
 	/**
 	 *
-	 * @param string $path_to_taxonomy_model Model chain/path to taxonomy model, including the termtaxonomy model itself
+	 * @param string $path_to_taxonomy_model Model chain/path to taxonomy model, including the term_taxonomy model itself
 	 */
 	public function __construct( $path_to_taxonomy_model ){
 		if( $path_to_taxonomy_model !== '' && substr( $path_to_taxonomy_model, -1, 1 ) != '.' ) {

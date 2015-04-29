@@ -55,9 +55,9 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
 	 * @return \EE_Default_Where_Conditions
 	 */
 	protected function _generate_restrictions( ) {
-		//if there are no standard caps for this model, then for now all we know
+		//if there are no standard caps for this model, then for now all we know is
 		//if they need the default cap to access this
-		if ( !$this->model()->cap_slug() ) {
+		if ( ! $this->model()->cap_slug() ) {
 			return array(
 				self::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
@@ -68,23 +68,23 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
 		return array(
 			//first: basically access to non-defaults is essentially controlled by which events are accessible
 			//if they don't have the basic event cap, they can't access ANY non-default items
-			self::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions( array( $this->_default_field_name => true ) ),
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions( array( $this->_default_field_name => true ) ),
 			//if they don't have the others event cap, they can't access others' non-default items
-			self::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
-				'OR*no_' . self::get_cap_name($event_model, $this->action() . '_others' ) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
+				'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others' ) => array(
 					$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder ),
 					$this->_default_field_name => true ) ),
 			//if they have basic and others, but not private, they can't access others' private non-default items
-			self::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
-				'OR*no_' .self::get_cap_name($event_model, $this->action() . '_private' ) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
+				'OR*no_' .EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => array(
 				$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
 				$this->_path_to_event_model . 'status' => array( '!=', 'private' ),
 				$this->_default_field_name => true ) ) ),
 			//second: access to defaults is controlled by the defaulty capabilities
 			//if they don't have the basic default capability, restrict access to only non-default items
-			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_default' )				 => new EE_Default_Where_Conditions( array( $this->_default_field_name => false ) ),
+			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_default' )	=> new EE_Default_Where_Conditions( array( $this->_default_field_name => false ) ),
 			//if they don't have the "others" default capability, restrict access to only their default ones, and non-default ones
-			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others_default' )	 => new EE_Default_Where_Conditions( array(
+			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others_default' ) => new EE_Default_Where_Conditions( array(
 				//if they don't have the others default cap, they can't access others default items (but they can access
 				//their own default items, and non-default items)
 				'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others_default' ) => array(

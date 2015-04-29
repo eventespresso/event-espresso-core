@@ -44,7 +44,7 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
 	protected function _generate_restrictions() {
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
-		if ( !$this->model()->cap_slug() ) {
+		if ( ! $this->model()->cap_slug() ) {
 			return array(
 				self::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
@@ -55,13 +55,13 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
 		return array(
 			//first: basically access to non-defaults is essentially controlled by which events are accessible
 			//if they don't have the basic event cap, they can't access ANY non-default items
-			self::get_cap_name($event_model, $this->action()) => new EE_Return_None_Where_Conditions(),
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => new EE_Return_None_Where_Conditions(),
 			//if they don't have the others event cap, they can't access others' non-default items
-			self::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
 					$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder ) ),
 			//if they have basic and others, but not private, they can't access others' private non-default items
-			self::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
-				'OR*no_' .self::get_cap_name($event_model, $this->action() . '_private' ) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
+				'OR*no_' .EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => array(
 				$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
 				$this->_path_to_event_model . 'status' => array( '!=', 'private' ) ) ) ),
 			 );

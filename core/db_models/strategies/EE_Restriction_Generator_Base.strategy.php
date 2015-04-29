@@ -30,12 +30,12 @@ abstract class EE_Restriction_Generator_Base {
 	protected $_model;
 
 	/**
-	 * One of the consts on EEM_Base::caps_*
+	 * One of the constants on EEM_Base::caps_*
 	 * @var string
 	 */
 	protected $_action;
 	/**
-	 * Puts the last necessary info onto the restriction genetor class. This is usually
+	 * Puts the last necessary info onto the restriction generator class. This is usually
 	 * called by EEM_Base during its constructor, so child classes don't have to
 	 * always provide this info.
 	 * @param EEM_Base $model
@@ -48,6 +48,8 @@ abstract class EE_Restriction_Generator_Base {
 
 	/**
 	 * Returns the model set for this restriction generator
+	 *
+	 * @throws EE_Error
 	 * @return EEM_Base
 	 */
 	public function model() {
@@ -59,7 +61,9 @@ abstract class EE_Restriction_Generator_Base {
 
 	/**
 	 * Returns the action this restriction generator will generate restrictions for.
-	 * It should be one of EEM_Base::caps_* consts
+	 * It should be one of EEM_Base::caps_* constants
+	 *
+	 * @throws EE_Error
 	 * @return string
 	 */
 	public function action() {
