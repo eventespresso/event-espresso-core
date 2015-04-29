@@ -52,13 +52,21 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 			'subsections'=>array(
 				'status' => new EE_Select_Input( array( 'Approved' => 'Approved', 'Pending' => 'Pending', 'Declined' => 'Declined' ), array('html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ))),//this will become the payments status when processing payments on this mock object
 				'credit_card'=>new EE_Credit_Card_Input(array(
-					'required'=>false
-				)),
-				'exp_month'=>new EE_Month_Input(true, array(
-					'required'=>false
-				)),
-				'exp_year'=>new EE_Year_Input(),
-				'cvv'=>new EE_CVV_Input(),
+							'required'=>false,
+							'html_label_text' => __( 'Credit Card', 'event_espresso' ),
+						)),
+						'exp_month'=>new EE_Month_Input(true, array(
+							'required'=>false,
+							'html_label_text' => __( 'Expiry Month', 'event_espresso' )
+						)),
+						'exp_year'=>new EE_Year_Input( array(
+							'required' => false,
+							'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
+						)),
+						'cvv'=>new EE_CVV_Input( array(
+							'required' => false,
+							'html_label_text' => __( 'CVV', 'event_espresso' )
+						)),
 			)
 		));
 		return $form;
