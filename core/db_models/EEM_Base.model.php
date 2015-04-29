@@ -909,7 +909,7 @@ abstract class EEM_Base extends EE_Base{
 
 		//set direction
 		$incoming_orderby = isset( $query_params['order_by'] ) ? $query_params['orderby'] : array();
-		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' + $incoming_orderby ) : array( $field_to_order_by => 'DESC' + $incoming_orderby );
+		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' ) + $incoming_orderby : array( $field_to_order_by => 'DESC') + $incoming_orderby;
 
 		//if $columns_to_select is empty then that means we're returning EE_Base_Class objects
 		if ( empty( $columns_to_select ) ) {
