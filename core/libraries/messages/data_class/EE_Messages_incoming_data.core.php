@@ -319,8 +319,6 @@ abstract class EE_Messages_incoming_data {
 	 * @throws \EE_Error
 	 */
 	protected function _assemble_data() {
-		$regchk = array_values($this->reg_objs);
-		$regchk = array_shift($regchk);
 		//verify that reg_objs is set
 		if ( !is_array( $this->reg_objs) && ! reset( $this->reg_objs ) instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
@@ -406,7 +404,7 @@ abstract class EE_Messages_incoming_data {
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],
 						'att_objs' => $items['att_objs'],
-						'dtt_objs' => $items['dtt_objs'],
+						'dtt_objs' => isset( $items['dtt_objs'] ) ? $items['dtt_objs'] : array(),
 						'line_items' => $ticket_line_items_for_event
 					);
 
