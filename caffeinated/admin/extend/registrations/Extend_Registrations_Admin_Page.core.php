@@ -324,7 +324,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'default'
 			);
 		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to )  ) {
-			if ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) {
+			if ( ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) || ( isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ) ) {
 				echo '';
 			} else {
 				$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
@@ -463,7 +463,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
 
-//		printr( $page_args, '$page_args' );
+//		EEH_Debug_Tools::printr( $page_args, '$page_args' );
 
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
@@ -492,7 +492,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$results = $REG->get_registrations_per_day_report( $period );
 
-		//printr( $results, '$registrations_per_day' );
+		//EEH_Debug_Tools::printr( $results, '$registrations_per_day' );
 		$regs = array();
 		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
 		$xmax = 0;
@@ -549,12 +549,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$REG = EEM_Registration::instance();
 
 		$results = $REG->get_registrations_per_event_report( $period );
-		//printr( $results, '$registrations_per_event' );
+		//EEH_Debug_Tools::printr( $results, '$registrations_per_event' );
 		$regs = array();
 		$ymax = 0;
 		$results = (array) $results;
 		foreach ( $results as $result ) {
-			$regs[] = array( $result->event_name, (int)$result->total );
+			$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int)$result->total );
 			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
 
@@ -926,7 +926,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	//		$registrations = EEM_Registration::instance();
 	//		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
 			if ( isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration ) {
-				//printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				//EEH_Debug_Tools::printr( $all_attendees[0], '$all_attendees[0]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// name
 				$first_registration = $registrations[0];
 				$event_obj = $first_registration->event_obj();
@@ -936,12 +936,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					// edit event link
 					if ( $event_name != '' ) {
 						$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );
-						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';
+						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . esc_attr__( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';
 						$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 					}
 
 					$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );
-					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';
+					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . esc_attr__( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';
 
 					$this->_template_args['before_admin_page_content'] = '
 				<div id="admin-page-header">

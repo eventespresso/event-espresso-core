@@ -116,7 +116,6 @@ class EE_CPT_Strategy extends EE_BASE {
 		$_CPT_endpoints = array();
 		if ( is_array( $this->_CPTs )) {
 			foreach ( $this->_CPTs as $CPT_type => $CPT ) {
-				$_CPT_endpoints [ $CPT['singular_slug'] ] = $CPT_type;
 				$_CPT_endpoints [ $CPT['plural_slug'] ] = $CPT_type;
 			}
 		}
@@ -564,7 +563,7 @@ class EE_CPT_Default_Strategy {
 	public function __construct( $arguments = array() ) {
 		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
 		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
-		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 //		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
@@ -579,7 +578,7 @@ class EE_CPT_Default_Strategy {
 	 * @return 	\WP_Query
 	 */
 	public function pre_get_posts(  WP_Query $WP_Query  ) {
-		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
 			return $WP_Query;
 		}

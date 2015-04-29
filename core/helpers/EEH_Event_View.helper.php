@@ -448,7 +448,6 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 * @access    public
 	 * @param int $EVT_ID
-	 * @internal  param string $text
 	 * @return    string
 	 */
 	public static function event_link_url( $EVT_ID = 0 ) {
@@ -467,7 +466,6 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 * @access    public
 	 * @param int $EVT_ID
-	 * @internal  param string $text
 	 * @return    string
 	 */
 	public static function event_phone( $EVT_ID = 0 ) {
@@ -580,7 +578,7 @@ class EEH_Event_View extends EEH_Base {
 //		// grab datetimes for events
 //		$datetimes = EEM_Datetime::instance()->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
 //		$datetimes = is_array( $datetimes ) ? $datetimes : array();
-////		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+////		EEH_Debug_Tools::printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		return $datetimes;
 //	}
 

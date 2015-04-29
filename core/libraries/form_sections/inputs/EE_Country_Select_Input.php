@@ -19,7 +19,11 @@ class EE_Country_Select_Input extends EE_Select_Input{
 	 * @return EE_Country_Select_Input
 	 */
 	public function __construct( $country_options = NULL, $input_settings = array() ){
-		$country_options = $this->get_country_answer_options( $country_options );
+		$country_options = apply_filters(
+			'FHEE__EE_Country_Select_Input____construct__country_options',
+			$this->get_country_answer_options( $country_options ),
+			$this
+		);
 		parent::__construct( $country_options, $input_settings );
 	}
 
@@ -37,6 +41,7 @@ class EE_Country_Select_Input extends EE_Select_Input{
 			// get possibly cached list of countries
 			$countries = EEM_Country::instance()->get_all_active_countries();
 			if ( ! empty( $countries )) {
+				$country_options[ '' ] = '';
 				foreach( $countries as $country ){
 					if ( $country instanceof EE_Country ) {
 						$country_options[ $country->ID() ] = $country->name();

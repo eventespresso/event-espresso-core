@@ -32,7 +32,7 @@ class EE_Register_CPTs {
 		// register CPTs
 		$CPTs =self::get_CPTs();
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
-			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
+			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'], $CPT['singular_slug'], $CPT['plural_slug'] );
 		}
 		// setup default terms in any of our taxonomies (but only if we're in admin).
 		// Why not added via register_activation_hook?
@@ -125,6 +125,73 @@ class EE_Register_CPTs {
 					'hierarchical'=>true
 				))
 			) );
+	}
+
+
+
+
+
+	/**
+	 * This returns the corresponding model name for cpts registered by EE.
+	 *
+	 * @since 4.6.16.rc.000
+	 * @param string $post_type_slug If a slug is included, then attempt to retreive the model name for the given cpt
+	 *                               		        slug.  Otherwise if empty, then we'll return all cpt model names for cpts
+	 *                               		        registered in EE.
+	 *
+	 * @return array 	       Empty array if no matching model names for the given slug or an array of model
+	 *                                         names indexed by post type slug.
+	 */
+	public static function get_cpt_model_names( $post_type_slug = '' ) {
+		$cpts = self::get_CPTs();
+
+		//first if slug passed in...
+		if ( ! empty( $post_type_slug )  ) {
+			//match?
+			if ( ! isset( $cpts[$post_type_slug] ) || ( isset( $cpts[$post_type_slug] ) && empty( $cpts[$post_type_slug]['class_name'] ) ) ) {
+				return array();
+			}
+
+			//k let's get the model name for this cpt.
+			return array( $post_type_slug => str_replace( 'EE', 'EEM', $cpts[$post_type_slug]['class_name'] ) );
+		}
+
+
+		//if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
+		$cpt_models = array();
+		foreach ( $cpts as $slug => $args ) {
+			if ( ! empty( $args['class_name'] ) ) {
+				$cpt_models[$slug] = str_replace( 'EE', 'EEM', $args['class_name'] );
+			}
+		}
+		return $cpt_models;
+	}
+
+
+
+
+
+	/**
+	 * This instantiates cpt models related to the cpts registered via EE.
+	 *
+	 * @since 4.6.16.rc.000
+	 *
+	 * @param string $post_type_slug If valid slug is provided, then will instantiate the model only for the cpt matching
+	 *                               		        the given slug.  Otherwise all cpt models will be instantiated (if possible).
+	 *
+	 * @return EEM_CPT_Base[]   successful instantiation will return an array of successfully instantiated EEM
+	 *                                     	  models  indexed by post slug.
+	 */
+	public static function instantiate_cpt_models( $post_type_slug = '' ) {
+		$cpt_model_names = self::get_cpt_model_names( $post_type_slug );
+		$instantiated = array();
+		foreach ( $cpt_model_names as $slug => $model_name ) {
+			$instance = EE_Registry::instance()->load_model( str_replace( 'EEM_', '', $model_name ) );
+			if ( $instance instanceof EEM_CPT_Base ) {
+				$instantiated[$slug] = $instance;
+			}
+		}
+		return $instantiated;
 	}
 
 
@@ -305,7 +372,7 @@ class EE_Register_CPTs {
 	 * The default values set in this function will be overridden by whatever you set in $override_args
 	 * @return void, but registers the custom post type
 	 */
-	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array()) {
+	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array(), $singular_slug = '', $plural_slug = '' ) {
 
 	  $labels = array(
 		'name' => $plural_name,
@@ -323,6 +390,10 @@ class EE_Register_CPTs {
 		'menu_name' => sprintf(__("%s", "event_espresso"),$plural_name)
 	  );
 
+	  //verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
+	  $singular_slug = ! empty( $singular_slug ) ? $singular_slug : $singular_name;
+	  $plural_slug = ! empty( $plural_slug ) ? $plural_slug : $plural_name;
+
 
 	  //note the page_templates arg in the supports index is something specific to EE.  WordPress doesn't actually have that in their register_post_type api.
 	  $args = array(
@@ -333,7 +404,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => $plural_slug ), $post_type ),
 		'capability_type' => 'post',
 		'map_meta_cap' => true,
 		'has_archive' => true,

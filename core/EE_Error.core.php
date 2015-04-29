@@ -1,17 +1,10 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+// if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
+	set_error_handler( array( 'EE_Error', 'error_handler' ));
+	register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
+}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link					{@link http://www.eventespresso.com}
- * @ since		 		4.0
- *
- * ------------------------------------------------------------------------
  *
  * Error Handling Class
  *
@@ -21,11 +14,6 @@
  *
  * ------------------------------------------------------------------------
  */
-// if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
-if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
-	set_error_handler( array( 'EE_Error', 'error_handler' ));
-	register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
-}
 class EE_Error extends Exception {
 
 
@@ -107,33 +95,32 @@ class EE_Error extends Exception {
 	 * @return void
 	 */
 	public static function error_handler( $code, $message, $file, $line ) {
-		if ( ! function_exists( 'wp_mail' )) {
-			return;
+		$type = EE_Error::error_type( $code );
+		$site = site_url();
+		switch ( $site ) {
+			case 'http://ee4.eventespresso.com/' :
+			case 'http://ee4decaf.eventespresso.com/' :
+			case 'http://ee4hf.eventespresso.com/' :
+			case 'http://ee4a.eventespresso.com/' :
+			case 'http://ee4ad.eventespresso.com/' :
+			case 'http://ee4b.eventespresso.com/' :
+			case 'http://ee4bd.eventespresso.com/' :
+			case 'http://ee4d.eventespresso.com/' :
+			case 'http://ee4dd.eventespresso.com/' :
+				$to = 'developers@eventespresso.com';
+				break;
+			default :
+				$to = get_option( 'admin_email' );
 		}
-		$ver = espresso_version();
-		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
-			$type = EE_Error::error_type( $code );
-			$site = site_url();
-			switch ( $site ) {
-				case 'http://ee4.eventespresso.com/' :
-				case 'http://ee4decaf.eventespresso.com/' :
-				case 'http://ee4hf.eventespresso.com/' :
-				case 'http://ee4a.eventespresso.com/' :
-				case 'http://ee4ad.eventespresso.com/' :
-				case 'http://ee4b.eventespresso.com/' :
-				case 'http://ee4bd.eventespresso.com/' :
-				case 'http://ee4d.eventespresso.com/' :
-				case 'http://ee4dd.eventespresso.com/' :
-					$to = 'developers@eventespresso.com';
-					break;
-				default :
-					$to = get_option( 'admin_email' );
-			}
-			$subject = 'Error type ' . $type . ' occurred in ' . $ver . ' on ' . site_url();
-			$msg = EE_Error::_format_error( $type, $message, $file, $line );
+		$subject = $type . ' ' . $message . ' in ' . EVENT_ESPRESSO_VERSION . ' on ' . site_url();
+		$msg = EE_Error::_format_error( $type, $message, $file, $line );
+		if ( function_exists( 'wp_mail' )) {
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
 		}
+		echo '<div id="message" class="espresso-notices error"><p>';
+		echo $type . ': ' . $message . '<br />' . $file . ' line ' . $line;
+		echo '<br /></p></div>';
 	}
 
 
@@ -177,6 +164,8 @@ class EE_Error extends Exception {
 			return 'E_DEPRECATED';
 			case E_USER_DEPRECATED: // 16384 //
 			return 'E_USER_DEPRECATED';
+			case E_ALL: // 16384 //
+			return 'E_ALL';
 		}
 		return "";
 	}
@@ -207,7 +196,7 @@ class EE_Error extends Exception {
 	 * @return string
 	 */
 	private static function _format_error( $code, $message, $file, $line ) {
-		$html  = "<table cellpadding='10'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
+		$html  = "<table cellpadding='5'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
 		$html .= "<tr valign='top'><td><b>Code</b></td><td>$code</td></tr>";
 		$html .= "<tr valign='top'><td><b>Error</b></td><td>$message</td></tr>";
 		$html .= "<tr valign='top'><td><b>File</b></td><td>$file</td></tr>";
@@ -739,7 +728,7 @@ class EE_Error extends Exception {
 		$error_messages = '';
 		$print_scripts = FALSE;
 
-		// printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// either save notices to the db
 		if ( $save_to_transient ) {
@@ -868,16 +857,20 @@ class EE_Error extends Exception {
 
 
 	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
-	* 	@return 		void
-	*/
-	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE ) {
+	 *    dismiss_persistent_admin_notice
+	 *
+	 * @access    public
+	 * @param        string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
+	 * @param bool          $purge
+	 * @param bool          $return_immediately
+	 * @return        void
+	 */
+	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE, $return_immediately = FALSE ) {
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
-			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
+			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
+			// check if notice we wish to dismiss is actually in the $persistent_admin_notices array
+			if ( is_array( $persistent_admin_notices ) && isset( $persistent_admin_notices[ $pan_name ] )) {
 				// completely delete nag notice, or just NULL message so that it can NOT be added again ?
 				if ( $purge ) {
 					unset( $persistent_admin_notices[ $pan_name ] );
@@ -889,7 +882,9 @@ class EE_Error extends Exception {
 				}
 			}
 		}
-		if ( EE_Registry::instance()->REQ->ajax ) {
+		if ( $return_immediately ) {
+			return;
+		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// grab any notices and concatenate into string
 			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();

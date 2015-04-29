@@ -187,6 +187,8 @@ class EE_Caf_Messages  {
 			'declined_registration',
 			'not_approved_registration',
 			'payment_declined',
+			'payment_failed',
+			'payment_cancelled',
 			'payment',
 			'payment_reminder',
 			'pending_approval'
@@ -219,12 +221,22 @@ class EE_Caf_Messages  {
 
 		//let's get the question from the code.
 		$shortcode = str_replace('[ANSWER_*', '', $shortcode);
-		$shortcode = str_replace(']', '', $shortcode);
+		$shortcode = trim( str_replace(']', '', $shortcode) );
+
+		$registration = $data instanceof EE_Registration ? $data : null;
+		$registration = ! $registration instanceof EE_Registration && is_array( $extra_data ) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Registration ? $extra_data['data'] : $registration;
+
+		$aee = $data instanceof EE_Messages_Addressee ? $data : null;
+		$aee = ! $aee instanceof EE_Messages_Adressee && is_array( $extra_data ) && isset( $extra_data['data'] ) ? $extra_data['data'] : $aee;
+
+		if ( ! $registration instanceof EE_Registration || ! $aee instanceof EE_Messages_Addressee ) {
+			return $parsed;
+		}
 
 		//now let's figure out which question has this text.
-		foreach ( $extra_data['data']->questions as $ansid => $question ) {
-			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->registrations[$data->ID()]['ans_objs'][$ansid]) )
-				return $extra_data['data']->registrations[$data->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
+		foreach ( $aee->questions as $ansid => $question ) {
+			if ( $question->get('QST_display_text') == $shortcode && isset($aee->registrations[$registration->ID()]['ans_objs'][$ansid]) )
+				return $aee->registrations[$registration->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
 		//nothing!
@@ -441,6 +453,25 @@ class EE_Caf_Messages  {
 			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'cancelled_registration', $setup_args );
+
+
+		//register payment failed message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Failed_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_failed/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_failed', $setup_args );
+
+		//register payment declined message type
+		$setup_args = array(
+			'mtfilename' => 'EE_Payment_Cancelled_message_type.class.php',
+			'autoloadpaths' => array( EE_CAF_LIBRARIES . 'messages/message_type/payment_cancelled/' ),
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( 'payment_cancelled', $setup_args );
 	}
 
 

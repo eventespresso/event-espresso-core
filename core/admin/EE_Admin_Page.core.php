@@ -502,7 +502,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
 
 		//default things
-		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box');
+		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_ratings_request', '_espresso_sponsors_post_box' );
 
 		//set page configs
 		$this->_set_page_routes();
@@ -1582,9 +1582,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script( 'ee-serialize-full-array', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		//helpers scripts
 		wp_register_script('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-moment-core', EE_THIRD_PARTY_URL . 'moment/moment-with-langs.min.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-moment-core', EE_THIRD_PARTY_URL . 'moment/moment-with-locales.min.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-moment-timezone', EE_THIRD_PARTY_URL . 'moment/moment-timezone.min.js', array('ee-moment-core'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-data.js', array('ee-moment-timezone'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js', array('ee-moment-timezone'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//excanvas
@@ -1798,15 +1798,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
-	 * 		get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
-	*		@access public
-	*		@return array
-	*/
-	public function get_list_table_view_RLs() {
+	 * get_list_table_view_RLs - get it? View RL ?? VU-RL???  URL ??
+	 *
+	 * @param array $extra_query_args Optional. An array of extra query args to add to the generated
+	 *                                		          	urls.  The array should be indexed by the view it is being
+	 *                                		          	added to.
+	 *
+	 * @return array
+	 */
+	public function get_list_table_view_RLs( $extra_query_args = array() ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$query_args = array();
 
 		if ( empty( $this->_views )) {
 			$this->_views = array();
@@ -1814,11 +1819,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {
+			$query_args = array();
 			// check for current view
 			$this->_views[ $key ]['class'] = $this->_view == $view['slug'] ? 'current' : '';
 			$query_args['action'] = $this->_req_action;
 			$query_args[$this->_req_action.'_nonce'] = wp_create_nonce( $query_args['action'] . '_nonce' );
 			$query_args['status'] = $view['slug'];
+			//merge any other arguments sent in.
+			if ( isset( $extra_query_args[$view['slug']] ) ) {
+				$query_args = array_merge( $query_args, $extra_query_args[$view['slug']] );
+			}
 			$this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		}
 
@@ -1961,9 +1971,39 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('New @ Event Espresso', 'event_espresso') );
-		add_meta_box('espresso_news_post_box', $news_box_title, array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __( 'New @ Event Espresso', 'event_espresso' ) );
+		add_meta_box( 'espresso_news_post_box', $news_box_title, array(
+			$this,
+			'espresso_news_post_box'
+		), $this->_wp_page_slug, 'side' );
 	}
+
+
+	/**
+	 * Code for setting up espresso ratings request metabox.
+	 */
+	protected function _espresso_ratings_request() {
+		if ( ! apply_filters( 'FHEE_show_ratings_request_meta_box', true ) ) {
+			return '';
+		}
+		$ratings_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('Keep Event Espresso Decaf Free', 'event_espresso') );
+		add_meta_box( 'espresso_ratings_request', $ratings_box_title, array(
+			$this,
+			'espresso_ratings_request'
+		), $this->_wp_page_slug, 'side' );
+	}
+
+
+	/**
+	 * Code for setting up espresso ratings request metabox content.
+	 */
+	public function espresso_ratings_request() {
+		$template_path = EE_ADMIN_TEMPLATE . 'espresso_ratings_request_content.template.php';
+		EE_Registry::instance()->load_helper( 'Template' );
+		EEH_Template::display_template( $template_path, array() );
+	}
+
+
 
 
 	public static function cached_rss_display( $rss_id, $url ) {
@@ -2023,7 +2063,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-	private function _espresso_sponsors_post_box() {
+	protected function _espresso_sponsors_post_box() {
 
 		$show_sponsors = apply_filters( 'FHEE_show_sponsors_meta_box', TRUE );
 		if ( $show_sponsors )
@@ -3068,6 +3108,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function get_view() {
 		return $this->_view;
+	}
+
+
+
+
+	/**
+	 * getter for the protected $_views property
+	 *
+	 * @return array
+	 */
+	public function get_views() {
+		return $this->_views;
 	}
 
 

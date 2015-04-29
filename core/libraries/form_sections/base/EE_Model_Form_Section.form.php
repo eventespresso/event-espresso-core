@@ -157,6 +157,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Foreign_Key_Int_Field':
 					case 'EE_Foreign_Key_String_Field':
+					case 'EE_WP_User_Field':
 						$models_pointed_to = $model_field instanceof EE_Field_With_Model_Name ? $model_field->get_model_class_names_pointed_to() : array();
 						if(true || is_array($models_pointed_to) && count($models_pointed_to) > 1){
 							$input_class = 'EE_Text_Input';
@@ -187,6 +188,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Money_Field':
 						throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+						break;
+					case 'EE_Post_Content_Field':
+						$input_class = 'EE_Text_Area_Input';
 						break;
 					case 'EE_Plain_Text_Field':
 						$input_class = 'EE_Text_Input';

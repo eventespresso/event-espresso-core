@@ -102,6 +102,8 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_template_helper( new EEH_Template() );
 			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
+			EE_Registry::instance()->load_helper( 'Money' );
+			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
@@ -352,7 +354,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					EE_Config::instance()->core->cancel_page_url()
+					$fail_url
 				);
 
 			//  Onsite Gateway
@@ -541,7 +543,7 @@ abstract class EE_PMT_Base{
 		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
 			return EE_PMT_Base::offsite;
 		}else{
-			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
 

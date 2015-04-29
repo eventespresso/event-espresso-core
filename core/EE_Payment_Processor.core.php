@@ -73,7 +73,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				min( $amount, $transaction->remaining() ),//make sure we don't overcharge
 				$billing_form,
 				$return_url,
-				EE_Registry::instance()->CFG->core->cancel_page_url(),
+				add_query_arg( array( 'ee_cancel_payment' => true ), $return_url ),
 				$method,
 				$by_admin
 			);
@@ -135,9 +135,17 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-//		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
-		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
+		EE_Processor_Base::set_IPN( true );
+		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
+			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
+		}elseif( $payment_method instanceof EE_Payment ){
+			$obj_for_log = $payment_method;
+		}elseif( $transaction instanceof EE_Transaction ){
+			$obj_for_log = $transaction;
+		}else{
+			$obj_for_log = null;
+		}
+		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $obj_for_log);
 		try{
 			/**
 			 * @var EE_Payment $payment
@@ -180,15 +188,9 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
-				if( $this->_ok_to_update_txn_based_on_payments( $transaction ) ) {
-					$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
-				}else{
-					//wait- don't update the txn just yet, just save the payment.
-					//the txn will get updated later. We want to avoid updating the
-					//txn now because there might be a race condition where a cached
-					//version of it will overwrite any changes we would make to it now anyways
-					$payment->save();
-				}
+				$payment->save();
+				//  update the TXN
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -264,82 +266,89 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * This should be called each time there may have been an update to a payment
-	 * on a transaction (ie, we asked for a payment to process a payment for a transaction,
-	 * or we told a payment method about an IPN, or we told a payment method to
+	 * This should be called each time there may have been an update to a
+	 * payment on a transaction (ie, we asked for a payment to process a
+	 * payment for a transaction, or we told a payment method about an IPN, or
+	 * we told a payment method to
 	 * "finalize_payment_for" (a transaction), or we told a payment method to
-	 * process a refund. This should handle firing the correct hooks to indicate
-	 * what exactly happened and updating the transaction appropriately). This could be integrated
-	 * directly into EE_Transaction upon save, but we want this logic to be separate
-	 * from 'normal' plain-jane saving and updating of transactions and payments, and to be
-	 * tied to payment processing
+	 * process a refund. This should handle firing the correct hooks to
+	 * indicate
+	 * what exactly happened and updating the transaction appropriately). This
+	 * could be integrated directly into EE_Transaction upon save, but we want
+	 * this logic to be separate from 'normal' plain-jane saving and updating
+	 * of transactions and payments, and to be tied to payment processing
+	 *
 	 * @param EE_Transaction $transaction
-	 * @param EE_Payment $payment
-	 * @param boolean $update_txn whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
-	 * (you can save 1 DB query if you know you're going to save it later instead)
+	 * @param EE_Payment     $payment
+	 * @param boolean        $update_txn
+	 *                        whether or not to call
+	 *                        EE_Transaction_Processor::
+	 *                        update_transaction_and_registrations_after_checkout_or_payment()
+	 *                        (you can save 1 DB query if you know you're going
+	 *                        to save it later instead)
+	 * @param bool           $IPN
+	 *                        if processing IPNs or other similar payment
+	 *                        related activities that occur in alternate
+	 *                        requests than the main one that is processing the
+	 *                        TXN, then set this to true to check whether the
+	 *                        TXN is locked before updating
+	 * @throws \EE_Error
 	 */
-	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = TRUE ){
+	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $IPN = false ){
 		$do_action = FALSE;
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
-		// verify payment
-		if ( $payment instanceof EE_Payment ) {
-			if( $payment->payment_method() instanceof EE_Payment_Method &&
-					$payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
-				$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
-			}
-			// we need to save this payment in order for transaction to be updated correctly
-			// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-			$payment->save();
-			$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
-
-		} else {
-			// there is no payment. Must be an offline gateway
-			//create a hacky payment object, but dont save it
-			$payment = EE_Payment::new_instance(
-				array(
-					'TXN_ID' 					=> $transaction->ID(),
-					'STS_ID' 					=> EEM_Payment::status_id_pending,
-					'PAY_timestamp' 	=> current_time('timestamp'),
-					'PAY_amount' 		=> 0.00,
-					'PMD_ID' 				=> $transaction->payment_method_ID()
-				)
+		// can we freely update the TXN at this moment?
+		if ( $IPN && $transaction->is_locked() ) {
+			// don't update the transaction at this exact moment
+			// because the TXN is active in another request
+			EE_Cron_Tasks::schedule_update_transaction_with_payment(
+				time(),
+				$transaction->ID(),
+				$payment
 			);
-			$transaction->set_status( EEM_Transaction::incomplete_status_code );
-			$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
-		}
-		/** @type EE_Transaction_Payments $transaction_payments */
-		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		$transaction_payments->calculate_total_payments_and_update_status( $transaction );
-		// call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
-		if ( $update_txn ) {
-			$this->_post_payment_processing( $transaction, $payment, $update_txn );
-		}
-		// and set a hook point for others to use?
-		if ( $do_action ) {
-			do_action( $do_action, $transaction, $payment );
-		}
-	}
+		} else {
+			// verify payment
+			if ( $payment instanceof EE_Payment ) {
+				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
+					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
+				}
+				// we need to save this payment in order for transaction to be updated correctly
+				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
+				$payment->save();
+				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
 
-	/**
-	 * Decides whether or not now is the right time to update the transaction
-	 * based on payments. This is useful because when an IPN is received, we don't necessarily
-	 * always want to immediately update the transactiona nd its related data. why?
-	 * because it's possible that there's a cached version of the transaction in a session that will
-	 * overwrite what the IPN would save anyways. So we want to only update the txn
-	 * once we know that won't happen.
-	 * @param EE_Transaction $transaction
-	 * @return boolean
-	 */
-	protected function _ok_to_update_txn_based_on_payments( $transaction ) {
-		$txn_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		/* @var $txn_processor EE_Transaction_Processor */
-		if( $txn_processor->all_reg_steps_completed( $transaction ) ) {
-			//note: this doesn't account for when someone goes to paypal to pay but never returns.
-			//although an IPN was received, the txn won't be updated
-			return true;
-		}else{
-			return false;
+			} else {
+				// there is no payment. Must be an offline gateway
+				//create a hacky payment object, but dont save it
+				$payment = EE_Payment::new_instance(
+					array(
+						'TXN_ID' 					=> $transaction->ID(),
+						'STS_ID' 					=> EEM_Payment::status_id_pending,
+						'PAY_timestamp' 	=> current_time('timestamp'),
+						'PAY_amount' 		=> 0.00,
+						'PMD_ID' 				=> $transaction->payment_method_ID()
+					)
+				);
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+				// send out notifications
+				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
+			}
+			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
+				/** @type EE_Transaction_Payments $transaction_payments */
+				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+				// set new value for total paid
+				$transaction_payments->calculate_total_payments_and_update_status( $transaction );
+				// call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
+				if ( $update_txn ) {
+					$this->_post_payment_processing( $transaction, $payment, $IPN );
+				}
+				// and set a hook point for others to use?
+				if ( $do_action ) {
+					do_action( $do_action, $transaction, $payment );
+				}
+			}
 		}
 	}
 
@@ -347,19 +356,69 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 	/**
 	 * Process payments and transaction after payment process completed.
+	 * ultimately this will send the TXN and payment details off so that notifications can be sent out.
+	 * if this request happens to be processing an IPN,
+	 * then we will also set the Payment Options Reg Step to completed,
+	 * and attempt to completely finalize the TXN if all of the other Reg Steps are completed as well.
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param EE_Payment     $payment
-	 *
-	 * @return void
+	 * @param bool           $IPN
 	 */
-	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment ) {
+	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment, $IPN = false ) {
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		$transaction_processor->set_revisit( $this->_revisit );
+		// is the Payment Options Reg Step completed ?
+		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
+		// if the Payment Options Reg Step is completed...
+		$revisit = $payment_options_step_completed !== false ? true : false;
+		// then this is kinda sorta a revisit with regards to payments at least
+		$transaction_processor->set_revisit( $revisit );
+		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
+		if (
+			$IPN &&
+			$payment_options_step_completed !== true &&
+			( $payment->is_approved() || $payment->is_pending() )
+		) {
+			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+		}
+		// DEBUG LOG
+		//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		// maybe update status, but don't save transaction just yet
+		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
+		//check if enough Reg Steps have been completed to warrant finalizing the TXN
+		$finalized = $transaction_processor->all_reg_steps_completed_except_final_step( $transaction );
+		//  if this is an IPN and the final step has not been initiated
+		if ( $IPN && $finalized === false ) {
+			// and if it hasn't already been set as being started...
+			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+		}
+		// because the above will return false if the final step was not fully completed, we need to check again...
+		if ( $IPN && $finalized ) {
+			// and if we are all good to go, then send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			// DEBUG LOG
+			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+		}
+		$transaction->save();
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'                   => $IPN,
+		//		'payment_options' => $payment_options_step_completed,
+		//		'finalize_registration' => $finalized,
+		//		'payment'               => $payment,
+		//		'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
+		//()->name() : 'off-line',
+		//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
+		//	)
+		//);
 		//ok, now process the transaction according to the payment
 		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
-		$transaction->save();
 	}
 
 

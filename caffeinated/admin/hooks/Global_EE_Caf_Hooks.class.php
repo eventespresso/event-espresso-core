@@ -36,7 +36,8 @@ class Global_EE_Caf_Hooks {
 
 
 	private function _do_hooks() {
-		add_filter('FHEE_show_sponsors_meta_box', create_function('$show_sponsors', 'return FALSE;' ), 10 );
+		add_filter('FHEE_show_sponsors_meta_box', '__return_false', 10 );
+		add_filter('FHEE_show_ratings_request_meta_box', '__return_false', 10 );
 		add_filter('FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array( $this, 'forums_lazy_loading'), 10 );
 		add_action('AHEE__EE_Admin_Page__espresso_news_post_box__after_content', array( $this, 'extra_news_box_content' ), 10 );
 	}

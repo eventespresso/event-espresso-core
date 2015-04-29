@@ -81,13 +81,22 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 		if ( EE_Registry::instance()->REQ->is_set('e_reg_url_link' )){
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
 		} else {
-			$this->_current_txn = NULL;
+			$this->_current_txn = null;
 		}
 		if ( $this->_current_txn instanceof EE_Transaction ) {
 			$payment_method_slug = EE_Registry::instance()->REQ->get( 'ee_payment_method', NULL );
+			if( $payment_method_slug ) {
+				$payment_method = EEM_Payment_Method::instance()->get_one_by_slug( $payment_method_slug );
+			}else{
+				$payment_method = null;
+			}
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-			$payment_processor->process_ipn( $_REQUEST, $this->_current_txn, $payment_method_slug );
+			$payment_processor->process_ipn( $_REQUEST, $this->_current_txn, $payment_method );
+			//allow gateways to add a filter to stop rendering the page
+			if( apply_filters( 'FHEE__EES_Espresso_Txn_Page__run__exit', FALSE ) ){
+				exit;
+			}
 		}
 
 	}
@@ -103,11 +112,7 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		if ( $this->_current_txn ) {
-			return sprintf( __( 'IPN successfully received for Transaction with ID "%d"', 'event_espresso' ),$this->_current_txn->ID() );
-		} else {
-			return __( 'No IPN (or incomplete IPN) received', 'event_espresso' );
-		}
+		return __( 'This is the Event Espresso Transactions page. This page receives instant payment notification (IPN) requests and should have a status of published, but should not be easily accessible by site visitors. Do not add it to your website\'s navigation menu or link to it from another page. Also, do not delete it or change its status to private.', 'event_espresso' );
 	}
 
 
