@@ -356,7 +356,7 @@ abstract class EE_PMT_Base{
 					),
 					$fail_url
 				);
-
+				$payment->save();
 			//  Onsite Gateway
 			} elseif ( $this->_gateway instanceof EE_Onsite_Gateway ) {
 
