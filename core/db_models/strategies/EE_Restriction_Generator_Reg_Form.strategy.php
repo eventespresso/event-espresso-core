@@ -14,6 +14,20 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 
+	/**
+	 *
+	 * @var string the name of the field that indicates whether or not this is a system thing
+	 */
+	protected $_system_field_name = null;
+
+	/**
+	 * Accepts the name of the field that indicates whether or not an object is a "system" one or not
+	 * @param string $system_field_name
+	 */
+	public function __construct( $system_field_name ) {
+		$this->_system_field_name = $system_field_name;
+	}
+
 
 	/**
 	 *
@@ -21,23 +35,6 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 	 * @throws EE_Error
 	 */
 	protected function _generate_restrictions() {
-
-		switch( $this->model()->get_this_model_name() ){
-			case 'Question':
-				$system_field_name = 'QST_system';
-				break;
-			case 'Question_Group':
-				$system_field_name = 'QSG_system';
-				break;
-			case 'Question_Group_Question':
-				$system_field_name = 'Question_Group.QSG_system';
-				break;
-			case 'Question_Option':
-				$system_field_name = 'Question.QST_system';
-				break;
-			default:
-				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Reg_Form. Please add a switch case for it in EE_Restriction_Generator_Reg_Form::_generate_restrictions', 'event_espresso' ), $this->model()->get_this_model_name() ) );
-		}
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
 		if( ! $this->model()->cap_slug() ) {
@@ -53,14 +50,14 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' ) => array(
 						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
 						'AND*allow-system-questions-so-far' => array(
-							$system_field_name => array( 'NOT_IN', array( '', 0 ) ),
-							$system_field_name . '*' => array( 'IS_NOT_NULL',)
+							$this->_system_field_name => array( 'NOT_IN', array( '', 0 ) ),
+							$this->_system_field_name . '*' => array( 'IS_NOT_NULL',)
 						)
 				) ) ),
 				EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => new EE_Default_Where_Conditions( array(
 					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => array(
-						$system_field_name => array( 'IN', array( '', 0 ) ),
-						$system_field_name . '*' => array('IS_NULL'))
+						$this->_system_field_name => array( 'IN', array( '', 0 ) ),
+						$this->_system_field_name . '*' => array('IS_NULL'))
 				)
 			) );
 	}

@@ -53,20 +53,6 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
 	 * @throws EE_Error
 	 */
 	protected function _generate_restrictions() {
-
-		switch ( $this->model()->get_this_model_name() ) {
-			case 'Ticket':
-				$this->_default_field_name	 = 'TKT_is_default';
-				$this->_path_to_event_model = 'Datetime.Event.';
-				break;
-			case 'Price':
-				$this->_default_field_name	 = 'PRC_is_default';
-				$this->_path_to_event_model = 'Ticket.Datetime.Event.';
-				break;
-
-			default:
-				throw new EE_Error( sprintf( __( 'Model %s is not a known model to EE_Restriction_Generator_Global. Please add a switch case for it in EE_Restriction_Generator_Global::_generate_restrictions', 'event_espresso' ), $this->model()->get_this_model_name() ) );
-		}
 		//if there are no standard caps for this model, then for now all we know
 		//if they need the default cap to access this
 		if ( !$this->model()->cap_slug() ) {
