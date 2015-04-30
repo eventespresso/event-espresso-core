@@ -16,7 +16,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base {
 
 	/**
-	 * name of the model field that indicates whether or not
+	 * name of the model field that indicates whether or not a model object is "global"
 	 * @var string
 	 */
 	protected $_global_field_name;
@@ -34,11 +34,11 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base {
 	 */
 	protected function _generate_restrictions() {
 
-		//if there are no standard caps for this model, then for now all we know
+		//if there are no standard caps for this model, then for now all we know is
 		//if they need the default cap to access this
-		if ( !$this->model()->cap_slug() ) {
+		if ( ! $this->model()->cap_slug() ) {
 			return array(
-				self::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
+				EE_Restriction_Generator_Base::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
 		}
 

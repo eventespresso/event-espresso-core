@@ -18,6 +18,7 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 	/**
 	 *
 	 * @return \EE_Default_Where_Conditions
+	 * @throws EE_Error
 	 */
 	protected function _generate_restrictions() {
 
@@ -41,7 +42,7 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 		//if they need the default cap to access this
 		if( ! $this->model()->cap_slug() ) {
 			return array(
-				self::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
+				EE_Restriction_Generator_Base::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
 		}
 

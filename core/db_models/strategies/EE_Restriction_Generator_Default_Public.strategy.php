@@ -49,8 +49,8 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
 	}
 
 	/**
-	 *
-	 * @return \EE_Default_Where_Conditions
+	 * @return EE_Default_Where_Conditions
+	 * @throws EE_Error
 	 */
 	protected function _generate_restrictions() {
 
@@ -80,18 +80,18 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
 		return array(
 			//first: basically access to non-defaults is essentially controlled by which events are accessible
 			//if they don't have the basic event cap, they can't access ANY non-default items
-			self::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions( array( 'OR*no_' . self::get_cap_name($event_model, $this->action()) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions( array( 'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action()) => array(
 				$this->_default_field_name => true,
 				$this->_path_to_event_model . 'status' => 'publish' ) ) ),
 			//if they don't have the others event cap, they can only access their own, others' that are for published events, or defaults
-			self::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
-				'OR*no_' . self::get_cap_name($event_model, $this->action() . '_others' ) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
+				'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_others' ) => array(
 					$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
 					$this->_default_field_name => true,
 					$this->_path_to_event_model . 'status' => 'publish' ) ) ),
 			//if they have basic and others, but not private, they acan access default, their own, and others' that aren't private
-			self::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
-				'OR*no_' .self::get_cap_name($event_model, $this->action() . '_private' ) => array(
+			EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => new EE_Default_Where_Conditions(array(
+				'OR*no_' .EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private' ) => array(
 					$this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
 					$this->_path_to_event_model . 'status' => array( '!=', 'private' ),
 					$this->_default_field_name => true ) ) ),
