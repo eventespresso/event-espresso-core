@@ -3814,7 +3814,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string|false
 	 */
 	public function cap_slug(){
-		return $this->_caps_slug;
+		return apply_filters( 'FHEE__EEM_Base__cap_slug', $this->_caps_slug, $this);
 	}
 
 	/**
