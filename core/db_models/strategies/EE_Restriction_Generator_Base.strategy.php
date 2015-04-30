@@ -140,7 +140,7 @@ abstract class EE_Restriction_Generator_Base {
 	 * @return string
 	 */
 	public static function get_cap_name( $model, $action ) {
-		return ( $model->is_wp_core_model() ? '' : 'ee_' ) . $action . '_' . $model->cap_slug();
+		return apply_filters( 'FHEE__EE_Restriction_Generator__get_cap_name', ( $model->is_wp_core_model() ? '' : 'ee_' ) . $action . '_' . $model->cap_slug(), $model, $action );
 	}
 
 	/**
