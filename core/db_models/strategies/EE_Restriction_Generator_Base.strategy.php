@@ -30,7 +30,7 @@ abstract class EE_Restriction_Generator_Base {
 	protected $_model;
 
 	/**
-	 * One of the constants on EEM_Base::caps_*
+	 * One of EEM_Base::valid_cap_contexts()
 	 * @var string
 	 */
 	protected $_action;
@@ -61,7 +61,7 @@ abstract class EE_Restriction_Generator_Base {
 
 	/**
 	 * Returns the action this restriction generator will generate restrictions for.
-	 * It should be one of EEM_Base::caps_* constants
+	 * It should be one of EEM_Base::valid_cap_contexts()
 	 *
 	 * @throws EE_Error
 	 * @return string

@@ -145,7 +145,7 @@ abstract class EEM_Base extends EE_Base{
 	protected $_caps_slug = null;
 
 	/**
-	 * 2d array where top-level keys are one of the consts EEM_Base::caps_*,
+	 * 2d array where top-level keys are one of EEM_Base::valid_cap_contexts(),
 	 * and next-level keys are capability names, and each's value is a
 	 * EE_Default_Where_Condition. If the requestor requests to apply caps to the query,
 	 * they specify which context to use (ie, frontend, backend, edit or delete)
@@ -163,7 +163,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Array defining which cap restriction generators to use to create default
 	 * cap restrictions to put in EEM_Base::_cap_restrictions.
 	 *
-	 * Array-keys are one of EEM_Base::caps_*, and values are a child of
+	 * Array-keys are one of EEM_Base::valid_cap_contexts(), and values are a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
 	 * automatically set this to false (not just null).
 	 * @var EE_Restriction_Generator_Base
@@ -485,7 +485,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Generates the cap restrictions for the given context, or if they were
 	 * already generated just gets what's cached
-	 * @param string $context like EEM_Base::caps_* consts
+	 * @param string $context one of EEM_Base::valid_cap_contexts()
 	 * @return EE_Default_Where_Conditions[]
 	 */
 	protected function _generate_cap_restrictions( $context ){
@@ -2206,7 +2206,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the where conditions that should be imposed on the query based on the
 	 * context (eg reading frontend, backend, edit or delete).
-	 * @param string $context one of EEM_Base::caps_* consts
+	 * @param string $context one of EEM_Base::valid_cap_contexts()
 	 * @return array like EEM_Base::get_all() 's $query_params[0]
 	 */
 	public function caps_where_conditions( $context = self::caps_read ) {
@@ -3820,7 +3820,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Returns the capability-restrictions array (@see EEM_Base::_cap_restrictions).
 	 *
-	 * If $context is provided (which should be set to one of EEM_Base::caps_* constants)
+	 * If $context is provided (which should be set to one of EEM_Base::valid_cap_contexts())
 	 * only returns the cap restrictions array in that context (ie, the array
 	 * at that key)
 	 * @param string $context
@@ -3871,7 +3871,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets the mapping from capability contexsts to action strings used in capability names
-	 * @return array keys are consts like EEM_Base::caps_*, and values are usually
+	 * @return array keys are one of EEM_Base::valid_cap_contexts(), and values are usually
 	 * one of 'read', 'edit', or 'delete'
 	 */
 	public function cap_contexts_to_cap_action_map() {
