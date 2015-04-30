@@ -455,11 +455,11 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->_caps_slug === null ) {
 			$this->_caps_slug = EE_Inflector::pluralize_and_lower( $this->get_this_model_name() );
 		}
-		//the model didn't define any cap restriction generators for any not explicitly defined
+		//initialize the standard cap restriction generators if none were specified by the child constructor
 		if( $this->_cap_restriction_generators !== false ){
-			foreach( $this->_cap_contexts_to_cap_action_map as $cap_context => $action ){
+			foreach( $this->cap_contexts_to_cap_action_map() as $cap_context => $action ){
 				if( ! isset( $this->_cap_restriction_generators[ $cap_context ] ) ) {
-					$this->_cap_restriction_generators[ $cap_context ] = new EE_Restriction_Generator_Protected();
+					$this->_cap_restriction_generators[ $cap_context ] = apply_filters( 'FHEE__EEM_Base___construct__standard_cap_restriction_generator', new EE_Restriction_Generator_Protected(), $cap_context, $this );
 				}
 			}
 		}
@@ -472,7 +472,7 @@ abstract class EEM_Base extends EE_Base{
 				if( !  $generator_object instanceof EE_Restriction_Generator_Base ){
 					throw new EE_Error( sprintf( __( 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.', 'event_espresso' ), $context, $this->get_this_model_name()  ) );
 				}
-				$action = $this->_cap_contexts_to_cap_action_map[ $context ];
+				$action = $this->cap_action_for_context( $context );
 				if( ! $generator_object->construction_finalized() ){
 					$generator_object->_construct_finalize( $this, $action );
 				}
@@ -490,8 +490,8 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected function _generate_cap_restrictions( $context ){
 		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
-				$this->_cap_contexts_to_cap_action_map[ $context ] instanceof EE_Restriction_Generator_Base ) {
-			return $this->_cap_contexts_to_cap_action_map[ $context ]->generate_restrictions();
+				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base ) {
+			return $this->_cap_restriction_generators[ $context ]->generate_restrictions();
 		}else{
 			return array();
 		}
@@ -2210,9 +2210,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array like EEM_Base::get_all() 's $query_params[0]
 	 */
 	public function caps_where_conditions( $context = self::caps_read ) {
-		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
-			throw new EE_Error( sprintf( __( '"%s" is not a valid capability context when making queries. Valid contexsts are: %s', 'event_espresso' ), $context, implode(',',array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
-		}
+		EEM_Base::verify_is_valid_cap_context( $context );
 		$cap_where_conditions = array();
 		$cap_restrictions = $this->caps_missing( $context );
 		/**
@@ -2221,7 +2219,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
 				$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
 		}
-		return $cap_where_conditions;
+		return apply_filters( 'FHEE__EEM_Base__caps_where_conditions__return', $cap_where_conditions, $this, $context, $cap_restrictions );
 	}
 
 	/**
@@ -3827,9 +3825,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Default_Where_Conditions[] indexed by associated capability
 	 */
 	public function cap_restrictions( $context = EEM_Base::caps_read ) {
-		if( ! isset( $this->_cap_contexts_to_cap_action_map[ $context ] ) ){
-			throw new EE_Error( sprintf( __( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ), $context, implode(',', array_keys( $this->_cap_contexts_to_cap_action_map ) ) ) );
-		}
+		EEM_Base::verify_is_valid_cap_context( $context );
 		//check if we ought to run the restriction generator first
 		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
 				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base &&
@@ -3875,7 +3871,24 @@ abstract class EEM_Base extends EE_Base{
 	 * one of 'read', 'edit', or 'delete'
 	 */
 	public function cap_contexts_to_cap_action_map() {
-		return $this->_cap_contexts_to_cap_action_map;
+		return apply_filters( 'FHEE__EEM_Base__cap_contexts_to_cap_action_map', $this->_cap_contexts_to_cap_action_map, $this );
+	}
+
+	/**
+	 * Gets the action string for the specified capability context
+	 * @param type $context
+	 * @return string one of EEM_Base::cap_contexts_to_cap_action_map() values
+	 */
+	public function cap_action_for_context( $context ) {
+		$mapping = $this->cap_contexts_to_cap_action_map();
+		if( isset( $mapping[ $context ] ) ) {
+			return $mapping[ $context ];
+		}
+		if( $action = apply_filters( 'FHEE__EEM_Base__cap_action_for_context', null, $this, $mapping, $context ) ) {
+			return $action;
+		}
+		throw new EE_Error( sprintf( __( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ), $context, implode(',', array_keys( $this->cap_contexts_to_cap_action_map() ) ) ) );
+
 	}
 
 	/**
@@ -3889,5 +3902,19 @@ abstract class EEM_Base extends EE_Base{
 			self::caps_edit,
 			self::caps_delete
 		));
+	}
+
+	/**
+	 * Verifies $context is one of EEM_Base::valid_cap_contexts(), if not it throws an exception
+	 * @param string $context
+	 * @return boolean
+	 */
+	static public function verify_is_valid_cap_context( $context ) {
+		$valid_cap_contexts = EEM_Base::valid_cap_contexts();
+		if( in_array( $context, $valid_cap_contexts ) ) {
+			return true;
+		}else{
+			throw new EE_Error( sprintt( __( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ). $context, get_class( $this ), implode(',', $valid_cap_contexts ) ) );
+		}
 	}
 }
