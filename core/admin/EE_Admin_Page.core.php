@@ -3193,6 +3193,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * @return bool  value of $_is_caf property
+	 */
+	public function is_caf() {
+		return $this->_is_caf;
+	}
+
+
 
 
 	/**
