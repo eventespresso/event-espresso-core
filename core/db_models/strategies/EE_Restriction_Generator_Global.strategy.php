@@ -8,6 +8,14 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * EE_Restriction_Generator_Protected
  *
+ * Generates restrictions (EE_Default_Where_Conditions[]) relating to models with "global"-scoped objects.
+ * This class is for when there are basic capabilities relating to the model (eg "read_things"),
+ *  "others" capabilities, and "global" capabilities; because some of the objects are
+ * considered "global". Basically you can only access others' global items if you have the global capability
+ * (eg, if you only have "read_things", you can only read your own global and non-global things).
+ * In order for this to work properly, you must specify the name of a field (on this model or a related model)
+ * that is a boolean indicating whether or not an object is "global".
+ *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson

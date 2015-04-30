@@ -7,6 +7,19 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * EE_Restriction_Generator_Protected
  *
+ * This generates restrictions (EE_Default_Where_Conditions[]) for a model. It dynamically
+ * detects if there are basic capabilities (eg "read_things"), "others" capabilities (eg "read_others_things"),
+ * and "private" capabilities.
+ * If there are only basic capabilities, it controls access to all items.
+ * If there are basic and "others" capabilities, the basic capabilities control access to one own's obejcts,
+ * and the "others" capabilities control all access to others.
+ * If there are all three, the basic capabilities control access to one's own objects,
+ * the "others" capabilities control access to others' non-private objects, and
+ * the "private" capabilities control access to others' private objects.
+ * If there are no capabilities at all, the default capability in EE_Restriction_Generator_Base
+ * controls all access to objects.
+ *
+ *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson

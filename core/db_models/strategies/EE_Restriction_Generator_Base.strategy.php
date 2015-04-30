@@ -7,7 +7,19 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * EE_Restriction_Generator_Base
  * Create an array of restrictions (@see EEM_Base::_cap_restrictions)
- * based off the model
+ * based off the model and the capabilities defined in EE_Capabilities.
+ * The primary method on this class is _generate_restrictions(), which returns
+ * an array where keys are capability names (eg "ee_read_others_events") and values
+ * are EE_Default_Where_Conditions objects. Note: EE_Default_Where_Conditions can be passed in an array of WHERE conditions
+ * like what EEM_Base::get_all() expects, and you can retrieve those using EE_Default_Where_Conditions::get_default_where_conditions().
+ * We use these classes instead of the array directly because in some cases the classes themselves can be interpreted in a special way
+ * (eg EE_Return_None_Where_Conditions, which alters the query parameters in a special way so NO results get returned, which some client code
+ * can use to decide to not bother running a query at all if that class is in the list of applicable restrictions), sometimes
+ * we need to generate the WHERE conditions at the time of querying (eg because the $current_user
+ * global isn't set when models are constructed, but is when they are queried), and because this class
+ * simplifies adding default where conditions onto a query from a related model object (eg
+ * while querying events, you may include datetimes in the query, in which case we may someday decide
+ * to add the datetime's capabilities restrictions onto the query too, not just those for events)
  *
  *
  * @package			Event Espresso
