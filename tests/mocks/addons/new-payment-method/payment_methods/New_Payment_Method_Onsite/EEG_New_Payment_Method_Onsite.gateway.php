@@ -39,15 +39,19 @@ class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
 		switch( $billing_info[ 'status' ] ){
 			case 'Approved':
 				$payment->set_status( $this->_pay_model->approved_status() );
+				$payment->set_gateway_response( "Payment accepted");
 				break;
 			case 'Pending':
 				$payment->set_status( $this->_pay_model->pending_status() );
+				$payment->set_gateway_response( "WE are on vacation, we will process your payment when we get back.");
 				break;
 			case 'Declined':
 				$payment->set_status( $this->_pay_model->declined_status() );
+				$payment->set_gateway_response( "You don't have enough spunk, payment was declined");
 				break;
 			case 'Failed':
 				$payment->set_status( $this->_pay_model->failed_status() );
+				$payment->set_gateway_response( "Mice got into our servers. The exterminator will be over after he finishes his day job. Sorry");
 		}
 		return $payment;
 	}
