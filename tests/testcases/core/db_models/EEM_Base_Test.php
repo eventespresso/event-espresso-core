@@ -248,35 +248,35 @@ class EEM_Base_Test extends EE_UnitTestCase{
 
 		$this->assertTrue( is_user_logged_in() );
 		$this->assertEquals(
-				array( array(
-					'QST_wp_user' => get_current_user_id()
-				) ),
-				EEM_Question::instance()->alter_query_params_to_only_include_mine() );
+			array( array(
+				'QST_wp_user' => get_current_user_id()
+			) ),
+			EEM_Question::instance()->alter_query_params_to_only_include_mine() );
 	}
 
 	public function test_alter_query_params_to_only_include_mine__not_logged_in() {
 		$this->assertFalse( is_user_logged_in() );
 		$this->assertEquals(
-				array( array(
-					'QST_wp_user' => get_current_user_id()
-				) ),
-				EEM_Question::instance()->alter_query_params_to_only_include_mine() );
+			array( array(
+				'QST_wp_user' => get_current_user_id()
+			) ),
+			EEM_Question::instance()->alter_query_params_to_only_include_mine() );
 	}
 	public function test_alter_query_params_to_only_include_mine__across_model_chain_once() {
 		$this->assertFalse( is_user_logged_in() );
 		$this->assertEquals(
-				array( array(
-					'Event.EVT_wp_user' => get_current_user_id()
-				) ),
-				EEM_Registration::instance()->alter_query_params_to_only_include_mine() );
+			array( array(
+				'Event.EVT_wp_user' => get_current_user_id()
+			) ),
+			EEM_Registration::instance()->alter_query_params_to_only_include_mine() );
 	}
 	public function test_alter_query_params_to_only_include_mine__across_model_chain_twice() {
 		$this->assertFalse( is_user_logged_in() );
 		$this->assertEquals(
-				array( array(
-					'Registration.Event.EVT_wp_user' => get_current_user_id()
-				) ),
-				EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
+			array( array(
+				'Registration.Event.EVT_wp_user' => get_current_user_id()
+			) ),
+			EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
 	}
 
 	/**
@@ -330,6 +330,114 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		}
 
 	}
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	function test_next_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving objects
+		$next_events = EEM_Event::instance()->next_x( $event->ID(), 'EVT_ID', 4 );
+
+		$this->assertEquals( 4, count( $next_events ) );
+		$this->assertInstanceOf( 'EE_Event', reset( $next_events ) );
+
+		//test retrieving just ids
+		$next_events = EEM_Event::instance()->next_x( $event->ID(), 'EVT_ID', 4, array(), 'EVT_ID' );
+
+		$this->assertEquals( 4, count( $next_events ) );
+		$this->assertTrue( array_key_exists('EVT_ID', $next_events[0] ) );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	function test_previous_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving objects
+		$previous_events = EEM_Event::instance()->previous_x( $event->ID(), 'EVT_ID', 4 );
+
+		$this->assertEquals( 4, count( $previous_events ) );
+		$this->assertInstanceOf( 'EE_Event', reset( $previous_events ) );
+
+		//test retrieving just ids
+		$previous_events = EEM_Event::instance()->previous_x( $event->ID(), 'EVT_ID', 4, array(), 'EVT_ID' );
+
+		$this->assertEquals( 4, count( $previous_events ) );
+		$this->assertTrue( array_key_exists('EVT_ID', $previous_events[3] ) );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	function test_next() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$next_event = EEM_Event::instance()->next( $event->ID() );
+
+		$this->assertInstanceOf( 'EE_Event', $next_event );
+		$this->assertEquals( $event->ID()+1, $next_event->ID() );
+
+		//test retrieving just ids
+		$next_event = EEM_Event::instance()->next( $event->ID(), 'EVT_ID', array(), 'EVT_ID' );
+		$this->assertTrue( array_key_exists('EVT_ID', $next_event ) );
+		$this->assertEquals( $event->ID()+1, $next_event['EVT_ID'] );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	function test_previous() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$previous_event = EEM_Event::instance()->previous( $event->ID() );
+
+		$this->assertInstanceOf( 'EE_Event', $previous_event );
+		$this->assertEquals( $event->ID()-1, $previous_event->ID() );
+
+		//test retrieving just ids
+		$previous_event = EEM_Event::instance()->previous( $event->ID(), 'EVT_ID', array(), 'EVT_ID' );
+		$this->assertTrue( array_key_exists('EVT_ID', $previous_event ) );
+		$this->assertEquals( $event->ID()-1, $previous_event['EVT_ID'] );
+	}
+
+
+
 }
 
 // End of file EEM_Base_Test.php
