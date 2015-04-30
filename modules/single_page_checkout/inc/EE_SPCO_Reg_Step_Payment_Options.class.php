@@ -1325,7 +1325,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$payment = $payment_processor->process_ipn(
 					$_REQUEST,
 					$this->checkout->transaction,
-					$this->checkout->payment_method
+					$this->checkout->payment_method,
+					true,
+					false
 				);
 				//$payment_source = 'process_ipn';
 			} else {
