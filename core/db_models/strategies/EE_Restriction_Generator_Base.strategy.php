@@ -104,9 +104,9 @@ abstract class EE_Restriction_Generator_Base {
 	 */
 	public function generate_restrictions() {
 		if( $this->_cap_restrictions_generated === false ) {
-			$this->_cap_restrictions_generated = $this->_generate_restrictions();
+			$this->_cap_restrictions_generated = apply_filters( 'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time', $this->_generate_restrictions(), $this );
 		}
-		return $this->_cap_restrictions_generated;
+		return apply_filters( 'FHEE__EE_Restriction_Generator_Base__generate_restrcionts__every_time', $this->_cap_restrictions_generated, $this );
 	}
 
 	/**
