@@ -46,6 +46,8 @@ class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
 			case 'Declined':
 				$payment->set_status( $this->_pay_model->declined_status() );
 				break;
+			case 'Failed':
+				$payment->set_status( $this->_pay_model->failed_status() );
 		}
 		return $payment;
 	}
