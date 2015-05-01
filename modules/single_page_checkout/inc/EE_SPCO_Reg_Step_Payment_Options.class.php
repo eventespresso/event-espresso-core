@@ -257,10 +257,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$events_requiring_pre_approval = '';
 		foreach ( $events_requiring_pre_approval_array as $event_requiring_pre_approval ) {
 			$events_requiring_pre_approval .= EEH_HTML::li(
-				EEH_HTML::span(
-					EEH_HTML::nbsp(1) . $event_requiring_pre_approval->name(),
-					'', 'dashicons dashicons-marker ee-icon-size-16 orange-text'
+				EEH_HTML::span( '', '', 'dashicons dashicons-marker ee-icon-size-16 orange-text'
 				)
+				 . EEH_HTML::span( $event_requiring_pre_approval->name(), '', 'orange-text' )
 			);
 		}
 		return new EE_Form_Section_Proper(
