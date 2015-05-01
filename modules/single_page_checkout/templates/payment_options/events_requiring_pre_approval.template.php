@@ -1,5 +1,5 @@
 
-	<h4><span class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></span> <?php _e( 'Events Requiring Pre-Approval', 'event_espresso' ); ?></h4>
+	<h4><span class="orange-text"><?php _e('Important Notice: Events Requiring Pre-Approval', 'event_espresso');?></span></h4>
 	<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
 		<?php echo $events_requiring_pre_approval_msg; ?>
 	</p>
