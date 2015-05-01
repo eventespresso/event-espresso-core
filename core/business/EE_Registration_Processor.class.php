@@ -357,7 +357,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE, $additional_details = array() ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
-		EEH_Debug_Tools::printr( $additional_details, '$additional_details', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $additional_details, '$additional_details', __FILE__, __LINE__ );
 		// was a payment just made ?
 		if (
 			isset( $additional_details[ 'payment_updates' ], $additional_details[ 'last_payment' ] ) &&
