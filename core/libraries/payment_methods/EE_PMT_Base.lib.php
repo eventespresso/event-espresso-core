@@ -233,12 +233,13 @@ abstract class EE_PMT_Base{
 	 * which will be sent to teh gateway (can be null)
 	 *
 	 * @param \EE_Transaction $transaction
+	 * @param array $extra_args
 	 * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form
 	 */
-	public function billing_form( EE_Transaction $transaction = NULL ){
+	public function billing_form( EE_Transaction $transaction = NULL, $extra_args = array() ){
 		// has billing form already been regenerated ? or overwrite cache?
 		if( ! $this->_billing_form || ! $this->_cache_billing_form ){
-			$this->_billing_form = $this->generate_new_billing_form( $transaction );
+			$this->_billing_form = $this->generate_new_billing_form( $transaction, $extra_args );
 		}
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
