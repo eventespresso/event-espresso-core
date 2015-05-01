@@ -639,7 +639,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Billing_Info_Form
 	 */
 	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method ) {
-		$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction );
+		$billing_form = $payment_method->type_obj()->billing_form( $this->checkout->transaction, array( 'amount_owing' => $this->checkout->amount_owing ) );
 		if ( $billing_form instanceof EE_Billing_Info_Form ) {
 			if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
                 if ( apply_filters('FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false )) {
