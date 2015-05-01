@@ -27,7 +27,7 @@ class EEM_WP_User extends EEM_Base {
 		$this->plural_item = __('WP_Users','event_espresso');
 		global $wpdb;
 		$this->_tables = array(
-			'WP_User'=> new EE_Primary_Table( defined( 'CUSTOM_USER_TABLE' ) ? CUSTOM_USER_TABLE : $wpdb->users, 'ID', false)
+			'WP_User'=> new EE_Primary_Table( $wpdb->users, 'ID', true)
 		);
 		$this->_fields = array(
 			'WP_User'=>array(

@@ -1,12 +1,28 @@
 <?php
+/**
+ * For defining the "secondary" table for models. Secondary tables are an extra
+ * table that has a one-to-one relationship between this table's rows and the primary
+ * table's rows. Ie, it can't have many rows in the secondary table that point to
+ * a single row in the primary table
+ */
 require_once( EE_MODELS . 'helpers/EE_Table_Base.php');
 class EE_Secondary_Table extends EE_Table_Base{
 	protected $_extra_join_conditions;
 
-	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null, $add_wpdb_prefix = true ){
+	/**
+	 *
+	 * @global type $wpdb
+	 * @param string $table_name with or without wpdb prefix
+	 * @param string $pk_column name of primary key column on THIS table
+	 * @param string $fk_column the name of the COLUMN that is a foreign key to the primary table's primary key
+	 * @param string $extra_join_conditions string for additional SQL to add onto the join statement's ON condition
+	 * @param boolean $global whether the table is "global" as in there is only 1 table on an entire multisite install,
+	 *					or whether each site on a multisite install has a copy of this table
+	 */
+	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null, $global = false ){
 		$this->_fk_on_table = $fk_column;
 		$this->_extra_join_conditions = $extra_join_conditions;
-		parent::__construct( $table_name, $pk_column, $add_wpdb_prefix );
+		parent::__construct( $table_name, $pk_column, $global );
 	}
 	function get_fk_on_table(){
 		return $this->_fk_on_table;

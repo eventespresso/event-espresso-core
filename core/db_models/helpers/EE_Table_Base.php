@@ -16,14 +16,21 @@ abstract class EE_Table_Base{
 	/**
 	 *
 	 * @global type $wpdb
-	 * @param string $table_name
+	 * @param string $table_name with or without wpdb prefix
 	 * @param string $pk_column
-	 * @param boolean $add_wpdb_prefix whether to add the $wpdb->prefix onto the $table_name or not
+	 * @param boolean $global whether the table is "global" as in there is only 1 table on an entire multisite install,
+	 *					or whether each site on a multisite install has a copy of this table
 	 */
-	function __construct($table_name, $pk_column, $add_wpdb_prefix = true ){
-		if( $add_wpdb_prefix ) {
-			global $wpdb;
-			$table_name = $wpdb->prefix . $table_name;
+	function __construct($table_name, $pk_column, $global = false ){
+		global $wpdb;
+		if( $global ) {
+			$prefix = $wpdb->base_prefix;
+		} else {
+			$prefix = $wpdb->prefix;
+		}
+		//if they didn't add the prefix, let's add it
+		if( strpos( $table_name, $prefix ) !== 0 ) {
+			$table_name = $prefix . $table_name;
 		}
 		$this->_table_name = $table_name;
 		$this->_pk_column = $pk_column;
