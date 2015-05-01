@@ -1,0 +1,181 @@
+/**
+ * CSS for the Other Services admin pages
+ */
+ .service-settings-heading {
+ 	padding-left: 10px;
+ 	padding-top: 20px;
+ 	padding-bottom: 5px;
+ }
+.button-primary + .button-secondary {
+	margin: 0;
+}
+
+.plugin-card-bottom_settings 
+{
+	clear: both;
+	padding: 20px;
+	background-color: #fafafa;
+	overflow: hidden;
+	text-align:right;
+	border-top: 1px solid #dedede
+}
+.plugin-icon-custom
+{
+	position: absolute;
+    top: 20px;
+    left: 20px;
+    max-width: 128px;
+    margin: 0px 20px 20px 0px;
+    text-decoration: none;
+    text-align:center;
+}
+.plugin-action-buttons-custom
+{
+	clear: right;
+	margin-left: 2em;
+	margin-bottom: 1em;
+	text-align: right;
+}
+ .service-div-settings {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #fafafa;
+    border-bottom-color: #dedede;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-image-outset: 0 0 0 0;
+    border-image-repeat: stretch stretch;
+    border-image-slice: 100% 100% 100% 100%;
+    border-image-source: none;
+    border-image-width: 1 1 1 1;
+    border-left-color-ltr-source: physical;
+    border-left-color-rtl-source: physical;
+    border-left-color-value: #dedede;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: solid;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 1px;
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #dedede;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    border-top-color: #dedede;
+    border-top-style: solid;
+    border-top-width: 1px;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-bottom: 16px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    min-height: 300px;
+    vertical-align: top;
+    width: calc(50% - 8px);
+}
+.service-div-settings:nth-child(2n+1) {
+    clear: both;
+    margin-left: 0;
+}
+.service-div-settings:nth-child(2n) {
+    margin-left: 8px;
+    margin-right: 0;
+}
+.service-div-settings .desc, .service-div-settings .name {
+}
+.service-div-settings-top {
+    background-color: #fff;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    position: relative;
+}
+.service-div-inner-content {
+    min-height: 150px;
+}
+.service-div-settings .desc p {
+    line-height: 2em !important;
+}
+
+.service-div-settings {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #fafafa;
+    border-bottom-color: #dedede;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-image-outset: 0 0 0 0;
+    border-image-repeat: stretch stretch;
+    border-image-slice: 100% 100% 100% 100%;
+    border-image-source: none;
+    border-image-width: 1 1 1 1;
+    border-left-color-ltr-source: physical;
+    border-left-color-rtl-source: physical;
+    border-left-color-value: #dedede;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: solid;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 1px;
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #dedede;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    border-top-color: #dedede;
+    border-top-style: solid;
+    border-top-width: 1px;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-bottom: 16px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    min-height: 300px;
+    vertical-align: top;
+    width: calc(50% - 8px);
+}
+.service-div-settings:nth-child(2n+1) {
+    clear: both;
+    margin-left: 0;
+}
+.service-div-settings:nth-child(2n) {
+    margin-left: 8px;
+    margin-right: 0;
+}
+.service-div-settings .desc, .service-div-settings .name {
+}
+.service-div-settings-top {
+    background-color: #fff;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    position: relative;
+}
+.service-div-inner-content {
+    min-height: 150px;
+}
+.service-div-settings .desc p {
+    line-height: 2em !important;
+}
+.column-description img {
+	float: right;
+	margin: 10px 0 10px 10px;
+}

@@ -118,14 +118,14 @@ abstract class EE_Base_Class{
 		$model_fields = $model->field_settings( FALSE );
 		// ensure $fieldValues is an array
 		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
-		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! isset( $model_fields[ $field_name] ) ){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//if db model is instantiating
 		if( $bydb ){
@@ -613,6 +613,105 @@ abstract class EE_Base_Class{
 		}
 		return $objects;
 	}
+
+
+	/**
+	 * Returns the next x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function next_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the previous x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function previous_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the next EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function next( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+
+	/**
+	 * Returns the previous EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an EE_Base_Class object is returned, otherwise
+	 *                                  you can indicate just the column you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function previous( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
 
 
 

@@ -390,7 +390,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array( 'Venues_Categories_Help_Tour' ),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				)
 		);
@@ -637,7 +637,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'CNT_ISO' => !empty( $this->_req_data['cnt_iso'] ) ? $this->_req_data['cnt_iso'] : NULL,
 			'VNU_zip' => !empty( $this->_req_data['vnu_zip'] ) ? $this->_req_data['vnu_zip'] : NULL,
 			'VNU_phone' => !empty( $this->_req_data['vnu_phone'] ) ? $this->_req_data['vnu_phone'] : NULL,
-			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : INF,
+			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? str_replace( ',', '', $this->_req_data['vnu_capacity'] ) : INF,
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,

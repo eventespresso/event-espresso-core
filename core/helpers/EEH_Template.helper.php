@@ -444,7 +444,7 @@ class EEH_Template {
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
 		$icon = !$icon_style ? ' dashicons-editor-help' : $icon_style;
 		$help_text = !$help_text ? '' : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . __('Click to open the \'Help\' tab for more information about this feature.', 'event_espresso') . '" > ' . $help_text . ' </a>';
+		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . esc_attr__('Click to open the \'Help\' tab for more information about this feature.', 'event_espresso') . '" > ' . $help_text . ' </a>';
 	}
 
 
@@ -527,8 +527,8 @@ class EEH_Template {
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
-			$content .= '<dt id="ee-legend-item-' . $item . '"' . $active_class . '>' . "\n\t\t";
-			$content .= '<span class="' . $details['class'] . '""></span>' . "\n\t\t";
+			$content .= '<dt id="ee-legend-item-tooltip-' . $item . '"' . $active_class . '>' . "\n\t\t";
+			$content .= '<span class="' . $details['class'] . '"></span>' . "\n\t\t";
 			$content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
 			$content .= '</dt>' . "\n";
 		}

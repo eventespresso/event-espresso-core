@@ -175,7 +175,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$payments = $this->_current_txn->payments( $args );
 //		global $wpdb;
 //		echo $wpdb->last_query;
-//		printr( $payments, '$payments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		EEH_Debug_Tools::printr( $payments, '$payments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $payments;
 	}
 
@@ -294,16 +294,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
+		$show_try_pay_again_link_default =  do_action( 'AHEE__EES_Espresso_Thank_You__init__show_try_pay_again_link_default', TRUE );
 		// txn status ?
 		if( $this->_current_txn->is_completed() ){
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		} else if ( $this->_current_txn->is_incomplete() && ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() )){
 			$this->_show_try_pay_again_link = TRUE;
 		} else if ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() ) {
 			// its pending
-			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : $show_try_pay_again_link_default;
 		} else {
-			$this->_show_try_pay_again_link = FALSE;
+			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
 		$this->_payments_closed = $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
 		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
@@ -343,6 +344,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			return EE_Error::get_notices();
 		}
+		EE_Registry::instance()->load_helper( 'Debug_Tools' );
+		EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true,
+			'EE_Transaction: ' . $this->_current_txn->ID() );
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 		if ( ! empty( $template_args['TXN_receipt_url'] )) {
@@ -622,6 +626,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function get_payment_row_html( $payment = NULL ) {
 		$html = '';
 		if ( $payment instanceof EE_Payment ) {
+			if (
+				$payment->payment_method() instanceof EE_Payment_Method
+				&& $payment->payment_method()->is_off_site()
+				&& $payment->status() === EEM_Payment::status_id_failed
+			) {
+				// considering the registrant has made it to the Thank You page,
+				// any failed payments may actually be pending and the IPN is just slow
+				// so let's
+				$payment->set_status( EEM_Payment::status_id_pending );
+			}
 			$payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined ? '<br /><span class="small-text">' . $payment->gateway_response() . '</span>' : '';
 			$html .= '
 				<tr>

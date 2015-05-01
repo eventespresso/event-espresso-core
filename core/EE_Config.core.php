@@ -2266,6 +2266,26 @@ class EE_Event_Single_Config extends EE_Config_Base{
 
 
 
+/**
+ * Stores Ticket_Selector_Config settings
+ */
+class EE_Ticket_Selector_Config extends EE_Config_Base{
+	public $show_ticket_sale_columns;
+	public $show_ticket_details;
+
+	/**
+	 *	class constructor
+	 */
+	public function __construct() {
+		$this->show_ticket_sale_columns = 1;
+		$this->show_ticket_details = 1;
+	}
+}
+
+
+
+
+
 
 /**
  * Stores any EE Environment values that are referenced through the code.
