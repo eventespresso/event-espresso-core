@@ -3,7 +3,7 @@ require_once( EE_MODELS . 'helpers/EE_Table_Base.php');
 class EE_Secondary_Table extends EE_Table_Base{
 	protected $_extra_join_conditions;
 
-	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null, $add_wpdb_prefix = false ){
+	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null, $add_wpdb_prefix = true ){
 		$this->_fk_on_table = $fk_column;
 		$this->_extra_join_conditions = $extra_join_conditions;
 		parent::__construct( $table_name, $pk_column, $add_wpdb_prefix );
