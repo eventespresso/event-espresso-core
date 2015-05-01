@@ -12,17 +12,27 @@ abstract class EE_Table_Base{
 	 * @var string
 	 */
 	protected $_pk_column;
-	
-	function __construct($table_name, $pk_column){
-		global $wpdb;
-		$this->_table_name = $wpdb->prefix . $table_name;
+
+	/**
+	 *
+	 * @global type $wpdb
+	 * @param string $table_name
+	 * @param string $pk_column
+	 * @param boolean $add_wpdb_prefix whether to add the $wpdb->prefix onto the $table_name or not
+	 */
+	function __construct($table_name, $pk_column, $add_wpdb_prefix = true ){
+		if( $add_wpdb_prefix ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . $table_name;
+		}
+		$this->_table_name = $table_name;
 		$this->_pk_column = $pk_column;
 	}
-	
+
 	function _construct_finalize_with_alias($table_alias){
 		$this->_table_alias = $table_alias;
 	}
-	
+
 	function get_table_name(){
 		return $this->_table_name;
 	}
@@ -32,17 +42,17 @@ abstract class EE_Table_Base{
 		}
 		return $this->_table_alias;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string name of column of PK
 	 */
 	function get_pk_column(){
 		return $this->_pk_column;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * returns a string with the table alias, a period, and the private key's column.
 	 * @return string

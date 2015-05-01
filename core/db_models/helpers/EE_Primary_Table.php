@@ -6,9 +6,9 @@
  */
 require_once( EE_MODELS . 'helpers/EE_Table_Base.php');
 class EE_Primary_Table extends EE_Table_Base{
-	
-	function __construct($table_name, $pk_column = null){
-		parent::__construct($table_name, $pk_column);
+
+	function __construct($table_name, $pk_column = null, $add_wpdb_prefix = true){
+		parent::__construct($table_name, $pk_column, $add_wpdb_prefix );
 	}
 	/**
 	 * Gets SQL for this table and assigning it an alias. Eg " wp_esp_attendee AS Attendee "
@@ -17,5 +17,5 @@ class EE_Primary_Table extends EE_Table_Base{
 	function get_table_sql(){
 		return " ".$this->get_table_name()." AS ".$this->get_table_alias()." ";
 	}
-	
+
 }

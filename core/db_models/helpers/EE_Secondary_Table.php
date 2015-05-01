@@ -2,11 +2,11 @@
 require_once( EE_MODELS . 'helpers/EE_Table_Base.php');
 class EE_Secondary_Table extends EE_Table_Base{
 	protected $_extra_join_conditions;
-	
-	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null){
+
+	function __construct($table_name, $pk_column,  $fk_column = null, $extra_join_conditions = null, $add_wpdb_prefix = false ){
 		$this->_fk_on_table = $fk_column;
 		$this->_extra_join_conditions = $extra_join_conditions;
-		parent::__construct($table_name, $pk_column);
+		parent::__construct( $table_name, $pk_column, $add_wpdb_prefix );
 	}
 	function get_fk_on_table(){
 		return $this->_fk_on_table;
@@ -15,7 +15,7 @@ class EE_Secondary_Table extends EE_Table_Base{
 		$this->_table_to_join_with = $table;
 	}
 	/**
-	 * 
+	 *
 	 * @return string of sql like "Event.post_type = 'event'", which gets added to
 	 * the end of the join statement with the primary table
 	 */
@@ -23,7 +23,7 @@ class EE_Secondary_Table extends EE_Table_Base{
 		return $this->_extra_join_conditions;
 	}
 	/**
-	 * 
+	 *
 	 * @return EE_Primary_Table
 	 */
 	function get_table_to_join_with(){
@@ -37,7 +37,7 @@ class EE_Secondary_Table extends EE_Table_Base{
 	 * @return string of SQL
 	 */
 	function get_join_sql( $primary_table_alias_with_model_chain_prefix  ){
-		
+
 		$table_name = $this->get_table_name();
 		$secondary_table_alias = EE_Model_Parser::get_prefix_from_table_alias_with_model_relation_chain_prefix($primary_table_alias_with_model_chain_prefix) . $this->get_table_alias();
 		$other_table_pk = $this->get_table_to_join_with()->get_pk_column();
@@ -49,12 +49,12 @@ class EE_Secondary_Table extends EE_Table_Base{
 		return $join_sql;
 	}
 
-	
+
 	/**
 	 * Produces join SQL like get_join_sql, except instead of joining the primary table to the
-	 * secondary table, does the inverse: joins the secondary table to the primary one. (Eg, isntead of 
+	 * secondary table, does the inverse: joins the secondary table to the primary one. (Eg, isntead of
 	 * " LEFT JOIN secondary_table_table AS Secondary ON ..." like get_join_sql, this function returns
-	 * " LEFT JOIN primary_table AS Primary ON ...". 
+	 * " LEFT JOIN primary_table AS Primary ON ...".
 	 * This is useful if the secondary table is already included in the SQL, but the primary table is not yet.
 	 * @return string
 	 */
@@ -74,7 +74,7 @@ class EE_Secondary_Table extends EE_Table_Base{
 	 * This prepares the join on the other table using a select with a internal limit.
 	 * @param  mixed (array|string) $limit limit
 	 * @return string             			SQL to return
-	 */		
+	 */
 	public function get_select_join_limit_join($limit) {
 		//first get the select
 		$select = $this->get_select_join_limit($limit);
