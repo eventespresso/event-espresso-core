@@ -476,16 +476,18 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Adds the line item as a child to this line item. If there is another child line
-	 * item with the same LIN_code, it is overwriten by this new one
+	 * item with the same LIN_code, it is overwritten by this new one
 	 * @param EE_Line_Item $line_item
 	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
 		if ( $this->ID() ) {
-			//check for any duplicate line items (with the same code), if so, thsi replaces it
+			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
 			if( $line_item_with_same_code instanceof EE_Line_Item ) {
 				$this->delete_child_line_item( $line_item_with_same_code->code() );
+				// erase ID else it won't save a few lines below
+				$line_item->set( 'LIN_ID', null );
 			}
 			$line_item->set_parent_ID( $this->ID() );
 			if( $this->TXN_ID() ){
@@ -659,7 +661,6 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @param bool $include_taxable_items_only. If FALSE (default), updates the line items and sub-totals. If TRUE, just finds the amount taxable in this line item's price or its children's.
 	 * @throws EE_Error
 	 * @return float
 	 */
