@@ -1139,7 +1139,11 @@ abstract class EEM_Base extends EE_Base{
 						//if there is no private key for this table on the results, it means there's no entry
 						//in this table, right? so insert a row in the current table, using any fields available
 						if( ! ( array_key_exists( $this_table_pk_column, $wpdb_result) && $wpdb_result[ $this_table_pk_column ] )){
-							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							$success = $this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							//if we died here, report the error
+							if( ! $success ) {
+								return false;
+							}
 						}
 					}
 				}
@@ -1544,7 +1548,11 @@ abstract class EEM_Base extends EE_Base{
 			$wpdb->show_errors( $old_show_errors_value );
 			if( ! empty( $wpdb->last_error ) ){
 				throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+			}elseif( $result === false ){
+				throw new EE_Error( sprintf( __( 'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"', 'event_espresso' ), $wpdb_method, var_export( $arguments_to_provide, true ) ) );
 			}
+		}elseif( $result === false ) {
+			EE_Error::add_error( sprintf( __( 'A database error has occurred. Turn on WP_DEBUG for more information.', 'event_espresso' )), __FILE__, __FUNCTION__, __LINE__);
 		}
 		return $result;
 	}
@@ -1814,8 +1822,10 @@ abstract class EEM_Base extends EE_Base{
 		if($this->_satisfies_unique_indexes($field_n_values)){
 			$main_table = $this->_get_main_table();
 			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
-			foreach($this->_get_other_tables() as $other_table){
-				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+			if( $new_id !== false ) {
+				foreach($this->_get_other_tables() as $other_table){
+					$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+				}
 			}
 			/**
 			 * Done just after attempting to insert a new model object
@@ -1923,7 +1933,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
 	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
-	 * @return int ID of new row inserted
+	 * @return int ID of new row inserted, or FALSE on failure
 	 */
 	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
@@ -1950,7 +1960,10 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		if( $result === false ) {
+			return false;
+		}
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){
