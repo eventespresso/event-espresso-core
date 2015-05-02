@@ -1321,18 +1321,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _process_off_site_payment( EE_Offsite_Gateway $gateway ) {
 		try {
 			// if gateway uses_separate_IPN_request, then we don't have to process the IPN manually
-			if ( ! ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() )) {
+			if ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() ) {
+				$payment = $this->checkout->transaction->last_payment();
+				//$payment_source = 'last_payment';
+			} else {
 				// get payment details and process results
+				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 				$payment = $payment_processor->process_ipn(
 					$_REQUEST,
 					$this->checkout->transaction,
-					$this->checkout->payment_method
+					$this->checkout->payment_method,
+					true,
+					false
 				);
 				//$payment_source = 'process_ipn';
-			} else {
-				$payment = $this->checkout->transaction->last_payment();
-				//$payment_source = 'last_payment';
 			}
 		} catch ( Exception $e ) {
 			// let's just eat the exception and try to move on using any previously set payment info
