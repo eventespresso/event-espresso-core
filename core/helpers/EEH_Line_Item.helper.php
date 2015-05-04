@@ -80,11 +80,16 @@ class EEH_Line_Item {
 	 */
 	public static function increment_ticket_qty_if_already_in_cart( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$line_item = null;
-		$ticket_line_items = $total_line_item->get_child_line_item( 'tickets' )->children();
-		foreach ( (array)$ticket_line_items as $ticket_line_item ) {
-			if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
-				$line_item = $ticket_line_item;
-				break;
+		if ( $total_line_item instanceof EE_Line_Item && $total_line_item->is_total() ) {
+			$tickets_subtotal_line_item = $total_line_item->get_child_line_item( 'tickets' );
+			if ( $tickets_subtotal_line_item instanceof EE_Line_Item && $tickets_subtotal_line_item->is_sub_total() ) {
+				$ticket_line_items = $total_line_item->get_child_line_item( 'tickets' )->children();
+				foreach ( (array)$ticket_line_items as $ticket_line_item ) {
+					if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
+						$line_item = $ticket_line_item;
+						break;
+					}
+				}
 			}
 		}
 		if ( $line_item instanceof EE_Line_Item ) {
