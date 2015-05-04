@@ -39,7 +39,7 @@ jQuery(document).ready(function($){
 			EEFV.initialize_datepicker_inputs();
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
-			EEFV.add_url_validator();
+			EEFV.add_custom_validators();
 		},
 
 
@@ -193,9 +193,9 @@ jQuery(document).ready(function($){
 
 
 		/**
-		 *	@function add_url_validator
+		 *	@function add_custom_validators
 		 */
-		add_url_validator : function() {
+		add_custom_validators : function() {
 			//adds a method used for validation URLs, which isn't native to jquery validate
 			$.validator.addMethod( "validUrl",
 				function( value, element ) {
@@ -208,6 +208,14 @@ jQuery(document).ready(function($){
 				},
 				ee_form_section_vars.localized_error_messages.validUrl
 			);
+			$.validator.addMethod(
+				"regex",
+				function(value, element, regexp) {
+					var re = new RegExp(regexp);
+					return this.optional(element) || re.test(value);
+				},
+				ee_form_section_vars.localized_error_messages.regex
+		);
 		},
 
 

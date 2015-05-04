@@ -2,6 +2,8 @@
 /**
  * EE_Max_Length_Validation_Strategy
  *
+ * Validates that the normalized value is smaller than max length
+ *
  * @package			Event Espresso
  * @subpackage	Expression package is undefined on line 19, column 19 in Templates/Scripting/PHPClass.php.
  * @author				Mike Nelson
