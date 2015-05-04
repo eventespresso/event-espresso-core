@@ -61,12 +61,8 @@ class EEH_Line_Item {
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
 		$line_item = self::increment_ticket_qty_if_already_in_cart( $total_line_item, $ticket, $qty );
-		if ( $line_item instanceof EE_Line_Item ) {
-			// recalculate cart totals based on new items
-			//$total_line_item->recalculate_total_including_taxes();
-		} else {
+		if ( ! $line_item instanceof EE_Line_Item ) {
 			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
-			//EEH_Debug_Tools::printr( $line_item, '$line_item', __FILE__, __LINE__ );
 		}
 		self::add_item( $total_line_item, $line_item );
 		return $line_item;
@@ -83,15 +79,14 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function increment_ticket_qty_if_already_in_cart( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
-		$line_item = EEM_Line_Item::instance()->get_one(
-			array(
-				array(
-					'TXN_ID'   => $total_line_item->TXN_ID(),
-					'OBJ_ID'   => $ticket->ID(),
-					'OBJ_type' => 'Ticket',
-				)
-			)
-		);
+		$line_item = null;
+		$ticket_line_items = $total_line_item->get_child_line_item( 'tickets' )->children();
+		foreach ( (array)$ticket_line_items as $ticket_line_item ) {
+			if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
+				$line_item = $ticket_line_item;
+				break;
+			}
+		}
 		if ( $line_item instanceof EE_Line_Item ) {
 			$qty += $line_item->quantity();
 			$line_item->set_quantity( $qty );
