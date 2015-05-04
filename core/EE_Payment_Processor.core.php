@@ -313,30 +313,18 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$payment
 			);
 		} else {
-			// verify payment
-			if ( $payment instanceof EE_Payment ) {
+			// verify payment and that it has been saved
+			if ( $payment instanceof EE_Payment && $payment->ID() ) {
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
-
 			} else {
-				// there is no payment. Must be an offline gateway
-				//create a hacky payment object, but dont save it
-				$payment = EE_Payment::new_instance(
-					array(
-						'TXN_ID' 					=> $transaction->ID(),
-						'STS_ID' 					=> EEM_Payment::status_id_pending,
-						'PAY_timestamp' 	=> current_time('timestamp'),
-						'PAY_amount' 		=> 0.00,
-						'PMD_ID' 				=> $transaction->payment_method_ID()
-					)
-				);
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
+			// if payment isn't failed
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
@@ -349,10 +337,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
-
 			//global hook for others to use.
 			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
-
 		}
 	}
 
