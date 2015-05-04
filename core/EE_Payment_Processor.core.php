@@ -48,7 +48,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * Using the selected gateway, processes the payment for that transaction.
+	 * Using the selected gateway, processes the payment for that transaction, and updates
+	 * the transaction appropriately. Saves the payment that is generated
 	 * @param EE_Payment_Method 	$payment_method
 	 * @param EE_Transaction 				$transaction
 	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
@@ -58,7 +59,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
 	 * @param bool                 				$by_admin
 	 * @param boolean              				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
-	 * @return EE_Payment | NULL
+	 * @return EE_Payment
 	 */
 	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE ) {
 		// verify payment method
@@ -128,6 +129,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so
 	 * we can easily find what registration the IPN is for and what payment method.
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
+	 * If a payment is found for the IPN info, it is saved.
 	 * @param 	$_req_data
 	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
 	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
@@ -251,7 +253,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 *
+	 * Processes a direct refund request, saves the payment, and updates the transaction appropriately.
 	 * @param EE_Payment_Method $payment_method
 	 * @param EE_Payment        $payment_to_refund
 	 * @param array             $refund_info
@@ -281,7 +283,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * what exactly happened and updating the transaction appropriately). This
 	 * could be integrated directly into EE_Transaction upon save, but we want
 	 * this logic to be separate from 'normal' plain-jane saving and updating
-	 * of transactions and payments, and to be tied to payment processing
+	 * of transactions and payments, and to be tied to payment processing.
+	 *
+	 * Note: this method DOES NOT save the payment passed into it. It is the responsibility
+	 * of previous code to decide whether or not to save (because the payment passed into
+	 * this method might be a temporary, never-to-be-saved payment from an offline gateway,
+	 * in which case we only want that payment object for some temporary usage during this request,
+	 * but we don't want it to be saved).
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param EE_Payment     $payment
