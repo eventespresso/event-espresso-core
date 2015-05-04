@@ -318,9 +318,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
-				// we need to save this payment in order for transaction to be updated correctly
-				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-				$payment->save();
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
 
 			} else {
