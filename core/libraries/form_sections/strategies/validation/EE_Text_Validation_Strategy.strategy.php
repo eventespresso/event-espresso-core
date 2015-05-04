@@ -11,7 +11,7 @@ class EE_Text_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 	protected $_regex = null;
 	public function __construct( $validation_error_message = NULL, $regex = null ) {
-		$this->_regex = null;
+		$this->_regex = $regex;
 		parent::__construct( $validation_error_message );
 	}
 
@@ -31,11 +31,23 @@ class EE_Text_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	function get_jquery_validation_rule_array(){
 		if( $this->_regex !== null ){
-			return array( 'regex'=>true, 'messages' => array( 'regex' => $this->get_validation_error_message() ) );
+			return array( 'regex'=> $this->regex_js(), 'messages' => array( 'regex' => $this->get_validation_error_message() ) );
 		}else{
 			return array();
 		}
 
+	}
+
+/**
+ * Translates a PHP regex into a javscript regex (eg, PHP needs separate delimieters, whereas
+ * javscript does not
+ * @return string
+ */
+	function regex_js() {
+		//first character must be the delimiter
+		$delimeter = $this->_regex[0];
+		$last_occurence_of_delimieter = strrpos($this->_regex, $delimeter );
+		return substr( $this->_regex, 1, $last_occurence_of_delimieter - 1 );
 	}
 }
 

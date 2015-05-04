@@ -211,6 +211,11 @@ jQuery(document).ready(function($){
 			$.validator.addMethod(
 				"regex",
 				function(value, element, regexp) {
+					//remove the delimiter PHP needed
+//					var reMeta = /(^|[^\\])\/(\w+$){0,1}/;
+//
+//					regexp = new RegExp( regexp.replace(reMeta,'$1') );
+					// after replace it looks like: "hello\/slash\/"
 					var re = new RegExp(regexp);
 					return this.optional(element) || re.test(value);
 				},

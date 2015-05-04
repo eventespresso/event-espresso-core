@@ -21,8 +21,10 @@ class EE_Min_Length_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @param $normalized_value
 	 */
 	public function validate($normalized_value) {
-		if( $this->_min_length > 0 && is_string( $normalized_value )
-				&& strlen( $normalized_value ) < $this->_min_length){
+		if( $this->_min_length > 0 &&
+				$normalized_value &&
+				is_string( $normalized_value ) &&
+				strlen( $normalized_value ) < $this->_min_length){
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'minlength' );
 		}
 	}
