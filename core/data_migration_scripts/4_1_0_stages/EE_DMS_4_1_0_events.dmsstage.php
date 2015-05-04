@@ -232,7 +232,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 */
 	private function _add_post_metas($old_event,$post_id){
 		$event_meta = maybe_unserialize($old_event['event_meta']);
-		if( ! $event_meta){
+		if( ! $event_meta || ! is_array( $event_meta ) ){
 			return;
 		}
 		unset($event_meta['date_submitted']);//factored into CPT

@@ -132,13 +132,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
 	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
 	 * @param boolean           				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+	 * @param bool $separate_IPN_request whether the IPN uses a separate request ( true like PayPal ) or is processed manually ( false like Mijireh )
 	 * @throws EE_Error
 	 * @throws Exception
 	 * @return EE_Payment
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true, $separate_IPN_request = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		EE_Processor_Base::set_IPN( true );
+		EE_Processor_Base::set_IPN( $separate_IPN_request );
 		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
 			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
 		}elseif( $payment_method instanceof EE_Payment ){
@@ -193,7 +194,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			if( $payment instanceof EE_Payment){
 				$payment->save();
 				//  update the TXN
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, $separate_IPN_request );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -312,33 +313,18 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$payment
 			);
 		} else {
-			// verify payment
-			if ( $payment instanceof EE_Payment ) {
+			// verify payment and that it has been saved
+			if ( $payment instanceof EE_Payment && $payment->ID() ) {
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
-				// we need to save this payment in order for transaction to be updated correctly
-				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-				$payment->save();
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
-
 			} else {
-				// there is no payment. Must be an offline gateway
-				//create a hacky payment object, but dont save it
-				$payment = EE_Payment::new_instance(
-					array(
-						'TXN_ID' 					=> $transaction->ID(),
-						'STS_ID' 					=> EEM_Payment::status_id_pending,
-						'PAY_timestamp' 	=> current_time('timestamp'),
-						'PAY_amount' 		=> 0.00,
-						'PMD_ID' 				=> $transaction->payment_method_ID()
-					)
-				);
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
 			}
+			// if payment isn't failed
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
@@ -351,10 +337,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
-
 			//global hook for others to use.
 			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
-
 		}
 	}
 

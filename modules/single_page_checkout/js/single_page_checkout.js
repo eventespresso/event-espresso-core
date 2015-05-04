@@ -17,6 +17,7 @@ jQuery(document).ready( function($) {
 	*     offset_from_top_modifier: number,
 	*     display_debug: number,
 	*     allow_enable_submit_buttons: boolean,
+	*     allow_submit_reg_form: boolean,
 	*     override_messages: boolean,
 	*     get_next_step: boolean,
 	*     form_is_valid: boolean
@@ -123,6 +124,8 @@ jQuery(document).ready( function($) {
 		display_debug : eei18n.wp_debug,
 		// allow submit buttons to be enabled?
 		allow_enable_submit_buttons : true,
+		// allow reg form to be submitted?
+		allow_submit_reg_form : true,
 		// override SPCO messages
 		override_messages : false,
 		// whether or not to proceed to the next step
@@ -377,11 +380,13 @@ jQuery(document).ready( function($) {
 		set_listener_for_process_next_reg_step_button : function() {
 			//console.log( JSON.stringify( '**set_listener_for_process_next_reg_step_button**', null, 4 ) );
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
+				//console.log( JSON.stringify( 'SPCO spco-next-step-btn  >CLICK <', null, 4 ) );
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
-				SPCO.main_container.trigger( 'process_next_step_button_click' );
+				SPCO.main_container.trigger( 'process_next_step_button_click', [ $( this ) ] );
+				//console.log( JSON.stringify( 'SPCO FINISHED "process_next_step_button_click" event', null, 4 ) );
 				//console.log( JSON.stringify( 'SPCO.form_is_valid: ' + SPCO.form_is_valid, null, 4 ) );
-				//console.log( JSON.stringify( 'eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
+				//console.log( JSON.stringify( 'SPCO eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
 				if ( ! SPCO.form_is_valid ){
 					SPCO.display_validation_errors();
 				} else if ( eei18n.ajax_submit ) {
@@ -688,7 +693,7 @@ jQuery(document).ready( function($) {
 		 *  @param {object} next_step_btn
 		 */
 		process_next_step : function( next_step_btn ) {
-			//console.log( JSON.stringify( '**process_next_step**', null, 4 ) );
+			//console.log( JSON.stringify( '**SPCO.process_next_step()**', null, 4 ) );
 			var step = $(next_step_btn).attr('rel');
 			// add trigger point so other JS can join the party
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
@@ -729,12 +734,14 @@ jQuery(document).ready( function($) {
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
-			//console.log( JSON.stringify( '**submit_reg_form**', null, 4 ) );
-			if ( ! eei18n.ajax_submit ) {
+			//console.log( JSON.stringify( '**SPCO.submit_reg_form()**', null, 4 ) );
+			//console.log( JSON.stringify( 'SPCO.allow_submit_reg_form: ' + SPCO.allow_submit_reg_form, null, 4 ) );
+			if ( ! ( eei18n.ajax_submit && SPCO.allow_submit_reg_form )) {
+				//console.log( JSON.stringify( 'NONE SHALL PASS !!!: ' + SPCO.allow_submit_reg_form, null, 4 ) );
 				return;
 			}
 
-			//console.log( JSON.stringify( 'step: ' + step, null, 4 ) );
+			//console.log( JSON.stringify( 'SPCO step: ' + step, null, 4 ) );
 			//console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ) );
 			//console.log( JSON.stringify( 'form_to_check: ' + form_to_check, null, 4 ) );
 			var form_data = $( form_to_check ).serialize();
@@ -746,6 +753,9 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
+
+
+			//console.log( '**SPCO SUBMIT REG FORM !!! ** form_data:' );
 			//console.log( form_data );
 			// send form via AJAX POST
 			$.ajax({
