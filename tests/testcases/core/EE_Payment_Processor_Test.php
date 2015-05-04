@@ -65,8 +65,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
 		/** @type EE_Payment $payment */
 		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_approved, 'PAY_amount' => 10,  ), FALSE );
-		$reg = $this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'REG_count' => 1 ) );
-		$this->assertEquals( 0, $payment->ID() );
+		// simulate payment save performed in EE_PMT_Base::process_payment()
+		$payment->save();
+		//$this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'REG_count' => 1 ) );
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 
 		/** @type EE_Payment_Processor $payment_processor */
@@ -74,7 +75,6 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$payment_processor->update_txn_based_on_payment($txn, $payment);
 
 		//the payment should have been saved, and the txn appropriately updated
-		$this->assertNotEquals( 0,  $payment->ID() );
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		$this->assertEquals( $payment, $txn->last_payment() );
 		$this->assertEquals( 10, $payment->amount() );
@@ -163,7 +163,8 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		/** @type EE_Payment_Processor $payment_processor */
 		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
 		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, NULL, 'success', 'CART', TRUE, TRUE );
-		$this->assertNull( $payment );
+		// offline payments are not saved... because no payment ever actually happened
+		$this->assertEquals( 0, $payment->ID() );
 		$this->assertEquals( EEM_Transaction::incomplete_status_code, $transaction->status_ID() );
 		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made' ] );
 	}
