@@ -77,8 +77,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$method,
 				$by_admin
 			);
-			//offline gateways DON'T return a payment object, so check it
-			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			// check if payment method uses an off-site gateway
+			if ( $payment_method->type_obj()->payment_occurs() != EE_PMT_Base::offsite ) {
+				// don't process payments for off-site gateways yet because no payment has occurred yet
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			}
 			return $payment;
 		} else {
 			EE_Error::add_error(
@@ -129,13 +132,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
 	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
 	 * @param boolean           				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+	 * @param bool $separate_IPN_request whether the IPN uses a separate request ( true like PayPal ) or is processed manually ( false like Mijireh )
 	 * @throws EE_Error
 	 * @throws Exception
 	 * @return EE_Payment
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true, $separate_IPN_request = true ){
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		EE_Processor_Base::set_IPN( true );
+		EE_Processor_Base::set_IPN( $separate_IPN_request );
 		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
 			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
 		}elseif( $payment_method instanceof EE_Payment ){
@@ -190,7 +194,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			if( $payment instanceof EE_Payment){
 				$payment->save();
 				//  update the TXN
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, $separate_IPN_request );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -229,6 +233,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool 	$update_txn  whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
 	 * @return EE_Payment
+	 * @deprecated 4.6.24 method is no longer used. Instead it is up to client code, like SPCO, to call handle_ipn() for offsite gateways that don't receive separate IPNs
 	 */
 	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
 		/** @var $transaction EE_Transaction */
@@ -313,9 +318,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
 				}
-				// we need to save this payment in order for transaction to be updated correctly
-				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-				$payment->save();
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
 
 			} else {
