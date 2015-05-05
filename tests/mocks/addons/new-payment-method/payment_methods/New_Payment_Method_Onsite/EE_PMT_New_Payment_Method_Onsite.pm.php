@@ -46,29 +46,38 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 	 * @param \EE_Transaction $transaction
 	 * @return \EE_Billing_Attendee_Info_Form
 	 */
-	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
-		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
-			'name'=>'New_Payment_Method_Onsite_Form',
-			'subsections'=>array(
-				'status' => new EE_Select_Input( array( 'Approved' => 'Approved', 'Pending' => 'Pending', 'Declined' => 'Declined', 'Failed' => 'Failed' ), array('html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ))),//this will become the payments status when processing payments on this mock object
-				'credit_card'=>new EE_Credit_Card_Input(array(
-							'required'=>false,
-							'html_label_text' => __( 'Credit Card', 'event_espresso' ),
-						)),
-						'exp_month'=>new EE_Month_Input(true, array(
-							'required'=>false,
-							'html_label_text' => __( 'Expiry Month', 'event_espresso' )
-						)),
-						'exp_year'=>new EE_Year_Input( array(
-							'required' => false,
-							'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
-						)),
-						'cvv'=>new EE_CVV_Input( array(
-							'required' => false,
-							'html_label_text' => __( 'CVV', 'event_espresso' )
-						)),
+	public function generate_new_billing_form( EE_Transaction $transaction = null ) {
+		$form = new EE_Billing_Attendee_Info_Form( $this->_pm_instance, array(
+			'name'        => 'New_Payment_Method_Onsite_Form',
+			'subsections' => array(
+				//this will become the payments status when processing payments on this mock object
+				'status'      => new EE_Select_Input(
+					array(
+						'Approved' => 'Approved',
+						'Pending'  => 'Pending',
+						'Declined' => 'Declined',
+						'Failed'   => 'Failed'
+					),
+					array( 'html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ) )
+				),
+				'credit_card' => new EE_Credit_Card_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'Credit Card', 'event_espresso' ),
+				) ),
+				'exp_month'   => new EE_Month_Input( true, array(
+					'required'        => false,
+					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
+				) ),
+				'exp_year'    => new EE_Year_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
+				) ),
+				'cvv'         => new EE_CVV_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'CVV', 'event_espresso' )
+				) ),
 			)
-		));
+		) );
 		return $form;
 	}
 
