@@ -29,10 +29,14 @@ class EEG_New_Payment_Method_Onsite extends EE_Onsite_Gateway{
 					'GBP',
 					'CAD',
 					'AUD');
+
+
+
 	/**
 	 *
 	 * @param EEI_Payment $payment
 	 * @param array $billing_info
+	 * @return \EE_Payment|\EEI_Payment
 	 */
 	public function do_direct_payment($payment, $billing_info = null) {
 		$this->log( $billing_info, $payment );
