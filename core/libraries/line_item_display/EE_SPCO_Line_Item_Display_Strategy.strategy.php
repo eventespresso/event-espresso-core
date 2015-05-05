@@ -21,6 +21,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	private $_show_taxes = FALSE;
 
 	/**
+	 * html for any tax rows
+	 * @type string $_show_taxes
+	 */
+	private $_taxes_html = '';
+
+	/**
 	 * array of tickets for events with Not Approved Reg Status
 	 * @type EE_Ticket[] $_do_not_bill
 	 */
@@ -110,12 +116,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		if ( isset( $options['events_requiring_pre_approval'] )) {
 			$this->_process_events_requiring_pre_approval( $options[ 'events_requiring_pre_approval' ] );
 		}
-		// determine whether to display taxes or not
-		if ( $line_item->is_total() ) {
-			$taxes = $line_item->get_total_tax();
-			$this->_show_taxes = $taxes > 0 ? true : false;
-		}
-
 
 		switch( $line_item->type() ) {
 
@@ -125,7 +125,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					$html .= $this->_item_row( $line_item, $options );
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
-						$this->display_line_item( $child_line_item, $options );
+						$html .= $this->display_line_item( $child_line_item, $options );
 					}
 				}
 				break;
@@ -150,7 +150,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 			case EEM_Line_Item::type_tax:
 				if ( $this->_show_taxes ) {
-					$html .= $this->_tax_row( $line_item, $options );
+					$this->_taxes_html .= $this->_tax_row( $line_item, $options );
 				}
 				break;
 
@@ -161,16 +161,19 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
 					}
-					$html .= $this->_total_tax_row( $line_item, __('Tax Total', 'event_espresso'), $options );
+					$this->_taxes_html .= $this->_total_tax_row( $line_item, __('Tax Total', 'event_espresso'), $options );
 				}
 				break;
 
 			case EEM_Line_Item::type_total:
+				// determine whether to display taxes or not
+				$this->_show_taxes = $line_item->get_total_tax() > 0 ? true : false;
 				// loop thru children
 				foreach( $line_item->children() as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
+				$html .= $this->_taxes_html;
 				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
 				$html .= $this->_payments_and_amount_owing_rows( $line_item );
 				break;
@@ -219,7 +222,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// total td
 		$total = EEH_Template::format_currency( $line_item->total(), false, false );
 		$total .= $line_item->is_taxable() ? '*' : '';
-		$this->_show_taxes = $line_item->is_taxable() ? TRUE : $this->_show_taxes;
 		$html .= EEH_HTML::td( $total, '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
