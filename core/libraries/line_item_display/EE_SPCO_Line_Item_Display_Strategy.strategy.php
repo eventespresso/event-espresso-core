@@ -110,6 +110,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		if ( isset( $options['events_requiring_pre_approval'] )) {
 			$this->_process_events_requiring_pre_approval( $options[ 'events_requiring_pre_approval' ] );
 		}
+		// determine whether to display taxes or not
+		if ( $line_item->is_total() ) {
+			$taxes = $line_item->get_total_tax();
+			$this->_show_taxes = $taxes > 0 ? true : false;
+		}
+
 
 		switch( $line_item->type() ) {
 
@@ -264,7 +270,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item tax-total' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
+		$name_and_desc .= '<span class="tiny-text" style="margin:0 0 0 2em;">' . __( ' * taxable items', 'event_espresso' ) . '</span>';
+		$name_and_desc .= $options[ 'show_desc' ] ? '<br/>' . $line_item->desc() : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
 		// percent td
