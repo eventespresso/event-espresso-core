@@ -52,6 +52,11 @@ class EE_Register_Config implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register a Config Class with EE_Register_Config::register(), you must include a "config_class" (the actual class name for this config class). As well, you can supply an array containing the following keys: "config_section" the main section of the config object the settings will be saved under (by default the new config will be registered under EE_Config::instance()->modules or EE_Config::instance()->addons depending on what type of class is calling this), "config_name" (by default the new config will be registered to EE_Config::instance()->{config_section}->{config_class}, but supplying a "config_name" will set the property name that this variable is accessible by. ie: EE_Config::instance()->{config_section}->{config_name})', 'event_espresso' ));
 		}
 
+		//make sure we don't register twice
+		if( isset( self::$_ee_config_registry[ $config_class ] ) ){
+			return;
+		}
+
 
 		//first find out if this happened too late.
 		if ( did_action( 'AHEE__EE_System__load_core_configuration__begin' ) ) {

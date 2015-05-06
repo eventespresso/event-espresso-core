@@ -34,7 +34,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	 * private instance of the Event object
 	 * @var EEM_Event
 	 */
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 
 
@@ -57,7 +57,6 @@ class EEM_Event  extends EEM_CPT_Base{
 		// EEM_Event object
 		return self::$_instance;
 	}
-
 
 
 	/**
@@ -112,9 +111,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
 				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Description', 'event_espresso' ), FALSE,'' ),
-				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
-				'EVT_wp_user'=>new EE_Integer_Field( 'post_author', __( 'Wordpress User ID', 'event_espresso'), FALSE, 1 ),
-				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), TRUE ),
+				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
+				'EVT_wp_user'=>new EE_WP_User_Field( 'post_author', __( 'Event Creator ID', 'event_espresso'), FALSE),
+				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), FALSE, 0 ),
 				'EVT_order'=>new EE_Integer_Field( 'menu_order', __( 'Event Menu Order', 'event_espresso' ), FALSE, 1 ),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_events'),// EE_Plain_Text_Field( 'post_type', __( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
 				'status' => new EE_WP_Post_Status_Field( 'post_status', __( 'Event Status', 'event_espresso' ), FALSE, 'draft', $this->_custom_stati )
@@ -146,6 +145,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
 			'Attendee'=>new EE_HABTM_Relation('Registration'),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
@@ -353,7 +353,7 @@ class EEM_Event  extends EEM_CPT_Base{
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
 
-					if ( $qst->type() == 'SINGLE' || $qst->type() == 'MULTIPLE' || $qst->type() == 'DROPDOWN' ) {
+					if ( $qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN' ) {
 						$QSOs = $qst->options(TRUE,$answer->value());
 						if ( is_array( $QSOs ) ) {
 							foreach ( $QSOs as $QSO_ID => $QSO ) {
@@ -439,36 +439,6 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
-
-
-
-	/**
-	*		migrate question data
-	*
-	* 		usage: EEM_Event::instance()->migrate_question_data();
-	*
-	* 		@access		public
-	* 		@param		$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
-	*/
-	public function migrate_question_data() {
-
-		global $wpdb;
-		$SQL = 'SELECT id, question_groups FROM ' . $wpdb->prefix . 'events_detail ORDER BY id';
-		if ( $results = $wpdb->get_results( $SQL )) {
-			foreach ( $results as $result ) {
-				$QSG_IDs = unserialize( $result->question_groups );
-				foreach ( $QSG_IDs as $QSG_ID ) {
-					if ( $wpdb->insert( $wpdb->prefix . 'esp_event_question_group', array( 'EVT_ID' => $result->id, 'QSG_ID' => $QSG_ID ), array( '%d', '%d' ))) {
-						echo '<h5>SUCCESS:    EVT_ID : ' . $result->id . '   QSG_ID : ' . $QSG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h5>';
-					} else {
-						echo '<h4>FAIL:    EVT_ID : ' . $result->id . '   QSG_ID : ' . $QSG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-					}
-				}
-			}
-		}
-
-	}
 
 
 

@@ -23,17 +23,17 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * add a function named ext_{function_name} (eg "ext_foobar")onto your EEE_Base_Class child, accepting the same
  * arguments and returning the same value as you would if it were on EE_Attendee.
  * Every time EE_Attendee::foobar() is called, it will call your EEE_Sample_Attendee::ext_foobar() function.
- * To access the originally model object on which the method was called, using $this->_. 
+ * To access the originally model object on which the method was called, using $this->_.
  * (Eg you can use $this->_->fname(); $this->_->save(); But note that you CANNOT access protected functions
  * or properties because this is not true inheritance)
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
 class EEE_Base_Class {
-	
+
 	const extending_method_prefix = 'ext_';
 	const dynamic_callback_method_prefix = 'dynamic_callback_method_';
 	/**
@@ -46,7 +46,7 @@ class EEE_Base_Class {
 	 * @var EE_Base_Class
 	 */
 	protected $_ = NULL;
-	
+
 	public function __construct(){
 		if( ! $this->_model_name_extended){
 			throw new EE_Error(sprintf(__("When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'", "event_espresso")));
@@ -56,7 +56,7 @@ class EEE_Base_Class {
 		}
 		$this->_register_extending_methods();
 	}
-	
+
 	/**
 	 * scans the child of EEME_Base for functions starting with ext_, and magically makes them functions on the
 	 * model extended. (Internally uses filters, and the __call magic method)
@@ -71,8 +71,22 @@ class EEE_Base_Class {
 			}
 		}
 	}
-	
-	
+	/**
+	 * scans the child of EEME_Base for functions starting with ext_, and magically REMOVES them as functions on the
+	 * model extended. (Internally uses filters, and the __call magic method)
+	 */
+	public function deregister(){
+		$all_methods = get_class_methods(get_class($this));
+		foreach($all_methods as $method_name){
+			if(strpos($method_name, self::extending_method_prefix) === 0){
+				$method_name_on_model = str_replace(self::extending_method_prefix, '', $method_name);
+				$callback_name = "FHEE__EE_{$this->_model_name_extended}__$method_name_on_model";
+				remove_filter($callback_name,array($this,self::dynamic_callback_method_prefix.$method_name_on_model),10);
+			}
+		}
+	}
+
+
 	public function __call($callback_method_name,$args){
 		if(strpos($callback_method_name, self::dynamic_callback_method_prefix) === 0){
 			//it's a dynamic callback for a method name
@@ -87,7 +101,7 @@ class EEE_Base_Class {
 			}else{
 				throw new EE_Error(sprintf(__("An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)", "event_espresso"),$this->_model_name_extended,get_class($this),$extending_method,$extending_method));
 			}
-			
+
 		}else{
 			throw new EE_Error(sprintf(__("There is no method named '%s' on '%s'", "event_espresso"),$callback_method_name,get_class($this)));
 		}

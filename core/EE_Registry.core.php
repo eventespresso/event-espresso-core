@@ -79,6 +79,17 @@ final class EE_Registry {
 	public $SSN = NULL;
 
 
+
+	/**
+	 * holds the ee capabilities object.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Capabilities
+	 */
+	public $CAP = NULL;
+
+
 	/**
 	 * 	$addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * 	@access 	public
@@ -196,7 +207,7 @@ final class EE_Registry {
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
+		self::$i18n_js_strings['wp_debug'] = defined( 'WP_DEBUG' ) ? WP_DEBUG : FALSE;
 	}
 
 
@@ -227,24 +238,27 @@ final class EE_Registry {
 	}
 
 
-
 	/**
 	 *    loads core classes - must be singletons
 	 *
 	 * @access    public
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed  $arguments
+	 * @param bool   $load_only
 	 * @return mixed
 	 */
-	public function load_core ( $class_name, $arguments = array() ) {
-		$core_paths = array(
-			EE_CORE,
-			EE_ADMIN,
-			EE_CPTS
+	public function load_core ( $class_name, $arguments = array(), $load_only = FALSE ) {
+		$core_paths = apply_filters(
+			'FHEE__EE_Registry__load_core__core_paths',
+			array(
+				EE_CORE,
+				EE_ADMIN,
+				EE_CPTS,
+				EE_CORE . 'data_migration_scripts' . DS
+			)
 		);
-		$core_paths = apply_filters( 'FHEE__EE_Registry__load_core__core_paths', $core_paths );
 		// retrieve instantiated class
-		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments );
+		return $this->_load( $core_paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -264,8 +278,6 @@ final class EE_Registry {
 
 
 
-
-
 	/**
 	 *	loads object creating classes - must be singletons
 	 *
@@ -278,8 +290,9 @@ final class EE_Registry {
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		$paths = apply_filters('FHEE__EE_Registry__load_class__paths',array(
+			EE_CORE,
 			EE_CLASSES,
-			EE_CORE
+			EE_BUSINESS
 		));
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
@@ -318,7 +331,8 @@ final class EE_Registry {
 			EE_LIBRARIES,
 			EE_LIBRARIES . 'messages' . DS,
 			EE_LIBRARIES . 'shortcodes' . DS,
-			EE_LIBRARIES . 'qtips' . DS
+			EE_LIBRARIES . 'qtips' . DS,
+			EE_LIBRARIES . 'payment_methods' . DS,
 		);
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'lib', $arguments, FALSE, TRUE, $load_only );
@@ -442,7 +456,8 @@ final class EE_Registry {
 			'EE_Config' => 'CFG',
 			'EE_Network_Config' => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
-			'EE_Session' => 'SSN'
+			'EE_Session' => 'SSN',
+			'EE_Capabilities' => 'CAP'
 		);
 
 		// check if class has already been loaded, and return it if it has been
@@ -481,10 +496,10 @@ final class EE_Registry {
 				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf (
-						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) are correct: %s','event_espresso'),
+						__('The %1$s file %2$s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) are correct: %3$s','event_espresso'),
 						trim( $type, '.' ),
 						$class_name,
-						implode( ', ', $file_paths )
+						'<br />' . implode( ',<br />', $file_paths )
 					)
 				);
 			}
@@ -517,6 +532,7 @@ final class EE_Registry {
 			if ( $reflector->getConstructor() === NULL || $reflector->isAbstract() || $load_only ) {
 //				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
+				return TRUE;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 //				$instantiation_mode = 1;
 				$class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
@@ -549,8 +565,8 @@ final class EE_Registry {
 //	echo '<h4>$from_db : ' . $from_db . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$cache : ' . $cache . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$load_only : ' . $load_only . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//	printr( $arguments, '$arguments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//	printr( $class_obj, '$class_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//	EEH_Debug_Tools::printr( $arguments, '$arguments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//	EEH_Debug_Tools::printr( $class_obj, '$class_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 
 		if ( isset( $class_obj )) {
@@ -658,9 +674,9 @@ final class EE_Registry {
 		return NULL;
 	}
 	/**
-	 * Gets an array of all the reigstered addons, where the keys are their names. (ie, what each returns for their name() function) They're already available on EE_Config::instance()->addons as properties, where each property's name is the addon's classname. So if you just want to get the addon by classname, use EE_Config::instance()->addons->{classname}
+	 * Gets an array of all the registered addons, where the keys are their names. (ie, what each returns for their name() function) They're already available on EE_Config::instance()->addons as properties, where each property's name is the addon's classname. So if you just want to get the addon by classname, use EE_Config::instance()->addons->{classname}
 	 *
-	 * @return EE_Addon[] where the KEYS are the addons's name()
+	 * @return EE_Addon[] where the KEYS are the addon's name()
 	 */
 	public function get_addons_by_name(){
 		$addons = array();
@@ -668,6 +684,48 @@ final class EE_Registry {
 			$addons[ $addon->name() ] = $addon;
 		}
 		return $addons;
+	}
+
+	/**
+	 * Resets that specified model's instance AND makes sure EE_Registry doesn't keep
+	 * a stale copy of it around
+	 * @param string $model_name
+	 * @return EEM_Base
+	 */
+	public function reset_model( $model_name ){
+		$model = $this->load_model( $model_name );
+		$model_class_name = get_class( $model );
+		//get that model reset it and make sure we nuke the old reference to it
+		if ( is_callable( array( $model_class_name, 'reset' ))) {
+			$this->LIB->$model_class_name = $model::reset();
+		}else{
+			throw new EE_Error( sprintf( __( 'Model %s does not have a method "reset"', 'event_espresso' ), $model_name ) );
+		}
+		return $this->LIB->$model_class_name;
+	}
+
+	/**
+	 * Resets the registry and everything in it (eventually, getting it to properly
+	 * reset absolutely everything will probably be tricky. right now it just resets
+	 * the config, data migration manager, and the models)
+	 * @param boolean $hard whether to reset data in the database too, or just refresh
+	 * the Registry to its state at the bginning of the request
+	 * @param boolean $reinstantiate whether to create new instances of EE_REgistry's singletons too,
+	 * or just reset without reinstantiating (handy to set to FALSE if you're not sure if you CAN
+	 * currently reinstantiate the singletons at the moment)
+	 * @return EE_Registry
+	 */
+	public static function reset( $hard = FALSE, $reinstantiate = TRUE ){
+		$instance = self::instance();
+		$instance->load_helper('Activation');
+		EEH_Activation::reset();
+		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
+		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
+		$instance->LIB = new stdClass();
+		foreach( array_keys( $instance->non_abstract_db_models ) as $model_name ){
+			$instance->reset_model( $model_name );
+		}
+		return $instance;
 	}
 
 

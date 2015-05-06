@@ -354,7 +354,7 @@ class EEH_Form_Fields {
 
 		$field = '<select id="' . EEH_Formatter::ee_tep_output_string($name) . '" name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
-		//printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( EEH_Formatter::ee_tep_not_null($parameters))
 			$field .= ' ' . $parameters;
 		if ($autosize) {
@@ -404,7 +404,7 @@ class EEH_Form_Fields {
 		$after_question_group_questions = apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' );
 
 		if ( ! empty( $question_groups )) {
-			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
 			foreach ( $question_groups as $QSG ) {
 				// check that questions exist
@@ -419,7 +419,7 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $QSG['QSG_questions'] as $question ) {
-//						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//						EEH_Debug_Tools::printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$QFI = new EE_Question_Form_Input(
 							$question['qst_obj'],
 							$question['ans_obj'],
@@ -462,10 +462,10 @@ class EEH_Form_Fields {
 				'input_class' => ''
 		);
 		$q_meta = array_merge( $default_q_meta, $q_meta );
-		//printr( $q_meta, '$q_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $q_meta, '$q_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if ( ! empty( $question_groups )) {
-//			printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
 			foreach ( $question_groups as $QSG ) {
 				if ( $QSG instanceof EE_Question_Group ) {
@@ -517,7 +517,7 @@ class EEH_Form_Fields {
 									)),
 									$q_meta
 							);
-							//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							//EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							$html .= self::generate_form_input( $QFI );
 						}
 						$html .= $after_question_group_questions;
@@ -547,6 +547,9 @@ class EEH_Form_Fields {
 		}
 
 		$QFI = self::_load_system_dropdowns( $QFI );
+		$QFI = self::_load_specialized_dropdowns( $QFI );
+
+		//we also need to verify
 
 		$display_text = $QFI->get('QST_display_text');
 		$input_name = $QFI->get('QST_input_name');
@@ -559,7 +562,7 @@ class EEH_Form_Fields {
 		$QST_required = $QFI->get('QST_required');
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
 		$use_html_entities = $QFI->get_meta( 'htmlentities' );
-		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : 'This field is required';
+		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : __( 'This field is required', 'event_espresso' );
 		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
 		$label_class = 'espresso-form-input-lbl';
 		$QST_options = $QFI->options(true,$answer);
@@ -567,6 +570,7 @@ class EEH_Form_Fields {
 		$system_ID = $QFI->get('QST_system');
 		$label_b4 = $QFI->get_meta( 'label_b4' );
 		$use_desc_4_label = $QFI->get_meta( 'use_desc_4_label' );
+
 
 		switch ( $QFI->get('QST_type') ){
 
@@ -578,11 +582,12 @@ class EEH_Form_Fields {
 					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, TRUE );
 				break;
 
-			case 'SINGLE' :
+
+			case 'RADIO_BTN' :
 					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, $label_b4, $use_desc_4_label );
 				break;
 
-			case 'MULTIPLE' :
+			case 'CHECKBOX' :
 					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
@@ -639,7 +644,7 @@ class EEH_Form_Fields {
 		// filter label but ensure required text comes before it
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 
-		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
+		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . esc_attr( $required['msg'] ) . '" ' . $disabled .' ' . $extra . '/>';
 
 		$input_html =  apply_filters( 'FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
@@ -737,7 +742,7 @@ class EEH_Form_Fields {
 		// filter label but ensure required text comes before it
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 
-		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '"' . $disabled . ' ' . $extra . '>';
+		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . esc_attr( $required['msg'] ) . '"' . $disabled . ' ' . $extra . '>';
 		// recursively count array elements, to determine total number of options
 		$only_option = count( $options, 1 ) == 1 ? TRUE : FALSE;
 		if ( ! $only_option ) {
@@ -858,7 +863,7 @@ class EEH_Form_Fields {
 				$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 				$input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-radio-btn-lbl">';
 				$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $label . '</span>' : '';
-				$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+				$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . esc_attr( $required['msg'] ) . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 				$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $label . '</span>' : '';
 				$input_html .= "\n\t\t\t\t\t" . '</label>';
 				$input_html .= $use_desc_4_label ? '' : '<span class="espresso-radio-btn-option-desc small-text grey-text">' . $desc . '</span>';
@@ -898,12 +903,15 @@ class EEH_Form_Fields {
 			return NULL;
 		}
 		$answer = maybe_unserialize( $answer );
+
 		// prep the answer(s)
 		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
+
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
 			$answer[$key] = self::prep_answer( $value );
 		}
+
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -934,7 +942,7 @@ class EEH_Form_Fields {
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . esc_attr( $required['msg'] ) . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			if ( ! empty( $desc ) && $desc != $text ) {
@@ -990,7 +998,7 @@ class EEH_Form_Fields {
 		// filter label but ensure required text comes before it
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 
-		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
+		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  title="' . esc_attr( $required['msg'] ) . '" ' . $disabled . ' ' . $extra . '/>';
 
 		// enqueue scripts
 		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION );
@@ -1058,10 +1066,14 @@ class EEH_Form_Fields {
 
 	/**
 	 * 	prep_answer
-	 * @param string $answer
+	 * @param mixed $answer
 	 * @return string
 	 */
 	static function prep_answer( $answer, $use_html_entities = TRUE ){
+		//make sure we convert bools first.  Otherwise (bool) false becomes an empty string which is NOT desired, we want "0".
+		if ( is_bool( $answer ) ) {
+			$answer = $answer ? 1 : 0;
+		}
 		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
 		return $use_html_entities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}
@@ -1178,6 +1190,29 @@ class EEH_Form_Fields {
 				break;
 			case 'admin-country' :
 				$QFI = self::generate_country_dropdown( $QFI, TRUE );
+				break;
+		}
+		return $QFI;
+	}
+
+
+
+	/**
+	 * This preps dropdowns that are specialized.
+	 *
+	 * @since  4.6.0
+	 *
+	 * @param EE_Question_Form_Input $QFI
+	 *
+	 * @return EE_Question_Form_Input
+	 */
+	protected static function _load_specialized_dropdowns( $QFI ) {
+		switch( $QFI->get( 'QST_type' ) ) {
+			case 'STATE' :
+				$QFI = self::generate_state_dropdown( $QFI );
+				break;
+			case 'COUNTRY' :
+				$QFI = self::generate_country_dropdown( $QFI );
 				break;
 		}
 		return $QFI;
@@ -1398,8 +1433,11 @@ class EEH_Form_Fields {
 				)
 			);
 
+		//translate month and date
+		global $wp_locale;
+
 		foreach ( $DTTS as $DTT ) {
-			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
 			$options[] = array(
 				'text' => $date,
 				'id' => $date

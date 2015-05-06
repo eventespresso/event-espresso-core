@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Venues_Hooks
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Venues_Hooks
  * @subpackage	caffeinated/admin/new/venues/espresso_events_Venues_Hooks.class.php
@@ -80,7 +80,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 		//remove default ee_autosave returns for DECAF venues (not needed for CAF venues cause we have a dropdown selector)
 		add_filter( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', '__return_false' );
-		
+
 	}
 
 
@@ -112,8 +112,21 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$evt_venues = !empty( $evt_id ) ? $evt_obj->venues() : array();
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
 		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
-		//all venues!
-		$venues = EE_Registry::instance()->load_model( 'Venue' )->get_all( array( array( 'status' => 'publish' )));
+
+		//possibly private venues.
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+			$vnu_where['status']= array( 'IN' , array( 'publish', 'private' ) );
+		} else {
+			$vnu_where['status'] = 'publish';
+		}
+
+		//cap checks
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
+			$vnu_where['VNU_wp_user'] = get_current_user_id();
+		}
+
+		$vnumdl = EE_Registry::instance()->load_model( 'Venue' );
+		$venues = $vnumdl->get_all( array( $vnu_where ) );
 
 		$ven_select = array();
 		$ven_select[0] = __('Select a Venue', 'event_espresso');
@@ -131,7 +144,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	
+
 
 	public function caf_venue_update( $evtobj, $data ) {
 		EE_Registry::instance()->load_model('Venue');

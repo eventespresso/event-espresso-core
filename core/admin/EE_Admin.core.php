@@ -73,6 +73,7 @@ final class EE_Admin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_action( 'network_admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
@@ -182,6 +183,7 @@ final class EE_Admin {
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
+			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 			//filter for get_edit_post_link used on comments for custom post types
@@ -467,6 +469,21 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function admin_init() {
+
+		/**
+		 * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
+		 * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
+		 * - check if doing post processing.
+		 * - check if doing post processing of one of EE CPTs
+		 * - instantiate the corresponding EE CPT model for the post_type being processed.
+		 */
+		if ( isset( $_POST['action'] ) && $_POST['action'] == 'editpost' ) {
+			if ( isset( $_POST['post_type'] ) ) {
+				EE_Registry::instance()->load_core( 'Register_CPTs' );
+				EE_Register_CPTs::instantiate_cpt_models( $_POST['post_type'] );
+			}
+		}
+
 	}
 
 

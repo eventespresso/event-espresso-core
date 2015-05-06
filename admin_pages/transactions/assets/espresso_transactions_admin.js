@@ -25,14 +25,6 @@ jQuery(document).ready(function($) {
 	$('.updated.fade').delay(5000).fadeOut();
 
 
-
-
-	$('#txn-admin-payment-method-slct').bind('change', function() {
-		var mop = $(this).val();
-		$('.mop').hide();
-		$('.mop-'+mop).show();
-	});
-
 	var dialog_content = {};
 	var d_contents = '';
 
@@ -49,8 +41,7 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
 		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
 		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
-		$('#txn-admin-payment-method-slct').val( $('#payment-method-' + PAY_ID ).text() );
-		$('#txn-admin-payment-gateway-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+		$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
 		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
 		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
 		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
@@ -75,6 +66,10 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var paymentAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( paymentAmount );
+
+		//make sure payment status selector shows
+		$('.txn-admin-apply-payment-status-dv').show();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -102,6 +97,9 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var refundAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( refundAmount );
+		//don't show payment status selector
+		$('.txn-admin-apply-payment-status-dv').hide();
+
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -132,8 +130,6 @@ jQuery(document).ready(function($) {
 				// remove validation notices
 				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
 				$('.validation-notice-dv').hide();
-
-				$('.mop').hide();
 			});
 	}
 
@@ -281,6 +277,7 @@ jQuery(document).ready(function($) {
 				dialog_content.html(d_contents);
 				$('.admin-modal-dialog-h2').hide();
 				$('#del-admin-modal-dialog-options-ul a').hide();
+				$('#admin-modal-dialog-options-ul a').hide();
 			});
 	}
 
@@ -335,7 +332,7 @@ jQuery(document).ready(function($) {
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 
-		if ( response.edit_or_apply == 'apply' ) {
+		if ( response.edit_or_apply === 'apply' ) {
 			// grab empty paymnet table row
 			var newRow = '\n				<tr id="txn-admin-payment-tr-PAY_ID">' + $('#txn-admin-payment-empty-row-tr').html() + '\n				</tr>\n';
 			// insert new PAY_ID
@@ -370,7 +367,7 @@ jQuery(document).ready(function($) {
 		$('#payment-method-' + PAY_ID).html( response.return_data.method );
 		// payment-gateway
 		$('#payment-gateway-' + PAY_ID).html( response.return_data.gateway );
-		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.gateway );
+		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.PM_ID );
 		// payment-gateway_response
 		$('#payment-response-' + PAY_ID).html( response.return_data.gateway_response );
 		// payment-txn_id_chq_nmbr
@@ -407,14 +404,14 @@ jQuery(document).ready(function($) {
 		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
 		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
 
-		if ( totalPaid == txnTotal ) {
+		if ( totalPaid === txnTotal ) {
 			//alert( 'paid in full' );
 			$('#txn-amount-due-h2').hide();
 			$('#txn-amount-due-h2 > span').removeClass();
 			$('#txn-admin-payments-total-tr').show();
 			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'Payments Total' );
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
+			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		} else if ( totalPaid > txnTotal ) {
 			//alert( 'overpaid' );
 			$('#txn-amount-due-h2').show();
@@ -422,7 +419,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-payments-total-tr').show();
 			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'This transaction has been overpaid ! Payments Total' );
-			$('#payments-total-spn').parents('tr').addClass( 'red-text');
+			$('#payments-total-spn').parents('tr').addClass( 'important-notice');
 		} else if ( totalPaid > 0 ) {
 			//alert( 'part payment' );
 			$('#txn-amount-due-h2').show();
@@ -431,7 +428,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'Payments Total' );
 			$('#overpaid').remove();
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
+			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		} else {
 			//alert( 'no payment' );
 			$('#txn-amount-due-h2').show();
@@ -440,7 +437,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-no-payments-tr').show();
 			$('#payments-total-spn').html( 'Payments Total' );
 			$('#overpaid').remove();
-			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
+			$('#payments-total-spn').parents('tr').removeClass( 'important-notice');
 		}
 
 	}
@@ -451,9 +448,11 @@ jQuery(document).ready(function($) {
 	function process_delete_payment( response ) {
 		toggleaAjaxActivity( true );
 		overlay.trigger('click');
-		// grab PAY ID from return data
-		var PAY_ID = response.return_data.PAY_ID;
-		update_payment_totals( response );
+		if ( typeof(response.return_data.PAY_ID) !== 'undefined' && response.return_data.PAY_ID !== false && response.return_data.PAY_ID !== null ) {
+			// grab PAY ID from return data
+			var PAY_ID = response.return_data.PAY_ID;
+			update_payment_totals( response );
+		}
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
 	}
 

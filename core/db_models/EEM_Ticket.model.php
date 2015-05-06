@@ -27,7 +27,7 @@ require_once ( EE_CLASSES . 'EE_Ticket.class.php' );
 class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Ticket object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -38,7 +38,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket','event_espresso');
-		$this->plural_item = __('Tickets','event_espresso');		
+		$this->plural_item = __('Tickets','event_espresso');
 
 		$this->_tables = array(
 			'Ticket'=> new EE_Primary_Table('esp_ticket', 'TKT_ID')
@@ -63,6 +63,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
 				'TKT_row' => new EE_Integer_Field('TKT_row', __('How tickets are displayed in the ui', 'event_espresso'), false, 0 ),
 				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
+				'TKT_wp_user' => new EE_WP_User_Field('TKT_wp_user', __('Ticket Creator ID', 'event_espresso'), FALSE ),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(
@@ -71,36 +72,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
 			'Ticket_Template'=>new EE_Belongs_To_Relation(),
 			'Registration' => new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 
 		parent::__construct( $timezone );
-	}
-
-
-
-
-
-	/**
-	 *		This function is a singleton method used to instantiate the Espresso_model object
-	 *
-	 *		@access public
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return EEM_Ticket instance
-	 */
-	public static function instance( $timezone = NULL ){
-
-		// check if instance of Espresso_model already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
-
-		// Espresso_model object
-		return self::$_instance;
 	}
 
 
@@ -125,8 +100,9 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	private function _set_default_dates( $tickets ) {
 		foreach ( $tickets as $ticket ) {
-			$ticket->set('TKT_start_date', time('timestamp') );
-			$ticket->set('TKT_end_date', time('timestamp') + (60 * 60 * 24 * 30 ) );
+			$ticket->set('TKT_start_date', current_time('timestamp') );
+			$ticket->set('TKT_end_date', current_time('timestamp') + (60 * 60 * 24 * 30 ) );
+			$ticket->set_end_time("12am");
 		}
 
 		return $tickets;

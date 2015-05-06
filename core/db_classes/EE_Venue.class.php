@@ -26,7 +26,7 @@
  * @subpackage 	includes/classes/EE_Venue.class.php
  * @author 				Mike Nelson
  */
-class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
+class EE_Venue extends EE_CPT_Base implements EEI_Address {
 
 	/**
 	 *
@@ -146,12 +146,48 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 		return $this->get( 'STA_ID' );
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function state_abbrev() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : __( 'Unknown', 'event_espresso' );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function state_name() {
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  __( 'Unknown', 'event_espresso' );
+	}
+
+
+
 	/**
 	 * Gets the state for this venue
 	 * @return EE_State
 	 */
 	function state_obj() {
 		return $this->get_first_related( 'State' );
+	}
+
+
+
+	/**
+	 * either displays the state abbreviation or the state name, as determined
+	 * by the "FHEE__EEI_Address__state__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function state() {
+		if ( apply_filters( 'FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj() ) ) {
+			return $this->state_abbrev();
+		} else {
+			return $this->state_name();
+		}
 	}
 
 
@@ -164,6 +200,17 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 		return $this->get( 'CNT_ISO' );
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function country_name() {
+		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  __( 'Unknown', 'event_espresso' );
+	}
+
+
+
 	/**
 	 * Gets the country of this venue
 	 * @return EE_Country
@@ -171,6 +218,23 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	function country_obj() {
 		return $this->get_first_related( 'Country' );
 	}
+
+
+
+	/**
+	 * either displays the country ISO2 code or the country name, as determined
+	 * by the "FHEE__EEI_Address__country__use_abbreviation" filter.
+	 * defaults to abbreviation
+	 * @return string
+	 */
+	public function country() {
+		if ( apply_filters( 'FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj() ) ) {
+			return $this->country_ID();
+		} else {
+			return $this->country_name();
+		}
+	}
+
 
 
 	/**
@@ -269,15 +333,22 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 
 
 
-
-
 	/**
 	 * Gets all events happening at this venue. Query parameters can be added to
 	 * fetch a subset of those events.
 	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param bool  $upcoming
 	 * @return EE_Event[]
 	 */
-	function events( $query_params = array() ) {
+	function events( $query_params = array(), $upcoming = FALSE ) {
+		if ( $upcoming ) {
+			$query_params = array(
+				array(
+					'status' => 'publish',
+					'Datetime.DTT_EVT_start' => array( '>', current_time( 'mysql' ))
+				)
+			);
+		}
 		return $this->get_many_related( 'Event', $query_params );
 	}
 

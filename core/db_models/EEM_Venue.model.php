@@ -26,27 +26,9 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
 class EEM_Venue extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Attendee instance
-	 */	
-	public static function instance(){
-	
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-	
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Venue','event_espresso');
 		$this->plural_item = __('Venues','event_espresso');
 		$this->_tables = array(
@@ -59,10 +41,10 @@ class EEM_Venue extends EEM_CPT_Base {
 				'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
 				'VNU_desc'=>new EE_Post_Content_Field('post_content', __("Venue Description", "event_espresso"), false,''),
 				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
-				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,current_time('timestamp')),
+				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), FALSE,current_time('timestamp')),
 				'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true,''),
-				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,current_time('timestamp')),
-				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
+				'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), FALSE,current_time('timestamp')),
+				'VNU_wp_user'=>new EE_WP_User_Field('post_author', __("Venue Creator ID", "event_espresso"), false ),
 				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), false,0),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_venues'),// EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
@@ -83,18 +65,19 @@ class EEM_Venue extends EEM_CPT_Base {
 				'VNU_virtual_url'=>new EE_Plain_Text_Field('VNU_virtual_url', __('Virtual URL', 'event_espresso'), true ),
 				'VNU_google_map_link'=>new EE_Plain_Text_Field('VNU_google_map_link', __('Google Map Link', 'event_espresso'), true ),
 				'VNU_enable_for_gmap'=>new EE_Boolean_Field('VNU_enable_for_gmap', __('Show Google Map?', 'event_espresso'), false, false )
-				
+
 			));
 		$this->_model_relations = array(
 			'Event'=>new EE_HABTM_Relation('Event_Venue'),
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event_Venue'=>new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation()
 		);
 		require_once( EE_CLASSES . 'EE_Venue.class.php');
 		require_once( EE_MODELS . 'strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
-		parent::__construct();
+		parent::__construct( $timezone );
 	}
 
 }

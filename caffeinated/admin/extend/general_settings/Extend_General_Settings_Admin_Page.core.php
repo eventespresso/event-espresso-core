@@ -46,11 +46,16 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$new_page_routes = array(
 			'update_template_settings' => array(
 				'func' => '_update_template_settings',
-				'noheader' => TRUE,
+				'capability' => 'manage_options',
+				'noheader' => TRUE
 			),
-			'google_map_settings' => '_google_map_settings',
+			'google_map_settings' => array(
+				'func' => '_google_map_settings',
+				'capability' => 'manage_options'
+			),
 			'update_google_map_settings' => array(
 				'func' => '_update_google_map_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE
 			)
 		);
@@ -64,7 +69,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					'label' => __('Templates'),
 					'order' => 30
 				),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
@@ -79,7 +84,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					'label' => __('Google Maps'),
 					'order' => 40
 					),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'general_settings_google_maps_help_tab' => array(
 						'title' => __('Google Maps', 'event_espresso'),

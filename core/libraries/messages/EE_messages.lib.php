@@ -34,6 +34,7 @@ class EE_messages {
 	private $_installed_message_types = array();
 	private $_messenger;
 	private $_message_type;
+	private $_installed_messengers = array();
 
 	/**
 	 * holds the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
@@ -48,7 +49,9 @@ class EE_messages {
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
-		$this->_set_installed_message_types();
+
+		//load debug tools
+		EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
 	/**
@@ -70,28 +73,131 @@ class EE_messages {
 					EE_Error::add_error($active->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
 				}
 				$this->_active_messengers[$name] = $active;
-				$this->_active_message_types[$name] = $_actives[$name]['settings'][$name . '-message_types'];
+				$this->_active_message_types[$name] = ! empty( $_actives[$name]['settings'][$name . '-message_types'] ) ? $_actives[$name]['settings'][$name . '-message_types'] : array();
 			}
 		}
 	}
 
-
-
+	/**
+	 * Ensures that the specified messenger is currently active.
+	 * If not, activates it and its default message types.
+	 * @param string $messenger_name
+	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
+	 */
+	public function ensure_messenger_is_active( $messenger_name ){
+		//note: active messengers indexed by their names
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		if( ! isset( $active_messengers[ $messenger_name ] ) ) {
+			$this->activate_messenger( $messenger_name );
+			return FALSE;
+		}else{
+			return TRUE;
+		}
+	}
 
 
 
 	/**
-	 * get active types from db and load the related files.  They don't get instantiated till $this->send_message.
+	 * Ensures that tthe specified message type for the given messenger is currently active, if not activates it.
+	 * This ALSO ensures that the given messenger is active as well!.
 	 *
+	 * @param string $message_type message type name
+	 *
+	 * @return boolean true if it got activated (or was active) and false if not.
 	 */
-	private function _set_installed_message_types() {
-		//get installed
-		$message_types = $this->get_installed( 'message_types' );
-
-		foreach ( $message_types as $message_type ) {
-			$this->_installed_message_types[$message_type->name] = $message_type;
+	public function ensure_message_type_is_active( $message_type, $messenger ) {
+		//first validate that the incoming messenger allows this message type to be activated.
+		$messengers = $this->get_installed_messengers();
+		if ( ! isset( $messengers[$messenger] ) ) {
+			throw new EE_Error( sprintf( __('The messenger sent to %s is not installed', 'event_espresso'), __METHOD__ ) );
 		}
+
+		$msgr = $messengers[$messenger];
+		$valid_message_types = $msgr->get_valid_message_types();
+		if ( ! in_array( $message_type, $valid_message_types ) ) {
+			throw new EE_Error( sprint_f( __('The message type ($1%s) sent to $2%s is not valid for the $3%s messenger.  Doublecheck the spelling and verify that message type has been registered as a valid type with the messenger.', 'event_espresso' ), $message_type, __METHOD__, $messenger ) );
+		}
+
+		//all is good so let's just get it active
+		return $this->activate_messenger( $messenger, array( $message_type ) );
 	}
+
+	/**
+	 * Activates the specified messenger
+	 * @param string $messenger_name
+	 * @param array $message_types (optional) An array of message types to activate with this messenger.  If
+	 *                             				included we do NOT setup the default message types (assuming
+	 *                             				they are already setup.)
+	 * @return boolean an array of generated templates or false if nothing generated/activated.
+	 */
+	public function activate_messenger( $messenger_name, $mts = array() ){
+		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$message_types = $this->get_installed_message_types();
+		$installed_messengers = $this->get_installed_messengers();
+		$mts_to_activate = array();
+		$templates = false;
+
+		//get has_active so we can be sure its kept up to date.
+		$has_activated = get_option( 'ee_has_activated_messenger' );
+
+		//grab the messenger to work with.
+		$messenger = isset( $installed_messengers[$messenger_name] ) ? $installed_messengers[$messenger_name] : null;
+
+		//it's inactive. Activate it.
+
+		if( $messenger instanceof EE_messenger ) {
+			$active_messengers[ $messenger->name ][ 'obj' ] = $messenger;
+
+			/** @var EE_messenger[] $installed_messengers  */
+			$mts_to_activate = ! empty( $mts ) ? $mts :  $messenger->get_default_message_types();
+			foreach ( $mts_to_activate as $message_type ) {
+				//we need to setup any initial settings for message types
+				/** @var EE_message_type[] $installed_mts */
+				$settings_fields = isset( $message_types[$message_type] ) ? $message_types[ $message_type ]->get_admin_settings_fields() : array();
+				if ( !empty( $settings_fields ) ) {
+					foreach ( $settings_fields as $field => $values ) {
+						$settings[$field] = $values[ 'default' ];
+					}
+				} else {
+					$settings = array();
+				}
+
+				$active_messengers[ $messenger->name ][ 'settings' ][ $messenger->name . '-message_types' ][ $message_type ][ 'settings' ] = $settings;
+
+				if (  ! empty( $has_activated[$messenger->name] ) && ! in_array( $message_type, $has_activated[$messenger->name] ) ) {
+					$has_activated[$messenger->name][] = $message_type;
+				}
+			}
+
+			//setup any initial settings for the messenger
+			$msgr_settings = $messenger->get_admin_settings_fields();
+
+			if ( !empty( $msgr_settings ) ) {
+				foreach ( $msgr_settings as $field => $value ) {
+					$active_messengers[ $messenger->name ][ 'settings' ][ $field ] = $value;
+				}
+			}
+
+			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+			update_option( 'ee_has_activated_messenger', $has_activated );
+
+			//make sure that the cached active_messengers is set on this object
+			$this->_active_messengers[$messenger->name] = $messenger;
+			$this->_active_message_types[$messenger->name] = $active_messengers[$messenger->name];
+
+			//might need to generate new templates
+			if ( ! empty( $mts_to_activate ) ) {
+				$templates = EEH_MSG_Template::generate_new_templates( $messenger->name, $mts_to_activate, 0, TRUE );
+			}
+		}
+
+		return $templates;
+	}
+
+
+
+
+
 
 	/**
 	 * load the active files needed (key word... NEEDED)
@@ -104,7 +210,7 @@ class EE_messages {
 		if ( empty($actives) ) return false;
 
 		//make sure autoloaders are set (failsafe)
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 
 		//make sure $actives is an array
 		$actives = (array) $actives;
@@ -166,54 +272,126 @@ class EE_messages {
 
 
 	/**
+	 * Used to verify if a message can be sent for the given messenger and message type and that it is a generating messenger (used for generating message templates).
+	 *
+	 * @param EE_messenger $messenger    messenger used in trigger
+	 * @param EE_messagetype $message_type message type used in trigger
+	 *
+	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
+	 */
+	private function _is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
+		$generating_msgrs = array();
+		//get the $messengers the message type says it can be used with.
+		$used_with = $message_type->with_messengers();
+
+		foreach ( $used_with as $generating_msgr => $secondary_msgrs ) {
+			if ( $messenger->name == $generating_msgr && isset( $this->_active_message_types[$generating_msgr][$message_type->name] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	/**
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
-	 * @param  array  $vars    Data being sent for parsing in the message
-	 * @return void
+	 * @param  mixed  $vars    Data being sent for parsing in the message
+	 * @param  string $sending_messenger if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
+	 * @param string $generating_messenger if included then this messenger is used for generating the message templates (but not for sending).
+	 * @param string $context If included then only a message type for a specific context will be generated.
+	  * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
+	 * @return bool
 	 */
-	public function send_message( $type, $vars ) {
-		$success = FALSE;
+	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $send = TRUE ) {
+
 		$error = FALSE;
+		$installed_message_types = $this->get_installed_message_types();
+		$debug_index = 'Messages: ' . $type;
+		foreach ( $vars as $var ) {
+			if ( method_exists( $var, 'ID' ) ) {
+				$debug_index = get_class( $var ) .  ': ' . $var->ID();
+				break;
+			} else if ( is_object( $var )) {
+				$debug_index = spl_object_hash( $var );
+			}
+		}
+		//EEH_Debug_Tools::log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	array(
+		//		'message_type' => $type,
+		//		'incoming_data' => $vars,
+		//		'sending_messenger' => $sending_messenger,
+		//		'generating_messenger' => $generating_messenger,
+		//		'context' => $context,
+		//		'send' => $send,
+		//		'installed_message_types' => $installed_message_types
+		//		),
+		//	false,
+		//	$debug_index
+		//);
+
 		// is that a real class ?
-		if ( isset(  $this->_installed_message_types[$type] ) ) {
-			// then send it
-			foreach ( $this->_active_messengers as $active_messenger ) {
+		if ( isset(  $installed_message_types[$type] ) ) {
+			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
+			if ( !empty ( $sending_messenger ) ) {
+				$generating_messenger =  !empty( $generating_messenger ) && !empty( $this->_active_messengers[$generating_messenger] ) ? $this->_active_messengers[$generating_messenger]: NULL;
+				$generating_messenger = empty( $generating_messenger ) && ! empty( $this->_active_messengers[$sending_messenger] ) ? $this->_active_messengers[$sending_messenger] : $generating_messenger;
 
-				//we ONLY continue if the given messenger has that message type active with it.
-				if ( !isset( $this->_active_message_types[$active_messenger->name][$type] ) )
+				if ( !$this->_is_generating_messenger_and_active( $generating_messenger, $installed_message_types[$type] ) ) {
 					return false;
-
-				// create message data
-				$messages = $this->_installed_message_types[$type];
-				$exit = $messages->set_messages( $vars, $active_messenger );
-
-				if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
-					//we've got an error so let's bubble up the error_object to be caught by caller.
-					//todo: would be better to just catch the errors and then return any aggregated errors later.
-					$error = TRUE;
-					continue;
 				}
+				$sending_messenger = ! empty( $this->_active_messengers[$sending_messenger] ) ? $this->_active_messengers[$sending_messenger] : NULL;
 
-				if ( $messages->count === 0 ) continue; //it is possible that the user has the messenger turned off for this type.
+				$context = !empty( $context ) ? $context : FALSE;
+				$success = $this->_send_message( $generating_messenger, $installed_message_types[$type], $vars, $sending_messenger, $context, $send );
+				if ( ! $send ) {
+					return $success; //returning generated EE_Messages objects
+				}
+			} else {
+				//no messenger sent so let's just loop through active messengers (this method is only acceptable for primary messengers)
+				$send_messages = array();
+				foreach ( $this->_active_messengers as $active_messenger ) {
 
-				//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.
-				//if ( $messages->count > 1000 ) ... do something
-				//else...
-				foreach ( $messages->messages as $message ) {
-					//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
-					$success = $active_messenger->send_message( $message );
+					//we ONLY continue if the given messenger is a primary messenger and is an active messenger for the given message type.  Otherwise we skip.
+					if ( ! $this->_is_generating_messenger_and_active( $active_messenger, $installed_message_types[$type] ) ) {
+						continue;
+					}
+
+					$success = $this->_send_message( $active_messenger, $installed_message_types[$type], $vars, $active_messenger );
 					if ( $success === FALSE  ) {
 						$error = TRUE;
+					} else {
+						$send_messages[] = $success;
 					}
 				}
-				unset($messages);
+
+				//EEH_Debug_Tools::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	array(
+				//		'message_type' => $type,
+				//		'active_messenger' => $this->_active_messengers,
+				//		'send_messages' => $send_messages,
+				//		'error' => $error
+				//		),
+				//	false,
+				//	$debug_index
+				//	);
+
+				//return generated EE_Messages objects?
+				if ( ! $send ) {
+					return $send_messages;
+				}
 			}
 		} else {
-			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		// add a success message
 		if ( ! $error ) {
-			EE_Error::add_success( sprintf( __( 'The %s message has been succesfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_success( sprintf( __( 'The %s message has been successfully sent.', 'event_espresso'), $installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
@@ -232,23 +410,25 @@ class EE_messages {
 	 */
 	public function preview_message( $type, $context, $messenger, $send = FALSE ) {
 
+		$installed_message_types = $this->get_installed_message_types();
+
 		//does the given type match an actual message type class.
-		if ( isset(  $this->_installed_message_types[$type] ) ) {
+		if ( isset(  $installed_message_types[$type] ) ) {
 			// valid messenger?
 			if ( isset( $this->_active_messengers[$messenger] ) ) {
 
-				//we ONLY continue if the given messenger has that message type active with it.
+				//we ONLY continue if the given messenger has that message type active with it (note previews only come from primary messengers so no need to check secondarys)
 				if ( !isset( $this->_active_message_types[$messenger][$type] ) )
 					return false;
 
-				$message = $this->_installed_message_types[$type];
+				$message = $installed_message_types[$type];
 				$messenger = $this->_active_messengers[$messenger];
 
 				//set data for preview
-				$message->set_messages( array(), $messenger, $context );
+				$message->set_messages( array(), $messenger, $context, TRUE );
 
 				//let's GET the message body from the messenger (instead of the normal send_message)
-				return $messenger->get_preview( $message->messages[0], $send );
+				return $messenger->get_preview( $message->messages[0], $message, $send );
 
 			} else {
 				EE_Error::add_error( sprintf( __('Messenger: %s does not exist', 'event_espresso'), $messenger ), __FILE__, __FUNCTION__, __LINE__ );
@@ -260,6 +440,88 @@ class EE_messages {
 			return FALSE;
 		}
 
+	}
+
+
+	/**
+	 *  Executes sending a message via the given sending messenger (but generated via the given generating messenger).
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param EE_messenger $generating_messenger The messenger used for generating messages
+	 * @param EE_message_type $message_type         The message type used for generating messages
+	 * @param mixed  $data                 Data provided for parsing shortcodes in message templates.
+	 * @param EE_messenger $sending_messenger    The messenger that will be used for SENDING the messages.
+	 * @param bool   $context              If provided, then a specific context for a given template will be sent.
+	 * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages std_Class objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
+	 *
+	 * @return mixed(bool|std_Class[])
+	 */
+	private function _send_message( EE_messenger $generating_messenger, EE_message_type $message_type, $data, EE_messenger $sending_messenger, $context = FALSE, $send = TRUE ) {
+		//can't even get started yo!
+		if ( $message_type === FALSE || is_wp_error( $message_type ) || $message_type->set_messages( $data, $generating_messenger, $context ) === FALSE ) {
+			return FALSE;
+		}
+		// if the generating messenger and the sending messengers are different...
+		// then are there any hooks that the generating messenger sets for the sending messenger (i.e. css file swap outs etc.)
+		if ( $sending_messenger != $generating_messenger ) {
+			$generating_messenger->do_secondary_messenger_hooks( $sending_messenger->name );
+		}
+		//it is possible that the user has the messenger turned off for this type.
+		if ( $message_type->count === 0 ) {
+			return FALSE;
+		}
+		//are we just sending the EE_Messages stdClass objects back?
+		if ( ! $send ) {
+			return $message_type->messages;
+		}
+		//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.
+		//if ( $message_type->count > 1000 ) ... do something
+		//else...
+		$success = TRUE;
+		// $success is a flag for the loop.  If there is NO error then everything is a success (true) otherwise it wasn't a success (false)
+		foreach ( $message_type->messages as $message ) {
+			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
+			// if messages send successfully then $success retains it's value, but a single fail will toggle it to FALSE
+			$success = $sending_messenger->send_message( $message, $message_type ) === TRUE ? $success : FALSE;
+		}
+		unset( $message_type );
+		return $success;
+	}
+
+
+
+
+
+	/**
+	 * This is a method that allows for sending a message using a messenger matching the string given and the provided EE_Message stdClass objects.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string       $messenger a string matching a valid active messenger in the system
+	 * @param string       $message_type   Although it seems contrary to the name of the method, a message type name is still required to send along the message type to the messenger because this is used for determining what specific variations might be loaded for the generated message.
+	 * @param stdClass $messages  a stdClass object in the format expected by the messenger.
+	 *
+	 * @return bool          success or fail.
+	 */
+	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
+
+		//get EE_messenger object (which also checks if its active)
+		$msgr =  !empty( $messenger ) && !empty( $this->_active_messengers[$messenger] ) ? $this->_active_messengers[$messenger]: NULL;
+		$installed_message_types = $this->get_installed_message_types();
+
+		if ( ! $msgr instanceof EE_messenger ) {
+			return false; //can't do anything without a valid messenger.
+		}
+
+		//check valid message type
+		$mtype = isset(  $installed_message_types[$message_type] ) ? $installed_message_types[$message_type] : NULL;
+
+		if( ! $mtype instanceof EE_message_type ) {
+			return false; //can't do anything without a valid message type.
+		}
+
+		return $msgr->send_message( $message, $mtype );
 	}
 
 
@@ -277,6 +539,7 @@ class EE_messages {
 
 		$message_type = strtolower(str_replace(' ', '_', $message_type) );
 		$messenger = strtolower(str_replace(' ', '_', $messenger));
+		$installed_message_types = $this->get_installed_message_types();
 
 
 		//setup messenger and message_type object
@@ -284,7 +547,7 @@ class EE_messages {
 
 
 		//message type
-		$mt = isset($this->_installed_message_types[$message_type]) ? $this->_installed_message_types[$message_type] : 'message_type_not_existent';
+		$mt = isset($installed_message_types[$message_type]) ? $installed_message_types[$message_type] : 'message_type_not_existent';
 
 		$this->_message_type = is_object($mt) ? $mt : null;
 
@@ -337,23 +600,7 @@ class EE_messages {
 		if ( ! $is_global )
 			return $this->_create_custom_template_group( $GRP_ID );
 
-		//assemble class name
-		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
-		$messenger = str_replace( ' ', '_', $messenger );
-		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
-		$message_type = str_replace( ' ', '_', $message_type );
-		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
-
-		//next we need to see if the defaults class exists
-		if ( !class_exists( $classname ) ) {
-			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
-			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso'), $classname );
-			throw new EE_Error( implode('||', $msg ) );
-		}
-
-		//if we've made it this far we have the class so let's instantiate
-		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this, $GRP_ID );
+		$DFLT = new EE_Message_Template_Defaults( $this, $this->_messenger->name, $this->_message_type->name, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();
@@ -408,6 +655,8 @@ class EE_messages {
 
 		$new_mtg->set('MTP_name', $template_name );
 		$new_mtg->set('MTP_description', $template_description );
+		//remove ALL relations on this template group so they don't get saved!
+		$new_mtg->_remove_relations( 'Message_Template' );
 		$new_mtg->save();
 		$success['GRP_ID'] = $new_mtg->ID();
 		$success['template_name'] = $template_name;
@@ -464,22 +713,31 @@ class EE_messages {
 	 *
 	 * @access public
 	 * @param string $type we can indicate just returning installed message types or messengers (or both) via this parameter.
+	 * @param bool  $set if true then we skip the cache and retrieve via files.
 	 * @return array multidimensional array of messenger and message_type objects (messengers index, and message_type index);
 	 */
-	public function get_installed( $type = 'all' ) {
+	public function get_installed( $type = 'all', $skip_cache = false ) {
 		$installed = array();
 
-		$message_base = EE_LIBRARIES . "messages" . DS;
+		//first let's account for caching
+		if ( $skip_cache ) {
+			$message_base = EE_LIBRARIES . "messages" . DS;
 
-		$messenger_files = $type == 'all' || $type == 'messengers' ? scandir( $message_base . "messenger", 1) : NULL;
-		$messagetype_files = $type == 'all' || $type == 'message_types' ? scandir( $message_base . "message_type", 1) : NULL;
+			$messenger_files = $type == 'all' || $type == 'messengers' ? scandir( $message_base . "messenger", 1) : NULL;
+			$messagetype_files = $type == 'all' || $type == 'message_types' ? scandir( $message_base . "message_type", 1) : NULL;
 
-		//allow plugins to filter in their messenger/message_type files
-		$messenger_files = apply_filters('FHEE__EE_messages__get_installed__messenger_files', $messenger_files, $type );
-		$messagetype_files = apply_filters('FHEE__EE_messages__get_installed__messagetype_files', $messagetype_files, $type );
 
-		$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
-		$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
+			//allow plugins to filter in their messenger/message_type files
+			$messenger_files = apply_filters('FHEE__EE_messages__get_installed__messenger_files', $messenger_files, $type );
+			$messagetype_files = apply_filters('FHEE__EE_messages__get_installed__messagetype_files', $messagetype_files, $type );
+
+			$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
+			$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
+		} else {
+			$installed['messengers'] = $this->get_installed_messengers();
+			$installed['message_types'] = $this->get_installed_message_types();
+		}
+
 
 		if ( $type != 'all' ) {
 			$installed = $type == 'messengers' ? $installed['messengers'] : $installed['message_types'];
@@ -507,7 +765,8 @@ class EE_messages {
 
 			//note: I'm not sure if this will work without including the file.  We do have autoloaders so it "may" work.
 			$a = new ReflectionClass($classname);
-			$the_goods[] = $a->newInstance();
+			$obj = $a->newInstance();
+			$the_goods[$obj->name] = $obj;
 		}
 		return $the_goods;
 	}
@@ -535,8 +794,64 @@ class EE_messages {
 		return $message_types;
 	}
 
+
+
+
+	/**
+	 * This checks the _active_message_types property for any active message types that are present for the given messenger and returns them.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $messenger The messenger being checked
+	 *
+	 * @return EE_message_type[]    (or empty array if none present)
+	 */
+	public function get_active_message_types_per_messenger( $messenger ) {
+		$messenger = (string) $messenger;
+		if ( empty( $this->_active_message_types[$messenger] ) ) {
+			return array();
+		}
+
+		$mts = array();
+		$message_types = $this->_active_message_types[$messenger];
+		$installed_message_types = $this->get_installed_message_types();
+		foreach ( $message_types as $mt => $settings ) {
+			if ( ! empty( $installed_message_types[$mt] ) )  {
+				$mts[] = $installed_message_types[$mt];
+			}
+		}
+		return $mts;
+	}
+
+
+	/**
+	 * This returns the EE_message_type from the active message types array ( if present );
+	 *
+	 * @param string $messenger      The string should correspond to the messenger (message types are
+	 *                               		    assigned to a messenger in the messages settings)
+	 * @param string $message_type The string should correspond to a message type.
+	 *
+	 * @return EE_Message_Type|null
+	 */
+	public function get_active_message_type( $messenger, $message_type ) {
+		$installed_message_types = $this->get_installed_message_types();
+		if ( !empty( $this->_active_message_types[$messenger][$message_type] ) && !empty( $installed_message_types[$message_type] ) )  {
+			return $installed_message_types[$message_type];
+		}
+		return NULL;
+	}
+
+
+
 	public function get_installed_message_types() {
+		$this->_installed_message_types = empty( $this->_installed_message_types ) ? $this->get_installed( 'message_types', true ) : $this->_installed_message_types;
 		return $this->_installed_message_types;
+	}
+
+
+	public function get_installed_messengers() {
+		$this->_installed_messengers = empty( $this->_installed_messengers ) ? $this->get_installed( 'messengers', true ) : $this->_installed_messengers;
+		return $this->_installed_messengers;
 	}
 }
 //end EE_messages class

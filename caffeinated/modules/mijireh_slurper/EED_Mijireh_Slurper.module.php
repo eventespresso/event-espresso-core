@@ -17,12 +17,12 @@
  * mijireh gateway functions independently of whether this module is active).
  * When a special admin page is requested, adds a wp page for slurping, and adds
  * a metabox to that page for easy slurping.
- * Everything relating to slurping is in this file, except for some help tab content, 
+ * Everything relating to slurping is in this file, except for some help tab content,
  * which is contained in admin_pages/payments/help_tabs/...mijireh.help_tab.php
  *
  * @package			Event Espresso
  * @subpackage	/modules/csv/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -70,8 +70,8 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 * Adds the slurping content to the gateway's settings page, because I thought this was best suited to remain in the module's code (because
 	 * the gateway works fine independent of this module)
 	 */
-	public static function add_slurp_link_to_gateway(){
-		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array() );
+	public static function add_slurp_link_to_gateway($existing_content){
+		echo EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array(),true ) . $existing_content;
 	}
 	public static function slurping_in_progress_notice(){
 		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/slurping_in_progress_notice.template.php', array() );
@@ -94,7 +94,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 						'post_content'=>  EED_Mijireh_Slurper::mijireh_slurper_shortcode,
 						'post_type'=>'page'
 					)
-				);			
+				);
 			}
 			wp_redirect(add_query_arg(array('post'=>$slurp_page_id,'action'=>'edit'),admin_url('post.php')));
 		}
@@ -111,7 +111,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 
 	/**
 	* Return true if the current page is the mijireh checkout page, otherwise return false.
-	* 
+	*
 	* @return boolean
 	*/
 	public static function is_slurp_page() {
@@ -133,16 +133,16 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	* adds the callback to adding the slurp page metabox, which shoudl only appear on a page with the {{mj-checkout-form}} "shortcode"
 	* @return void
 	*/
-	public static function add_slurp_page_metabox() { 
-		if(self::is_slurp_page() && EEM_Gateways::instance()->get_gateway('Mijireh')){
-			add_meta_box( 
-				'slurp_meta_box', // $id  
-				'Mijireh Page Slurp', // $title  
-				array('EED_Mijireh_Slurper', 'slurp_page_metabox'), // $callback  
-				'page', // $page  
-				'normal', // $context  
+	public static function add_slurp_page_metabox() {
+		if(self::is_slurp_page() && EEM_Payment_Method::instance()->get_one_active( EEM_Payment_Method::scope_cart, array( array( 'PMD_type' => 'Mijireh' ) ) ) ){
+			add_meta_box(
+				'slurp_meta_box', // $id
+				'Mijireh Page Slurp', // $title
+				array('EED_Mijireh_Slurper', 'slurp_page_metabox'), // $callback
+				'page', // $page
+				'normal', // $context
 				'high'
-			); // $priority  
+			); // $priority
 		}
 	}
 
@@ -153,16 +153,15 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	*/
 	public static function slurp_page_metabox($post) {
 	   global $wp;
-	   $mijireh_gateway = EEM_Gateways::instance()->get_gateway('Mijireh');
-	   if($mijireh_gateway){
-		$settings = $mijireh_gateway->settings();
-		$access_key = $settings['access_key'];
+	   $mijireh_payment_method = EEM_Payment_Method::instance()->get_one_of_type( 'Mijireh' );
+	   if( $mijireh_payment_method ){
+		$access_key = $mijireh_payment_method->get_extra_meta( 'access_key', TRUE );
 		EEH_Template::display_template(
-			EED_MIJIREH_SLURPER_PATH.'templates/mijireh_slurp_page_metabox.template.php', 
+			EED_MIJIREH_SLURPER_PATH.'templates/mijireh_slurp_page_metabox.template.php',
 			 array(
-				 'mijireh_image_url'=>EE_GATEWAYS_URL.'Mijireh/lib/mijireh-checkout-logo.png',
+				 'mijireh_image_url'=> $mijireh_payment_method->button_url(),
 				 'access_key'=>$access_key,
-				 'slurp_action_link'=> add_query_arg('mijireh_slurp_now','true',add_query_arg( $wp->query_string, '',  '?'.$_SERVER['QUERY_STRING'] ))
+				 'slurp_action_link'=> esc_url_raw( add_query_arg('mijireh_slurp_now','true', add_query_arg( $wp->query_string, '',  '?'.$_SERVER['QUERY_STRING'] )))
 			 )
 		 );
 	   }
@@ -191,11 +190,8 @@ class EED_Mijireh_Slurper  extends EED_Module {
 			$post->post_status = 'publish';
 			wp_update_post($post);
 		}
-		$mijireh_gateway = EEM_Gateways::instance()->get_gateway('Mijireh');
-		$mijireh_settings = $mijireh_gateway->settings();
-		// $return_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
-		// 'mijireh_url'=>'https://secure.mijireh.com/api/1/slurps',
-		$access_key = $mijireh_settings['access_key'];
+		$mijireh_gateway = EEM_Payment_Method::instance()->get_one_of_type( 'Mijireh' );
+		$access_key = $mijireh_gateway->get_extra_meta( 'access_key', TRUE );
 		// 'slurp_url'=>get_permalink($post),
 		// 'page_id'=>$post->ID,
 		// 'return_url'=>$return_url
@@ -222,7 +218,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 		// echo "redirect to $url";
 		wp_redirect($url);
 	}
-	
+
 	/**
 	 * 	run - initial module setup
 	 *

@@ -1,0 +1,42 @@
+/*
+Tranquility Invoice Template
+Created by Roan Lavery
+18/02/08
+*/
+
+
+/*=========================== TYPOGRAPHY =========================*/
+
+#invoice {font-family: Georgia, "Times New Roman", Times, serif; color: #6C8597;line-height:1.4}
+#invoice h1 {margin: 0;color: #000;text-transform: uppercase;}
+#invoice h2, #Main #invoice h3 {font-family: Georgia, "Times New Roman", Times, serif; color:#000; text-transform: none; line-height:1.2;margin-top:9px}
+#invoice h2 {font-size:11pt}
+#company-address, #client-details, #payment-details, #invoice-other, .invoice-amount td, th,  #invoice-info {font-size:10pt}
+.org, .fn, #bank_name{text-transform:capitalize;font-variant: small-caps; font-weight:bold; letter-spacing:0.07em; color:#5F7C91}
+#payment-details strong, #invoice-other strong{font-weight:normal; color:#666}
+#payment-details h2, #invoice-other h2{font-variant: small-caps;letter-spacing:0.07em; color:#6C8597 }
+#client-details{color:#5F7C91}
+#invoice #invoice-info h2 {margin-bottom: 0px; text-transform:capitalize;font-variant: small-caps; font-size:14pt; color:#5F7C91; font-weight:normal;letter-spacing:0.1em}
+#invoice #invoice-info h3 {margin:0 !important;color:#7F99AB;font-weight:normal;font-size:10pt;}
+#invoice #payment-due{color:#999;font-weight:normal; font-size:10pt}
+#invoice #invoice-info, #invoice #invoice-info p{text-align:right}
+#invoice-info #payment-total{display:none}
+#comments {font-weight:normal; color:#888; font-size:9pt; text-align:center;}
+#bank_name{color:#666}
+
+/*=========================== LAYOUT =========================*/
+
+#invoice{ padding:1cm; background: #fff url(../images/ripple.jpg) 0px 120px no-repeat;  }
+#invoice-header{padding-top:1cm; }
+#invoice-info { margin:10px 0 20px 0 }
+#invoice-info th{text-align:right}
+#company-address { width:300px; text-align:right; margin-top:10px }
+
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
+
+.invoice-amount {margin: 1em 0; clear: both; }
+
+#payment-details{width:250px; float:left;  }
+#invoice-other{width:350px;clear:both; float:right; text-align:right;  }
+
+#comments{clear:both; padding-top:1cm}

@@ -46,8 +46,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 * Back-end widget form.
 	 *
 	 * @see WP_Widget::form()
-	 *
 	 * @param array $instance Previously saved values from database.
+	 * @return string|void
 	 */
 	public function form( $instance ) {
 
@@ -60,7 +60,10 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			'show_expired' => FALSE,
 			'show_desc' => TRUE,
 			'show_dates' => TRUE,
+			'show_everywhere' => FALSE,
+			'date_limit' => 2,
 			'limit' => 10,
+			'date_range' => FALSE,
 			'image_size' => 'medium'
 		);
 
@@ -68,8 +71,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		// don't add HTML labels for EE_Form_Fields generated inputs
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$yes_no_values = array(
-			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
-			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
+			EE_Question_Option::new_instance( array( 'QSO_value' => FALSE, 'QSO_desc' => __('No', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => TRUE, 'QSO_desc' => __('Yes', 'event_espresso')))
 		);
 
 	?>
@@ -88,9 +91,14 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			</label>
 			<?php
 			$event_categories = array();
-			if ( $categories = EE_Registry::instance()->load_model( 'Term' )->get_all_ee_categories( TRUE )) {
+			/** @type EEM_Term $EEM_Term */
+			$EEM_Term = EE_Registry::instance()->load_model( 'Term' );
+			$categories = $EEM_Term->get_all_ee_categories( TRUE );
+			if ( $categories ) {
 				foreach ( $categories as $category ) {
-					$event_categories[] = EE_Question_Option::new_instance( array( 'QSO_value' => $category->get( 'slug' ), 'QSO_desc' => $category->get( 'name' )));
+					if ( $category instanceof EE_Term ) {
+						$event_categories[] = EE_Question_Option::new_instance( array( 'QSO_value' => $category->get( 'slug' ), 'QSO_desc' => $category->get( 'name' )));
+					}
 				}
 			}
 			array_unshift( $event_categories, EE_Question_Option::new_instance( array( 'QSO_value' => '', 'QSO_desc' => __(' - display all - ', 'event_espresso'))));
@@ -129,7 +137,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			</label>
 			<?php
 			$image_sizes = array();
-			if ( $sizes = get_intermediate_image_sizes() ) {
+			$sizes = get_intermediate_image_sizes();
+			if ( $sizes ) {
 				// loop thru images and create option objects out of them
 				foreach ( $sizes as $image_size ) {
 					$image_size = trim( $image_size );
@@ -178,6 +187,40 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			);
 			?>
 		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('show_everywhere'); ?>">
+		        <?php _e('Show on all Pages:', 'event_espresso'); ?>
+			</label>
+	 	    <?php
+	 	    echo EEH_Form_Fields::select(
+	 	        __('Show on all Pages:', 'event_espresso'),
+	 	        $instance['show_everywhere'],
+	 	        $yes_no_values,
+	 	        $this->get_field_name('show_everywhere'),
+	 	        $this->get_field_id('show_everywhere')
+	 	    );
+	 	    ?>
+	 	</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('date_limit'); ?>">
+				<?php _e('Number of Dates to Display:', 'event_espresso'); ?>
+			</label>
+			<input id="<?php echo $this->get_field_id('date_limit'); ?>" name="<?php echo $this->get_field_name('date_limit'); ?>" value="<?php echo esc_attr( $instance['date_limit'] ); ?>" size="3" type="text" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('date_range'); ?>">
+				<?php _e('Show Date Range:', 'event_espresso'); ?>
+			</label>
+			<?php
+			echo EEH_Form_Fields::select(
+				 __('Show Date Range:', 'event_espresso'),
+				$instance['date_range'],
+				$yes_no_values,
+				$this->get_field_name('date_range'),
+				$this->get_field_id('date_range')
+			);
+			?><span class="description"><br /><?php _e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
+		</p>
 
 		<?php
 	}
@@ -203,6 +246,9 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		$instance['image_size'] = $new_instance['image_size'];
 		$instance['show_desc'] = $new_instance['show_desc'];
 		$instance['show_dates'] = $new_instance['show_dates'];
+		$instance['show_everywhere'] = $new_instance['show_everywhere'];
+		$instance['date_limit'] = $new_instance['date_limit'];
+		$instance['date_range'] = $new_instance['date_range'];
 		return $instance;
 	}
 
@@ -221,14 +267,29 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		global $post;
 		// make sure there is some kinda post object
 		if ( $post instanceof WP_Post ) {
+			$before_widget = '';
+			$before_title = '';
+			$after_title = '';
+			$after_widget = '';
 			// but NOT an events archives page, cuz that would be like two event lists on the same page
-			if ( ! ( $post->post_type == 'espresso_events' && is_archive() )) {
+			$show_everywhere = isset( $instance['show_everywhere'] ) ? (bool) absint( $instance['show_everywhere'] ) : TRUE;
+			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {	
 				// let's use some of the event helper functions'
 				EE_Registry::instance()->load_helper( 'Event_View' );
 				// make separate vars out of attributes
+
+
 				extract($args);
+
+				// add function to make the title a link
+	            add_filter('widget_title', array($this, 'make_the_title_a_link'), 15);
+
 				// filter the title
 				$title = apply_filters('widget_title', $instance['title']);
+
+				// remove the function from the filter, so it does not affect other widgets
+	            remove_filter('widget_title', array($this, 'make_the_title_a_link'), 15);
+
 				// Before widget (defined by themes).
 				echo $before_widget;
 				// Display the widget title if one was input (before and after defined by themes).
@@ -241,6 +302,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				$image_size = isset( $instance['image_size'] ) && ! empty( $instance['image_size'] ) ? $instance['image_size'] : 'medium';
 				$show_desc = isset( $instance['show_desc'] ) ? (bool) absint( $instance['show_desc'] ) : TRUE;
 				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
+				$date_limit = isset( $instance['date_limit'] ) && ! empty( $instance['date_limit'] ) ? $instance['date_limit'] : NULL;
+				$date_range = isset( $instance['date_range'] ) && ! empty( $instance['date_range'] ) ? $instance['date_range'] : FALSE;
 				// start to build our where clause
 				$where = array(
 //					'Datetime.DTT_is_primary' => 1,
@@ -267,30 +330,39 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				if ( ! empty( $events )) {
 					echo '<ul class="ee-upcoming-events-widget-ul">';
 					foreach ( $events as $event ) {
-						if ( $event instanceof EE_Event && $post->ID != $event->ID() ) {
+						if ( $event instanceof EE_Event && ( !is_single() || $post->ID != $event->ID() ) ) {
 							//printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							echo '<li id="ee-upcoming-events-widget-li-' . $event->ID() . '" class="ee-upcoming-events-widget-li">';
 							// how big is the event name ?
 							$name_length = strlen( $event->name() );
 							switch( $name_length ) {
 								case $name_length > 70 :
-									$len_class =  'three-line';
+									$len_class =  ' three-line';
 									break;
 								case $name_length > 35 :
-									$len_class =  'two-line';
+									$len_class =  ' two-line';
 									break;
 								default :
-									$len_class =  'one-line';
+									$len_class =  ' one-line';
 							}
-							echo '<a class="ee-widget-event-name-a" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a>';
+							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
-								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
+								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
 							}
+							$desc = $event->short_description( 25 );
 							if ( $show_dates ) {
-								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
+								$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', get_option( 'date_format' ));
+								$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', get_option( 'time_format' ));
+								$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', get_option( 'date_format' ));
+								$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', get_option( 'time_format' ));
+								if ( $date_range == TRUE ) {
+									echo espresso_event_date_range( $date_format, $time_format, $single_date_format, $single_time_format, $event->ID() );
+								}else{
+									echo espresso_list_of_event_dates( $event->ID(), $date_format, $time_format, FALSE, NULL, TRUE, TRUE, $date_limit );
+								}
 							}
-							if ( $show_desc && $desc = $event->short_description( 25 )) {
-								echo  '<p>' . $desc . '</p>';
+							if ( $show_desc && $desc ) {
+								echo '<p style="margin-top: .5em">' . $desc . '</p>';
 							}
 							echo '</li>';
 						}
@@ -301,6 +373,19 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				echo $after_widget;
 			}
 		}
+	}
+
+
+
+	/**
+	 * make_the_title_a_link
+	 * callback for widget_title filter
+	 *
+	 * @param $title
+	 * @return string
+	 */
+	public function make_the_title_a_link($title) {
+	    return '<a href="' . EEH_Event_View::event_archive_url() . '">' . $title . '</a>';
 	}
 
 }

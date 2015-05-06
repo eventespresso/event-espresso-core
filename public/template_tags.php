@@ -570,12 +570,12 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 		$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );
 		$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', $single_time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$the_event_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_event_date( $date_format, $time_format, $EVT_ID )));
-		$the_event_end_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_event_end_date( $date_format, $time_format, $EVT_ID )));
+		$the_event_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID )));
+		$the_event_end_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )));
 		if ( $the_event_date != $the_event_end_date ) {
-			echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_event_end_date( $date_format, $time_format, $EVT_ID )));
+			echo $the_event_date . __( ' - ', 'event_espresso' ) . $the_event_end_date;
 		} else {
-			echo date_i18n( $single_date_format . ' ' . $single_time_format, strtotime( EEH_Event_View::the_event_date( $single_date_format, $single_time_format, $EVT_ID )));
+			echo $the_event_date;
 		}
 	}
 }
@@ -704,10 +704,10 @@ if ( ! function_exists( 'espresso_organization_name' )) {
 	 */
 	function espresso_organization_name($echo = TRUE) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->name;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'name' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->name;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'name' );
 	}
 }
 
@@ -742,10 +742,10 @@ if ( ! function_exists( 'espresso_organization_email' )) {
 	 */
 	function espresso_organization_email( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->email;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'email' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->email;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'email' );
 	}
 }
 
@@ -757,10 +757,10 @@ if ( ! function_exists( 'espresso_organization_logo_url' )) {
 	 */
 	function espresso_organization_logo_url( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->logo_url;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'logo_url' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->logo_url;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'logo_url' );
 	}
 }
 
@@ -772,10 +772,10 @@ if ( ! function_exists( 'espresso_organization_facebook' )) {
 	 */
 	function espresso_organization_facebook( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->facebook;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'facebook' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->facebook;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'facebook' );
 	}
 }
 
@@ -787,10 +787,10 @@ if ( ! function_exists( 'espresso_organization_twitter' )) {
 	 */
 	function espresso_organization_twitter( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->twitter;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'twitter' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->twitter;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'twitter' );
 	}
 }
 
@@ -802,10 +802,10 @@ if ( ! function_exists( 'espresso_organization_linkedin' )) {
 	 */
 	function espresso_organization_linkedin( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->linkedin;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'linkedin' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->linkedin;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'linkedin' );
 	}
 }
 
@@ -817,10 +817,10 @@ if ( ! function_exists( 'espresso_organization_pinterest' )) {
 	 */
 	function espresso_organization_pinterest( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->pinterest;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'pinterest' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->pinterest;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'pinterest' );
 	}
 }
 
@@ -832,10 +832,10 @@ if ( ! function_exists( 'espresso_organization_google' )) {
 	 */
 	function espresso_organization_google( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->google;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'google' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->google;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'google' );
 	}
 }
 
@@ -847,10 +847,10 @@ if ( ! function_exists( 'espresso_organization_instagram' )) {
 	 */
 	function espresso_organization_instagram( $echo = TRUE ) {
 		if($echo){
-			echo EE_Registry::instance()->CFG->organization->instagram;
+			echo EE_Registry::instance()->CFG->organization->get_pretty( 'instagram' );
 			return '';
 		}
-		return EE_Registry::instance()->CFG->organization->instagram;
+		return EE_Registry::instance()->CFG->organization->get_pretty( 'instagram' );
 	}
 }
 
@@ -887,6 +887,23 @@ if ( ! function_exists( 'espresso_venue_id' )) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		$venue = EEH_Venue_View::get_venue( $EVT_ID );
 		return $venue instanceof EE_Venue ? $venue->ID() : 0;
+	}
+}
+
+
+
+if ( ! function_exists( 'espresso_is_venue_private' ) ) {
+	/**
+	 * Return whether a venue is private or not.
+	 * @see EEH_Venue_View::get_venue() for more info on expected return results.
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 *
+	 * @return bool | null
+	 */
+	function espresso_is_venue_private( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::is_venue_private( $VNU_ID );
 	}
 }
 
@@ -1118,8 +1135,9 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 	/**
 	 * espresso_edit_venue_link
 	 *
-	 * @param int  $VNU_ID
+	 * @param int $VNU_ID
 	 * @param bool $echo
+	 * @return string
 	 */
 	function espresso_edit_venue_link( $VNU_ID = 0, $echo = TRUE ) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );

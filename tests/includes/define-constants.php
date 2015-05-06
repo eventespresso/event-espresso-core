@@ -11,6 +11,7 @@ define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( __FILE__ ) ) ) . '/' );
 
 if ( ! defined( 'EE_TESTS_DIR' ) ) {
 	define( 'EE_TESTS_DIR', dirname( dirname( __FILE__ ) ) . '/' );
+	define( 'EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/' );
 }
 
 /**

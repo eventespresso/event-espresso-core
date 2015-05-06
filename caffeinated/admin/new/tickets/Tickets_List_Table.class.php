@@ -30,11 +30,11 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;		
+		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;
 		$this->_data = $this->_admin_page->get_default_tickets( $this->_per_page, FALSE, $trashed );
 		$this->_all_data_count = $this->_admin_page->get_default_tickets( $this->_per_page, TRUE, FALSE );
 		$this->_trashed_count = $this->_admin_page->get_default_tickets( $this->_per_page, TRUE, TRUE );
-	}	
+	}
 
 
 
@@ -72,7 +72,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
         $this->_hidden_columns = array(
 			);
-			
+
 	}
 
 
@@ -86,8 +86,9 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_all_data_count;		
-		$this->_views['trashed']['count'] = $this->_trashed_count;		
+		$this->_views['all']['count'] = $this->_all_data_count;
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_tickets', 'trash_ticket'))
+		$this->_views['trashed']['count'] = $this->_trashed_count;
 	}
 
 
@@ -107,14 +108,14 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 		if ( $item->ID() !== 1 ) {
 			if ( $this->_view == 'all' ) {
 				$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'trash_ticket', 'TKT_ID' => $item->ID() ), TICKETS_ADMIN_URL );
-				$actions['trash'] = '<a href="' . $trash_lnk_url . '" title="' . __('Move Ticket to trash', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+				$actions['trash'] = '<a href="' . $trash_lnk_url . '" title="' . esc_attr__('Move Ticket to trash', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 			} else {
 				// restore price link
 				$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_ticket', 'TKT_ID'=>$item->ID() ), TICKETS_ADMIN_URL );
-				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Ticket', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . esc_attr__( 'Restore Ticket', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 				// delete price link
 				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_ticket', 'TKT_ID'=>$item->ID() ), TICKETS_ADMIN_URL );
-				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Ticket Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
+				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . esc_attr__( 'Delete Ticket Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 			}
 		}
 

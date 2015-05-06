@@ -29,32 +29,7 @@ require_once ( EE_CLASSES . 'EE_Checkin.class.php' );
 class EEM_Checkin extends EEM_Base {
 
 	// private instance of the EEM_Checkin object
-	private static $_instance = NULL;
-
-
-
-	/**
-	 * 		This function is a singleton method used to instantiate the EEM_Checkin object
-	 *
-	 * 		@access public
-	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return EEM_Checkin instance
-	 */
-	public static function instance( $timezone = NULL ) {
-
-		// check if instance of EEM_Checkin already exists
-		if (self::$_instance === NULL) {
-			// instantiate Price_model
-			self::$_instance = new self( $timezone );
-		}
-
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
-		
-		// EEM_Checkin object
-		return self::$_instance;
-	}
+	protected static $_instance = NULL;
 
 
 
@@ -65,9 +40,9 @@ class EEM_Checkin extends EEM_Base {
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * 		@return void
 	 */
-	protected function __construct( $timezone ) {
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Check-In','event_espresso');
-		$this->plural_item = __('Check-Ins','event_espresso');		
+		$this->plural_item = __('Check-Ins','event_espresso');
 
 		$this->_tables = array(
 			'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')
@@ -85,6 +60,7 @@ class EEM_Checkin extends EEM_Base {
 			'Registration'=>new EE_Belongs_To_Relation(),
 			'Datetime'=>new EE_Belongs_To_Relation()
 		);
+		$this->_model_chain_to_wp_user = 'Registration.Event';
 		parent::__construct( $timezone );
 
 	}

@@ -97,20 +97,30 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
+		$qst_id = ! empty( $this->_req_data['QST_ID'] ) ? $this->_req_data['QST_ID'] : 0;
 		$this->_page_routes = array(
-
-			'default' => '_questions_overview_list_table',
+			'default' => array(
+				'func' => '_questions_overview_list_table',
+				'capability' => 'ee_read_questions'
+				),
 
 			'edit_question' => array(
 				'func' => '_edit_question',
+				'capability' => 'ee_edit_question',
+				'obj_id' => $qst_id,
 				'args' => array('edit')
 				),
 
-			'question_groups' => '_questions_groups_preview',
+			'question_groups' => array(
+				'func' => '_questions_groups_preview',
+				'capability' => 'ee_read_question_groups'
+				),
 
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
+				'capability' => 'ee_edit_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE,
 				),
 			);
@@ -128,7 +138,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
                 'help_tabs' => array(
 					'registration_form_questions_overview_help_tab' => array(
 						'title' => __('Questions Overview', 'event_espresso'),
@@ -155,7 +165,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
@@ -173,7 +183,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_edit_question_group_help_tab' => array(
 						'title' => __('Edit Question', 'event_espresso'),
@@ -266,16 +276,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 //				'bulk_action' => array(
 //					'trash_questions' => __('Trash', 'event_espresso'),
 //					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 //				'bulk_action' => array(
 //					'delete_questions' => __('Delete Permanently', 'event_espresso'),
 //					'restore_questions' => __('Restore', 'event_espresso'),
-				)
-		);
+				);
+		}
 	}
 
 	/**
@@ -284,7 +297,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _questions_groups_preview() {
 		$this->_admin_page_title = __('Question Groups (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="Preview Question Groups Overview List Table screenshot" />';
+		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="' . esc_attr__( 'Preview Question Groups Overview List Table screenshot', 'event_espresso' ) . '" />';
 		$this->_template_args['preview_text'] = '<strong>'.__( 'Question Groups is a feature that is only available in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups.', 'event_espresso' ).'</strong>';
 		$this->display_admin_caf_preview_page( 'question_groups_tab' );
 	}
@@ -412,7 +425,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				//get list of all options
 			$question=$this->_question_model->get_one_by_ID($ID);
 			$options=$question->options();
-			if(!empty($options)){
+			if(! empty($options)){
 				foreach($options as $option_ID=>$option){
 					$option_req_index=$this->_get_option_req_data_index($option_ID);
 					if($option_req_index!==FALSE){
@@ -425,8 +438,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 			//save new related options
 			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
-					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
+				if( empty($option_req_data['QSO_ID'] ) && (  ( isset( $option_req_data['QSO_value'] ) && $option_req_data['QSO_value'] !== '' ) || ! empty( $option_req_data['QSO_desc'] ) ) ) {//no ID! save it!
+					if( ! isset( $option_req_data['QSO_value'] ) || $option_req_data['QSO_value'] === ''  ){
 						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}
 					$new_option=EE_Question_Option::new_instance( array( 'QSO_value' => $option_req_data['QSO_value'], 'QSO_desc' => $option_req_data['QSO_desc'], 'QSO_order' => $option_req_data['QSO_order'], 'QST_ID' => $question->ID()));
@@ -501,6 +514,37 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
+		//capability checks (just leaving this commented out for reference because it illustrates some complicated query params that could be useful when fully implemented)
+		/*if ( $model instanceof EEM_Question_Group ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'espresso_registration_form_edit_question_group' ) ) {
+				$query_params[0] = array(
+					'AND' => array(
+						'OR' => array(
+							'QSG_system' => array( '>', 0 ),
+							'AND' => array(
+								'QSG_system' => array( '<', 1 ),
+								'QSG_wp_user' => get_current_user_id()
+								)
+							)
+						)
+					);
+			}
+		} else {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'espresso_registration_form_edit_question' ) ) {
+				$query_params[0] = array(
+					'AND' => array(
+						'OR' => array(
+							'QST_system' => array( '!=', '' ),
+							'AND' => array(
+								'QST_system' => '',
+								'QST_wp_user' => get_current_user_id()
+								)
+							)
+						)
+					);
+			}
+		}/**/
+
 		return $query_params;
 
 	}
@@ -564,7 +608,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? $this->_display_nice( EE_Registry::instance()->CFG->registration->recaptcha_theme ) : 'clean';
+		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->display_nice( 'recaptcha_theme' ) : 'clean';
 
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),

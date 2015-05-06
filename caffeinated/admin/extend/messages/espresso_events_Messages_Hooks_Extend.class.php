@@ -31,6 +31,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
 
 	public function __construct( EE_Admin_Page $adminpage ) {
+		/**
+		 * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
+		 */
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'messages_events_editor_metabox' ) ) {
+			return;
+		}
 		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
 		parent::__construct( $adminpage );
 	}
@@ -42,6 +48,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return void
 	 */
 	protected function _extend_properties() {
+
 		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
 		$this->_ajax_func = array(
 			'ee_msgs_create_new_custom' => 'create_new_custom'
@@ -134,7 +141,17 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+			//first check if there are any active message types for this messenger.
+			$active_mts = $EEM_controller->get_active_message_types_per_messenger( $name );
+			if ( empty( $active_mts ) ) {
+				continue;
+			}
+
+			$tcont = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+
+			if ( ! empty( $tcont ) ) {
+				$tabs[$name] = $tcont;
+			}
 		}
 
 
@@ -165,6 +182,10 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return string either an html string will be returned or a success message
 	 */
 	public function create_new_custom() {
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'create_new_custom_ajax' ) ) {
+			wp_die( __('You don\'t have privileges to do this action', 'event_espresso' ) );
+		}
 
 		//let's clean up the _POST global a bit for downstream usage of name and description.
 		$_POST['templateName'] = !empty( $this->_req_data['custom_template_args']['MTP_name'] ) ? $this->_req_data['custom_template_args']['MTP_name'] : '';

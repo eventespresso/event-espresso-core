@@ -28,31 +28,14 @@ require_once( EE_CLASSES . 'EE_Question_Option.class.php');
 class EEM_Question_Option extends EEM_Soft_Delete_Base {
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Question_Option instance
-	 */
-	public static function instance(){
-
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
-
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question Option','event_espresso');
 		$this->plural_item = __('Question Options','event_espresso');
 
 		$this->_tables = array(
-			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSG_ID')
+			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSO_ID')
 		);
 		$this->_fields = array(
 			'Question_Option'=>array(
@@ -68,7 +51,9 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 			'Question'=>new EE_Belongs_To_Relation()
 		);
 
-		parent::__construct();
+		$this->_model_chain_to_wp_user = 'Question';
+
+		parent::__construct( $timezone );
 	}
 
 

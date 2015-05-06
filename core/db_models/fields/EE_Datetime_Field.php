@@ -306,12 +306,21 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * For example, we may want to output floats with 2 decimal places by default, dates as "Monday Jan 12, 2013, at 3:23pm" instead of
 	 * "8765678632", or any other modifications to how the value should be displayed, but not modified itself.
 	 * @param mixed $datetime_value
-	 * @param null  $schema
+	 * @param string  $schema if set to "no_html", even if the timezone is shown, there will be no tags next to it.
 	 * @internal param mixed $value_on_field_to_be_outputted
 	 * @return mixed
 	 */
 	public function prepare_for_pretty_echoing( $datetime_value, $schema = null ) {
-		$timezone_string = $this->_display_timezone() ? '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>' : '';
+		if( $this->_display_timezone() ) {
+			if( $schema == 'no_html' ){
+				$timezone_string = '(' . self::get_timezone_abbrev( $this->_timezone ) . ')';
+			}else{
+				$timezone_string = '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>';
+			}
+		} else {
+			$timezone_string = '';
+		}
+
 		$format_string = $this->_get_date_time_output( TRUE );
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetime_value, $format_string ) . $timezone_string;
 	}
@@ -357,7 +366,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$datetime = date( 'Y-m-d H:i:s', (int)$datetime_value );
 		$this->_set_date_obj( $datetime, 'UTC' );
 		if ( ! $this->_date instanceof DateTime ) {
-			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+			throw new EE_Error( sprintf( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used on %s', 'event_espresso' ) , $this->get_model_name() ) );
 		}
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
 		return $this->_date->format( $format );
@@ -609,21 +618,23 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			return;
 		}
 		try {
-			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
-		} catch( Exception $e ) {
-			//probably a badly formatted date string
+			//start off assuming it's a wonky excel format
+			if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+				// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
+				$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
+			} else {
+				//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
+				$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
+			}
+		} catch( Exception $e ) {}
+
+		if( ! $this->_date ){
 			try {
-				if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-					// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
-					$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
-				} else {
-					//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
-					$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
-				}
+				$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
 			} catch( Exception $e ) {
 				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
 				if ( strtotime( $date_string ) == 0 ) {
-					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to its formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
 				} else {
 					//ok give up, but don't throw an error
 					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));

@@ -51,7 +51,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	 */
 	const onsale = 'TKO';
 
-
+	/**
+	 * cached result from method of the same name
+	 * @var float $_ticket_total_with_taxes
+	 */
+	private $_ticket_total_with_taxes = NULL;
 
 	/**
 	 *
@@ -400,6 +404,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 
+
+	/**
+	 * get the author of the ticket.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('TKT_wp_user');
+	}
+
+
+
 	/**
 	 * Gets the template for the ticket
 	 * @return EE_Ticket_Template
@@ -412,7 +430,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Simply returns an array of EE_Price objects that are taxes.
-	 * @return EE_Taxes[]
+	 * @return EE_Price[]
 	 */
 	public function get_ticket_taxes_for_admin() {
 		return EE_Taxes::get_taxes_for_admin( $this );
@@ -439,10 +457,24 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * @return bool
+	 */
+	public function is_free() {
+		return $this->get_ticket_total_with_taxes() == 0 ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * get_ticket_total_with_taxes
+	 * @param bool $no_cache
 	 * @return float
 	 */
-	public function get_ticket_total_with_taxes() {
-		return $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+	public function get_ticket_total_with_taxes( $no_cache = FALSE ) {
+		if ( ! isset( $this->_ticket_total_with_taxes ) || $no_cache ) {
+			$this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+		}
+		return (float)$this->_ticket_total_with_taxes;
 	}
 
 
@@ -540,6 +572,19 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	 */
 	function set_end_date( $end_date ) {
 		$this->_set_date_time( 'B', $end_date, 'TKT_end_date' );
+	}
+
+
+
+	/**
+	 * Sets sell until time
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $time a string representation of the sell until time (ex 9am or 7:30pm)
+	 */
+	function set_end_time( $time ) {
+		$this->_set_time_for( $time, 'TKT_end_date' );
 	}
 
 

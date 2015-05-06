@@ -133,7 +133,7 @@ jQuery(document).ready(function($) {
 
 
 		getOffset: function() {
-			var zone = moment.tz(this.timeZone).zone();
+			var zone = moment.tz(this.timeZone).utcOffset();
 			var positive = zone > 0 ? false : true;  //we have to flip the symbols later.
 			zone = zone/60; //get hours
 			zone = zone > 0 ? zone : zone*-1; //get rid of any possible - sign.
@@ -335,13 +335,13 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
+						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add(1, 'weeks').hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
 					case 'event-datetime-DTT_EVT_end' :
 						DTT_end_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, 'YYYY-MM-DD h:mm a').add('hours', 4 ).format('YYYY-MM-DD h:mm a') : DTT_end_time;
+						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, 'YYYY-MM-DD h:mm a').add( 4, 'hours' ).format('YYYY-MM-DD h:mm a') : DTT_end_time;
 						$(this).val(DTT_end_time);
 						break;
 
@@ -1176,7 +1176,7 @@ jQuery(document).ready(function($) {
 					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
 						idref = 'add-new-ticket-TKT_start_date';
 						if ( $(this).val() === '' ) {
-							curval = tktHelper.eemoment().add('hours', 2).format('YYYY-MM-DD h:mm a');
+							curval = tktHelper.eemoment().add(2, 'hours').format('YYYY-MM-DD h:mm a');
 						}
 					}
 
@@ -1185,7 +1185,7 @@ jQuery(document).ready(function($) {
 						if ( $(this).val() === '' ) {
 							curval = $('.event-datetime-DTT_EVT_start', '#event-datetime-' + tktHelper.dateTimeRow).val();
 						}
-					}
+					}/**/
 
 					if ( $(this).hasClass('add-new-ticket-TKT_qty') )
 						idref = 'add-new-ticket-TKT_qty';
@@ -1212,7 +1212,14 @@ jQuery(document).ready(function($) {
 				if ( $('.ticket-row', '.event-tickets-container').length > 1 )
 					$('.trash-icon', '.event-tickets-container .ticket-row' ).show();
 
+			} else {
+				//make sure tkt sell until date matches the date-time start date for the first date.
+				var dtt_end_date = $('.event-datetime-DTT_EVT_start').first().val();
+				var tkt_end_date = tktHelper.eemoment(dtt_end_date, 'YYYY-MM-DD h:mm a').startOf('day').format('YYYY-MM-DD h:mm a');
+				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
+
+
 
 			//now let's setup the display row!
 			if( incomingcontext != 'short-ticket' ) {

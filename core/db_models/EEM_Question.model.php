@@ -25,18 +25,24 @@ require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once( EE_CLASSES . 'EE_Question.class.php');
 
 class EEM_Question extends EEM_Soft_Delete_Base {
-	
+
+	// constant used to indicate that the question type is COUNTRY
+	const QST_type_country = 'COUNTRY';
+
 	// constant used to indicate that the question type is DATE
 	const QST_type_date = 'DATE';
 
 	// constant used to indicate that the question type is DROPDOWN
 	const QST_type_dropdown = 'DROPDOWN';
 
-	// constant used to indicate that the question type is MULTIPLE
-	const QST_type_multiple = 'MULTIPLE';
+	// constant used to indicate that the question type is CHECKBOX
+	const QST_type_checkbox = 'CHECKBOX';
 
-	// constant used to indicate that the question type is SINGLE
-	const QST_type_single = 'SINGLE';
+	// constant used to indicate that the question type is RADIO_BTN
+	const QST_type_radio = 'RADIO_BTN';
+
+	// constant used to indicate that the question type is STATE
+	const QST_type_state = 'STATE';
 
 	// constant used to indicate that the question type is TEXT
 	const QST_type_text = 'TEXT';
@@ -44,53 +50,40 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is TEXTAREA
 	const QST_type_textarea = 'TEXTAREA';
 
-				
+
 
   	// private instance of the Attendee object
-	private static $_instance = NULL;
+	protected static $_instance = NULL;
 
-	/**
-	 *		This function is a singleton method used to instantiate the EEM_Attendee object
-	 *
-	 *		@access public
-	 *		@return EEM_Question instance
-	 */	
-	public static function instance(){
-	
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
-			self::$_instance = new self();
-		}
-		// EEM_Attendee object
-		return self::$_instance;
-	}
+
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private
-	 * @var array of strings 
+	 * @var array of strings
 	 */
 	private $_allowed_question_types;
 	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
 	 * but they can be extended
 	 * @return string[]
 	 */
 	public function allowed_question_types(){
 		return $this->_allowed_question_types;
 	}
-	protected function __construct(){
+	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
-		$this->_allowed_question_types=apply_filters( 
+		$this->_allowed_question_types=apply_filters(
 			'FHEE__EEM_Question__construct__allowed_question_types',
 			array(
 				EEM_Question::QST_type_text =>__('Text','event_espresso'),
 				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
-				EEM_Question::QST_type_single =>__('Single','event_espresso'),
+				EEM_Question::QST_type_checkbox =>__('Checkboxes','event_espresso'),
+				EEM_Question::QST_type_radio =>__('Radio Buttons','event_espresso'),
 				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
-				EEM_Question::QST_type_multiple =>__('Multiple Choice','event_espresso'),
-				EEM_Question::QST_type_date =>__('Date','event_espresso')
+				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
+				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
+				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
 			)
 		);
 
@@ -108,7 +101,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
 				'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
 				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
-				'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false, 1),
+				'QST_wp_user'=>new EE_WP_User_Field('QST_wp_user', __('Question Creator ID','event_espresso'), false ),
 				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
 		);
@@ -116,17 +109,18 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'Question_Group'=>new EE_HABTM_Relation('Question_Group_Question'),
 			'Question_Option'=>new EE_Has_Many_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 			//for QST_order column
 			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
-		
-		parent::__construct();
+
+		parent::__construct( $timezone );
 	}
 
 
-	
+
 	/**
-	 * Gets an array for converting between QST_system and QST_IDs for system questions. Eg, if you want to know 
+	 * Gets an array for converting between QST_system and QST_IDs for system questions. Eg, if you want to know
 	 * which system question QST_ID corresponds to the QST_system 'city', use EEM_Question::instance()->get_Question_ID_from_system_string('city');
 	 * @return int of QST_ID for the question that corresponds to that QST_system
 	 */
@@ -147,8 +141,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		return isset( $conversion_array[ $QST_system ] ) ? $conversion_array[ $QST_system ] : NULL;
 
 	}
-	
-	
+
+
 	/**
 	 * searches the db for the question with the latest question order and returns that value.
 	 * @access public

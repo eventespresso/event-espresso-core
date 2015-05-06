@@ -47,11 +47,11 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init {
 		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
 			'menu_group' => 'extras',
 			'menu_order' => 40,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_about',
 			'menu_label' => EE_ABOUT_LABEL,
-			'capability' => 'administrator',
+			'capability' => 'manage_options',
 			'maintenance_mode_parent' => 'espresso_maintenance_settings',
 			'admin_init_page' => $this
 			));
