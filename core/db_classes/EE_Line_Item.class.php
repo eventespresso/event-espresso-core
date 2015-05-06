@@ -501,13 +501,14 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Adds the line item as a child to this line item. If there is another child line
-	 * item with the same LIN_code, it is overwriten by this new one
+	 * item with the same LIN_code, it is overwritten by this new one
 	 * @param EE_Line_Item $line_item
 	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
+		$line_item->set_order( count( $this->children() ) );
 		if ( $this->ID() ) {
-			//check for any duplicate line items (with the same code), if so, thsi replaces it
+			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
 			if( $line_item_with_same_code instanceof EE_Line_Item ) {
 				$this->delete_child_line_item( $line_item_with_same_code->code() );
@@ -516,7 +517,6 @@ class EE_Line_Item extends EE_Base_Class {
 			if( $this->TXN_ID() ){
 				$line_item->set_TXN_ID( $this->TXN_ID() );
 			}
-			$line_item->set_order(  count( $this->children() ) );
 			return $line_item->save();
 		} else {
 			$this->_Line_Item[ $line_item->code() ] = $line_item;
@@ -565,6 +565,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Also searches through the child's children for a matching line item. However, once a line item has been found
 	 * and deleted, stops searching (so if there are line items with duplicate codes, only the first one found will be deleted)
 	 * @param string $code
+	 * @param bool $stop_search_once_found
 	 * @return int count of items deleted (or simply removed from the line item's cache, if not has not been saved to the DB yet)
 	 */
 	function delete_child_line_item( $code, $stop_search_once_found = true ) {
@@ -718,10 +719,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @throws EE_Error
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return float
+	 * @throws \EE_Error
 	 */
-	function recalculate_pre_tax_total( ) {
+	function recalculate_pre_tax_total( EE_Line_Item $parent_line_item = null ) {
 		$total = 0;
 		//completely ignore tax sub-totals when calculating the pre-tax-total
 		if ( $this->is_tax_sub_total() ) {
@@ -729,8 +731,11 @@ class EE_Line_Item extends EE_Base_Class {
 		} elseif ( $this->is_sub_line_item() ) {
 			throw new EE_Error( sprintf( __( 'Calculating the pretax-total on sub-line items doesn\'t make sense right now. You were trying to calculate it on %s', "event_espresso" ), print_r( $this, TRUE ) ) );
 		} elseif ( $this->is_line_item() ) {
-			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
-			$total = $this->unit_price() * $this->quantity();
+			if ( $this->is_percent() && $parent_line_item instanceof EE_Line_Item ) {
+				$total += $parent_line_item->total() * $this->percent() / 100;
+			} else {
+				$total = $this->unit_price() * $this->quantity();
+			}
 			$this->set_total( $total );
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
@@ -740,7 +745,7 @@ class EE_Line_Item extends EE_Base_Class {
 					if ( $child_line_item->is_percent() ) {
 						$total += $total * $child_line_item->percent() / 100;
 					} else {
-						$total += $child_line_item->recalculate_pre_tax_total();
+						$total += $child_line_item->recalculate_pre_tax_total( $this );
 					}
 				}
 			}
