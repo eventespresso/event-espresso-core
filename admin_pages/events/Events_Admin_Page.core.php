@@ -1528,11 +1528,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$end = ' 23:59:59';
 			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
-
-		//possible conditions for capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
-			$where['status**'] = array( '!=', 'private' );
-		}
+		
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
