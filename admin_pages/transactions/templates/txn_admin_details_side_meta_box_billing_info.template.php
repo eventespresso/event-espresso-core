@@ -20,7 +20,7 @@
 			}
 		}
 	}
-	txn_admin_details_side_meta_box_billing_info_for( $billing_form ); ?>
+	ee_show_billing_info_cleaned( $billing_form ); ?>
 		<p class="help"><?php _e( 'Note: Card expiry dates and CCV are not stored. Only the last 4 digits of card numbers are stored.', 'event_espresso' );?></p>
 <?php endif; ?>
 
