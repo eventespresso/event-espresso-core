@@ -219,7 +219,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$options
 		);
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l' );
 		// quantity td
 		$html .= EEH_HTML::td( $line_item->quantity(), '',  'item_l jst-rght' );
 		if ( $line_item->percent() ) {
@@ -254,7 +254,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$name_and_desc = $line_item->name();
 		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '';
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
 		if ( $line_item->is_percent() ) {
 			$html .= EEH_HTML::td( $line_item->percent() . '%', '',  'item_c' );
@@ -285,7 +285,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$name_and_desc .= '<span class="tiny-text" style="margin:0 0 0 2em;">' . __( ' * taxable items', 'event_espresso' ) . '</span>';
 		$name_and_desc .= $options[ 'show_desc' ] ? '<br/>' . $line_item->desc() : '';
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
 		// percent td
 		$html .= EEH_HTML::td( $line_item->percent() . '%', '',  ' jst-rght', '' );
 		// total td
@@ -323,7 +323,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 			// total td
-			$html .= EEH_HTML::td( $text, '', 'total_currency total jst-rght', '', ' colspan="3"' );
+			$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $text, '', 'total_currency total jst-rght', '', ' colspan="3"' );
 			// total td
 			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_total_tax, false, false ), '', 'total jst-rght' );
 			// end of row
@@ -348,7 +348,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 			// total td
-			$html .= EEH_HTML::td( $text, '', 'total_currency total jst-rght', '', ' colspan="3"' );
+			$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $text, '', 'total_currency total jst-rght', '', ' colspan="3"' );
 			// total td
 			$total = $line_item->total() * ( $this->_billable_total / ( $this->_billable_total + $this->_non_billable_total ) );
 			$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '', 'total jst-rght' );
@@ -375,7 +375,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'total_tr odd' );
 			// total td
-			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
+			$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
 			// total td
 			$this->_grand_total = $this->_billable_total + $this->_total_tax;
 			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_grand_total, false, false ), '',  'total jst-rght' );
@@ -492,6 +492,22 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					$this->_billable_tax_total += $line_item->total();
 				}
 			}
+		} else {
+			$this->_billable_total += apply_filters(
+				'FHEE__EE_SPCO_Line_Item_Display_Strategy___is_billable___billable_total',
+				0,
+				$line_item
+			);
+			$this->_total_items += apply_filters(
+				'FHEE__EE_SPCO_Line_Item_Display_Strategy___is_billable___total_items',
+				0,
+				$line_item
+			);
+			$this->_billable_tax_total += apply_filters(
+				'FHEE__EE_SPCO_Line_Item_Display_Strategy___is_billable___billable_tax_total',
+				0,
+				$line_item
+			);
 		}
 		return true;
 	}
