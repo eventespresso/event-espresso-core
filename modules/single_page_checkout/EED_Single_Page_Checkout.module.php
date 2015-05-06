@@ -344,6 +344,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// setup the EE_Checkout object
 		$this->checkout = $this->_initialize_checkout();
+		// filter checkout
+		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 		// get the $_GET
 		$this->_get_request_vars();
 		// filter continue_reg
@@ -799,10 +801,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	bool
 	 */
 	private function _final_verifications() {
+		// filter checkout
+		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
+		//verify that current step is still set correctly
 		if ( ! $this->checkout->current_step instanceof EE_SPCO_Reg_Step ) {
 			EE_Error::add_error( __( 'We\'re sorry but the registration process can not proceed because one or more registration steps were not setup correctly. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+		// if returning to SPCO, then verify that primary registrant is set
 		if ( ! empty( $this->checkout->reg_url_link )) {
 			$valid_registrant = $this->checkout->transaction->primary_registration();
 			if ( ! $valid_registrant instanceof EE_Registration ) {
@@ -822,10 +828,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
+		// update the cart because inaccurate totals are not so much fun
 		if ( $this->checkout->cart instanceof EE_Cart ) {
 			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
 		}
-		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		return true;
 	}
 
