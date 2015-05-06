@@ -822,6 +822,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
+		if ( $this->checkout->cart instanceof EE_Cart ) {
+			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
+		}
 		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		return true;
 	}
