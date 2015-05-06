@@ -4,7 +4,7 @@
 			<?php _e( 'There is no billing info for this transaction.', 'event_espresso' );?><br/>
 		</div>
 <?php else :
-	function ee_show_billing_info_cleaned( $form_section ) {
+	function ee_show_billing_info_cleaned( EE_Form_Section_Proper $form_section ) {
 		foreach( $form_section->subsections() as $subsection ) {
 			if( $subsection instanceof EE_Form_Input_Base ) {
 				if( $subsection->get_sensitive_data_removal_strategy() instanceof EE_All_Sensitive_Data_Removal ||
