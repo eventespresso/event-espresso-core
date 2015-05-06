@@ -55,11 +55,11 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 							'required'=>false,
 							'html_label_text' => __( 'Credit Card', 'event_espresso' ),
 						)),
-						'exp_month'=>new EE_Month_Input(true, array(
+						'exp_month'=>new EE_Credit_Card_Month_Input(true, array(
 							'required'=>false,
 							'html_label_text' => __( 'Expiry Month', 'event_espresso' )
 						)),
-						'exp_year'=>new EE_Year_Input( array(
+						'exp_year'=>new EE_Credit_Card_Year_Input( array(
 							'required' => false,
 							'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
 						)),
