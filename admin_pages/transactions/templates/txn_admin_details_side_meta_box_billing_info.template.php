@@ -15,7 +15,7 @@
 					<div class="clearfix">
 						<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php echo $subsection->get_html_for_label();?></span><?php echo $subsection->pretty_value();?>
 					</div><?php
-			} else {
+			} elseif( $subsection instanceof EE_Form_Section_Proper ) {
 				ee_show_billing_info_cleaned( $subsection );
 			}
 		}
