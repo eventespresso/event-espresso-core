@@ -558,7 +558,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 			return false;
 		}
 		$billing_form->clean_sensitive_data();
-		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values() );
+		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values( true ) );
 	}
 
 }

@@ -396,11 +396,7 @@ abstract class EE_PMT_Base{
 	 */
 	protected function _get_billing_values_from_form( $billing_form ){
 		if($billing_form instanceof EE_Form_Section_Proper ){
-			$billing_values = $billing_form->input_pretty_values();
-			foreach( $billing_form->subforms() as $name => $subform ){
-				$billing_values[ $name ] = $this->_get_billing_values_from_form( $subform );
-			}
-			return $billing_values;
+			return $billing_form->input_pretty_values( true );
 		}else{
 			return NULL;
 		}
