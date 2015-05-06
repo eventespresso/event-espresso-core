@@ -255,7 +255,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period));
-		$where = array('REG_date'=>array('>=',$sql_date) );
+
+		//don't include incomplete regs by default
+		$where = array('REG_date'=>array('>=',$sql_date), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
 		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
@@ -286,7 +288,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
 		$date_sql = date("Y-m-d H:i:s", strtotime($period));
-		$where = array( 'REG_date'=>array('>=',$date_sql ) );
+
+		//do not include incomplete registrations by default
+
+		$where = array( 'REG_date'=>array('>=',$date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
