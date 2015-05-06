@@ -18,9 +18,9 @@
 		</h2>
 	<?php endif; ?>
 
-	<?php if ( $method_of_payment instanceof EE_Payment_Method ) : ?>
+	<?php if ( $method_of_payment_name ) : ?>
 		<h3 id="txn-selected-method-of-payment-h3" style="padding:0;margin:0 0 1em;">
-			<?php echo __( 'Selected Method of Payment: ', 'event_espresso' );?><?php echo $method_of_payment->admin_name();?>
+			<?php echo __( 'Selected Method of Payment: ', 'event_espresso' );?><?php echo $method_of_payment_name;?>
 		</h3>
 	<?php endif; ?>
 
