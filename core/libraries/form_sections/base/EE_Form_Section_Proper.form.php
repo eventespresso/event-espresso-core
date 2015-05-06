@@ -639,7 +639,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * values. (Similar to calling get_input_value on inputs)
 	 * *
 	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
-	 * @param boolean $flatten Whether to force the results inta 1-dimensional array, or allow multidimensional array
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
 	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
 	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
 	 * it can be a multidimensional array where keys are always subsection names and values are either the
@@ -656,7 +656,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * where keys are the input names, and values are their display values
 	 *
 	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
-	 * @param boolean $flatten Whether to force the results inta 1-dimensional array, or allow multidimensional array
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
 	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
 	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
 	 * it can be a multidimensional array where keys are always subsection names and values are either the
@@ -670,7 +670,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Gets the input values from the form
 	 * @param boolean $pretty Whether to retrieve the pretty value, or just the normalized value
 	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
-	 * @param boolean $flatten Whether to force the results inta 1-dimensional array, or allow multidimensional array
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
 	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
 	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
 	 * it can be a multidimensional array where keys are always subsection names and values are either the
