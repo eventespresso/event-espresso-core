@@ -1532,6 +1532,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
+		} else {
+			if ( ! isset( $where['status'] ) ) {
+				if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events' ) ) {
+					$where['OR'] = array(
+						'status*restrict_private' => array( '!=', 'private' ),
+						'AND' => array(
+							'status*inclusive' => array( '=', 'private' ),
+							'EVT_wp_user' => get_current_user_id()
+						)
+					);
+				}
+			}
 		}
 
 		if ( isset( $this->_req_data['EVT_wp_user'] ) ) {

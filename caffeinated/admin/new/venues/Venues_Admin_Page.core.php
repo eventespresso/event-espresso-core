@@ -710,7 +710,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	protected function _trash_or_restore_venue( $venue_stats = 'trash', $redirect_after = TRUE ) {
+	protected function _trash_or_restore_venue( $venue_status = 'trash', $redirect_after = TRUE ) {
 		$VNU_ID = isset( $this->_req_data['VNU_ID'] ) ? absint( $this->_req_data['VNU_ID'] ) : FALSE;
 
 		//loop thru venues
@@ -949,10 +949,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
 
-		$where = array(
-			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft', 'private' ) )
-			//todo add filter by category
-			);
+
+		if ( isset( $this->_req_data['venue_status'] ) ) {
+			$where['status'] = $this->_req_data['venue_status'];
+		}
+
 
 		if ( $category ) {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
@@ -962,6 +963,18 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
+		} else {
+			if ( ! isset( $where['status'] ) ) {
+				if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+					$where['OR'] = array(
+						'status*restrict_private' => array( '!=', 'private' ),
+						'AND'                     => array(
+							'status*inclusive' => array( '=', 'private' ),
+							'VNU_wp_user'      => get_current_user_id()
+						)
+					);
+				}
+			}
 		}
 
 
