@@ -916,6 +916,162 @@ abstract class EEM_Base extends EE_Base{
 
 
 
+
+	/**
+	 * Returns the next x number of items in sequence from the given value as
+	 * found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 */
+	public function next_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		return $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the previous x number of items in sequence from the given value
+	 * as found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 */
+	public function previous_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		return $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+	/**
+	 * Returns the next item in sequence from the given value as found in the
+	 * database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an EE_Base_Class
+	 *                                      object is returned, otherwise you
+	 *                                      can indicate just the columns you
+	 *                                      want and a single array indexed by
+	 *                                      the columns will be returned.
+	 *
+	 * @return EE_Base_Class|null|array()
+	 */
+	public function next( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$results = $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, 1, $query_params, $columns_to_select );
+		return empty( $results ) ? null : reset( $results );
+	}
+
+
+
+
+	/**
+	 * Returns the previous item in sequence from the given value as found in
+	 * the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an EE_Base_Class
+	 *                                      object is returned, otherwise you
+	 *                                      can indicate just the columns you
+	 *                                      want and a single array indexed by
+	 *                                      the columns will be returned.
+	 *
+	 * @return EE_Base_Class|null|array()
+	 */
+	public function previous( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$results = $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, 1, $query_params, $columns_to_select );
+		return empty( $results ) ? null : reset( $results );
+	}
+
+
+
+
+
+	/**
+	 * Returns the a consecutive number of items in sequence from the given
+	 * value as found in the database matching the given query conditions.
+	 *
+	 * @param mixed $current_field_value    Value used for the reference point.
+	 * @param string $operand               What operand is used for the
+	 *                                      sequence.
+	 * @param null $field_to_order_by       What field is used for the
+	 *                                      reference point.
+	 * @param int $limit                    How many to return.
+	 * @param array $query_params           Extra conditions on the query.
+	 * @param null $columns_to_select       If left null, then an array of
+	 *                                      EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the
+	 *                                      columns you want returned.
+	 *
+	 * @return EE_Base_Class[]|array
+	 * @throws EE_Error
+	 */
+	protected function _get_consecutive( $current_field_value, $operand = '>', $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		//if $field_to_order_by is empty then let's assume we're ordering by the primary key.
+		if ( empty( $field_to_order_by ) ) {
+			if ( $this->has_primary_key_field() ) {
+				$field_to_order_by = $this->get_primary_key_field()->get_name();
+			} else {
+
+				if ( WP_DEBUG ) {
+					throw new EE_Error( __( 'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).', 'event_espresso' ) );
+				}
+				EE_Error::add_error( __('There was an error with the query.', 'event_espresso') );
+				return array();
+			}
+		}
+
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::_get_consecutive', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
+
+		//let's add the where query param for consecutive look up.
+		$query_params[0][ $field_to_order_by ] = array( $operand, $current_field_value );
+		$query_params['limit'] = $limit;
+
+		//set direction
+		$incoming_orderby = isset( $query_params['order_by'] ) ? $query_params['order_by'] : array();
+		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' ) + $incoming_orderby : array( $field_to_order_by => 'DESC') + $incoming_orderby;
+
+		//if $columns_to_select is empty then that means we're returning EE_Base_Class objects
+		if ( empty( $columns_to_select ) ) {
+			return $this->get_all( $query_params );
+		} else {
+			//getting just the fields
+			return $this->_get_all_wpdb_results( $query_params, ARRAY_A, $columns_to_select );
+		}
+	}
+
+
+
+
 	/**
 	 * This just returns whatever is set for the current timezone.
 	 *
@@ -1019,7 +1175,11 @@ abstract class EEM_Base extends EE_Base{
 						//if there is no private key for this table on the results, it means there's no entry
 						//in this table, right? so insert a row in the current table, using any fields available
 						if( ! ( array_key_exists( $this_table_pk_column, $wpdb_result) && $wpdb_result[ $this_table_pk_column ] )){
-							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							$success = $this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+							//if we died here, report the error
+							if( ! $success ) {
+								return false;
+							}
 						}
 					}
 				}
@@ -1422,7 +1582,11 @@ abstract class EEM_Base extends EE_Base{
 			$wpdb->show_errors( $old_show_errors_value );
 			if( ! empty( $wpdb->last_error ) ){
 				throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+			}elseif( $result === false ){
+				throw new EE_Error( sprintf( __( 'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"', 'event_espresso' ), $wpdb_method, var_export( $arguments_to_provide, true ) ) );
 			}
+		}elseif( $result === false ) {
+			EE_Error::add_error( sprintf( __( 'A database error has occurred. Turn on WP_DEBUG for more information.', 'event_espresso' )), __FILE__, __FUNCTION__, __LINE__);
 		}
 		return $result;
 	}
@@ -1692,8 +1856,10 @@ abstract class EEM_Base extends EE_Base{
 		if($this->_satisfies_unique_indexes($field_n_values)){
 			$main_table = $this->_get_main_table();
 			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
-			foreach($this->_get_other_tables() as $other_table){
-				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+			if( $new_id !== false ) {
+				foreach($this->_get_other_tables() as $other_table){
+					$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+				}
 			}
 			/**
 			 * Done just after attempting to insert a new model object
@@ -1801,7 +1967,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param int  $new_id 	for now we assume only int keys
 	 * @throws EE_Error
 	 * @global WPDB $wpdb only used to get the $wpdb->insert_id after performing an insert
-	 * @return int ID of new row inserted
+	 * @return int ID of new row inserted, or FALSE on failure
 	 */
 	protected function _insert_into_specific_table(EE_Table_Base $table, $fields_n_values, $new_id = 0 ){
 		global $wpdb;
@@ -1828,7 +1994,10 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
+		if( $result === false ) {
+			return false;
+		}
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){

@@ -487,7 +487,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		wp_enqueue_script( $report_JS );
 
-		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
 
 		$results = $REG->get_registrations_per_day_report( $period );
