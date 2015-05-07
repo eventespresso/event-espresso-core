@@ -13,7 +13,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group models
  * @group core/db_models
  * @group capabilities
- * @group EEM_Price_Caps
+ * @group EEM_Price_Caps_Test
  *
  */
 class EEM_Price_Caps_Test extends EE_UnitTestCase{

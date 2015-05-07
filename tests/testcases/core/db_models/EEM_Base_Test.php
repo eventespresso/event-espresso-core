@@ -11,11 +11,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group models
+ * @group core/db_models
+ * @group capabilities
+ * @group EEM_Base_Test
  *
  * ------------------------------------------------------------------------
- */
-/**
- * @group core/db_models
  */
 class EEM_Base_Test extends EE_UnitTestCase{
 	public function test_models_defined_ok(){

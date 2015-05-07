@@ -11,9 +11,13 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group models
+ * @group core/db_models
+ * @group capabilities
+ * @group EEM_Attendee_Caps_Test
  *
  */
-class EEM_Attendee_Test extends EE_UnitTestCase{
+class EEM_Attendee_Caps_Test extends EE_UnitTestCase{
 	/**
 	 * verifies that non-logged-in users can't view attendees,
 	 * but users with contact-reading permissions can read all attendees

@@ -11,9 +11,13 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ *  @group models
+ * @group core/db_models
+ * @group capabilities
+ * @group EEM_Question_Caps_Test
  *
  */
-class EEM_Question_Test extends EE_UnitTestCase{
+class EEM_Question_Caps_Test extends EE_UnitTestCase{
 	/**
 	 * test that they can read any questions by default
 	 */

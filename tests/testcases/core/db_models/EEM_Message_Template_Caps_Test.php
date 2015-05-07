@@ -11,6 +11,10 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group models
+ * @group core/db_models
+ * @group capabilities
+ * @group EEM_Message_Template_Caps_Test
  *
  */
 class EEM_Message_Template_Caps_Test extends EE_UnitTestCase{
