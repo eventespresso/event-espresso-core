@@ -47,23 +47,16 @@ class EEM_Question_Caps_Test extends EE_UnitTestCase{
 		$q4_others_system = $this->new_model_obj_with_dependencies( 'Question', array( 'QST_system' => 'somethingelse', 'QST_wp_user' => 9999 ) );
 		$i_can_edit = EEM_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit ) );
 		$this->assertEquals( $q1, reset( $i_can_edit ) );
-		$this->assertEquals( 1, count( $i_can_edit ) );
+		$this->assertEquals( $q3_others, next( $i_can_edit ) );
+		$this->assertEquals( 2, count( $i_can_edit ) );
 
 		//now give them the ability to edit system questions
 		$user->add_cap( 'ee_edit_system_questions' );
 		$i_can_edit = EEM_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit ) );
 		$this->assertEquals( $q1, reset( $i_can_edit ) );
 		$this->assertEquals( $q2_system, next( $i_can_edit ) );
-		$this->assertEquals( $q4_others_system, next( $i_can_edit ) );
-		$this->assertEquals( 3, count( $i_can_edit ) );
-
-		//now let them edit OTHERS stuff (and keep the ability to edit system questions)
-		$user->add_cap( 'ee_edit_others_questions' );
-		$i_can_edit = EEM_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit, 'order_by' => array( 'QST_ID' => 'ASC' ) ) );
-		$this->assertEquals( $q1, reset( $i_can_edit ) );
-		$this->assertEquals( $q2_system, next( $i_can_edit ) );
 		$this->assertEquals( $q3_others, next( $i_can_edit ) );
-		$this->assertEquals( $q4_others_system, next( $i_can_edit ) );;
+		$this->assertEquals( $q4_others_system, next( $i_can_edit ) );
 		$this->assertEquals( 4, count( $i_can_edit ) );
 	}
 }

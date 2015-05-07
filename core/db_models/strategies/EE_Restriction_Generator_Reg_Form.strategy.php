@@ -5,7 +5,10 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  *
- * EE_Restriction_Generator_Protected
+ * EE_Restriction_Generator_Reg_Form
+ * For generating default where conditions relating to caps for questions, question groups,
+ * and question-group-question models. These are distinct in that they have
+ * "system" items which
  *
  * @package			Event Espresso
  * @subpackage
@@ -45,20 +48,11 @@ class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base{
 
 		return array(
 			EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() ) => new EE_Return_None_Where_Conditions(),
-				EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
-					//I need to be the owner, or it must be a system question
-					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' ) => array(
-						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-						'AND*allow-system-questions-so-far' => array(
-							$this->_system_field_name => array( 'NOT_IN', array( '', 0 ) ),
-							$this->_system_field_name . '*' => array( 'IS_NOT_NULL',)
-						)
-				) ) ),
-				EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => new EE_Default_Where_Conditions( array(
-					'OR*no_' . EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => array(
-						$this->_system_field_name => array( 'IN', array( '', 0 ) ),
-						$this->_system_field_name . '*' => array('IS_NULL'))
-				)
+			EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => new EE_Default_Where_Conditions( array(
+				'OR*no_' . EE_Restriction_Generator_Base::get_cap_name(  $this->model(), $this->action() . '_system' ) => array(
+					$this->_system_field_name => array( 'IN', array( '', 0 ) ),
+					$this->_system_field_name . '*' => array('IS_NULL'))
+			)
 			) );
 	}
 }
