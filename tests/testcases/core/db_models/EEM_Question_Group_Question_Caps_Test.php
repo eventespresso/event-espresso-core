@@ -53,19 +53,12 @@ class EEM_Question_Group_Question_Caps_Test extends EE_UnitTestCase{
 		$user->add_cap( 'ee_edit_question_groups');
 		$i_can_edit = EEM_Question_Group_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit ) );
 		$this->assertEquals( $qgq1, reset( $i_can_edit ) );
-		$this->assertEquals( 1, count( $i_can_edit ) );
+		$this->assertEquals( $qgq3, next( $i_can_edit ) );
+		$this->assertEquals( 2, count( $i_can_edit ) );
 
 		//now give them the ability to edit system questions
 		$user->add_cap( 'ee_edit_system_question_groups' );
 		$i_can_edit = EEM_Question_Group_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit ) );
-		$this->assertEquals( $qgq1, reset( $i_can_edit ) );
-		$this->assertEquals( $qgq2, next( $i_can_edit ) );
-		$this->assertEquals( $qgq4, next( $i_can_edit ) );
-		$this->assertEquals( 3, count( $i_can_edit ) );
-
-		//now let them edit OTHERS stuff (and keep the ability to edit system questions)
-		$user->add_cap( 'ee_edit_others_question_groups' );
-		$i_can_edit = EEM_Question_Group_Question::instance()->get_all( array( 'caps' => EEM_Base::caps_edit, 'order_by' => array( 'QGQ_ID' => 'ASC' ) ) );
 		$this->assertEquals( $qgq1, reset( $i_can_edit ) );
 		$this->assertEquals( $qgq2, next( $i_can_edit ) );
 		$this->assertEquals( $qgq3, next( $i_can_edit ) );
