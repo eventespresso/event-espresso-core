@@ -178,10 +178,21 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			case EEM_Line_Item::type_total:
 				// determine whether to display taxes or not
 				$this->_show_taxes = $line_item->get_total_tax() > 0 ? true : false;
-				// loop thru children
-				foreach( $line_item->children() as $child_line_item ) {
-					// recursively feed children back into this method
-					$html .= $this->display_line_item( $child_line_item, $options );
+				// get all child line items
+				$children = $line_item->children();
+				// loop thru all non-tax child line items
+				foreach( $children as $child_line_item ) {
+					if ( $child_line_item->type() != EEM_Line_Item::type_tax_sub_total ) {
+						// recursively feed children back into this method
+						$html .= $this->display_line_item( $child_line_item, $options );
+					}
+				}
+				// now loop thru  tax child line items
+				foreach( $children as $child_line_item ) {
+					if ( $child_line_item->type() == EEM_Line_Item::type_tax_sub_total ) {
+						// recursively feed children back into this method
+						$html .= $this->display_line_item( $child_line_item, $options );
+					}
 				}
 				$html .= $this->_taxes_html;
 				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
