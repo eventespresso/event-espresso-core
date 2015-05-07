@@ -543,11 +543,12 @@
 	 *			@return void
 	 */
 	private function fputcsv2 ($fh, array $row, $delimiter = ',', $enclosure = '"', $mysql_null = FALSE) {
+		//Allow user to filter the csv delimiter and enclosure for other countries csv standards
+		$delimiter = apply_filters( 'FHEE__EE_CSV__fputcsv2__delimiter', $delimiter );
+		$enclosure = apply_filters( 'FHEE__EE_CSV__fputcsv2__enclosure', $enclosure );
 
 		$delimiter_esc = preg_quote($delimiter, '/');
 		$enclosure_esc = preg_quote($enclosure, '/');
-		//Allow user to filter the csv delimiter for other countries csv standards
-		$delimiter = apply_filters( 'FHEE__EE_CSV__fputcsv2__delimiter', $delimiter );
 
 		$output = array();
 		foreach ($row as $field_value) {
