@@ -40,12 +40,26 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 	protected function _set_data_handler() {
 		if ( is_array( $this->_data ) ) {
 			$data_type = reset( $this->_data );
-			$this->_data_handler = $data_type instanceof EE_Registration ? 'REG' : 'Gateways';
+			if ( is_array( $data_type ) ) {
+				//grab the first item and see if its a registration.
+				$maybe_reg = isset( $data_type[0] ) && is_array( $data_type[0] ) ? reset( $data_type[0] ) : reset( $data_type );
+				if ( $maybe_reg instanceof EE_Registration ) {
+					foreach ( $data_type as $reg ) {
+						$this->_regs_for_sending[] = $reg->ID();
+					}
+					$this->_data = isset( $data_type[1] ) ? array( $maybe_reg->transaction(), null, $data_type[1] ) : array( $maybe_reg->transaction() );
+					$this->_data_handler = 'Gateways';
+				} else {
+					$this->_data_handler = 'Gateways';
+				}
+			} else {
+				$this->_data_handler = $data_type instanceof EE_Registration ? 'REG' : 'Gateways';
+			}
 		} else {
 			$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
 		}
 
-		$this->_single_message = $this->_data_handler instanceof EE_Registration ? TRUE : FALSE;
+		$this->_single_message = $this->_data_handler == 'REG' ? true : false;
 	}
 
 

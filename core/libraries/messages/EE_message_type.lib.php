@@ -114,6 +114,16 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected $_single_message = FALSE;
 
 
+	/**
+	 * This will hold an array of specific reg_ids that are receiving messages.
+	 * @since 4.7.x
+	 * @var array
+	 */
+	protected $_regs_for_sending = array();
+
+
+
+
 
 	/**
 	 * This holds the data passed to this class from the controller and also the final processed data.
@@ -769,7 +779,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * Takes care of setting up the addresee object(s) for the registered attendees
+	 * Takes care of setting up the addressee object(s) for the registered attendees
 	 *
 	 * @access protected
 	 * @return array of EE_Addressee objects
@@ -779,11 +789,20 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
 		//use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
 		$already_processed = array();
+
 		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
 
 			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
+
+			//is $this->_regs_for_sending present?  If so, let's make sure we ONLY generate addressee for registrations in that array.
+			if ( ! empty( $this->_regs_for_sending ) && is_array( $this->_regs_for_sending ) ) {
+				$regs_allowed = array_intersect_key( array_flip( $this->_regs_for_sending ), $details['reg_objs'] );
+				if ( empty( $regs_allowed ) ) {
+					continue;
+				}
+			}
 
 			if ( in_array( $details['attendee_email'], $already_processed ) )
 				continue;

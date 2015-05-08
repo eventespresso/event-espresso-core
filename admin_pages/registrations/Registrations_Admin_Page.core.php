@@ -1198,12 +1198,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! $REG_ID ) {
 			// then check req data for an array of REG_IDs
 			$REG_IDs = isset( $this->_req_data['_REG_ID'] ) && is_array( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
+			//now reset $this->_req_data['_REG_ID'] so it can be utilized for the messages sending.
+			$this->_req_data['_REG_ID'] = array();
 			$success = TRUE;
 			// loop thru REG_IDs and set each reg status separately
 			foreach ( $REG_IDs as $REG_ID ) {
 				$result = $this->_set_registration_status( $REG_ID, $status, $notify );
 				$success = isset( $result['success'] ) && $result['success'] ? $success : FALSE;
 			}
+			$this->_process_resend_registration();
 			$REG_ID = FALSE;
 		}
 		if ( $REG_ID ) {
@@ -1219,8 +1222,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = $success === FALSE ? FALSE : TRUE;
 
 			if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
-				$this->_req_data['_REG_ID'] = $REG_ID;
-				$this->_process_resend_registration();
+				$this->_req_data['_REG_ID'][] = $REG_ID;
 			}
 		}
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
@@ -2264,7 +2266,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _resend_registration() {
-		$success = $this->_process_resend_registration();
+		$this->_process_resend_registration();
 		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], '_REG_ID' => $this->_req_data['_REG_ID'] ) : array(
 			'action' => 'default'
 		);
