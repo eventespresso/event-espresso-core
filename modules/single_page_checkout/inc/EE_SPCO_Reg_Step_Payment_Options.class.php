@@ -13,6 +13,11 @@
  */
 class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
+	/**
+	 * @access protected
+	 * @var EE_Line_Item_Display $Line_Item_Display
+	 */
+	protected $Line_Item_Display = null;
 
 
 
@@ -68,6 +73,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->checkout = $checkout;
 		$this->_reset_success_message();
 		$this->set_instructions( __('Please select a method of payment and provide any necessary billing information before proceeding.', 'event_espresso'));
+	}
+
+
+
+	/**
+	 * @return null
+	 */
+	public function Line_Item_Display() {
+		return $this->Line_Item_Display;
+	}
+
+
+
+	/**
+	 * @param null $Line_Item_Display
+	 */
+	public function set_Line_Item_Display( $Line_Item_Display ) {
+		$this->Line_Item_Display = $Line_Item_Display;
 	}
 
 
@@ -188,7 +211,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$subsections['events_requiring_pre_approval'] = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		}
 		if ( ! empty( $payment_required )) {
-			$subsections[ 'payment_options' ] = $this->_display_payment_options( $reg_count, $events_requiring_pre_approval );
+			// autoload Line_Item_Display classes
+			EEH_Autoloader::register_line_item_display_autoloaders();
+			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
+			$transaction_details = $this->Line_Item_Display->display_line_item(
+				$this->checkout->cart->get_grand_total(),
+				array( 'events_requiring_pre_approval' => $events_requiring_pre_approval )
+			);
+			$this->checkout->amount_owing = $this->_calculate_amount_owing();
+			if ( $this->checkout->amount_owing > 0 ) {
+				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
+			}
 		} else {
 			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
@@ -201,6 +234,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 * _calculate_amount_owing
+	 * @return float
+	 */
+	private function _calculate_amount_owing() {
+		return (float)( $this->Line_Item_Display->grand_total() - $this->checkout->transaction->paid() );
 	}
 
 
@@ -329,23 +372,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * _display_payment_options
 	 *
-	 * @param int $reg_count
-	 * @param array $events_requiring_pre_approval
+	 * @param string $transaction_details
 	 * @return \EE_Form_Section_Proper
 	 */
-	private function _display_payment_options( $reg_count = 0, $events_requiring_pre_approval = array() ) {
+	private function _display_payment_options( $transaction_details = '' ) {
 		// reset in case someone changes their mind
 		$this->_reset_selected_method_of_payment();
 		// has method_of_payment been set by no-js user?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment();
-		// autoload Line_Item_Display classes
-		EEH_Autoloader::register_line_item_display_autoloaders();
-		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
-		$transaction_details = $Line_Item_Display->display_line_item(
-			$this->checkout->cart->get_grand_total(),
-			array( 'events_requiring_pre_approval' => $events_requiring_pre_approval )
-		);
-		$this->checkout->amount_owing = $Line_Item_Display->grand_total();
 		// build payment options form
 		return new EE_Form_Section_Proper(
 			array(
@@ -359,7 +393,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___payment_options__template_args',
 							array(
-								'reg_count' 					=> $Line_Item_Display->total_items(),
+								'reg_count' 					=> $this->Line_Item_Display->total_items(),
 								'transaction_details' 	=> $transaction_details,
 								'available_payment_methods' => array()
 							)
