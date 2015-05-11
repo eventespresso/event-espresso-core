@@ -178,12 +178,13 @@ jQuery(document).ready(function($) {
 	function validate_form_inputs() {
 		goodToGo = true;
 		$('#txn-admin-apply-payment-frm .required').each( function( index ) {
-			if( $( this ).val() === false ) {
+			if( ! $(this).val() ) {
 				$( this ).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
+                $( this ).eeScrollTo(400);
 				goodToGo = false;
 			}
 			$( this ).on( 'change', function() {
-				if( $( this ).val() !== false ) {
+				if( ! $(this).val() ) {
 					$( this ).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
 				}
 			});

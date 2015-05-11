@@ -497,7 +497,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	private static function _get_localized_error_messages(){
 		return array(
-			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso")
+			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso"),
+			'regex' => __( 'Please check your input', 'event_espresso' ),
 		);
 	}
 
