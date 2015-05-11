@@ -148,6 +148,12 @@ interface EEI_Registration{
 	 * @return EEI_Attendee
 	 */
 	function attendee();
+
+	/**
+	 * Returns the event's name this registration is for
+	 * @return string
+	 */
+	function event_name();
 }
 
 
