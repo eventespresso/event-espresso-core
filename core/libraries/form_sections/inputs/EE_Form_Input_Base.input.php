@@ -320,7 +320,30 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	protected function _add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ){
+		$validation_strategy->_construct_finalize( $this );
 		$this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
+
+	}
+
+	/**
+	 * Adds a new validation strategy onto the form input
+	 * @param EE_Validation_Strategy_Base $validation_strategy
+	 * @return void
+	 */
+	public function add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ) {
+		$this->_add_validation_strategy( $validation_strategy );
+	}
+
+	/**
+	 * The classname of the validation strategy to remove
+	 * @param string $validation_strategy_classname
+	 */
+	public function remove_validation_strategy( $validation_strategy_classname ) {
+		foreach( $this->_validation_strategies as $key => $validation_strategy ){
+			if( is_subclass_of( $validation_strategy, $validation_strategy_classname ) ){
+				unset( $this->_validation_strategies[ $key ] );
+			}
+		}
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
