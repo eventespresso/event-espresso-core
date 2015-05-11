@@ -397,8 +397,9 @@ jQuery(document).ready(function($) {
 		var totalPaid = response.return_data.total_paid;
 		$('#txn-admin-payment-total').html( accounting.formatMoney( totalPaid ) );
 		// total-amount-due
-		var txnTotal = accounting.unformat( $('#txn-admin-grand-total').text() );
+		var txnTotal = $('#txn-admin-grand-total').text(); //this is already in decimal format, no unformatting needed
 		var totalAmountDue = txnTotal - totalPaid;
+        
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( accounting.formatMoney( totalAmountDue ) );
 
