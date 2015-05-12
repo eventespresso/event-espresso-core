@@ -375,7 +375,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 		$registration_rows = $reg_model->get_all_wpdb_results( $query_params );
 		//get all questions which relate to someone in this group
-		$registration_ids = array_keys($registration_rows);
+		$registration_ids = array();
+		foreach( $registration_rows as $reg_row ) {
+			$registration_ids[] = intval( $reg_row[ 'Registration.REG_ID'] );
+		}
 //		EEM_Question::instance()->show_next_x_db_queries();
 		$questions_for_these_regs_rows = EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
 		foreach($registration_rows as $reg_row){
