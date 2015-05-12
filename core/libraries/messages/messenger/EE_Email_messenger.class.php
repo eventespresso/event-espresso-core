@@ -469,23 +469,33 @@ class EE_Email_messenger extends EE_messenger  {
 			);
 		$body =  $this->_get_main_template( $preview );
 
-		//now if this isn't a preview, let's setup the body so it has inline styles
-		if ( !$preview ) {
-			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-			$CSS = new CssToInlineStyles( $body );
-			$CSS->setUseInlineStylesBlock();
-			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
-		} else if ( $preview && defined('DOING_AJAX' ) ) {
-			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-			$style = file_get_contents( $this->get_variation( $this->_tmp_pack,  $this->_incoming_message_type->name, FALSE, 'main', $this->_variation ) );
-			$CSS = new CssToInlineStyles( utf8_decode($body), $style );
-			$body = ltrim( $CSS->convert(), ">\n" );
+		/**
+		 * This filter allows one to bypass the CSSToInlineStyles tool and leave the body untouched.
+		 *
+		 * @type    bool    $preview    Indicates whether a preview is being generated or not.
+		 * @return  bool    true  indicates to use the inliner, false bypasses it.
+		 */
+		if ( apply_filters( 'FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview ) ) {
 
-			//let's attempt to fix width's for ajax preview
-			/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
-			$s_width = '/width="[ 0-9]+"/';
-			$body = preg_replace( $i_width, 'width:100%;', $body );
-			$body = preg_replace( $s_width, 'width=100%', $body );/**/
+			//now if this isn't a preview, let's setup the body so it has inline styles
+			if ( ! $preview ) {
+				require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
+				$CSS = new CssToInlineStyles( $body );
+				$CSS->setUseInlineStylesBlock();
+				$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
+			} else if ( $preview && defined( 'DOING_AJAX' ) ) {
+				require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
+				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, false, 'main', $this->_variation ) );
+				$CSS   = new CssToInlineStyles( utf8_decode( $body ), $style );
+				$body  = ltrim( $CSS->convert(), ">\n" );
+
+				//let's attempt to fix width's for ajax preview
+				/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
+				$s_width = '/width="[ 0-9]+"/';
+				$body = preg_replace( $i_width, 'width:100%;', $body );
+				$body = preg_replace( $s_width, 'width=100%', $body );/**/
+			}
+
 		}
 		return $body;
 	}
