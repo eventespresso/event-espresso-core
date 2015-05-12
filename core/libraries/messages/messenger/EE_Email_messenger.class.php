@@ -481,20 +481,10 @@ class EE_Email_messenger extends EE_messenger  {
 			require_once EE_THIRD_PARTY . 'cssinliner/vendor/autoload.php';
 
 			//now if this isn't a preview, let's setup the body so it has inline styles
-			if ( ! $preview ) {
-				$CSS = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles( $body );
-				$CSS->setUseInlineStylesBlock();
-				$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
-			} else if ( $preview && defined( 'DOING_AJAX' ) ) {
-				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, false, 'main', $this->_variation ) );
-				$CSS   = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles( utf8_decode( $body ), $style );
-				$body  = ltrim( $CSS->convert(), ">\n" );
-
-				//let's attempt to fix width's for ajax preview
-				/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
-				$s_width = '/width="[ 0-9]+"/';
-				$body = preg_replace( $i_width, 'width:100%;', $body );
-				$body = preg_replace( $s_width, 'width=100%', $body );/**/
+			if ( ! $preview || ( $preview && defined( 'DOING_AJAX' ) ) ) {
+				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, 'main', $this->_variation ), TRUE );
+				$CSS = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles( $body, $style );
+				$body = ltrim( $CSS->convert( true ), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
 			}
 
 		}
