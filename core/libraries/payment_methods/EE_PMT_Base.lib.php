@@ -391,13 +391,13 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the values we want to pass onto the gateway. Normally these
 	 * are just the 'pretty' values, but there may be times the data may need
-	 * a  little massaging
+	 * a  little massaging. Proper subsections will become arrays of inputs
 	 * @param EE_Billing_Info_Form $billing_form
 	 * @return array
 	 */
 	protected function _get_billing_values_from_form( $billing_form ){
 		if($billing_form instanceof EE_Form_Section_Proper ){
-			return $billing_form->input_pretty_values();
+			return $billing_form->input_pretty_values( true );
 		}else{
 			return NULL;
 		}

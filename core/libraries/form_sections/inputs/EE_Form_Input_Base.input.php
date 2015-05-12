@@ -144,9 +144,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function __construct( $input_args = array() ){
 		// the following properties must be cast as arrays
 		$set_as_array = array(
-			'display_strategy',
-			'normalization_strategy',
-			'sensitive_data_removal_strategy',
 			'validation_strategies'
 		);
 		// loop thru incoming options
