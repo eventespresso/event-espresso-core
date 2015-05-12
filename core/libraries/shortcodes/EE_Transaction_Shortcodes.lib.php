@@ -298,7 +298,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//image tags have been requested.
 		$image_size = getimagesize( $invoice_logo_url );
-		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+		
+		//if image is wider than 200px, set the wideth to 200
+		if ( $image_size[0] > 200 ) {
+			$image_width = 200;
+		}else{
+			$image_width = $image_size[0];
+		}
+
+		return '<img class="logo screen" src="' . $invoice_logo_url . '" width="' . $image_width . '" alt="logo" />';
 	}
 
 
