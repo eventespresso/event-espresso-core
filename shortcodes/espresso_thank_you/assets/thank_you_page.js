@@ -36,7 +36,8 @@ jQuery(document).ready(function($) {
 
 	// make sure eei18n is defined
 	if ( typeof eei18n === 'undefined' ) {
-		var eei18n = {
+		console.log( JSON.stringify( 'typeof eei18n === ' + undefined, null, 4 ) );
+		eei18n = {
 			loading_payment_info : "loading payment information...",
 			checking_for_new_payments : "checking for new payments...",
 			slow_IPN : '<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">The Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.</div>',
@@ -114,7 +115,7 @@ jQuery(document).ready(function($) {
 			//eeThnx.console_log( 'setup_listener_for_heartbeat' );
 			// setup listener
 			$( document ).on( 'heartbeat-tick', function( event, data ) {
-				console.log( JSON.stringify( 'heartbeat-tick', null, 4 ) );
+				//eeThnx.console_log( 'heartbeat-tick' );
 				if ( typeof data[ 'espresso_thank_you_page' ] === 'undefined' ) {
 					return;
 				}
@@ -159,7 +160,8 @@ jQuery(document).ready(function($) {
 			wp.heartbeat.interval( eeThnx.polling_time );
 			wp.heartbeat.enqueue( 'espresso_thank_you_page', eeThnx.return, false );
 			wp.heartbeat.connectNow();
-
+			// slow down polling after initial check
+			eeThnx.polling_time = 15;
 		},
 
 		/**
@@ -204,9 +206,11 @@ jQuery(document).ready(function($) {
 		 *    process_wait_time
 		 */
 		process_wait_time: function () {
-			//eeThnx.console_log('process_wait_time');
+			//eeThnx.console_log( 'process_wait_time' );
+			//eeThnx.console_log( 'eeThnx.data.still_waiting', eeThnx.data.still_waiting );
+			//eeThnx.console_log( 'eei18n.IPN_wait_time', eei18n.IPN_wait_time );
 			// has wait time exceeded exceptable limit?
-			if (eeThnx.data.still_waiting > eei18n.IPN_wait_time) {
+			if ( eeThnx.data.still_waiting > eei18n.IPN_wait_time ) {
 				// waited too long
 				eeThnx.wait_time_exceeded();
 				eeThnx.stop_heartbeat();
@@ -228,6 +232,8 @@ jQuery(document).ready(function($) {
 				eeThnx.update_transaction_details();
 				eeThnx.display_new_payments();
 				eeThnx.start_stop_heartbeat();
+				// slow down polling
+				eeThnx.polling_time = 60;
 				// received transaction AND payment details ?
 			} else if (typeof eeThnx.data.transaction_details !== 'undefined' && typeof eeThnx.data.payment_details !== 'undefined') {
 				//eeThnx.console_log( 'transaction_details && payment_details' );
@@ -235,18 +241,24 @@ jQuery(document).ready(function($) {
 				eeThnx.display_payment_details();
 				eeThnx.hide_loading_message();
 				eeThnx.start_stop_heartbeat();
+				// slow down polling
+				eeThnx.polling_time = 60;
 				// received transaction details only ?
 			} else if (typeof eeThnx.data.transaction_details !== 'undefined') {
 				//eeThnx.console_log( 'transaction_details' );
 				eeThnx.display_transaction_details();
 				eeThnx.update_loading_message();
 				eeThnx.start_stop_heartbeat();
+				// slow down polling
+				eeThnx.polling_time = 60;
 				// received payment details
 			} else if (typeof eeThnx.data.payment_details !== 'undefined') {
 				//eeThnx.console_log( 'payment_details' );
 				eeThnx.display_payment_details();
 				eeThnx.hide_loading_message();
 				eeThnx.start_stop_heartbeat();
+				// slow down polling
+				eeThnx.polling_time = 60;
 			} else {
 				//eeThnx.console_log( 'start_stop_heartbeat' );
 				eeThnx.start_stop_heartbeat();
@@ -339,6 +351,7 @@ jQuery(document).ready(function($) {
 		set_wait_time : function() {
 			//eeThnx.console_log( 'set_wait_time' );
 			var waitTime = new Date( null, null, null, null, null, eeThnx.data.still_waiting ).toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
+			//eeThnx.console_log( 'waitTime', waitTime );
 			$('#espresso-thank-you-page-ajax-time-dv').html( waitTime );
 		},
 
@@ -355,6 +368,8 @@ jQuery(document).ready(function($) {
 		*/
 		start_stop_heartbeat : function() {
 			//eeThnx.console_log( 'start_stop_heartbeat' );
+			//eeThnx.console_log( 'eeThnx.return.txn_status', eeThnx.return.txn_status );
+			//eeThnx.console_log( 'eei18n.TXN_incomplete', eei18n.TXN_incomplete );
 			if (eeThnx.return.txn_status === eei18n.TXN_incomplete) {
 				eeThnx.restart_heartbeat();
 //				eeThnx.checking_for_new_payments_message();
@@ -369,7 +384,6 @@ jQuery(document).ready(function($) {
 		 */
 		restart_heartbeat: function () {
 			//eeThnx.console_log('restart_heartbeat');
-			eeThnx.console_log_obj('eeThnx.return', eeThnx.return);
 			wp.heartbeat.enqueue('espresso_thank_you_page', eeThnx.return, true);
 		},
 
