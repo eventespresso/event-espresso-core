@@ -157,6 +157,12 @@ interface EEI_Registration extends EEI_Base {
 	 * @return EEI_Attendee
 	 */
 	function attendee();
+
+	/**
+	 * Returns the event's name this registration is for
+	 * @return string
+	 */
+	function event_name();
 }
 
 
@@ -214,18 +220,21 @@ interface EEI_Address {
 	public function address();
 	public function address2();
 	public function city();
-	public function state_ID();
-	public function state_name();
 	/**
 	 * @return EE_State
 	 */
 	public function state_obj();
-	public function country_ID();
-	public function country_name();
+	public function state_ID();
+	public function state_name();
+	public function state_abbrev();
+	public function state();
 	/**
 	 * @return EE_Country
 	 */
 	public function country_obj();
+	public function country_ID();
+	public function country_name();
+	public function country();
 	public function zip();
 }
 

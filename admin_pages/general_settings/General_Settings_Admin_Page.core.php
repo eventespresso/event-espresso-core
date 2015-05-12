@@ -170,7 +170,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Critical Pages', 'event_espresso'),
 					'order' => 50
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
                			'help_tabs' => array(
 					'general_settings_critical_pages_help_tab' => array(
 						'title' => __('Critical Pages', 'event_espresso'),
@@ -187,7 +187,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Templates', 'event_espresso'),
 					'order' => 30
 				),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
@@ -209,7 +209,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						)
 					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
@@ -217,7 +217,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Admin Options', 'event_espresso'),
 					'order' => 60
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
                 			'help_tabs' => array(
 					'general_settings_admin_options_help_tab' => array(
 						'title' => __('Admin Options', 'event_espresso'),
@@ -239,7 +239,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						)
 					),
 				'help_tour' => array( 'Countries_Help_Tour' ),
-				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
 				)
 			);
