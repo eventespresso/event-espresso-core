@@ -11,11 +11,7 @@
 	<p class="clearfix">
 		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Address', 'event_espresso'); ?></span>
 		<div class="admin-side-mbox-text-dv">
-			<?php echo $address;?>
-			<?php echo $address2;?>
-			<?php echo $city;?>
-			<?php echo $state . $country;?>
-			<?php echo $zip;?>
+			<?php echo $formatted_address;?>
 		</div>
 	</p>
 </div>

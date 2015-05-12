@@ -82,10 +82,11 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
-	 * @param EE_Line_Item $line_item grand total line item of type EEM_Line_Item::type_total
+	 * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
-	 * @return EE_Line_Item
+	 * @return \EE_Line_Item
+	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
 		// add $ticket to cart
@@ -236,11 +237,11 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item
 	 */
 	protected static function create_pre_tax_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
-		$pre_tax_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'	=> 'pre-tax-subtotal',
-			'LIN_name' 	=> __('Pre-Tax Subtotal', 'event_espresso'),
-			'LIN_type'	=> EEM_Line_Item::type_sub_total
-		));
+		$pre_tax_line_item = EE_Line_Item::new_instance( array(
+			'LIN_code' 	=> 'pre-tax-subtotal',
+			'LIN_name' 	=> __( 'Pre-Tax Subtotal', 'event_espresso' ),
+			'LIN_type' 	=> EEM_Line_Item::type_sub_total
+		) );
 		self::set_TXN_ID( $pre_tax_line_item, $transaction );
 		$total_line_item->add_child_line_item( $pre_tax_line_item );
 		self::create_event_subtotal( $pre_tax_line_item, $transaction );
@@ -762,6 +763,9 @@ class EEH_Line_Item {
 		EE_Error::doing_it_wrong( 'EEH_Line_Item::get_items_subtotal()', __('Method replaced with EEH_Line_Item::get_pre_tax_subtotal()', 'event_espresso'), '4.6.0' );
 		return self::get_pre_tax_subtotal( $total_line_item );
 	}
+
+
+
 	/**
 	 * @deprecated
 	 * @param EE_Transaction $transaction
@@ -771,6 +775,9 @@ class EEH_Line_Item {
 		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_total_line_item()', __('Method replaced with EEH_Line_Item::create_total_line_item()', 'event_espresso'), '4.6.0' );
 		return self::create_total_line_item( $transaction );
 	}
+
+
+
 	/**
 	 * @deprecated
 	 * @param EE_Line_Item $total_line_item
@@ -781,6 +788,9 @@ class EEH_Line_Item {
 		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_tickets_subtotal()', __('Method replaced with EEH_Line_Item::create_pre_tax_subtotal()', 'event_espresso'), '4.6.0' );
 		return self::create_pre_tax_subtotal( $total_line_item, $transaction );
 	}
+
+
+
 	/**
 	 * @deprecated
 	 * @param EE_Line_Item $total_line_item
@@ -791,6 +801,9 @@ class EEH_Line_Item {
 		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_taxes_subtotal()', __('Method replaced with EEH_Line_Item::create_taxes_subtotal()', 'event_espresso'), '4.6.0' );
 		return self::create_taxes_subtotal( $total_line_item, $transaction );
 	}
+
+
+
 	/**
 	 * @deprecated
 	 * @param EE_Line_Item $total_line_item

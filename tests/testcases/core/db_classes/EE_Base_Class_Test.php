@@ -446,6 +446,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//if that didn't throw an error, we're good
 	}
 
+
+
 	/**
 	 * @group 7358
 	 */
@@ -519,7 +521,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 */
 	public function test_set_date_time() {
 		//setup a datetime object with some known values for testing with.
-		$original_timezone = get_option('timezone_string' );
+		$original_timezone = get_option( 'timezone_string' );
 		update_option( 'timezone_string', 'America/Toronto' );
 		$dateTimeZone = new DateTimeZone( 'America/Toronto' );
 		$currentTime = new DateTime( "now", $dateTimeZone );
@@ -528,44 +530,186 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		/** @type EE_Datetime $datetime */
 		$datetime = $this->factory->datetime->create(
 			array(
-				'DTT_EVT_start' 	=> $currentTime->format( 'Y-m-d H:i:s' ),
-				'DTT_EVT_end'   	=> $futureTime->format( 'Y-m-d H:i:s' ),
-				'formats'       		=> array( 'Y-m-d', 'H:i:s' )
+				'DTT_EVT_start' => $currentTime->format( 'Y-m-d H:i:s' ),
+				'DTT_EVT_end'   => $futureTime->format( 'Y-m-d H:i:s' ),
+				'formats'       => array( 'Y-m-d', 'H:i:s' )
 			)
 		);
-
 		$this->assertInstanceOf( 'EE_Datetime', $datetime );
-
 		//create a second datetime for polluting the formats on EE_Datetime_Field.
 		// Note: the purpose of this is to test that when th EE_Datetime_Field gets the new formats from this object, that they are NOT persisting to the original datetime created that has different formats (but utilizes the same EE_Date)
 		$this->factory->datetime->create(
 			array(
-				'DTT_EVT_start' 	=> $currentTime->format( 'd/m/Y g:i a' ),
-				'DTT_EVT_end' 	=> $futureTime->format( 'd/m/Y g:i a' ),
-				'formats' 				=> array( 'd/m/Y', 'g:i a' )
+				'DTT_EVT_start' => $currentTime->format( 'd/m/Y g:i a' ),
+				'DTT_EVT_end'   => $futureTime->format( 'd/m/Y g:i a' ),
+				'formats'       => array( 'd/m/Y', 'g:i a' )
 			)
 		);
-
 		//test setting the time to 8am using a time string.
 		$datetime->set_start_time( '8:00:00' );
-		$this->assertEquals( $currentTime->setTime( 8,0,0 )->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
-
+		$this->assertEquals( $currentTime->setTime( 8, 0, 0 )->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
 		//test setting the time to 11pm using a date object
-		$currentTime->setTime( 23,0,0 );
+		$currentTime->setTime( 23, 0, 0 );
 		$datetime->set_start_time( $currentTime );
 		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
-
 		//test setting the date to 12-31-2012 on start date using a date string.
 		$currentTime->setDate( '2012', '12', '31' );
 		$datetime->set_start_date( '2012-12-31' );
 		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
-
 		//test setting the date to 12-15 using a date object.
 		$currentTime->setDate( '2012', '12', '15' );
 		$datetime->set_start_date( $currentTime );
 		$this->assertEquals( $currentTime->format( 'Y-m-d H:i:s' ), $datetime->get( 'DTT_EVT_start' ) );
 		//reset timezone_string back to original
 		update_option( 'timezone_string', $original_timezone );
+
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_next_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$next_events = $event->next_x( 'EVT_ID', 2 );
+
+		//verify we have two returned.
+		$this->assertEquals( 2, count( $next_events ) );
+
+		//loop through and verify the events returned are correct.
+		$pointer = 1;
+		foreach( $next_events as $next_event ) {
+			$this->assertInstanceOf( 'EE_Event', $next_event );
+			$this->assertEquals( $event->ID()+$pointer, $next_event->ID() );
+			$pointer++;
+		}
+
+		//test retrieving just ids
+		$next_events = $event->next_x( 'EVT_ID', 2, array(), 'EVT_ID' );
+
+		//verify we have two returned
+		$this->assertEquals( 2, count( $next_events ) );
+
+		//loop through and verify the IDS returned are correct.
+		$pointer = 1;
+		foreach( $next_events as $next_event ) {
+			$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+			$this->assertEquals( $event->ID()+$pointer, $next_event['EVT_ID'] );
+			$pointer++;
+		}
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_previous_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$previous_events = $event->previous_x( 'EVT_ID', 2 );
+
+		//verify we have two returned.
+		$this->assertEquals( 2, count( $previous_events ) );
+
+		//loop through and verify the events returned are correct.
+		$pointer = 1;
+		foreach( $previous_events as $next_event ) {
+			$this->assertInstanceOf( 'EE_Event', $next_event );
+			$this->assertEquals( $event->ID()-$pointer, $next_event->ID() );
+			$pointer++;
+		}
+
+		//test retrieving just ids
+		$previous_events = $event->previous_x( 'EVT_ID', 2, array(), 'EVT_ID' );
+
+		//verify we have two returned
+		$this->assertEquals( 2, count( $previous_events ) );
+
+		//loop through and verify the IDS returned are correct.
+		$pointer = 1;
+		foreach( $previous_events as $next_event ) {
+			$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+			$this->assertEquals( $event->ID()-$pointer, $next_event['EVT_ID'] );
+			$pointer++;
+		}
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_next() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$next_event = $event->next( 'EVT_ID' );
+
+		//verify we have an event returned and that its the right one in sequence.
+		$this->assertInstanceOf( 'EE_Event', $next_event );
+		$this->assertEquals( $event->ID()+1, $next_event->ID() );
+
+		//test retrieving just id
+		$next_event = $event->next( 'EVT_ID', array(), 'EVT_ID' );
+
+		//verify the returned array has the right key and value.
+		$this->assertTrue( is_array( $next_event ) );
+		$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+		$this->assertEquals( $event->ID()+1, $next_event['EVT_ID'] );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_previous() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$previous_event = $event->previous( 'EVT_ID' );
+
+		//verify we have an event returned and that its the right one in sequence.
+		$this->assertInstanceOf( 'EE_Event', $previous_event );
+		$this->assertEquals( $event->ID()-1, $previous_event->ID() );
+
+		//test retrieving just id
+		$previous_event = $event->previous( 'EVT_ID', array(), 'EVT_ID' );
+
+		//verify the returned array has the right key and value.
+		$this->assertTrue( is_array( $previous_event ) );
+		$this->assertTrue( array_key_exists( 'EVT_ID', $previous_event ) );
+		$this->assertEquals( $event->ID()-1, $previous_event['EVT_ID'] );
+
 	}
 
 }
