@@ -978,7 +978,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			case EE_PMT_Base::onsite :
 			case EE_PMT_Base::offline :
 				// mark this reg step as completed
-				$this->checkout->current_step->set_completed();
+			$this->checkout->current_step->set_completed();
 				break;
 		}
 		return;
@@ -1060,7 +1060,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
 			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
-			return true;
+			if ( $payment->status() == EEM_Payment::status_id_approved || $payment->status() == EEM_Payment::status_id_pending ) {
+				return true;
+			} else {
+				return false;
+			}
 		} else if ( $payment === true ) {
 			// please note that offline payment methods will NOT make a payment,
 			// but instead just mark themselves as the PMD_ID on the transaction, and return true
@@ -1524,6 +1528,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 				// bad payment
 				case EEM_Payment::status_id_failed :
+					if ( ! empty( $msg ) ) {
+						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+						return false;
+					}
 					// default to error below
 					break;
 

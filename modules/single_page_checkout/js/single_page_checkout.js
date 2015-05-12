@@ -1191,7 +1191,7 @@ jQuery(document).ready( function($) {
 					SPCO.end_ajax();
 				}
 				// display message
-				espresso_ajax_msg.removeClass('hidden').show().delay( fadeOut ).fadeOut();
+				espresso_ajax_msg.stop().removeClass('hidden').show().delay( fadeOut ).fadeOut();
 			} else {
 				// bye bye spinner
 				SPCO.end_ajax();
@@ -1219,7 +1219,7 @@ jQuery(document).ready( function($) {
 		 * stop any message alerts that are in progress
 		 */
 		hide_notices : function() {
-			$('.espresso-ajax-notices').stop().fadeOut(50);
+			$('.espresso-ajax-notices').stop().hide();
 		},
 
 
