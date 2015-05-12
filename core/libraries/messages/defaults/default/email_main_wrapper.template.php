@@ -3,7 +3,7 @@
 <head>
 <!-- If you delete this meta tag, Half Life 3 will never be released. -->
 <meta name="viewport" content="width=device-width" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- Facebook sharing information tags -->
 <meta property="og:title" content="<?php echo $subject; ?>" />
 <title><?php echo $subject; ?></title>
