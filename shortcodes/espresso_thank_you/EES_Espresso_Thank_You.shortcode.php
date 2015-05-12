@@ -307,7 +307,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = $show_try_pay_again_link_default;
 		}
+
 		$this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
+
 		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
@@ -358,7 +360,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary && ! $this->_payments_closed && ! $this->_current_txn->is_free() ) {
+ 		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 
@@ -595,11 +597,11 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			<div id="espresso-thank-you-page-ajax-content-dv">
 				<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 				<div id="espresso-thank-you-page-ajax-payment-dv"></div>
-				<div id="espresso-thank-you-page-ajax-loading-dv">
-					<div id="ee-ajax-loading-dv" class="left lt-blue-text">
-						<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' ); ?></span>
-					</div>
-					<?php if ( ! $this->_is_offline_payment_method ) : ?>
+					<div id="espresso-thank-you-page-ajax-loading-dv">
+						<div id="ee-ajax-loading-dv" class="left lt-blue-text">
+							<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' ); ?></span>
+						</div>
+					<?php if ( ! $this->_is_offline_payment_method && ! $this->_payments_closed ) : ?>
 						<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 							<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ) ); ?>
 							<br/>
@@ -607,7 +609,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 								<span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 						</p>
 					<?php endif; ?>
-				</div>
+					</div>
 				<div class="clear"></div>
 			</div>
 		<?php
