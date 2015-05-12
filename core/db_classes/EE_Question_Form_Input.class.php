@@ -237,13 +237,13 @@ class EE_Question_Form_Input {
 		$inputs = array();
 		$fields = $object->get_model()->field_settings( FALSE );
 		//		$pk = $object->ID(); <<< NO!
-		//		printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		//		printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		//		printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//		EEH_Debug_Tools::printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//		EEH_Debug_Tools::printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//		EEH_Debug_Tools::printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $fields as $field_ID => $field ) {
 			if ( $field instanceof EE_Model_Field_Base ) {
 				//			echo '<h4>$field_ID : ' . $field_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				//			printr( $field, '$field  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				//			EEH_Debug_Tools::printr( $field, '$field  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				if ( isset( $input_types[ $field_ID ] ) ) {
 					// get saved value for field
 					$value = $object->get( $field_ID );
@@ -307,10 +307,10 @@ class EE_Question_Form_Input {
 					if ( $field_ID == $object->get_model()->primary_key_name() ) {
 						$QFI->set( 'QST_disabled', TRUE );
 					}
-					//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					//EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$inputs[ $field_ID ] = $QFI;
 					//			if ( $field_ID == 'CNT_active' ) {
-					//				printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					//				EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					//			}
 				}
 			}

@@ -335,7 +335,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			'FHEE__EE_Export__report_registration_for_event',
 			array(
 				array(
-					'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+					'OR' => array(
+						//don't include registrations from failed or abandoned transactions...
+						'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+						//unless the registration is approved, in which case include it regardless of transaction status
+						'STS_ID' => EEM_Registration::status_id_approved
+						),
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
@@ -368,6 +373,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 						$value = $registration->get_pretty($field_name,'localized_float');
 					}elseif( $field_name == 'REG_count' ){
 						$value = sprintf( __( '%s of %s', 'event_espresso' ), $registration->get_pretty( 'REG_count' ), $registration->get_pretty( 'REG_group_size'  ) );
+					}elseif( $field_name == 'REG_date' ) {
+						$value = $registration->get_pretty( $field->get_name(), 'no_html' );
 					}else{
 						$value = $registration->get_pretty($field->get_name());
 					}

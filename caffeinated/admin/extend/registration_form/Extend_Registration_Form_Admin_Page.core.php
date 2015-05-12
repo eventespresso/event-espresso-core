@@ -221,7 +221,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						),
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE,
 				'qtips' => array(
 					'EE_Registration_Form_Tips'
@@ -234,7 +234,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
                 'help_tabs' => array(
 					'registration_form_add_question_help_tab' => array(
 						'title' => __('Add Question', 'event_espresso'),
@@ -251,7 +251,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_add_question_group_help_tab' => array(
 						'title' => __('Add Question Group', 'event_espresso'),
@@ -269,7 +269,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_edit_question_group_help_tab' => array(
 						'title' => __('Edit Question Group', 'event_espresso'),
@@ -288,7 +288,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_reg_form_settings_help_tab' => array(
 						'title' => __('Registration Form Settings', 'event_espresso'),
@@ -535,7 +535,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		} else {
 			$QSG_ID = absint($this->_req_data['QSG_ID']);
 			unset( $set_column_values[ 'QSG_ID' ] );
-			$this->_question_group_model->show_next_x_db_queries(2);
 			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
 		// update the existing related questions

@@ -92,12 +92,14 @@ class EEM_Change_Log extends EEM_Base{
 							self::type_gateway=> __("Gateway Interaction (IPN or Direct Payment)", 'event_espresso'),
 							)),
 				'LOG_message'=>new EE_Maybe_Serialized_Text_Field('LOG_message', __("Log Message (body)", 'event_espresso'), true),
-				'LOG_wp_user' => new EE_Integer_Field('LOG_wp_user', __("WP User ID who was logged in while this occurred", 'event_espresso'), true, $current_user ? $current_user->ID : NULL),
+				'LOG_wp_user' => new EE_WP_User_Field('LOG_wp_user', __("User who was logged in while this occurred", 'event_espresso'), true ),
 
 			));
 		$this->_model_relations = array();
 		foreach($models_this_can_attach_to as $model){
-			if( $model != 'Change_Log' ) {
+			if( $model == 'WP_User' ){
+				$this->_model_relations[ $model ] = new EE_Belongs_To_Relation();
+			}elseif( $model != 'Change_Log' ) {
 				$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 			}
 		}
