@@ -14,3 +14,7 @@
 .joyride-expose-cover {
 	z-index: 9999990000;
 }
+
+.joyride-tip-guide a {
+	color: orange;
+}
