@@ -430,7 +430,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						)
 					),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),
-				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_registration_details_metaboxes' ) ),
 				'require_nonce' => FALSE
 				),
 
@@ -440,7 +440,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'labels' => array(
 					'publishbox' => __('Save Registration', 'event_espresso')
 					),
@@ -453,7 +453,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 
@@ -1252,6 +1252,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_process_resend_registration();
 		}
 
+		if ( ! isset( $this->_req_data['return'] ) || $this->_req_data['return'] != 'view_registration' ) {
+			//unset nonces
+			foreach ( $this->_req_data as $ref => $value ) {
+				if ( strpos( $ref, 'nonce' ) !== false ) {
+					unset( $this->_req_data[$ref] );
+					continue;
+				}
+				$this->_req_data[$ref] = urlencode( $value );
+			}
+
+			//merge request vars so that the reloaded list table contains any existin filter query params
+			$route = array_merge( $this->_req_data, $route );
+		}
+
 		$this->_redirect_after_action( FALSE, '', '', $route, TRUE );
 	}
 
@@ -1725,13 +1739,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
 		$this->_template_args['lname'] = $attendee->lname();//$this->_registration->ATT_lname;
 		$this->_template_args['email'] = $attendee->email();//$this->_registration->ATT_email;
-		$this->_template_args['address'] = $attendee->address();//$this->_registration->ATT_address;
-		$this->_template_args['address2'] =  $attendee->address2() ? '<br />' . $attendee->address2() : '';
-		$this->_template_args['city'] =  $attendee->city() ? '<br />' . $attendee->city(). ', ' : '';
-		$this->_template_args['state'] =  $attendee->state_obj() ? '<br />' . $attendee->state_obj()->name() . ', ' : '';
-		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
-		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
+
+		EE_Registry::instance()->load_helper( 'Formatter' );
+		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $attendee );
+
 
 		//edit link
 		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
