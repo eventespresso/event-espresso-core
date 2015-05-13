@@ -19,13 +19,13 @@
 			<tbody>
 		<?php foreach ( $line_items as $item ) : ?>
 			<?php
-				$event = $item->get_first_related('Transaction')->get_first_related('Registration')->get_first_related('Event');
-				$event_name = $event->get('EVT_name');
-
+				$event = $item->ticket_event();
+				$event_name = $item->ticket_event_name();
+				$event_link = $event instanceof EE_Event ? '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ), TXN_ADMIN_URL ) . '">' . $event_name . '</a>' : $event_name;
 			?>
 			<tr>
 				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><?php echo $event_name;?></td>
+				<td class="jst-left"><?php echo $event_link;?></td>
 				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
 				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price'), FALSE, FALSE ); ?></td>
 				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
