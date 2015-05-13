@@ -74,16 +74,19 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					'TWD',
 					'RUB');
 
+
+
 	/**
 	 *
 	 * @param EEI_Payment $payment
-	 * @param array $billing_info{
-	 *	@type $credit_card string
-	 *	@type $credit_card_type string
-	 *	@type $exp_month string always 2 characters
-	 *	@type $exp_year string always 4 characters
-	 *	@type $cvv string
+	 * @param array $billing_info {
+	 * @type $credit_card string
+	 * @type $credit_card_type string
+	 * @type $exp_month string always 2 characters
+	 * @type $exp_year string always 4 characters
+	 * @type $cvv string
 	 * } @see parent::do_direct_payment for more info
+	 * @return \EE_Payment|\EEI_Payment
 	 */
 	public function do_direct_payment($payment,$billing_info = null){
 		$transaction = $payment->transaction();
@@ -251,7 +254,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				}else{
 					$payment->set_status($this->_pay_model->declined_status());
 				}
-				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
+				//make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
 				$payment->set_amount(isset($PayPalResult['AMT']) ? floatval( $PayPalResult['AMT'] ) : 0);
 				$payment->set_gateway_response($message);
 				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
@@ -259,14 +262,18 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 				$payment->set_extra_accntng($primary_registration_code);
 				$payment->set_details($PayPalResult);
-				return $payment;
 			}
 		}catch(Exception $e){
 			$payment->set_status($this->_pay_model->failed_status());
 			$payment->set_gateway_response($e->getMessage());
-			return $payment;
 		}
+		//$payment->set_status( $this->_pay_model->declined_status() );
+		//$payment->set_gateway_response( '' );
+		return $payment;
 	}
+
+
+
 	/**
 	 * CLeans out sensitive CC data and then logs it, and returns the cleaned request
 	 * @param array $request
@@ -279,6 +286,9 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		unset($cleaned_request_data['CCDetails']['cvv2']);
 		$this->log(array('Paypal Request'=>$cleaned_request_data), $payment);
 	}
+
+
+
 	/**
 	 * Cleans the response, logs it, and returns it
 	 * @param array $response
@@ -294,6 +304,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		$this->log(array('Paypal Response'=>$response),$payment);
 		return $response;
 	}
+
+
+
+	/**
+	 * @param $DataArray
+	 * @return array
+	 */
 	private function prep_and_curl_request($DataArray) {
 		// Create empty holders for each portion of the NVP string
 		$DPFieldsNVP = '&METHOD=DoDirectPayment&BUTTONSOURCE=AngellEYE_PHP_Class_DDP';
@@ -372,8 +389,12 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		return $NVPResponseArray;
 	}
 
-// End function prep_and_curl_request()
 
+
+	/**
+	 * @param $Request
+	 * @return mixed
+	 */
 	private function _CURLRequest($Request) {
 		$EndPointURL = $this->_debug_mode ? 'https://api-3t.sandbox.paypal.com/nvp' : 'https://api-3t.paypal.com/nvp';
 		$curl = curl_init();
@@ -391,6 +412,13 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 
 		return $Response;
 	}
+
+
+
+	/**
+	 * @param $NVPString
+	 * @return array
+	 */
 	private function _NVPToArray($NVPString) {
 
 		// prepare responses into array
@@ -410,18 +438,29 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		return $proArray;
 	}
 
-// End function NVPToArray()
 
+
+	/**
+	 * @param array $PayPalResult
+	 * @return bool
+	 */
 	private function _APICallSuccessful($PayPalResult) {
+		$approved = false;
 		// check main response message from PayPal
 		if (isset($PayPalResult['ACK']) && !empty($PayPalResult['ACK'])) {
 			$ack = strtoupper($PayPalResult['ACK']);
-			$approved = ( $ack == 'SUCCESS' || $ack == 'SUCCESSWITHWARNING' || $ack == 'PARTIALSUCCESS' ) ? TRUE : FALSE;
+			$approved = ( $ack == 'SUCCESS' || $ack == 'SUCCESSWITHWARNING' || $ack == 'PARTIALSUCCESS' ) ? true : false;
 		}
 
 		return $approved;
 	}
 
+
+
+	/**
+	 * @param $DataArray
+	 * @return array
+	 */
 	private function _GetErrors($DataArray) {
 
 		$Errors = array();
@@ -446,16 +485,21 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		return $Errors;
 	}
 
+
+
 	/**
-	 * 		nothing to see here...  move along....
-	 * 		@access protected
-	 * 		@return void
+	 *        nothing to see here...  move along....
+	 *
+	 * @access protected
+	 * @param $Errors
+	 * @return string
 	 */
 	private function _DisplayErrors($Errors) {
 		$error = '';
 		foreach ($Errors as $ErrorVar => $ErrorVal) {
 			$CurrentError = $Errors[$ErrorVar];
 			foreach ($CurrentError as $CurrentErrorVar => $CurrentErrorVal) {
+				$CurrentVarName = '';
 				if ($CurrentErrorVar == 'L_ERRORCODE')
 					$CurrentVarName = 'Error Code';
 				elseif ($CurrentErrorVar == 'L_SHORTMESSAGE')
@@ -470,6 +514,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		}
 		return $error;
 	}
-}
 
+
+
+}
 // End of file EEG_Paypal_Pro.gateway.php
