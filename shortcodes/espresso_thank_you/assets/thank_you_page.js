@@ -278,10 +278,9 @@ jQuery(document).ready(function($) {
 		 */
 		display_transaction_details: function () {
 			//eeThnx.console_log('display_transaction_details');
-			if ( ! eeThnx.transaction_details_dv.length > 0 ) {
-				alert( 'eeThnx.transaction_details_dv.length = ' + eeThnx.transaction_details_dv.length );
+			if ( eeThnx.transaction_details_dv.length > 0 ) {
+				eeThnx.transaction_details_dv.hide().html( eeThnx.data.transaction_details ).slideDown();
 			}
-			eeThnx.transaction_details_dv.hide().html(eeThnx.data.transaction_details).slideDown();
 			// has the TXN status changed ?
 			if (eeThnx.return.txn_status !== eeThnx.prev_txn_status) {
 				eeThnx.prev_txn_status = eeThnx.return.txn_status;
