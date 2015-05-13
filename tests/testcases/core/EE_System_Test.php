@@ -331,6 +331,9 @@ class EE_System_Test extends EE_UnitTestCase{
         ),
 		);
 		$this->assertEquals( 0, $method->invoke(EE_System::instance(), $activation_history, $current_version ) );
+		$this->assertEquals( 1, $method->invoke( EE_System::instance(), $activation_history, '4.8.0.rc.000' ) );
+		$this->assertEquals( -1, $method->invoke( EE_System::instance(), $activation_history, '4.4.0.rc.000' ) );
+		$this->assertEquals( 1, $method->invoke( EE_System::instance(), array(), '4.8.0.rc.000' ) );
 	}
 
 
