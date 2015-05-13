@@ -507,8 +507,9 @@ class EE_CPT_Strategy extends EE_BASE {
 		$object = get_queried_object();
 		//does this called object HAVE a page template set that is something other than the default.
 		$template = get_post_meta( $object->ID, '_wp_page_template', true );
+
 		//exit early if default or not set or invalid path (accounts for theme changes)
-		if ( $template == 'default' || empty( $template ) || validate_file( $template ) != 0 || ! is_readable( $template ) ) {
+		if ( $template == 'default' || empty( $template ) || ! is_readable( get_stylesheet_directory() . '/' . $template ) ) {
 			return $current_template;
 		}
 		//made it here so we SHOULD be able to just locate the template and then return it.
@@ -563,7 +564,7 @@ class EE_CPT_Default_Strategy {
 	public function __construct( $arguments = array() ) {
 		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
 		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
-		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 //		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
@@ -578,7 +579,7 @@ class EE_CPT_Default_Strategy {
 	 * @return 	\WP_Query
 	 */
 	public function pre_get_posts(  WP_Query $WP_Query  ) {
-		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//EEH_Debug_Tools::printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
 			return $WP_Query;
 		}

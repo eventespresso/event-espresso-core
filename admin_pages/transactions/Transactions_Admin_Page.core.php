@@ -465,7 +465,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transactions_overview_list_table() {
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$event = isset($this->_req_data['EVT_ID']) ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'] ) : NULL;
-		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . __('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
+		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . esc_attr__('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -618,7 +618,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 //		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 
 		// process payment details
-		$this->_template_args['payments'] = $this->_transaction->get_many_related('Payment');
+		$payments = $this->_transaction->get_many_related('Payment');
+		$this->_template_args['payments'] = $payments;
 		if ( empty( $this->_template_args['payments'] )) {
 			$this->_template_args['payments'] = FALSE;
 		}
@@ -642,7 +643,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$reg_steps = '<ul>';
 		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
-//			printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
+//			EEH_Debug_Tools::printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
 			switch ( $reg_step_status ) {
 				case $reg_step_status === true :
 					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
@@ -664,7 +665,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_details']['reg_steps']['label'] = __( 'Registration Step Progress', 'event_espresso' );
 
 
-		$this->_get_payment_methods();
+		$this->_get_payment_methods( $payments );
 		$this->_get_payment_status_array();
 		$this->_get_reg_status_selection(); //sets up the template args for the reg status array for the transaction.
 
@@ -703,11 +704,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * 	_get_payment_methods
-	*	@access private
-	*	@return void
-	*/
-	private function _get_payment_methods() {
-		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all_active(EEM_Payment_Method::scope_admin);
+	 * Gets all the payment methods available generally, or the ones that are already
+	 * selected on these payments (in case their payment methods are no longer active).
+	 * Has the side-effect of updating the template args' payment_methods item
+	 *	@access private
+	 * @param EE_Payment[] to show on this page
+	 *	@return void
+	 */
+	private function _get_payment_methods( $payments = array() ) {
+		$payment_methods_of_payments = array();
+		foreach( $payments as $payment ){
+			if( $payment instanceof EE_Payment ){
+				$payment_methods_of_payments[] = $payment->get( 'PMD_ID' );
+			}
+		}
+		if( $payment_methods_of_payments ){
+			$query_args = array( array( 'OR*payment_method_for_payment' => array(
+					'PMD_ID' => array( 'IN', $payment_methods_of_payments ),
+					'PMD_scope' => array( 'LIKE', '%' . EEM_Payment_Method::scope_admin . '%' ) ) ) );
+		}else{
+			$query_args = array( array( 'PMD_scope' => array( 'LIKE', '%' . EEM_Payment_Method::scope_admin . '%' ) ) );
+		}
+		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all( $query_args );
 	}
 
 
@@ -789,19 +807,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this registration.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
 			$primary_att = EEM_Attendee::instance()->create_default_object();
 		}
-		$this->_template_args['ATT_ID'] 							= $primary_att->get('ATT_ID');
-		$this->_template_args['prime_reg_fname'] 		= $primary_att->get('ATT_fname');
-		$this->_template_args['prime_reg_lname'] 		= $primary_att->get('ATT_lname');
-		$this->_template_args['prime_reg_email'] 			= $primary_att->get('ATT_email');
-		$this->_template_args['prime_reg_address'] 		= $primary_att->get('ATT_address');
-		$this->_template_args['prime_reg_address2'] 	= $primary_att->get('ATT_address2');
-		$this->_template_args['prime_reg_city'] 			= $primary_att->get('ATT_city');
-		$this->_template_args['prime_reg_zip'] 				= $primary_att->get('ATT_zip');
-		$this->_template_args['prime_reg_phone'] 		= $primary_att->get('ATT_phone');
-		$state = $primary_att->state_obj();
-		$this->_template_args['prime_reg_state'] 			= $state instanceof EE_State ? $state->get('STA_name' ) : '';
-		$this->_template_args['prime_reg_country'] 		= $primary_att->get('CNT_ISO');
-		$this->_template_args['registrant_form_url'] 		= add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );
+		$this->_template_args['ATT_ID'] 						= $primary_att->ID();
+		$this->_template_args['prime_reg_fname']		= $primary_att->fname();
+		$this->_template_args['prime_reg_lname']		= $primary_att->lname();
+		$this->_template_args['prime_reg_email'] 		= $primary_att->email();
+		$this->_template_args['prime_reg_phone'] 	= $primary_att->phone();
+		$this->_template_args['edit_attendee_url'] 	= EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $primary_att->ID()  ), REG_ADMIN_URL );
+		// get formatted address for registrant
+		EE_Registry::instance()->load_helper( 'Formatter' );
+		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $primary_att );
 		echo EEH_Template::display_template( TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php', $this->_template_args, TRUE );
 	}
 

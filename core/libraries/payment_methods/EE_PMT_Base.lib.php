@@ -354,7 +354,7 @@ abstract class EE_PMT_Base{
 							'ee_payment_method'=>$this->_pm_instance->slug()
 						)
 					),
-					EE_Config::instance()->core->cancel_page_url()
+					$fail_url
 				);
 
 			//  Onsite Gateway
@@ -390,13 +390,13 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the values we want to pass onto the gateway. Normally these
 	 * are just the 'pretty' values, but there may be times the data may need
-	 * a  little massaging
+	 * a  little massaging. Proper subsections will become arrays of inputs
 	 * @param EE_Billing_Info_Form $billing_form
 	 * @return array
 	 */
 	protected function _get_billing_values_from_form( $billing_form ){
 		if($billing_form instanceof EE_Form_Section_Proper ){
-			return $billing_form->input_pretty_values();
+			return $billing_form->input_pretty_values( true );
 		}else{
 			return NULL;
 		}
@@ -543,7 +543,7 @@ abstract class EE_PMT_Base{
 		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
 			return EE_PMT_Base::offsite;
 		}else{
-			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
 

@@ -306,12 +306,21 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * For example, we may want to output floats with 2 decimal places by default, dates as "Monday Jan 12, 2013, at 3:23pm" instead of
 	 * "8765678632", or any other modifications to how the value should be displayed, but not modified itself.
 	 * @param mixed $datetime_value
-	 * @param null  $schema
+	 * @param string  $schema if set to "no_html", even if the timezone is shown, there will be no tags next to it.
 	 * @internal param mixed $value_on_field_to_be_outputted
 	 * @return mixed
 	 */
 	public function prepare_for_pretty_echoing( $datetime_value, $schema = null ) {
-		$timezone_string = $this->_display_timezone() ? '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>' : '';
+		if( $this->_display_timezone() ) {
+			if( $schema == 'no_html' ){
+				$timezone_string = '(' . self::get_timezone_abbrev( $this->_timezone ) . ')';
+			}else{
+				$timezone_string = '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>';
+			}
+		} else {
+			$timezone_string = '';
+		}
+
 		$format_string = $this->_get_date_time_output( TRUE );
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetime_value, $format_string ) . $timezone_string;
 	}
