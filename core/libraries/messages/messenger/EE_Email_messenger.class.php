@@ -457,7 +457,7 @@ class EE_Email_messenger extends EE_messenger  {
 	/**
 	 * setup body for email
 	 *
-	 * @param bool $preview will etermine whether this is preview template or not.
+	 * @param bool $preview will determine whether this is preview template or not.
 	 * @return string formatted body for email.
 	 */
 	protected function _body( $preview = FALSE ) {
@@ -477,23 +477,14 @@ class EE_Email_messenger extends EE_messenger  {
 		 */
 		if ( apply_filters( 'FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview ) ) {
 
-			//now if this isn't a preview, let's setup the body so it has inline styles
-			if ( ! $preview ) {
-				require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-				$CSS = new CssToInlineStyles( $body );
-				$CSS->setUseInlineStylesBlock();
-				$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
-			} else if ( $preview && defined( 'DOING_AJAX' ) ) {
-				require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, false, 'main', $this->_variation ) );
-				$CSS   = new CssToInlineStyles( utf8_decode( $body ), $style );
-				$body  = ltrim( $CSS->convert(), ">\n" );
+			//require CssToInlineStyles library and its dependencies via composer autoloader
+			require_once EE_THIRD_PARTY . 'cssinliner/vendor/autoload.php';
 
-				//let's attempt to fix width's for ajax preview
-				/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
-				$s_width = '/width="[ 0-9]+"/';
-				$body = preg_replace( $i_width, 'width:100%;', $body );
-				$body = preg_replace( $s_width, 'width=100%', $body );/**/
+			//now if this isn't a preview, let's setup the body so it has inline styles
+			if ( ! $preview || ( $preview && defined( 'DOING_AJAX' ) ) ) {
+				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, 'main', $this->_variation ), TRUE );
+				$CSS = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles( $body, $style );
+				$body = ltrim( $CSS->convert( true ), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
 			}
 
 		}
