@@ -1258,6 +1258,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'][0] ) : array( 'action' => 'default' );
+			//unset nonces
+			foreach ( $this->_req_data as $ref => $value ) {
+				if ( strpos( $ref, 'nonce' ) !== false ) {
+					unset( $this->_req_data[$ref] );
+					continue;
+				}
+				$this->_req_data[$ref] = urlencode( $value );
+			}
+
+			//merge request vars so that the reloaded list table contains any existin filter query params
+			$route = array_merge( $this->_req_data, $route );
+		}
 
 		$this->_redirect_after_action( false, '', '', $route, true );
 	}
