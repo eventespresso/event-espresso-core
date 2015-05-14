@@ -94,7 +94,7 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 
 		$sum_of_regs = 0;
 		foreach( $regs as $reg){
-			$sum_of_regs += $reg->price_paid();
+			$sum_of_regs += $reg->final_price();
 			$reg = array_shift( $regs );
 			$tkt = $reg->ticket();
 			$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->price_paid() );
