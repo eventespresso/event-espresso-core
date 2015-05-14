@@ -365,22 +365,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *    Set final Price Paid for ticket after all modifications
+	 *    Set final price owing for this registration after all ticket/price modifications
 	 *
 	 * @access    public
 	 * @param    float $REG_final_price
 	 */
-	public function set_price_paid( $REG_final_price = 0.00 ) {
+	public function set_final_price( $REG_final_price = 0.00 ) {
 		$this->set( 'REG_final_price', $REG_final_price );
 	}
 
 
 
 	/**
-	 * @return string of price, with correct decimal places and currency symbol
+	 *    Set amount paid towards this registration's final price
+	 *
+	 * @access    public
+	 * @param    float $REG_paid
 	 */
-	public function pretty_price_paid() {
-		return $this->get_pretty( 'REG_final_price' );
+	public function set_paid( $REG_paid = 0.00 ) {
+		$this->set( 'REG_paid', $REG_paid );
 	}
 
 
@@ -650,11 +653,35 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *        get Price Paid
+	 * final_price
+	 * total owing for this registration after all ticket/price modifications
 	 * @access        public
+	 * @return    float
 	 */
-	public function price_paid() {
+	public function final_price() {
 		return $this->get( 'REG_final_price' );
+	}
+
+
+
+	/**
+	 * pretty_final_price
+	 *  final price as formatted string, with correct decimal places and currency symbol
+	 * @return string
+	 */
+	public function pretty_final_price() {
+		return $this->get_pretty( 'REG_final_price' );
+	}
+
+
+
+	/**
+	 * get paid (yeah)
+	 * @access        public
+	 * @return 	float
+	 */
+	public function paid() {
+		return $this->get( 'REG_paid' );
 	}
 
 
@@ -1043,6 +1070,45 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$registrations = $this->get_model()->get_all( $query );
 		return $registrations;
 	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @access 	public
+	 */
+	public function price_paid() {
+		EE_Error::doing_it_wrong( 'EE_Registration::price_paid()', __( 'This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso' ), '4.7.0' );
+		return $this->final_price();
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @access    public
+	 * @param    float $REG_final_price
+	 */
+	public function set_price_paid( $REG_final_price = 0.00 ) {
+		EE_Error::doing_it_wrong( 'EE_Registration::set_price_paid()', __( 'This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso' ), '4.7.0' );
+		$this->set_final_price( $REG_final_price );
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @return string
+	 */
+	public function pretty_price_paid() {
+		EE_Error::doing_it_wrong( 'EE_Registration::pretty_price_paid()', __( 'This method is deprecated, please use EE_Registration::pretty_final_price() instead.', 'event_espresso' ), '4.7.0' );
+		return $this->pretty_final_price();
+	}
+
+
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */
