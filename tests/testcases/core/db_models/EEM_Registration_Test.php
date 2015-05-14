@@ -63,6 +63,8 @@ class EEM_Registration_Test extends EE_UnitTestCase {
 		foreach ( $events as $event ) {
 			foreach( $registration_args as $registration_arg ) {
 				$reg = $this->factory->registration->create( $registration_arg );
+				//set registrations to pending so we can test
+				$reg->set_status( EEM_Registration::status_id_pending_payment );
 				$reg->_add_relation_to( $event, 'Event' );
 				$reg->save();
 			}
