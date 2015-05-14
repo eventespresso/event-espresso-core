@@ -566,6 +566,9 @@ class PluginUpdateEngineChecker {
 		}
 
 
+		add_action( 'admin_notices', array( $this, 'maybe_display_extra_notices' ) );
+
+
 		if ( ! $this->_use_wp_update ) {
 			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
@@ -704,8 +707,13 @@ class PluginUpdateEngineChecker {
 		//Try to parse the response
 		$pluginInfo = null;
 
-		//first are there any special messages that are showing up from here?
-
+		//any special notices in the return package?
+		if ( isset( $result['body'] ) ) {
+			$response = json_decode( $result['body'] );
+			if ( isset( $response->extra_notices ) ) {
+				$this->add_persistent_notice( $response->extra_notices );
+			}
+		}
 
 
 		if ( !is_wp_error($result) && isset($result['response']['code']) && ($result['response']['code'] == 200) && !empty($result['body']) ){
@@ -747,18 +755,30 @@ class PluginUpdateEngineChecker {
 			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name LIKE '%s'", '%' . $notice_prefix . '%' ) );
 		}
 
+
 		//k make sure there are no existing notices matching the incoming notices and only append new notices (unless overwrite is set to true).
 		foreach ( (array) $message as $notice_type => $notices ) {
 			if ( isset( $existing_notices[$notice_type] ) && ! $overwrite ) {
-				foreach ( (array) $notices as $notice ) {
-					if ( isset( $existing_notices[$notice] ) ) {
+				foreach ( (array) $notices as $notice_id => $notice ) {
+					if (  empty( $notice ) || ( isset( $existing_notices[$notice_type][$notice_id] ) &&  ! $existing_notices[$notice_type][$notice_id]['active'] ) ) {
+						//first let's check the message (if not empty) and if it matches what's already present then we continue, otherwise we replace and make active.
+						if ( ! empty( $notice ) && $existing_notices[$notice_type][$notice_id]['msg'] && $existing_notices[$notice_type][$notice_id]['msg'] != $notice ) {
+							$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+							$existing_notices[$notice_type][$notice_id]['active'] = 1;
+						}
 						continue;
 					} else {
-						$existing_notices[$notice_type][$notice] = 1;
+						$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+						$existing_notices[$notice_type][$notice_id]['active'] = 1;
 					}
 				}
 			} else {
-				$existing_notices[$notice_type][$notice] = 1;
+				foreach ( (array) $notices as $notice_id => $notice ) {
+					if ( ! empty( $notice ) ) {
+						$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+						$existing_notices[ $notice_type ][ $notice_id ]['active'] = 1;
+					}
+				}
 			}
 		}
 
@@ -786,12 +806,12 @@ class PluginUpdateEngineChecker {
 		$existing_notices = get_option( $notice_ref, array() );
 
 		if ( isset( $existing_notices[$type] ) ) {
-			foreach ( $existing_notices[$type] as $notice => $active ) {
-				$existing_notices[$type][$notice] = 0;
+			foreach ( $existing_notices[$type] as $notice_id => $details ) {
+				$existing_notices[$type][$notice_id]['active'] = 0;
 			}
 		}
 
-		update( $notice_ref, $existing_notices );
+		update_option( $notice_ref, $existing_notices );
 	}
 
 
@@ -799,40 +819,41 @@ class PluginUpdateEngineChecker {
 	 * This method determines whether or not to display extra notices that might have come back from the request.
 	 */
 	public function maybe_display_extra_notices() {
+
 		//nothing should happen if this plugin doesn't save extra notices
-		if ( ! $this->turn_on_notice_saves ) {
+		if ( ! $this->turn_on_notice_saves || ! is_main_site() ) {
 			return;
 		}
 
 		//okay let's get any extra notices
-		$notices = get_option( 'pue_special_notices_' . $this->_installed_version );
+		$notices = get_option( 'pue_special_notices_' . $this->_installed_version, array() );
 
 		//setup the message content for each notice;
 		$errors = $attentions = $successes = '';
 		foreach ( $notices as $type => $notes ) {
 			switch( $type ) {
 				case 'error' :
-					foreach ( $notes as $note => $active ) {
-						if ( ! $active ) {
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
 							continue;
 						}
-						$errors .= '<p>' . trim( stripslashes( $note ) ) . '</p>';
+						$errors .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
 					}
 					break;
 				case 'attention' :
-					foreach ( $notes as $note => $active ) {
-						if ( ! $active ) {
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
 							continue;
 						}
-						$attentions .= '<p>' . trim( stripslashes( $note ) ) . '</p>';
+						$attentions .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
 					}
 					break;
 				case 'success' :
-					foreach ( $notes as $note => $active ) {
-						if ( ! $active ) {
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
 							continue;
 						}
-						$successes .= '<p>' . trim( stripslashes( $note ) ) . '</p>';
+						$successes .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
 					}
 					break;
 			}
@@ -849,7 +870,7 @@ class PluginUpdateEngineChecker {
 			?>
 			<div class="error" id="pue_error_notices">
 				<?php echo $errors; ?>
-				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );" style="float:right">
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
 				<div style="clear:both"></div>
@@ -862,9 +883,9 @@ class PluginUpdateEngineChecker {
 		if ( !empty( $attentions ) ) {
 			ob_start();
 			?>
-			<div class="attention" id="pue_attention_notices">
+			<div class="notice notice-info" id="pue_attention_notices">
 				<?php echo $attentions; ?>
-				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );" style="float:right">
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
 				<div style="clear:both"></div>
@@ -879,7 +900,7 @@ class PluginUpdateEngineChecker {
 			?>
 			<div class="success" id="pue_success_notices">
 				<?php echo $successes; ?>
-				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );" style="float:right">
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
 				<div style="clear:both"></div>
@@ -894,12 +915,13 @@ class PluginUpdateEngineChecker {
 		?>
 		<script type="text/javascript">
             function PUEDismissNotice( type ){
-                jQuery("pue_" + type + "_notices").slideUp();
+                jQuery("#pue_" + type + "_notices").slideUp();
                 jQuery.post(ajaxurl, {action:"pue_dismiss_persistent_notice", type:type, cookie: encodeURIComponent(document.cookie)});
             }
         </script>
 		<?php
 		$content .= ob_get_contents();
+		ob_end_clean();
 		echo $content;
 	}
 
