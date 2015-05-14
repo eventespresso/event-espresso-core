@@ -1060,9 +1060,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 			$this->_session = $transaction->session_data();
 
-			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
-			// add PRC_ID to title if editing
-			$title = $this->_registration->ID() ? $title . ' # ' . $this->_registration->ID() : $title;
+			$event_id = $this->_registration->event_ID();
 
 
 			$this->_template_args['reg_nmbr']['value'] = $this->_registration->ID();
@@ -1083,6 +1081,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			// link back to overview
 			$this->_template_args['reg_overview_url'] = REG_ADMIN_URL;
 			$this->_template_args['registration'] = $this->_registration;
+			$this->_template_args['filtered_registrations_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'event_id' => $event_id ), REG_ADMIN_URL );
+			$this->_template_args['filtered_transactions_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event_id, 'page' => 'espresso_transactions' ), admin_url( 'admin.php' ) );
+			$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $event_id ), admin_url( 'admin.php' ) );
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
@@ -1250,6 +1251,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 			$this->_req_data['_REG_ID'] = $result['REG_ID'];
 			$this->_process_resend_registration();
+		}
+
+		if ( ! isset( $this->_req_data['return'] ) || $this->_req_data['return'] != 'view_registration' ) {
+			//unset nonces
+			foreach ( $this->_req_data as $ref => $value ) {
+				if ( strpos( $ref, 'nonce' ) !== false ) {
+					unset( $this->_req_data[$ref] );
+					continue;
+				}
+				$this->_req_data[$ref] = urlencode( $value );
+			}
+
+			//merge request vars so that the reloaded list table contains any existin filter query params
+			$route = array_merge( $this->_req_data, $route );
 		}
 
 		$this->_redirect_after_action( FALSE, '', '', $route, TRUE );
@@ -1434,6 +1449,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['reg_details']['user_agent']['value'] = $reg_details['user_agent'];
 		$this->_template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
+
+		$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'event_id' => $this->_registration->event_ID()), REG_ADMIN_URL );
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -1725,13 +1742,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
 		$this->_template_args['lname'] = $attendee->lname();//$this->_registration->ATT_lname;
 		$this->_template_args['email'] = $attendee->email();//$this->_registration->ATT_email;
-		$this->_template_args['address'] = $attendee->address();//$this->_registration->ATT_address;
-		$this->_template_args['address2'] =  $attendee->address2() ? '<br />' . $attendee->address2() : '';
-		$this->_template_args['city'] =  $attendee->city() ? '<br />' . $attendee->city(). ', ' : '';
-		$this->_template_args['state'] =  $attendee->state_obj() ? '<br />' . $attendee->state_obj()->name() . ', ' : '';
-		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
-		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
+
+		EE_Registry::instance()->load_helper( 'Formatter' );
+		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $attendee );
+
 
 		//edit link
 		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );

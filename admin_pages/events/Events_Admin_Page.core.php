@@ -982,7 +982,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
-				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
+				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : $row,
 				'TKT_price' => $ticket_price
 				);
 
@@ -1008,7 +1008,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -2158,10 +2158,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
 		$success = 0; //we already have a success message so lets not send another.
-		$query_args = array(
-			'action' => 'edit_category',
-			'EVT_CAT_ID' => $cat_id
-		);
+
+		if ( $cat_id ) {
+			$query_args = array(
+				'action'     => 'edit_category',
+				'EVT_CAT_ID' => $cat_id
+			);
+		} else {
+			$query_args = array( 'action' => 'add_category' );
+		}
 		$this->_redirect_after_action( $success, '','', $query_args, TRUE );
 
 	}
@@ -2173,6 +2178,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$category_name= isset( $this->_req_data['category_name'] ) ? $this->_req_data['category_name'] : '';
 		$category_desc= isset( $this->_req_data['category_desc'] ) ? $this->_req_data['category_desc'] : '';
 		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
+
+		if ( empty( $category_name ) ) {
+			$msg = __( 'You must add a name for the category.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
 
 		$term_args=array(
 			'name'=>$category_name,
@@ -2186,7 +2197,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
