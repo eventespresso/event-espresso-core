@@ -513,8 +513,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$content = isset( $_GET['event_id'] ) && $ticket instanceof EE_Ticket ? '<span class="TKT_name">' . $ticket->name() . '</span><br />' : '';
 
-		if ( $item->price_paid() > 0 ) {
-			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';
+		if ( $item->final_price() > 0 ) {
+			$content .= '<span class="reg-pad-rght">' . $item->pretty_final_price() . '</span>';
 		} else {
 			// free event
 			$content .= '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
@@ -537,7 +537,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$ticket = $item->ticket();
 		$content = isset( $_GET['event_id'] ) || ! $ticket instanceof EE_Ticket ? '' : '<span class="TKT_name">' . $ticket->name() . '</span><br />';
 
-		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';
+		$content .= '<span class="reg-pad-rght">' .  $item->pretty_final_price() . '</span>';
 		return $content;
 
 	}
