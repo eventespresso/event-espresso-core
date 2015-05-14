@@ -221,6 +221,7 @@ class EE_Payment_Method_Manager {
 						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
 						'PMD_wp_user'=>$current_user->ID,
+						'PMD_order' => EEM_Payment_Method::instance()->count( array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))) * 10,
 					));
 				}
 				$payment_method->set_active();
