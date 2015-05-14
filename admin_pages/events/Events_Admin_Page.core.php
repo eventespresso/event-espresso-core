@@ -2124,10 +2124,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
 		$success = 0; //we already have a success message so lets not send another.
-		$query_args = array(
-			'action' => 'edit_category',
-			'EVT_CAT_ID' => $cat_id
-		);
+
+		if ( $cat_id ) {
+			$query_args = array(
+				'action'     => 'edit_category',
+				'EVT_CAT_ID' => $cat_id
+			);
+		} else {
+			$query_args = array( 'action' => 'add_category' );
+		}
 		$this->_redirect_after_action( $success, '','', $query_args, TRUE );
 
 	}
@@ -2139,6 +2144,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$category_name= isset( $this->_req_data['category_name'] ) ? $this->_req_data['category_name'] : '';
 		$category_desc= isset( $this->_req_data['category_desc'] ) ? $this->_req_data['category_desc'] : '';
 		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
+
+		if ( empty( $category_name ) ) {
+			$msg = __( 'You must add a name for the category.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
 
 		$term_args=array(
 			'name'=>$category_name,
@@ -2152,7 +2163,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
