@@ -392,6 +392,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  STS_ID VARCHAR(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPP',
 					  REG_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 					  REG_final_price DECIMAL(10,3) NOT NULL DEFAULT '0.00',
+					  REG_paid DECIMAL(10,3) NOT NULL DEFAULT '0.00',
 					  REG_session VARCHAR(45) COLLATE utf8_bin NOT NULL,
 					  REG_code VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
 					  REG_url_link VARCHAR(64) COLLATE utf8_bin DEFAULT NULL,
