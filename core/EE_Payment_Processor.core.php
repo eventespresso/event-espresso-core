@@ -395,6 +395,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				)
 			) );
 		}
+		// still nothing ??!??
+		if ( empty( $registrations )) {
+			return;
+		}
 		$payment_amount = $payment->amount() / count( $registrations );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
