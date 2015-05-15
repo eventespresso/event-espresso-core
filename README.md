@@ -1,13 +1,13 @@
 #Event Espresso 4 core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Stable-v4.6.19.p-brightgreen.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
+[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.6.28.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
 
 
-Note: for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically don't include new features.  Releases including new features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-released version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
+Note: for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically only include bug fixes and minor features.  Releases including bigger features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-stable release candidate version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
 ***
 
@@ -57,6 +57,3 @@ Here's how we deal with pull requests for our repo:
 2. Any BUGFIX pull requests should be based off of the branch the bug was found.  Please verify if it is in master before submitting the pull request.  If it is in reproducible on master, we'd prefer to have the pull request based off master.
 3. We greatly appreciate any pull-requests submitted for consideration, but please understand we are very selective in what we decide to include in EE core.  If the "feature" is something that expands too much on our design decisions for EE core then we may suggest you develop your pull request into an addon for EE.
 
-## Finally...
-
-This is a private repo, and it will remain private even if you choose to fork it.
