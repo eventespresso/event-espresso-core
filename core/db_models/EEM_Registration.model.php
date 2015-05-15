@@ -126,7 +126,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
-			'Checkin'=>new EE_Has_Many_Relation()
+			'Checkin'=>new EE_Has_Many_Relation(),
+			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
 		);
 		$this->_model_chain_to_wp_user = 'Event';
 
