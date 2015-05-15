@@ -374,6 +374,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//add/update price_modifiers
 			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
 
+			//need to make sue that the TKT_price is accurate after saving the prices.
+			$TKT->ensure_TKT_Price_correct();
+
 
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
 			if ( ! defined('DOING_AUTOSAVE' ) ) {
