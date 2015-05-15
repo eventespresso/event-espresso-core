@@ -27,8 +27,20 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	private $_taxes_html = '';
 
 	/**
-	 * array of tickets for events with Not Approved Reg Status
-	 * @type EE_Ticket[] $_do_not_bill
+	 * array of registration and ticket IDs with monies owing
+	 * @type array $_billable
+	 */
+	private $_billable = array();
+
+	/**
+	 * whether or not billable items have been processed
+	 * @type bool $_process_billable
+	 */
+	private static $_process_billable = true;
+
+	/**
+	 * array of registration and ticket IDs for events with Not Approved Reg Status
+	 * @type array $_do_not_bill
 	 */
 	private $_do_not_bill = array();
 
@@ -119,8 +131,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		);
 		$options = array_merge( $default_options, (array)$options );
 
-		if ( isset( $options['events_requiring_pre_approval'] )) {
-			$this->_process_events_requiring_pre_approval( $options[ 'events_requiring_pre_approval' ] );
+		if ( isset( $options['registrations_requiring_payment'] )) {
+			$this->_process_registrations_requiring_payment( $options[ 'registrations_requiring_payment' ] );
+		}
+
+		if ( isset( $options['registrations_requiring_pre_approval'] )) {
+			$this->_process_registrations_requiring_pre_approval( $options[ 'registrations_requiring_pre_approval' ] );
 		}
 
 		switch( $line_item->type() ) {
@@ -142,15 +158,17 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 			case EEM_Line_Item::type_sub_total:
 				static $sub_total = 0;
+				$sub_total += $line_item->total();
 				$child_line_items = $line_item->children();
 				// loop thru children
 				foreach( $child_line_items as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
+				//EEH_Debug_Tools::printr( $line_item->total(), '$line_item->total()', __FILE__, __LINE__ );
+				//EEH_Debug_Tools::printr( $sub_total, '$sub_total', __FILE__, __LINE__ );
 				if ( $line_item->total() != $sub_total && count( $child_line_items ) > 1 ) {
 					$html .= $this->_sub_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
-					$sub_total = $line_item->total();
 				}
 				break;
 
@@ -197,6 +215,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				$html .= $this->_taxes_html;
 				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
 				$html .= $this->_payments_and_amount_owing_rows( $line_item );
+				//echo '<br/><br/><h5 style="color:#2EA2CC;">$this->_billable_total : <span style="color:#E76700">' . $this->_billable_total . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+				//echo '<h5 style="color:#2EA2CC;">$this->_non_billable_total : <span style="color:#E76700">' . $this->_non_billable_total . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+				//echo '<h5 style="color:#2EA2CC;">$this->_billable_tax_total : <span style="color:#E76700">' . $this->_billable_tax_total . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+				//echo '<h5 style="color:#2EA2CC;">$this->_non_billable_tax_total : <span style="color:#E76700">' . $this->_non_billable_tax_total . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+				//echo '<h5 style="color:#2EA2CC;">$this->_total_items : <span style="color:#E76700">' . $this->_total_items . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				break;
 
 		}
@@ -403,12 +426,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = '';
 		$transaction = EEM_Transaction::instance()->get_one_by_ID( $line_item->TXN_ID() );
 		if ( $transaction instanceof EE_Transaction ) {
+			$owing = $transaction->total() - $this->grand_total();
 			$payments = $transaction->approved_payments();
 			if ( ! empty( $payments )) {
-				$owing = $line_item->total();
+				//$owing = $line_item->total();
+				//EEH_Debug_Tools::printr( $owing, '$owing', __FILE__, __LINE__ );
 				foreach ( $payments as $payment ) {
 					if ( $payment instanceof EE_Payment ) {
-						$owing = $owing - $payment->amount();
+						//$owing = $owing - $payment->amount();
 						$payment_desc = sprintf(
 							__('Payment%1$s Received: %2$s', 'event_espresso'),
 							$payment->txn_id_chq_nmbr() != '' ? ' ' . $payment->txn_id_chq_nmbr() : '',
@@ -442,35 +467,45 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 	/**
-	 *    _process_events_requiring_pre_approval
+	 *    _process_registrations_requiring_payment
 	 * compiles a list of EE_Tickets for each event in the passed array
 	 *
-	 * @param array $events_requiring_pre_approval
+	 * @param EE_Registration[] $registrations_requiring_payment
 	 * @return mixed
 	 */
-	private function _process_events_requiring_pre_approval( $events_requiring_pre_approval = array() ) {
-		if ( is_array( $events_requiring_pre_approval ) && self::$_process_do_not_bill ) {
-			foreach ( $events_requiring_pre_approval as $event ) {
-				if ( $event instanceof EE_Event ) {
-					$datetimes = $event->datetimes_ordered( false );
-					if ( is_array( $datetimes )) {
-						foreach ( $datetimes as $datetime ) {
-							if ( $datetime instanceof EE_Datetime ) {
-								$tickets = $datetime->ticket_types_available_for_purchase();
-								if ( is_array( $tickets )) {
-									foreach ( $tickets as $ticket ) {
-										if ( $ticket instanceof EE_Ticket ) {
-											$this->_do_not_bill[ $ticket->ID() ] = $ticket;
-										}
-									}
-								}
-							}
-						}
-					}
+	private function _process_registrations_requiring_payment( $registrations_requiring_payment = array() ) {
+		if ( is_array( $registrations_requiring_payment ) && self::$_process_billable ) {
+			foreach ( $registrations_requiring_payment as $registration ) {
+				if ( ! $registration instanceof EE_Registration ) {
+					break;
 				}
+				$this->_billable[ $registration->ID() ] = $registration->ticket_ID();
 			}
-			self::$_process_do_not_bill = false;
+			//EEH_Debug_Tools::printr( $this->_billable, '$this->_billable', __FILE__, __LINE__ );
 		}
+		self::$_process_billable = false;
+	}
+
+
+
+	/**
+	 *    _process_registrations_requiring_pre_approval
+	 * compiles a list of EE_Tickets for each event in the passed array
+	 *
+	 * @param EE_Registration[] $registrations_requiring_pre_approval
+	 * @return mixed
+	 */
+	private function _process_registrations_requiring_pre_approval( $registrations_requiring_pre_approval = array() ) {
+		if ( is_array( $registrations_requiring_pre_approval ) && self::$_process_do_not_bill  ) {
+			foreach ( $registrations_requiring_pre_approval as $registration ) {
+				if ( ! $registration instanceof EE_Registration ) {
+					break;
+				}
+				$this->_do_not_bill[ $registration->ID() ] = $registration->ticket_ID();
+			}
+			//EEH_Debug_Tools::printr( $this->_do_not_bill, '$this->_do_not_bill', __FILE__, __LINE__ );
+		}
+		self::$_process_do_not_bill = false;
 	}
 
 
@@ -482,24 +517,40 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 * @return mixed
 	 */
 	private function _is_billable( EE_Line_Item $line_item ) {
+		$billable = true;
 		// is this a ticket ?
 		if ( $line_item->OBJ_type() == 'Ticket' ) {
+			//echo '<br/><h5 style="color:#2EA2CC;">$line_item->name() : <span style="color:#E76700">' . $line_item->name() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			//echo '<h5 style="color:#2EA2CC;">$line_item->OBJ_ID() : <span style="color:#E76700">' . $line_item->OBJ_ID() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+
 			// is it in the "do not bill" list?
-			if ( isset( $this->_do_not_bill[ $line_item->OBJ_ID() ] )) {
-				$this->_non_billable_total += $line_item->total();
-				if ( $line_item->is_taxable() ) {
-					$this->_non_billable_tax_total += $line_item->total();
+			foreach ( $this->_billable as $REG_ID => $TKT_ID ) {
+				if ( $line_item->OBJ_ID() === $TKT_ID ) {
+					//echo '<h5 style="color:#2EA2CC;">billable : <span style="color:#E76700">' . $line_item->unit_price() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+					$this->_billable_total += $line_item->unit_price();
+					//$this->_total_items += $line_item->quantity();
+					if ( $line_item->is_taxable() ) {
+						$this->_billable_tax_total += $line_item->unit_price();
+					}
+					$this->_total_items++;
+					unset( $this->_do_not_bill[ $REG_ID ] );
 				}
-				return false;
-			} else {
-				$this->_billable_total += $line_item->total();
-				$this->_total_items += $line_item->quantity();
-				if ( $line_item->is_taxable() ) {
-					$this->_billable_tax_total += $line_item->total();
+			}
+
+			foreach ( $this->_do_not_bill as $REG_ID => $TKT_ID ) {
+				if ( $line_item->OBJ_ID() === $TKT_ID ) {
+					//echo '<h5 style="color:#2EA2CC;">non_billable : <span style="color:#E76700">' . $line_item->unit_price() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+					$this->_non_billable_total += $line_item->unit_price();
+					if ( $line_item->is_taxable() ) {
+						$this->_non_billable_tax_total += $line_item->unit_price();
+					}
+					$this->_total_items++;
+					unset( $this->_do_not_bill[ $REG_ID ] );
+					$billable = false;
 				}
 			}
 		}
-		return true;
+		return $billable;
 	}
 
 
