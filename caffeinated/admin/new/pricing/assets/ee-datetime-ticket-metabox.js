@@ -2322,7 +2322,7 @@ jQuery(document).ready(function($) {
      * So clones work as expected.
      */
     // textarea
-    $( '#event-and-ticket-form-content').on( 'keypress', 'textarea', function() { $(this).text($(this).val()); });
+    $( '#event-and-ticket-form-content').on( 'keyup', 'textarea', function() { $(this).text($(this).val()); });
 
     // select
     $('#event-and-ticket-form-content' ).on( 'change', 'select', function() {
