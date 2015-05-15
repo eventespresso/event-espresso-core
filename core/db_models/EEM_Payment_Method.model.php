@@ -249,7 +249,7 @@ class EEM_Payment_Method extends EEM_Base {
 				) );
 				foreach( $buttons_urls_to_try as $button_url_to_try ) {
 					if( $button_url_to_try &&
-						EEH_URL::remote_file_exists( $button_url_to_try )	) {
+						EEH_URL::remote_file_exists( $button_url_to_try, false )	) {
 						if( $current_button_url != $button_url_to_try ){
 							$payment_method->save( array( 'PMD_button_url' => $button_url_to_try ) );
 							EE_Error::add_attention( sprintf( __( "Payment Method %s's button url was set to %s, because the old image either didnt exist or SSL was recently enabled.", "event_espresso" ), $payment_method->name(), $button_url_to_try ) );

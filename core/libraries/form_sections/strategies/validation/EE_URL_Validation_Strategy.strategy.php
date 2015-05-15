@@ -35,7 +35,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 				throw new EE_Validation_Error( $this->get_validation_error_message(), 'invalid_url');
 			}else{
 				EE_Registry::instance()->load_helper('URL');
-				if( ! EEH_URL::remote_file_exists($normalized_value)){
+				if( ! EEH_URL::remote_file_exists( $normalized_value, false )){
 					throw new EE_Validation_Error(sprintf(__("That URL seems to be broken. Please enter a valid URL", "event_espresso")));
 				}
 			}
