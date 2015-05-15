@@ -57,6 +57,7 @@ class EEH_URL{
 			'method'=>'GET',
 			'redirection'=>1,
 			'sslverify' => $sslverify,
+			'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
 		));
 		if( ! $results instanceof WP_Error &&
 				isset($results['response']) &&
