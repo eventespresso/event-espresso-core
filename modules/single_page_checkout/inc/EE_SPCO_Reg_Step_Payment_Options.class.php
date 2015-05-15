@@ -160,13 +160,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$registrations_requiring_pre_approval = array();
 		$sold_out_events = array();
 		$reg_count = 0;
-		// these reg statuses require payment (if event is not free)
-		$requires_payment = array(
-			EEM_Registration::status_id_pending_payment,
-			EEM_Registration::status_id_approved
-		);
 		// loop thru registrations to gather info
-		foreach ( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) as $registration ) {
+		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
+		foreach ( $registrations as $registration ) {
+			//echo '<h3 style="color:#E76700;line-height:1em;">' . $registration->ID() . '<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h3>';
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
@@ -191,18 +188,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					);
 				}
 			}
-			if (
-				in_array( $registration->status_ID(), $requires_payment ) &&
-				$registration->final_price() != 0 &&
-				$registration->final_price() != $registration->paid()
-			) {
+			// are they allowed to pay now and is there monies owing?
+			if ( $registration->owes_monies_and_can_pay() ) {
 				$registrations_requiring_payment[ $registration->ID() ] = $registration;
 				do_action(
 					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_payment',
 					$registration->event(),
 					$this
 				);
-			} else if ( $registration->status_ID() != EEM_Registration::status_id_not_approved ) {
+			} else if ( ! $this->checkout->revisit && $registration->status_ID() != EEM_Registration::status_id_not_approved && $registration->ticket()->is_free()  ) {
 				$registrations_for_free_events[ $registration->event()->ID() ] = $registration;
 			}
 		}
@@ -214,24 +208,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $registrations_requiring_pre_approval )) {
 			$subsections['registrations_requiring_pre_approval'] = $this->_registrations_requiring_pre_approval( $registrations_requiring_pre_approval );
 		}
-		if ( ! empty( $registrations_requiring_payment )) {
+		if ( ! empty( $registrations_for_free_events ) ) {
+			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
+		}
+		if ( ! empty( $registrations_requiring_payment ) ) {
+			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
 			EEH_Autoloader::register_line_item_display_autoloaders();
 			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
 			$transaction_details = $this->Line_Item_Display->display_line_item(
 				$this->checkout->cart->get_grand_total(),
-				array(
-					'registrations_requiring_payment' 			=> $registrations_requiring_payment,
-					'registrations_requiring_pre_approval' 	=> $registrations_requiring_pre_approval,
-				)
+				array( 'registrations' => $registrations )
 			);
-			$this->checkout->amount_owing = $this->_calculate_amount_owing();
-			//$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
-			//if ( $this->checkout->amount_owing > 0 ) {
+			$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			if ( $this->checkout->amount_owing > 0 ) {
 				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
-			//}
-		} else {
-			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
+			}
 		}
 		return new EE_Form_Section_Proper(
 			array(
@@ -242,21 +234,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
-	}
-
-
-
-	/**
-	 * _calculate_amount_owing
-	 * @return float
-	 */
-	private function _calculate_amount_owing() {
-		//echo '<br/><br/><h5 style="color:#2EA2CC;">$this->Line_Item_Display->grand_total() : <span style="color:#E76700">' . $this->Line_Item_Display->grand_total() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		//echo '<h5 style="color:#2EA2CC;">$this->checkout->transaction->total() : <span style="color:#E76700">' . $this->checkout->transaction->total() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		//echo '<h5 style="color:#2EA2CC;">$this->checkout->transaction->paid() : <span style="color:#E76700">' . $this->checkout->transaction->paid() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		//echo '<h5 style="color:#2EA2CC;">total() - paid() : <span style="color:#E76700">' . ( $this->checkout->transaction->total() - $this->checkout->transaction->paid() ) . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5><br/>';
-		return (float)( $this->checkout->transaction->total()- $this->Line_Item_Display->grand_total() );
-		//return $this->Line_Item_Display->grand_total();
 	}
 
 
