@@ -572,6 +572,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 *
 	 * @return void
 	 * @access protected
+	 * @throws EE_Error
 	 */
 	protected function _init_data() {
 
@@ -612,6 +613,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 	/**
 	 * processes the data object so we get
+	 * @throws EE_Error
 	 * @return void
 	 */
 	protected function _process_data() {
