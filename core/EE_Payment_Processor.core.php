@@ -376,7 +376,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			return;
 		}
 		// find registrations with monies owing that can receive a payment
-		$registrations = $transaction->registrations(
+		$registrations = $transaction->registrations( array(
 			array(
 				'STS_ID' => array(
 					'IN',
@@ -389,8 +389,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				'REG_final_price'  => array( '!=', 0 ),
 				'REG_final_price*' => array( '!=', 'REG_paid' ),
 			)
-		);
-		EEH_Debug_Tools::printr( $registrations, '$registrations', __FILE__, __LINE__ );
+		));
+		//EEH_Debug_Tools::printr( $registrations, '$registrations', __FILE__, __LINE__ );
 		$payment_amount = $payment->amount() / count( $registrations );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
