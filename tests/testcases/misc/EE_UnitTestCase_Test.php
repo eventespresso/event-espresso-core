@@ -31,10 +31,10 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 		$regs = $txn->registrations();
 		$this->assertEquals(1, count( $regs ) );
 		$reg = array_shift( $regs );
-		$this->assertEquals( $txn->total(), $reg->price_paid() );
+		$this->assertEquals( $txn->total(), $reg->final_price() );
 
 		$tkt = $reg->ticket();
-		$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->price_paid() );
+		$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->final_price() );
 		$this->assertTrue( $tkt->taxable() );
 
 		$total_line_item = $txn->total_line_item();
@@ -63,10 +63,10 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 		$regs = $txn->registrations();
 		$this->assertEquals(1, count( $regs ) );
 		$reg = array_shift( $regs );
-		$this->assertEquals( $txn->total(), $reg->price_paid() );
+		$this->assertEquals( $txn->total(), $reg->final_price() );
 
 		$tkt = $reg->ticket();
-		$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->price_paid() );
+		$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->final_price() );
 		$this->assertTrue( $tkt->taxable() );
 
 		$total_line_item = $txn->total_line_item();
@@ -97,7 +97,7 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 			$sum_of_regs += $reg->final_price();
 			$reg = array_shift( $regs );
 			$tkt = $reg->ticket();
-			$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->price_paid() );
+			$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->final_price() );
 			$this->assertTrue( $tkt->taxable() );
 		}
 		$this->assertEquals( $txn->total(), $sum_of_regs );
