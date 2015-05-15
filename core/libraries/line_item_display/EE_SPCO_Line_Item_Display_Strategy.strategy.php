@@ -252,6 +252,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$line_item,
 			$options
 		);
+		$name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
 		// name td
 		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
 		// quantity td
@@ -260,7 +261,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		// total td
 		$total = EEH_Template::format_currency( $line_item->total(), false, false );
-		$total .= $line_item->is_taxable() ? '*' : '';
 		$html .= EEH_HTML::td( $total, '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
