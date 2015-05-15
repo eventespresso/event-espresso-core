@@ -44,10 +44,11 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 				//grab the first item and see if its a registration.
 				$maybe_reg = isset( $data_type[0] ) && is_array( $data_type[0] ) ? reset( $data_type[0] ) : reset( $data_type );
 				if ( $maybe_reg instanceof EE_Registration ) {
-					foreach ( $data_type as $reg ) {
+					$regs = is_array( $data_type[0] ) ? $data_type[0] : array( $maybe_reg );
+					foreach ( $regs as $reg ) {
 						$this->_regs_for_sending[] = $reg->ID();
 					}
-					$this->_data = isset( $data_type[1] ) ? array( $maybe_reg->transaction(), null, $data_type[1] ) : array( $maybe_reg->transaction() );
+					$this->_data = isset( $this->_data[1] ) ? array( $maybe_reg->transaction(), null, $this->_data[1] ) : array( $maybe_reg->transaction() );
 					$this->_data_handler = 'Gateways';
 				} else {
 					$this->_data_handler = 'Gateways';
