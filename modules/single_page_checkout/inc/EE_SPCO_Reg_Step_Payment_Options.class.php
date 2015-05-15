@@ -155,10 +155,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EE_Registry::instance()->load_helper( 'HTML' );
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'payments_closed';
-		$payment_required = array();
+		$registrations_requiring_payment = array();
 		$registrations_for_free_events = array();
+		$registrations_requiring_pre_approval = array();
 		$sold_out_events = array();
-		$events_requiring_pre_approval = array();
 		$reg_count = 0;
 		// these reg statuses require payment (if event is not free)
 		$requires_payment = array(
@@ -183,7 +183,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// event requires admin approval
 				if ( $registration->status_ID() == EEM_Registration::status_id_not_approved ) {
 					// add event to list of events with pre-approval reg status
-					$events_requiring_pre_approval[ $registration->event()->ID() ] = $registration->event();
+					$registrations_requiring_pre_approval[ $registration->ID() ] = $registration;
 					do_action(
 						'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
 						$registration->event(),
@@ -191,8 +191,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					);
 				}
 			}
-			if ( in_array( $registration->status_ID(), $requires_payment ) && ! $registration->ticket()->is_free() ) {
-				$payment_required[ $registration->event()->ID() ] = $registration->event();
+			if (
+				in_array( $registration->status_ID(), $requires_payment ) &&
+				$registration->final_price() != 0 &&
+				$registration->final_price() != $registration->paid()
+			) {
+				$registrations_requiring_payment[ $registration->ID() ] = $registration;
 				do_action(
 					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_payment',
 					$registration->event(),
@@ -205,23 +209,27 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$subsections = array();
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
-			$subsections['events_requiring_pre_approval'] = $this->_sold_out_events( $sold_out_events );
+			$subsections['sold_out_events'] = $this->_sold_out_events( $sold_out_events );
 		}
-		if ( ! empty( $events_requiring_pre_approval )) {
-			$subsections['events_requiring_pre_approval'] = $this->_events_requiring_pre_approval( $events_requiring_pre_approval );
+		if ( ! empty( $registrations_requiring_pre_approval )) {
+			$subsections['registrations_requiring_pre_approval'] = $this->_registrations_requiring_pre_approval( $registrations_requiring_pre_approval );
 		}
-		if ( ! empty( $payment_required )) {
+		if ( ! empty( $registrations_requiring_payment )) {
 			// autoload Line_Item_Display classes
 			EEH_Autoloader::register_line_item_display_autoloaders();
 			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
 			$transaction_details = $this->Line_Item_Display->display_line_item(
 				$this->checkout->cart->get_grand_total(),
-				array( 'events_requiring_pre_approval' => $events_requiring_pre_approval )
+				array(
+					'registrations_requiring_payment' 			=> $registrations_requiring_payment,
+					'registrations_requiring_pre_approval' 	=> $registrations_requiring_pre_approval,
+				)
 			);
 			$this->checkout->amount_owing = $this->_calculate_amount_owing();
-			if ( $this->checkout->amount_owing > 0 ) {
+			//$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			//if ( $this->checkout->amount_owing > 0 ) {
 				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
-			}
+			//}
 		} else {
 			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
@@ -243,7 +251,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return float
 	 */
 	private function _calculate_amount_owing() {
-		return (float)( $this->Line_Item_Display->grand_total() - $this->checkout->transaction->paid() );
+		//echo '<br/><br/><h5 style="color:#2EA2CC;">$this->Line_Item_Display->grand_total() : <span style="color:#E76700">' . $this->Line_Item_Display->grand_total() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		//echo '<h5 style="color:#2EA2CC;">$this->checkout->transaction->total() : <span style="color:#E76700">' . $this->checkout->transaction->total() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		//echo '<h5 style="color:#2EA2CC;">$this->checkout->transaction->paid() : <span style="color:#E76700">' . $this->checkout->transaction->paid() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		//echo '<h5 style="color:#2EA2CC;">total() - paid() : <span style="color:#E76700">' . ( $this->checkout->transaction->total() - $this->checkout->transaction->paid() ) . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5><br/>';
+		return (float)( $this->checkout->transaction->total()- $this->Line_Item_Display->grand_total() );
+		//return $this->Line_Item_Display->grand_total();
 	}
 
 
@@ -291,19 +304,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * events_requiring_pre_approval
-	 * @param \EE_Event[] $events_requiring_pre_approval_array
+	 * registrations_requiring_pre_approval
+	 * @param array $registrations_requiring_pre_approval
 	 * @return \EE_Form_Section_Proper
 	 */
-	private function _events_requiring_pre_approval( $events_requiring_pre_approval_array = array()) {
-
+	private function _registrations_requiring_pre_approval( $registrations_requiring_pre_approval = array()) {
 		$events_requiring_pre_approval = '';
-		foreach ( $events_requiring_pre_approval_array as $event_requiring_pre_approval ) {
-			$events_requiring_pre_approval .= EEH_HTML::li(
-				EEH_HTML::span( '', '', 'dashicons dashicons-marker ee-icon-size-16 orange-text'
-				)
-				 . EEH_HTML::span( $event_requiring_pre_approval->name(), '', 'orange-text' )
-			);
+		foreach ( $registrations_requiring_pre_approval as $registration ) {
+			if ( $registration instanceof EE_Registration && $registration->event() instanceof EE_Event ) {
+				$events_requiring_pre_approval[ $registration->event()->ID() ] = EEH_HTML::li(
+					EEH_HTML::span( '', '', 'dashicons dashicons-marker ee-icon-size-16 orange-text'
+					)
+					. EEH_HTML::span( $registration->event()->name(), '', 'orange-text' )
+				);
+			}
 		}
 		return new EE_Form_Section_Proper(
 			array(
@@ -317,7 +331,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						'template_args'  				=> apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__template_args',
 							array(
-								'events_requiring_pre_approval' 			=> $events_requiring_pre_approval,
+								'events_requiring_pre_approval' 			=> implode( '', $events_requiring_pre_approval ),
 								'events_requiring_pre_approval_msg' 	=> apply_filters(
 									'FHEE__EE_SPCO_Reg_Step_Payment_Options___events_requiring_pre_approval__events_requiring_pre_approval_msg',
 									__( 'The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso' )
