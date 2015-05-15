@@ -687,6 +687,31 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
+	 * owes_monies_and_can_pay
+	 * whether or not this registration has monies owing and it's' status allows payment
+	 * @access        public
+	 * @return 	boolean
+	 */
+	public function owes_monies_and_can_pay() {
+		// these reg statuses require payment (if event is not free)
+		$requires_payment = array(
+			EEM_Registration::status_id_pending_payment,
+			EEM_Registration::status_id_approved
+		);
+		if (
+			in_array( $this->status_ID(), $requires_payment ) &&
+			$this->final_price() != 0 &&
+			$this->final_price() != $this->paid()
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+
+	/**
 	 * Prints out the return value of $this->pretty_status()
 	 * @param bool $show_icons
 	 * @return void
