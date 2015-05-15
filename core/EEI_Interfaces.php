@@ -31,7 +31,7 @@ interface EEI_Base{
 /**
  * Interface EEI_Transaction
  */
-interface EEI_Transaction extends EEI_Base{
+interface EEI_Transaction extends EEI_Base {
 	/**
 	 *
 	 * @return EEI_Payment
@@ -75,6 +75,10 @@ interface EEI_Line_Item{
 	 */
 	function name();
 	/**
+	 * @return string
+	 */
+	function desc();
+	/**
 	 * The unit price for the items of this line item
 	 * @return float
 	 */
@@ -96,6 +100,11 @@ interface EEI_Line_Item{
 	 * @return EEI_Line_Item[]
 	 */
 	function get_items();
+	/**
+	 * Gets the total for all the items purchased only
+	 * @return float
+	 */
+	public function get_items_total();
 	/**
 	 * Gets all the children line items of type 'tax'
 	 * @return EEI_Line_Item[]
@@ -136,7 +145,7 @@ interface EEI_Line_Item{
 /**
  * Interface EEI_Registration
  */
-interface EEI_Registration{
+interface EEI_Registration extends EEI_Base {
 	/**
 	 * Gets the registration code
 	 * @return string
