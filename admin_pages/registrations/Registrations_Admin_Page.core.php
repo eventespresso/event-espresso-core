@@ -1174,101 +1174,103 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
+	/**
+	 * This method is used when using _REG_ID from request which may or may not be an array of reg_ids.
+	 *
+	 * @param bool $status REG status given for changing registrations to.
+	 * @param bool $notify Whether to send messages notifications or not.
+	 *
+	 * @return array  (array with reg_id(s) updated and whether update was successful.
+	 */
+	protected function _set_registration_status_from_request( $status = false, $notify = false ) {
+		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
+
+		$success = $this->_set_registration_status( $REG_ID, $status );
+
+		//notify?
+		if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
+			$this->_process_resend_registration();
+		}
+
+		return $success;
+	}
+
+
 
 	/**
-	 *        _set_registration_status
+	 * Set the registration status for the given reg_id (which may or may not be an array, it gets typecast to an array).
 	 *
-	 * @access private
+	 * Note, this method does NOT take care of possible notifications.  That is required by calling code.
+	 *
 	 * @param bool $REG_ID
 	 * @param bool $status
-	 * @param bool $notify
-	 * @internal param $bool $notify Whether or not to notify the registrant(s) about the status change.
-	 * @return array
+	 * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as the array of updated registrations).
 	 */
-	private function _set_registration_status( $REG_ID = FALSE, $status = FALSE, $notify = FALSE ) {
-		$success = FALSE;
+	protected function _set_registration_status( $REG_ID, $status = false ) {
+		$success = true;
 		// set default status if none is passed
 		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
-		// have we been passed a REG_ID ?
-		if ( ! $REG_ID ) {
-			// no ? then check for one in the req data
-			$REG_ID = isset( $this->_req_data['_REG_ID'] ) && !is_array( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : $REG_ID;
-		}
-		// still don't have one?
-		if ( ! $REG_ID ) {
-			// then check req data for an array of REG_IDs
-			$REG_IDs = isset( $this->_req_data['_REG_ID'] ) && is_array( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
-			$success = TRUE;
-			// loop thru REG_IDs and set each reg status separately
-			foreach ( $REG_IDs as $REG_ID ) {
-				$result = $this->_set_registration_status( $REG_ID, $status, $notify );
-				$success = isset( $result['success'] ) && $result['success'] ? $success : FALSE;
-			}
-			$REG_ID = FALSE;
-		}
-		if ( $REG_ID ) {
-			$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
+
+		//typecast and sanitize reg_id
+		$reg_ids = array_filter( (array) $REG_ID, 'absint' );
+
+		//loop through REG_ID's and change status
+		foreach ( $reg_ids as $r_id ) {
+			$registration = EEM_Registration::instance()->get_one_by_ID( $r_id );
 			if ( $registration instanceof EE_Registration ) {
 				$registration->set_status( $status );
-				$success = $registration->save();
-				/** @type EE_Transaction_Processor $transaction_processor */
-				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				$transaction_processor->set_transaction_payment_method_based_on_registration_statuses( $registration );
-			}
-			//make sure we don't just get 0 updated
-			$success = $success === FALSE ? FALSE : TRUE;
+				$result = $registration->save();
 
-			if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
-				$this->_req_data['_REG_ID'] = $REG_ID;
-				$this->_process_resend_registration();
+				//verifying explicit fails because update *may* just return 0 for 0 rows affected
+				$success = $success !== false && $result !== false;
 			}
 		}
-		return array( 'REG_ID' => $REG_ID, 'success' => $success );
+
+		//reset _req_data['_REG_ID'] for any potential future messages notifications
+		$this->_req_data['_REG_ID'] = $reg_ids;
+
+		//return $success and processed registrations
+		return array( 'REG_ID' => $reg_ids, 'success' => $success );
 	}
+
 
 
 
 	/**
 	 * Common logic for setting up success message and redirecting to appropriate route
 	 * @param  string $STS_ID  status id for the registration changed to
-	 * @param  array  $result array from _set_registration_status()
+	 * @param   bool    $notify indicates whether the _set_registration_status_from_request does notifications or not.
 	 * @return void
 	 */
-	private function _reg_status_change_return( $STS_ID, $result ) {
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+	protected function _reg_status_change_return( $STS_ID, $notify = false ) {
+
+		$result = ! empty( $STS_ID ) ? $this->_set_registration_status_from_request( $STS_ID, $notify ) : array( 'success' => false );
+
+
+		$success = isset( $result['success'] ) && $result['success'];
 
 		//setup success message
 		if ( $success ) {
-
-			$msg = $result['REG_ID'] ? sprintf( __('Registration status has been set to %s', 'event_espresso'), EEH_Template::pretty_status($STS_ID, FALSE, 'lower' ) ) :  sprintf( __('Registrations have been %s.', 'event_espresso'), EEH_Template::pretty_status($STS_ID, FALSE, 'lower' ) ) ;
+			$msg = is_array( $result['REG_ID'] ) && count( $result['REG_ID'] ) > 1  ? sprintf( __('Registration status has been set to %s', 'event_espresso'), EEH_Template::pretty_status($STS_ID, false, 'lower' ) ) :  sprintf( __('Registrations have been set to %s.', 'event_espresso'), EEH_Template::pretty_status($STS_ID, false, 'lower' ) ) ;
 			EE_Error::add_success( $msg );
 		} else {
 			EE_Error::add_error( __('Something went wrong, and the status was not changed', 'event_espresso' ), __FILE__, __LINE__, __FUNCTION__ );
 		}
 
-		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'] ) : array( 'action' => 'default' );
-
-		//was the send notification toggle checked?
-		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
-			$this->_req_data['_REG_ID'] = $result['REG_ID'];
-			$this->_process_resend_registration();
-		}
-
-		if ( ! isset( $this->_req_data['return'] ) || $this->_req_data['return'] != 'view_registration' ) {
-			//unset nonces
-			foreach ( $this->_req_data as $ref => $value ) {
-				if ( strpos( $ref, 'nonce' ) !== false ) {
-					unset( $this->_req_data[$ref] );
-					continue;
-				}
-				$this->_req_data[$ref] = urlencode( $value );
+		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'][0] ) : array( 'action' => 'default' );
+		//unset nonces
+		foreach ( $this->_req_data as $ref => $value ) {
+			if ( strpos( $ref, 'nonce' ) !== false ) {
+				unset( $this->_req_data[$ref] );
+				continue;
 			}
-
-			//merge request vars so that the reloaded list table contains any existin filter query params
-			$route = array_merge( $this->_req_data, $route );
+			$this->_req_data[$ref] = urlencode( $value );
 		}
 
-		$this->_redirect_after_action( FALSE, '', '', $route, TRUE );
+		//merge request vars so that the reloaded list table contains any existing filter query params
+		$route = array_merge( $this->_req_data, $route );
+
+		$this->_redirect_after_action( false, '', '', $route, true );
 	}
 
 
@@ -1278,32 +1280,31 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _change_reg_status() {
-		$success = FALSE;
 		$this->_req_data['return'] = 'view_registration';
-		if ( !isset( $this->_req_data['_reg_status_id'] ) ) {
-			$result['success'] = FALSE;
-			$this->_reg_status_change_return( '', $result );
-		}
+
+		//set notify based on whether the send notifications toggle is set or not
+		$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
 
 		switch ( $this->_req_data['_reg_status_id'] ) {
-			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) :
-				$this->approve_registration();
+			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :
+				$this->approve_registration( $notify );
 				break;
-			case EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) :
-				$this->pending_registration();
+			case EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, false, 'sentence' ) :
+				$this->pending_registration( $notify );
 				break;
-			case EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) :
-				$this->not_approve_registration();
+			case EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, false, 'sentence' ) :
+				$this->not_approve_registration( $notify );
 				break;
-			case EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) :
-				$this->decline_registration();
+			case EEH_Template::pretty_status( EEM_Registration::status_id_declined, false, 'sentence' ) :
+				$this->decline_registration( $notify );
 				break;
-			case EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) :
-				$this->cancel_registration();
+			case EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, false, 'sentence' ) :
+				$this->cancel_registration( $notify );
 				break;
 			default :
-				$result['success'] = FALSE;
-				$this->_reg_status_change_return( '', $result );
+				$result['success'] = false;
+				unset( $this->_req_data['return'] );
+				$this->_reg_status_change_return( '', false );
 				break;
 		}
 	}
@@ -1316,10 +1317,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function approve_registration( $notify = FALSE ) {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_approved, $notify );
-		$this->_reg_status_change_return( EEM_Registration::status_id_approved, $result );
+	protected function approve_registration( $notify = false ) {
+		$this->_reg_status_change_return( EEM_Registration::status_id_approved, $notify );
 	}
+
 
 
 
@@ -1329,9 +1330,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function decline_registration( $notify = FALSE ) {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined, $notify );
-		$this->_reg_status_change_return( EEM_Registration::status_id_declined, $result );
+	protected function decline_registration( $notify = false ) {
+		$this->_reg_status_change_return( EEM_Registration::status_id_declined, $notify );
 	}
 
 
@@ -1343,9 +1343,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function cancel_registration( $notify = FALSE ) {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_cancelled, $notify );
-		$this->_reg_status_change_return( EEM_Registration::status_id_cancelled, $result );
+	protected function cancel_registration( $notify = false ) {
+		$this->_reg_status_change_return( EEM_Registration::status_id_cancelled, $notify );
 	}
 
 
@@ -1358,9 +1357,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function not_approve_registration( $notify = FALSE ) {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved, $notify );
-		$this->_reg_status_change_return( EEM_Registration::status_id_not_approved, $result );
+	protected function not_approve_registration( $notify = false ) {
+		$this->_reg_status_change_return( EEM_Registration::status_id_not_approved, $notify );
 	}
 
 
@@ -1371,9 +1369,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function pending_registration( $notify = FALSE ) {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment, $notify );
-		$this->_reg_status_change_return( EEM_Registration::status_id_pending_payment, $result );
+	protected function pending_registration( $notify = false ) {
+		$this->_reg_status_change_return( EEM_Registration::status_id_pending_payment, $notify );
 	}
 
 
@@ -2278,7 +2275,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _resend_registration() {
-		$success = $this->_process_resend_registration();
+		$this->_process_resend_registration();
 		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], '_REG_ID' => $this->_req_data['_REG_ID'] ) : array(
 			'action' => 'default'
 		);
