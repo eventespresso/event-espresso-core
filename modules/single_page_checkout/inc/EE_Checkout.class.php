@@ -962,10 +962,13 @@ class EE_Checkout {
 			return FALSE;
 		}
 		if ( $this->cart instanceof EE_Cart ) {
-			$grand_total = $this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
-				$this->cart->get_grand_total()->ID(),
-				$this->cart->get_grand_total()
-			);
+			$grand_total = $this->cart->get_grand_total();
+			if ( $grand_total instanceof EE_Line_Item && $grand_total->ID() ) {
+				$grand_total = $grand_total->get_model()->refresh_entity_map_with(
+					$this->cart->get_grand_total()->ID(),
+					$this->cart->get_grand_total()
+				);
+			}
 			if ( $grand_total instanceof EE_Line_Item ) {
 				$this->cart = EE_Cart::instance( $grand_total );
 			} else {
