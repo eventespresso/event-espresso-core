@@ -59,6 +59,7 @@ class PluginUpdateEngineChecker {
 	public $slug; //will hold the slug that is being used to check for updates.
 	public $current_domain; //holds what the current domain is that is pinging for updates
 	public $extra_stats; //used to contain an array of key/value pairs that will be sent as extra stats.
+	public $turn_on_notice_saves = false; //used to flag that renewal notices/critical notices are attached to version updates of this plugin.
 
 
 	private $_installed_version = ''; //this will just hold what installed version we have of the plugin right now.
@@ -117,6 +118,7 @@ class PluginUpdateEngineChecker {
 		$this->options_page_slug = $options_verified['options_page_slug'];
 		$this->_use_wp_update = $this->_is_premium || $this->_is_prerelease ? FALSE : $options_verified['use_wp_update'];
 		$this->extra_stats = $options_verified['extra_stats'];
+		$this->turn_on_notice_saves = isset( $options_verified['turn_on_notices_saved'] ) ? $options_verified['turn_on_notices_saved'] : false;
 
 		//set hooks
 		$this->_check_for_forced_upgrade();
@@ -430,6 +432,10 @@ class PluginUpdateEngineChecker {
 		//dashboard message "dismiss upgrade" link
 		add_action( "wp_ajax_".$this->dismiss_upgrade, array($this, 'dashboard_dismiss_upgrade'));
 
+		if ( ! has_action( "wp_ajax_pue_dismiss_persistent_notice" ) ) {
+			add_action( "wp_ajax_pue_dismiss_persistent_notice", array( $this, 'dismiss_persistent_notice' ) );
+		}
+
 
 		if ( !$this->_use_wp_update ) {
 			add_filter( 'upgrader_pre_install', array( $this, 'pre_upgrade_setup'), 10, 2 );
@@ -560,7 +566,10 @@ class PluginUpdateEngineChecker {
 		}
 
 
-		if ( !$this->_use_wp_update ) {
+		add_action( 'admin_notices', array( $this, 'maybe_display_extra_notices' ) );
+
+
+		if ( ! $this->_use_wp_update ) {
 			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
 				add_action('admin_notices', array($this, 'display_json_error'), 10, 3);
@@ -697,6 +706,16 @@ class PluginUpdateEngineChecker {
 
 		//Try to parse the response
 		$pluginInfo = null;
+
+		//any special notices in the return package?
+		if ( isset( $result['body'] ) ) {
+			$response = json_decode( $result['body'] );
+			if ( isset( $response->extra_notices ) ) {
+				$this->add_persistent_notice( $response->extra_notices );
+			}
+		}
+
+
 		if ( !is_wp_error($result) && isset($result['response']['code']) && ($result['response']['code'] == 200) && !empty($result['body']) ){
 
 			$pluginInfo = PU_PluginInfo::fromJson($result['body']);
@@ -705,6 +724,205 @@ class PluginUpdateEngineChecker {
 		$pluginInfo = apply_filters('puc_request_info_result-'.$this->slug, $pluginInfo, $result);
 
 		return $pluginInfo;
+	}
+
+
+	/**
+	 * Utility method for adding a persistent notice to users admin.
+	 *
+	 * @param array $message Expect an array of ['error'], ['attention'], ['success'] notices to add to the persistent
+	 *                       array.
+	 * @param bool $overwrite Whether to force overwriting existing notices or just append to any existing notices
+	 *                           (default).
+	 */
+	protected function add_persistent_notice( $message, $overwrite = false ) {
+		//renewal notices are only saved ONCE per version update and we only do this for plugins that have "turned on"
+		// notice saves (typically the main plugin).
+		if ( ! $this->turn_on_notice_saves ) {
+			return;
+		}
+
+		//get existing notices
+		$notice_prefix = 'pue_special_notices_';
+		$notice_ref = $notice_prefix . $this->_installed_version;
+
+		$existing_notices = get_option( $notice_ref, array() );
+
+		//if we don't have existing notices for the current plugin version then let's just make sure all older notices
+		//are removed from the db.
+		if ( empty( $existing_notices ) ) {
+			global $wpdb;
+			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name LIKE '%s'", '%' . $notice_prefix . '%' ) );
+		}
+
+
+		//k make sure there are no existing notices matching the incoming notices and only append new notices (unless overwrite is set to true).
+		foreach ( (array) $message as $notice_type => $notices ) {
+			if ( isset( $existing_notices[$notice_type] ) && ! $overwrite ) {
+				foreach ( (array) $notices as $notice_id => $notice ) {
+					if (  empty( $notice ) || ( isset( $existing_notices[$notice_type][$notice_id] ) &&  ! $existing_notices[$notice_type][$notice_id]['active'] ) ) {
+						//first let's check the message (if not empty) and if it matches what's already present then we continue, otherwise we replace and make active.
+						if ( ! empty( $notice ) && $existing_notices[$notice_type][$notice_id]['msg'] && $existing_notices[$notice_type][$notice_id]['msg'] != $notice ) {
+							$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+							$existing_notices[$notice_type][$notice_id]['active'] = 1;
+						}
+						continue;
+					} else {
+						$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+						$existing_notices[$notice_type][$notice_id]['active'] = 1;
+					}
+				}
+			} else {
+				foreach ( (array) $notices as $notice_id => $notice ) {
+					if ( ! empty( $notice ) ) {
+						$existing_notices[$notice_type][$notice_id]['msg'] = $notice;
+						$existing_notices[ $notice_type ][ $notice_id ]['active'] = 1;
+					}
+				}
+			}
+		}
+
+		//update notices option
+		update_option( $notice_ref, $existing_notices );
+	}
+
+
+	/**
+	 * This basically dismisses all persistent notices of a given type (note this only dismisses the notice for the
+	 * duration of the current plugins version
+	 *
+	 */
+	public function dismiss_persistent_notice() {
+
+		//if no $type in the request then exit
+		$type = isset( $_REQUEST['type'] ) ? $_REQUEST['type'] : null;
+
+		if ( empty( $type ) ) {
+			return;
+		}
+
+
+		$notice_ref = 'pue_special_notices_' . $this->_installed_version;
+		$existing_notices = get_option( $notice_ref, array() );
+
+		if ( isset( $existing_notices[$type] ) ) {
+			foreach ( $existing_notices[$type] as $notice_id => $details ) {
+				$existing_notices[$type][$notice_id]['active'] = 0;
+			}
+		}
+
+		update_option( $notice_ref, $existing_notices );
+	}
+
+
+	/**
+	 * This method determines whether or not to display extra notices that might have come back from the request.
+	 */
+	public function maybe_display_extra_notices() {
+
+		//nothing should happen if this plugin doesn't save extra notices
+		if ( ! $this->turn_on_notice_saves || ! is_main_site() ) {
+			return;
+		}
+
+		//okay let's get any extra notices
+		$notices = get_option( 'pue_special_notices_' . $this->_installed_version, array() );
+
+		//setup the message content for each notice;
+		$errors = $attentions = $successes = '';
+		foreach ( $notices as $type => $notes ) {
+			switch( $type ) {
+				case 'error' :
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
+							continue;
+						}
+						$errors .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
+					}
+					break;
+				case 'attention' :
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
+							continue;
+						}
+						$attentions .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
+					}
+					break;
+				case 'success' :
+					foreach ( (array) $notes as $noteref ) {
+						if ( ! $noteref['active'] || empty( $noteref['msg'] ) ) {
+							continue;
+						}
+						$successes .= '<p>' . trim( stripslashes( $noteref['msg'] ) ) . '</p>';
+					}
+					break;
+			}
+		}
+
+		//now let's setup the containers but only if we HAVE message to use :)
+		if ( empty( $errors ) && empty( $attentions ) && empty( $successes ) ) {
+			return '';
+		}
+
+		$content = '';
+		if ( !empty( $errors ) ) {
+			ob_start();
+			?>
+			<div class="error" id="pue_error_notices">
+				<?php echo $errors; ?>
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );" style="float:right; margin-bottom: 10px;">
+					<?php _e("Dismiss"); ?>
+				</a>
+				<div style="clear:both"></div>
+			</div>
+			<?php
+			$content .= ob_get_contents();
+			ob_end_clean();
+		}
+
+		if ( !empty( $attentions ) ) {
+			ob_start();
+			?>
+			<div class="notice notice-info" id="pue_attention_notices">
+				<?php echo $attentions; ?>
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );" style="float:right; margin-bottom: 10px;">
+					<?php _e("Dismiss"); ?>
+				</a>
+				<div style="clear:both"></div>
+			</div>
+			<?php
+			$content .= ob_get_contents();
+			ob_end_clean();
+		}
+
+		if ( !empty( $successes ) ) {
+			ob_start();
+			?>
+			<div class="success" id="pue_success_notices">
+				<?php echo $successes; ?>
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );" style="float:right; margin-bottom: 10px;">
+					<?php _e("Dismiss"); ?>
+				</a>
+				<div style="clear:both"></div>
+			</div>
+			<?php
+			$content .= ob_get_contents();
+			ob_end_clean();
+		}
+
+		//add inline script for dismissing notice
+		ob_start();
+		?>
+		<script type="text/javascript">
+            function PUEDismissNotice( type ){
+                jQuery("#pue_" + type + "_notices").slideUp();
+                jQuery.post(ajaxurl, {action:"pue_dismiss_persistent_notice", type:type, cookie: encodeURIComponent(document.cookie)});
+            }
+        </script>
+		<?php
+		$content .= ob_get_contents();
+		ob_end_clean();
+		echo $content;
 	}
 
 
