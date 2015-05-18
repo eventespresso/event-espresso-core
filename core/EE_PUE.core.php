@@ -180,7 +180,8 @@ class EE_PUE {
 				'options_page_slug' => 'espresso_general_settings',
 				'plugin_basename' => EE_PLUGIN_BASENAME,
 				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
-				'extra_stats' => $extra_stats
+				'extra_stats' => $extra_stats,
+				'turn_on_notices_saved' => true
 			);
 			$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 		}
