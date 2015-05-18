@@ -556,8 +556,10 @@ class PluginUpdateEngineChecker {
 			add_action('admin_notices', array($this, 'show_premium_upgrade') );
 		}
 
+
 		//this injects info into the returned Plugin info popup but we ONLY inject if we're not doing wp_updates
-		if ( !$this->_use_wp_update ) {
+		$this->json_error = $this->get_json_error_string();
+		if ( ! $this->_use_wp_update ) {
 			add_filter('plugins_api', array( $this, 'injectInfo' ), 10, 3);
 
 			//Insert our update info into the update array maintained by WP
@@ -570,7 +572,6 @@ class PluginUpdateEngineChecker {
 
 
 		if ( ! $this->_use_wp_update ) {
-			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
 				add_action('admin_notices', array($this, 'display_json_error'), 10, 3);
 			} else if ( empty( $this->json_error ) ) {
@@ -578,6 +579,26 @@ class PluginUpdateEngineChecker {
 				delete_site_option( $ver_option_key );
 			}
 		}
+	}
+
+
+
+	function get_json_error_string() {
+		$option_name = substr( 'pue_json_error_' . $this->pluginFile, 0, 40 );
+		return get_site_option( $option_name );
+	}
+
+
+	function set_json_error_string( $error_message ) {
+		$option_name = substr( 'pue_json_error_' . $this->pluginFile, 0, 40 );
+		update_site_option( $option_name, $error_message );
+	}
+
+
+
+	function delete_json_error_string() {
+		$option_name = substr( 'pue_json_error_' . $this->pluginFile, 0, 40 );
+		delete_site_option( $option_name );
 	}
 
 
@@ -700,7 +721,6 @@ class PluginUpdateEngineChecker {
 			$url,
 			$options
 		);
-
 
 		$this->_send_extra_stats(); //we'll trigger an extra stats update here.
 
@@ -970,7 +990,7 @@ class PluginUpdateEngineChecker {
 		//For the sake of simplicity, this function just calls requestInfo()
 		//and transforms the result accordingly.
 		$pluginInfo = $this->requestInfo(array('pu_checking_for_updates' => '1'));
-		delete_site_option('pue_json_error_'.$this->pluginFile);
+		$this->delete_json_error_string();
 		if ( $pluginInfo == null ){
 			return null;
 		}
@@ -979,7 +999,7 @@ class PluginUpdateEngineChecker {
 		//admin display for if the update check reveals that there is a new version but the API key isn't valid.
 		if ( isset($pluginInfo->api_invalid) )  { //we have json_error returned let's display a message
 			$this->json_error = $pluginInfo;
-			update_site_option('pue_json_error_'.$this->pluginFile, $this->json_error);
+			$this->set_json_error_string( $this->json_error );
 			return $this->json_error;
 		}
 
@@ -1004,6 +1024,7 @@ class PluginUpdateEngineChecker {
 
 	function in_plugin_update_message($plugin_data) {
 		$plugininfo = $this->json_error;
+
 		//only display messages if there is a new version of the plugin.
 		if ( is_object($plugininfo) ) {
 			if ( version_compare($plugininfo->version, $this->_installed_version, '>') ) {
@@ -1259,7 +1280,9 @@ class PluginUpdateEngineChecker {
 		if ( !empty($state) && isset($state->update) && !empty($state->update) ){
 			//Only insert updates that are actually newer than the currently installed version.
 			if ( version_compare($state->update->version, $this->_installed_version, '>') ){
-				$updates->response[$this->pluginFile] = $state->update->toWpFormat();
+				$updated = $state->update->toWPFormat();
+				$updated->plugin = $this->pluginFile;
+				$updates->response[$this->pluginFile] = $updated;
 			}
 		}
 
