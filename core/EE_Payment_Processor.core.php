@@ -399,15 +399,23 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( empty( $registrations )) {
 			return;
 		}
-		$payment_amount = $payment->amount() / count( $registrations );
+		// how much is available to apply to registrations?
+		$available_payment_amount = $payment->amount();
 		foreach ( $registrations as $registration ) {
+			// nothing left?
+			if ( $available_payment_amount <= 0 ) {
+				break;
+			}
 			if ( $registration instanceof EE_Registration ) {
 				$owing = $registration->final_price() - $registration->paid();
 				// check if relation already exists for this payment, and if not...
 				if ( $owing > 0 && ! EEM_Registration_Payment::instance()->exists(
 					array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
 				) ) {
-					$payment_amount = $payment_amount > $owing ? $owing : $payment_amount;
+					// don't allow payment amount to exceed the available payment amount
+					$payment_amount = $available_payment_amount < $owing ? $available_payment_amount : $owing;
+					// update $available_payment_amount
+					$available_payment_amount = $available_payment_amount - $payment_amount;
 					//calculate and set new REG_paid
 					$registration->set_paid( $registration->paid() + $payment_amount );
 					// and add relation to payment
