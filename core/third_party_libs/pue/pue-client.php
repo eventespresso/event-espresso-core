@@ -708,7 +708,7 @@ class PluginUpdateEngineChecker {
 		$pluginInfo = null;
 
 		//any special notices in the return package?
-		if ( isset( $result['body'] ) ) {
+		if ( ! is_wp_error( $result ) && isset( $result['body'] ) ) {
 			$response = json_decode( $result['body'] );
 			if ( isset( $response->extra_notices ) ) {
 				$this->add_persistent_notice( $response->extra_notices );
