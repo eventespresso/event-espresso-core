@@ -1275,6 +1275,22 @@ abstract class EEM_Base extends EE_Base{
 		return $results;
 	}
 
+	/**
+	 * Returns a single column value for a single row from the database
+	 * @param array $query_params @see EEM_Base::get_all()
+	 * @param string $field_to_select @see EEM_Base::get_col()
+	 * @return string
+	 */
+	public function get_var( $query_params = array(), $field_to_select = NULL ) {
+		$query_params[ 'limit' ] = 1;
+		$col = $this->get_col( $query_params, $field_to_select );
+		if( ! empty( $col ) ) {
+			return reset( $col );
+		}else{
+			return NULL;
+		}
+	}
+
 
 
 	/**
