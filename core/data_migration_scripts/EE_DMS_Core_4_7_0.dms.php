@@ -51,13 +51,14 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function can_migrate_from_version($version_array) {
+		EE_Registry::instance()->load_helper( 'Activation' );
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.7.0' && $version_string >= '4.6.0' ){
+		if ( ( $version_string <= '4.7.0' && $version_string >= '4.6.0' ) || ( $version_string >= '4.7.0' && ! EEH_Activation::table_exists( 'esp_registration_payment' ) ) ) {
 			return true;
-		}elseif( ! $version_string ){
+		} elseif ( ! $version_string ) {
 			//no version string provided... this must be pre 4.3
 			return false;//changed mind. dont want people thinking they should migrate yet because they cant
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -134,7 +135,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				CUR_dec_plc VARCHAR(1) COLLATE utf8_bin NOT NULL DEFAULT '2',
 				CUR_active TINYINT(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 		$table_name = 'esp_currency_payment_method';
@@ -142,7 +143,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				CUR_code  VARCHAR(6) COLLATE utf8_bin NOT NULL,
 				PMD_ID INT(11) NOT NULL,
 				PRIMARY KEY  (CPM_ID)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = 'esp_datetime';
@@ -242,7 +243,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				LOG_message TEXT,
 				LOG_wp_user INT(11) DEFAULT NULL,
 				PRIMARY KEY  (LOG_ID)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -317,7 +318,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
 				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = "esp_ticket_price";
@@ -419,7 +420,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
