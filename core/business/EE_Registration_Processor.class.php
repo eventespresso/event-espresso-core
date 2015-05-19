@@ -116,7 +116,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				'TKT_ID'          => $ticket->ID(),
 				'STS_ID'          => EEM_Registration::status_id_incomplete,
 				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => $ticket->price(),
+				'REG_final_price' => $ticket->get_ticket_total_with_taxes(),
 				'REG_session'     => EE_Registry::instance()->SSN->id(),
 				'REG_count'       => $att_nmbr,
 				'REG_group_size'  => $total_ticket_count,
