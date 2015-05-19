@@ -479,6 +479,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 
+	public function ensure_TKT_Price_correct() {
+		$this->set( 'TKT_price', EE_Taxes::get_subtotal_for_admin( $this ) );
+		$this->save();
+	}
+
+
+
 	/**
 	 * @return float
 	 */
