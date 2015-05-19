@@ -251,12 +251,17 @@ class EEM_Payment_Method extends EEM_Base {
 					if(
 							(//this is the current url and it exists, regardless of SSL issues
 								$button_url_to_try == $current_button_url &&
-								EEH_URL::remote_file_exists( $button_url_to_try, false )
+								EEH_URL::remote_file_exists(
+										$button_url_to_try,
+										array(
+											'sslverify' => false,
+											'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
+											) )
 							)
 							||
 							(//this is NOT the current url and it exists with a working SSL cert
 								$button_url_to_try != $current_button_url &&
-								EEH_URL::remote_file_exists( $button_url_to_try, true )
+								EEH_URL::remote_file_exists( $button_url_to_try )
 							) ) {
 						if( $current_button_url != $button_url_to_try ){
 							$payment_method->save( array( 'PMD_button_url' => $button_url_to_try ) );

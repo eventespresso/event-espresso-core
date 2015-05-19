@@ -52,13 +52,11 @@ class EEH_URL{
 	 * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
 	 * @return boolean
 	 */
-	public static function remote_file_exists( $url, $sslverify = true ){
-		$results = wp_remote_request($url,array(
+	public static function remote_file_exists( $url, $args = array() ){
+		$results = wp_remote_request($url,array_merge( array(
 			'method'=>'GET',
-			'redirection'=>1,
-			'sslverify' => $sslverify,
-			'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
-		));
+			'redirection'=>1
+		), $args ) );
 		if( ! $results instanceof WP_Error &&
 				isset($results['response']) &&
 				isset($results['response']['code']) &&
