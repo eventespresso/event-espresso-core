@@ -416,8 +416,8 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = row;
 			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
-			var newDTTorigrow = $('#event-datetime-' + row).clone().attr('id','event-datetime-' + newrownum);
-			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone().attr('id', 'advanced-dtt-edit-row-' + newrownum);
+			var newDTTorigrow = $('#event-datetime-' + row).clone(true).attr('id','event-datetime-' + newrownum);
+			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone(true).attr('id', 'advanced-dtt-edit-row-' + newrownum);
 			var newDTTrow = newDTTorigrow.add(newDTTsettingsRow);
 			newDTTrow = $(newDTTrow).appendTo('.datetime-editing-dtts-tbody');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -577,7 +577,7 @@ jQuery(document).ready(function($) {
 			this.ticketRow = row;
 			this.context = 'ticket';
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
+			var newTKTrow = $('#display-ticketrow-' + row).clone(true, true).attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone(true, true).attr('id', 'edit-ticketrow-' + newrownum));
 
 			newTKTrow = newTKTrow.appendTo($('.ticket-table', '.event-tickets-container').find('tbody').first() );
 
@@ -684,6 +684,7 @@ jQuery(document).ready(function($) {
 			//textarea
 			newTKTrow.find('textarea').each( function() {
 				curname = $(this).attr('name');
+
 
 				//are we in the price rows?
 				if ( $(this, '.price-table').length > 0 ) {
@@ -2315,4 +2316,18 @@ jQuery(document).ready(function($) {
 		id = id.replace('edit-ticket-TKT_end_date-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
 	});
+
+    /**
+     * On change of textarea and select elements in the ticket editor metabox, update the node to the new value
+     * So clones work as expected.
+     */
+    // textarea
+    $( '#event-and-ticket-form-content').on( 'keyup', 'textarea', function() { $(this).text($(this).val()); });
+
+    // select
+    $('#event-and-ticket-form-content' ).on( 'change', 'select', function() {
+        var sel = $(this).children(":selected");
+        $(this.children).not(sel).removeAttr("selected");
+        sel.attr("selected", "selected");
+    });
 });
