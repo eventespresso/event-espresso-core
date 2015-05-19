@@ -417,6 +417,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$sql = "RPY_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  REG_ID INT(10) UNSIGNED NOT NULL,
 					  PAY_ID INT(10) UNSIGNED NULL,
+					  RPY_amount DECIMAL(10,3) NOT NULL DEFAULT '0.00',
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
