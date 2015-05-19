@@ -145,6 +145,7 @@ final class EE_System {
 		if ( ! $this->_minimum_php_version_recommended() ) {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
+		$this->display_beta_banner_warning();
 		// central repository for classes
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
@@ -179,6 +180,60 @@ final class EE_System {
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
+	}
+
+
+
+	/**
+	 *    display_maintenance_mode_notice
+	 *
+	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public function display_beta_banner_warning() {
+		// skip AJAX requests
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+		// skip stable releases
+		if ( strpos( EVENT_ESPRESSO_VERSION, '.rc.' ) === false ) {
+			return;
+		}
+		// post release candidate warning
+		if ( is_admin() ) {
+			EE_Error::add_attention(
+				sprintf(
+					__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
+					'<strong>',
+					'</strong>'
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		} else {
+			add_action( 'shutdown', array( $this, 'beta_banner_warning_notice' ), 10 );
+		}
+	}
+
+
+
+	/**
+	 *    beta_banner_warning_notice
+	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function beta_banner_warning_notice() {
+		$admin_bar_adjustment = is_admin_bar_showing() ? ' style="top:32px;"' : '';
+		printf(
+			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
+			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"' . $admin_bar_adjustment . '><p>',
+			'<strong>',
+			'</strong>',
+			'</p></div>'
+		);
 	}
 
 
