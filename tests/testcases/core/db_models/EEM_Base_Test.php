@@ -443,7 +443,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	function test_get_all__between(){
 		EEM_Event::instance()->get_all( array(
 			array(
-				'Datetime.DTT_EVT_start' => array( 'BETWEEN', '2015-03-02 00:00:00', '2016-03-04 00:00:00')
+				'Datetime.DTT_EVT_start' => array( 'BETWEEN', array('2015-03-02 00:00:00', '2016-03-04 00:00:00'))
 			)
 		));
 		$this->assertTrue(true);
