@@ -339,7 +339,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
     function column_cb($item){
 	/** checkbox/lock **/
-	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+	$transaction = $item->get_first_related( 'Transaction' );
+	$payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
@@ -606,7 +607,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
-		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL, true );
 
 
 		//Build row actions

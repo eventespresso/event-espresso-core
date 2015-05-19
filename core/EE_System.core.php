@@ -688,7 +688,8 @@ final class EE_System {
 					$times_activated = array( $times_activated );
 				}
 				foreach( $times_activated as $an_activation ){
-					if( $an_activation > $most_recently_active_version_activation  ){
+					if( $an_activation != 'unknown-date' &&
+							$an_activation > $most_recently_active_version_activation  ){
 						$most_recently_active_version = $version;
 						$most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
 					}
