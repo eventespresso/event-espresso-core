@@ -5,20 +5,20 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  *
- * EE_DMS_Core_4_7_0_Tests
+ * EE_DMS_Core_4_8_0_Tests
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  * @group data_migration_scripts
  * @group core/data_migration_scripts
- * @group EE_DMS_Core_4_7_0_Tests
+ * @group EE_DMS_Core_4_8_0_Tests
  *
  */
-class EE_DMS_Core_4_7_0_Tests extends EE_UnitTestCase{
+class EE_DMS_Core_4_8_0_Tests extends EE_UnitTestCase{
 	function test_migrate_pretax_total(){
-		$script = EE_Registry::instance()->load_dms( 'EE_DMS_Core_4_7_0' );
-		$stage = new EE_DMS_4_7_0_pretax_totals();
+		$script = EE_Registry::instance()->load_dms( 'EE_DMS_Core_4_8_0' );
+		$stage = new EE_DMS_4_8_0_pretax_totals();
 
 		//ok let's create a line item to with the LIN_code='tickets'
 		$tickets_subtottal = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'LIN_code' => 'tickets' ) );
@@ -33,4 +33,4 @@ class EE_DMS_Core_4_7_0_Tests extends EE_UnitTestCase{
 	}
 }
 
-// End of file EE_DMS_Core_4_7_0_Tests.php
+// End of file EE_DMS_Core_4_8_0_Tests.php
