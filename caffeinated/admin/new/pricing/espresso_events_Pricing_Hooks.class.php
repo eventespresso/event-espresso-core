@@ -665,8 +665,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
-			//if there are no related tickets this is likely a new event OR autodraft event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
-			if ( empty ( $related_tickets ) ) {
+			//if there are no related tickets this is likely a new event OR autodraft
+			// event so we need to generate the default tickets because dtts
+			// ALWAYS have at least one related ticket!!.  EXCEPT, we dont' do this if there is already more than one
+			// datetime on the event.
+			if ( empty ( $related_tickets ) && count( $times ) < 2 ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
