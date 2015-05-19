@@ -339,7 +339,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
     function column_cb($item){
 	/** checkbox/lock **/
-	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+	$transaction = $item->get_first_related( 'Transaction' );
+	$payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
