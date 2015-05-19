@@ -470,14 +470,28 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function ticket_event_name() {
 		$event_name = __( "Unknown", "event_espresso" );
-		$datetime = $this->get_ticket_datetime();
-		if ( $datetime ) {
-			$event = $datetime->event();
-			if ( $event instanceof EE_Event ) {
-				$event_name = $event->name();
-			}
+		$event = $this->ticket_event();
+		if ( $event instanceof EE_Event ) {
+			$event_name = $event->name();
 		}
 		return $event_name;
+	}
+
+
+	/**
+	 * Gets the event that's related to the ticket, if this line item represents a ticket.
+	 * @return EE_Event|null
+	 */
+	function ticket_event() {
+		$event = null;
+		$ticket = $this->ticket();
+		if ( $ticket instanceof EE_Ticket ) {
+			$datetime = $ticket->first_datetime();
+			if ( $datetime instanceof EE_Datetime ) {
+				$event = $datetime->event();
+			}
+		}
+		return $event;
 	}
 
 
