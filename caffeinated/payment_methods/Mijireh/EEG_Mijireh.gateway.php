@@ -84,8 +84,8 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
-				$primary_attendee->state_name()  &&
-				$primary_attendee->country_name()  &&
+				$primary_attendee->state_ID()  &&
+				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
 			$shipping_address = array(
 				'first_name'=>$primary_attendee->fname(),
