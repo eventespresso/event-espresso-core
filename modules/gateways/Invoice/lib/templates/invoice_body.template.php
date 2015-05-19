@@ -177,7 +177,7 @@
 						<td class="item_l"><?php echo $registration->ticket()->name() ?></td>
 						<td class="item_l"><?php $datetimes = $registration->ticket()->datetimes(); $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
 						<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
-						<td class="item_r"><?php echo EEH_Template::format_currency($registration->price_paid())?></td>
+						<td class="item_r"><?php echo EEH_Template::format_currency($registration->final_price())?></td>
 					</tr>
 				<?php } */ ?>
 			</tbody>

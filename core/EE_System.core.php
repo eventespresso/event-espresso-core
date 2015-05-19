@@ -483,7 +483,7 @@ final class EE_System {
 
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type =  $this->detect_req_type($espresso_db_update);
-//		echo "request type:".$request_type;
+		//EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}

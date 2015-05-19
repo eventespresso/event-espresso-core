@@ -355,6 +355,10 @@
 	margin: 0 0 3em;
 }
 
+.spco-grand-total td {
+	font-weight: bold;
+}
+
 #method-of-payment-hdr {
 	margin:1.5em 0 .5em;
 }

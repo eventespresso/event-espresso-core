@@ -378,8 +378,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		//EEH_Debug_Tools::printr( isset( self::$_amount_paid[ $registration->ID() ] ), 'isset( self::$_amount_paid[ $registration->ID() ] ) &&', __FILE__, __LINE__ );
 		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount_no_code()', __FILE__, __LINE__ );
 		//EEH_Debug_Tools::printr( $total_paid, '$total_paid', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $registration->price_paid(), '$registration->price_paid()', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $payment->amount() - $total_paid >= $registration->price_paid(), '$payment->amount_no_code() - $total_paid >= $registration->price_paid()', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $registration->final_price(), '$registration->final_price()', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment->amount() - $total_paid >= $registration->final_price(), '$payment->amount_no_code() - $total_paid >= $registration->final_price()', __FILE__, __LINE__ );
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
@@ -396,12 +396,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 					// this specific registration has not yet been paid for
 					! isset( self::$_amount_paid[ $registration->ID() ] ) &&
 					// payment amount, less what we have already attributed to other registrations, is greater than this reg's final price
-					$payment->amount() - $total_paid >= $registration->price_paid()
+					$payment->amount() - $total_paid >= $registration->final_price()
 				)
 			)
 		) {
 			// mark as paid
-			self::$_amount_paid[ $registration->ID() ] = $registration->price_paid();
+			self::$_amount_paid[ $registration->ID() ] = $registration->final_price();
 			// track new REG_Status
 			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved

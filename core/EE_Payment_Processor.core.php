@@ -311,8 +311,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		} else {
 			// verify payment
 			if ( $payment instanceof EE_Payment ) {
-				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
+				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ) {
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
+					// update TXN registrations with payment info
+					$this->process_registration_payments( $transaction, $payment );
 				}
 				// we need to save this payment in order for transaction to be updated correctly
 				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
@@ -355,6 +357,71 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				// and set a hook point for others to use?
 				if ( $do_action ) {
 					do_action( $do_action, $transaction, $payment );
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * update registrations REG_paid field after successful payment and link registrations with payment
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param EE_Payment $payment
+	 * @param EE_Registration[] $registrations
+	 * @throws \EE_Error
+	 */
+	public function process_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $registrations = array() ) {
+		// only process if payment was successful
+		if ( $payment->status() !== EEM_Payment::status_id_approved ) {
+			return;
+		}
+		//EEM_Registration::instance()->show_next_x_db_queries();
+		if ( empty( $registrations )) {
+			// find registrations with monies owing that can receive a payment
+			$registrations = $transaction->registrations( array(
+				array(
+					'STS_ID'           => array(
+						'IN',
+						array(
+							// only these reg statuses can receive payments
+							EEM_Registration::status_id_pending_payment,
+							EEM_Registration::status_id_approved
+						)
+					),
+					'REG_final_price'  => array( '!=', 0 ),
+					'REG_final_price*' => array( '!=', 'REG_paid', true ),
+				)
+			) );
+		}
+		// still nothing ??!??
+		if ( empty( $registrations )) {
+			return;
+		}
+		// how much is available to apply to registrations?
+		$available_payment_amount = $payment->amount();
+		foreach ( $registrations as $registration ) {
+			// nothing left?
+			if ( $available_payment_amount <= 0 ) {
+				break;
+			}
+			if ( $registration instanceof EE_Registration ) {
+				$owing = $registration->final_price() - $registration->paid();
+				// check if relation already exists for this payment, and if not...
+				if ( $owing > 0 && ! EEM_Registration_Payment::instance()->exists(
+					array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
+				) ) {
+					// don't allow payment amount to exceed the available payment amount
+					$payment_amount = $available_payment_amount < $owing ? $available_payment_amount : $owing;
+					// update $available_payment_amount
+					$available_payment_amount = $available_payment_amount - $payment_amount;
+					//calculate and set new REG_paid
+					$registration->set_paid( $registration->paid() + $payment_amount );
+					// and add relation to payment
+					$registration->_add_relation_to( $payment, 'Payment' );
+					// make it stick
+					$registration->save();
 				}
 			}
 		}
