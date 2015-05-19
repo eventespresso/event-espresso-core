@@ -57,6 +57,7 @@ class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage{
 				array( 'LIN_code' => 'tickets' ),
 				array( '%s' ),
 				array( '%s' ) );
+		$this->set_completed();
 		return 1;
 	}
 }
