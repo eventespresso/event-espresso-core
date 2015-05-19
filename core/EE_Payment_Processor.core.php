@@ -418,8 +418,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 					$available_payment_amount = $available_payment_amount - $payment_amount;
 					//calculate and set new REG_paid
 					$registration->set_paid( $registration->paid() + $payment_amount );
-					// and add relation to payment
-					$registration->_add_relation_to( $payment, 'Payment' );
+					// add relation between registration and payment and set amount
+					$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
 					// make it stick
 					$registration->save();
 				}
