@@ -5,7 +5,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  *
- * EE_DMS_4_7_0_gateways
+ * EE_DMS_4_8_0_gateways
  *
  * @package			Event Espresso
  * @subpackage
@@ -13,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  * Migrates line items that used to have LIN_code="tickets" to "pre-tax-total"
  */
-class EE_DMS_4_7_0_pretax_totals extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage{
 
 	protected $_line_item_table_name;
 
@@ -61,4 +61,4 @@ class EE_DMS_4_7_0_pretax_totals extends EE_Data_Migration_Script_Stage{
 	}
 }
 
-// End of file EE_DMS_4_7_0_gateways.dmsstage.php
+// End of file EE_DMS_4_8_0_gateways.dmsstage.php
