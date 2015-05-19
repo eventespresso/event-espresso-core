@@ -81,10 +81,10 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * want to directly use the EEM_Event_Question_Group model to add the entry to the table and set those extra columns' values
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
-	 * @param array             $where_query col=>val pairs that are used as extra conditions for checking existing values and for setting new rows if no exact matches.
+	 * @param array             $extra_join_model_fields_n_values col=>val pairs that are used as extra conditions for checking existing values and for setting new rows if no exact matches.
 	 * @return EE_Base_Class
 	 */
-	 function add_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array() ){
+	 function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array() ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//check if such a relationship already exists
@@ -96,10 +96,10 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 				 $join_model_fk_to_other_model->get_name() => $other_model_obj->ID());
 
 		 //if $where_query exists lets add them to the query_params.
-		 if ( !empty( $where_query ) ) {
+		 if ( !empty( $extra_join_model_fields_n_values ) ) {
 		 	//make sure we strip any of the join model names from the $where_query cause we don't need that in here (why? because client code may have used the same conditionals for get_all_related which DOES need the join model name)
 		 	//make sure we strip THIS models name from the query param
-		 	foreach ( $where_query as $query_param => $val ) {
+		 	foreach ( $extra_join_model_fields_n_values as $query_param => $val ) {
 				$query_param = str_replace($this->get_join_model()->get_this_model_name().".","", $query_param);
 				$parsed_query[$query_param] = $val;
 			}
