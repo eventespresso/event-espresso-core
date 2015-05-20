@@ -138,7 +138,8 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
-	 * @return EE_Line_Item
+	 * @return \EE_Line_Item
+	 * @throws \EE_Error
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$datetimes = $ticket->datetimes();
@@ -149,7 +150,7 @@ class EEH_Line_Item {
 		}
 		$description_addition = " (For " . implode( ", ", $event_names ) . ")";
 		$full_description = $ticket->description() . $description_addition;
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
+		$items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $total_line_item );
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_name'       => $ticket->name(),
