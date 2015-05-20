@@ -868,6 +868,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$start_date = min( $start_date, $end_date );
 			$end_date = max( $start_date, $end_date );
 
+			//convert for query
+			$start_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', date( 'Y-m-d H:i:s', $start_date ), 'Y-m-d H:i:s' );
+			$end_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', date( 'Y-m-d H:i:s', $end_date ), 'Y-m-d H:i:s' );
+
 			$query_params[0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
 
 		}

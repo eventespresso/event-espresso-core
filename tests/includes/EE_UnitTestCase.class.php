@@ -7,7 +7,6 @@
  * @subpackage 	tests
  */
 
-require_once EE_TESTS_DIR . 'includes/factory.php';
 
 
 /**
@@ -19,6 +18,12 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+
+	/**
+	 * @var EE_UnitTest_Factory
+	 */
+	protected $factory;
+
 	/**
 	 * Should be used to store the global $wp_actions during a test
 	 * so that it can be restored afterwards to keep tests from interfere with each other
@@ -39,6 +44,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @var boolean
 	 */
 	static $accidental_txn_commit_noted = FALSE;
+
+
+
+	/**
+	 * Holds an array of default DateTime objects for testing with.
+	 * This is set via the _set_default_dates() method.  Child test classes that wish to use this much set it first
+	 * using the method.
+	 *
+	 * @var array.
+	 */
+	protected $_default_dates;
+
+
 
 	public function setUp() {
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
@@ -67,7 +85,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		add_filter( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true' );
 		add_filter( 'FHEE__EEH_Activation__drop_index__short_circuit', '__return_true' );
 
-		//factor
+		// load factories
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_TESTS_DIR . 'includes' . DS . 'factories' );
 		$this->factory = new EE_UnitTest_Factory;
 		EE_Registry::reset();
 	}
@@ -274,6 +293,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function loadAdminMocks() {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/registrations/EE_Registrations_List_Table_Mock.php';
+	}
+
+
+	/**
+	 * This loads the various admin page mock files required for tests.
+	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
+	 * @since 4.6.0
+	 */
+	public function delayedAdminPageMocks() {
+		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
 	}
 
 
@@ -282,6 +314,150 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function loadMessagesMocks() {
 		require_once EE_TESTS_DIR . 'mocks/core/libraries/messages/validators/EE_Messages_Validator_Mock.php';
 	}
+
+
+	/**
+	 * @param array $ModelsMocks array of Model class names like "EEM_Event"
+	 */
+	public function loadModelsMocks( $ModelsMocks = array() ) {
+		foreach ( $ModelsMocks as $ModelsMock ) {
+			require_once EE_TESTS_DIR . 'mocks/core/db_models/' . $ModelsMock . '_Mock.php';
+		}
+	}
+
+
+	/**
+	 * @param array $ModelFieldMocks array of Model Field class names like "EE_Datetime_Field"
+	 */
+	public function loadModelFieldMocks( $ModelFieldMocks = array() ) {
+		foreach ( $ModelFieldMocks as $ModelFieldMock ) {
+			require_once EE_TESTS_DIR . 'mocks/core/db_models/fields/' . $ModelFieldMock . '_Mock.php';
+		}
+	}
+
+
+
+	/**
+	 * This returns an array of date and time formats that are commonly used in testing.
+	 *
+	 * @return array
+	 */
+	public function date_formats_to_test() {
+		return array(
+			'date' => array(
+				'F j, Y',
+				'Y-m-d',
+				'm/d/Y',
+				'd/m/Y',
+				'j F, Y',
+				'd-m-Y',
+				'm-d-Y',
+				'd-m Y',
+				'\D\a\t\e\: Y-m-d'
+				),
+			'time' => array(
+				'g:i a',
+				'g:i A',
+				'H: i',
+				'h:i:s a',
+				'\T\i\m\e\: g:i a'
+				)
+			);
+	}
+
+
+
+	/**
+	 * This sets a bunch of default dates for common data properties using dates for testing.
+	 *
+	 * @param string $timezone Timezone string to initialize the times in.
+	 */
+	protected function _set_default_dates( $timezone = 'America/Vancouver' ) {
+		$tz = new DateTimeZone( $timezone );
+		$this->_default_dates = array(
+			'DTT_start' => new DateTime( '2015-02-20 11:30 am', $tz ),
+			'DTT_end' => new DateTime( '2015-02-20 2:00 pm', $tz ),
+			'TKT_start' => new DateTime( '2015-01-30 8:00 am', $tz ),
+			'TKT_end' => new DateTime( '2015-02-20 8:00 am', $tz )
+			);
+	}
+
+
+
+
+	/**
+	 * This sets up some save data for use in testing updates and saves via the event editor.
+	 *
+	 * @todo Add extra event data for testing event creation/save.
+	 * @param string $format The format used for incoming date strings.
+	 * @param string $prefix  A string to prefix the fields being assembled.  Used as a way of
+	 *                        	    differentiating between multiple calls.
+	 * @param string $row     Equals the value we want to give for row.
+	 * @param string $timezone  Timezone string to add to the timezone data point.  Remember that
+	 *                          		$this->_default_date() datetime objects are used for the default dates, so if
+	 *                          		you include a string here make sure it matches what you set used for setting
+	 *                          		_default_dates unless you are intentionally testing timezone mismatches.
+	 *
+	 * @return array of data in post format from the save action.
+	 */
+	protected function _get_save_data( $format = 'Y-m-d h:i a', $prefix = '', $row = '1', $timezone = 'America/Vancouver' ) {
+		$data = array(
+			'starting_ticket_datetime_rows' => array(
+				$row => ''
+				),
+			'ticket_datetime_rows' => array(
+				$row => '1'
+				),
+			'datetime_IDs' => '',
+			'edit_event_datetimes' => array(
+				$row => array(
+					'DTT_EVT_end' => $this->_default_dates['DTT_end']->format( $format ),
+					'DTT_EVT_start' => $this->_default_dates['DTT_start']->format( $format ),
+					'DTT_ID' => '0',
+					'DTT_name' => $prefix . ' Datetime A',
+					'DTT_description' => $prefix . ' Lorem Ipsum Emitetad',
+					'DTT_reg_limit' => '',
+					'DTT_order' => $row
+					)
+				),
+			'edit_tickets' => array(
+				$row => array(
+					'TKT_ID' => '0',
+					'TKT_base_price' => '0',
+					'TKT_base_price_ID' => '1',
+					'TTM_ID' => '0',
+					'TKT_name' => $prefix . ' Ticket A',
+					'TKT_description' => $prefix . ' Lorem Ipsum Tekcit',
+					'TKT_start_date' => $this->_default_dates['TKT_start']->format( $format ),
+					'TKT_end_date' => $this->_default_dates['TKT_end']->format( $format ),
+					'TKT_qty' => '',
+					'TKT_uses' => '',
+					'TKT_min' => '',
+					'TKT_max' => '',
+					'TKT_row' => '',
+					'TKT_order' => $row,
+					'TKT_taxable' => '0',
+					'TKT_required' => '0',
+					'TKT_price' => '0',
+					'TKT_is_default' => '0'
+					)
+				),
+			'edit_prices' => array(
+				$row => array(
+					'PRT_ID' => '1',
+					'PRC_ID' => '0',
+					'PRC_amount' => '0',
+					'PRC_name' => $prefix . ' Price A',
+					'PRC_desc' => $prefix . ' Lorem Ipsum Ecirp',
+					'PRC_is_default' => '1',
+					'PRC_order' => $row
+					)
+				),
+			'timezone_string' => $timezone
+			);
+		return $data;
+	}
+
 
 
 
@@ -550,7 +726,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected function new_typical_transaction($options = array()){
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
-		$total_line_item = EEH_Line_Item::create_default_total_line_item( $txn->ID() );
+		$total_line_item = EEH_Line_Item::create_total_line_item( $txn->ID() );
 		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
 		if( isset( $options[ 'ticket_types' ] ) ){
 			$ticket_types = $options[ 'ticket_types' ];
@@ -564,7 +740,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
-			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
+			$a_datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
+			$ticket->_add_relation_to( $a_datetime, 'Datetime');
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
 			foreach($taxes as $taxes_at_priority){
@@ -586,7 +764,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param array $options {
 	 *	@type int $dollar_surcharge the dollar surcharge to add to this ticket
 	 *	@type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
-	 *	@type int $datetimes the number of datetimes for this ticket
+	 *	@type int $datetimes the number of datetimes for this ticket,
+	 *	@type int $TKT_price set the TKT_price to this value.
+	 *	@type int $TKT_taxable set the TKT_taxable to this value.
 	 * }
 	 * @return EE_Ticket
 	 */
@@ -599,23 +779,40 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => $ticket_price, 'TKT_taxable' => $ticket_taxable ) );
 		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
 		$this->assertInstanceOf( 'EE_Price_Type', $base_price_type );
-		$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
-		$ticket->_add_relation_to( $base_price, 'Price' );
-		$this->assertArrayContains( $base_price, $ticket->prices() );
-		if( isset( $options[ 'dollar_surcharge'] ) ){
-			$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
-			$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
-			$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
-			$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
-			$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+
+		//only associate on the tickets if TKT_price is not included
+		if ( ! isset( $options['TKT_price'] ) ) {
+			$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
+			$ticket->_add_relation_to( $base_price, 'Price' );
+			$this->assertArrayContains( $base_price, $ticket->prices() );
+			if( isset( $options[ 'dollar_surcharge'] ) ){
+				$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
+				$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
+				$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
+				$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
+				$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+			}
+			if( isset( $options[ 'percent_surcharge' ] ) ){
+				$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
+				$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
+				$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
+				$ticket->_add_relation_to( $percent_surcharge, 'Price' );
+				$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
+			}
 		}
-		if( isset( $options[ 'percent_surcharge' ] ) ){
-			$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
-			$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
-			$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
-			$ticket->_add_relation_to( $percent_surcharge, 'Price' );
-			$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
+
+		if ( isset( $options[ 'TKT_price' ] ) ) {
+			$ticket->set( 'TKT_price', $options['TKT_price'] );
+			//set the base price
+			$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'TKT_price' ], 'PRT_ID' => $base_price_type->ID() ) );
+			$ticket->_add_relation_to( $base_price, 'Price' );
+			$this->assertArrayContains( $base_price, $ticket->prices() );
 		}
+
+		if ( isset( $options[ 'TKT_taxable'] ) ) {
+			$ticket->set( 'TKT_taxable', $options['TKT_taxable'] );
+		}
+
 		// set datetimes, default = 1
 		$datetimes = isset( $options[ 'datetimes' ] ) ? $options[ 'datetimes' ] : 1;
 
@@ -625,6 +822,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$ticket->_add_relation_to( $ddt, 'Datetime' );
 			$this->assertArrayContains( $ddt, $ticket->datetimes() );
 		}
+
+		//resave ticket to account for possible field value changes
+		$ticket->save();
+
 		return $ticket;
 	}
 }

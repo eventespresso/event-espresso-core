@@ -31,8 +31,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 	 * @param array  $fieldValues
 	 * @param bool   $bydb
 	 * @param string $timezone
+	 * @param array $date_formats
 	 */
-	protected function __construct( $fieldValues = NULL, $bydb = FALSE, $timezone = NULL ) {
+	protected function __construct( $fieldValues = NULL, $bydb = FALSE, $timezone = NULL, $date_formats = array() ) {
 		if ( !isset( $fieldValues[ 'ATT_full_name' ] ) ) {
 			$fname = isset( $fieldValues[ 'ATT_fname' ] ) ? $fieldValues[ 'ATT_fname' ] . ' ' : '';
 			$lname = isset( $fieldValues[ 'ATT_lname' ] ) ? $fieldValues[ 'ATT_lname' ] : '';
@@ -45,30 +46,35 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 		if ( !isset( $fieldValues[ 'ATT_short_bio' ] ) && isset( $fieldValues[ 'ATT_bio' ] ) ) {
 			$fieldValues[ 'ATT_short_bio' ] = substr( $fieldValues[ 'ATT_bio' ], 0, 50 );
 		}
-		parent::__construct( $fieldValues, $bydb, $timezone );
+		parent::__construct( $fieldValues, $bydb, $timezone, $date_formats );
 	}
 
 
 
 	/**
 	 *
-	 * @param array $props_n_values
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
 	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
-		return $has_object ? $has_object : new self( $props_n_values );
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
 	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 

@@ -644,7 +644,7 @@ final class EE_System {
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
+	 * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,

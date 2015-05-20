@@ -178,6 +178,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'config_name' 					=> isset( $setup_args['config_name'] ) ? (string) $setup_args['config_name']: '',
 			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' 			=> isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
+			// an array of  "full server paths" for any folders containing classes that might be invoked by the addon
+			'autoloader_folders' 			=> isset( $setup_args['autoloader_folders'] ) ? (array)$setup_args['autoloader_folders'] : array(),
 			// array of full server paths to any EE_DMS data migration scripts used by the addon
 			'dms_paths' 						=> isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array(),
 			// array of full server paths to any EED_Modules used by the addon
@@ -257,7 +259,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
+			// setup autoloader for single file
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
+		}
+		// setup autoloaders for folders
+		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_folders'] )) {
+			foreach ( self::$_settings[ $addon_name ]['autoloader_folders'] as $autoloader_folder ) {
+				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $autoloader_folder );
+			}
 		}
 		// register new models
 		if ( ! empty( self::$_settings[ $addon_name ]['model_paths'] ) || ! empty( self::$_settings[ $addon_name ]['class_paths'] )) {
@@ -301,7 +310,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 		//register capability related stuff.
 		if ( ! empty( self::$_settings[ $addon_name ]['capabilities'] ) ) {
-			EE_Register_Capabilities::register( $addon_name . '_caps', array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
+			EE_Register_Capabilities::register( $addon_name , array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
 		}
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
@@ -461,6 +470,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
 					EE_Register_Message_Type::deregister( $message_type );
 				}
+			}
+			if ( ! empty( self::$_settings[$addon_name]['capabilities']) || ! empty( self::$_settings[$addon_name]['capability_maps'])) {
+				EE_Register_Capabilities::deregister( $addon_name );
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			remove_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( EE_Registry::instance()->addons->$class_name, 'initialize_db_if_no_migrations_required' ) );

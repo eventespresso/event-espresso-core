@@ -49,8 +49,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TTM_ID'=>new EE_Foreign_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso'), false, 0, 'Ticket_Template'),
 				'TKT_name'=>new EE_Plain_Text_Field('TKT_name', __('Ticket Name', 'event_espresso'), false, ''),
 				'TKT_description'=>new EE_Full_HTML_Field('TKT_description', __('Description of Ticket', 'event_espresso'), false, '' ),
-				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, time(), $timezone ),
+				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, time(), $timezone ),
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
 				'TKT_max'=>new EE_Infinite_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, INF ),
 				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
@@ -100,9 +100,9 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	private function _set_default_dates( $tickets ) {
 		foreach ( $tickets as $ticket ) {
-			$ticket->set('TKT_start_date', current_time('timestamp') );
-			$ticket->set('TKT_end_date', current_time('timestamp') + (60 * 60 * 24 * 30 ) );
-			$ticket->set_end_time("12am");
+			$ticket->set('TKT_start_date', $this->current_time_for_query('TKT_start_date', true) );
+			$ticket->set('TKT_end_date', $this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
+			$ticket->set_end_time( $this->convert_datetime_for_query( 'TKT_end_date', '11:59 pm', 'g:i a', $this->_timezone ) );
 		}
 
 		return $tickets;

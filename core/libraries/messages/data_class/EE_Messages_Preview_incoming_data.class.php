@@ -363,7 +363,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 
-		$cart = EE_Cart::instance();
+		$cart = EE_Cart::reset();
 
 
 		//add tickets to cart
@@ -376,7 +376,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//setup txn property
 		$this->txn = EE_Transaction::new_instance(
 			array(
-				'TXN_timestamp' => current_time('mysql'), //unix timestamp
+				'TXN_timestamp' => time(), //unix timestamp
 				'TXN_total' => 0, //txn_total
 				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
@@ -404,7 +404,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'TXN_ID' => $regtxn,
 						'TKT_ID' => $ticket->ID(),
 						'STS_ID' => EEM_Registration::status_id_pending_payment,
-						'REG_date' => current_time('mysql'),
+						'REG_date' => time(),
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
 						'REG_code' => $regid . '-dummy-generated-code',
@@ -430,7 +430,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup line items!
 		EE_Registry::instance()->load_helper('Line_Item');
-		$line_item_total = EEH_Line_Item::create_default_total_line_item( $this->txn );
+		$line_item_total = EEH_Line_Item::create_total_line_item( $this->txn );
 
 		//add tickets
 		foreach ( $this->tickets as $tktid => $item ) {
@@ -455,14 +455,21 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		EEH_Line_Item::apply_taxes( $line_item_total );
 
 		//now we should be able to get the items we need from this object
-		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
-
-		foreach ( $ticket_line_items as $line_id => $line_item ) {
-			if( $line_item->OBJ_ID() && $line_item->OBJ_type() ){
-				$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
-				$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
-				$line_items[$line_item->ID()]['children'] = $line_item->children();
-				$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+		$event_line_items = EEH_Line_Item::get_pre_tax_subtotal( $line_item_total )->children();
+		$line_items = array();
+		foreach ( $event_line_items as $line_id => $line_item ) {
+			if ( ! $line_item instanceof EE_Line_Item || $line_item->OBJ_type() !== 'Event' ) {
+				continue;
+			}
+			$ticket_line_items = EEH_Line_Item::get_ticket_line_items( $line_item );
+			foreach ( $ticket_line_items as $ticket_line_id => $ticket_line_item ) {
+				if ( ! $ticket_line_item instanceof EE_Line_Item ) {
+					continue;
+				}
+				$this->tickets[$ticket_line_item->OBJ_ID()]['line_item'] = $ticket_line_item;
+				$this->tickets[$ticket_line_item->OBJ_ID()]['sub_line_items'] = $ticket_line_item->children();
+				$line_items[$ticket_line_item->ID()]['children'] = $ticket_line_item->children();
+				$line_items[$ticket_line_item->ID()]['EE_Ticket'] = $this->tickets[$ticket_line_item->OBJ_ID()]['ticket'];
 			}
 		}
 
@@ -514,8 +521,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_id = 1;
 		$this->ip_address = '192.0.2.1';
 		$this->user_agent = '';
-		$this->init_access = current_time('mysql');
-		$this->last_access = current_time('mysql');
+		$this->init_access = time();
+		$this->last_access = time();
 	}
 
 } //end EE_Messages_Preview_incoming_data class

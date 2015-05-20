@@ -239,13 +239,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		);
 		$name_and_desc .= apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__desc',
-			( $options['show_desc'] ? ' : ' . $line_item->desc() : '' ),
+			( $options['show_desc'] ? '<span class="line-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '' ),
 			$line_item,
 			$options
 		);
 		$name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l' );
 		// quantity td
 		//$html .= EEH_HTML::td( $line_item->quantity(), '',  'item_l jst-rght' );
 		$html .= EEH_HTML::td( $options[ 'billable_qty' ], '',  'item_l jst-rght' );
@@ -273,9 +273,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item-row' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? ' : ' . $line_item->desc() : '';
+		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '';
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
 		if ( $line_item->is_percent() ) {
 			$html .= EEH_HTML::td( $line_item->percent() . '%', '',  'item_c' );
@@ -306,7 +306,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$name_and_desc .= '<span class="tiny-text" style="margin:0 0 0 2em;">' . __( ' * taxable items', 'event_espresso' ) . '</span>';
 		$name_and_desc .= $options[ 'show_desc' ] ? '<br/>' . $line_item->desc() : '';
 		// name td
-		$html .= EEH_HTML::td( $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
+		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
 		// percent td
 		$html .= EEH_HTML::td( $line_item->percent() . '%', '',  ' jst-rght', '' );
 		// total td
@@ -396,7 +396,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'spco-grand-total total_tr odd' );
 			// total td
-			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
+			$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
 			// total td
 			$this->_grand_total = $this->_billable_total + $this->_total_tax;
 			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_grand_total, false, false ), '',  'total jst-rght' );

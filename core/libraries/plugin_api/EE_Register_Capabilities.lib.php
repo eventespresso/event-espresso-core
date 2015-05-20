@@ -24,6 +24,11 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 */
 	protected static $_registry = array();
 
+	/**
+	 * Holds the cap map objects taht get registered so they can be de-registered
+	 * @var array
+	 */
+	protected static $_registered_cap_maps = array();
 
 
 	/**
@@ -113,6 +118,36 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 				continue;
 			}
 			foreach ( $setup['cap_maps'] as $cap_class => $args ) {
+				/**
+				 * account for cases where capability maps may be indexed
+				 * numerically to allow for the same map classto be utilzed
+				 * In those cases, maps will be setup in an array like:
+				 *
+				 * array(
+				 * 	0 => array( 'EE_Meta_Capability' => array(
+				 * 		'ee_edit_cap', array( 'Object_Name',
+				 * 		'ee_edit_published_cap',
+				 * 		'ee_edit_others_cap', 'ee_edit_private_cap' )
+				 * 		) )
+				 * 	1 => ...
+				 * )
+				 *
+				 * instead of:
+				 *
+				 * array(
+				 * 	'EE_Meta_Capability' => array(
+				 * 		'ee_edit_cap', array( 'Object_Name',
+				 * 		'ee_edit_published_cap',
+				 * 		'ee_edit_others_cap', 'ee_edit_private_cap' )
+				 * 		),
+				 * 	...
+				 * )
+				 */
+				if ( is_numeric( $cap_class ) ) {
+					$cap_class = key( $args );
+					$args = $args[$cap_class];
+				}
+
 				if ( ! class_exists( $cap_class ) ) {
 					throw new EE_Error( sprintf( __( 'An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments', 'event_espresso' ), $cap_reference ) );
 				}
@@ -120,8 +155,9 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 				if ( count( $args ) !== 2 ) {
 					throw new EE_Error( sprintf( __('An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments.  The array should have two values the first being a string and the second an array.', 'event_espresso' ), $cap_reference ) );
 				}
-
-				$cap_maps[] = new $cap_class( $args[0], $args[1] );
+				$new_map_object = new $cap_class( $args[0], $args[1] );
+				$cap_maps[] = $new_map_object;
+				self::$_registered_cap_maps[ $cap_reference ][] = $new_map_object;
 			}
 		}
 		return $cap_maps;
@@ -133,5 +169,16 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	public static function deregister( $cap_reference = NULL ) {
 		if ( !empty( self::$_registry[$cap_reference] ) )
     		unset( self::$_registry[$cap_reference] );
+		//make sure to remove the filters added by cap map objects
+		if( isset( self::$_registered_cap_maps[ $cap_reference ] ) ) {
+			if( is_array( self::$_registered_cap_maps[ $cap_reference ] ) ){
+				foreach( self::$_registered_cap_maps[ $cap_reference ] as $cap_map_object ){
+					if( $cap_map_object instanceof EE_Meta_Capability_Map ) {
+						$cap_map_object->remove_filters();
+					}
+				}
+			}
+			unset( self::$_registered_cap_maps[ $cap_reference ] );
+		}
 	}
 }

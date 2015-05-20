@@ -1,30 +1,13 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once ( EE_CLASSES . 'EE_Price.class.php' );
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * Price Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/EEM_Price.model.php
- * @author				Sidney Harrell
- *
- * ------------------------------------------------------------------------
+ * @author				Mike Nelson
  */
-require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
-require_once ( EE_CLASSES . 'EE_Price.class.php' );
-
-
 class EEM_Price extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Price object
@@ -37,7 +20,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		@Constructor
 	 * 		@access protected
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return void
+	 * 		@return EEM_Price
 	 */
 	protected function __construct( $timezone ) {
 		require_once( EE_MODELS . 'EEM_Price_Type.model.php');
@@ -54,7 +37,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Post_Content_Field('PRC_desc', 'Price Description', false, ''),
-				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, true),
+				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, false),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
@@ -103,13 +86,13 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retrieve all active prices for a particular event
+	 *        retrieve all active prices for a particular event
 	 *
-	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * @access        public
+	 * @param int $EVT_ID
+	 * @return array on success
 	 */
-	public function get_all_event_prices( $EVT_ID ) {
+	public function get_all_event_prices( $EVT_ID = 0 ) {
 		return $this->get_all(array(
 			array(
 				'EVT_ID'=>$EVT_ID,
@@ -121,12 +104,12 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retrieve all active global prices for a particular event
+	 * 		retrieve all active global prices (that are not taxes (PBT_ID=4)) for a particular event
 	 *
 	 * 		@access		public
-	 * 		@param 			boolean $count  return count
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 		@param 		boolean 		$count  return count
+	 * 		@return 		array			on success
+	 * 		@return 		boolean		false on fail
 	 */
 	public function get_all_default_prices( $count = FALSE ) {
 		$_where = array(
@@ -164,11 +147,10 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			array( 'Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_tax ),
 			'order_by' => array( 'Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC' )
 		));
-//		$all_taxes = $this->_select_all_prices_where(
-//				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE )
-//		);
 		foreach ( $all_taxes as $tax ) {
-			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
+			if ( $tax instanceof EE_Price ) {
+				$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
+			}
 		}
 		return $taxes;
 	}
@@ -181,21 +163,22 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		retrieve all prices for an ticket plus default global prices, but not taxes
 	 *
 	 * 		@access		public
-	 * 		@param int     $TKT          the id of the event.  If not included then we assume that this is a new ticket.
+	 * 		@param int $TKT_ID          the id of the event.  If not included then we assume that this is a new ticket.
 	 * 		@return 		boolean			false on fail
 	 */
-	public function get_all_ticket_prices_for_admin( $TKT_ID = FALSE ) {
-		$ticket_prices = array();
-		if ( empty($TKT_ID) ) {
+	public function get_all_ticket_prices_for_admin( $TKT_ID = 0 ) {
+		$array_of_price_objects = array();
+		if ( empty( $TKT_ID )) {
 
 			//if there is no tkt, get prices with no tkt ID, are global, are not a tax, and are active
 			//return that list
-			$ticket_prices = $this->get_all_default_prices();
+			$default_prices = $this->get_all_default_prices();
 
-			if ( $global_prices ) {
-				$array_of_price_objects = array();
-				foreach ($global_prices as $price) {
+			if ( $default_prices ) {
+				foreach ($default_prices as $price) {
+					if ( $price instanceof EE_Price ) {
 						$array_of_price_objects[ $price->type() ][] = $price;
+					}
 				}
 				return $array_of_price_objects;
 			} else {
@@ -215,7 +198,9 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 		if ( !empty( $ticket_prices ) ) {
 			foreach ( $ticket_prices as $price ) {
-				$array_of_price_objects[ $price->type() ][] = $price;
+				if ( $price instanceof EE_Price ) {
+					$array_of_price_objects[ $price->type() ][] = $price;
+				}
 			}
 			return $array_of_price_objects;
 
@@ -226,16 +211,15 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 
-
-
 	/**
-	 * 		_sort_event_prices_by_type
+	 *        _sort_event_prices_by_type
 	 *
-	 * 		@access		private
-	 * 		@return 		boolean			false on fail
+	 * @access public
+	 * @param \EE_Price $price_a
+	 * @param \EE_Price $price_b
+	 * @return bool false on fail
 	 */
-	private function _sort_event_prices_by_type( $price_a, $price_b ) {
-		$PRT = EEM_Price_Type::instance();
+	public function _sort_event_prices_by_type( EE_Price $price_a, EE_Price $price_b ) {
 		if ( $price_a->type_obj()->order() == $price_b->type_obj()->order() ) {
 			return $this->_sort_event_prices_by_order( $price_a, $price_b );
 		}
@@ -244,23 +228,20 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 
-
-
 	/**
-	 * 		_sort_event_prices_by_order
+	 *        _sort_event_prices_by_order
 	 *
-	 * 		@access		private
-	 * 		@return 		boolean			false on fail
+	 * @access public
+	 * @param \EE_Price $price_a
+	 * @param \EE_Price $price_b
+	 * @return bool false on fail
 	 */
-	private function _sort_event_prices_by_order($price_a, $price_b) {
+	public function _sort_event_prices_by_order( EE_Price $price_a, EE_Price $price_b) {
 		if ( $price_a->order() == $price_b->order() ) {
-			return $this->_sort_event_prices_by_start_date( $price_a, $price_b );
+			return 0;
 		}
 		return $price_a->order() < $price_b->order() ? -1 : 1;
 	}
-
-
-
 
 
 
@@ -271,7 +252,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		@param 		int 				$type - PRT_ID
 	 * 		@return 		boolean		false on fail
 	 */
-	public function get_all_prices_that_are_type($type = FALSE) {
+	public function get_all_prices_that_are_type( $type = 0 ) {
 		return $this->get_all(array(
 			array(
 				'PRT_ID'=>$type
@@ -279,6 +260,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'order_by'=>$this->_order_by_array_for_get_all_method()
 		));
 	}
+
+
 
 	/**
 	 * Returns an array of the normal 'order_by' query parameter provided to the get_all query.
@@ -289,10 +272,12 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return array(
 				'PRC_order'=>'ASC',
 				'Price_Type.PRT_order'=>'ASC',
-				'PRC_ID'=>'ASC');
+				'PRC_ID'=>'ASC'
+		);
 	}
 
-}
 
+
+}
 // End of file EEM_Price.model.php
 // Location: /ee-mvc/models/EEM_Price.model.php

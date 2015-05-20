@@ -388,23 +388,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *	@return array
 	 */
 	protected function _transaction_legend_items() {
-		$items = array(
-			'view_details' => array(
-				'class' => 'dashicons dashicons-cart',
-				'desc' => __('View Transaction Details', 'event_espresso')
+		$items = apply_filters(
+			'FHEE__Transactions_Admin_Page___transaction_legend_items__items',
+			array(
+				'view_details' => array(
+					'class' => 'dashicons dashicons-cart',
+					'desc' => __('View Transaction Details', 'event_espresso')
 				),
-			'view_invoice' => array(
-				'class' => 'dashicons dashicons-media-spreadsheet',
-				'desc' => __('View Transaction Invoice', 'event_espresso')
+				'view_invoice' => array(
+					'class' => 'dashicons dashicons-media-spreadsheet',
+					'desc' => __('View Transaction Invoice', 'event_espresso')
 				),
-			'view_receipt' => array(
-				'class' => 'dashicons dashicons-media-default',
-				'desc' => __('View Transaction Receipt', 'event_espresso' )
+				'view_receipt' => array(
+					'class' => 'dashicons dashicons-media-default',
+					'desc' => __('View Transaction Receipt', 'event_espresso' )
 				),
-			'view_registration' => array(
-				'class' => 'dashicons dashicons-clipboard',
-				'desc' => __('View Registration Details', 'event_espresso')
+				'view_registration' => array(
+					'class' => 'dashicons dashicons-clipboard',
+					'desc' => __('View Registration Details', 'event_espresso')
 				)
+			)
 		);
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
@@ -427,27 +430,29 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'desc' => ''
 				);
 		}
-
-		$more_items = array(
-			 'overpaid' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+		$more_items = apply_filters(
+			'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
+			array(
+				'overpaid'   => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
 				),
-			 'complete' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
+				'complete'   => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
 				),
-			 'incomplete' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
+				'incomplete' => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
-			 'abandoned' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
-			 ),
-			 'failed' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				'abandoned'  => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::abandoned_status_code, FALSE, 'sentence' )
+				),
+				'failed'     => array(
+					'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+					'desc'  => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
+				)
 			)
 		);
 
@@ -749,32 +754,41 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( ! empty( $line_items )) {
 			foreach ( $line_items as $item ) {
 				if ( $item instanceof EE_Line_Item ) {
-					$ticket = $item->ticket();
-					if ( empty( $ticket )) {
-						continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
-					}
-					$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-					$event = $ticket->get_first_related('Registration')->get_first_related('Event');
-					$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
+					switch( $item->OBJ_type() ) {
 
-					$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
-					foreach( $registrations as $registration ) {
-						$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
-						$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
-						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
-						// attendee info
-						$attendee = $registration->get_first_related('Attendee');
-						if ( $attendee instanceof EE_Attendee ) {
-							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
-							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= $attendee->email();
-							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
-						} else {
-							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
-							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
-						}
+						case 'Event' :
+							break;
+
+						case 'Ticket' :
+							$ticket = $item->ticket();
+							if ( empty( $ticket )) {
+								continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							}
+							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
+							$event = $ticket->get_first_related('Registration')->get_first_related('Event');
+							$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
+
+							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
+							foreach( $registrations as $registration ) {
+								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
+								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
+								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+								// attendee info
+								$attendee = $registration->get_first_related('Attendee');
+								if ( $attendee instanceof EE_Attendee ) {
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
+									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . __(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+								} else {
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
+								}
+							}
+							break;
+
 					}
 				}
 			}
@@ -868,7 +882,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'PAY_extra_accntng' => $this->_req_data['txn_admin_payment']['accounting'],
 					'PAY_details' => $this->_req_data['txn_admin_payment'],
 					'PAY_ID' => $this->_req_data['txn_admin_payment']['PAY_ID']
-				)
+				),
+				'',
+				array( 'Y-m-d', 'H:i a' )
 			);
 			if ( ! $payment->save() ){
 				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
@@ -950,7 +966,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	/**
+
+		/**
 	 * delete_payment
 	 * 	delete a payment or refund made towards a transaction
 	*
@@ -1034,8 +1051,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$TXN = EEM_Transaction::instance();
 
-	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
-	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-10 year' ));
+	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'm/d/Y' );
 
 	    //make sure our timestamps start and end right at the boundaries for each day
 	    $start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
@@ -1049,6 +1066,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //makes sure start date is the lowest value and vice versa
 	    $start_date = min( $start_date, $end_date );
 	    $end_date = max( $start_date, $end_date );
+
+	    //convert to correct format for query
+	$start_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', $start_date ), 'Y-m-d H:i:s' );
+	$end_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', $end_date ), 'Y-m-d H:i:s' );
+
 
 
 	    //set orderby

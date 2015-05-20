@@ -550,6 +550,12 @@ abstract class EE_Meta_Capability_Map {
 		}
 	}
 
+	/**
+	 * Makes it so this object stops filtering caps
+	 */
+	public function remove_filters(){
+		remove_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10 );
+	}
 
 
 	/**

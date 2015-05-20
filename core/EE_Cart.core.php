@@ -132,19 +132,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * @return EE_Line_Item
 	 */
 	private function _create_grand_total(){
-		$this->_grand_total = EEH_Line_Item::create_default_total_line_item();
+		$this->_grand_total = EEH_Line_Item::create_total_line_item();
 		return $this->_grand_total;
 	}
 
 
 
 	/**
-	 *	Gets all the item line items (ie, all line items for registrations, products, etc. NOT taxes or promotions)
+	 *	Gets all the line items of object type Ticket
 	 *	@access public
 	 *	@return \EE_Line_Item[]
 	 */
 	public function get_tickets() {
-		return EEH_Line_Item::get_items_subtotal( $this->_grand_total )->children();
+		return EEH_Line_Item::get_ticket_line_items( $this->_grand_total );
 	}
 
 
@@ -170,7 +170,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *  Gets all tha tax line items
+	 *  Gets all the tax line items
 	 * @return \EE_Line_Item[]
 	 */
 	public function get_taxes(){
@@ -197,7 +197,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
-		EEH_Line_Item::add_ticket_purchase( $this->_grand_total, $ticket, $qty );
+		EEH_Line_Item::add_ticket_purchase( $this->get_grand_total(), $ticket, $qty );
 		return $this->save_cart() ? TRUE : FALSE;
 	}
 
@@ -238,13 +238,27 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
+	 *	Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
+	 *	@access public
+	 *	@return float
+	 */
+	public function recalculate_all_cart_totals() {
+		$pre_tax_total = $this->get_cart_total_before_tax();
+		$taxes_total = EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+		$this->_grand_total->set_total( $pre_tax_total + $taxes_total );
+		$this->_grand_total->save_this_and_descendants_to_txn();
+		return $this->get_grand_total()->total();
+	}
+
+
+
+	/**
 	 *	deletes an item from the cart
 	 *	@access public
 	 *	@param mixed - string or array - line_item_ids
 	 *	@return int on success, FALSE on fail
 	 */
 	public function delete_items( $line_item_codes = FALSE ) {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return EEH_Line_Item::delete_items($this->get_grand_total(), $line_item_codes );
 	}
@@ -291,13 +305,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	 *	@save cart to session
-	 *	@access public
-	 *	@return TRUE on success, FALSE on fail
-	 */
-	public function save_cart() {
-		EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+	 /**
+	  * @save cart to session
+	  * @access public
+	  * @param bool $apply_taxes
+	  * @return TRUE on success, FALSE on fail
+	  */
+	public function save_cart( $apply_taxes = TRUE ) {
+		if ( $apply_taxes ) {
+			EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+		}
 		return EE_Registry::instance()->SSN->set_cart( $this );
 	}
 

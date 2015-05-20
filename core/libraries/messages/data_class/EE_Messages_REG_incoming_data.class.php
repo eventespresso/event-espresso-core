@@ -103,7 +103,7 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 		$this->payment = $this->txn->get_first_related('Payment');
 		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
 			'STS_ID' => EEM_Payment::status_id_pending,
-			'PAY_timestamp' => (int) current_time('timestamp'),
+			'PAY_timestamp' => time(),
 			'PMD_ID' => $this->txn->payment_method_ID(),
 			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
 			)
