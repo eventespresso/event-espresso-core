@@ -437,6 +437,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'new_registration' => array(
 				'nav' => array(
 					'label' => __('Add New Registration', 'event_espresso'),
+					'url' => '#',
 					'order' => 15,
 					'persistent' => FALSE
 					),
