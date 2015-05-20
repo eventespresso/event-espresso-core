@@ -203,17 +203,30 @@ final class EE_System {
 		}
 		// post release candidate warning
 		if ( is_admin() ) {
-			EE_Error::add_attention(
-				sprintf(
-					__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
-					'<strong>',
-					'</strong>'
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
+			add_action( 'admin_notices', array( $this, 'beta_banner_admin_notice' ), -999 );
 		} else {
 			add_action( 'shutdown', array( $this, 'beta_banner_warning_notice' ), 10 );
 		}
+	}
+
+
+
+	/**
+	 *    beta_banner_admin_notice
+	 *    displays admin notice that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function beta_banner_admin_notice() {
+		EE_Error::add_attention(
+			sprintf(
+				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
+				'<strong>',
+				'</strong>'
+			),
+			__FILE__, __FUNCTION__, __LINE__
+		);
 	}
 
 
@@ -226,6 +239,10 @@ final class EE_System {
 	 * @return void
 	 */
 	public function beta_banner_warning_notice() {
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
+			return;
+		}
 		$admin_bar_adjustment = is_admin_bar_showing() ? ' style="top:32px;"' : '';
 		printf(
 			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
