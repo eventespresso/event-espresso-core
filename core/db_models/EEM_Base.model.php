@@ -4099,7 +4099,7 @@ abstract class EEM_Base extends EE_Base{
 		if( in_array( $context, $valid_cap_contexts ) ) {
 			return true;
 		}else{
-			throw new EE_Error( sprintt( __( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ). $context, get_class( $this ), implode(',', $valid_cap_contexts ) ) );
+			throw new EE_Error( sprintf( __( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ), $context, 'EEM_Base' , implode(',', $valid_cap_contexts ) ) );
 		}
 	}
 }
