@@ -377,14 +377,14 @@
 					<div class="txn-admin-payment-reg-status-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-reg-status-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
 						<?php echo $status_change_select; ?>
-						<p class="description"><?php printf( __( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso' ), '<strong>', '</strong>' ); ?></p>
+						<p class="description"><?php _e( 'If you wish to change the status for the registrations selected above, then select which status from this dropdown.', 'event_espresso' ); ?></p>
 						<br/>
 					</div>
 
 					<div class="txn-admin-apply-payment-send-notifications-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-send-notifications-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
-						<p class="description"><?php printf( __('By default a payment message %sis%s sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso'), '<strong>', '</strong>' ); ?></p>
+						<p class="description"><?php printf( __('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check this box, the system will also send any related messages matching the status of the registrations to %1$seach registration for this transaction%2$s.', 'event_espresso'), '<strong>', '</strong>', '<br />' ); ?></p>
 						<label></label>
 					</div>
 					<div class="clear"></div>
