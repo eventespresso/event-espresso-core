@@ -15,7 +15,6 @@ class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 	function __construct(){}
 	/**
 	 * Gets the where default where conditions for a custom post type model
-	 * @param string $model_relation_path. Eg, from Event to Payment, this should be "Registration.Transaction.Payment"
 	 * @return array like EEM_Base::get_all's $query_params's index [0] (where conditions)
 	 */
 	protected function _get_default_where_conditions(){
