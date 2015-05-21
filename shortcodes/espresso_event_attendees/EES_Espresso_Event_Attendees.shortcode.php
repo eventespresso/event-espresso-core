@@ -101,7 +101,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 		$query = array();
 
 		//what event?
-		if ( empty( $attributes['event_id'] ) ) {
+		if ( empty( $attributes['event_id'] ) && empty( $attributes['datetime_id'] ) && empty( $attributes['ticket_id'] ) ) {
 			//seems like is_espresso_event_single() isn't working as expected. So using alternate method.
 			if ( is_single() && is_espresso_event() ) {
 				$event = EEH_Event_View::get_event();
@@ -149,7 +149,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 
 		//status
 		$query[0]['Registration.STS_ID'] = $attributes['status'];
-		$query['group_by'] = 'ATT_ID';
+		$query['group_by'] = array( 'ATT_ID' );
 
 		//get contacts!
 		$template_args['contacts'] = EEM_Attendee::instance()->get_all( $query );
