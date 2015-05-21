@@ -35,6 +35,19 @@ class EE_Registration_Payment extends EE_Base_Class {
 		return new self( $props_n_values, true, $timezone );
 	}
 
+
+
+	/**
+	 * amount
+	 * @access 	public
+	 * @return 	float
+	 */
+	public function amount() {
+		return $this->get( 'RPY_amount' );
+	}
+
+
+
 }
 // End of file EE_Registration_Payment.class.php
 // Location: /EE_Registration_Payment.class.php
