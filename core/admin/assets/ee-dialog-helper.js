@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 
 
 	window.position_dialog = function position_dialog(dialogWidthFraction) {
-		dialogWidthFraction = typeof dialogWidthFraction === 'undefined' ? 2 : dialogWidthFraction;
+		dialogWidthFraction = typeof dialogWidthFraction === 'undefined' ? 1.5 : dialogWidthFraction;
 		var wndwWidth = parseInt( $(window).width(), 10 );
 		var wndwHeight = parseInt( $(window).height(), 10 );
 		var scrllTp = $('html').scrollTop();
