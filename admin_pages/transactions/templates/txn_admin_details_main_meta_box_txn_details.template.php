@@ -304,7 +304,6 @@
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
-						<br/>
 						<p class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></p>
 					</div>
 
@@ -312,7 +311,6 @@
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-amount-inp" class=""><?php _e( 'Amount', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[amount]" id="txn-admin-payment-amount-inp" class="txn-admin-apply-payment-inp required" type="text" value=""/>
-						<br/>
 						<p class="description"><?php _e( 'The amount of the payment', 'event_espresso' );?></p>
 					</div>
 
@@ -325,7 +323,6 @@
 							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"<?php echo $selected; ?>><?php echo sanitize_key( $method->admin_desc() ) ? substr( $method->admin_desc(), 0, 128) : $method->admin_name() ; ?>&nbsp;&nbsp;</option>
 						<?php endforeach; ?>
 						</select>
-						<br/>
 						<p class="description"><?php _e( 'Whether the payment was made via PayPal, Credit Card, Cheque, or Cash', 'event_espresso' );?></p>
 					</div>
 
@@ -333,7 +330,6 @@
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
 							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
-							<br/>
 							<p class="description"><?php _e( 'The Transaction ID sent back from the payment gateway, or the Cheque #', 'event_espresso' );?></p>
 						</div>
 					</div>
@@ -342,7 +338,6 @@
 						<div class="txn-admin-apply-payment-response-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-gateway-response-inp" class=""><?php _e( 'Gateway Response', 'event_espresso' );?></label>
 							<input name="txn_admin_payment[gateway_response]" id="txn-admin-payment-gateway-response-inp" class="txn-admin-apply-payment-inp" type="text"/>
-							<br/>
 							<p class="description"><?php _e( 'The gateway response string (optional)', 'event_espresso' );?></p>
 						</div>
 					</div>
@@ -356,7 +351,6 @@
 								<option id="payment-status-opt-<?php echo $STS_ID; ?>" value="<?php echo $STS_ID; ?>"<?php echo $selected; ?>><?php echo $STS_code; ?>&nbsp;&nbsp;</option>
 							<?php endforeach; ?>
 							</select>
-							<br/>
 							<p class="description"><?php _e( 'Whether the payment was approved, cancelled, declined or failed after submission to the gateway', 'event_espresso' );?></p>
 						</div>
 					</div>
@@ -364,32 +358,33 @@
 					<div class="txn-admin-apply-payment-po-nmbr-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-po-nmbr-inp" class=""><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
-						<br/>
 						<p class="description"><?php _e( 'The Purchase or Sales Order Number if any (optional)', 'event_espresso' );?></p>
 					</div>
 
 					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
-						<br/>
-						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p>
 					</div>
 
-					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
-						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+					<div class="txn-admin-apply-payment-registrations-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-registrations-inp" class="last"><?php _e( 'Registrations to Apply Payment to:', 'event_espresso' ); ?></label>
+						<?php echo $registrations_to_apply_payment_to; ?>
+						<div class="clear"></div>
+						<p class="description"><?php _e( 'The payment will only be applied to the registrations that have a check mark in their corresponding check box.', 'event_espresso' ); ?></p>
+					</div>
+
+					<div class="txn-admin-payment-reg-status-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-reg-status-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
 						<?php echo $status_change_select; ?>
+						<p class="description"><?php printf( __( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso' ), '<strong>', '</strong>' ); ?></p>
 						<br/>
-						<br />
-						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
-						<label></label>
 					</div>
 
-					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
-						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
+					<div class="txn-admin-apply-payment-send-notifications-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-send-notifications-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
-						<br/>
-						<br />
-						<p class="description"><?php printf( __('By default a payment message %sis%s sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
+						<p class="description"><?php printf( __('By default a payment message %sis%s sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso'), '<strong>', '</strong>' ); ?></p>
 						<label></label>
 					</div>
 					<div class="clear"></div>
@@ -446,21 +441,15 @@
 					<input  type="hidden" name="delete_txn_admin_payment[TXN_ID]" id="delete-txn-admin-payment-txn-id-inp" value="<?php echo $txn_nmbr['value']; ?>"/>
 
 					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
-						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+						<label for="delete-txn-admin-payment-reg-status-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
 						<?php echo $delete_status_change_select; ?>
-						<br/>
-						<br />
-						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p><br/>
-						<label></label>
+						<p class="description"><?php printf( __('If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. %sNote: ALL registrations associated with this transaction will be updated to this new status.%s', 'event_espresso'), '<strong>', '</strong>' ); ?></p>
 					</div>
 
 					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
 						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="delete_txn_reg_status_change[send_notifications]">
-						<br/>
-						<br />
-						<p class="description"><?php _e( 'If you check this box, the system will send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
-						<label></label>
+						<p class="description"><?php _e( 'If you check this box, the system will send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p>
 					</div>
 					<div class="clear"></div>
 
