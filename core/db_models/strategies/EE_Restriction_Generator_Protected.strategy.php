@@ -11,7 +11,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * detects if there are basic capabilities (eg "read_things"), "others" capabilities (eg "read_others_things"),
  * and "private" capabilities.
  * If there are only basic capabilities, it controls access to all items.
- * If there are basic and "others" capabilities, the basic capabilities control access to one own's obejcts,
+ * If there are basic and "others" capabilities, the basic capabilities control access to one own's objects,
  * and the "others" capabilities control all access to others.
  * If there are all three, the basic capabilities control access to one's own objects,
  * the "others" capabilities control access to others' non-private objects, and
@@ -41,21 +41,27 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base{
 		}
 
 		$restrictions = array();
-
 		//does the basic cap exist? (eg 'ee_read_registrations')
-		if( EE_Restriction_Generator_Base::is_cap($this->model(), $this->action()) ) {
-			$restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action()) ] = new EE_Return_None_Where_Conditions();
+		if ( EE_Restriction_Generator_Base::is_cap( $this->model(), $this->action() ) ) {
+			$restrictions[ EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() ) ] = new EE_Return_None_Where_Conditions();
 			//does the others cap exist? (eg 'ee_read_others_registrations')
-			if( EE_Restriction_Generator_Base::is_cap($this->model(), $this->action() . '_others' ) ) {//both caps exist
-				$restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_others' ) ] = new EE_Default_Where_Conditions( array(
-				EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder ) );
+			if ( EE_Restriction_Generator_Base::is_cap( $this->model(), $this->action() . '_others' ) ) {//both caps exist
+				$restrictions[ EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' ) ] = new EE_Default_Where_Conditions(
+					array(
+						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder
+					)
+				);
 				//does the private cap exist (eg 'ee_read_others_private_events')
-				if( EE_Restriction_Generator_Base::is_cap( $this->model(), $this->action() . '_private' ) && $this->model() instanceof EEM_CPT_Base ){
+				if ( EE_Restriction_Generator_Base::is_cap( $this->model(), $this->action() . '_private' ) && $this->model() instanceof EEM_CPT_Base ) {
 					//if they have basic and others, but not private, restrict them to see theirs and others' that aren't private
-					$restrictions[ EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_private' ) ] = new EE_Default_Where_Conditions(array(
-						'OR*no_' .EE_Restriction_Generator_Base::get_cap_name($this->model(), $this->action() . '_private' ) => array(
-						EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-						'status' => array( '!=', 'private' ) ) ) );
+					$restrictions[ EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_private' ) ] = new EE_Default_Where_Conditions(
+						array(
+							'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_private' ) => array(
+								EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+								'status' => array( '!=', 'private' )
+							)
+						)
+					);
 				}
 			}
 		}else{
