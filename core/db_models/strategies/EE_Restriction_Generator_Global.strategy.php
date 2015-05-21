@@ -49,19 +49,21 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base {
 				EE_Restriction_Generator_Base::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions()
 			);
 		}
-
 		return array(
-			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() )				 => new EE_Return_None_Where_Conditions(),
-			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' )	 => new EE_Default_Where_Conditions( array(
+			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() ) => new EE_Return_None_Where_Conditions(),
+			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' ) => new EE_Default_Where_Conditions( array(
 				//I need to be the owner, or it must be a global item
 				'OR*no_' . EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_others' ) => array(
 					EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-					$this->_global_field_name => true
-				) ) ),
+					$this->_global_field_name                                => true
+				)
+			) ),
 			EE_Restriction_Generator_Base::get_cap_name( $this->model(), $this->action() . '_global' ) => new EE_Default_Where_Conditions( array(
-				//it mustn't be global
-				$this->_global_field_name => false )
-			) );
+					//it mustn't be global
+					$this->_global_field_name => false
+				)
+			)
+		);
 	}
 
 }
