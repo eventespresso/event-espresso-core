@@ -41,7 +41,7 @@ class EE_Inflector{
 
 	/**
 	 * Just calls self::pluralize and strtolower on $word and returns it
-	 * @param type $word
+	 * @param string $word
 	 * @return string
 	 */
 	static function pluralize_and_lower( $word ){
