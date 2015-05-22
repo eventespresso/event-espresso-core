@@ -229,7 +229,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$return_data[ $this->_remove_unusable_characters( $key ) ] = $this->_remove_unusable_characters( $value );
 			}
 		}else{
-			$return_data =  preg_replace('/[[:^print:]]/', '', $request_data);
+			$return_data =  preg_replace('/[^[:print:]]/', '', $request_data);
 		}
 		return $return_data;
 	}
