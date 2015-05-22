@@ -44,6 +44,9 @@ class EE_Restriction_Generator_Taxonomy_Protected extends EE_Restriction_Generat
 			'ee_manage_venue_categories' => new EE_Default_Where_Conditions( array(
 				$this->_path_to_taxonomy_model . 'taxonomy*no_ee_manage_venue_categories' => array( '!=', 'espresso_venue_categories' )
 			)),
+			'ee_manage_event_types' => new EE_Default_Where_Conditions( array(
+				$this->_path_to_taxonomy_model . 'taxonomy*ee_manage_event_types' => array( '!=', 'espresso_event_types' )
+			)),
 		);
 	}
 }
