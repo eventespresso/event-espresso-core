@@ -23,7 +23,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	function __construct(){
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		$this->_pretty_name = __( 'Generate Registration Payment Records', 'event_espresso' );
+		$this->_pretty_name = __( 'Registration Payment Record Generation', 'event_espresso' );
 		// define tables
 		$this->_old_table 									= $wpdb->prefix . 'esp_transaction';
 		$this->_payment_table 						= $wpdb->prefix . 'esp_payment';
@@ -104,6 +104,20 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 
 
 	/**
+	 * _get_possibly_updated_REG_paid
+	 *
+	 * @param int $REG_ID
+	 * @return array
+	 */
+	protected function _get_possibly_updated_REG_paid( $REG_ID ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		return $wpdb->get_var( $wpdb->prepare( "SELECT REG_paid FROM $this->_registration_payment_table WHERE REG_ID = %d", $REG_ID ) );
+	}
+
+
+
+	/**
 	 * _process_registration_payments
 	 *
 	 * basically a copy of the "Sequential Registration Payment Application Strategy"  logic
@@ -117,18 +131,36 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 		// how much is available to apply to registrations?
 		$available_payment_amount = $payment->PAY_amount;
 		foreach ( $registrations as $REG_ID => $registration ) {
-			// nothing left?
-			if ( $available_payment_amount <= 0 ) {
+			// nothing left, then we are done here?
+			if ( ! $available_payment_amount > 0 ) {
 				break;
 			}
-			// don't allow payment amount to exceed the available payment amount
-			$payment_amount = $available_payment_amount < $registration->REG_final_price ? $available_payment_amount : $registration->REG_final_price;
+			// ensure REG_final_price has a valid value, and skip if it turns out to be zero
+			$registration->REG_final_price = ! empty( $registration->REG_final_price ) ? (float)$registration->REG_final_price : 0.00;
+			if ( ! $registration->REG_final_price > 0 ) {
+				continue;
+			}
+			// because REG_paid may have been updated by a previous payment, we need to retrieve the value from the db
+			$possibly_updated_REG_paid = $this->_get_possibly_updated_REG_paid( $REG_ID );
+			if ( is_float( $possibly_updated_REG_paid ) ) {
+				$registration->REG_paid = $possibly_updated_REG_paid;
+			}
+			// and ensure REG_paid has a valid value
+			$registration->REG_paid = ! empty( $registration->REG_paid ) ? (float)$registration->REG_paid : 0.00;
+			// calculate amount owing, and skip if it turns out to be zero
+			$owing = $registration->REG_final_price - $registration->REG_paid;
+			if ( ! $owing > 0 ) {
+				continue;
+			}
+			// don't allow payment amount to exceed the available payment amount, OR the amount owing
+			$payment_amount = min( $available_payment_amount, $owing );
 			// update $available_payment_amount
 			$available_payment_amount = $available_payment_amount - $payment_amount;
 			// add relation between registration and payment and set amount
-			if ( $this->_insert_registration_payment( $registration->REG_ID, $payment->PAY_ID, $payment->PAY_amount )) {
+			if ( $this->_insert_registration_payment( $registration->REG_ID, $payment->PAY_ID, $payment_amount )) {
 				//calculate and set new REG_paid
-				$this->_update_registration_paid( $registration->REG_ID, $payment->PAY_amount );
+				$registration->REG_paid = $registration->REG_paid + $payment_amount;
+				$this->_update_registration_paid( $registration->REG_ID, $registration->REG_paid );
 			}
 		}
 	}
