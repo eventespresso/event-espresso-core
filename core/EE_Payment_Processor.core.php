@@ -399,6 +399,14 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( empty( $registrations )) {
 			return;
 		}
+
+		// todo: break out the following logic into a separate strategy class
+		// todo: named something like "Sequential_Reg_Payment_Strategy"
+		// todo: which would apply payments using the capitalist "first come first paid" approach
+		// todo: then have another strategy class like "Distributed_Reg_Payment_Strategy"
+		// todo: which would be the socialist "everybody gets a piece of pie" approach,
+		// todo: which would be better for deposits, where you want a bit of the payment applied to each registration
+
 		// how much is available to apply to registrations?
 		$available_payment_amount = $payment->amount();
 		foreach ( $registrations as $registration ) {
