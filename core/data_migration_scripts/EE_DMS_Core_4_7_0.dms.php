@@ -39,7 +39,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.7.0.p", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
-			//new EE_DMS_4_7_0_populate_esp_registration_line_item_payment(),
+			new EE_DMS_4_7_0_Registration_Payments(),
 		);
 		parent::__construct();
 	}
@@ -53,7 +53,11 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_array) {
 		EE_Registry::instance()->load_helper( 'Activation' );
 		$version_string = $version_array['Core'];
-		if ( ( $version_string <= '4.7.0' && $version_string >= '4.6.0' ) || ( $version_string >= '4.7.0' && ! EEH_Activation::table_exists( 'esp_registration_payment' ) ) ) {
+		if (
+			( $version_string <= '4.7.0' && $version_string >= '4.6.0' )
+			||
+			( $version_string >= '4.7.0' && ! EEH_Activation::table_exists( 'esp_registration_payment' ) )
+		) {
 			return true;
 		} elseif ( ! $version_string ) {
 			//no version string provided... this must be pre 4.3
