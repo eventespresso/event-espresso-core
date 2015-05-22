@@ -16,9 +16,9 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 // +----------------------------------------------------------------------+
 
 /**
- * EE_Inflector for pluralize and singularize English nouns.
+ * EEH_Inflector for pluralize and singularize English nouns.
  *
- * This EE_Inflector is a port of Ruby on Rails EE_Inflector.
+ * This EEH_Inflector is a port of Ruby on Rails EEH_Inflector.
  *
  * It can be really helpful for developers that want to
  * create frameworks based on naming conventions rather than
@@ -34,7 +34,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since 0.1
  * @version $Revision 0.1 $
  */
-class EE_Inflector{
+class EEH_Inflector{
     // ------ CLASS METHODS ------ //
     // ---- Public methods ---- //
     // {{{ pluralize()
@@ -205,7 +205,7 @@ class EE_Inflector{
      */
     static function titleize($word, $uppercase = ''){
         $uppercase = $uppercase == 'first' ? 'ucfirst' : 'ucwords';
-        return $uppercase(EE_Inflector::humanize(EE_Inflector::underscore($word)));
+        return $uppercase(EEH_Inflector::humanize(EEH_Inflector::underscore($word)));
     }
 
     // }}}
@@ -292,7 +292,7 @@ class EE_Inflector{
      * @return string Returns a lowerCamelCasedWord
      */
     static function variablize($word){
-        $word = EE_Inflector::camelize($word);
+        $word = EEH_Inflector::camelize($word);
         return strtolower($word[0]) . substr($word, 1);
     }
 
@@ -312,7 +312,7 @@ class EE_Inflector{
      * @return string plural_table_name
      */
     static function tableize($class_name){
-        return EE_Inflector::pluralize(EE_Inflector::underscore($class_name));
+        return EEH_Inflector::pluralize(EEH_Inflector::underscore($class_name));
     }
 
     // }}}
@@ -331,7 +331,7 @@ class EE_Inflector{
      * @return string SingularClassName
      */
     static function classify($table_name){
-        return EE_Inflector::camelize(EE_Inflector::singularize($table_name));
+        return EEH_Inflector::camelize(EEH_Inflector::singularize($table_name));
     }
 
     // }}}

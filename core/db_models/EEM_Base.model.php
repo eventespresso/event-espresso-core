@@ -453,7 +453,8 @@ abstract class EEM_Base extends EE_Base{
 		//if the cap slug hasn't been set, and we haven't set it to false on purpose
 		//to indicate to NOT set it, set it to the logical default
 		if( $this->_caps_slug === null ) {
-			$this->_caps_slug = EE_Inflector::pluralize_and_lower( $this->get_this_model_name() );
+			EE_Registry::instance()->load_helper( 'Inflector' );
+			$this->_caps_slug = EEH_Inflector::pluralize_and_lower( $this->get_this_model_name() );
 		}
 		//initialize the standard cap restriction generators if none were specified by the child constructor
 		if( $this->_cap_restriction_generators !== false ){
