@@ -205,6 +205,10 @@ final class EE_System {
 		if ( is_admin() ) {
 			add_action( 'admin_notices', array( $this, 'beta_banner_admin_notice' ), -999 );
 		} else {
+			// site admin has authorized use of non-stable release candidate for production
+			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
+				return;
+			}
 			add_action( 'shutdown', array( $this, 'beta_banner_warning_notice' ), 10 );
 		}
 	}
