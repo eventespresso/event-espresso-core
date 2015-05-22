@@ -420,8 +420,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( $owing > 0 && ! EEM_Registration_Payment::instance()->exists(
 					array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
 				) ) {
-					// don't allow payment amount to exceed the available payment amount
-					$payment_amount = $available_payment_amount < $owing ? $available_payment_amount : $owing;
+					// don't allow payment amount to exceed the available payment amount, OR the amount owing
+					$payment_amount = min( $available_payment_amount, $owing );
 					// update $available_payment_amount
 					$available_payment_amount = $available_payment_amount - $payment_amount;
 					//calculate and set new REG_paid
