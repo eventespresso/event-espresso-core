@@ -382,14 +382,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			// find registrations with monies owing that can receive a payment
 			$registrations = $transaction->registrations( array(
 				array(
-					'STS_ID'           => array(
-						'IN',
-						array(
-							// only these reg statuses can receive payments
-							EEM_Registration::status_id_pending_payment,
-							EEM_Registration::status_id_approved
-						)
-					),
+					// only these reg statuses can receive payments
+					'STS_ID'  => array( 'IN', EEM_Registration::reg_statuses_that_allow_payment() ),
 					'REG_final_price'  => array( '!=', 0 ),
 					'REG_final_price*' => array( '!=', 'REG_paid', true ),
 				)
