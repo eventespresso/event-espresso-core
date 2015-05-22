@@ -112,7 +112,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	protected function _get_possibly_updated_REG_paid( $REG_ID ) {
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT REG_paid FROM $this->_registration_payment_table WHERE REG_ID = %d", $REG_ID ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT REG_paid FROM $this->_registration_table WHERE REG_ID = %d", $REG_ID ) );
 	}
 
 
