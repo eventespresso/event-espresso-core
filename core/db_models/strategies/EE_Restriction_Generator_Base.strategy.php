@@ -62,7 +62,7 @@ abstract class EE_Restriction_Generator_Base {
 	 * Returns the model set for this restriction generator
 	 *
 	 * @throws EE_Error
-	 * @return EEM_Base
+	 * @return EEM_Base | EEM_Soft_Delete_Base
 	 */
 	public function model() {
 		if( ! $this->_model instanceof EEM_Base ) {
@@ -106,7 +106,7 @@ abstract class EE_Restriction_Generator_Base {
 		if( $this->_cap_restrictions_generated === false ) {
 			$this->_cap_restrictions_generated = apply_filters( 'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time', $this->_generate_restrictions(), $this );
 		}
-		return apply_filters( 'FHEE__EE_Restriction_Generator_Base__generate_restrcionts__every_time', $this->_cap_restrictions_generated, $this );
+		return apply_filters( 'FHEE__EE_Restriction_Generator_Base__generate_restrictions__every_time', $this->_cap_restrictions_generated, $this );
 	}
 
 	/**

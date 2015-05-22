@@ -171,7 +171,7 @@ abstract class EEM_Base extends EE_Base{
 	protected $_cap_restriction_generators = array();
 
 	/**
-	 * consts used to categorize capability restrictions on EEM_Base::_caps_restrictions
+	 * constants used to categorize capability restrictions on EEM_Base::_caps_restrictions
 	 */
 	const caps_read = 'read';
 	const caps_read_admin = 'read_admin';
@@ -179,9 +179,9 @@ abstract class EEM_Base extends EE_Base{
 	const caps_delete = 'delete';
 
 	/**
-	 * Keys are all the cap contexsts (ie consts EEM_Base::_caps_*) and values are their 'action'
+	 * Keys are all the cap contexts (ie constants EEM_Base::_caps_*) and values are their 'action'
 	 * as how they'd be used in capability names. Eg EEM_Base::caps_read ('read_frontend')
-	 * maps to 'read' because when looking for revelevant permissions we're going to use
+	 * maps to 'read' because when looking for relevant permissions we're going to use
 	 * 'read' in teh capabilities names like 'ee_read_events' etc.
 	 * @var array
 	 */
@@ -460,7 +460,12 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->_cap_restriction_generators !== false ){
 			foreach( $this->cap_contexts_to_cap_action_map() as $cap_context => $action ){
 				if( ! isset( $this->_cap_restriction_generators[ $cap_context ] ) ) {
-					$this->_cap_restriction_generators[ $cap_context ] = apply_filters( 'FHEE__EEM_Base___construct__standard_cap_restriction_generator', new EE_Restriction_Generator_Protected(), $cap_context, $this );
+					$this->_cap_restriction_generators[ $cap_context ] = apply_filters(
+						'FHEE__EEM_Base___construct__standard_cap_restriction_generator',
+						new EE_Restriction_Generator_Protected(),
+						$cap_context,
+						$this
+					);
 				}
 			}
 		}
@@ -470,8 +475,14 @@ abstract class EEM_Base extends EE_Base{
 				if( ! $generator_object ){
 					continue;
 				}
-				if( !  $generator_object instanceof EE_Restriction_Generator_Base ){
-					throw new EE_Error( sprintf( __( 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.', 'event_espresso' ), $context, $this->get_this_model_name()  ) );
+				if( ! $generator_object instanceof EE_Restriction_Generator_Base ){
+					throw new EE_Error(
+						sprintf(
+							__( 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.', 'event_espresso' ),
+							$context,
+							$this->get_this_model_name()
+						)
+					);
 				}
 				$action = $this->cap_action_for_context( $context );
 				if( ! $generator_object->construction_finalized() ){
@@ -3344,12 +3355,13 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	*		cycle though array of attendees and create objects out of each item
-	*
-	* 		@access		private
-	* 		@param		array		$rows of results of $wpdb->get_results($query,ARRAY_A)
-	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
-	*/
+	 *        cycle though array of attendees and create objects out of each item
+	 *
+	 * @access        private
+	 * @param        array $rows of results of $wpdb->get_results($query,ARRAY_A)
+	 * @return \EE_Base_Class[] array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
+	 * @throws \EE_Error
+	 */
 	protected function _create_objects( $rows = array() ) {
 		$array_of_objects=array();
 		if(empty($rows)){
@@ -4037,7 +4049,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets all the caps that are missing which impose a restriction on
 	 * queries made in this context
-	 * @param string $context one of EEM_Base::caps_ consts
+	 * @param string $context one of EEM_Base::caps_ constants
 	 * @return EE_Default_Where_Conditions[] indexed by capability name
 	 */
 	public function caps_missing( $context = EEM_Base::caps_read ) {
@@ -4052,7 +4064,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 
 	/**
-	 * Gets the mapping from capability contexsts to action strings used in capability names
+	 * Gets the mapping from capability contexts to action strings used in capability names
 	 * @return array keys are one of EEM_Base::valid_cap_contexts(), and values are usually
 	 * one of 'read', 'edit', or 'delete'
 	 */
@@ -4060,10 +4072,13 @@ abstract class EEM_Base extends EE_Base{
 		return apply_filters( 'FHEE__EEM_Base__cap_contexts_to_cap_action_map', $this->_cap_contexts_to_cap_action_map, $this );
 	}
 
+
+
 	/**
 	 * Gets the action string for the specified capability context
-	 * @param type $context
+	 * @param string $context
 	 * @return string one of EEM_Base::cap_contexts_to_cap_action_map() values
+	 * @throws \EE_Error
 	 */
 	public function cap_action_for_context( $context ) {
 		$mapping = $this->cap_contexts_to_cap_action_map();
@@ -4073,12 +4088,18 @@ abstract class EEM_Base extends EE_Base{
 		if( $action = apply_filters( 'FHEE__EEM_Base__cap_action_for_context', null, $this, $mapping, $context ) ) {
 			return $action;
 		}
-		throw new EE_Error( sprintf( __( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ), $context, implode(',', array_keys( $this->cap_contexts_to_cap_action_map() ) ) ) );
+		throw new EE_Error(
+			sprintf(
+				__( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ),
+				$context,
+				implode(',', array_keys( $this->cap_contexts_to_cap_action_map() ) )
+			)
+		);
 
 	}
 
 	/**
-	 * Returns all the capability contexts whcih are valid when querying models
+	 * Returns all the capability contexts which are valid when querying models
 	 * @return array
 	 */
 	static public function valid_cap_contexts() {
@@ -4090,17 +4111,27 @@ abstract class EEM_Base extends EE_Base{
 		));
 	}
 
+
+
 	/**
 	 * Verifies $context is one of EEM_Base::valid_cap_contexts(), if not it throws an exception
 	 * @param string $context
-	 * @return boolean
+	 * @return bool
+	 * @throws \EE_Error
 	 */
 	static public function verify_is_valid_cap_context( $context ) {
 		$valid_cap_contexts = EEM_Base::valid_cap_contexts();
 		if( in_array( $context, $valid_cap_contexts ) ) {
 			return true;
 		}else{
-			throw new EE_Error( sprintf( __( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ), $context, 'EEM_Base' , implode(',', $valid_cap_contexts ) ) );
+			throw new EE_Error(
+				sprintf(
+					__( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ),
+					$context,
+					'EEM_Base' ,
+					implode(',', $valid_cap_contexts )
+				)
+			);
 		}
 	}
 }

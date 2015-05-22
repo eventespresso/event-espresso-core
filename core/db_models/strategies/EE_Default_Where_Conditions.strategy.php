@@ -14,13 +14,13 @@ class EE_Default_Where_Conditions{
 
 	/**
 	 * This const can be used in EE_Default_Where_Conditions where parameters as the name
-	 * of the user field. When we are actualyl generating the where conditions it will be
+	 * of the user field. When we are actually generating the where conditions it will be
 	 * replaced with the model's wp user fieldname
 	 */
 	const user_field_name_placeholder = '%$user_field_name_placeholder$%';
 
 	/**
-	 * Model fo rwhich this strategy find default where conditions
+	 * Model for which this strategy find default where conditions
 	 * @var EEM_Base
 	 */
 	protected $_model;
@@ -65,19 +65,22 @@ class EE_Default_Where_Conditions{
 	}
 	/**
 	 * Gets the default where conditions that are specific to this child of EE_Default_Where_Conditions.
-	 * Adding model relaiton chains is handled by the public method get_default_where_conditions
+	 * Adding model relation chains is handled by the public method get_default_where_conditions
 	 * @return array
 	 */
 	protected function _get_default_where_conditions(){
 		return array();
 	}
 
+
+
 	/**
 	 * Takes the default query parameters, and traverses them, adding the model relation chain
-	 * onto them (intelligently doesn't do taht to logic query params like NOT, OR, and AND)
+	 * onto them (intelligently doesn't do that to logic query params like NOT, OR, and AND)
 	 * @param array $where_conditions
 	 * @param string $model_relation_chain
 	 * @return array
+	 * @throws \EE_Error
 	 */
 	public function prepare_where_conditions_for_querying( $where_conditions, $model_relation_chain ) {
 		$where_conditions_with_model_relation_chain_prefixes = array();
