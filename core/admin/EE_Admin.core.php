@@ -243,7 +243,7 @@ final class EE_Admin {
 		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
 			return;
 
-		$initial_meta_boxes = array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
 		$hidden_meta_boxes = array();
 
 		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
