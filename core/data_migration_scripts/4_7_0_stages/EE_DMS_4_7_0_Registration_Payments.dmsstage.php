@@ -23,15 +23,14 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	function __construct(){
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		$this->_pretty_name = __( 'Transaction Payment Method Relations', 'event_espresso' );
+		$this->_pretty_name = __( 'Generate Registration Payment Records', 'event_espresso' );
 		// define tables
 		$this->_old_table 									= $wpdb->prefix . 'esp_transaction';
 		$this->_payment_table 						= $wpdb->prefix . 'esp_payment';
 		$this->_registration_table 					= $wpdb->prefix . 'esp_registration';
 		$this->_registration_payment_table 	= $wpdb->prefix . 'esp_registration_payment';
-		// build SQL JOIN and WHERE clauses
-		$this->_extra_where_sql = "WHERE STS_ID = 'TIN' ";
-		$this->_extra_where_sql .= "AND TXN_Total != '0.000'";
+		// build SQL WHERE clauses
+		$this->_extra_where_sql = "WHERE STS_ID IN ( 'TIN', 'TCM' ) AND TXN_Total != '0.000'";
 		parent::__construct();
 	}
 
@@ -39,7 +38,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 
 	/**
 	 * @param array $transaction
-	 * @return boolean
+	 * @return void
 	 */
 	protected function _migrate_old_row( $transaction ) {
 		/** @type WPDB $wpdb */
@@ -53,28 +52,24 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 					$wpdb->last_error
 				)
 			);
-			return false;
+			return;
 		}
 		// get all payments for the TXN
 		$payments = $this->_get_payments( $TXN_ID );
 		if ( empty( $payments ) ) {
-			return true;
+			return;
 		}
 		// then the registrants
 		$registrations = $this->_get_registrations( $TXN_ID );
 		if ( empty( $registrations ) ) {
-			return true;
+			return;
 		}
-		$success = true;
 		// now loop thru each payment and apply it to each of the registrations
 		foreach ( $payments as $PAY_ID => $payment ) {
 			if ( $payment->STS_ID === 'PAP' && $payment->PAY_amount > 0 ) {
-				if ( ! $this->_process_registration_payments( $payment, $registrations )) {
-					$success = false;
-				}
+				$this->_process_registration_payments( $payment, $registrations );
 			}
 		}
-		return $success;
 	}
 
 
@@ -111,12 +106,14 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	/**
 	 * _process_registration_payments
 	 *
+	 * basically a copy of the "Sequential Registration Payment Application Strategy"  logic
+	 * currently in EE_Payment_Processor::process_registration_payments()
+	 *
 	 * @param stdClass $payment
 	 * @param array $registrations
 	 * @return bool
 	 */
 	protected function _process_registration_payments( $payment, $registrations = array() ){
-		$success = true;
 		// how much is available to apply to registrations?
 		$available_payment_amount = $payment->PAY_amount;
 		foreach ( $registrations as $REG_ID => $registration ) {
@@ -131,44 +128,9 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 			// add relation between registration and payment and set amount
 			if ( $this->_insert_registration_payment( $registration->REG_ID, $payment->PAY_ID, $payment->PAY_amount )) {
 				//calculate and set new REG_paid
-				if ( ! $this->_update_registration_paid( $registration->REG_ID, $payment->PAY_amount )) {
-					$success = false;
-				}
+				$this->_update_registration_paid( $registration->REG_ID, $payment->PAY_amount );
 			}
 		}
-		return $success;
-	}
-
-
-
-	/**
-	 * _update_registration_paid
-	 *
-	 * @param int $REG_ID
-	 * @param float $REG_paid
-	 * @return bool
-	 */
-	protected function _update_registration_paid( $REG_ID = 0, $REG_paid = 0.00 ){
-		/** @type WPDB $wpdb */
-		global $wpdb;
-		$success = $wpdb->update(
-			$this->_registration_table,
-			array( 'REG_paid' => $REG_paid ),  // data
-			array( 'REG_ID' => $REG_ID ),  // where
-			array( '%f' ),   // data format
-			array( '%d' )  // where format
-		);
-		if ( ! $success ) {
-			$this->add_error(
-				sprintf(
-					__( 'Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso' ),
-					$REG_ID,
-					$wpdb->last_error
-				)
-			);
-			return false;
-		}
-		return true;
 	}
 
 
@@ -189,7 +151,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 			array( 'REG_ID' => $REG_ID, 'PAY_ID' => $PAY_ID, 'RPY_amount' => $PAY_amount, ),  // data
 			array( '%f' )   // data format
 		);
-		if ( ! $success ) {
+		if ( $success === false ) {
 			$this->add_error(
 				sprintf(
 					__( 'Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso' ),
@@ -203,6 +165,38 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	}
 
 
-}
 
+	/**
+	 * _update_registration_paid
+	 *
+	 * @param int $REG_ID
+	 * @param float $REG_paid
+	 * @return bool
+	 */
+	protected function _update_registration_paid( $REG_ID = 0, $REG_paid = 0.00 ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		$success = $wpdb->update(
+			$this->_registration_table,
+			array( 'REG_paid' => $REG_paid ),  // data
+			array( 'REG_ID' => $REG_ID ),  // where
+			array( '%f' ),   // data format
+			array( '%d' )  // where format
+		);
+		if ( $success === false ) {
+			$this->add_error(
+				sprintf(
+					__( 'Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso' ),
+					$REG_ID,
+					$wpdb->last_error
+				)
+			);
+			return false;
+		}
+		return true;
+	}
+
+
+
+}
 // End of file EE_DMS_4_7_0_Registration_Payments.dmsstage.php
