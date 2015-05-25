@@ -22,10 +22,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 	}
 	protected function _migrate_old_row( $line_item_row ) {
 		global $wpdb;
-		//wha
-		//[P|L}POikt event is this line item for? this can be foun
-		//'];d by looking at its
-		//transaction's registration's EVT_ID
+		//what event is this line item for? this can be found by looking at its transaction's registration's EVT_ID
 		$event_id = $wpdb->get_var( $wpdb->prepare( 'SELECT EVT_ID FROM ' . $wpdb->prefix . 'esp_registration WHERE TXN_ID=%d LIMIT 1', $line_item_row[ 'TXN_ID' ] ) );
 		$new_line_item_data = array(
 					'LIN_code' => 'event-' . $event_id,
