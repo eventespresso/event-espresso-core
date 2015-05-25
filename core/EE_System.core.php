@@ -198,7 +198,7 @@ final class EE_System {
 			return;
 		}
 		// skip stable releases
-		if ( strpos( EVENT_ESPRESSO_VERSION, '.rc.' ) === false ) {
+		if ( strpos( EVENT_ESPRESSO_VERSION, '.rc.' ) === false && strpos( EVENT_ESPRESSO_VERSION, 'beta' ) === false ) {
 			return;
 		}
 		// post release candidate warning
