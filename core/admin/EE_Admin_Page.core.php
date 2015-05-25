@@ -3342,6 +3342,36 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * A helper for getting a "next link".
+	 *
+	 * @param string $url   The url to link to
+	 * @param string $class The class to use.
+	 *
+	 * @return string
+	 */
+	protected function _next_link( $url, $class = 'dashicons dashicons-arrow-right' ) {
+		return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
+	}
+
+
+
+
+	/**
+	 * A helper for getting a "previous link".
+	 *
+	 * @param string $url   The url to link to
+	 * @param string $class The class to use.
+	 *
+	 * @return string
+	 */
+	protected function _previous_link( $url, $class = 'dashicons dashicons-arrow-left' ) {
+		return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
+	}
+
+
+
+
 
 
 

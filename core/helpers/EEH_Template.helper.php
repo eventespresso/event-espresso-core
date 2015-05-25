@@ -694,35 +694,6 @@ class EEH_Template {
 	}
 
 
-	/**
-	 * A helper for getting a "next link".
-	 *
-	 * @param string $url   The url to link to
-	 * @param string $class The class to use.
-	 *
-	 * @return string
-	 */
-	public static function next_link( $url, $class = 'dashicons dashicons-arrow-right' ) {
-			return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
-	}
-
-
-
-
-	/**
-	 * A helper for getting a "previous link".
-	 *
-	 * @param string $url   The url to link to
-	 * @param string $class The class to use.
-	 *
-	 * @return string
-	 */
-	public static function previous_link( $url, $class = 'dashicons dashicons-arrow-left' ) {
-		return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
-	}
-
-
-
 } //end EEH_Template class
 
 //function convert_zero_to_free( $amount, $return_raw ) {
