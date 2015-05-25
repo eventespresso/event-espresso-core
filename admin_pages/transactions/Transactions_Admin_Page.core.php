@@ -550,6 +550,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;
 
+
+		//next and previous links
+		$next_txn = $this->_transaction->next(null, array(), 'TXN_ID' );
+		$this->_template_args['next_transaction'] = $next_txn ? $this->_next_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_transaction', 'TXN_ID' => $next_txn['TXN_ID'] ), TXN_ADMIN_URL ), 'dashicons dashicons-arrow-right ee-icon-size-22' ) : '';
+		$previous_txn = $this->_transaction->previous( null, array(), 'TXN_ID' );
+		$this->_template_args['previous_transaction'] = $previous_txn ? $this->_previous_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_transaction', 'TXN_ID' => $previous_txn['TXN_ID'] ), TXN_ADMIN_URL ), 'dashicons dashicons-arrow-left ee-icon-size-22' ) : '';
+
+
 		// grab messages at the last second
 		$this->_template_args['notices'] = EE_Error::get_notices();
 		// path to template
