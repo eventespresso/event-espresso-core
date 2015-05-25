@@ -3351,7 +3351,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string
 	 */
 	protected function _next_link( $url, $class = 'dashicons dashicons-arrow-right' ) {
-		return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
+		return '<a class="' . $class . '" href="' . $url . '"></a>';
 	}
 
 
@@ -3366,7 +3366,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string
 	 */
 	protected function _previous_link( $url, $class = 'dashicons dashicons-arrow-left' ) {
-		return '<a href="' . $url . '"><span class="' . $class . '"></span></a>';
+		return '<a class="' . $class . '" href="' . $url . '"></a>';
 	}
 
 
