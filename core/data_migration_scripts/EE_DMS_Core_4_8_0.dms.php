@@ -52,14 +52,14 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * Because this is being done at basically the same time as the MER-ready branch
 	 * of core, it's possible people might have installed MEr-ready branch first,
-	 * and then this one, in whcih case we still want to perform this migration,
+	 * and then this one, in which case we still want to perform this migration,
 	 * even though the version might not have increased
 	 * @param array $version_array
 	 * @return bool
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.8.0' && $version_string >= '4.6.0' ){
+		if( $version_string <= '4.8.0' && $version_string >= '4.6.0' ){
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
