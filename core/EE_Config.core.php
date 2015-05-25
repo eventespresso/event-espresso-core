@@ -403,8 +403,8 @@ final class EE_Config {
 	 * @return   bool
 	 */
 	public function  update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
-		$clone = clone( self::$_instance );
-		self::$_instance = NULL;
+		//$clone = clone( self::$_instance );
+		//self::$_instance = NULL;
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
 		$this->_reset_espresso_addon_config();
 		// hook into update_option because that happens AFTER the ( $value === $old_value ) conditional but BEFORE the actual update occurs
@@ -420,8 +420,8 @@ final class EE_Config {
 		// remove our action since we don't want it in the system anymore
 		remove_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1 );
 		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
-		self::$_instance = $clone;
-		unset( $clone );
+		//self::$_instance = $clone;
+		//unset( $clone );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
 			if ( $add_success ) {
