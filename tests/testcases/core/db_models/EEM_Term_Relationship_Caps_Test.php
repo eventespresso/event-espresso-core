@@ -194,7 +194,7 @@ class EEM_Term_Relationship_Caps_Test extends EE_UnitTestCase {
 		//log the user in
 		global $current_user;
 		$current_user = $this->user;
-		$current_user->add_cap( 'ee_delete_events' );
+		$current_user->add_cap( 'ee_edit_events' );
 
 		//now check they can only see the term relationship for their own event
 		$term_rs = EEM_Term_Relationship::instance()->get_all(
@@ -213,7 +213,7 @@ class EEM_Term_Relationship_Caps_Test extends EE_UnitTestCase {
 		//log the user in
 		global $current_user;
 		$current_user = $this->user;
-		$current_user->add_cap( 'ee_delete_events' );
+		$current_user->add_cap( 'ee_edit_events' );
 		$current_user->add_cap( 'ee_assign_event_category' );
 
 		//now check they can only see the term relationship for their own event

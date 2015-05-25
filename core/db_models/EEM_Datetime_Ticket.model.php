@@ -58,7 +58,7 @@ class EEM_Datetime_Ticket extends EEM_Base {
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public( 'Datetime.Event' );
 		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected( 'Datetime.Event' );
 		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected( 'Datetime.Event' );
-		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected( 'Datetime.Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected( 'Datetime.Event', EEM_Base::caps_edit );
 		parent::__construct( $timezone );
 	}
 } //end EEM_Datetime_Ticket class

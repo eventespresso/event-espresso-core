@@ -53,7 +53,7 @@ class EEM_Term_Relationship extends EEM_Base {
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public( $path_to_event_model );
 		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected( $path_to_event_model );
 		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected( $path_to_event_model );
-		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected( $path_to_event_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected( $path_to_event_model, EEM_Base::caps_edit );
 
 		$path_to_tax_model = 'Term_Taxonomy.';
 		//add cap restrictions for editing term relations to the "ee_assign_*"
