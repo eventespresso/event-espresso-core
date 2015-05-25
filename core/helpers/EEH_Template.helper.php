@@ -710,7 +710,7 @@ class EEH_Template {
 
 
 	/**
-	 * A helper for getting a "prveious link".
+	 * A helper for getting a "previous link".
 	 *
 	 * @param string $url   The url to link to
 	 * @param string $class The class to use.
