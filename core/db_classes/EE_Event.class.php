@@ -114,7 +114,7 @@ class EE_Event extends EE_CPT_Base {
 	/**
 	 * Gets all the tickets available for purchase of this event
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return EE_Ticket
+	 * @return EE_Ticket[]
 	 */
 	public function tickets( $query_params = array() ) {
 		//first get all datetimes
