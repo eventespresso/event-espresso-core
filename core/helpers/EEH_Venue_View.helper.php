@@ -294,6 +294,11 @@ class EEH_Venue_View extends EEH_Base {
 				EEH_Venue_View::$_venue
 			);
 			$venue_name = EEH_Schema::name( $venue_name );
+
+			//if venue is trashed then ignore the "link to" setting because the venue is trashed.
+			if ( $venue->get('status') == 'trash' ) {
+				$link_to = '';
+			}
 			switch( $link_to ) {
 
 				case 'details' :
