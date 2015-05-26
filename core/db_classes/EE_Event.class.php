@@ -678,6 +678,32 @@ class EE_Event extends EE_CPT_Base {
 
 
 	/**
+	 * This returns the total remaining spaces for sale on this event.
+	 *
+	 * @uses EE_Event::total_available_spaces()
+	 * @return float|int  (INF is returned as float)
+	 */
+	public function spaces_remaining_for_sale() {
+		//first get total available spaces not including expired things
+		$spaces_available = $this->total_available_spaces( false );
+
+		//if total available = 0, then exit right away because that means everything is expired.
+		if ( $spaces_available === 0 ) {
+			return 0;
+		}
+
+		//subtract total approved registrations from spaces available to get how many are remaining.
+		$spots_taken = EEM_Registration::instance()->count( array( array( 'EVT_ID' => $this->ID(), 'STS_ID' => EEM_Registration::status_id_approved ) ), 'REG_ID', true );
+		$spaces_remaining = $spaces_available - $spots_taken;
+
+		return $spaces_remaining > 0 ? $spaces_remaining : 0;
+	}
+
+
+
+
+
+	/**
 	 * This returns the total spaces available for an event while considering all the qtys on the tickets and the reg limits
 	 * on the datetimes attached to this event.
 	 *
