@@ -409,24 +409,47 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				break;
 			}
 			if ( $registration instanceof EE_Registration ) {
-				$owing = $registration->final_price() - $registration->paid();
-				// check if relation already exists for this payment, and if not...
-				if ( $owing > 0 && ! EEM_Registration_Payment::instance()->exists(
-					array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
-				) ) {
-					// don't allow payment amount to exceed the available payment amount, OR the amount owing
-					$payment_amount = min( $available_payment_amount, $owing );
-					// update $available_payment_amount
-					$available_payment_amount = $available_payment_amount - $payment_amount;
-					//calculate and set new REG_paid
-					$registration->set_paid( $registration->paid() + $payment_amount );
-					// add relation between registration and payment and set amount
-					$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
-					// make it stick
-					$registration->save();
-				}
+				$available_payment_amount = $this->process_registration_payment( $registration, $payment, $available_payment_amount );
 			}
 		}
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after successful payment and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $available_payment_amount
+	 * @return float
+	 */
+	public function process_registration_payment( EE_Registration $registration, EE_Payment $payment, $available_payment_amount = 0.00 ) {
+		$owing = $registration->final_price() - $registration->paid();
+		if ( $owing > 0 ) {
+			// don't allow payment amount to exceed the available payment amount, OR the amount owing
+			$payment_amount = min( $available_payment_amount, $owing );
+			// update $available_payment_amount
+			$available_payment_amount = $available_payment_amount - $payment_amount;
+			//calculate and set new REG_paid
+			$registration->set_paid( $registration->paid() + $payment_amount );
+			// find any existing reg payment records for this registration and payment
+			$existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
+				array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
+			);
+			// if existing registration payment exists
+			if ( $existing_reg_payment instanceof EE_Registration_Payment ) {
+				// then update that record
+				$existing_reg_payment->set_amount( $payment_amount );
+				$existing_reg_payment->save();
+			} else {
+				// or add new relation between registration and payment and set amount
+				$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
+				// make it stick
+				$registration->save();
+			}
+		}
+		return $available_payment_amount;
 	}
 
 
