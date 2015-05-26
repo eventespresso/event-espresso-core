@@ -112,16 +112,17 @@
 					<td>
 						<span id="payment-status-<?php echo $PAY_ID; ?>" class="ee-status-strip-td ee-status-strip pymt-status-<?php echo $payment->STS_ID(); ?>"></span>
 						<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
+						<div id="reg-payments-<?php echo $PAY_ID;?>" class="hidden"><?php echo json_encode( $existing_reg_payments[ $PAY_ID ] );?></div>
 					</td>
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" data-payment-id="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" data-payment-id="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -369,9 +370,15 @@
 
 					<div class="txn-admin-apply-payment-registrations-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-registrations-inp" class="last"><?php _e( 'Registrations to Apply Payment to:', 'event_espresso' ); ?></label>
+						<label class="txn-admin-apply-payment-to-registrations-lbl">
+							<input type="radio" value="1" id="txn-admin-apply-payment-to-all-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]" data-payment-id="" checked="checked"/>
+							<?php _e( 'ALL Registrations', 'event_espresso' ); ?>
+						</label>
+						<label class="txn-admin-apply-payment-to-registrations-lbl">
+							<input type="radio" value="0" id="txn-admin-apply-payment-to-some-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]" data-payment-id=""/>
+							<?php _e( 'Just the following Registrations', 'event_espresso' ); ?>
+						</label>
 						<?php echo $registrations_to_apply_payment_to; ?>
-						<div class="clear"></div>
-						<p class="description"><?php _e( 'The payment will only be applied to the registrations that have a check mark in their corresponding check box.', 'event_espresso' ); ?></p>
 					</div>
 
 					<div class="txn-admin-payment-reg-status-dv admin-modal-dialog-row">
@@ -384,7 +391,7 @@
 					<div class="txn-admin-apply-payment-send-notifications-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-send-notifications-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
-						<p class="description"><?php printf( __('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check this box, the system will also send any related messages matching the status of the registrations to %1$seach registration for this transaction%2$s.', 'event_espresso'), '<strong>', '</strong>', '<br />' ); ?></p>
+						<p class="description"><?php printf( __('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check this box, the system will also send any related messages matching the status of the registrations to %1$search registration for this transaction%2$s.', 'event_espresso'), '<strong>', '</strong>', '<br />' ); ?></p>
 						<label></label>
 					</div>
 					<div class="clear"></div>
