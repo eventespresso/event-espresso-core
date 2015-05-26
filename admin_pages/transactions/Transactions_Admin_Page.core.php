@@ -619,9 +619,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		// process payment details
 		$payments = $this->_transaction->get_many_related('Payment');
-		$this->_template_args['payments'] = $payments;
-		if ( empty( $this->_template_args['payments'] )) {
-			$this->_template_args['payments'] = FALSE;
+		if( ! empty(  $payments ) ) {
+			$this->_template_args[ 'payments' ] = $payments;
+			$this->_template_args[ 'existing_reg_payments' ] = $this->_get_registration_payment_IDs( $payments );
+		} else {
+			$this->_template_args[ 'payments' ] = false;
+			$this->_template_args[ 'existing_reg_payments' ] = array();
 		}
 
 		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
@@ -684,6 +687,45 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 * _get_registration_payment_IDs
+	 *
+	 *    generates an array of Payment IDs and their corresponding Registration IDs
+	 *
+	 * @access protected
+	 * @param EE_Payment[] $payments
+	 * @return array
+	 */
+	protected function _get_registration_payment_IDs( $payments = array() ) {
+		$existing_reg_payments = array();
+		// get all reg payments for these payments
+		$reg_payments = EEM_Registration_Payment::instance()->get_all( array(
+			array(
+				'PAY_ID' => array(
+					'IN',
+					array_keys( $payments )
+				)
+			)
+		) );
+		if ( ! empty( $reg_payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( ! $payment instanceof EE_Payment ) {
+					continue;
+				} else if ( ! isset( $existing_reg_payments[ $payment->ID() ] ) ) {
+					$existing_reg_payments[ $payment->ID() ] = array();
+				}
+				foreach ( $reg_payments as $reg_payment ) {
+					if ( $reg_payment instanceof EE_Registration_Payment && $reg_payment->payment_ID() === $payment->ID() ) {
+						$existing_reg_payments[ $payment->ID() ][ ] = $reg_payment->registration_ID();
+					}
+				}
+			}
+		}
+		return $existing_reg_payments;
+	}
+
+
+
+	/**
 	 * _get_registrations_to_apply_payment_to
 	 *
 	 * 	generates HTML for displaying a series of checkboxes in the admin payment modal window
@@ -693,36 +735,55 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _get_registrations_to_apply_payment_to() {
-		$registrations_to_apply_payment_to = '';
 		// we want any registration with an active status (ie: not deleted or cancelled)
 		// that is not free, and has not already been fully paid for
 		$query_params = array(
 			array(
-				'STS_ID' => array( 'IN',
+				'STS_ID' => array(
+					'IN',
 					array(
 						EEM_Registration::status_id_approved,
 						EEM_Registration::status_id_pending_payment,
 						EEM_Registration::status_id_not_approved,
 					)
 				),
-				'REG_final_price'  => array( '!=', 0 ),
-				'REG_final_price*' => array( '!=', 'REG_paid', true ),
+				//'REG_final_price'  => array( '!=', 0 ),
+				//'REG_final_price*' => array( '!=', 'REG_paid', true ),
 			)
 		);
-		foreach ( $this->_transaction->registrations( $query_params ) as $registration ) {
+		$registrations_to_apply_payment_to = '<br /><div id="txn-admin-apply-payment-to-registrations-dv"  style="clear: both; margin: 1.5em 0 0; display: none;">';
+		$registrations_to_apply_payment_to .= '<br /><div class="admin-primary-mbox-tbl-wrap">';
+		$registrations_to_apply_payment_to .= '<table class="admin-primary-mbox-tbl">';
+		$registrations_to_apply_payment_to .= '<thead><tr>';
+		$registrations_to_apply_payment_to .= '<td>' . __( 'ID', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '<td>' . __( 'Registrant', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '<td>' . __( 'Ticket', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '<td>' . __( 'Event', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '<td class="jst-cntr">' . __( 'Owing', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '<td class="jst-cntr">' . __( 'Apply', 'event_espresso' ) . '</td>';
+		$registrations_to_apply_payment_to .= '</tr></thead><tbody>';
+		// get registrations for TXN
+		$registrations = $this->_transaction->registrations( $query_params );
+		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
+				$owing = $registration->final_price() - $registration->paid();
+				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments ) ? ' checked="checked"' : '';
+				$registrations_to_apply_payment_to .= '<tr>';
 				// add html for checkbox input and label
-				$registrations_to_apply_payment_to = '<label class="txn-admin-payment-reg-to-apply-lbl">';
-				$registrations_to_apply_payment_to .= '<input type="checkbox" value="' . $registration->ID() . '" name="txn_admin_payment[registrations]" checked="checked">';
-				$registrations_to_apply_payment_to .= sprintf(
-					__( '%1$s : %2$s for Event: %3$s', 'event_espresso' ),
-					$registration->attendee()->full_name(),
-					$registration->ticket()->name(),
-					$registration->event_name()
-				);
-				$registrations_to_apply_payment_to .= '</label><br />';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td class="jst-rght">' . EEH_Template::format_currency( $owing ) . '</td>';
+				$registrations_to_apply_payment_to .= '<td class="jst-cntr">';
+				$disabled = $registration->final_price() > 0 ? '' : ' disabled';
+				$registrations_to_apply_payment_to .= '<input type="checkbox" value="' . $registration->ID() . '" name="txn_admin_payment[registrations]"' . $checked . $disabled . '>';
+				$registrations_to_apply_payment_to .= '</td>';
+				$registrations_to_apply_payment_to .= '</tr>';
 			}
 		}
+		$registrations_to_apply_payment_to .= '</tbody></table></div>';
+		$registrations_to_apply_payment_to .= '<p class="clear description">' . __( 'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.', 'event_espresso' ) . '</p></div>';
 		$this->_template_args[ 'registrations_to_apply_payment_to' ] = $registrations_to_apply_payment_to;
 	}
 
@@ -917,6 +978,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'PAY_ID' => $this->_req_data['txn_admin_payment']['PAY_ID']
 				)
 			);
+
 			if ( ! $payment->save() ){
 				$msg = __( 'An error occurred. The payment has not been processed successfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -935,30 +997,17 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					$msg = __( 'The payment was processed successfully but the amount paid for the transaction was not updated.', 'event_espresso');
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
-
-				//prepare to render page
-				$this->_get_payment_status_array();
-				$json_response_data['return_data']['amount'] = $payment->amount();
-				$json_response_data['return_data']['total_paid'] = $transaction->paid();
-				$json_response_data['return_data']['txn_status'] = $transaction->status_ID();
-				$json_response_data['return_data']['pay_status'] = $payment->STS_ID();
-				$json_response_data['return_data']['PAY_ID'] = $payment->ID();
-				$json_response_data['return_data']['STS_ID'] = $payment->STS_ID();
-				$json_response_data['return_data']['status'] = self::$_pay_status[ $payment->STS_ID() ];
-				$json_response_data['return_data']['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
-				$json_response_data['return_data']['method'] = strtoupper( $payment->source() ) ;
-				$json_response_data['return_data']['PM_ID'] = $payment->payment_method() ? $payment->payment_method()->ID() : 1;
-				$json_response_data['return_data']['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
-				$json_response_data['return_data']['gateway_response'] = $payment->gateway_response();
-				$json_response_data['return_data']['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
-				$json_response_data['return_data']['po_number'] = $payment->po_number();
-				$json_response_data['return_data']['extra_accntng'] = $payment->extra_accntng();
-
 				// grab array of IDs for registrations to apply changes to
-				$REG_IDs = isset( $this->_req_data[ 'txn_admin_payment' ][ 'registrations' ] ) ? (array)$this->_req_data[ 'txn_admin_payment' ][ 'registrations' ] : array();
+				if ( isset( $this->_req_data[ 'txn_admin_payment' ][ 'registrations' ] ) ) {
+					$REG_IDs = (array)$this->_req_data[ 'txn_admin_payment' ][ 'registrations' ];
+				} else {
+					$REG_IDs = $this->_get_existing_reg_payment_REG_IDs( $payment );
+				}
+				$this->_remove_non_applicable_registration_payments( $payment, $REG_IDs );
+				// apply payment to registrations (if applicable)
 				if ( ! empty( $REG_IDs ) ) {
 					$registration_query_where_params = array( 'REG_ID' => array( 'IN', $REG_IDs ) );
-					$this->_process_registration_payments( $transaction, $payment, $registration_query_where_params );
+					$this->_process_updated_registration_payments( $transaction, $payment, $registration_query_where_params );
 					// now process status changes for the same registrations
 					if ( isset( $this->_req_data['txn_reg_status_change'] ) ) {
 						$this->_process_registration_status_change( $transaction, array( $registration_query_where_params ) );
@@ -967,6 +1016,23 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				if ( isset( $this->_req_data['txn_reg_status_change'], $this->_req_data['txn_reg_status_change']['send_notifications'] )) {
 					$this->_process_payment_notification( $payment );
 				}
+				//prepare to render page
+				$this->_get_payment_status_array();
+				$json_response_data[ 'return_data' ][ 'amount' ] = $payment->amount();
+				$json_response_data[ 'return_data' ][ 'total_paid' ] = $transaction->paid();
+				$json_response_data[ 'return_data' ][ 'txn_status' ] = $transaction->status_ID();
+				$json_response_data[ 'return_data' ][ 'pay_status' ] = $payment->STS_ID();
+				$json_response_data[ 'return_data' ][ 'PAY_ID' ] = $payment->ID();
+				$json_response_data[ 'return_data' ][ 'STS_ID' ] = $payment->STS_ID();
+				$json_response_data[ 'return_data' ][ 'status' ] = self::$_pay_status[ $payment->STS_ID() ];
+				$json_response_data[ 'return_data' ][ 'date' ] = $payment->timestamp( 'Y-m-d', 'h:i a' );
+				$json_response_data[ 'return_data' ][ 'method' ] = strtoupper( $payment->source() );
+				$json_response_data[ 'return_data' ][ 'PM_ID' ] = $payment->payment_method() ? $payment->payment_method()->ID() : 1;
+				$json_response_data[ 'return_data' ][ 'gateway' ] = $payment->payment_method() ? $payment->payment_method()->admin_name() : __( "Unknown", 'event_espresso' );
+				$json_response_data[ 'return_data' ][ 'gateway_response' ] = $payment->gateway_response();
+				$json_response_data[ 'return_data' ][ 'txn_id_chq_nmbr' ] = $payment->txn_id_chq_nmbr();
+				$json_response_data[ 'return_data' ][ 'po_number' ] = $payment->po_number();
+				$json_response_data[ 'return_data' ][ 'extra_accntng' ] = $payment->extra_accntng();
 
 			} else {
 				EE_Error::add_error( __( 'A valid Transaction for this payment could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -986,14 +1052,71 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * _process_registration_payments
-	 * this applies the payments to the selected registrations but only if they have not already been paid for
+	 * _get_existing_reg_payment_REG_IDs
+	 *
+	 * returns a list of registration IDs that the payment is currently related to
+	 * as recorded in the database
+	 *
+	 * @param \EE_Payment $payment
+	 * @return array
+	 */
+	protected function _get_existing_reg_payment_REG_IDs( EE_Payment $payment ) {
+		static $existing_reg_payment_REG_IDs = null;
+		if ( $existing_reg_payment_REG_IDs === null ) {
+			// let's get any existing reg payment records for this payment
+			$existing_reg_payment_REG_IDs = $payment->get_many_related( 'Registration' );
+			// but we only want the REG IDs, so grab the array keys
+			$existing_reg_payment_REG_IDs = ! empty( $existing_reg_payment_REG_IDs ) ? array_keys( $existing_reg_payment_REG_IDs ) : array();
+		}
+		return $existing_reg_payment_REG_IDs;
+	}
+
+
+
+
+
+	/**
+	 * _remove_non_applicable_registration_payments
+	 *
+	 * this calculates the difference between existing relations
+	 * to the supplied payment and the new list registration IDs,
+	 * removes any related registrations tha no longer apply,
+	 * and then updates the registration paid fields
+	 *
+	 * @param \EE_Payment $payment
+	 * @param array $new_reg_payment_REG_IDs
+	 */
+	protected function _remove_non_applicable_registration_payments( EE_Payment $payment, $new_reg_payment_REG_IDs = array() ) {
+		$existing_reg_payment_REG_IDs = $this->_get_existing_reg_payment_REG_IDs( $payment );
+		// registrations that were unchecked ( ie: NOT in the $REG_IDs array ) need to have existing reg payments removed
+		$reg_payment_REG_IDs_to_remove = array_diff( $existing_reg_payment_REG_IDs, $new_reg_payment_REG_IDs );
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		$transaction_payments->delete_registration_payments_and_update_registrations(
+			$payment,
+			array(
+				array(
+					'PAY_ID' => $payment->ID(),
+					'REG_ID' => array( 'IN', $reg_payment_REG_IDs_to_remove )
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 * _process_updated_registration_payments
+	 *
+	 * this applies the payments to the selected registrations
+	 * but only if they have not already been paid for
+	 *
 	 * @param  EE_Transaction $transaction
 	 * @param \EE_Payment $payment
 	 * @param array $registration_query_where_params
 	 * @return bool
 	 */
-	protected function _process_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $registration_query_where_params = array() ) {
+	protected function _process_updated_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $registration_query_where_params = array() ) {
 		// we can pass our own custom set of registrations to EE_Payment_Processor::process_registration_payments()
 		// so let's do that using our set of REG_IDs from the form, but add in some conditions regarding payment
 		// so that we don't apply payments to registrations that are free or have already been paid for
@@ -1006,8 +1129,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			)
 		);
-		$registrations = $transaction->registrations( $registration_query_where_params
-		);
+		$registrations = $transaction->registrations( $registration_query_where_params );
 		if ( ! empty( $registrations ) ) {
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
@@ -1019,7 +1141,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * _process_registration_status_change
-	 * This processes requested registration status changes for all the registrations on a given transaction and (optionally) sends out notifications for the changes.
+	 *
+	 * This processes requested registration status changes for all the registrations
+	 * on a given transaction and (optionally) sends out notifications for the changes.
+	 *
 	 * @param  EE_Transaction $transaction
 	 * @param array $registration_query_params
 	 * @return bool
@@ -1038,6 +1163,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	}
 
 
+
 	/**
 	 * delete_payment
 	 * 	delete a payment or refund made towards a transaction
@@ -1053,6 +1179,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$delete_txn_reg_status_change = isset( $this->_req_data[ 'delete_txn_reg_status_change' ] ) ? $this->_req_data[ 'delete_txn_reg_status_change' ] : false;
 			$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 			if ( $payment instanceof EE_Payment ) {
+
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				if ( $transaction_payments->delete_payment_and_update_transaction( $payment )) {
