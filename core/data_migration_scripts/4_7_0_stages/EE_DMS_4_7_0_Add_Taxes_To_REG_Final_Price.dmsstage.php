@@ -33,7 +33,7 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
 
 
 	/**
-	 * Gets the rows for each migration stage from the old table
+	 * Gets the rows for all taxable tickets in the esp_line_item table
 	 * @global wpdb $wpdb
 	 * @param int $limit
 	 * @return array of arrays like $wpdb->get_results($sql, ARRAY_A)
@@ -42,9 +42,27 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		$start_at_record = $this->count_records_migrated();
-		$query = "SELECT reg.TXN_ID, reg.REG_final_price, tkt.TKT_ID, tkt.TKT_taxable FROM {$this->_old_table} AS reg ";
+		// LIN_ID LIN_code TXN_ID 	LIN_name 	LIN_desc 	LIN_unit_price 	LIN_percent 	LIN_is_taxable 	LIN_order 	LIN_parent 	LIN_type 	LIN_total 	LIN_quantity 	OBJ_ID 	OBJ_type
+		$query = "SELECT reg.REG_ID, reg.TXN_ID, reg.REG_final_price, reg.TKT_ID, line.OBJ_ID, line.LIN_is_taxable FROM {$this->_old_table} AS reg ";
 		$query .= "JOIN {$this->_line_item_table} as line ON reg.TXN_ID = line.TXN_ID ";
-		$query .= "{$this->_extra_where_sql} " . $wpdb->prepare( "LIMIT %d, %d", $start_at_record, $limit );
+		$query .= "WHERE line.OBJ_type = 'Ticket' ";
+		$query .= "AND line.OBJ_ID = reg.TKT_ID ";
+		$query .= "AND line.TKT_taxable = 1";
+		$query .= $wpdb->prepare( "LIMIT %d, %d", $start_at_record, $limit );
+
+		// produces something like:
+		/*
+			SELECT
+			  reg.REG_ID, reg.TXN_ID, reg.REG_final_price, reg.TKT_ID, line.OBJ_ID, line.LIN_is_taxable
+
+			FROM `wp_esp_registration` AS reg
+			  JOIN `wp_esp_line_item` AS line ON reg.TXN_ID = line.TXN_ID
+
+			WHERE line.OBJ_type = 'Ticket'
+				  AND line.OBJ_ID = reg.TKT_ID
+				  AND line.LIN_is_taxable = '1'
+		 */
+
 		return $wpdb->get_results( $query, ARRAY_A );
 	}
 
