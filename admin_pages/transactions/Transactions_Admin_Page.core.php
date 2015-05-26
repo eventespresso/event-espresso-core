@@ -810,9 +810,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function txn_registrant_side_meta_box() {
-		$primary_att = $this->_transaction->primary_registration()->get_first_related('Attendee');
+		$primary_att = $this->_transaction->primary_registration() instanceof EE_Registration ? $this->_transaction->primary_registration()->get_first_related('Attendee') : null;
 		if ( ! $primary_att instanceof EE_Attendee ) {
-			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this registration.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
+			$this->_template_args['no_attendee_message'] = __('There is no attached contact for this transaction.  The transaction either failed due to an error or was abandoned.', 'event_espresso');
 			$primary_att = EEM_Attendee::instance()->create_default_object();
 		}
 		$this->_template_args['ATT_ID'] 						= $primary_att->ID();
