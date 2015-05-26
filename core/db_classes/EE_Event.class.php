@@ -677,6 +677,74 @@ class EE_Event extends EE_CPT_Base {
 	}
 
 
+	/**
+	 * This returns the total spaces available for an event while considering all the qtys on the tickets and the reg limits
+	 * on the datetimes attached to this event.
+	 *
+	 * Note: by "spaces available" we are not returning how many spaces remain.  That is a calculation involving using the value
+	 * from this method and subtracting the approved registrations for the event.
+	 *
+	 * @param   bool    $include_expired    Whether to include expired tickets and/or datetimes.
+	 * @return  int|float  (if INF is returned its considered a float by PHP)
+	 */
+	public function total_available_spaces( $include_expired = true ) {
+		//tracking array for calcs
+		$spaces_available = array();
+
+		//first get all tickets on the event
+		$tickets = $this->tickets();
+
+		//loop through tickets
+		foreach ( $tickets as $ticket ) {
+
+			//if none available then just continue
+			if ( ! $ticket->available() ) {
+				continue;
+			}
+
+			$query_args = array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) );
+			if ( ! $include_expired ) {
+				$query_args[0] = array(
+					'DTT_EVT_end' => array( '>', time() ),
+					'Ticket.TKT_end_date' => array( '>', time() )
+				);
+			}
+			$datetimes = $ticket->datetimes( $query_args );
+
+			if ( empty( $datetimes ) ) {
+				continue;
+			}
+
+			//first datetime should be the lowest datetime
+			$datetime = reset( $datetimes );
+
+			//which is lower reg_limit, datetime or ticket?
+			if ( $datetime->reg_limit() <  $ticket->qty() ) {
+				$ticket_limit = $datetime->reg_limit();
+			} else {
+				$ticket_limit = $ticket->qty();
+			}
+
+			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
+			if ( $ticket_limit == INF ) {
+				return INF;
+			}
+
+			//now save the amount to the $spaces_available tracking array
+			if ( isset( $spaces_available[$datetime->ID()] ) ) {
+				//the larger amount wins because we'll allow for datetime available across all tickets.
+				$spaces_available[$datetime->ID()] = max( $spaces_available[$datetime->ID()], $ticket_limit );
+			} else {
+				$spaces_available[$datetime->ID()] = $ticket_limit;
+			}
+
+		}
+
+		//now let's add the available amounts and return
+		return array_sum( $spaces_available );
+	}
+
+
 
 	/**
 	 * Checks if the event is set to sold out
