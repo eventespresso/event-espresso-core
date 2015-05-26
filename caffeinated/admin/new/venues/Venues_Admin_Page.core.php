@@ -510,13 +510,24 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'slug' => 'all',
 				'label' => __('View All Venues', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
-					//'restore_venues' => __('Restore_from Trash', 'event_espresso'),
-					//'trash_venues' => __('Move to Trash', 'event_espresso'),
-					'delete_venues' => __('Delete', 'event_espresso')
-					)
+				'bulk_action' => array()
 				)
 		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_venues', 'espresso_venues_trash_venues' ) ) {
+			$this->_views['all']['bulk_action'] = array(
+				'trash_venues' => __('Move to Trash', 'event_espresso')
+			);
+			$this->_views['trash'] = array(
+				'slug' => 'trash',
+				'label' => __( 'Trash', 'event_espresso' ),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_venues' => __('Restore_from Trash', 'event_espresso'),
+					'delete_venues' => __('Delete', 'event_espresso')
+				)
+			);
+		}
 	}
 
 
@@ -866,7 +877,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//loop thru venues
 		if ( $VNU_ID ) {
 			//clean status
-			$venue_status = strtoupper( sanitize_key( $venue_status ) );
+			$venue_status = sanitize_key( $venue_status );
 			// grab status
 			if (!empty($venue_status)) {
 				$success = $this->_change_venue_status($VNU_ID, $venue_status);
@@ -893,12 +904,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _trash_or_restore_venues( $venue_status = 'trash' ) {
 		// clean status
-		$venue_status = strtoupper(sanitize_key($venue_status));
+		$venue_status = sanitize_key($venue_status);
 		// grab status
 		if (!empty($venue_status)) {
 			$success = TRUE;
 			//determine the event id and set to array.
-			$VNU_IDs = isset($this->_req_data['VNU_IDs']) ? (array) $this->_req_data['VNU_IDs'] : array();
+			$VNU_IDs = isset($this->_req_data['venue_id']) ? (array) $this->_req_data['venue_id'] : array();
 			// loop thru events
 			foreach ($VNU_IDs as $VNU_ID) {
 				if ($VNU_ID = absint($VNU_ID)) {
@@ -931,24 +942,24 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	 * //todo this is pretty much the same as the corresponding change_event_status method in Events_Admin_Page.  We should probably abstract this up to the EE_Admin_Page_CPT (or even EE_Admin_Page) and make this a common method accepting a certain number of params.
 	 *
 	 * @access  private
-	 * @param  int $event_id
-	 * @param  string $event_status
+	 * @param  int $VNU_ID
+	 * @param  string $venue_status
 	 * @return void
 	 */
-	private function _change_venue_status( $VNU_ID = FALSE, $venue_status = FALSE ) {
+	private function _change_venue_status( $VNU_ID = 0, $venue_status = '' ) {
 		// grab venue id
-		if (!$VNU_ID) {
+		if (! $VNU_ID) {
 			$msg = __('An error occurred. No Venue ID or an invalid Venue ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
 
-		$this->_set_model_object( $VNU_ID );
+		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 
 		// clean status
-		$venue_status = strtoupper(sanitize_key($venue_status));
+		$venue_status = sanitize_key($venue_status);
 		// grab status
-		if (empty($venue_status)) {
+		if ( ! $venue_status ) {
 			$msg = __('An error occurred. No Venue Status or an invalid Venue Status was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
@@ -985,13 +996,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * @param  boolean $redirect_after [description]
-	 * @return [type]                  [description]
+	 * @param  bool $redirect_after
+	 * @return void
 	 */
-	protected function _delete_venue( $redirect_after = TRUE ) {
+	protected function _delete_venue( $redirect_after = true ) {
 		//determine the venue id and set to array.
 		$VNU_ID = isset($this->_req_data['VNU_ID']) ? absint($this->_req_data['VNU_ID']) : NULL;
-		$VNU_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
+		$VNU_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : $VNU_ID;
 
 
 		// loop thru venues
@@ -1100,7 +1111,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
 
 		$where = array(
-			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
+			'status' => isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ? $this->_req_data['status'] : array('IN', array('publish', 'draft') )
 			//todo add filter by category
 			);
 
