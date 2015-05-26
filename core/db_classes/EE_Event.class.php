@@ -117,7 +117,18 @@ class EE_Event extends EE_CPT_Base {
 	 * @return EE_Ticket
 	 */
 	public function tickets( $query_params = array() ) {
-		return $this->get_many_related( 'Ticket', $query_params );
+		//first get all datetimes
+		$datetimes = $this->datetimes_ordered();
+		if ( ! $datetimes ) {
+			return array();
+		}
+
+		$datetime_ids = array();
+		foreach ( $datetimes as $datetime ) {
+			$datetime_ids[] = $datetime->ID();
+		}
+
+		return EEM_Ticket::instance()->get_all( array( array( 'Datetime.DTT_ID' => array( 'IN', $datetime_ids ) ) ) );
 	}
 
 
