@@ -1,5 +1,5 @@
 
-		<h3 style="padding:0;margin:-.5em 0 1em;"><?php echo __( 'Transaction # ', 'event_espresso' ) . $txn_nmbr['value'];?></h3>
+		<h3 style="padding:0;margin:-.5em 0 1em;"><?php echo $previous_transaction . '&nbsp;'; echo __( 'Transaction # ', 'event_espresso' ) . $txn_nmbr['value']; echo '&nbsp;' . $next_transaction; ?></h3>
 		
 		<h2 id="txn-date-h2" style="padding:0;margin:0 0 1em;"><?php echo $txn_datetime['value'];?></h2>
 		
