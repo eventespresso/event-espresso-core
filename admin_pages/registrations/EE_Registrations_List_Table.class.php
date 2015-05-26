@@ -339,7 +339,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
     function column_cb($item){
 	/** checkbox/lock **/
-	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+	$t = $item->get_first_related('Transaction');
+	$payment_count = $t instanceof EE_Transaction ?  $t->count_related('Payment') : 0;
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
@@ -436,7 +437,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$link = EE_Registry::instance()->CAP->current_user_can('ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>' : $attendee_name;
 		$link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
 
-		$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+		$t = $item->get_first_related('Transaction');
+		$payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
 
 		//trash/restore/delete actions
 		$actions = array();
