@@ -5,7 +5,7 @@
  * In this relation, the OTHER model ahs the foreign key pointing to this model
  */
 require_once( EE_MODELS . 'relations/EE_Has_Many_Relation.php');
-class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{	
+class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 
 	/**
@@ -26,7 +26,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 
 
-	
+
 	/**
 	 * Object representing the relationship between two models. Has_Many_Relations are where the OTHER model has the foreign key
 	 * this model. IE, there can be many other model objects related to one of this model's objects (but NOT through a JOIN table,
@@ -42,7 +42,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 		$this->_parent_pk_relation_field = $parent_pk_relation_field;
 		parent::__construct($block_deletes, $blocking_delete_error_message);
 	}
-	
+
 
 
 
@@ -55,7 +55,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 function add_relation_to($this_obj_or_id, $other_obj_or_id ){
 		 $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
 		 $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id);
-		 
+
 		 //handle possible revisions
 		 $other_model_obj = $this->_check_for_revision($this_model_obj, $other_model_obj);
 
@@ -95,7 +95,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 		 //find the field on th eother model which is a foreign key to this model
 		$fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 
-		
+
 		 //set that field on the other model to this model's ID
 		 if ( $this->_blocking_delete ) {
 		 	$other_model_obj->set($fk_field_on_other_model->get_name(),null,true);
@@ -113,19 +113,22 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 	 /**
 	  * This is identical to EE_Model_Relation->get_all_related() except we're going handle special autosave conditions in here.
-	  * @param  EE_Base_Class|int  $model_object_or_id            
+	  * @param  EE_Base_Class|int  $model_object_or_id
 	  * @param  array   $query_params                            like EEM_Base::get_all's $query_params
-	  * @param  boolean $values_already_prepared_by_model_object 
-	  * @return EE_Base_Class[]                                         
+	  * @param  boolean $values_already_prepared_by_model_object @deprecated since 4.6.30
+	  * @return EE_Base_Class[]
 	  */
 	 public function get_all_related( $model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false ) {
-	 	
+		if( $values_already_prepared_by_model_object !== false ) {
+			EE_Error::doing_it_wrong( 'EE_Model_Relation_Base::get_all_related', __( 'The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso' ), '4.6.30' );
+		}
+
 	 	//if this is an autosave then we're going to get things differently
 	 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
-	 		return $this->_do_autosave_get_all($model_object_or_id, $query_params, $values_already_prepared_by_model_object = false);
+	 		return $this->_do_autosave_get_all($model_object_or_id, $query_params );
 	 	}
 
-	 	return parent::get_all_related( $model_object_or_id, $query_params, $values_already_prepared_by_model_object );
+	 	return parent::get_all_related( $model_object_or_id, $query_params );
 	 }
 
 
@@ -136,9 +139,9 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	  * If we're in the midst of an autosave then we're going to do things a bit differently than the usual get_all_related (commenting within).  For description of params see the get_all_related() comments
 	  *
 	  * @access protected
-	  * @return EE_Base_Class[]        
+	  * @return EE_Base_Class[]
 	  */
-	 protected function _do_autosave_get_all( $model_object_or_id, $query_params, $values_already_prepared_by_model_object = false ) {
+	 protected function _do_autosave_get_all( $model_object_or_id, $query_params, $deprecated = false ) {
 
 	 	//first we check if the post_id for the incoming query is for an autosave.  If it isn't that's what we want!
 	 	$model_object_id = $this->_get_model_object_id( $model_object_or_id );
@@ -146,10 +149,10 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 	$autosave = wp_get_post_autosave( $model_object_id );
 	 	$id_to_use = $autosave ? $autosave->ID : $model_object_id;
 
-	 	$autosave_relations =  parent::get_all_related( $id_to_use, $query_params, $values_already_prepared_by_model_object );
+	 	$autosave_relations =  parent::get_all_related( $id_to_use, $query_params );
 	 	$parent_ids = $parents = array();
 	 	$return_objs = array();
-		
+
 		//k this is where things differ because NOW what we're going to do is get the PARENTS for the get all related (and we'll also start setting up the return_objs array containing related that DON'T have parent ids, for those that DON'T have parents to merge with our returned objects);
 		foreach ( $autosave_relations as $a_r ) {
 			$pid = $a_r->parent();
@@ -161,7 +164,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 		}
 
 		//we have to make sure we also include the ORIGINAL values
-		$originals = parent::get_all_related($model_object_or_id, $query_params, $values_already_prepared_by_model_object);
+		$originals = parent::get_all_related($model_object_or_id, $query_params );
 
 		//merge $originals with $return_objs
 		if ( $originals ) {
@@ -172,7 +175,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 		if ( !empty( $parent_ids ) ) {
 			$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
 			$query_param[0][$query_param_where_this_model_pk] = array('IN', $parent_ids );
-			$parents = $this->get_other_model()->get_all($query_param);
+			$parents = $this->get_other_model()->get_all($query_params);
 		}
 
 		//var_dump($parents);
@@ -190,7 +193,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 * @param  EE_Base_Class $this_model_obj
 	 * @param  EE_Base_Class $other_obj
 	 * @param  boolean       $remove_relation Indicates whether we're doing a remove_relation or add_relation.
-	 * @return EE_Base_Class. ($other_obj); 
+	 * @return EE_Base_Class. ($other_obj);
 	 */
 	protected function _check_for_revision( $this_obj, $other_obj, $remove_relation = FALSE ) {
 		$pk_on_related_model = $this->get_other_model()->get_primary_key_field()->get_name();
@@ -208,20 +211,20 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 				if ( $has_parent_obj ) {
 					//this makes sure the update on the current obj happens to the revision's row NOT the parent row.
-					
+
 					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID());
 					$other_obj->set($pk_on_related_model, $has_parent_obj->ID() );
 					$other_obj->set($this->_primary_cpt_field, $this_obj->ID());
 
 					if ( !$remove_relation ) {
 						$other_obj->save();
-						return array( $other_obj ); 
+						return array( $other_obj );
 					} elseif ( $remove_relation && !$this->_blocking_delete) {
 						$other_obj->delete();
 						$other_obj->set($this->_parent_pk_relation_field, NULL, true);
 						return array($other_obj);
 					}
-			
+
 				} else {
 					$other_obj->set( $this->_parent_pk_relation_field, $other_obj->ID() );
 					$other_obj->set( $this->_primary_cpt_field, $this_obj->ID() );
@@ -238,7 +241,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 			//the last possible condition on a revision is that the incoming other_model object has a fk that == $this_obj pk which means we just return the $other obj and let it save as normal so we see the return at the bottom of this method.
 
 		} else {
-			
+
 			//we only need to do the below IF this is not a remove relation
 			if ( !$remove_relation ) {
 				//okay this is is a normal update/save/remove so, let's make sure the other object is not a revision of the current object.
