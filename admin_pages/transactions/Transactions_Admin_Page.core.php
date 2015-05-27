@@ -736,7 +736,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _get_registrations_to_apply_payment_to() {
 		// we want any registration with an active status (ie: not deleted or cancelled)
-		// that is not free, and has not already been fully paid for
 		$query_params = array(
 			array(
 				'STS_ID' => array(
@@ -746,9 +745,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						EEM_Registration::status_id_pending_payment,
 						EEM_Registration::status_id_not_approved,
 					)
-				),
-				//'REG_final_price'  => array( '!=', 0 ),
-				//'REG_final_price*' => array( '!=', 'REG_paid', true ),
+				)
 			)
 		);
 		$registrations_to_apply_payment_to = '<br /><div id="txn-admin-apply-payment-to-registrations-dv"  style="clear: both; margin: 1.5em 0 0; display: none;">';
