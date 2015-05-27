@@ -140,6 +140,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @return EE_Payment
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true, $separate_IPN_request = true ){
+		$_req_data = $this->_remove_unusable_characters( $_req_data );
 		EE_Registry::instance()->load_model( 'Change_Log' );
 		EE_Processor_Base::set_IPN( $separate_IPN_request );
 		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
@@ -218,6 +219,24 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			);
 			throw $e;
 		}
+	}
+
+	/**
+	 * Removes any non-printable illegal characters from the input, which might cause a raucus
+	 * when trying to insert into the database
+	 * @param type $request_data
+	 * @return array|string
+	 */
+	protected function _remove_unusable_characters( $request_data ) {
+		if( is_array( $request_data ) ) {
+			$return_data = array();
+			foreach( $request_data as $key => $value ) {
+				$return_data[ $this->_remove_unusable_characters( $key ) ] = $this->_remove_unusable_characters( $value );
+			}
+		}else{
+			$return_data =  preg_replace('/[^[:print:]]/', '', $request_data);
+		}
+		return $return_data;
 	}
 
 
