@@ -117,12 +117,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" data-payment-id="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" data-paymentId="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" data-payment-id="<?php echo $PAY_ID;?>">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" data-paymentId="<?php echo $PAY_ID;?>">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -371,11 +371,11 @@
 					<div class="txn-admin-apply-payment-registrations-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-registrations-inp" class="last"><?php _e( 'Registrations to Apply Payment to:', 'event_espresso' ); ?></label>
 						<label class="txn-admin-apply-payment-to-registrations-lbl">
-							<input type="radio" value="1" id="txn-admin-apply-payment-to-all-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]" data-payment-id="" checked="checked"/>
+							<input type="radio" value="1" id="txn-admin-apply-payment-to-all-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]"  checked="checked"/>
 							<?php _e( 'ALL Registrations', 'event_espresso' ); ?>
 						</label>
 						<label class="txn-admin-apply-payment-to-registrations-lbl">
-							<input type="radio" value="0" id="txn-admin-apply-payment-to-some-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]" data-payment-id=""/>
+							<input type="radio" value="0" id="txn-admin-apply-payment-to-some-registrations-inp" name="txn_admin_payment[apply_to_all_registrations]" />
 							<?php _e( 'Just the following Registrations', 'event_espresso' ); ?>
 						</label>
 						<?php echo $registrations_to_apply_payment_to; ?>
