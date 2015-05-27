@@ -94,7 +94,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					)),
 				),
 				'include'=>array(
-					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
+					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency','PMD_order',
 					$pdf_payee_input_name, 'pdf_payee_email', 'pdf_payee_tax_number', 'pdf_payee_address', 'pdf_instructions','pdf_logo_image',
 					$confirmation_text_input_name, 'page_extra_info'),
 			));

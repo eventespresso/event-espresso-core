@@ -67,6 +67,14 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 				'required'=>TRUE
 			)
 		);
+		$this->_subsections['PMD_order'] = new EE_Text_Input( array(
+			'html_help_text' => __( 'Lowest numbers will be shown first', 'event_espresso' ),
+			'normalization_strategy' => new EE_Int_Normalization(),
+			'validation_strategies' => array(
+				new EE_Int_Validation_Strategy()
+			),
+			'default' => 0
+		));
 		$this->_layout_strategy = new EE_Admin_Two_Column_Layout();
 		parent::__construct($options_array);
 	}

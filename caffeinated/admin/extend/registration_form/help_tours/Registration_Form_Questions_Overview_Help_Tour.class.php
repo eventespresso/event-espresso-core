@@ -39,15 +39,6 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 			10 => array(
 				'content' => $this->_start(),
 				),
-			20 => array(
-				'id' => 'id',
-				'content' => $this->_question_id_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => -20,
-					'tipAdjustmentY' => -25
-					)
-				),
 			30 => array(
 				'id' => 'display_text',
 				'content' => $this->_display_text_stop(),
@@ -129,10 +120,6 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 		$content .= '<p>' . __('This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 
 		return $content;
-	}
-
-	protected function _question_id_stop() {
-		return '<p>' . __('View the question ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_text_stop() {
