@@ -262,10 +262,13 @@ class EE_Transaction_Payments {
 	 * and subtracts their amounts from the corresponding registrations REG_paid field
 	 *
 	 * @param EE_Payment $payment
-	 * @return boolean
+	 * @param array $reg_payment_query_params
+	 * @return bool
+	 * @throws \EE_Error
 	 */
-	public function delete_registration_payments_and_update_registrations( EE_Payment $payment ) {
-		$registration_payments = EEM_Registration_Payment::instance()->get_all( array( array( 'PAY_ID' => $payment->ID() ) ) );
+	public function delete_registration_payments_and_update_registrations( EE_Payment $payment, $reg_payment_query_params = array() ) {
+		$reg_payment_query_params = ! empty( $reg_payment_query_params ) ? $reg_payment_query_params : array( array( 'PAY_ID' => $payment->ID() ) );
+		$registration_payments = EEM_Registration_Payment::instance()->get_all( $reg_payment_query_params );
 		if ( ! empty( $registration_payments )) {
 			foreach ( $registration_payments as $registration_payment ) {
 				if ( $registration_payment instanceof EE_Registration_Payment ) {

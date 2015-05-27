@@ -137,10 +137,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 * 	reg_statuses_that_allow_payment
+	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function reg_statuses_that_allow_payment() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+			)
+		);
+	}
+
+
+
+	/**
 	 * 		get list of registration statuses
 	 *
 	 *
-	 *		@access private
+	 *		@access public
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
 	 *		@return array

@@ -38,12 +38,45 @@ class EE_Registration_Payment extends EE_Base_Class {
 
 
 	/**
+	 * registration_ID
+	 * @access 	public
+	 * @return 	int
+	 */
+	public function registration_ID() {
+		return $this->get( 'REG_ID' );
+	}
+
+
+
+	/**
+	 * payment_ID
+	 * @access 	public
+	 * @return    int
+	 */
+	public function payment_ID() {
+		return $this->get( 'PAY_ID' );
+	}
+
+
+
+	/**
 	 * amount
 	 * @access 	public
 	 * @return 	float
 	 */
 	public function amount() {
 		return $this->get( 'RPY_amount' );
+	}
+
+
+
+	/**
+	 * amount
+	 * @access    public
+	 * @param float $amount
+	 */
+	public function set_amount( $amount = 0.000 ) {
+		$this->set( 'RPY_amount', $amount );
 	}
 
 

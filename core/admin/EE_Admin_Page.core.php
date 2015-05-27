@@ -1709,7 +1709,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function admin_footer_scripts_eei18n_js_strings() {
 
 		EE_Registry::$i18n_js_strings['ajax_url'] = WP_AJAX_URL;
-		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA associated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 
 		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['February'] = __( 'February', 'event_espresso' );

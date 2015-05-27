@@ -250,10 +250,15 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     margin: 6px 1em .5em 0
 }
 
-.admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl input[type=checkbox] {
-    margin: 2px 1em .5em 0
+.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],
+.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {
+    /*margin: 2px 1em .5em 0*/
+    margin: 0
 }
 
+.txn-admin-apply-payment-to-registrations-lbl input {
+    margin: 2px 1em 0 0;
+}
 /*#txn-admin-payment-amount-inp { max-width:150px; }*/
 
 /*.admin-primary-mbox-tbl-wrap-inner { padding:12px; margin:0; background:#fcfcfc; }

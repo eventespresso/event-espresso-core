@@ -83,7 +83,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	protected function _get_registrations( $TXN_ID ) {
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		$SQL = "SELECT * FROM $this->_registration_table WHERE TXN_ID = %d AND STS_ID IN ( 'RPP', 'RAP' )";
+		$SQL = "SELECT * FROM {$this->_registration_table} WHERE TXN_ID = %d AND STS_ID IN ( 'RPP', 'RAP' )";
 		return $wpdb->get_results( $wpdb->prepare( $SQL, $TXN_ID ), OBJECT_K );
 	}
 
@@ -98,7 +98,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	protected function _get_payments( $TXN_ID ) {
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $this->_payment_table WHERE TXN_ID = %d", $TXN_ID ), OBJECT_K );
+		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$this->_payment_table} WHERE TXN_ID = %d", $TXN_ID ), OBJECT_K );
 	}
 
 
@@ -112,7 +112,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
 	protected function _get_possibly_updated_REG_paid( $REG_ID ) {
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT REG_paid FROM $this->_registration_payment_table WHERE REG_ID = %d", $REG_ID ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT REG_paid FROM {$this->_registration_table} WHERE REG_ID = %d", $REG_ID ) );
 	}
 
 
