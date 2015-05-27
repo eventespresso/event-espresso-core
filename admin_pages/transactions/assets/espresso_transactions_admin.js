@@ -34,7 +34,7 @@ jQuery(document).ready(function($) {
 		display_payments_and_refunds_modal_dialog();
 		$('.txn-reg-status-change-reg-status').val('NAN');
 		// grab payment ID
-		var PAY_ID = $(this).attr('data-payment-id');
+		var PAY_ID = $(this).data( 'paymentId');
 		$('#admin-modal-dialog-edit-payment-h2').show();
 		$('#admin-modal-dialog-edit-payment-h2' ).find('span').html(PAY_ID);
 		// transfer values from table to modal box form
@@ -48,8 +48,8 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
 		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
 		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
-		$('#txn-admin-apply-payment-to-all-registrations-inp').attr( 'data-payment-id', PAY_ID );
-		$('#txn-admin-apply-payment-to-some-registrations-inp').attr( 'data-payment-id', PAY_ID );
+		$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
+		$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
 
 		$('#txn-admin-modal-dialog-edit-payment-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
@@ -78,7 +78,7 @@ jQuery(document).ready(function($) {
 	txn_admin_payments_table.on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
 		display_delete_payment_modal_dialog();
 		//grab payment ID
-		var PAY_ID = $(this).attr('data-payment-id');
+		var PAY_ID = $(this).data( 'paymentId');
 		$('#delete-txn-admin-payment-payment-id-inp').val( PAY_ID );
 		$('.delete-txn-reg-status-change-reg-status').val('NAN');
 		$('#admin-modal-dialog-delete-payment-h2').show();
@@ -502,7 +502,7 @@ jQuery(document).ready(function($) {
 	eedialog.on( 'click', '#txn-admin-apply-payment-to-some-registrations-inp', function() {
 		if ( $( this ).is( ':checked' ) ) {
 			display_payment_registrations_table();
-			var PAY_ID = $( this ).attr( 'data-payment-id' );
+			var PAY_ID = $( this ).data( 'paymentId' );
 			var reg_payments = $.parseJSON( $( '#reg-payments-' + PAY_ID ).html() );
 			update_registration_payments_inputs( reg_payments );
 		}
