@@ -548,7 +548,7 @@ abstract class EEM_Base extends EE_Base{
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
 	 * }
-	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
+	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 * Some full examples:
 	 *
 	 * 		get 10 transactions which have Scottish attendees:
@@ -3726,7 +3726,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
-	 * @return \EE_Base_Class[]
+	 * @return \EE_Base_Class[] Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 
@@ -3817,5 +3817,37 @@ abstract class EEM_Base extends EE_Base{
 			$names[$obj->ID()] = $obj->name();
 		}
 		return $names;
+	}
+
+	/**
+	 * Gets an array of primary keys from the model objects. If you acquired the model objects
+	 * using EEM_Base::get_all() you don't need to call this (and probably shouldn't because
+	 * this is duplicated effort and reduces efficiency) you would be better to use
+	 * array_keys() on $model_objects.
+	 * @param /EE_Base_Class[] $model_objects
+	 * @param boolean $filter_out_empty_ids if a model object has an ID of '' or 0, don't bother including it in the returned array
+	 * @return array
+	 */
+	public function get_IDs( $model_objects, $filter_out_empty_ids = false) {
+		if( ! $this->has_primary_key_field() ) {
+			if( WP_DEBUG ) {
+				EE_Error::add_error( __( 'Trying to get IDs from a model than has no primary key', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return array();
+			}
+		}
+		$IDs = array();
+		foreach( $model_objects as $model_object ) {
+			$id = $model_object->ID();
+			if( ! $id ) {
+				if( $filter_out_empty_ids ) {
+					continue;
+				}
+				if( WP_DEBUG ) {
+					EE_Error::add_error(__( 'Called %1$s on a model object that has no ID and so probably hasnt been saved to the database', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
+			$IDs[] = $id;
+		}
+		return $IDs;
 	}
 }

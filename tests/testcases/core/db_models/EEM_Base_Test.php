@@ -449,6 +449,24 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertTrue(true);
 	}
 
+	/**
+	 * @group 8241
+	 */
+	function test_get_IDs__empty_ID() {
+		$e1 = $this->new_model_obj_with_dependencies( 'Event', array(), false );
+		$e2 = $this->new_model_obj_with_dependencies( 'Event', array(), false );
+		$this->assertEquals( array(), EEM_Event::instance()->get_IDs( array( $e1, $e2 ), true ) );
+	}
+
+	/**
+	 * @group 8241
+	 */
+	function test_get_IDS() {
+		$e1 = $this->new_model_obj_with_dependencies( 'Event', array() );
+		$e2 = $this->new_model_obj_with_dependencies( 'Event', array() );
+		$this->assertEquals( array( $e1->ID(), $e2->ID() ), EEM_Event::instance()->get_IDs( array( $e1, $e2 ), true ) );
+	}
+
 
 }
 

@@ -583,7 +583,7 @@ abstract class EE_Base_Class{
 	 *
 	 * @param string $relationName
 	 * @throws \EE_Error
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] NOT necessarily indexed by primary keys
 	 */
 	public function get_all_from_cache($relationName){
 		$cached_array_or_object =  $this->_model_relations[$relationName];
@@ -1516,7 +1516,8 @@ abstract class EE_Base_Class{
 	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
 	 * @param array  $query_params  like EEM_Base::get_all
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] Results not necessarily indexed by IDs, because some results might not have primary keys
+	 * or might not be saved yet. Consider using EEM_Base::get_IDs() on these results if you want IDs
 	 */
 	public function get_many_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, so get the related things from either the cache or the DB
