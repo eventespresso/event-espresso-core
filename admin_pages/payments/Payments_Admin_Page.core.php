@@ -548,7 +548,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$form_section->exclude(
 				array(
 					'PMD_type', //dont want them changing the type
-					'PMD_order', //or the order, for now
 					'PMD_slug', //or the slug (probably never)
 					'PMD_wp_user', //or the user's ID
 					'Currency' //or the currency, until the rest of EE supports simultaneous currencies
