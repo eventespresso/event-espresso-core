@@ -373,13 +373,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		}
 		$questionTypes=array();
 		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $db_name => $nice_text){
+		foreach( $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types() as $db_name => $nice_text){
 			$questionTypes[$count]=array('id'=>$db_name,'text'=>$nice_text);
 			$count++;
 		}
 		$this->_template_args['QST_ID']=$ID;
 		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']=$questionTypes;
+		$this->_template_args['question_types']= $questionTypes;
 
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );

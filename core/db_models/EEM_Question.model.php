@@ -50,6 +50,16 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is TEXTAREA
 	const QST_type_textarea = 'TEXTAREA';
 
+	/**
+	 * Question types that are interchangeable, even after answers have been provided for them.
+	 * Top-level keys are category slugs, next level is an array of question types. If question types
+	 * aren't in this array, it is assumed they AREN'T interchangeable with any other question types.
+	 * @var array
+	 */
+	protected $_question_type_categories = null;
+
+
+
 
 
   	// private instance of the Attendee object
@@ -70,6 +80,22 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	public function allowed_question_types(){
 		return $this->_allowed_question_types;
 	}
+	/**
+	 * Gets all the question types in the same category
+	 * @param string $question_type one of EEM_Question::allowed_question_types(
+	 * @return string[] like EEM_Question::allowed_question_types()
+	 */
+	public function question_types_in_same_category( $question_type ) {
+		$question_types = array( $question_type );
+		foreach( $this->_question_type_categories as $category => $question_types_in_category ) {
+			if( in_array( $question_type, $question_types_in_category ) ) {
+				$question_types = $question_types_in_category;
+				break;
+			}
+		}
+
+		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
+	}
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
@@ -84,6 +110,19 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
 				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
+			)
+		);
+		$this->_question_type_categories = apply_filters(
+				'FHEE__EEM_Question__construct__question_type_categories',
+				array(
+				'text' => array(
+						self::QST_type_text,
+						self::QST_type_textarea
+					),
+				'single-answer-enum' => array(
+					self::QST_type_radio,
+					self::QST_type_dropdown
+				),
 			)
 		);
 
