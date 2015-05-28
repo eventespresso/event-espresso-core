@@ -401,15 +401,21 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		// todo: which would be the socialist "everybody gets a piece of pie" approach,
 		// todo: which would be better for deposits, where you want a bit of the payment applied to each registration
 
+		$refund = $payment->is_a_refund();
 		// how much is available to apply to registrations?
-		$available_payment_amount = $payment->amount();
+		$available_payment_amount = abs( $payment->amount() );
+		//EEH_Debug_Tools::printr( $available_payment_amount, '$available_payment_amount', __FILE__, __LINE__ );
 		foreach ( $registrations as $registration ) {
-			// nothing left?
-			if ( $available_payment_amount <= 0 ) {
-				break;
-			}
 			if ( $registration instanceof EE_Registration ) {
-				$available_payment_amount = $this->process_registration_payment( $registration, $payment, $available_payment_amount );
+				// nothing left?
+				if ( $available_payment_amount <= 0 ) {
+					break;
+				}
+				if ( $refund ) {
+					$available_payment_amount = $this->process_registration_refund( $registration, $payment, $available_payment_amount );
+				} else {
+					$available_payment_amount = $this->process_registration_payment( $registration, $payment, $available_payment_amount );
+				}
 			}
 		}
 	}
@@ -426,6 +432,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 */
 	public function process_registration_payment( EE_Registration $registration, EE_Payment $payment, $available_payment_amount = 0.00 ) {
 		$owing = $registration->final_price() - $registration->paid();
+		//EEH_Debug_Tools::printr( $owing, '$owing', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
 		if ( $owing > 0 ) {
 			// don't allow payment amount to exceed the available payment amount, OR the amount owing
 			$payment_amount = min( $available_payment_amount, $owing );
@@ -433,23 +441,67 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$available_payment_amount = $available_payment_amount - $payment_amount;
 			//calculate and set new REG_paid
 			$registration->set_paid( $registration->paid() + $payment_amount );
-			// find any existing reg payment records for this registration and payment
-			$existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
-				array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
-			);
-			// if existing registration payment exists
-			if ( $existing_reg_payment instanceof EE_Registration_Payment ) {
-				// then update that record
-				$existing_reg_payment->set_amount( $payment_amount );
-				$existing_reg_payment->save();
-			} else {
-				// or add new relation between registration and payment and set amount
-				$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
-				// make it stick
-				$registration->save();
-			}
+			// now save it
+			$this->_apply_registration_payment( $registration, $payment, $payment_amount );
 		}
 		return $available_payment_amount;
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after successful payment and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $payment_amount
+	 * @return float
+	 */
+	protected function _apply_registration_payment( EE_Registration $registration, EE_Payment $payment, $payment_amount = 0.00 ) {
+		// find any existing reg payment records for this registration and payment
+		$existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
+			array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
+		);
+		// if existing registration payment exists
+		if ( $existing_reg_payment instanceof EE_Registration_Payment ) {
+			// then update that record
+			$existing_reg_payment->set_amount( $payment_amount );
+			$existing_reg_payment->save();
+		} else {
+			// or add new relation between registration and payment and set amount
+			$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
+			// make it stick
+			$registration->save();
+		}
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after refund and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $available_refund_amount - IMPORTANT !!! SEND AVAILABLE REFUND AMOUNT AS A POSITIVE NUMBER
+	 * @return float
+	 */
+	public function process_registration_refund( EE_Registration $registration, EE_Payment $payment, $available_refund_amount = 0.00 ) {
+		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
+		if ( $registration->paid() > 0 ) {
+			// ensure $available_refund_amount is NOT negative
+			$available_refund_amount = abs( $available_refund_amount );
+			// don't allow refund amount to exceed the available payment amount, OR the amount paid
+			$refund_amount = min( $available_refund_amount, $registration->paid() );
+			// update $available_payment_amount
+			$available_refund_amount = $available_refund_amount - $refund_amount;
+			//calculate and set new REG_paid
+			$registration->set_paid( $registration->paid() - $refund_amount );
+			// convert payment amount back to a negative value for storage in the db
+			$refund_amount = abs( $refund_amount ) * -1;
+			// now save it
+			$this->_apply_registration_payment( $registration, $payment, $refund_amount );
+		}
+		return $available_refund_amount;
 	}
 
 
