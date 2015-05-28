@@ -371,15 +371,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$question->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
-		$questionTypes=array();
-		$count=0;
-		foreach( $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types() as $db_name => $nice_text){
-			$questionTypes[$count]=array('id'=>$db_name,'text'=>$nice_text);
-			$count++;
-		}
+		$question_types = $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types();
 		$this->_template_args['QST_ID']=$ID;
 		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']= $questionTypes;
+		$this->_template_args['question_types']= $question_types;;
 
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
