@@ -499,11 +499,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				if( $identifier == 'email' ){
 					return new EE_Email_Input( $input_constructor_args );
 				}else{
+					$input_constructor_args[ 'validation_strategies' ] = array(
+						new EE_Plaintext_Validation_Strategy()
+					);
 					return new EE_Text_Input( $input_constructor_args );
 				}
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
+				$input_constructor_args[ 'validation_strategies' ] = array(
+					new EE_Plaintext_Validation_Strategy()
+				);
 				return new EE_Text_Area_Input( $input_constructor_args );
 				break;
 			// Radio Buttons
