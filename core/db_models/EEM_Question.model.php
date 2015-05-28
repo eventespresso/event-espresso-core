@@ -58,44 +58,16 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	protected $_question_type_categories = null;
 
-
-
-
-
-  	// private instance of the Attendee object
-	protected static $_instance = NULL;
-
-
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private
 	 * @var array of strings
 	 */
-	private $_allowed_question_types;
-	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
-	 * but they can be extended
-	 * @return string[]
-	 */
-	public function allowed_question_types(){
-		return $this->_allowed_question_types;
-	}
-	/**
-	 * Gets all the question types in the same category
-	 * @param string $question_type one of EEM_Question::allowed_question_types(
-	 * @return string[] like EEM_Question::allowed_question_types()
-	 */
-	public function question_types_in_same_category( $question_type ) {
-		$question_types = array( $question_type );
-		foreach( $this->_question_type_categories as $category => $question_types_in_category ) {
-			if( in_array( $question_type, $question_types_in_category ) ) {
-				$question_types = $question_types_in_category;
-				break;
-			}
-		}
+	protected $_allowed_question_types;
 
-		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
-	}
+	// private instance of the Attendee object
+	protected static $_instance = NULL;
+
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
@@ -154,6 +126,31 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 
 		parent::__construct( $timezone );
+	}
+
+	/**
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
+	 * but they can be extended
+	 * @return string[]
+	 */
+	public function allowed_question_types(){
+		return $this->_allowed_question_types;
+	}
+	/**
+	 * Gets all the question types in the same category
+	 * @param string $question_type one of EEM_Question::allowed_question_types(
+	 * @return string[] like EEM_Question::allowed_question_types()
+	 */
+	public function question_types_in_same_category( $question_type ) {
+		$question_types = array( $question_type );
+		foreach( $this->_question_type_categories as $category => $question_types_in_category ) {
+			if( in_array( $question_type, $question_types_in_category ) ) {
+				$question_types = $question_types_in_category;
+				break;
+			}
+		}
+
+		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
 	}
 
 
