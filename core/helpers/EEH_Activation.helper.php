@@ -1286,6 +1286,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			'ee_data_migration_mapping_' => FALSE,
 			'ee_data_migration_script_' => FALSE,
 			'ee_data_migrations' => TRUE,
+			'ee_dms_map' => FALSE,
 			'ee_notices' => TRUE,
 			'lang_file_check_' => FALSE,
 			'ee_maintenance_mode' => TRUE,

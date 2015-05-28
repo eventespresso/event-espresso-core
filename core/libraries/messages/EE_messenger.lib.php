@@ -682,9 +682,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	protected function _get_main_template( $preview = FALSE ) {
 		$type = $preview ? 'preview' : 'main';
 
-		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, $type, $this->_variation ), TRUE );
-
 		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, $type );
 
 		//check file exists and is readable
