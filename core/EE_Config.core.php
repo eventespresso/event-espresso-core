@@ -403,6 +403,7 @@ final class EE_Config {
 	 * @return   bool
 	 */
 	public function  update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
+		// commented out the following re: https://events.codebasehq.com/projects/event-espresso/tickets/8197
 		//$clone = clone( self::$_instance );
 		//self::$_instance = NULL;
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
