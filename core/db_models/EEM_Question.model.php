@@ -62,6 +62,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * @var array of strings
 	 */
 	private $_allowed_question_types;
+
+	protected $_plaintext_question_types = null;
 	/**
 	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
 	 * but they can be extended
@@ -86,6 +88,12 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
 			)
 		);
+		$this->_plaintext_question_types = apply_filters(
+				'FHEE__EEM_Question__construct__plaintext_question_types',
+				array(
+					EEM_Question::QST_type_text,
+					EEM_Question::QST_type_textarea
+				));
 
 		$this->_tables = array(
 			'Question'=>new EE_Primary_Table('esp_question','QST_ID')
@@ -115,6 +123,14 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 
 		parent::__construct( $timezone );
+	}
+
+	/**
+	 * Returns the question types that should be sanitized as plaintext
+	 * @return array
+	 */
+	public function plaintext_question_types(){
+		return $this->_plaintext_question_types;
 	}
 
 
