@@ -123,9 +123,11 @@ class EED_Add_New_State  extends EED_Module {
 	public static function display_add_new_state_micro_form( EE_Form_Section_Proper $question_group_reg_form ){
 		// only add the 'new_state_micro_form' when displaying reg forms,
 		// not during processing since we process the 'new_state_micro_form' in it's own AJAX request
-		if ( EE_Registry::instance()->REQ->get( 'action', '' ) === 'process_reg_step' ) {
+		$action = EE_Registry::instance()->REQ->get( 'action', '' );
+		if ( $action === 'process_reg_step' || $action === 'update_reg_step' ) {
 			return $question_group_reg_form;
 		}
+		EEH_Debug_Tools::printr( EE_Registry::instance()->REQ->get( 'action', '' ), 'EE_Registry::instance()->REQ->get( action )', __FILE__, __LINE__ );
 		// is the "state" question in this form section?
 		$input = $question_group_reg_form->get_subsection( 'state' );
 		// we're only doing this for state select inputs
@@ -251,7 +253,7 @@ class EED_Add_New_State  extends EED_Module {
 								EEH_HTML::br() .
 								EEH_HTML::link( '', __('cancel new state/province', 'event_espresso'), '', 'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '', 'rel="' . $input->html_id() . '"' ) .
 								EEH_HTML::divx() .
-								EEH_HTML::br(2)
+								EEH_HTML::br()
 							)
 						)
 
@@ -343,9 +345,9 @@ class EED_Add_New_State  extends EED_Module {
 	 *
 	 * recursively drills down through request params to remove any that were added by this module
 	 *
-	 * @access        public
+	 * @access public
 	 * @param array $request_params
-	 * @return void
+	 * @return array
 	 */
 	public static function filter_checkout_request_params ( $request_params ) {
 		foreach ( $request_params as $form_section ) {
@@ -354,6 +356,7 @@ class EED_Add_New_State  extends EED_Module {
 				EED_Add_New_State::filter_checkout_request_params( $form_section );
 			}
 		}
+		return $request_params;
 	}
 
 
@@ -366,11 +369,11 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function unset_new_state_request_params ( $request_params ) {
-		unset( $request_params['new_state_micro_form'] );
-		unset( $request_params['add_new_state'] );
-		unset( $request_params['new_state_country'] );
-		unset( $request_params['new_state_name'] );
-		unset( $request_params['new_state_abbrv'] );
+		unset( $request_params[ 'new_state_micro_form' ] );
+		unset( $request_params[ 'add_new_state' ] );
+		unset( $request_params[ 'new_state_country' ] );
+		unset( $request_params[ 'new_state_name' ] );
+		unset( $request_params[ 'new_state_abbrv' ] );
 		return $request_params;
 	}
 
