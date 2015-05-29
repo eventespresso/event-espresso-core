@@ -1,8 +1,28 @@
-<?php
-
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * For a db text column, which can either be an array in PHP code or a string.
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ * ------------------------------------------------------------------------
+ */
+/**
+ * EE_Maybe_Serialized_Simple_HTML_Field
+ *
+ * @package			Event Espresso
+ * @subpackage		includes/models/
+ * @author				Michael Nelson
+
+ * Model field for representing a column that CAN contain serialized text, or a regular string.
+ * But either way, the string or the array's values can ONLY contain simple HTML tags.
+ * If you want to allow Full HTML in the value, use EE_Maybe_Serialized_Text_Field
  */
 class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Field{
 	/**
