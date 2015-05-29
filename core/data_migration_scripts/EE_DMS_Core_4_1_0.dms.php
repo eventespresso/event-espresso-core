@@ -285,7 +285,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$table_name = "esp_ticket";
 		$sql = "TKT_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  TTM_ID INT(10) UNSIGNED NOT NULL,
-					  TKT_name VARCHAR(100) NOT NULL DEFAULT '',
+					  TKT_name VARCHAR(245) NOT NULL DEFAULT '',
 					  TKT_description TEXT NOT NULL,
 					  TKT_qty MEDIUMINT(8) DEFAULT NULL,
 					  TKT_sold MEDIUMINT(8) NOT NULL DEFAULT 0,
@@ -342,7 +342,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$sql = "PRC_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					  PRT_ID TINYINT(3) UNSIGNED NOT NULL,
 					  PRC_amount DECIMAL(10,3) NOT NULL DEFAULT '0.00',
-					  PRC_name VARCHAR(45) NOT NULL,
+					  PRC_name VARCHAR(245) NOT NULL,
 					  PRC_desc TEXT,
 					  PRC_is_default TINYINT(1) UNSIGNED NOT NULL DEFAULT '1',
 					  PRC_overrides INT(10) UNSIGNED DEFAULT NULL,

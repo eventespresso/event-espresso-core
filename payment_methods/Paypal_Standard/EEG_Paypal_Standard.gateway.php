@@ -275,19 +275,18 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( apply_filters( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', FALSE ) ){
 			return TRUE;
 		}
-		if( $update_info === $_REQUEST ){
-			//we're using the $_REQUEST info... except we can't use it because it has issues with quotes
-			// Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
-			// Instead, read raw POST data from the input stream.
-			// @see https://gist.github.com/xcommerce-gists/3440401
-			$raw_post_data = file_get_contents('php://input');
-			$raw_post_array = explode('&', $raw_post_data);
-			$update_info = array();
-			foreach ($raw_post_array as $keyval) {
-			  $keyval = explode ('=', $keyval);
-			  if (count($keyval) == 2)
-				 $update_info[$keyval[0]] = urldecode($keyval[1]);
-			}
+		//...otherwise, we actually don't care what the $update_info is, we need to look
+		//at the request directly because we can't use $update_info because it has issues with quotes
+		// Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
+		// Instead, read raw POST data from the input stream.
+		// @see https://gist.github.com/xcommerce-gists/3440401
+		$raw_post_data = file_get_contents('php://input');
+		$raw_post_array = explode('&', $raw_post_data);
+		$update_info = array();
+		foreach ($raw_post_array as $keyval) {
+		  $keyval = explode ('=', $keyval);
+		  if (count($keyval) == 2)
+			 $update_info[$keyval[0]] = urldecode($keyval[1]);
 		}
 
 

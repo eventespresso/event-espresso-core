@@ -304,7 +304,7 @@ abstract class EE_PMT_Base{
 	 * @param null                 $fail_url
 	 * @param string               $method
 	 * @param bool           $by_admin
-	 * @return \EE_Base_Class|\EE_Payment|null
+	 * @return EE_Payment
 	 * @throws EE_Error
 	 */
 	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
@@ -313,12 +313,12 @@ abstract class EE_PMT_Base{
 			//there is a gateway, so we're going to make a payment object
 			//but wait! do they already have a payment in progress that we thought was failed?
 			$duplicate_properties = array(
-				'TXN_ID' => $transaction->ID(),
-				'STS_ID' => EEM_Payment::status_id_failed,
-				'PAY_source' => $method,
-				'PAY_amount' => $amount !== NULL ? $amount : $transaction->remaining(),
-				'PMD_ID' => $this->_pm_instance->ID(),
-				'PAY_gateway_response'=>NULL,
+				'STS_ID' 								=> EEM_Payment::status_id_failed,
+				'TXN_ID' 								=> $transaction->ID(),
+				'PMD_ID' 							=> $this->_pm_instance->ID(),
+				'PAY_source' 						=> $method,
+				'PAY_amount' 					=> $amount !== NULL ? $amount : $transaction->remaining(),
+				'PAY_gateway_response' 	=> NULL,
 			);
 			$payment = EEM_Payment::instance()->get_one( array( $duplicate_properties ));
 			//if we didn't already have a payment in progress for the same thing,
@@ -328,11 +328,11 @@ abstract class EE_PMT_Base{
 					array_merge(
 						$duplicate_properties,
 						array(
-							'PAY_timestamp' => current_time( 'mysql' ),
-							'PAY_txn_id_chq_nmbr' => NULL,
-							'PAY_po_number' => NULL,
-							'PAY_extra_accntng' => NULL,
-							'PAY_details' => NULL
+							'PAY_timestamp' 			=> current_time( 'mysql' ),
+							'PAY_txn_id_chq_nmbr' 	=> NULL,
+							'PAY_po_number' 			=> NULL,
+							'PAY_extra_accntng' 		=> NULL,
+							'PAY_details' 					=> NULL
 						)
 					)
 				);
@@ -350,13 +350,13 @@ abstract class EE_PMT_Base{
 					$return_url,
 					EE_Config::instance()->core->txn_page_url(
 						array(
-							'e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),
-							'ee_payment_method'=>$this->_pm_instance->slug()
+							'e_reg_url_link' 				=> $transaction->primary_registration()->reg_url_link(),
+							'ee_payment_method' 	=> $this->_pm_instance->slug()
 						)
 					),
 					$fail_url
 				);
-
+				$payment->save();
 			//  Onsite Gateway
 			} elseif ( $this->_gateway instanceof EE_Onsite_Gateway ) {
 
@@ -374,9 +374,19 @@ abstract class EE_PMT_Base{
 			}
 
 		} else {
-			//no gateway provided
-			//so create no payment. The payment processor will know how to handle this
-			$payment = NULL;
+			// no gateway provided
+			// there is no payment. Must be an offline gateway
+			// create a payment object anyways, but dont save it
+			$payment = EE_Payment::new_instance(
+				array(
+					'STS_ID' 					=> EEM_Payment::status_id_pending,
+					'TXN_ID'        			=> $transaction->ID(),
+					'PMD_ID' 				=> $transaction->payment_method_ID(),
+					'PAY_amount'    		=> 0.00,
+					'PAY_timestamp' 	=> current_time( 'timestamp' ),
+				)
+			);
+
 		}
 
 		// if there is billing info, clean it and save it now
@@ -390,13 +400,13 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the values we want to pass onto the gateway. Normally these
 	 * are just the 'pretty' values, but there may be times the data may need
-	 * a  little massaging
+	 * a  little massaging. Proper subsections will become arrays of inputs
 	 * @param EE_Billing_Info_Form $billing_form
 	 * @return array
 	 */
 	protected function _get_billing_values_from_form( $billing_form ){
 		if($billing_form instanceof EE_Form_Section_Proper ){
-			return $billing_form->input_pretty_values();
+			return $billing_form->input_pretty_values( true );
 		}else{
 			return NULL;
 		}
