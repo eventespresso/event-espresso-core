@@ -291,9 +291,9 @@ class EE_Payment_Method extends EE_Base_Class{
 
 	/**
 	 * Overrides parent so when PMD_type is changed we refresh the _type_obj
-	 * @param type $field_name
-	 * @param type $field_value
-	 * @param type $use_default
+	 * @param string $field_name
+	 * @param mixed $field_value
+	 * @param boolean $use_default
 	 */
 	function set( $field_name, $field_value, $use_default = FALSE ){
 		if( $field_name == 'PMD_type' ){
