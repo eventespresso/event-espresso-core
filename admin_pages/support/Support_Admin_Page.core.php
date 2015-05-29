@@ -69,7 +69,11 @@ class Support_Admin_Page extends EE_Admin_Page {
 			'contact_support' => array(
 				'func' => '_contact_support',
 				'capability' => 'ee_read_ee'
-				)
+				),
+			'developers' => array(
+				'func' => '_developers',
+				'capability' => 'ee_read_ee'
+				),
 			);
 	}
 
@@ -89,6 +93,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'label' => __('Support', 'event_espresso'),
 					'order' => 40),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_support_boxes' ) ),
+				'require_nonce' => FALSE
+				),
+			'developers' => array(
+				'nav' => array(
+					'label' => __('Developers', 'event_espresso'),
+					'order' => 50),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				),
 			);
@@ -190,6 +201,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 			$callback_args = array('template_path' => $template_path, 'template_args' => $this->_template_args);
 			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
 		}
+	}
+
+
+	protected function _developers() {
+		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'developers_admin_details.template.php';
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($template_path, array(), true );
+		$this->display_admin_page_with_sidebar();
 	}
 
 
