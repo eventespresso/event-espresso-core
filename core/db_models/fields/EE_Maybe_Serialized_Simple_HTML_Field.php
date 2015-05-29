@@ -16,13 +16,13 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 
 	/**
 	 * Remove any non-"simple" html tags. @see EE_Simple_HTML_Field
-	 * @param type $value
-	 * @return mixed array|string
+	 * @param array|string $value
+	 * @return array|string
 	 */
 	protected function _remove_tags( $value ) {
 		if( is_array( $value ) ) {
-			foreach( $value as $key => $value ) {
-				$value[ $key ] = $this->_remove_tags( $value );
+			foreach( $value as $key => $v ) {
+				$value[ $key ] = $this->_remove_tags( $v );
 			}
 		}elseif( is_string( $value ) ) {
 			$value = wp_kses("$value", $this->_get_allowed_tags() );
@@ -32,8 +32,8 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 
 	/**
 	 * In case unsafe data somehow got inserted into the database, we want to remove tags again
-	 * @param arary|string $value_found_in_db_for_model_object
-	 * @return mixed array|string
+	 * @param array|string $value_found_in_db_for_model_object
+	 * @return array|string
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
 		return parent::prepare_for_set_from_db( $this->_remove_tags(  $value_found_in_db_for_model_object ) );
@@ -42,7 +42,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 
 	/**
 	 * Determines what tags to allow in this model field
-	 * @global type $allowedtags
+	 * @global array $allowedtags
 	 * @return array
 	 */
 	function _get_allowed_tags(){
