@@ -1013,9 +1013,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						$this->_process_registration_status_change( $transaction, array( $registration_query_where_params ) );
 					}
 				}
-				if ( isset( $this->_req_data['txn_reg_status_change'], $this->_req_data['txn_reg_status_change']['send_notifications'] )) {
-					$this->_process_payment_notification( $payment );
-				}
+
+				$this->_process_payment_notification( $payment );
+
 				//prepare to render page
 				$this->_get_payment_status_array();
 				$json_response_data[ 'return_data' ][ 'amount' ] = $payment->amount();
