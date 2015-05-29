@@ -1272,7 +1272,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				unset( $this->_req_data[$ref] );
 				continue;
 			}
-			$this->_req_data[$ref] = urlencode( $value );
+
+			$value = is_array( $value ) ? array_map( 'urlencode', $value ) : urlencode( $value );
+			$this->_req_data[$ref] = $value;
 		}
 
 		//merge request vars so that the reloaded list table contains any existing filter query params
