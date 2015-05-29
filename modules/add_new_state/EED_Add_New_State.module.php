@@ -127,7 +127,6 @@ class EED_Add_New_State  extends EED_Module {
 		if ( $action === 'process_reg_step' || $action === 'update_reg_step' ) {
 			return $question_group_reg_form;
 		}
-		EEH_Debug_Tools::printr( EE_Registry::instance()->REQ->get( 'action', '' ), 'EE_Registry::instance()->REQ->get( action )', __FILE__, __LINE__ );
 		// is the "state" question in this form section?
 		$input = $question_group_reg_form->get_subsection( 'state' );
 		// we're only doing this for state select inputs
