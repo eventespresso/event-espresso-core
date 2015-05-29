@@ -6,7 +6,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  *
  * EED_Mijireh_Payment_Checker
- * Adds hooks so we check for completed mijireh payments from the transactions page
+ * Adds hooks so we check for completed Mijireh payments from the transactions page
  * (because it's quite possible a user paid with Mijireh, but when they returned from Mijireh
  * the payment processing server hasn' tye tconfirmed whether or not the payment was approved.
  * So when the customer arrives at the thank you page, we checked with Mijireh to see
@@ -32,9 +32,9 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
-	 *	MIjireh Slurper module mostly just detects a special request on the EE payment methods page
+	 *	Mijireh Slurper module mostly just detects a special request on the EE payment methods page
 	 *	to perform a redirect to a slurping page; detects a special request on the post.php editing page to
-	 *	initiate slurping into mijireh; and adds a metabox to the post.php editing page when mijireh's special
+	 *	initiate slurping into Mijireh; and adds a metabox to the post.php editing page when Mijireh's special
 	 *	shortcode is present
 	 *  @access 	public
 	 *  @return 	void
@@ -47,10 +47,12 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 		if( $transaction instanceof EE_Transaction ) {
 			$last_payment = $transaction->last_payment();
 			//if this payment is from Mijireh and so far unapproved
-			if( $last_payment instanceof EE_Payment &&
-					$last_payment->payment_method() &&
-					$last_payment->payment_method()->type_obj() instanceof EE_PMT_Mijireh &&
-					$last_payment->status() != EEM_Payment::status_id_approved ) {
+			if(
+				$last_payment instanceof EE_Payment &&
+				$last_payment->payment_method() instanceof EE_Payment_Method &&
+				$last_payment->payment_method()->type_obj() instanceof EE_PMT_Mijireh &&
+				$last_payment->status() != EEM_Payment::status_id_approved
+			) {
 				$updated_payment = $last_payment->payment_method()->type_obj()->handle_ipn( NULL, $transaction );
 				$updated_payment->save();
 			}
