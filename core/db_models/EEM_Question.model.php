@@ -50,8 +50,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is TEXTAREA
 	const QST_type_textarea = 'TEXTAREA';
 
-	// constant used ot indicate the the question type is a TEXTAREA that allows simple html
-	const QST_type_htmlarea = 'HTMLAREA';
+	// constant used to indicate that the question type is a TEXTAREA that allows simple html
+	const QST_type_html_textarea = 'HTML_TEXTAREA';
 
 
 
@@ -89,7 +89,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
 				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso'),
-				EEM_Question::QST_type_htmlarea => __( 'HTML Textarea', 'event_espresso' ),
+				EEM_Question::QST_type_html_textarea => __( 'HTML Textarea', 'event_espresso' ),
 			)
 		);
 		$this->_plaintext_question_types = apply_filters(
