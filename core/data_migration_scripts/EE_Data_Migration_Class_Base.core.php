@@ -134,6 +134,10 @@ abstract class EE_Data_Migration_Class_Base{
 		}else{
 			$limit = EE_DMS_ERROR_LIMIT;
 		}
+		//make sure errors is an array, see ticket #8261
+		if( is_string( $this->_errors ) ){
+			$this->_errors = array( $this->_errors );
+		}
 		if(count($this->_errors) >= $limit ){
 			if( $force ){
 				//get rid of the first half of the errors and any above the limit
