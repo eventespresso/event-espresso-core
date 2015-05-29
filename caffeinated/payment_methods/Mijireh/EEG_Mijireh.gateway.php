@@ -1,21 +1,5 @@
-<?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
  *
  * EEG_Mijireh
  *
@@ -23,12 +7,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @subpackage
  * @author				Mike Nelson
  *
- * ------------------------------------------------------------------------
  */
 class EEG_Mijireh extends EE_Offsite_Gateway{
+
 	protected $_access_key;
 
 	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
+
+	protected $_mijireh_api_orders_url = 'https://secure.mijireh.com/api/1/orders';
 
 
 
@@ -112,7 +98,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			),
 		'body'=>  json_encode($order)
 		);
-		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
+		$response = wp_remote_post( $this->_mijireh_api_orders_url, $args );
 		$this->log(array('get checkout url request_args' => $args, 'response' => $response ), $payment);
 		if( ! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
@@ -149,6 +135,8 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		return $payment;
 	}
 
+
+
 	/**
 	 * goes through $data and ensures there are no percent signs in it
 	 * (which, strangely, kill mijireh)
@@ -168,51 +156,67 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			return $data;
 		}
 	}
-/**
- * Handles the payment update (note: mijireh doesn't send an IPN in the usual sense,
- * instead they just redirect the user back to our website and then we need to query them
- * for the payment's status). Also note that the $update_info should be an array with the key
- * 'payment' containing the EEI_Payment to update
- * @param array $update_info unused. We just use the $transaction
- * @param EEI_Transaction $transaction
- * @throws EE_Error
- */
-	public function handle_payment_update($update_info, $transaction) {
-		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
-		if($payment && $payment instanceof EEI_Payment){
-			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
-			$request_args = array(
-				'headers' => array(
-					'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
-					'Accept'=>'application/json'
-				)
-			);
-			$response = wp_remote_get($url, $request_args );
-			$this->log(
-				array( 'get payment status request_args' => $request_args, 'response' => $response ),
-				$payment
-			);
-			if($response && isset($response['body']) && $response_body = json_decode($response['body'])){
-				switch($response_body->status){
-					case 'paid':
-						$payment->set_status($this->_pay_model->approved_status());
-						break;
-					case 'pending':
-						$payment->set_status($this->_pay_model->pending_status());
-						break;
-					default:
-						$payment->set_status($this->_pay_model->declined_status());
-				}
 
-			}else{
-				$payment->set_gateway_response( __( 'Response from Mijireh could not be understood.', 'event_espresso' ) );
-				$payment->set_details( $response );
-				$payment->set_status( $this->_pay_model->failed_status() );
-			}
-			return $payment;
-		}else{
-			throw new EE_Error(sprintf(__("Could not find Mijireh payment for transaction %s",'event_espresso'),$transaction->ID()));
+
+
+	/**
+	 * Handles the payment update (note: mijireh doesn't send an IPN in the usual sense,
+	 * instead they just redirect the user back to our website and then we need to query them
+	 * for the payment's status). Also note that the $update_info should be an array with the key
+	 * 'payment' containing the EEI_Payment to update
+	 *
+	 * @param array $update_info unused. We just use the $transaction
+	 * @param EEI_Transaction $transaction
+	 * @return \EEI_Payment|null
+	 * @throws EE_Error
+	 */
+	public function handle_payment_update($update_info, $transaction) {
+
+		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
+
+		if ( ! $payment instanceof EEI_Payment ){
+			throw new EE_Error( sprintf( __( "Could not find Mijireh payment for transaction %s", 'event_espresso' ), $transaction->ID() ) );
 		}
+
+		$request_args = array(
+			'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
+				'Accept'=>'application/json'
+			)
+		);
+
+		$response = wp_remote_get(
+			$this->_mijireh_api_orders_url . '/' . $payment->txn_id_chq_nmbr(),
+			$request_args
+		);
+
+		$this->log(
+			array( 'get payment status request_args' => $request_args, 'response' => $response ),
+			$payment
+		);
+
+		if( $response && isset( $response['body'] ) && $response_body = json_decode( $response['body'] )){
+
+			switch( $response_body->status ){
+				case 'paid':
+					$payment->set_status($this->_pay_model->approved_status());
+					break;
+				case 'pending':
+					$payment->set_status($this->_pay_model->pending_status());
+					break;
+				default:
+					$payment->set_status($this->_pay_model->declined_status());
+			}
+
+		} else {
+			$payment->set_gateway_response( __( 'Response from Mijireh could not be understood.', 'event_espresso' ) );
+			$payment->set_details( $response );
+			$payment->set_status( $this->_pay_model->failed_status() );
+		}
+
+		$payment->save();
+		return $payment;
+
 	}
 
 }
