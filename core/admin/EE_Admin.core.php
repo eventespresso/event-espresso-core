@@ -689,7 +689,7 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
-		EE_Registry::instance()->load( 'DTT_Helper' );
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
