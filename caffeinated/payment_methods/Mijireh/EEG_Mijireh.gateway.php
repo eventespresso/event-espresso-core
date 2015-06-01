@@ -214,7 +214,6 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$payment->set_status( $this->_pay_model->failed_status() );
 		}
 
-		$payment->save();
 		return $payment;
 
 	}

@@ -37,7 +37,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway{
 	 * Asks the gateway to do whatever it does to process the payment. Onsite gateways will
 	 * usually send a request directly to the payment provider and update the payment's status based on that;
 	 * whereas offsite gateways will usually just update the payment with the URL and query parameters to use
-	 * for sending the request via http_remote_request()
+	 * for sending the request via http_remote_request(). Saving the payment from within this method is unnecessary,
+	 * as it is the responsibility of client code to save it.
 	 * @param EEI_Payment $payment
 	 * @param array $billing_info {
 	 *	@type $first_name string
