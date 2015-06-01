@@ -541,7 +541,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_script('event-datetime-metabox');
 
 		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-		wp_localize_script('event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings);
 	}
 
 

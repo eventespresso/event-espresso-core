@@ -294,7 +294,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
-		wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
+		//wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
