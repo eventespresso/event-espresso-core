@@ -128,7 +128,18 @@ class EE_Event extends EE_CPT_Base {
 			$datetime_ids[] = $datetime->ID();
 		}
 
-		return EEM_Ticket::instance()->get_all( array( array( 'Datetime.DTT_ID' => array( 'IN', $datetime_ids ) ) ) );
+		$where_params = array( 'Datetime.DTT_ID' => array( 'IN', $datetime_ids ) );
+
+		//if incoming $query_params has where conditions let's merge but not override existing.
+		if ( is_array( $query_params ) && isset( $query_params[0]) ) {
+			$where_params = array_merge( $query_params[0], $where_params );
+			unset( $query_params[0] );
+		}
+
+		//now add $where_params to $query_params
+		$query_params[0] = $where_params;
+
+		return EEM_Ticket::instance()->get_all( $query_params );
 	}
 
 
