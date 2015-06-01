@@ -684,7 +684,7 @@ class EE_Event extends EE_CPT_Base {
 	 * Note: by "spaces available" we are not returning how many spaces remain.  That is a calculation involving using the value
 	 * from this method and subtracting the approved registrations for the event.
 	 *
-	 * @param   bool    $current_total_available    Whether to consider any tickets that have already sold in our caculation.
+	 * @param   bool    $current_total_available    Whether to consider any tickets that have already sold in our calculation.
 	 *                                              If this is false, then we return the most tickets that could ever be sold
 	 *                                              for this event with the datetime and tickets setup on the event under optimal
 	 *                                              selling conditions.  Otherwise we return a live calculation of spaces available
