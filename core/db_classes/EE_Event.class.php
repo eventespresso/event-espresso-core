@@ -768,6 +768,7 @@ class EE_Event extends EE_CPT_Base {
 				return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
 			});
 
+
 			//get the remaining on the first datetime (which should be the one with the least remaining) and that is
 			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
 			$lowest_datetime = reset( $ticket_datetimes_remaining );
@@ -783,6 +784,11 @@ class EE_Event extends EE_CPT_Base {
 			if ( $remaining === INF ) {
 				$spaces_available += $ticket_info['ticket']->qty();
 				continue;
+			}
+
+			//if ticket has sold amounts then we also need to add that (but only if doing live counts)
+			if ( $current_total_available ) {
+				$spaces_available += $ticket_info['ticket']->sold();
 			}
 
 			if ( $remaining <= 0 ) {
