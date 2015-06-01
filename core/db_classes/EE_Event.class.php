@@ -692,7 +692,7 @@ class EE_Event extends EE_CPT_Base {
 	 *                                              may appear to equal remaining tickets.  However, the more tickets are
 	 *                                              sold out, the more accurate the "live" total is.
 	 *
-*@return  int|float  (Note: if INF is returned its considered a float by PHP)
+	* @return  int|float  (Note: if INF is returned its considered a float by PHP)
 	 */
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
