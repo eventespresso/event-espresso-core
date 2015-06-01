@@ -708,8 +708,8 @@ class EE_Event extends EE_CPT_Base {
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
 
-		//first get all tickets on the event
-		$tickets = $this->tickets();
+		//first get all tickets on the event and include expired tickets
+		$tickets = $this->tickets( array( 'default_where_conditions' => 'none' ) );
 		$ticket_sums = array();
 		$datetime_limits = array();
 
