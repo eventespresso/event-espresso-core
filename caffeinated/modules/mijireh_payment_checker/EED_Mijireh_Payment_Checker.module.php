@@ -53,8 +53,7 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 				$last_payment->payment_method()->type_obj() instanceof EE_PMT_Mijireh &&
 				$last_payment->status() != EEM_Payment::status_id_approved
 			) {
-				$updated_payment = $last_payment->payment_method()->type_obj()->handle_ipn( NULL, $transaction );
-				$updated_payment->save();
+				EE_Payment_Processor::instance()->process_ipn( NULL, $transaction, $last_payment->payment_method() );
 			}
 		}
 	}
