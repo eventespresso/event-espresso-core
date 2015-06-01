@@ -778,7 +778,7 @@ class EE_Event extends EE_CPT_Base {
 			//for the simulation, so we can continue to the next ticket.
 			$remaining = $lowest_datetime['rem'];
 
-			//if $remaining is infinite that means that all datetimes are infinite but we've made it here because all
+			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
 			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
 			//available.
 			if ( $remaining === INF ) {
