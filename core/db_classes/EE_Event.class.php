@@ -784,10 +784,11 @@ class EE_Event extends EE_CPT_Base {
 			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
 			$lowest_datetime = reset( $ticket_datetimes_remaining );
 
-			//need to get what the remaining is on the lowest datetime.  if its 0 (because of previous tickets in our
-			//simulation selling out), then it has already been tracked on $spaces available and this ticket is now sold out
-			//for the simulation, so we can continue to the next ticket.
-			$remaining = $lowest_datetime['rem'];
+			//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
+			// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
+			// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
+			// to the next ticket.
+			$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
 
 			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
 			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
