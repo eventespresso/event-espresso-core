@@ -695,8 +695,8 @@ class EE_Event extends EE_CPT_Base {
 	 * @return float|int  (INF is returned as float)
 	 */
 	public function spaces_remaining_for_sale() {
-		//first get total available spaces not including expired things
-		$spaces_available = $this->total_available_spaces( false );
+		//first get total available spaces including consideration for tickets that have already sold.
+		$spaces_available = $this->total_available_spaces( true );
 
 		//if total available = 0, then exit right away because that means everything is expired.
 		if ( $spaces_available === 0 ) {
