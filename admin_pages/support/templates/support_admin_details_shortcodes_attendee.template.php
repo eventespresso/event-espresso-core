@@ -1,4 +1,7 @@
 <div class="padding">
+	<p>
+		<strong>Note:</strong> The <code>[ESPRESSO_EVENT_ATTENDEES]</code> shortcode is not used to represent the attendees post type directly, but is instead used to represent the intersection of attendees with events.  So it's always returning a list of attendees <em>in relation to</em> an event.
+	</p>
 	<ul>
 			<li>
 				<strong>[ESPRESSO_EVENT_ATTENDEES]</strong><br>
