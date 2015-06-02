@@ -32,6 +32,8 @@ class EED_Add_New_State  extends EED_Module {
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', array( 'EED_Add_New_State', 'inject_new_reg_state_into_options' ), 10, 5 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', array( 'EED_Add_New_State', 'inject_new_reg_country_into_options' ), 10, 5 );
 		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
 		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
 	}
@@ -54,6 +56,8 @@ class EED_Add_New_State  extends EED_Module {
 		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
 		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
 		add_filter( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', array( 'EED_Add_New_State', 'inject_new_reg_state_into_options' ), 10, 5 );
+		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', array( 'EED_Add_New_State', 'inject_new_reg_country_into_options' ), 10, 5 );
 	}
 
 
@@ -123,7 +127,8 @@ class EED_Add_New_State  extends EED_Module {
 	public static function display_add_new_state_micro_form( EE_Form_Section_Proper $question_group_reg_form ){
 		// only add the 'new_state_micro_form' when displaying reg forms,
 		// not during processing since we process the 'new_state_micro_form' in it's own AJAX request
-		if ( EE_Registry::instance()->REQ->get( 'action', '' ) === 'process_reg_step' ) {
+		$action = EE_Registry::instance()->REQ->get( 'action', '' );
+		if ( $action === 'process_reg_step' || $action === 'update_reg_step' ) {
 			return $question_group_reg_form;
 		}
 		// is the "state" question in this form section?
@@ -251,7 +256,7 @@ class EED_Add_New_State  extends EED_Module {
 								EEH_HTML::br() .
 								EEH_HTML::link( '', __('cancel new state/province', 'event_espresso'), '', 'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '', 'rel="' . $input->html_id() . '"' ) .
 								EEH_HTML::divx() .
-								EEH_HTML::br(2)
+								EEH_HTML::br()
 							)
 						)
 
@@ -343,9 +348,9 @@ class EED_Add_New_State  extends EED_Module {
 	 *
 	 * recursively drills down through request params to remove any that were added by this module
 	 *
-	 * @access        public
+	 * @access public
 	 * @param array $request_params
-	 * @return void
+	 * @return array
 	 */
 	public static function filter_checkout_request_params ( $request_params ) {
 		foreach ( $request_params as $form_section ) {
@@ -354,6 +359,7 @@ class EED_Add_New_State  extends EED_Module {
 				EED_Add_New_State::filter_checkout_request_params( $form_section );
 			}
 		}
+		return $request_params;
 	}
 
 
@@ -366,11 +372,11 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function unset_new_state_request_params ( $request_params ) {
-		unset( $request_params['new_state_micro_form'] );
-		unset( $request_params['add_new_state'] );
-		unset( $request_params['new_state_country'] );
-		unset( $request_params['new_state_name'] );
-		unset( $request_params['new_state_abbrv'] );
+		unset( $request_params[ 'new_state_micro_form' ] );
+		unset( $request_params[ 'add_new_state' ] );
+		unset( $request_params[ 'new_state_country' ] );
+		unset( $request_params[ 'new_state_name' ] );
+		unset( $request_params[ 'new_state_abbrv' ] );
 		return $request_params;
 	}
 
@@ -437,6 +443,68 @@ class EED_Add_New_State  extends EED_Module {
 			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		EE_Error::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev, TRUE, TRUE );
+	}
+
+
+
+	/**
+	 *    inject_new_reg_state_into_options
+	 *
+	 * @access public
+	 * @param \EE_State[] $state_options
+	 * @param \EE_SPCO_Reg_Step_Attendee_Information $reg_step
+	 * @param \EE_Registration $registration
+	 * @param \EE_Question $question
+	 * @param $answer
+	 * @return bool
+	 */
+	public static function inject_new_reg_state_into_options( $state_options = array(), EE_SPCO_Reg_Step_Attendee_Information $reg_step, EE_Registration $registration, EE_Question $question, $answer ) {
+		if ( $answer instanceof EE_Answer  && $question instanceof EE_Question && $question->type() === EEM_Question::QST_type_state ) {
+			$STA_ID = $answer->value();
+			if ( ! empty( $STA_ID ) ) {
+				$state = EEM_State::instance()->get_one_by_ID( $STA_ID );
+				if ( $state instanceof EE_State ) {
+					$country = $state->country();
+					if ( $country instanceof EE_Country ) {
+						if ( ! isset( $state_options[ $country->name() ] )) {
+							$state_options[ $country->name() ] = array();
+						}
+						if ( ! isset( $state_options[ $country->name() ][ $STA_ID ] )) {
+							$state_options[ $country->name() ][ $STA_ID ] = $state->name();
+						}
+					}
+				}
+			}
+		}
+		return $state_options;
+	}
+
+
+
+	/**
+	 *    inject_new_reg_country_into_options
+	 *
+	 * @access public
+	 * @param \EE_Country[] $country_options
+	 * @param \EE_SPCO_Reg_Step_Attendee_Information $reg_step
+	 * @param \EE_Registration $registration
+	 * @param \EE_Question $question
+	 * @param $answer
+	 * @return bool
+	 */
+	public static function inject_new_reg_country_into_options( $country_options = array(), EE_SPCO_Reg_Step_Attendee_Information $reg_step, EE_Registration $registration, EE_Question $question, $answer ) {
+		if ( $answer instanceof EE_Answer && $question instanceof EE_Question && $question->type() === EEM_Question::QST_type_country ) {
+			$CNT_ISO = $answer->value();
+			if ( ! empty( $CNT_ISO ) ) {
+				$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
+				if ( $country instanceof EE_Country ) {
+					if ( ! isset( $country_options[ $CNT_ISO ] ) ) {
+						$country_options[ $CNT_ISO ] = $country->name();
+					}
+				}
+			}
+		}
+		return $country_options;
 	}
 
 
