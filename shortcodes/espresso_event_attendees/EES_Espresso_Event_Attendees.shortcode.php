@@ -83,7 +83,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			'event_id' => NULL,
 			'datetime_id' => NULL,
 			'ticket_id' => NULL,
-			'status' => 'RAP',
+			'status' => EEM_Registration::status_id_approved,
 			'show_gravatar' => false
 		);
 
