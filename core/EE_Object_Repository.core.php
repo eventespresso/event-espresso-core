@@ -19,6 +19,12 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 
 
 	/**
+	 * addObject
+	 *
+	 * attaches an object to the SplObjectStorage
+	 * and sets any supplied data associated with the current iterator entry
+	 * if no $info is supplied, then the spl_object_hash() is used
+	 *
 	 * @access protected
 	 * @param object $object
 	 * @param mixed $info
@@ -33,6 +39,10 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 
 
 	/**
+	 * getObjectByInfo
+	 *
+	 * finds and returns an object in the repository based on the info that was set using addObject()
+	 *
 	 * @access protected
 	 * @param mixed
 	 * @return null | object
@@ -53,6 +63,10 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 
 
 	/**
+	 * hasObject
+	 *
+	 * returns TRUE or FALSE depending on whether the supplied object is within the repository
+	 *
 	 * @access protected
 	 * @param object $object
 	 * @return bool
@@ -64,22 +78,30 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 
 
 	/**
+	 * persistObject
+	 *
+	 * primarily used for saving EE_Base_Class classes to the database,
+	 * but can be supplied with a "persistence callback" that can be used for classes that are not instances of EE_Base_Class,
+	 * or for providing alternate ways to persist an object such as session caching, etc...
+	 * an array of arguments can also be supplied that will be passed along to the object's persistence method
+	 *
 	 * @access protected
-	 * @param object $object
-	 * @param string $persistence_callback
-	 * @return bool|int
+	 * @param object 	$object
+	 * @param string 	$persistence_callback 		name of method found on object that can be used for persisting the object
+	 * @param array 	$persistence_arguments	arrays of arguments that will be passed to the object's persistence method
+	 * @return bool | int
 	 * @throws \EE_Error
 	 */
-	protected function persistObject( $object, $persistence_callback = '' ) {
+	protected function persistObject( $object, $persistence_callback = '', $persistence_arguments = array() ) {
 		if ( $this->contains( $object ) ) {
 			$this->rewind();
 			while ( $this->valid() ) {
 				if ( $object === $this->current() ) {
 					$success = false;
-					if ( method_exists( $object, $persistence_callback ) ) {
-						$success = $object->$persistence_callback();
+					if ( $persistence_callback !== '' && method_exists( $object, $persistence_callback ) ) {
+						$success = $object->$persistence_callback( $persistence_arguments );
 					} else if ( $object instanceof EE_Base_Class ) {
-						$success = $object->save();
+						$success = $object->save( $persistence_arguments );
 					}
 					$this->rewind();
 					return $success;
@@ -93,6 +115,10 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 
 
 	/**
+	 * removeObject
+	 *
+	 * detaches an object from the SplObjectStorage
+	 *
 	 * @access protected
 	 * @param $object
 	 * @return void
