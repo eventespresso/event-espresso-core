@@ -16,29 +16,6 @@
  */
 abstract class EE_Object_Repository extends SplObjectStorage {
 
-	/**
-	 * @type \EE_Session $_session
-	 */
-	protected $_session;
-
-
-
-	/**
-	 * @param \EE_Session $session
-	 */
-	function __construct( EE_Session $session ) {
-		$this->_session = $session;
-	}
-
-
-
-	/**
-	 * @return \EE_Session
-	 */
-	public function session() {
-		return $this->_session;
-	}
-
 
 
 	/**
