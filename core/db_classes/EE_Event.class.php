@@ -691,6 +691,12 @@ class EE_Event extends EE_CPT_Base {
 	/**
 	 * This returns the total remaining spaces for sale on this event.
 	 *
+	 * ############################
+	 * VERY IMPORTANT FOR DEVELOPERS:
+	 * While included here, this method is still being tested internally, so its signature and behaviour COULD change. While
+	 * this comment block is in place, usage is at your own risk and know that it may change in future builds.
+	 * ############################
+	 *
 	 * @uses EE_Event::total_available_spaces()
 	 * @return float|int  (INF is returned as float)
 	 */
