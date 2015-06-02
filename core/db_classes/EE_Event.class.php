@@ -692,6 +692,12 @@ class EE_Event extends EE_CPT_Base {
 	 * This returns the total spaces available for an event while considering all the qtys on the tickets and the reg limits
 	 * on the datetimes attached to this event.
 	 *
+	 * ############################
+	 * VERY IMPORTANT FOR DEVELOPERS:
+	 * While included here, this method is still being tested internally, so its signature and behaviour COULD change. While
+	 * this comment block is in place, usage is at your own risk and know that it may change in future builds.
+	 * ############################
+	 *
 	 * Note: by "spaces available" we are not returning how many spaces remain.  That is a calculation involving using the value
 	 * from this method and subtracting the approved registrations for the event.
 	 *
