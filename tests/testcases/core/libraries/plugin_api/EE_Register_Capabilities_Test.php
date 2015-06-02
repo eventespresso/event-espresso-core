@@ -171,5 +171,6 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 
 	public function tearDown(){
 		EE_Register_Capabilities::deregister('Test_Capabilities');
+		parent::tearDown();
 	}
 }
