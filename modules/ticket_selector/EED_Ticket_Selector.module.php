@@ -367,7 +367,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		$html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, self::$_event );
 		return $html;
 	}
-	}
 
 
 
