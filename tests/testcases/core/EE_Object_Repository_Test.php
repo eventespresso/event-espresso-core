@@ -23,6 +23,7 @@ class EE_Object_Repository_Test extends EE_UnitTestCase {
 	public function setUp() {
 		require_once EE_TESTS_DIR . 'mocks/EE_Object_Repository_Mock.php';
 		$this->repository = new EE_Object_Repository_Mock();
+		parent::setUp();
 	}
 
 	public function test_addObject() {
