@@ -42,6 +42,9 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 
 
 
+
+
+
 	/**
 	 * 	process_shortcode - ESPRESSO_EVENT_ATTENDEES - Returns a list of attendees to an event.
 	 *
@@ -156,7 +159,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 
 
 		//all set let's load up the template and return.
-		return EEH_Template::locate_template( 'loop-espresso_attendees-shortcode.php', $template_args, true, true );
+		return EEH_Template::locate_template( 'loop-espresso_event_attendees.php', $template_args, true, true );
 
 	}
 

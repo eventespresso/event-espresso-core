@@ -1,6 +1,6 @@
 <?php
 /**
- * Template for the [ESPRESSO_EVENT_ATTENDEES] shortcode
+ * Loop Template for the [ESPRESSO_EVENT_ATTENDEES] shortcode
  *
  * @package Event Espresso
  * @subpackage templates
@@ -34,21 +34,15 @@ $title = apply_filters( 'FHEE__loop-espresso_attendees-shortcode__template__titl
 
 <div class="event-attendees">
 	<h2 id="event-attendees-details-h2" class="entry-title"><?php echo $title; ?></h2>
+	<?php do_action( 'AHEE__loop-espresso_event_attendees__before', $contacts, $event, $datetime, $ticket, $show_gravatar ); ?>
 	<?php if ( $contacts ) : ?>
 		<ul class="event-attendees-list">
 			<?php foreach( $contacts as $contact ) :
-				if ( $show_gravatar ) {
-					$gravatar = get_avatar( $contact->email(),
-						(int) apply_filters( 'FHEE__loop-espresso_attendees-shortcode__template__avatar_size', 32 )
-						);
-				} else {
-					$gravatar = '';
-				}
-				?>
-			<li><?php echo $gravatar . '&nbsp;' .  $contact->full_name(); ?></li>
-			<?php endforeach; ?>
+				EEH_Template::get_template_part( 'content', 'espresso_event_attendees', array( 'contact' => $contact, 'show_gravatar' => $show_gravatar ) );
+				endforeach; ?>
 		</ul>
 	<?php else : ?>
 		<p><?php echo $no_attendees_message; ?></p>
 	<?php endif; ?>
+	<?php do_action( 'AHEE__loop-espresso_event_attendees__after', $contacts, $event, $datetime, $ticket, $show_gravatar ); ?>
 </div>
