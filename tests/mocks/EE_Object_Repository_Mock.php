@@ -24,6 +24,17 @@ class EE_Object_Repository_Mock extends EE_Object_Repository {
 
 
 	/**
+	 * @param object $object
+	 * @param mixed $info
+	 * @return void
+	 */
+	public function set_object_info( $object, $info = null ) {
+		$this->setObjectInfo( $object, $info );
+	}
+
+
+
+	/**
 	 * @param mixed $info
 	 * @return null | object
 	 */

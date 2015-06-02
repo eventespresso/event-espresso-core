@@ -40,6 +40,14 @@ class EE_Object_Repository_Test extends EE_UnitTestCase {
 		$this->assertContains( $ticket_2, $this->repository );
 	}
 
+	public function test_setObjectInfo() {
+		// add ticket 1
+		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price' => '5' ) );
+		$this->repository->add_object( $ticket_1 );
+		$this->repository->set_object_info( $ticket_1, 'ticket_1' );
+		$this->assertEquals( $this->repository[ $ticket_1 ], 'ticket_1' );
+	}
+
 	public function test_getObjectByInfo() {
 		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'   => '5' ) );
 		$this->repository->add_object( $ticket_1, 'ticket_1' );

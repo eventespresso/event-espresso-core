@@ -16,14 +16,12 @@
  */
 abstract class EE_Object_Repository extends SplObjectStorage {
 
-
-
 	/**
 	 * addObject
 	 *
 	 * attaches an object to the SplObjectStorage
 	 * and sets any supplied data associated with the current iterator entry
-	 * if no $info is supplied, then the spl_object_hash() is used
+	 * by calling EE_Object_Repository::setObjectInfo()
 	 *
 	 * @access protected
 	 * @param object $object
@@ -31,9 +29,35 @@ abstract class EE_Object_Repository extends SplObjectStorage {
 	 * @return bool
 	 */
 	protected function addObject( $object, $info = null ) {
-		$info = ! empty( $info ) ? $info : spl_object_hash( $object );
-		$this->attach( $object, $info );
+		$this->attach( $object );
+		$this->setObjectInfo( $object, $info );
 		return $this->contains( $object );
+	}
+
+
+
+	/**
+	 * setObjectInfo
+	 *
+	 * Sets the data associated with an object in the SplObjectStorage
+	 * if no $info is supplied, then the spl_object_hash() is used
+	 *
+	 * @access protected
+	 * @param object $object
+	 * @param mixed $info
+	 * @return bool
+	 */
+	protected function setObjectInfo( $object, $info = null ) {
+		$info = ! empty( $info ) ? $info : spl_object_hash( $object );
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $object == $this->current() ) {
+				$this->setInfo( $info );
+				$this->rewind();
+				return;
+			}
+			$this->next();
+		}
 	}
 
 
