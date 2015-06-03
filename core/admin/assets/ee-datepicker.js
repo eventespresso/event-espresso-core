@@ -158,6 +158,8 @@ var dttPickerHelper = {
 					    else
 						    dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract(diff,'minutes').format('YYYY-MM-DD h:mm a') );
 				}
+                //trigger the dttPicker close event
+                dttPickerHelper.pickerobj.trigger({ type:'datepickerclose',dateText:dateText, dttinst:dpinst } );
 				dttPickerHelper.resetpicker();
 				dttPickerHelper.pickerobj.datetimepicker('destroy');
 				return false;
