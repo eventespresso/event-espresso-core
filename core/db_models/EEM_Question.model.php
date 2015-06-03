@@ -91,7 +91,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				array(
 				'text' => array(
 						self::QST_type_text,
-						self::QST_type_textarea
+						self::QST_type_textarea,
+						self::QST_type_html_textarea,
 					),
 				'single-answer-enum' => array(
 					self::QST_type_radio,
