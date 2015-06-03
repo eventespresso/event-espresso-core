@@ -182,7 +182,7 @@ final class EE_Registry {
 			'EE_Config'          => 'CFG',
 			'EE_Session'         => 'SSN',
 			'EE_Capabilities'    => 'CAP',
-			'EE_Cart_Repository' => 'CART',
+			'EE_Cart' => 'CART',
 			'EE_Network_Config'  => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
 		);
@@ -485,15 +485,9 @@ final class EE_Registry {
 		$this->_require_file( $path, $class_name, $type, $file_paths );
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only, $resolve_dependencies );
-		//EEH_Debug_Tools::printr( $class_name, '$class_name', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $from_db, '$from_db', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $cache, '$cache', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $load_only, '$load_only', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $arguments, '$arguments', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $class_obj, '$class_obj', __FILE__, __LINE__ );
+		// save it for later... kinda like gum  { : $
 		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
 		return $class_obj;
-
 	}
 
 
