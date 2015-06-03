@@ -625,7 +625,8 @@ final class EE_Registry {
 				if ( $resolve_dependencies ) {
 					$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 				}
-				$class_obj = $reflector->newInstanceArgs( (array)$arguments );
+				$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
+				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
 				// heh ? something's not right !
 				throw new EE_Error(
