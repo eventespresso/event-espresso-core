@@ -175,7 +175,7 @@ jQuery(document).ready(function($) {
 
 
 		if ( extra_statuses !== '' ) {
-			$(extra_statuses).appendTo($('#post_status'));
+            $('#post_status').append(extra_statuses);
 		}
 	}
 
