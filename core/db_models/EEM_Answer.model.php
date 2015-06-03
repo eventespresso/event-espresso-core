@@ -61,7 +61,7 @@ class EEM_Answer extends EEM_Base {
 				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID','event_espresso')),
 				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0, 'Registration'),
 				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
-				'ANS_value'=>new EE_Maybe_Serialized_Text_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
+				'ANS_value'=>new EE_Maybe_Serialized_Simple_HTML_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Belongs_To_Relation(),

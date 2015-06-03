@@ -98,7 +98,7 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 						break;
 				}
 
-				return wp_strip_all_tags($answer);
+				return $answer;
 				break;
 
 		}

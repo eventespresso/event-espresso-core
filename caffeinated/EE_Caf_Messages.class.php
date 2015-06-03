@@ -236,7 +236,7 @@ class EE_Caf_Messages  {
 		//now let's figure out which question has this text.
 		foreach ( $aee->questions as $ansid => $question ) {
 			if ( $question->get('QST_display_text') == $shortcode && isset($aee->registrations[$registration->ID()]['ans_objs'][$ansid]) )
-				return wp_strip_all_tags( $aee->registrations[$registration->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop') );
+				return $aee->registrations[$registration->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
 		//nothing!
