@@ -160,11 +160,6 @@ var dttPickerHelper = {
 				}
 				dttPickerHelper.resetpicker();
 				dttPickerHelper.pickerobj.datetimepicker('destroy');
-				jQuery.event.trigger({
-					type: "datepickerclose",
-					dateText: dateText,
-					dttinst: dpinst
-				});
 				return false;
 			};
 
