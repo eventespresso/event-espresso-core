@@ -35,14 +35,13 @@ class EE_CPT_Event_Strategy {
 	/**
 	 *    class constructor
 	 *
-	 * @access 	public
-	 * @param 	array 	$arguments
-	 * @return 	\EE_CPT_Event_Strategy
+	 * @access    public
+	 * @param WP_Query $WP_Query
+	 * @param array $CPT
 	 */
-	public function __construct( $arguments = array() ) {
-		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
-		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
-
+	public function __construct( WP_Query $WP_Query, $CPT = array() ) {
+		$this->CPT = $CPT;
+		$WP_Query = $WP_Query;
 		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 		// here's the list of available filters in the WP_Query object
 		// 'posts_where'
