@@ -1328,6 +1328,7 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper|jQuery selector}       this object for chainability
 		 */
 		toggleTicketSelect: function(itm, trash, getitm) {
+            itm = typeof itm === 'string' ? itm.trim() : itm; //remove whitespace.
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			getitm = typeof(getitm) === 'undefined' ? false : getitm;
