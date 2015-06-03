@@ -52,6 +52,38 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 
 	// constant used to indicate that the question type is a TEXTAREA that allows simple html
 	const QST_type_html_textarea = 'HTML_TEXTAREA';
+
+	// constant used to indicate that the question type is an email input
+	const QST_type_email = 'EMAIL';
+
+	// constant used to indicate that the question type is a US-formatted phone number
+	const QST_type_us_phone = 'US_PHONE';
+
+	// constant used to indicate that the question type is an integer (whole number)
+	const QST_type_int = 'INTEGER';
+
+	// constant used to indicate that the question type is a decimal (float)
+	const QST_type_decimal = 'DECIMAL';
+
+	// constant used to indicate that the question type can only have the options Yes or No
+	const QST_type_yes_no = 'YES_NO';
+
+	// constant used to indicate that the question type is a valid URL
+	const QST_type_url = 'URL';
+
+	// constant used to indicate that the question type is a YEAR
+	const QST_type_year = 'YEAR';
+
+	// constant used to indicate that the question type is a valid month
+	const QST_type_month = 'MONTH';
+
+	// constant used to indicate that the question type is a multi-select
+	const QST_type_multi_select = 'MULTI_SELECT';
+
+
+
+
+
 	/**
 	 * Question types that are interchangeable, even after answers have been provided for them.
 	 * Top-level keys are category slugs, next level is an array of question types. If question types
@@ -84,20 +116,38 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso'),
 				EEM_Question::QST_type_html_textarea => __( 'HTML Textarea', 'event_espresso' ),
+				EEM_Question::QST_type_email => __( 'Email', 'event_espresso' ),
+				EEM_Question::QST_type_us_phone => __( 'USA-Format Phone', 'event_espresso' ),
+				EEM_Question::QST_type_int => __( 'Integer Number', 'event_espresso' ),
+				EEM_Question::QST_type_decimal => __( 'Decimal Number', 'event_espresso' ),
+				EEM_Question::QST_type_yes_no => __( 'Yes/No', 'event_espresso' ),
+				EEM_Question::QST_type_url => __( 'Valid URL', 'event_espresso' ),
+				EEM_Question::QST_type_year => __( 'Year', 'event_espresso' ),
+				EEM_Question::QST_type_month => __( 'Month', 'event_espresso' ),
+				EEM_Question::QST_type_multi_select => __( 'Multi Select', 'event_espresso' )
 			)
 		);
 		$this->_question_type_categories = apply_filters(
 				'FHEE__EEM_Question__construct__question_type_categories',
 				array(
 				'text' => array(
-						self::QST_type_text,
-						self::QST_type_textarea,
-						self::QST_type_html_textarea,
+					EEM_Question::QST_type_text,
+					EEM_Question::QST_type_textarea,
+					EEM_Question::QST_type_html_textarea,
+					EEM_Question::QST_type_email,
+					EEM_Question::QST_type_us_phone,
+					EEM_Question::QST_type_int,
+					EEM_Question::QST_type_decimal,
+					EEM_Question::QST_type_url,
 					),
 				'single-answer-enum' => array(
-					self::QST_type_radio,
-					self::QST_type_dropdown
+					EEM_Question::QST_type_radio,
+					EEM_Question::QST_type_dropdown
 				),
+				'multi-answer-enum' => array(
+					EEM_Question::QST_type_checkbox,
+					EEM_Question::QST_type_multi_select
+				)
 			)
 		);
 
