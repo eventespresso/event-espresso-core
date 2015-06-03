@@ -416,8 +416,8 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = row;
 			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
-			var newDTTorigrow = $('#event-datetime-' + row).clone(true).attr('id','event-datetime-' + newrownum);
-			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone(true).attr('id', 'advanced-dtt-edit-row-' + newrownum);
+			var newDTTorigrow = $('#event-datetime-' + row).clone().attr('id','event-datetime-' + newrownum);
+			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone().attr('id', 'advanced-dtt-edit-row-' + newrownum);
 			var newDTTrow = newDTTorigrow.add(newDTTsettingsRow);
 			newDTTrow = $(newDTTrow).appendTo('.datetime-editing-dtts-tbody');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -577,7 +577,7 @@ jQuery(document).ready(function($) {
 			this.ticketRow = row;
 			this.context = 'ticket';
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone(true, true).attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone(true, true).attr('id', 'edit-ticketrow-' + newrownum));
+			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
 
 			newTKTrow = newTKTrow.appendTo($('.ticket-table', '.event-tickets-container').find('tbody').first() );
 
@@ -2299,12 +2299,11 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
-		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
+		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.dateFieldContext).find(data.relatedField);
 		var next = $(data.nextField, data.dateFieldContext);
 		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
 
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
-
 		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
 	});
 
