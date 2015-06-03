@@ -720,6 +720,7 @@ jQuery(document).ready(function($) {
 				tktHelper.newTKTListRow( this );
 			});
 
+
 			//make sure all trash icons show on creating the ticket
 			$('.trash-icon', '.event-tickets-container').show();
 
@@ -883,8 +884,11 @@ jQuery(document).ready(function($) {
 			if ( typeof(dttrownum) === 'undefined' )
 				return true; //we may have a blank ticket row.
 
-			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html();
-			var active_dtts_on_tkt = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').data('datetimeRow');
+			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html(),
+                active_dtts_on_tkt = [];
+			$('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').each( function() {
+                active_dtts_on_tkt.push( $( this ).data('datetimeRow') );
+            });
 			var default_list_row_for_tkt;
 
 			//replace all instances of TICKETNUM with ticketRow
@@ -898,7 +902,7 @@ jQuery(document).ready(function($) {
 
 
 			//is this ticketrow in the active datetimes list? if so then we toggle.
-			if ( $.inArray(dttrownum, active_dtts_on_tkt ) > -1 || dttrownum == active_dtts_on_tkt ) {
+			if ( $.inArray( parseInt( dttrownum, 10 ), active_dtts_on_tkt ) > -1 || dttrownum == active_dtts_on_tkt ) {
 				new_tkt_list_row = this.toggleTicketSelect(new_tkt_list_row, false, true);
 			}
 			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime
