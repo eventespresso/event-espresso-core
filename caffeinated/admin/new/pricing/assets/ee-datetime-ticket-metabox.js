@@ -914,6 +914,9 @@ jQuery(document).ready(function($) {
 			$(new_tkt_list_row).data('ticketRow', this.ticketRow);
 			$(new_tkt_list_row).data('context', 'datetime-ticket');
 
+            //update ticket status
+            this.setTicketStatus();
+
 			//append new_tkt_list_row to the available tkts row BUT keeping the DTTNUM generic BUT only if existing row isn't already present
 			if ( $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="'+this.ticketRow+'"]').length < 1 )
 				$('#dtt-existing-available-ticket-list-items-holder').append(default_list_row_for_tkt);
