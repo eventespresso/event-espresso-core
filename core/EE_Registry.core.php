@@ -502,7 +502,8 @@ final class EE_Registry {
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 		} else {
-			$class_abbreviation = 'BATMAN';
+			// have to specify something, but not anything that will conflict
+			$class_abbreviation = 'FANCY_BATMAN_PANTS';
 		}
 		// check if class has already been loaded, and return it if it has been
 		if ( isset( $this->$class_abbreviation ) && ! is_null( $this->$class_abbreviation ) ) {
