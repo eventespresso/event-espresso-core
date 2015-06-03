@@ -232,7 +232,11 @@ final class EE_Front_Controller {
 	 * @return    void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
+		EE_Registry::instance()->REQ->set_request_vars( $WP );
 		// grab post_name from request
 		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', EE_Registry::instance()->REQ->get( 'post_name' ));
 		// if it's not set, then check if frontpage is blog
@@ -259,7 +263,6 @@ final class EE_Front_Controller {
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-			// d( EE_Registry::instance()->CFG->core->post_shortcodes );
 			// cycle thru all posts with shortcodes set
 			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// filter shortcodes so
