@@ -716,7 +716,7 @@ jQuery(document).ready(function($) {
 
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
 			//update all existing DTT edit forms with the new TKT li element (note we're also making sure that we match the active tickets).
-			$('.advanced-dtt-edit-row', '.event-datetimes-container').each( function() {
+			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
 				tktHelper.newTKTListRow( this );
 			});
 
