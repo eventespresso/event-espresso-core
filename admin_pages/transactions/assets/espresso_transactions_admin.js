@@ -394,12 +394,16 @@ jQuery(document).ready(function($) {
 		//alert( response.toSource() );
 
 		// payment-total
-		var totalPaid = response.return_data.total_paid;
+		var totalPaid = parseFloat( response.return_data.total_paid );
 		$('#txn-admin-payment-total').html( accounting.formatMoney( totalPaid ) );
 		// total-amount-due
-		var txnTotal = $('#txn-admin-grand-total').text(); //this is already in decimal format, no unformatting needed
+		//this is already in decimal format, no unformatting needed
+		var txnTotal = parseFloat($('#txn-admin-grand-total').text() );
 		var totalAmountDue = txnTotal - totalPaid;
-        
+		//console.log( JSON.stringify( 'txnTotal: ' + txnTotal, null, 4 ) );
+		//console.log( JSON.stringify( 'totalPaid: ' + totalPaid, null, 4 ) );
+		//console.log( JSON.stringify( 'totalAmountDue: ' + totalAmountDue, null, 4 ) );
+		//console.log( JSON.stringify( 'accounting.formatMoney( totalAmountDue ): ' + accounting.formatMoney( totalAmountDue ), null, 4 ) );
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( accounting.formatMoney( totalAmountDue ) );
 
