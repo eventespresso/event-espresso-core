@@ -34,7 +34,17 @@
 			<li>
 				<strong>[ESPRESSO_EVENT_ATTENDEES status=RAP]</strong><br>
 				<p class="description">
-					<?php _e('You can list attendees that have a specific registration status (use status_id) or use "all" to return all attendees regardless of status.  Default when you don\'t have this parameter set is to only return attendees attached to approved contacts.', 'event_espresso' ); ?>
+					<?php _e('You can list attendees that have a specific registration status (use status code) or use "all" to return all attendees regardless of status.  Default when you don\'t have this parameter set is to only return attendees attached to approved contacts.', 'event_espresso' ); ?>
+				</p>
+				<p>
+					<?php _e('The statuses you can use are:', 'event_espresso'); ?>
+					<br>
+					<?php
+						foreach ( EEM_Registration::reg_status_array( array(), true ) as $status_code => $status_label ) {
+							echo '<strong>' . $status_code . ':</strong>' . ' ' . $status_label . '<br>';
+						}
+					?>
+
 				</p>
 				<br>
 			</li>
