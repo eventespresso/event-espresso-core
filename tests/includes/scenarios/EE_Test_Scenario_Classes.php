@@ -57,12 +57,20 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * Instantiates the scenario class and sets up basic properties.
+	 * @var EE_UnitTestCase
 	 */
-	public function __construct() {
+	protected $_eeTest;
+
+
+	/**
+	 * Instantiates the scenario class and sets up basic properties.
+	 *
+	 */
+	public function __construct( EE_UnitTestCase $eeTest ) {
 		//verify properties set
 		$this->type = empty( $this->type ) ? 'Unknown' : $this->type;
 		$this->name = empty( $this->name ) ? get_class( $this ) : $this->name;
+		$this->_eeTest = $eeTest;
 	}
 
 
@@ -228,8 +236,17 @@ class EE_Test_Scenario_Factory {
 	 */
 	protected $_repository;
 
-	public function __construct() {
+
+	/**
+	 * @var EE_UnitTestCase
+	 */
+	protected $_eeTest;
+
+
+
+	public function __construct( EE_UnitTestCase $eeTest ) {
 		$this->_repository = new EE_Test_Scenario_Repository();
+		$this->_eeTest = $eeTest;
 	}
 
 
@@ -241,7 +258,7 @@ class EE_Test_Scenario_Factory {
 				require $scenario_file;
 				$class_name = str_replace( '.scenario.php', '', $scenario_file );
 				if ( class_exists( $class_name ) ) {
-					$this->_repository->add_test_scenario( new $class_name );
+					$this->_repository->add_test_scenario( new $class_name( $this->_eeTest ) );
 				}
 			}
 		}
