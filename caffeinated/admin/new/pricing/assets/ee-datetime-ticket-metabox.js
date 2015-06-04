@@ -416,8 +416,8 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = row;
 			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
-			var newDTTorigrow = $('#event-datetime-' + row).clone(true).attr('id','event-datetime-' + newrownum);
-			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone(true).attr('id', 'advanced-dtt-edit-row-' + newrownum);
+			var newDTTorigrow = $('#event-datetime-' + row).clone().attr('id','event-datetime-' + newrownum);
+			var newDTTsettingsRow = $('#advanced-dtt-edit-row-' + row).clone().attr('id', 'advanced-dtt-edit-row-' + newrownum);
 			var newDTTrow = newDTTorigrow.add(newDTTsettingsRow);
 			newDTTrow = $(newDTTrow).appendTo('.datetime-editing-dtts-tbody');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -577,7 +577,7 @@ jQuery(document).ready(function($) {
 			this.ticketRow = row;
 			this.context = 'ticket';
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone(true, true).attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone(true, true).attr('id', 'edit-ticketrow-' + newrownum));
+			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
 
 			newTKTrow = newTKTrow.appendTo($('.ticket-table', '.event-tickets-container').find('tbody').first() );
 
@@ -716,9 +716,10 @@ jQuery(document).ready(function($) {
 
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
 			//update all existing DTT edit forms with the new TKT li element (note we're also making sure that we match the active tickets).
-			$('.advanced-dtt-edit-row', '.event-datetimes-container').each( function() {
+			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
 				tktHelper.newTKTListRow( this );
 			});
+
 
 			//make sure all trash icons show on creating the ticket
 			$('.trash-icon', '.event-tickets-container').show();
@@ -883,8 +884,11 @@ jQuery(document).ready(function($) {
 			if ( typeof(dttrownum) === 'undefined' )
 				return true; //we may have a blank ticket row.
 
-			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html();
-			var active_dtts_on_tkt = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').data('datetimeRow');
+			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html(),
+                active_dtts_on_tkt = [];
+			$('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').each( function() {
+                active_dtts_on_tkt.push( $( this ).data('datetimeRow') );
+            });
 			var default_list_row_for_tkt;
 
 			//replace all instances of TICKETNUM with ticketRow
@@ -898,7 +902,7 @@ jQuery(document).ready(function($) {
 
 
 			//is this ticketrow in the active datetimes list? if so then we toggle.
-			if ( $.inArray(dttrownum, active_dtts_on_tkt ) > -1 || dttrownum == active_dtts_on_tkt ) {
+			if ( $.inArray( parseInt( dttrownum, 10 ), active_dtts_on_tkt ) > -1 || dttrownum == active_dtts_on_tkt ) {
 				new_tkt_list_row = this.toggleTicketSelect(new_tkt_list_row, false, true);
 			}
 			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime
@@ -909,6 +913,9 @@ jQuery(document).ready(function($) {
 			$(new_tkt_list_row).data('datetimeRow', dttrownum);
 			$(new_tkt_list_row).data('ticketRow', this.ticketRow);
 			$(new_tkt_list_row).data('context', 'datetime-ticket');
+
+            //update ticket status
+            this.setTicketStatus();
 
 			//append new_tkt_list_row to the available tkts row BUT keeping the DTTNUM generic BUT only if existing row isn't already present
 			if ( $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="'+this.ticketRow+'"]').length < 1 )
@@ -1328,6 +1335,7 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper|jQuery selector}       this object for chainability
 		 */
 		toggleTicketSelect: function(itm, trash, getitm) {
+            itm = typeof itm === 'string' ? itm.trim() : itm; //remove whitespace.
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			getitm = typeof(getitm) === 'undefined' ? false : getitm;
@@ -2299,12 +2307,11 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
-		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
+		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.dateFieldContext).find(data.relatedField);
 		var next = $(data.nextField, data.dateFieldContext);
 		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
 
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
-
 		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
 	});
 
