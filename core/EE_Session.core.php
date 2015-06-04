@@ -127,13 +127,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	* 	private constructor to prevent direct creation
-	* 	@Constructor
-	* 	@access private
-	* 	@return EE_Session
-	*/
-	private function __construct() {
+	 /**
+	  *    private constructor to prevent direct creation
+	  * @Constructor
+	  * @access private
+	  * @param \EE_Encryption $encryption
+	  */
+	private function __construct( EE_Encryption $encryption = null ) {
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
@@ -162,9 +162,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			}
 		}
 		// are we using encryption?
-		if ( $this->_use_encryption ) {
-			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
-			$this->encryption = EE_Registry::instance()->load_core( 'Encryption' );
+		if ( $this->_use_encryption && $encryption instanceof EE_Encryption ) {
+			// encrypt data via: $this->encryption->encrypt();
+			$this->encryption = $encryption;
 		}
 		// filter hook allows outside functions/classes/plugins to change default empty cart
 		$extra_default_session_vars = apply_filters( 'FHEE__EE_Session__construct__extra_default_session_vars', array() );
