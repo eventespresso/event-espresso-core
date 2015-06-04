@@ -22,7 +22,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * @var EE_UnitTest_Factory
 	 */
-	protected $factory;
+	public $factory;
 
 	/**
 	 * Should be used to store the global $wp_actions during a test
@@ -57,6 +57,12 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected $_default_dates;
 
 
+	/**
+	 * @var EE_Test_Scenario_Factory
+	 */
+	public $scenarios;
+
+
 
 	public function setUp() {
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
@@ -88,6 +94,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		// load factories
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_TESTS_DIR . 'includes' . DS . 'factories' );
 		$this->factory = new EE_UnitTest_Factory;
+
+		// load scenarios
+		require EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
+		$this->scenarios = new EE_Test_Scenario_Factory(  $this );
 		EE_Registry::reset();
 	}
 
