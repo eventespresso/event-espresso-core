@@ -96,8 +96,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$this->factory = new EE_UnitTest_Factory;
 
 		// load scenarios
-		require EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
-		$this->scenarios = new EE_Test_Scenario_Factory(  $this );
+		require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
+		$this->scenarios = new EE_Test_Scenario_Factory( $this );
 		EE_Registry::reset();
 	}
 
