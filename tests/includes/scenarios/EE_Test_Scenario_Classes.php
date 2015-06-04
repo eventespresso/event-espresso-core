@@ -185,12 +185,12 @@ class EE_Test_Scenario_Repository extends EE_Object_Repository {
 	}
 
 	public function get_scenarios_by_type( $type ) {
-		return $this->getObjectByInfo( $type, 'type' );
+		return $this->getObjectByInfoArray( $type, 'type' );
 	}
 
 
 	public function get_scenario_by_name( $name ) {
-		return reset( $this->getObjectByInfo( $name, 'name' ) );
+		return reset( $this->getObjectByInfoArray( $name, 'name' ) );
 	}
 
 
@@ -200,7 +200,7 @@ class EE_Test_Scenario_Repository extends EE_Object_Repository {
 	 *
 	 * @return array | object
 	 */
-	protected function getObjectByInfo( $info, $key ) {
+	protected function getObjectByInfoArray( $info, $key ) {
 		$objects = array();
 		$this->rewind();
 		while( $this->valid() ) {
