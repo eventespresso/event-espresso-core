@@ -696,11 +696,13 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$wpdb->insert( $this->_new_price_table,
 				array(
 					'PRC_amount' => $old_att_price,
+					'PRT_ID' => EE_DMS_4_1_0_prices::price_type_base,
 					'PRC_name' => $old_att_price_option,
 					'PRC_deleted' => TRUE
 				),
 				array(
 					'%d',//PRC_amount
+					'%d',//PRT_ID
 					'%s',//PRC_name
 					'%d',//PRC_deleted
 				));
