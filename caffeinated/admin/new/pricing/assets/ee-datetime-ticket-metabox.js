@@ -550,6 +550,9 @@ jQuery(document).ready(function($) {
 				$(this).attr('name', newname);
 			});
 
+            //remove id content
+            newDTTrow.find('.ee-item-id').text('');
+
 
 			// update ALL existing TKT edit forms with the new DTT li element.
 			$('.edit-ticket-row', '.event-tickets-container').each( function() {
@@ -713,6 +716,9 @@ jQuery(document).ready(function($) {
 				$(this).attr('data-ticket-row', newrownum);
 				$(this).data('ticketRow', newrownum);
 			});
+
+            //remove ticket id content
+            newTKTrow.find('.ee-item-id').text('');
 
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
 			//update all existing DTT edit forms with the new TKT li element (note we're also making sure that we match the active tickets).
