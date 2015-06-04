@@ -710,7 +710,6 @@ class EEH_Template {
 	}
 
 
-
 } //end EEH_Template class
 
 //function convert_zero_to_free( $amount, $return_raw ) {

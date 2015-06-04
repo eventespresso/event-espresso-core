@@ -2318,6 +2318,7 @@ class EE_Event_Single_Config extends EE_Config_Base{
 class EE_Ticket_Selector_Config extends EE_Config_Base{
 	public $show_ticket_sale_columns;
 	public $show_ticket_details;
+	public $show_expired_tickets;
 
 	/**
 	 *	class constructor
@@ -2325,6 +2326,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->show_ticket_sale_columns = 1;
 		$this->show_ticket_details = 1;
+		$this->show_expired_tickets = 1;
 	}
 }
 
