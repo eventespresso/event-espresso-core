@@ -28,7 +28,7 @@
  * @subpackage            core
  * @author                    Brent Christensen
  */
-final class EE_Registry {
+class EE_Registry {
 
 	/**
 	 *    EE_Registry Object
@@ -41,7 +41,7 @@ final class EE_Registry {
 	 * @var array $_class_abbreviations
 	 * @access    private
 	 */
-	private $_class_abbreviations = array();
+	protected $_class_abbreviations = array();
 
 	/**
 	 *    EE_Cart Object
@@ -543,7 +543,7 @@ final class EE_Registry {
 				return $file_paths[ $key ];
 			}
 		}
-		return false;
+		return '';
 	}
 
 
