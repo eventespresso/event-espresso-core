@@ -80,10 +80,10 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 
 		//set default attributes
 		$default_shortcode_attributes = array(
-			'event_id' => NULL,
-			'datetime_id' => NULL,
-			'ticket_id' => NULL,
-			'status' => EEM_Registration::status_id_approved,
+			'event_id'      => null,
+			'datetime_id'   => null,
+			'ticket_id'     => null,
+			'status'        => EEM_Registration::status_id_approved,
 			'show_gravatar' => false
 		);
 
@@ -93,10 +93,10 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 		$attributes = array_merge( $default_shortcode_attributes, $attributes );
 
 		$template_args = array(
-			'contacts' => array(),
-			'event' => null,
-			'datetime' => null,
-			'ticket' => null,
+			'contacts'      => array(),
+			'event'         => null,
+			'datetime'      => null,
+			'ticket'        => null,
 			'show_gravatar' => $attributes['show_gravatar']
 		);
 
@@ -109,17 +109,21 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			if ( is_single() && is_espresso_event() ) {
 				$event = EEH_Event_View::get_event();
 				if ( $event instanceof EE_Event ) {
-					$template_args['event'] = $event;
+					$template_args['event']          = $event;
 					$query[0]['Registration.EVT_ID'] = $event->ID();
 				}
 			} else {
 				//try getting the earliest active event if none then get the
-				$event = EEM_Event::instance()->get_active_events( array( 'limit' => 1, 'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' ) ) );
-				$event = empty( $event ) ? EEM_Event::instance()->get_upcoming_events( array( 'limit' => 1, 'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC') ) ) : null;
+				$event = EEM_Event::instance()->get_active_events( array( 'limit'    => 1,
+				                                                          'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' )
+				) );
+				$event = empty( $event ) ? EEM_Event::instance()->get_upcoming_events( array( 'limit'    => 1,
+				                                                                              'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' )
+				) ) : null;
 				$event = reset( $event );
 				if ( $event instanceof EE_Event ) {
 					$query[0]['Registration.EVT_ID'] = $event->ID();
-					$template_args['event'] = $event;
+					$template_args['event']          = $event;
 				}
 			}
 		} else {
@@ -135,8 +139,8 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			$datetime = EEM_Datetime::instance()->get_one_by_ID( $attributes['datetime_id'] );
 			if ( $datetime instanceof EE_Datetime ) {
 				$query[0]['Registration.Event.Datetime.DTT_ID'] = $attributes['datetime_id'];
-				$template_args['datetime'] = $datetime;
-				$template_args['event'] = $datetime->event();
+				$template_args['datetime']                      = $datetime;
+				$template_args['event']                         = $datetime->event();
 			}
 		}
 
@@ -145,13 +149,15 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			$ticket = EEM_Ticket::instance()->get_one_by_ID( $attributes['ticket_id'] );
 			if ( $ticket instanceof EE_Ticket ) {
 				$query[0]['Registration.TKT_ID'] = $attributes['ticket_id'];
-				$template_args['ticket'] = $ticket;
-				$template_args['event'] = $ticket->first_datetime() instanceof EE_Datetime ? $ticket->first_datetime()->event() : null;
+				$template_args['ticket']         = $ticket;
+				$template_args['event']          = $ticket->first_datetime() instanceof EE_Datetime ? $ticket->first_datetime()->event() : null;
 			}
 		}
 
 		//status
-		$query[0]['Registration.STS_ID'] = $attributes['status'];
+		if ( $attributes['status'] != 'all' ) {
+			$query[0]['Registration.STS_ID'] = $attributes['status'];
+		}
 		$query['group_by'] = array( 'ATT_ID' );
 
 		//get contacts!
