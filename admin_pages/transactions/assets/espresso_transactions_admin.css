@@ -64,13 +64,13 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     border-left-color: #A39D9C;
 }
 
-.ee-status-strip-td {
-    padding: 0;
-	min-height: 50px;
-    height: 100%;
-    display: inline-block;
-	margin: 0 0 -5px;
-}
+/*.ee-status-strip-td {*/
+    /*padding: 0;*/
+	/*min-height: 50px;*/
+    /*height: 100%;*/
+    /*display: inline-block;*/
+	/*margin: 0 0 -5px;*/
+/*}*/
 
 .widefat td.column-STS_ID,
 .widefat th.column-STS_ID {
@@ -225,13 +225,14 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     border:1px solid #dfdfdf; background:#fcfcfc;
     /*font-family: sans-serif; font-size: 1em; vertical-align:middle;*/
 }
-.admin-modal-dialog-row { clear:both; margin:0 0 1em; }
-.admin-modal-dialog-inner label { display:inline-block; float:left; width:150px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; }
-.admin-modal-dialog-inner .left-150 { display:inline-block; padding-left:150px; margin-left:1em; }
-.admin-modal-dialog-inner .description { vertical-align:top; }
+.admin-modal-dialog-row { clear:both; margin:0 0 2em; }
+.admin-modal-dialog-inner label { display:inline-block; float:left; width:250px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; font-weight: bold; }
+.admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl { width:auto; font-weight: normal; }
+.admin-modal-dialog-inner .left-250 { display:inline-block; padding-left:250px; margin-left:1em; }
+.admin-modal-dialog-inner .description { vertical-align:top; color: #787878; }
 .admin-modal-dialog-inner input,
 .admin-modal-dialog-inner select { vertical-align:top; }
-.validation-notice-dv { display:none; padding:0 0 0 150px; margin-left:1em; color:red; }
+.validation-notice-dv { display:none; padding:0 0 0 250px; margin-left:1em; color:red; }
 
 .requires-value { border:1px solid #FE2A00 !important; }
 
@@ -246,9 +247,18 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-modal-dialog-inner input[type=text],
 .admin-modal-dialog-inner select { width:100%; min-width:150px; max-width:250px; }
 .admin-modal-dialog-inner input[type=checkbox] {
-    margin-top: 6px;
+    margin: 6px 1em .5em 0
 }
 
+.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],
+.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {
+    /*margin: 2px 1em .5em 0*/
+    margin: 0
+}
+
+.txn-admin-apply-payment-to-registrations-lbl input {
+    margin: 2px 1em 0 0;
+}
 /*#txn-admin-payment-amount-inp { max-width:150px; }*/
 
 /*.admin-primary-mbox-tbl-wrap-inner { padding:12px; margin:0; background:#fcfcfc; }

@@ -1070,12 +1070,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['reg_datetime']['value'] =  $this->_registration->pretty_date('l F j, Y','g:i:s a') ;
 			$this->_template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
 
-			$this->_template_args['reg_status']['value'] = $this->_registration->pretty_status();
-			$this->_template_args['reg_status']['label'] = __( 'Registration Status', 'event_espresso' );
-			$this->_template_args['reg_status']['class'] = 'status-' . $this->_registration->status_ID();
-
-			$this->_template_args['approve_decline_reg_status_buttons'] = $this->_set_approve_or_decline_reg_status_buttons();
-
 			$this->_template_args['grand_total'] = $transaction->total();
 
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
@@ -1115,6 +1109,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_details_metaboxes() {
 		$this->_set_registration_object();
 		$attendee = $this->_registration instanceof EE_Registration ? $this->_registration->attendee() : null;
+		add_meta_box( 'edit-reg-status-mbox', __( 'Registration Status', 'event_espresso' ), array( $this, 'set_reg_status_buttons_metabox' ), $this->wp_page_slug, 'normal', 'high' );
 		add_meta_box( 'edit-reg-details-mbox', __( 'Registration Details', 'event_espresso' ), array( $this, '_reg_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 		if ( $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can('ee_edit_registration', 'edit-reg-questions-mbox' ) ) {
 			add_meta_box( 'edit-reg-questions-mbox', __( 'Registration Form Answers', 'event_espresso' ), array( $this, '_reg_questions_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
@@ -1135,15 +1130,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@access protected
 	*		@return string
 	*/
-	protected function _set_approve_or_decline_reg_status_buttons() {
+	public function set_reg_status_buttons_metabox() {
 
 		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
 		$is_complete = $this->_registration->transaction()->is_completed();
 
 		//let's get an array of all possible buttons that we can just reference
 		$status_buttons = $this->_get_reg_status_buttons();
-
-		$default_status = EE_Registry::instance()->CFG->registration->default_STS_ID;
+		$template_args[ 'reg_status_value' ] = $this->_registration->pretty_status();
+		$template_args[ 'reg_status_class' ] = 'status-' . $this->_registration->status_ID();
 		$template_args['attendee'] = $this->_registration->attendee();
 		$template = REG_TEMPLATE_PATH . 'reg_status_change_buttons.template.php';
 		if ( $this->_set_registration_object() ) {
@@ -1158,7 +1153,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['REG_ID'] = $this->_registration->ID();
 		$template_args['nonce'] = wp_nonce_field( 'change_reg_status_nonce',  'change_reg_status_nonce', FALSE, FALSE );
 
-		return EEH_Template::display_template( $template, $template_args, TRUE );
+		EEH_Template::display_template( $template, $template_args );
 
 	}
 
