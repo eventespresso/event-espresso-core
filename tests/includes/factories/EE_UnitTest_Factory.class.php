@@ -89,11 +89,19 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 	public $payment;
 
 
+	/**
+	 * @var EE_UnitTest_Factory_for_Specific_Builds
+	 */
+	public $complex_factory;
+
+
 
 	public function __construct() {
 		parent::__construct();
 
-		//setup any properties containing various test factory objects. EE_Test_Factories should extend the WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/EE_UnitTest_Factory.class.php).
+		//simple factories
+		//setup any properties containing various test factory objects. EE_Test_Factories should extend the
+		// WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/EE_UnitTest_Factory.class.php).
 		$this->event = new EE_UnitTest_Factory_For_Event( $this );
 		$this->venue = new EE_UnitTest_Factory_For_Venue( $this );
 		$this->datetime = new EE_UnitTest_Factory_For_Datetime( $this );
@@ -112,6 +120,12 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->attendee_chained = new EE_UnitTest_Factory_For_Attendee( $this, true );
 		$this->status = new EE_UnitTest_Factory_For_Status( $this );
 		$this->payment = new EE_UnitTest_Factory_For_Payment( $this );
+
+		//complex relationship factory
+		//This is a unique factory (not extending WP_UnitTest_Factory_for_Thing) that builds EE objects from a given special formatted
+		//setup array outlining object instantiation and relationships.
+		$this->complex_factory = new EE_UnitTest_Factory_for_Specific_Builds( $this );
+
 	}
 }
 
