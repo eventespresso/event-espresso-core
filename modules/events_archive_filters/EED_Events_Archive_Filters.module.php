@@ -498,7 +498,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		add_action( 'loop_start', array( $this, 'event_list_pagination' ));
 		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
 		// if NOT a custom template
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+		if ( EE_Registry::instance()->LIB->EE_Front_Controller->get_selected_template() != 'archive-espresso_events.php' ) {
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
