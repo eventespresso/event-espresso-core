@@ -80,7 +80,7 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return void
 	 */
 	public function set_request_vars( $wp = NULL ) {
@@ -102,7 +102,7 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = NULL ) {
