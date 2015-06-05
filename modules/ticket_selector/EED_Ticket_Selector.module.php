@@ -295,7 +295,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		);
 
 		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets ) {
-			$ticket_query_args[0]['TKT_end_date'] = array( '>', time() );
+			//use the correct applicable time query depending on what version of core is being run.
+			$current_time = method_exists( 'EEM_Datetime', 'current_time_for_query' ) ? time() : current_time('timestamp');
+			$ticket_query_args[0]['TKT_end_date'] = array( '>', $current_time );
 		}
 
 		// get all tickets for this event ordered by the datetime
