@@ -248,9 +248,10 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed $arguments
 	 * @param bool $load_only
+	 * @param bool $resolve_dependencies
 	 * @return mixed
 	 */
-	public function load_core( $class_name, $arguments = array(), $load_only = false ) {
+	public function load_core( $class_name, $arguments = array(), $load_only = false, $resolve_dependencies = false ) {
 		$core_paths = apply_filters(
 			'FHEE__EE_Registry__load_core__core_paths',
 			array(
@@ -261,7 +262,7 @@ class EE_Registry {
 			)
 		);
 		// retrieve instantiated class
-		return $this->_load( $core_paths, 'EE_', $class_name, 'core', $arguments, false, true, $load_only );
+		return $this->_load( $core_paths, 'EE_', $class_name, 'core', $arguments, false, true, $load_only, $resolve_dependencies );
 	}
 
 
@@ -279,7 +280,7 @@ class EE_Registry {
 		$service_paths = apply_filters(
 			'FHEE__EE_Registry__load_service__service_paths',
 			array(
-				EE_CORE . 'services' . DS
+				EE_CORE . 'services' . DS,
 			)
 		);
 		// retrieve instantiated class
@@ -611,25 +612,31 @@ class EE_Registry {
 		try {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
+			if ( $resolve_dependencies ) {
+				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
+			}
+			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
 			if ( $reflector->getConstructor() === null || $reflector->isAbstract() || $load_only ) {
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
+				//$instantiation_mode = "no constructor";
 				return true;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
+				//$instantiation_mode = "new_instance_from_db";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
 			} else if ( method_exists( $class_name, 'new_instance' ) ) {
+				//$instantiation_mode = "new_instance";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance' ), $arguments );
 			} else if ( method_exists( $class_name, 'instance' ) ) {
+				//$instantiation_mode = "instance";
 				$class_obj = call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			} else if ( $reflector->isInstantiable() ) {
-				if ( $resolve_dependencies ) {
-					$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
-				}
-				$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
+				//$instantiation_mode = "isInstantiable";
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
 				// heh ? something's not right !
+				//$instantiation_mode = 'none';
 				throw new EE_Error(
 					sprintf(
 						__( 'The %s file %s could not be instantiated.', 'event_espresso' ),
@@ -638,7 +645,6 @@ class EE_Registry {
 					)
 				);
 			}
-
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
@@ -656,6 +662,9 @@ class EE_Registry {
 	 */
 	protected function _resolve_dependencies( ReflectionClass $reflector, $class_name, $arguments = array() ) {
 		$constructor = $reflector->getConstructor();
+		if ( ! $constructor ) {
+			return $arguments;
+		}
 		$params = $constructor->getParameters();
 		foreach ( $params as $param ) {
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
