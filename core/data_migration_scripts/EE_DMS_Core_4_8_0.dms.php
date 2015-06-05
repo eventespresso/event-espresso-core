@@ -38,7 +38,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * return EE_DMS_Core_4_8_0
 	 */
 	public function __construct() {
-		$this->_pretty_name = __("Data Migration to Event Espresso 4.7.0.P (for promotions)", "event_espresso");
+		$this->_pretty_name = __("Data Migration to Event Espresso 4.8.0.P (for promotions)", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_8_0_pretax_totals(),
