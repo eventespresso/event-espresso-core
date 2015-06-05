@@ -1045,7 +1045,7 @@ final class EE_System {
 		// let's get it started
 		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
-			EE_Registry::instance()->load_core( 'Front_Controller' );
+			EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true );
 		} else if ( ! EE_FRONT_AJAX ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
