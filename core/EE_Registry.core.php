@@ -494,6 +494,15 @@ class EE_Registry {
 
 
 	/**
+	 * _get_cached_class
+	 *
+	 * attempts to find a cached version of the requested class
+	 * by looking in the following places:
+	 * 		$this->{class_abbreviation} 		 	ie:   	$this->CART
+	 * 		$this->{$class_name}           		 	ie:    $this->Some_Class
+	 * 		$this->LIB->{$class_name}			ie: 	$this->LIB->Some_Class
+	 * 		$this->addon->{$$class_name}	ie: 	$this->addon->Some_Addon_Class
+	 *
 	 * @access protected
 	 * @param string $class_name
 	 * @param string $class_prefix
@@ -522,6 +531,12 @@ class EE_Registry {
 
 
 	/**
+	 * _resolve_path
+	 *
+	 * attempts to find a full valid filepath for the requested class.
+	 * loops thru each of the base paths in the $file_paths array and appends : "{classname} . {file type} . php"
+	 * then returns that path if the target file has been found and is readable
+	 *
 	 * @access protected
 	 * @param string $class_name
 	 * @param string $type
@@ -550,6 +565,11 @@ class EE_Registry {
 
 
 	/**
+	 * _require_file
+	 *
+	 * basically just performs a require_once()
+	 * but with some error handling
+	 *
 	 * @access protected
 	 * @param string $path
 	 * @param string $class_name
@@ -596,6 +616,20 @@ class EE_Registry {
 
 
 	/**
+	 * _create_object
+	 * Attempts to instantiate the requested class via any of the
+	 * commonly used instantiation methods employed throughout EE.
+	 * The priority for instantiation is as follows:
+	 * 		- abstract classes or any class flagged as "load only" (no instantiation occurs)
+	 * 	 	- model objects via their 'new_instance_from_db' method
+	 * 	 	- model objects via their 'new_instance' method
+	 * 	 	- "singleton" classes" via their 'instance' method
+	 *  	- standard instantiable classes via their __constructor
+	 * Prior to instantiation, if the $resolve_dependencies flag is set to true,
+	 * then the constructor for the requested class will be examined to determine
+	 * if any dependencies exist, and if they can be injected.
+	 * If so, then those classes will be added to the array of arguments passed to the constructor
+	 *
 	 * @access protected
 	 * @param string $class_name
 	 * @param array $arguments
@@ -654,6 +688,17 @@ class EE_Registry {
 
 
 	/**
+	 * _resolve_dependencies
+	 *
+	 * examines the constructor for the requested class to determine
+	 * if any dependencies exist, and if they can be injected.
+	 * If so, then those classes will be added to the array of arguments passed to the constructor
+	 * For example:
+	 * 		if attempting to load a class "Foo" with the following constructor:
+	 *        __construct( Bar $bar_class, Fighter $grohl_class )
+	 * 		then $bar_class and $grohl_class will be added to the $arguments array
+	 * 		IF they can be resolved
+	 *
 	 * @access protected
 	 * @param ReflectionClass $reflector
 	 * @param string $class_name
@@ -661,21 +706,51 @@ class EE_Registry {
 	 * @return array
 	 */
 	protected function _resolve_dependencies( ReflectionClass $reflector, $class_name, $arguments = array() ) {
+		// let's examine the constructor
 		$constructor = $reflector->getConstructor();
+		// whu? huh? nothing?
 		if ( ! $constructor ) {
 			return $arguments;
 		}
+		// get constructor parameters
 		$params = $constructor->getParameters();
-		foreach ( $params as $param ) {
+		// and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
+		$argument_keys = array_keys( $arguments );
+		// now loop thru all of the constructors expected parameters
+		foreach ( $params as $index => $param ) {
+			// is this a dependency for a specific class ?
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
+			if (
+				// param is not even a class
+				$param_class === null ||
+				(
+					// something already exists in the incoming arguments for this param
+					isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] ) &&
+					// AND it's the correct class
+					$arguments[ $argument_keys[ $index ] ] instanceof $param_class
+				)
+			) {
+				// so let's skip this argument and move on to the next
+				continue;
+			}
+			// we might have a dependency... let's try and find it in our cache
 			$cached_class = $this->_get_cached_class( $param_class );
-			if ( $cached_class !== null ) {
-				array_unshift( $arguments, $cached_class );
+			$dependency = null;
+			// and grab it if it exists
+			if ( $cached_class instanceof $param_class ) {
+				$dependency = $cached_class;
 			} else if ( $param_class != $class_name ) {
+				// or if not cached, then let's try and load it directly
 				$core_class = $this->load_core( $param_class );
-				if ( $core_class !== null ) {
-					array_unshift( $arguments, $core_class );
+				// as long as we aren't creating some recursive loading loop
+				if ( $core_class instanceof $param_class ) {
+					$dependency = $core_class;
 				}
+			}
+			// did we successfully find the correct dependency ?
+			if ( $dependency instanceof $param_class ) {
+				// then let's inject it into the incoming array of arguments at the correct location
+				array_splice( $arguments, $index, 1, $dependency );
 			}
 		}
 		return $arguments;
@@ -684,6 +759,17 @@ class EE_Registry {
 
 
 	/**
+	 * _set_cached_class
+	 *
+	 * attempts to cache the instantiated class locally
+	 * in one of the following places, in the following order:
+	 *        $this->{class_abbreviation} 			ie:    $this->CART
+	 *        $this->{$class_name}                    	ie:    $this->Some_Class
+	 *        $this->addon->{$$class_name} 	ie:    $this->addon->Some_Addon_Class
+	 *        $this->LIB->{$class_name} + 		ie:    $this->LIB->Some_Class +
+	 * 		+ only classes that are NOT model objects with the $cache flag set to true
+	 * 	 	will be cached under LIB (libraries)
+	 *
 	 * @access protected
 	 * @param object $class_obj
 	 * @param string $class_name
