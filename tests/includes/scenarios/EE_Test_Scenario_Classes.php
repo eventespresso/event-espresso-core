@@ -98,7 +98,7 @@ abstract class EE_Test_Scenario {
 	 * Used to initialize the scenario (does nothing if its beein initialized.
 	 */
 	public function initialize() {
-		if ( ! $this->is_initalized() ) {
+		if ( $this->is_initialized() ) {
 			return;
 		}
 		$this->_set_up_scenario();
@@ -126,7 +126,7 @@ abstract class EE_Test_Scenario {
 	 * @return mixed
 	 */
 	public function get_expected( $key ) {
-		return isset( $this->_expected_values[$key] ) ? $this->_expected_values[$key] : null;
+		return isset( $this->_expected_values[$key] ) ? $this->_expected_values[$key] : false;
 	}
 
 
@@ -245,7 +245,6 @@ class EE_Test_Scenario_Factory {
 
 
 	public function __construct( EE_UnitTestCase $eeTest ) {
-		$this->_repository = new EE_Test_Scenario_Repository();
 		$this->_eeTest = $eeTest;
 	}
 
@@ -255,10 +254,11 @@ class EE_Test_Scenario_Factory {
 
 		if ( ! empty( $scenario_files ) ) {
 			foreach ( $scenario_files as $scenario_file ) {
-				require $scenario_file;
-				$class_name = str_replace( '.scenario.php', '', $scenario_file );
+				require_once $scenario_file;
+				$class_name = str_replace( '.scenario.php', '', basename( $scenario_file ) );
 				if ( class_exists( $class_name ) ) {
-					$this->_repository->add_test_scenario( new $class_name( $this->_eeTest ) );
+					$scenario = new $class_name( $this->_eeTest );
+					$this->_repository->add_test_scenario( $scenario );
 				}
 			}
 		}
@@ -270,7 +270,8 @@ class EE_Test_Scenario_Factory {
 	 * @return EE_Test_Scenario_Repository
 	 */
 	public function get_repository() {
-		if ( empty( $this->_repository ) ) {
+		if ( ! $this->_repository instanceof EE_Test_Scenario_Repository ) {
+			$this->_repository = new EE_Test_Scenario_Repository();
 			$this->_build_scenarios();
 		}
 		return $this->_repository;

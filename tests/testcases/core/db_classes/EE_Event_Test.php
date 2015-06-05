@@ -124,7 +124,9 @@ class EE_Event_Test extends EE_UnitTestCase{
 		//grab test scenarios.
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
 		foreach ( $scenarios as $scenario ) {
-			$this->assertEquals( $scenario->get_expected('total_avaialable_spaces'), $scenario->get_scenario_object()->total_avaialable_space() );
+			if ( $scenario->get_expected( 'total_available_spaces') ) {
+				$this->assertEquals( $scenario->get_expected( 'total_available_spaces' ), $scenario->get_scenario_object()->total_available_spaces(), 'Testing ' . $scenario->name );
+			}
 		}
 	}
 

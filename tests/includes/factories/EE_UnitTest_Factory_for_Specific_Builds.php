@@ -57,41 +57,43 @@ class EE_UnitTest_Factory_for_Specific_Builds {
 	 * @return EE_Base_Class[]   the objects created.
 	 */
 	public function build( $model_name, $build_artifact, $save_to_db = true ) {
-			$model_property = strtolower( $model_name );
-			if ( ! property_exists( $this->_factory, $model_property ) ) {
-				throw new Exception( sprintf( 'Unable to construct object because %s is not a property on the EE_UnitTest_Factory' ), $model_name );
+		$model_property = strtolower( $model_name );
+		if ( ! property_exists( $this->_factory, $model_property ) ) {
+			throw new Exception( sprintf( 'Unable to construct object because %s is not a property on the EE_UnitTest_Factory' ), $model_name );
+		}
+
+		$built_objects = array();
+		$relations_objects = array();
+
+		//first we need to build the relations if present for use
+		if ( isset( $build_artifact['relations'] ) ) {
+			foreach( $build_artifact['relations'] as $relation_name => $relation_artifact ) {
+				$relations_objects[$relation_name] = $this->build( $relation_name, $relation_artifact, $save_to_db );
 			}
+			//unset relations
+			unset( $build_artifact['relations'] );
+		}
 
-			$built_objects = array();
-			$relations_objects = array();
-
-			//first we need to build the relations if present for use
-			if ( isset( $build_artifact['relations'] ) ) {
-				foreach( $build_artifact['relations'] as $relation_name => $relation_artifact ) {
-					$relations_objects[$relation_name] = $this->build( $relation_name, $relation_artifact, $save_to_db );
-				}
-				//unset relations
-				unset( $build_artifact['relations'] );
-			}
-
-			//next build the main objects in the build_artifact
-			foreach( $build_artifact as $index => $object_instructions ) {
-				/**
-				 * @type EE_Base_Class
-				 */
-				$built_object = $this->$model_property->create( $object_instructions['fields'] );
-				if ( isset( $object_instructions['relations'] ) ) {
-					foreach ( $object_instructions['relations'] as $object_relation_name => $relate_to_index ) {
-						if ( isset( $relations_object[$object_relation_name][$relate_to_index] ) ) {
-							$built_object->_add_relation_to( $object_relation_name, $relations_objects[$object_relation_name][$relate_to_index] );
+		//next build the main objects in the build_artifact
+		foreach( $build_artifact as $index => $object_instructions ) {
+			/**
+			 * @type EE_Base_Class
+			 */
+			$built_object = $this->_factory->$model_property->create( $object_instructions['fields'] );
+			if ( isset( $object_instructions['relations'] ) ) {
+				foreach ( $object_instructions['relations'] as $object_relation_name => $relate_to_indexes) {
+					foreach ( $relate_to_indexes as $relate_to_index ) {
+						if ( $relations_objects && isset( $relations_objects[ $object_relation_name ][ $relate_to_index ] ) ) {
+							$built_object->_add_relation_to( $relations_objects[ $object_relation_name ][ $relate_to_index ], $object_relation_name );
 							if ( $save_to_db ) {
 								$built_object->save();
 							}
 						}
 					}
 				}
-				$built_objects[] = $built_object;
 			}
-			return $built_objects;
+			$built_objects[] = $built_object;
+		}
+		return $built_objects;
 	}
 }

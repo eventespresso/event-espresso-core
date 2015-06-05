@@ -20,6 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Event_Scenario_A extends EE_Test_Scenario {
 
+	public function __construct( EE_UnitTestCase $eetest ) {
+		$this->type = 'event';
+		$this->name = 'Event Scenario A';
+		parent::__construct( $eetest );
+	}
+
 	protected function _set_up_expected(){
 		$this->_expected_values = array(
 			'total_available_spaces' => 15,
@@ -29,9 +35,6 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 
 
 	protected function _set_up_scenario(){
-		$this->type = 'event';
-		$this->name = 'Event Scenario A';
-
 		$event_info = array(
 			0 => array(
 				'fields' => array(
@@ -87,7 +90,7 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 			1 => array(
 				'fields' => array(
 					'TKT_name' => 'Ticket B',
-					'TKT_qty' => 15
+					'TKT_qty' => 5
 				),
 				'relations' => array(
 					'Datetime' => array( 0, 1 )
@@ -96,7 +99,7 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 			2 => array(
 				'fields' => array(
 					'TKT_name' => 'Ticket C',
-					'TKT_qty' => 5
+					'TKT_qty' => 15
 				),
 				'relations' => array(
 					'Datetime' => array( 0 )
@@ -105,7 +108,7 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 			3 => array(
 				'fields' => array(
 					'TKT_name' => 'Ticket D',
-					'TKT_qty' => 20
+					'TKT_qty' => 10
 				),
 				'relations' => array(
 					'Datetime' => array( 1, 2 )
