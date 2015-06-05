@@ -143,6 +143,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			$datetime = EEM_Datetime::instance()->get_one_by_ID( $attributes['datetime_id'] );
 			if ( $datetime instanceof EE_Datetime ) {
 				$query[0]['Registration.Ticket.Datetime.DTT_ID'] = $attributes['datetime_id'];
+				$query['default_where_conditions'] = 'this_model_only';
 				$template_args['datetime']                      = $datetime;
 				$template_args['event']                         = $datetime->event();
 			} else {
@@ -150,7 +151,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			}
 		}
 
-		//ticket?
+		//ticket?just
 		if ( ! empty( $attributes['ticket_id'] ) && empty( $attributes['event_id'] ) && empty( $attributes['datetime_id'] ) ) {
 			$ticket = EEM_Ticket::instance()->get_one_by_ID( $attributes['ticket_id'] );
 			if ( $ticket instanceof EE_Ticket ) {
