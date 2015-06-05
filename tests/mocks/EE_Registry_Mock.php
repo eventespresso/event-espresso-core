@@ -128,6 +128,21 @@ class EE_Registry_Mock extends EE_Registry {
 		return $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only, $resolve_dependencies );
 	}
 
+
+
+	/**
+	 * @access public
+	 * @param object $class_obj
+	 * @param string $class_name
+	 * @param string $class_prefix
+	 * @param bool $from_db
+	 * @param bool $cache
+	 * @return void
+	 */
+	public function set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
+		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
+	}
+
 }
 
 
