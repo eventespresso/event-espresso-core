@@ -218,9 +218,6 @@ final class EE_Front_Controller {
 	 * @return    void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
 		EE_Registry::instance()->REQ->set_request_vars( $WP );
 		// grab post_name from request
