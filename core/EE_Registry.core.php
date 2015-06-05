@@ -697,7 +697,8 @@ class EE_Registry {
 	 * 		if attempting to load a class "Foo" with the following constructor:
 	 *        __construct( Bar $bar_class, Fighter $grohl_class )
 	 * 		then $bar_class and $grohl_class will be added to the $arguments array
-	 * 		IF they can be resolved
+	 * 		IF they are NOT already present in the incoming arguments array,
+	 * 		and the correct classes can be loaded
 	 *
 	 * @access protected
 	 * @param ReflectionClass $reflector
