@@ -23,14 +23,6 @@
  */
 final class EE_Front_Controller {
 
-
-	/**
-	 * 	instance of the EE_System object
-	 *	@var 	$_instance
-	 * 	@access 	private
-	 */
-	private static $_instance = NULL;
-
 	/**
 	 * 	$_template_path
 	 *	@var 	string		$_template_path
@@ -47,37 +39,22 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * static copy of registry that modules can use until they get instantiated
-	 *	@var 	EE_Registry	$registry
-	 * 	@access 	public
+	 *	@type  EE_Module_Request_Router $Module_Request_Router
+	 * 	@access    protected
 	 */
-	public static $registry;
-
-
-	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return EE_Front_Controller
-	 */
-	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_Front_Controller )) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
+	protected $Module_Request_Router;
 
 
 
 	/**
 	 *    class constructor
-	 *
 	 *    should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
-	 * @access    private
-	 * @return \EE_Front_Controller
+	 * @access    public
+	 * @param \EE_Module_Request_Router $Module_Request_Router
 	 */
-	private function __construct() {
+	public function __construct( EE_Module_Request_Router $Module_Request_Router   ) {
+		$this->Module_Request_Router = $Module_Request_Router;
 		// make sure template tags are loaded immediately so that themes don't break
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'load_espresso_template_tags' ), 10 );
 		// determine how to integrate WP_Query with the EE models
@@ -108,6 +85,15 @@ final class EE_Front_Controller {
 		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 1 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
+	}
+
+
+
+	/**
+	 * @return EE_Module_Request_Router
+	 */
+	public function Module_Request_Router() {
+		return $this->Module_Request_Router;
 	}
 
 
@@ -323,17 +309,17 @@ final class EE_Front_Controller {
 	public function pre_get_posts( $WP_Query ) {
 		// only load Module_Request_Router if this is the main query
 		if ( $WP_Query->is_main_query() ) {
-			// load module request router
-			$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
+			//// load module request router
+			//$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
 			// verify object
-			if ( $Module_Request_Router instanceof EE_Module_Request_Router ) {
+			if ( $this->Module_Request_Router instanceof EE_Module_Request_Router ) {
 				// cycle thru module routes
-				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
+				while ( $route = $this->Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
-					$module = $Module_Request_Router->resolve_route( $route[0], $route[1] );
+					$module = $this->Module_Request_Router->resolve_route( $route[0], $route[1] );
 					if( $module instanceof EED_Module ) {
 						// get registered view for route
-						$this->_template_path = $Module_Request_Router->get_view( $route );
+						$this->_template_path = $this->Module_Request_Router->get_view( $route );
 						// grab module name
 						$module_name = $module->module_name();
 						// map the module to the module objects
