@@ -541,7 +541,7 @@ class EE_Registry {
 	 * @param string $class_name
 	 * @param string $type
 	 * @param array $file_paths
-	 * @return string
+	 * @return string | bool
 	 */
 	protected function _resolve_path( $class_name, $type = '', $file_paths = array() ) {
 		// make sure $file_paths is an array
@@ -559,7 +559,7 @@ class EE_Registry {
 				return $file_paths[ $key ];
 			}
 		}
-		return '';
+		return false;
 	}
 
 
@@ -714,14 +714,20 @@ class EE_Registry {
 		if ( ! $constructor ) {
 			return $arguments;
 		}
+		//echo "\n\n class_name: $class_name";
 		// get constructor parameters
 		$params = $constructor->getParameters();
 		// and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
 		$argument_keys = array_keys( $arguments );
+		//echo "\n\n arguments:\n";
+		//var_dump( $arguments );
+		//echo "\n argument_keys:\n";
+		//var_dump( $argument_keys );
 		// now loop thru all of the constructors expected parameters
 		foreach ( $params as $index => $param ) {
 			// is this a dependency for a specific class ?
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
+			//echo "\n\n param_class: " . $param_class;
 			if (
 				// param is not even a class
 				$param_class === null ||
@@ -751,8 +757,15 @@ class EE_Registry {
 			}
 			// did we successfully find the correct dependency ?
 			if ( $dependency instanceof $param_class ) {
+				//echo "\n\n arguments:\n";
+				//var_dump( $arguments );
+				//echo "\n index: $index";
+				//echo "\n dependency:\n";
+				//var_dump( $dependency );
 				// then let's inject it into the incoming array of arguments at the correct location
-				array_splice( $arguments, $index, 1, $dependency );
+				array_splice( $arguments, $index, 1, array( $dependency ) );
+				//echo "\n arguments:\n";
+				//var_dump( $arguments );
 			}
 		}
 		return $arguments;
