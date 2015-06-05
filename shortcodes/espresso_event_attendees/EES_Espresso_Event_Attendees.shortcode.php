@@ -103,6 +103,8 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 		//start setting up the query for the contacts
 		$query = array();
 
+		$error = false;
+
 		//what event?
 		if ( empty( $attributes['event_id'] ) && empty( $attributes['datetime_id'] ) && empty( $attributes['ticket_id'] ) ) {
 			//seems like is_espresso_event_single() isn't working as expected. So using alternate method.
@@ -114,13 +116,13 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 				}
 			} else {
 				//try getting the earliest active event if none then get the
-				$event = EEM_Event::instance()->get_active_events( array( 'limit'    => 1,
+				$events = EEM_Event::instance()->get_active_events( array( 'limit'    => 1,
 				                                                          'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' )
 				) );
-				$event = empty( $event ) ? EEM_Event::instance()->get_upcoming_events( array( 'limit'    => 1,
+				$events = empty( $events ) ? EEM_Event::instance()->get_upcoming_events( array( 'limit'    => 1,
 				                                                                              'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' )
-				) ) : null;
-				$event = reset( $event );
+				) ) : array();
+				$event = reset( $events );
 				if ( $event instanceof EE_Event ) {
 					$query[0]['Registration.EVT_ID'] = $event->ID();
 					$template_args['event']          = $event;
@@ -131,6 +133,8 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			if ( $event instanceof EE_Event ) {
 				$query[0]['Registration.EVT_ID'] = $attributes['event_id'];
 				$template_args['event']          = $event;
+			} else {
+				$error = true;
 			}
 		}
 
@@ -141,6 +145,8 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 				$query[0]['Registration.Event.Datetime.DTT_ID'] = $attributes['datetime_id'];
 				$template_args['datetime']                      = $datetime;
 				$template_args['event']                         = $datetime->event();
+			} else {
+				$error = true;
 			}
 		}
 
@@ -151,14 +157,28 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 				$query[0]['Registration.TKT_ID'] = $attributes['ticket_id'];
 				$template_args['ticket']         = $ticket;
 				$template_args['event']          = $ticket->first_datetime() instanceof EE_Datetime ? $ticket->first_datetime()->event() : null;
+			} else {
+				$error = true;
 			}
 		}
 
 		//status
-		if ( $attributes['status'] != 'all' ) {
+		$reg_status_array = EEM_Registration::reg_status_array();
+		if ( $attributes['status'] != 'all' && isset( $reg_status_array[$attributes['status']] ) ) {
 			$query[0]['Registration.STS_ID'] = $attributes['status'];
 		}
 		$query['group_by'] = array( 'ATT_ID' );
+
+		//if we have NO query where conditions, then there was an invalid parameter or the shortcode was used incorrectly
+		//so when WP_DEBUG is set and true, we'll show a message, otherwise we'll just return an empty string.
+		if ( ( ! isset( $query[0] ) || ! is_array( $query[0] ) ) || $error ) {
+			if ( WP_DEBUG ) {
+				return '<div class="important-notice ee-attention">' . __( 'The [ESPRESSO_EVENT_ATTENDEES] shortcode has been used incorrectly.  Please double check the arguments you used for any typos.  In the case of ID type arguments, its possible the given ID does not correspond to existing data in the database.', 'event_espresso' ) . '</div>';
+			} else {
+				return '';
+			}
+		}
+
 
 		//get contacts!
 		$template_args['contacts'] = EEM_Attendee::instance()->get_all( $query );
