@@ -168,6 +168,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 			$query[0]['Registration.STS_ID'] = $attributes['status'];
 		}
 		$query['group_by'] = array( 'ATT_ID' );
+		$query['order_by'] = apply_filters( 'FHEE__EES_Espresso_Event_Attendees__process_shortcode__order_by', array( 'ATT_lname' => 'ASC', 'ATT_fname' => 'ASC' ) );
 
 		//if we have NO query where conditions, then there was an invalid parameter or the shortcode was used incorrectly
 		//so when WP_DEBUG is set and true, we'll show a message, otherwise we'll just return an empty string.
