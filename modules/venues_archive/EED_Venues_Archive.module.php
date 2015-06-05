@@ -74,7 +74,7 @@ class EED_Venues_Archive  extends EED_Module {
 	 */
 	public function template_include( $template ) {
 		// not a custom template?
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_venues.php' ) {
+		if ( EE_Registry::instance()->LIB->EE_Front_Controller->get_selected_template() != 'archive-espresso_venues.php' ) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
