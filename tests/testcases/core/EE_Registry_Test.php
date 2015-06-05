@@ -33,13 +33,13 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
 		$this->assertEquals( null, $cached_class );
 		// create a stdClass object will use to mock the EE_Capabilities class
-		$session = new stdClass();
-		$session->name = 'EE_Capabilities';
+		$orig_class = new stdClass();
+		$orig_class->name = 'EE_Capabilities';
 		// and manually cache it at EE_Registry_Mock::instance()->CAP
-		EE_Registry_Mock::instance()->CAP = $session;
+		EE_Registry_Mock::instance()->CAP = $orig_class;
 		// now attempt to retrieve it
 		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
-		$this->assertEquals( $session->name, $cached_class->name );
+		$this->assertEquals( $orig_class->name, $cached_class->name );
 	}
 
 
@@ -351,6 +351,80 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+
+	/**
+	 * this tests that objects cached using the EE_Registry class abbreviations can be retrieved
+	 *
+	 * @group                8284
+	 * @author                Brent Christensen
+	 */
+	public function test_set_cached_class_abbreviations() {
+		// create a stdClass object we'll use for a mock
+		$orig_class = new stdClass();
+		$orig_class->name = 'If_This_Is_An_Abbreviated_Class_Name_Then_Why_Is_It_So_Long';
+		// cache it at EE_Registry_Mock::instance()->CAP
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'EE_Capabilities' );
+		// now attempt to retrieve it
+		$cached_class = EE_Registry_Mock::instance()->CAP;
+		$this->assertEquals( $orig_class, $cached_class );
+	}
+
+
+
+	/**
+	 * this tests that objects cached directly as EE_Registry_Mock properties can be retrieved
+	 *
+	 * @group                8284
+	 * @author                Brent Christensen
+	 */
+	public function test_set_cached_class_property() {
+		// create a stdClass object we'll use for a mock
+		$orig_class = new stdClass();
+		$orig_class->name = 'Some_Class';
+		// cache it at EE_Registry_Mock::instance()->CAP
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'Some_Class' );
+		// now attempt to retrieve it
+		$cached_class = EE_Registry_Mock::instance()->Some_Class;
+		$this->assertEquals( $orig_class, $cached_class );
+	}
+
+
+
+	/**
+	 * this tests that objects cached on EE_Registry->LIB can be retrieved
+	 *
+	 * @group                8284
+	 * @author                Brent Christensen
+	 */
+	public function test_set_cached_class_library() {
+		// create a stdClass object we'll use for a mock
+		$orig_class = new stdClass();
+		$orig_class->name = 'Library_Class';
+		// cache it at EE_Registry_Mock::instance()->CAP
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'Library_Class' );
+		// now attempt to retrieve it
+		$cached_class = EE_Registry_Mock::instance()->LIB->Library_Class;
+		$this->assertEquals( $orig_class, $cached_class );
+	}
+
+
+
+	/**
+	 * this tests that objects cached on EE_Registry->addons can be retrieved
+	 *
+	 * @group                8284
+	 * @author                Brent Christensen
+	 */
+	public function test_set_cached_class_addon() {
+		// create a stdClass object we'll use for a mock
+		$orig_class = new stdClass();
+		$orig_class->name = 'Addon_Class';
+		// cache it at EE_Registry_Mock::instance()->CAP
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'Addon_Class', 'addon' );
+		// now attempt to retrieve it
+		$cached_class = EE_Registry_Mock::instance()->addons->Addon_Class;
+		$this->assertEquals( $orig_class, $cached_class );
+	}
 
 
 
