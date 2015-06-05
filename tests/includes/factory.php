@@ -1098,7 +1098,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		$registration = $this->_maybe_chained( $registration, $args );
 		//only run finalize if $chained because it requires EE_Transaction
 		if ( $this->_chained ) {
-			$p = new EE_Registration_Processor();
+			$p = EE_Registration_Processor::instance();
 			$att_nmbr++;
 			$registration->set_reg_url_link( $p->generate_reg_url_link( $att_nmbr, md5( 'ticket' . $registrationID . time() )));
 			$registration->set_reg_code( $p->generate_reg_code( $registration ) );
