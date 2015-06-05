@@ -39,9 +39,13 @@ class EE_CPT_Event_Strategy {
 	 * @param WP_Query $WP_Query
 	 * @param array $CPT
 	 */
-	public function __construct( WP_Query $WP_Query, $CPT = array() ) {
-		$this->CPT = $CPT;
-		$WP_Query = $WP_Query;
+	public function __construct( $WP_Query, $CPT = array() ) {
+		if ( $WP_Query instanceof WP_Query ) {
+			$this->CPT = $CPT;
+		} else {
+			$WP_Query = isset( $WP_Query[ 'WP_Query' ] ) ? $WP_Query[ 'WP_Query' ] : null;
+			$this->CPT = isset( $WP_Query[ 'CPT' ] ) ? $WP_Query[ 'CPT' ] : null;
+		}
 		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 		// here's the list of available filters in the WP_Query object
 		// 'posts_where'
