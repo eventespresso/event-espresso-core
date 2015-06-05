@@ -16,7 +16,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 	function __construct(){
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix . 'esp_line_item';
-		$this->_extra_where_sql = ' WHERE LIN_type="sub-total"';
+		$this->_extra_where_sql = ' WHERE LIN_type="sub-total" AND LIN_code="pre-tax-total"';
 		$this->_pretty_name = __('Event Sub-total line items', 'event_espresso');
 		parent::__construct();
 	}
