@@ -128,7 +128,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 					$template_args['event']          = $event;
 				}
 			}
-		} else {
+		} elseif ( ! empty( $attributes['event_id'] ) ) {
 			$event = EEM_Event::instance()->get_one_by_ID( $attributes['event_id'] );
 			if ( $event instanceof EE_Event ) {
 				$query[0]['Registration.EVT_ID'] = $attributes['event_id'];
