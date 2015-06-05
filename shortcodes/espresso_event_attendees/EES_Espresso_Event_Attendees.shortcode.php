@@ -142,7 +142,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 		if ( ! empty( $attributes['datetime_id'] ) && empty( $attributes['event_id'] ) ) {
 			$datetime = EEM_Datetime::instance()->get_one_by_ID( $attributes['datetime_id'] );
 			if ( $datetime instanceof EE_Datetime ) {
-				$query[0]['Registration.Event.Datetime.DTT_ID'] = $attributes['datetime_id'];
+				$query[0]['Registration.Ticket.Datetime.DTT_ID'] = $attributes['datetime_id'];
 				$template_args['datetime']                      = $datetime;
 				$template_args['event']                         = $datetime->event();
 			} else {
