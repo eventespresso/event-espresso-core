@@ -159,7 +159,7 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 			}
 			// if NOT a custom template
-			if ( EE_Registry::instance()->LIB->EE_Front_Controller->get_selected_template() != 'archive-espresso_events.php' ) {
+			if ( EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'archive-espresso_events.php' ) {
 				// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
