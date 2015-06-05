@@ -105,7 +105,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public static function reset( EE_Line_Item $grand_total = NULL ){
 		remove_action( 'shutdown', array( self::$_instance, 'save_cart'), 90 );
-		EE_Registry::instance()->SSN->reset_cart();
+		if ( EE_Registry::instance()->SSN instanceof EE_Session ) {
+			EE_Registry::instance()->SSN->reset_cart();
+		}
 		self::$_instance = NULL;
 		return self::instance( $grand_total );
 	}
