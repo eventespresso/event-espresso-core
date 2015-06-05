@@ -1,6 +1,12 @@
 <?php
 /**
  * converts DBs to 4.7
+ * Adds the esp_registration_payment table (indicating which registrations payments are for),
+ * adds fields esp_registration.REG_paid field,
+ * and recalculates esp_registration.REG_final_price to actually be the final price
+ * for that registration (before this it was just the ticket's price, NOT including
+ * taxes or other price modifiers)
+ *
  */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
