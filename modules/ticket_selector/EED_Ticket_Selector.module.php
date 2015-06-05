@@ -62,6 +62,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	protected function set_config(){
+		$this->set_config_section( 'template_settings' );
+		$this->set_config_class( 'EE_Ticket_Selector_Config' );
+		$this->set_config_name( 'EED_Ticket_Selector' );
+	}
+
+
+
 
 
 	/**
@@ -110,6 +118,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function set_definitions() {
 		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+
+		//if config is not set, initialize
+		//If config is not set, set it.
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		}
 	}
 
 
