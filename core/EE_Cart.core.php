@@ -66,7 +66,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			self::$_instance = new self( $grand_total );
 		}elseif ( ! self::$_instance instanceof EE_Cart) {
 			//try getting the cart out of the session
-			$saved_cart = EE_Registry::instance()->SSN->cart();
+			$saved_cart = EE_Registry::instance()->SSN instanceof EE_Session ? EE_Registry::instance()->SSN->cart() : null;
 			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );
 			unset( $saved_cart );
 		}
