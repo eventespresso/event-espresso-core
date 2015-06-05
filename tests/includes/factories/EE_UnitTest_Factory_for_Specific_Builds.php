@@ -54,8 +54,8 @@ class EE_UnitTest_Factory_for_Specific_Builds {
 	 *              )
 	 * @param bool $save_to_db   Whether to save the objects to the database or not
 	 *
-	 *@throws Exception
-	 * @return EE_Base_Class[]   the objects created.
+	 * @throws Exception
+	 * @return array()   an array of EE_Base_Class objects created indexed by model object name.
 	 */
 	public function build( $build_artifact, $save_to_db = true ) {
 		$built_objects = array();
