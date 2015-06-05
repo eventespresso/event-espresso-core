@@ -782,6 +782,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_tickets_list' => $default ? '<li class="hidden"></li>' : '',
 			'show_tickets_row' => ' style="display:none;"', //$default || $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' style="display:none;"' : '',
 			'add_new_datetime_ticket_help_link' => EEH_Template::get_help_tab_link('add_new_ticket_via_datetime', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
+			'DTT_ID' => $default ? '' : $dtt->ID()
 			);
 
 		//need to setup the list items (but only if this isnt' a default skeleton setup)
