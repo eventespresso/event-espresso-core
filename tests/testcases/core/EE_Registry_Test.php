@@ -146,27 +146,23 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author                Brent Christensen
 	 */
 	public function test_require_file(){
-		// first verify that Cart is not already loaded
+		// first verify that EE_Class_For_Testing_Loading is not already loaded
 		// (made sure to set the class_exists() autoload param to false)
-		$this->assertEquals(
-			// expected
-			false,
-			// actual
-			class_exists( 'EE_Cart', false )
-		);
+		$this->assertEquals( false, class_exists( 'EE_Class_For_Testing_Loading', false ) );
 		// let's attempt to load the EE_Cart
 		EE_Registry_Mock::instance()->require_file(
-			EE_CORE . 'EE_Cart.core.php',
-			'EE_Cart',
+			EE_MOCKS_DIR . 'core' . DS . 'EE_Class_For_Testing_Loading.core.php',
+			'EE_Class_For_Testing_Loading',
 			'core',
 			array(
 				EE_CORE,
 				EE_ADMIN,
-				EE_CPTS,
-				EE_CORE . 'data_migration_scripts' . DS
+				EE_CORE . 'data_migration_scripts' . DS,
+				EE_MOCKS_DIR,
+				EE_MOCKS_DIR . 'core' . DS,
 			)
 		);
-		$this->assertEquals( true, class_exists( 'EE_Cart', false ) );
+		$this->assertEquals( true, class_exists( 'EE_Class_For_Testing_Loading', false ) );
 	}
 
 
