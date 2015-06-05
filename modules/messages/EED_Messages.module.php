@@ -73,7 +73,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		//actions
-		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
+		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 2 );
 		//filters
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
@@ -90,7 +90,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		//actions
-		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', array( 'EED_Messages', 'payment' ), 10, 2 );
+		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
@@ -420,24 +420,62 @@ class EED_Messages  extends EED_Module {
 			//no messages please
 			return;
 		}
+
+
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		// send the message type matching the status if that message type is active.
-		$message_type = self::_get_reg_status_array( $registration->status_ID() );
-		// verify message type is active
-		if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
-			self::_load_controller();
-			if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null ) ) ) {
-				// DEBUG LOG
-				//self::log(
-				//	__CLASS__, __FUNCTION__, __LINE__,
-				//	$registration->transaction(),
-				//	array(
-				//		'delivered'    => current_time( 'mysql' ),
-				//		'message_type' => $message_type,
-				//		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
-				//	)
-				//);
+
+		//get all registrations so we make sure we send messages for the right status.
+		$all_registrations = $registration->transaction()->registrations();
+
+		//cached array of statuses so we only trigger messages once per status.
+		$statuses_sent = array();
+
+		//loop through registrations and trigger messages once per status.
+		foreach ( $all_registrations as $reg ) {
+
+			//already triggered?
+			if ( in_array( $reg->status_ID(), $statuses_sent ) ) {
+				continue;
 			}
+
+			$message_type = self::_get_reg_status_array( $reg->status_ID() );
+			if ( EEH_MSG_Template::is_mt_active( $message_type ) ) {
+				self::_load_controller();
+
+				//send away, send away, uhhuh
+				if ( self::$_EEMSG->send_message( $message_type, array( $registration->transaction(), null, $reg->status_ID() ) ) ) {
+					// DEBUG LOG
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => $message_type,
+					// 		'reg_status'   => $reg->status_obj()->code( false, 'sentence' ),
+					// 		'context' => 'in all registrations loop'
+					// 	)
+					// );
+				}
+			}
+
+			$statuses_sent[] = $reg->status_ID();
+		}
+
+		//now send summary (registration_summary) if active
+		if ( EEH_MSG_Template::is_mt_active( 'registration_summary' ) ) {
+			self::_load_controller();
+			if ( self::$_EEMSG->send_message( 'registration_summary', array( $registration->transaction(), null ) ) ) {
+					// DEBUG LOG
+					// self::log(
+					// 	__CLASS__, __FUNCTION__, __LINE__,
+					// 	$registration->transaction(),
+					// 	array(
+					// 		'delivered'    => current_time( 'mysql' ),
+					// 		'message_type' => 'registration_summary',
+					// 		'reg_status'   => $registration->status_obj()->code( false, 'sentence' ),
+					// 	)
+					// );
+				}
 		}
 	}
 
@@ -453,28 +491,44 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          true = send away, false = nope halt the presses.
 	 */
 	protected static function _verify_registration_notification_send( EE_Registration $registration, $extra_details = array() ) {
+		 //self::log(
+		 //	__CLASS__, __FUNCTION__, __LINE__,
+		 //	$registration->transaction(),
+		 //	array( '$extra_details' => $extra_details )
+		 //);
 		// currently only using this to send messages for the primary registrant
 		if ( ! $registration->is_primary_registrant() ) {
 			return false;
 		}
-		//first we check if we're in admin and not doing front ajax and if we
-		 //make sure appropriate admin params are set for sending messages
-		if (
-			( is_admin() && ! EE_FRONT_AJAX )
-			&&
-			( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) )
-		) {
-			//no messages sent please.
-			return false;
+		// first we check if we're in admin and not doing front ajax
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
+			//make sure appropriate admin params are set for sending messages
+			if ( empty( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) || ! absint( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
+				//no messages sent please.
+				return false;
+			}
+		} else {
+			// frontend request (either regular or via AJAX)
+			// TXN is NOT finalized ?
+			if ( ! isset( $extra_details[ 'finalized' ] ) || $extra_details[ 'finalized' ] === false ) {
+				return false;
+			}
+			// return visit but nothing changed ???
+			if (
+				isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) &&
+				$extra_details[ 'revisit' ] && ! $extra_details[ 'status_updates' ]
+			) {
+				return false;
+			}
+			// NOT sending messages && reg status is something other than "Not-Approved"
+			if (
+				! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
+				$registration->status_ID() !== EEM_Registration::status_id_not_approved
+			) {
+				return false;
+			}
 		}
-		// frontend ?
-		if (
-			! ( is_admin() && ! EE_FRONT_AJAX ) &&
-			! apply_filters( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', false ) &&
-			$registration->status_ID() !== EEM_Registration::status_id_not_approved
-		) {
-			return false;
-		}
+		// release the kraken
 		return true;
 	}
 
@@ -529,48 +583,73 @@ class EED_Messages  extends EED_Module {
 	 * @return bool          success/fail
 	 */
 	public static function process_resend( $req_data ) {
+		$regs_to_send = array();
 
 		//first let's make sure we have the reg id (needed for resending!);
 		if ( ! isset( $req_data['_REG_ID'] ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return false;
 		}
 
-		//get reg object from reg_id
-		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID( $req_data['_REG_ID'] );
+		//if $req_data['_REG_ID'] is an array then let's group the registrations by transaction and reg status
+		// so we can only trigger messages per group.
+		if ( is_array( $req_data['_REG_ID'] ) ) {
+			foreach ( $req_data['_REG_ID'] as $reg_id ) {
+				$reg = EE_Registry::instance()->load_model( 'Registration' )->get_one_by_ID( $reg_id );
+				if ( ! $reg instanceof EE_Registration ) {
+					EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+					return false;
+				}
+				$regs_to_send[$reg->transaction_ID()][$reg->status_ID()][] = $reg;
+			}
+		} else {
+			//we have a single registration id, so let's see if we can get a EE_Registration from it, and if so set it up for sending.
+			//get reg object from reg_id
+			$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID( $req_data['_REG_ID'] );
 
-		//if no reg object then send error
-		if ( ! $reg instanceof EE_Registration ) {
-			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
-			return FALSE;
+			//if no reg object then send error
+			if ( ! $reg instanceof EE_Registration ) {
+				EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+				return false;
+			}
+
+			$regs_to_send[$reg->transaction_ID()][$reg->status_ID()][] = $reg;
 		}
 
 		self::_load_controller();
-
-		//get status_match_array
 		$status_match_array = self::_get_reg_status_array();
 		$active_mts = self::$_EEMSG->get_active_message_types();
-		if ( ! in_array( $status_match_array[ $reg->status_ID() ], $active_mts ) ) {
-			EE_Error::add_error(
-				sprintf(
-					__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
-					$status_match_array[ $reg->status_ID() ],
-					'<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
-					'</a>'
-				)
-			);
-			return FALSE;
+		$success = false;
+		//loop through and send!
+		foreach( $regs_to_send as $status_group ) {
+			foreach ( $status_group as $status_id => $registrations ) {
+				if ( ! in_array( $status_match_array[ $status_id ], $active_mts ) ) {
+					EE_Error::add_error(
+						sprintf(
+							__('Cannot resend the message for this registration because the corresponding message type (%1$s) is not active.  If you wish to send messages for this message type then please activate it by visiting the %2$sMessages Admin Page%3$s.', 'event_espresso'),
+							$status_match_array[ $reg->status_ID() ],
+							'<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">',
+							'</a>'
+						)
+					);
+					return false;
+				}
+
+				if ( self::$_EEMSG->send_message( $status_match_array[$status_id], array( $registrations, $status_id ) ) ) {
+					EE_Error::overwrite_success();
+					EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
+					$success = true;
+				} else {
+					EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
 		}
 
-		if ( self::$_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) ) {
-			EE_Error::overwrite_success();
-			EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
-			return TRUE;
-		} else {
-			EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return FALSE;
+		/**
+		 * Note this returns true if ANY messages were sent successfully. So if client code wants to catch messages
+		 * that might not have sent successfully, it needs to check EE_Error for any errors.
+		 */
+		return $success;
 	}
 
 

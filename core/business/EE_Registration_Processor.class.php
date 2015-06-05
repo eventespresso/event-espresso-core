@@ -37,6 +37,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	protected $_new_reg_status = array();
 
+	/**
+	 * amounts paid at the end of the request after all processing.
+	 * indexed by registration ID
+	 *
+	 * @var array
+	 */
+	protected static $_amount_paid = array();
+
 
 
 	/**
@@ -108,7 +116,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				'TKT_ID'          => $ticket->ID(),
 				'STS_ID'          => EEM_Registration::status_id_incomplete,
 				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => $ticket->price(),
+				'REG_final_price' => $ticket->get_ticket_total_with_taxes(),
 				'REG_session'     => EE_Registry::instance()->SSN->id(),
 				'REG_count'       => $att_nmbr,
 				'REG_group_size'  => $total_ticket_count,
@@ -133,7 +141,9 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return string
 	 */
 	public function generate_reg_url_link( $att_nmbr, $item ) {
-		return $item instanceof EE_Line_Item ? $att_nmbr . '-' . $item->code() :  $att_nmbr . '-' . $item;
+		$reg_url_link = $item instanceof EE_Line_Item ? $item->code() : $item;
+		$reg_url_link = $att_nmbr . '-' . md5( $reg_url_link . microtime() );
+		return $reg_url_link;
 	}
 
 
@@ -146,12 +156,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function generate_reg_code( EE_Registration $registration ) {
 	// figure out where to start parsing the reg code
-		$chars = strpos( $registration->reg_url_link(), '-' ) + 4;
+		$chars = strpos( $registration->reg_url_link(), '-' ) + 5;
 		// TXN_ID + TKT_ID + first 3 and last 3 chars of reg_url_link
 		$new_reg_code = array(
 			$registration->transaction_ID(),
 			$registration->ticket_ID(),
-			substr( $registration->reg_url_link(), 0, $chars ) . substr( $registration->reg_url_link(), - 3 )
+			substr( $registration->reg_url_link(), 0, $chars )
 		);
 		// now put it all together
 		$new_reg_code = implode( '-', $new_reg_code );
@@ -238,11 +248,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				if ( $save ) {
 					$registration->save();
 				}
-				// send messages
-				$this->trigger_registration_update_notifications(
-					$registration,
-					array( 'manually_updated' 	=> true )
-				);
 			}
 			return TRUE;
 		}
@@ -340,29 +345,65 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	}
 
 
+
 	/**
-	 * 	toggle_registration_statuses_if_no_monies_owing
+	 *    toggle_registration_statuses_if_no_monies_owing
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Registration $registration
-	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
-	 * 	@return boolean
+	 * @param bool $save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @param array $additional_details
+	 * @return bool
+	 * @throws \EE_Error
 	 */
-	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE ) {
+	public function toggle_registration_status_if_no_monies_owing( EE_Registration $registration, $save = TRUE, $additional_details = array() ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
+		//EEH_Debug_Tools::printr( $additional_details, '$additional_details', __FILE__, __LINE__ );
+		// was a payment just made ?
+		if (
+			isset( $additional_details[ 'payment_updates' ], $additional_details[ 'last_payment' ] ) &&
+			$additional_details[ 'payment_updates' ] &&
+			$additional_details[ 'last_payment' ] instanceof EE_Payment
+		) {
+			$payment = $additional_details[ 'last_payment' ];
+			$total_paid = 0;
+			foreach ( self::$_amount_paid as $reg => $amount_paid ) {
+				$total_paid += $amount_paid;
+			}
+		} else {
+			$payment = null;
+			$total_paid = 0;
+		}
+		//EEH_Debug_Tools::printr( $registration->status_ID(), '$registration->status_ID()', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment instanceof EE_Payment, '$payment instanceof EE_Payment &&', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( isset( self::$_amount_paid[ $registration->ID() ] ), 'isset( self::$_amount_paid[ $registration->ID() ] ) &&', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount_no_code()', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $total_paid, '$total_paid', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $registration->final_price(), '$registration->final_price()', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment->amount() - $total_paid >= $registration->final_price(), '$payment->amount_no_code() - $total_paid >= $registration->final_price()', __FILE__, __LINE__ );
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
 			$registration->status_ID() == EEM_Registration::status_id_pending_payment
 			// AND no monies are owing
 			&& (
-				$registration->transaction()->is_completed() ||
-				$registration->transaction()->is_overpaid() ||
-				$registration->transaction()->is_free() ||
-				apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
+				(
+					$registration->transaction()->is_completed() ||
+					$registration->transaction()->is_overpaid() ||
+					$registration->transaction()->is_free() ||
+					apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
+				) || (
+					$payment instanceof EE_Payment &&
+					// this specific registration has not yet been paid for
+					! isset( self::$_amount_paid[ $registration->ID() ] ) &&
+					// payment amount, less what we have already attributed to other registrations, is greater than this reg's final price
+					$payment->amount() - $total_paid >= $registration->final_price()
+				)
 			)
 		) {
+			// mark as paid
+			self::$_amount_paid[ $registration->ID() ] = $registration->final_price();
 			// track new REG_Status
 			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
 			// toggle status to approved
@@ -426,7 +467,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			//		)
 			//	)
 			//);
-
+			EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
@@ -434,7 +476,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			);
 
 		} catch( Exception $e ) {
-			EE_Error::add_error( $e->getMessage(), $e->getFile(), '', $e->getLine() );
+			EE_Error::add_error( $e->getMessage(), $e->getFile(), 'function_added_from_exception', $e->getLine() );
 		}
 	}
 
@@ -452,21 +494,13 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 
 		// if the registration status gets updated, then save the registration
-		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false )) {
+		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false, $additional_details )) {
 			$registration->save();
 		}
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		// send messages
-		$this->trigger_registration_update_notifications(
-			$registration,
-			array_merge(
-				is_array( $additional_details ) ? $additional_details : array( $additional_details ),
-				array( 'checkout_or_payment' 	=> true )
-			)
-		);
-		return $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
 

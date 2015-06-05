@@ -137,6 +137,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
 				'_REG_final_price' => __( 'Price', 'event_espresso' ),
+				'_REG_paid' => __( 'Paid', 'event_espresso' ),
 				'actions' => __( 'Actions', 'event_espresso' )
 			);
 			$this->_bottom_buttons = array(
@@ -339,7 +340,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
     function column_cb($item){
 	/** checkbox/lock **/
-	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+	$transaction = $item->get_first_related( 'Transaction' );
+	$payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
@@ -436,7 +438,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$link = EE_Registry::instance()->CAP->current_user_can('ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>' : $attendee_name;
 		$link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
 
-		$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+		$t = $item->get_first_related('Transaction');
+		$payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
 
 		//trash/restore/delete actions
 		$actions = array();
@@ -483,7 +486,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column__REG_count(EE_Registration $item){
-		return  sprintf(__( '%1$s of %2$s', 'event_espresso' ), $item->count(), $item->group_size());
+		return  sprintf(__( '%1$s / %2$s', 'event_espresso' ), $item->count(), $item->group_size());
 	}
 
 
@@ -513,8 +516,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$content = isset( $_GET['event_id'] ) && $ticket instanceof EE_Ticket ? '<span class="TKT_name">' . $ticket->name() . '</span><br />' : '';
 
-		if ( $item->price_paid() > 0 ) {
-			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';
+		if ( $item->final_price() > 0 ) {
+			$content .= '<span class="reg-pad-rght">' . $item->pretty_final_price() . '</span>';
 		} else {
 			// free event
 			$content .= '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
@@ -537,9 +540,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$ticket = $item->ticket();
 		$content = isset( $_GET['event_id'] ) || ! $ticket instanceof EE_Ticket ? '' : '<span class="TKT_name">' . $ticket->name() . '</span><br />';
 
-		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';
+		$content .= '<span class="reg-pad-rght">' .  $item->pretty_final_price() . '</span>';
 		return $content;
 
+	}
+
+
+
+	/**
+	 * column__REG_paid
+	 *
+	 * @access public
+	 * @param \EE_Registration $item
+	 * @return string
+	 */
+	function column__REG_paid(EE_Registration $item){
+		return '<span class="reg-pad-rght">' .  $item->pretty_paid() . '</span>';
 	}
 
 
@@ -606,7 +622,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
-		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL, true );
 
 
 		//Build row actions

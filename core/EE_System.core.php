@@ -145,6 +145,7 @@ final class EE_System {
 		if ( ! $this->_minimum_php_version_recommended() ) {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
+		$this->display_alpha_banner_warning();
 		// central repository for classes
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
@@ -179,6 +180,80 @@ final class EE_System {
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
+	}
+
+
+
+	/**
+	 *    display_alpha_banner_warning
+	 *
+	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public function display_alpha_banner_warning() {
+		// skip AJAX requests
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+		// skip stable releases
+		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
+			return;
+		}
+		// post release candidate warning
+		if ( is_admin() ) {
+			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
+		} else {
+			// site admin has authorized use of non-stable release candidate for production
+			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
+				return;
+			}
+			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
+		}
+	}
+
+
+
+	/**
+	 *    alpha_banner_admin_notice
+	 *    displays admin notice that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function alpha_banner_admin_notice() {
+		EE_Error::add_attention(
+			sprintf(
+				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
+				'<strong>',
+				'</strong>'
+			),
+			__FILE__, __FUNCTION__, __LINE__
+		);
+	}
+
+
+
+	/**
+	 *    alpha_banner_warning_notice
+	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function alpha_banner_warning_notice() {
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
+			return;
+		}
+		printf(
+			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
+			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
+			'<strong>',
+			'</strong>',
+			'</p></div>'
+		);
 	}
 
 
@@ -428,7 +503,7 @@ final class EE_System {
 
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type =  $this->detect_req_type($espresso_db_update);
-//		echo "request type:".$request_type;
+		//EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
@@ -590,8 +665,6 @@ final class EE_System {
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
 	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
-	 *                            If not provided, this function retrieves it from the database... so the parameter only exists for optimization
-	 * @internal param array $espresso_db_update_value the value of the wordpress option.
 	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
@@ -690,7 +763,8 @@ final class EE_System {
 					$times_activated = array( $times_activated );
 				}
 				foreach( $times_activated as $an_activation ){
-					if( $an_activation > $most_recently_active_version_activation  ){
+					if( $an_activation != 'unknown-date' &&
+							$an_activation > $most_recently_active_version_activation  ){
 						$most_recently_active_version = $version;
 						$most_recently_active_version_activation = $an_activation == 'unknown-date' ? '1970-01-01 00:00:00' : $an_activation;
 					}
@@ -1060,10 +1134,13 @@ final class EE_System {
 		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
 			define( 'DONOTCACHCEOBJECT', true );
 		}
+		if ( ! defined( 'DONOTCACHEDB' ) ) {
+			define( 'DONOTCACHEDB', true );
+		}
 		// add no cache headers
-		add_action( 'wp_head' , array( 'EE_System', 'nocache_headers' ), 10 );
+		add_action( 'send_headers' , array( 'EE_System', 'nocache_headers' ), 10 );
 		// plus a little extra for nginx
-		add_filter( 'nocache_headers' , array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		add_filter( 'nocache_headers', array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
 	}

@@ -37,9 +37,11 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	public $payment;
 
 
+
 	/**
 	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.
 	 * @param array $data
+	 * @throws \EE_Error
 	 */
 	public function __construct( $data ) {
 
@@ -50,17 +52,24 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		if ( empty( $data[1] ) || ! $data[1] instanceof  EE_Payment  )
 			$pmt_obj = $this->_get_empty_payment_obj( $data[0] );
 
+		if ( ! empty( $data[2] ) ) {
+			$filtered_reg_status = $data[2];
+		}
+
 		$data = array(
 			'txn_obj' => $data[0],
 			'pmt_obj' => isset($pmt_obj) ? $pmt_obj : $data[1],
+			'filtered_reg_status' => isset( $filtered_reg_status ) ? $filtered_reg_status : null
 			);
 		parent::__construct( $data );
 	}
 
 
+
 	/**
 	 * This sets up an empty EE_Payment object for the purpose of shortcode parsing.  Note that this doesn't actually get saved to the db.
-	 * @return EE_Payment
+	 * @param \EE_Transaction $txn
+	 * @return \EE_Payment
 	 */
 	private function _get_empty_payment_obj( EE_Transaction $txn ) {
 		$PMT = EE_Payment::new_instance( array(
@@ -74,12 +83,17 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	}
 
 
+
+	/**
+	 * _setup_data
+	 */
 	protected function _setup_data() {
 
 		$this->reg_info = array();
 
 		$this->txn = $this->_data['txn_obj'];
 		$this->payment = $this->_data['pmt_obj'];
+		$this->filtered_reg_status = $this->_data['filtered_reg_status'];
 		$this->incoming_data = $this->_data;
 
 		$session_data = $this->txn->session_data();

@@ -177,6 +177,15 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
+	 * @return array
+	 */
+	public function get_CPT_taxonomies() {
+		return $this->_CPT_taxonomies;
+	}
+
+
+
+	/**
 	 *    _set_CPT_terms
 	 *
 	 * @access private
@@ -507,8 +516,9 @@ class EE_CPT_Strategy extends EE_BASE {
 		$object = get_queried_object();
 		//does this called object HAVE a page template set that is something other than the default.
 		$template = get_post_meta( $object->ID, '_wp_page_template', true );
+
 		//exit early if default or not set or invalid path (accounts for theme changes)
-		if ( $template == 'default' || empty( $template ) || validate_file( $template ) != 0 || ! is_readable( $template ) ) {
+		if ( $template == 'default' || empty( $template ) || ! is_readable( get_stylesheet_directory() . '/' . $template ) ) {
 			return $current_template;
 		}
 		//made it here so we SHOULD be able to just locate the template and then return it.

@@ -105,7 +105,7 @@ class EE_Transaction_Payments {
 	 * @return bool
 	 */
 	public function txn_status_updated() {
-		return $this->_new_txn_status !== $this->_old_txn_status ? true : false;
+		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null  ? true : false;
 	}
 
 
@@ -140,12 +140,12 @@ class EE_Transaction_Payments {
 			// maybe update status, and make sure to save transaction if not done already
 			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
 				if ( $update_txn ) {
-					return $transaction->save() ? TRUE : FALSE;
+					return $transaction->save() ? true : false;
 				}
 			} else {
 				// the status got updated and was saved by
 				// update_transaction_status_based_on_total_paid()
-				return TRUE;
+				return true;
 			}
 		}
 		return false;
@@ -242,14 +242,67 @@ class EE_Transaction_Payments {
 			EE_Error::add_error( __( 'A valid Payment object was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		$transaction = $payment->transaction();
+		if ( ! $this->delete_registration_payments_and_update_registrations( $payment ) ) {
+			return false;
+		}
 		if ( ! $payment->delete() ) {
 			EE_Error::add_error( __( 'The payment could not be deleted.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return false;
 		}
+		$transaction = $payment->transaction();
 		return $this->calculate_total_payments_and_update_status( $transaction );
 	}
 
+
+
+	/**
+	 * delete_registration_payments_and_update_registrations
+	 *
+	 * removes all registration payment records associated with a payment
+	 * and subtracts their amounts from the corresponding registrations REG_paid field
+	 *
+	 * @param EE_Payment $payment
+	 * @param array $reg_payment_query_params
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function delete_registration_payments_and_update_registrations( EE_Payment $payment, $reg_payment_query_params = array() ) {
+		$reg_payment_query_params = ! empty( $reg_payment_query_params ) ? $reg_payment_query_params : array( array( 'PAY_ID' => $payment->ID() ) );
+		$registration_payments = EEM_Registration_Payment::instance()->get_all( $reg_payment_query_params );
+		if ( ! empty( $registration_payments )) {
+			foreach ( $registration_payments as $registration_payment ) {
+				if ( $registration_payment instanceof EE_Registration_Payment ) {
+					$amount_paid = $registration_payment->amount();
+					$registration = $registration_payment->get_first_related( 'Registration' );
+					if ( $registration instanceof EE_Registration ) {
+						$registration->set_paid( $registration->paid() - $amount_paid );
+						if ( $registration->save() ) {
+							$registration_payment->delete();
+						}
+					} else {
+						EE_Error::add_error(
+							sprintf(
+								__( 'An invalid Registration object was associated with Registration Payment ID# %1$d.', 'event_espresso' ),
+								$registration_payment->ID()
+							),
+							__FILE__, __FUNCTION__, __LINE__
+						);
+						return false;
+					}
+				} else {
+					EE_Error::add_error(
+						sprintf(
+							__( 'An invalid Registration Payment object was associated with payment ID# %1$d.', 'event_espresso' ),
+							$payment->ID()
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 }
 // End of file EE_Transaction_Payments.class.php

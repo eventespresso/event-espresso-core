@@ -16,7 +16,8 @@ if( is_array( $registrations_for_free_events ) && ! empty( $registrations_for_fr
 					<?php echo apply_filters(
 						'FHEE__registration_page_payment_options__no_payment_required_pg',
 						sprintf(
-							__( '%1$s is a free event, so no billing will occur.', 'event_espresso' ),
+							__( '"%1$s" for "%2$s" is free, so no payment is required and no billing will occur.', 'event_espresso' ),
+							$registration_for_free_event->ticket()->name(),
 							$registration_for_free_event->event()->name()
 						)
 					); ?>

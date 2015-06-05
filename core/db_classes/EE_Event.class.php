@@ -114,10 +114,32 @@ class EE_Event extends EE_CPT_Base {
 	/**
 	 * Gets all the tickets available for purchase of this event
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return EE_Ticket
+	 * @return EE_Ticket[]
 	 */
 	public function tickets( $query_params = array() ) {
-		return $this->get_many_related( 'Ticket', $query_params );
+		//first get all datetimes
+		$datetimes = $this->datetimes_ordered();
+		if ( ! $datetimes ) {
+			return array();
+		}
+
+		$datetime_ids = array();
+		foreach ( $datetimes as $datetime ) {
+			$datetime_ids[] = $datetime->ID();
+		}
+
+		$where_params = array( 'Datetime.DTT_ID' => array( 'IN', $datetime_ids ) );
+
+		//if incoming $query_params has where conditions let's merge but not override existing.
+		if ( is_array( $query_params ) && isset( $query_params[0]) ) {
+			$where_params = array_merge( $query_params[0], $where_params );
+			unset( $query_params[0] );
+		}
+
+		//now add $where_params to $query_params
+		$query_params[0] = $where_params;
+
+		return EEM_Ticket::instance()->get_all( $query_params );
 	}
 
 
@@ -663,6 +685,175 @@ class EE_Event extends EE_CPT_Base {
 		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out.
 		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
 		return $sold_out;
+	}
+
+
+	/**
+	 * This returns the total remaining spaces for sale on this event.
+	 *
+	 * ############################
+	 * VERY IMPORTANT FOR DEVELOPERS:
+	 * While included here, this method is still being tested internally, so its signature and behaviour COULD change. While
+	 * this comment block is in place, usage is at your own risk and know that it may change in future builds.
+	 * ############################
+	 *
+	 * @uses EE_Event::total_available_spaces()
+	 * @return float|int  (INF is returned as float)
+	 */
+	public function spaces_remaining_for_sale() {
+		//first get total available spaces including consideration for tickets that have already sold.
+		$spaces_available = $this->total_available_spaces( true );
+
+		//if total available = 0, then exit right away because that means everything is expired.
+		if ( $spaces_available === 0 ) {
+			return 0;
+		}
+
+		//subtract total approved registrations from spaces available to get how many are remaining.
+		$spots_taken = EEM_Registration::instance()->count( array( array( 'EVT_ID' => $this->ID(), 'STS_ID' => EEM_Registration::status_id_approved ) ), 'REG_ID', true );
+		$spaces_remaining = $spaces_available - $spots_taken;
+
+		return $spaces_remaining > 0 ? $spaces_remaining : 0;
+	}
+
+
+
+
+
+	/**
+	 * This returns the total spaces available for an event while considering all the qtys on the tickets and the reg limits
+	 * on the datetimes attached to this event.
+	 *
+	 * ############################
+	 * VERY IMPORTANT FOR DEVELOPERS:
+	 * While included here, this method is still being tested internally, so its signature and behaviour COULD change. While
+	 * this comment block is in place, usage is at your own risk and know that it may change in future builds.
+	 * ############################
+	 *
+	 * Note: by "spaces available" we are not returning how many spaces remain.  That is a calculation involving using the value
+	 * from this method and subtracting the approved registrations for the event.
+	 *
+	 * @param   bool    $current_total_available    Whether to consider any tickets that have already sold in our calculation.
+	 *                                              If this is false, then we return the most tickets that could ever be sold
+	 *                                              for this event with the datetime and tickets setup on the event under optimal
+	 *                                              selling conditions.  Otherwise we return a live calculation of spaces available
+	 *                                              based on tickets sold.  Depending on setup and stage of sales, this
+	 *                                              may appear to equal remaining tickets.  However, the more tickets are
+	 *                                              sold out, the more accurate the "live" total is.
+	 *
+	* @return  int|float  (Note: if INF is returned its considered a float by PHP)
+	 */
+	public function total_available_spaces( $current_total_available = false ) {
+		$spaces_available = 0;
+
+		//first get all tickets on the event and include expired tickets
+		$tickets = $this->tickets( array( 'default_where_conditions' => 'none' ) );
+		$ticket_sums = array();
+		$datetime_limits = array();
+
+		//loop through tickets and normalize them
+		foreach ( $tickets as $ticket ) {
+			$datetimes = $ticket->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
+
+			if ( empty( $datetimes ) ) {
+				continue;
+			}
+
+			//first datetime should be the lowest datetime
+			$least_datetime = reset( $datetimes );
+
+			//lets reset the ticket quantity to be the lower of either the lowest datetime reg limit or the ticket quantity
+			//IF datetimes sold (and we're not doing current live total available, then use spaces remaining for datetime, not reg_limit.
+			if ( $current_total_available ) {
+				if ( $ticket->is_remaining() ) {
+					$remaining = $ticket->remaining();
+				} else {
+					$spaces_available += $ticket->get( 'TKT_sold' );
+					//and we don't cache this ticket to our list because its sold out.
+					continue;
+				}
+			} else {
+				$remaining = min( $ticket->qty(), $least_datetime->reg_limit() );
+			}
+
+			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
+			if ( $remaining == INF ) {
+				return INF;
+			}
+
+			//add the sum of ticket qty and all datetimes on the ticket. Note we're ordering sums by lowest to highest.
+			$ticket_sums[$ticket->ID()]['sum'] = $remaining;
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime->spaces_remaining() !== INF ) {
+					$ticket_sums[ $ticket->ID() ]['sum'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+				}
+				$datetime_limits[$datetime->ID()] = $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+			}
+			$ticket_sums[$ticket->ID()]['ticket'] = $ticket;
+		}
+
+		//reorder the tickets by lowest sum first.
+		usort( $ticket_sums, function( $a, $b ) {
+			if ( $a['sum'] == $b['sum'] ) {
+				return 0;
+			}
+			return ( $a['sum'] < $b['sum'] ) ? -1 : 1;
+		});
+
+		//now let's loop through the sorted tickets and simulate sellouts
+		foreach ( $ticket_sums as $ticket_info ) {
+			$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
+			//need to sort these $datetimes by remaining (only if $current_total_available)
+			//setup datetimes for simulation
+			$ticket_datetimes_remaining = array();
+			foreach( $datetimes as $datetime ) {
+				$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
+				$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
+			}
+			usort( $ticket_datetimes_remaining, function( $a, $b ) {
+				if ( $a['rem'] == $b['rem'] ) {
+					return 0;
+				}
+				return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
+			});
+
+
+			//get the remaining on the first datetime (which should be the one with the least remaining) and that is
+			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
+			$lowest_datetime = reset( $ticket_datetimes_remaining );
+
+			//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
+			// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
+			// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
+			// to the next ticket.
+			$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+
+			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
+			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
+			//available.
+			if ( $remaining === INF ) {
+				$spaces_available += $ticket_info['ticket']->qty();
+				continue;
+			}
+
+			//if ticket has sold amounts then we also need to add that (but only if doing live counts)
+			if ( $current_total_available ) {
+				$spaces_available += $ticket_info['ticket']->sold();
+			}
+
+			if ( $remaining <= 0 ) {
+				continue;
+			} else {
+				$spaces_available += $remaining;
+			}
+
+			//loop through the datetimes and sell them out!
+			foreach ( $ticket_datetimes_remaining as $datetime_info ) {
+				$datetime_limits[$datetime_info['datetime']->ID()] += - $remaining;
+			}
+		}
+
+		return $spaces_available;
 	}
 
 

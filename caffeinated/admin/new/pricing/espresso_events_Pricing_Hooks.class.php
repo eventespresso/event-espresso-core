@@ -374,6 +374,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//add/update price_modifiers
 			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( $price_rows, $TKT, $update_prices ) : $TKT;
 
+			//need to make sue that the TKT_price is accurate after saving the prices.
+			$TKT->ensure_TKT_Price_correct();
+
 
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
 			if ( ! defined('DOING_AUTOSAVE' ) ) {
@@ -662,8 +665,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
-			//if there are no related tickets this is likely a new event OR autodraft event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
-			if ( empty ( $related_tickets ) ) {
+			//if there are no related tickets this is likely a new event OR autodraft
+			// event so we need to generate the default tickets because dtts
+			// ALWAYS have at least one related ticket!!.  EXCEPT, we dont' do this if there is already more than one
+			// datetime on the event.
+			if ( empty ( $related_tickets ) && count( $times ) < 2 ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
@@ -799,6 +805,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default ) {
 		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
 		$dtt_tkts = $dtt instanceof EE_Datetime && isset( $datetime_tickets[$dtt->ID()] ) ? $datetime_tickets[$dtt->ID()] : array();
+
 		$displayrow = !empty( $ticket ) ? $ticket->get('TKT_row') : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
@@ -806,7 +813,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name'),
-			'tkt_status_class' => $default && empty( $ticket ) ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_status_class' => ( $default && empty( $ticket ) ) || $this->_is_creating_event ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			);
 
 		//filter template args

@@ -301,6 +301,26 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	/**
+	 * Shortcut for preparing a database result for display
+	 * @param EEM_Base $model
+	 * @param string $field_name
+	 * @param string $raw_db_value
+	 * @param boolean|string $pretty_schema true to display pretty, a string to use a specific "Schema", or false to NOT display pretty
+	 * @return string
+	 */
+	protected function _prepare_value_from_db_for_display( $model, $field_name,  $raw_db_value, $pretty_schema = true ) {
+		$field_obj = $model->field_settings_for( $field_name );
+		$value_on_model_obj = $field_obj->prepare_for_set_from_db( $raw_db_value );
+		if( $pretty_schema === true){
+			return $field_obj->prepare_for_pretty_echoing( $value_on_model_obj );
+		}elseif( is_string( $pretty_schema ) ) {
+			return $field_obj->prepare_for_pretty_echoing($value_on_model_obj, $pretty_schema );
+		}else{
+			return $field_obj->prepare_for_get( $value_on_model_obj );
+		}
+	}
+
+	/**
 	 * Export a custom CSV of registration info including: A bunch of the reg fields, the time of the event, the price name,
 	 * and the questions associated with the registrations
 	 * @param int $event_id
@@ -335,11 +355,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			'FHEE__EE_Export__report_registration_for_event',
 			array(
 				array(
-					'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+					'OR' => array(
+						//don't include registrations from failed or abandoned transactions...
+						'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+						//unless the registration is approved, in which case include it regardless of transaction status
+						'STS_ID' => EEM_Registration::status_id_approved
+						),
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
 			),
 			$event_id
 		);
@@ -348,30 +373,33 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}else{
 			$query_params[ 'force_join' ][] = 'Event';
 		}
-		$registrations = $reg_model->get_all( $query_params );
-
+		$registration_rows = $reg_model->get_all_wpdb_results( $query_params );
 		//get all questions which relate to someone in this group
-		$registration_ids = array_keys($registrations);
+		$registration_ids = array();
+		foreach( $registration_rows as $reg_row ) {
+			$registration_ids[] = intval( $reg_row[ 'Registration.REG_ID'] );
+		}
 //		EEM_Question::instance()->show_next_x_db_queries();
-		$questions_for_these_registrations = EEM_Question::instance()->get_all(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
-		foreach($registrations as $registration){
-			if ( $registration instanceof EE_Registration ) {
+		$questions_for_these_regs_rows = EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
+		foreach($registration_rows as $reg_row){
+			if ( is_array( $reg_row ) ) {
 				$reg_csv_array = array();
 				if( ! $event_id ){
 					//get the event's name and Id
-					$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = $registration->event_name() . '(' . $registration->event_ID() . ')';
+					$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = sprintf( __( '%1$s (%2$s)', 'event_espresso' ), $this->_prepare_value_from_db_for_display( EEM_Event::instance(), 'EVT_name', $reg_row[ 'Event_CPT.post_title'] ), $reg_row[ 'Event_CPT.ID' ] );
 				}
-				/*@var $registration EE_Registration */
+				$is_primary_reg = $reg_row[ 'Registration.REG_count' ] == '1' ? true : false;
+				/*@var $reg_row EE_Registration */
 				foreach($reg_fields_to_include as $field_name){
 					$field = $reg_model->field_settings_for($field_name);
 					if($field_name == 'REG_final_price'){
-						$value = $registration->get_pretty($field_name,'localized_float');
+						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_final_price'], 'localized_float' );
 					}elseif( $field_name == 'REG_count' ){
-						$value = sprintf( __( '%s of %s', 'event_espresso' ), $registration->get_pretty( 'REG_count' ), $registration->get_pretty( 'REG_group_size'  ) );
+						$value = sprintf( __( '%s of %s', 'event_espresso' ), $this->_prepare_value_from_db_for_display( $reg_model, 'REG_count', $reg_row['Registration.REG_count'] ), $this->_prepare_value_from_db_for_display( $reg_model, 'REG_group_size', $reg_row['Registration.REG_group_size' ] ) );
 					}elseif( $field_name == 'REG_date' ) {
-						$value = $registration->get_pretty( $field->get_name(), 'no_html' );
+						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_date'], 'no_html' );
 					}else{
-						$value = $registration->get_pretty($field->get_name());
+						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ $field->get_qualified_column() ] );
 					}
 					$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
 					if($field_name == 'REG_final_price'){
@@ -380,19 +408,24 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					}
 				}
 				//get pretty status
-				$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
+				$stati = EEM_Status::instance()->localized_status( array(
+					$reg_row[ 'Registration.STS_ID' ] => __( 'unknown', 'event_espresso' ),
+					$reg_row[ 'Transaction.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
+						FALSE,
+						'sentence' );
+				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
 				//get pretty trnasaction status
-				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
-				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty('TXN_total', 'localized_float') : '0.00';
-				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $registration->is_primary_registrant() ? $registration->transaction()->get_pretty( 'TXN_paid', 'localized_float' ) : '0.00';
+				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
 				$payment_times = array();
-				if($registration->is_primary_registrant() && $registration->transaction() instanceof EE_Transaction ){
+				if( $is_primary_reg && $reg_row[ 'Transaction.TXN_ID' ] ){
 					$payments_info = EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
-									'TXN_ID' => $registration->get('TXN_ID'),
+									'TXN_ID' => $reg_row[ 'Transaction.TXN_ID' ],
 									'STS_ID' => EEM_Payment::status_id_approved
 								),
 								'force_join' => array( 'Payment_Method' ),
@@ -413,13 +446,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				$reg_csv_array[ __( 'Gateway Transaction ID(s)', 'event_espresso' )] = implode( ',', $gateway_txn_ids_etc );
 
 				//get whether or not the user has checked in
-				$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
+				$reg_csv_array[__("Check-Ins", "event_espresso")] = $reg_model->count_related( $reg_row[ 'Registration.REG_ID'] , 'Checkin' );
 				//get ticket of registration and its price
 				$ticket_model = EE_Registry::instance()->load_model('Ticket');
-				if( $registration->ticket() ) {
-					$ticket_name = $registration->ticket()->name();
+				if( $reg_row[ 'Ticket.TKT_ID'] ) {
+					$ticket_name = $this->_prepare_value_from_db_for_display( $ticket_model, 'TKT_name', $reg_row[ 'Ticket.TKT_name' ] );
 					$datetimes_strings = array();
-					foreach($registration->ticket()->datetimes() as $datetime){
+					foreach( EEM_Datetime::instance()->get_all( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) ) as $datetime){
 						$datetimes_strings[] = $datetime->start_date_and_time();
 					}
 
@@ -432,52 +465,40 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				//get datetime(s) of registration
 
 				//add attendee columns
-				$attendee = $registration->attendee();
 				foreach($att_fields_to_include as $att_field_name){
-					if($attendee){
+					$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+					if( $reg_row[ 'Attendee_CPT.ID' ]){
 						if($att_field_name == 'STA_ID'){
-							$state = $attendee->state_obj();
-							if($state){
-								$value = $state->name();
-							}else{
-								$value = '';
-							}
+							$value = EEM_State::instance()->get_var( array( array( 'STA_ID' => $reg_row[ 'Attendee_Meta.STA_ID' ] ) ), 'STA_name' );
 						}elseif($att_field_name == 'CNT_ISO'){
-							$country = $attendee->country_obj();
-							if($country){
-								$value = $country->name();
-							}else{
-								$value = '';
-							}
+							$value = EEM_Country::instance()->get_var( array( array( 'CNT_ISO' => $reg_row[ 'Attendee_Meta.CNT_ISO' ] ) ), 'CNT_name' );
 						}else{
-							$value = $attendee->get_pretty($att_field_name);
+							$value = $this->_prepare_value_from_db_for_display( EEM_Attendee::instance(), $att_field_name, $reg_row[ $field_obj->get_qualified_column() ] );
 						}
 					}else{
 						$value = '';
 					}
-					$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+
 					$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
 				}
 
 				//make sure each registration has the same questions in the same order
-				foreach($questions_for_these_registrations as $question){
-					if ( $question instanceof EE_Question ) {
-						if( ! isset($reg_csv_array[$question->admin_label()])){
-							$reg_csv_array[$question->admin_label()] = null;
-						}
+				foreach($questions_for_these_regs_rows as $question_row){
+					if( ! isset($reg_csv_array[$question_row[ 'Question.QST_admin_label']])){
+						$reg_csv_array[$question_row[ 'Question.QST_admin_label' ] ] = null;
 					}
 				}
 				//now fill out the questions THEY answered
-				foreach($registration->answers() as $answer){
+				foreach( EEM_Answer::instance()->get_all_wpdb_results( array( array( 'REG_ID' => $reg_row[ 'Registration.REG_ID' ] ), 'force_join' => array( 'Question' ) ) ) as $answer_row){
 					/* @var $answer EE_Answer */
-					if( $answer->question() instanceof EE_Question ){
-						$question_label = $answer->question()->admin_label();
+					if( $answer_row[ 'Question.QST_ID' ] ){
+						$question_label = $this->_prepare_value_from_db_for_display( EEM_Question::instance(), 'QST_admin_label', $answer_row[ 'Question.QST_admin_label' ] );
 					}else{
-						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer->question_ID() );
+						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer_row[ 'Answer.QST_ID' ] );
 					}
-					$reg_csv_array[ $question_label ] = $answer->pretty_value();
+					$reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
 				}
-				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $registration );
+				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $reg_row );
 			}
 		}
 
@@ -498,8 +519,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$registrations_csv_ready_array [] = $reg_csv_array;
 		}
 		if( $event_id ){
-			$event = EEM_Event::instance()->get_one_by_ID($event_id);
-			$event_slug =  $event instanceof EE_Event ? $event->slug() : __( 'unknown', 'event_espresso' );
+			$event_slug =  EEM_Event::instance()->get_var( array( array( 'EVT_ID' => $event_id ) ), 'EVT_slug' );
+			if( ! $event_slug ) {
+				$event_slug = __( 'unknown', 'event_espresso' );
+			}
 		}else{
 			$event_slug = __( 'all', 'event_espresso' );
 		}

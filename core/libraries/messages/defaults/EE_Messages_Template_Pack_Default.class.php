@@ -26,6 +26,7 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 		$this->_supports = array(
 			'email' => array(
 				'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration',
+					'registration_summary',
 				'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
 				),
 			'html' => array(

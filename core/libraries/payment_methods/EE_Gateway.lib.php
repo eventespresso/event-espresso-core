@@ -277,7 +277,7 @@ abstract class EE_Gateway{
 	/**
 	 * Handles updating the transaction and any other related data based on the payment.
 	 * You may be tempted to do this as part of do_direct_payment or handle_payment_update,
-	 * but doing so on those functions might be too early. It's possibel that the changes
+	 * but doing so on those functions might be too early. It's possible that the changes
 	 * you make to teh transaction or registration or line items may just get overwritten
 	 * at that point. Instead, you should store any info you need on the payment during those
 	 * functions, and use that information at this step, which client code will decide
@@ -286,7 +286,7 @@ abstract class EE_Gateway{
 	 * @return void
 	 */
 	public function update_txn_based_on_payment( $payment ){
-		//maybe update the trasnaction or line items or registrations
+		//maybe update the transaction or line items or registrations
 		//but most gateways don't need to do this, because they only update the payment
 	}
 

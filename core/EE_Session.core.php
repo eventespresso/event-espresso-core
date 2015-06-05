@@ -723,6 +723,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	public function clear_session( $class = '', $function = '' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
+		$this->reset_cart();
+		$this->reset_checkout();
+		$this->reset_transaction();
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
 		// reset initial site access time and the session expiration
@@ -835,8 +838,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					FROM {$wpdb->options}
 					WHERE option_name
 					LIKE '\_transient\_timeout\_ee\_ssn\_%'
-					AND option_value < {$expiration}
-					OR option_value > {$too_far_in_the_the_future}
+					AND ( option_value < {$expiration}
+					OR option_value > {$too_far_in_the_the_future} )
 					LIMIT {$expired_session_transient_delete_query_limit}
 				";
 				 $expired_sessions = $wpdb->get_col( $SQL );

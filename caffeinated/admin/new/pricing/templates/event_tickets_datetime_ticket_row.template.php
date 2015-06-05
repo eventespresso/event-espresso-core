@@ -1,7 +1,7 @@
 <tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
 	<!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>"><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
 	<td class="ee-tkt-order-field"><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>"></td>
-	<td><input type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>"></td>
+	<td><input maxlength="245" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>"></td>
 	<td>
 		<?php if ( $disabled ) : ?>
 			<input type="hidden" id="edit-ticket-TKT_start_date-<?php echo $tkt_row; ?>"  name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp" value="<?php echo $TKT_start_date; ?>" >

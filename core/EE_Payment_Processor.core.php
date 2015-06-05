@@ -48,7 +48,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * Using the selected gateway, processes the payment for that transaction.
+	 * Using the selected gateway, processes the payment for that transaction, and updates
+	 * the transaction appropriately. Saves the payment that is generated
 	 * @param EE_Payment_Method 	$payment_method
 	 * @param EE_Transaction 				$transaction
 	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
@@ -58,7 +59,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
 	 * @param bool                 				$by_admin
 	 * @param boolean              				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
-	 * @return EE_Payment | NULL
+	 * @return EE_Payment
 	 */
 	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE ) {
 		// verify payment method
@@ -77,8 +78,11 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$method,
 				$by_admin
 			);
-			//offline gateways DON'T return a payment object, so check it
-			$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			// check if payment method uses an off-site gateway
+			if ( $payment_method->type_obj()->payment_occurs() != EE_PMT_Base::offsite ) {
+				// don't process payments for off-site gateways yet because no payment has occurred yet
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn );
+			}
 			return $payment;
 		} else {
 			EE_Error::add_error(
@@ -125,18 +129,30 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so
 	 * we can easily find what registration the IPN is for and what payment method.
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
+	 * If a payment is found for the IPN info, it is saved.
 	 * @param 	$_req_data
 	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
 	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
 	 * @param boolean           				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+	 * @param bool $separate_IPN_request whether the IPN uses a separate request ( true like PayPal ) or is processed manually ( false like Mijireh )
 	 * @throws EE_Error
 	 * @throws Exception
 	 * @return EE_Payment
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $update_txn = true, $separate_IPN_request = true ){
+		$_req_data = $this->_remove_unusable_characters( $_req_data );
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		EE_Processor_Base::set_IPN( true );
-		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
+		EE_Processor_Base::set_IPN( $separate_IPN_request );
+		if( $transaction instanceof EE_Transaction && $payment_method instanceof EE_Payment_Method ){
+			$obj_for_log = EEM_Payment::instance()->get_one( array( array( 'TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID() ), 'order_by' => array( 'PAY_timestamp' => 'desc' ) ) );
+		}elseif( $payment_method instanceof EE_Payment ){
+			$obj_for_log = $payment_method;
+		}elseif( $transaction instanceof EE_Transaction ){
+			$obj_for_log = $transaction;
+		}else{
+			$obj_for_log = null;
+		}
+		$log = EEM_Change_Log::instance()->log(EEM_Change_Log::type_gateway, array('IPN data received'=>$_req_data), $obj_for_log);
 		try{
 			/**
 			 * @var EE_Payment $payment
@@ -181,7 +197,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			if( $payment instanceof EE_Payment){
 				$payment->save();
 				//  update the TXN
-				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, true );
+				$this->update_txn_based_on_payment( $transaction, $payment, $update_txn, $separate_IPN_request );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -205,6 +221,24 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		}
 	}
 
+	/**
+	 * Removes any non-printable illegal characters from the input, which might cause a raucus
+	 * when trying to insert into the database
+	 * @param type $request_data
+	 * @return array|string
+	 */
+	protected function _remove_unusable_characters( $request_data ) {
+		if( is_array( $request_data ) ) {
+			$return_data = array();
+			foreach( $request_data as $key => $value ) {
+				$return_data[ $this->_remove_unusable_characters( $key ) ] = $this->_remove_unusable_characters( $value );
+			}
+		}else{
+			$return_data =  preg_replace('/[^[:print:]]/', '', $request_data);
+		}
+		return $return_data;
+	}
+
 
 
 	/**
@@ -220,6 +254,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool 	$update_txn  whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
 	 * @return EE_Payment
+	 * @deprecated 4.6.24 method is no longer used. Instead it is up to client code, like SPCO, to call handle_ipn() for offsite gateways that don't receive separate IPNs
 	 */
 	public function finalize_payment_for( $transaction, $update_txn = TRUE ){
 		/** @var $transaction EE_Transaction */
@@ -237,7 +272,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 *
+	 * Processes a direct refund request, saves the payment, and updates the transaction appropriately.
 	 * @param EE_Payment_Method $payment_method
 	 * @param EE_Payment        $payment_to_refund
 	 * @param array             $refund_info
@@ -267,7 +302,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * what exactly happened and updating the transaction appropriately). This
 	 * could be integrated directly into EE_Transaction upon save, but we want
 	 * this logic to be separate from 'normal' plain-jane saving and updating
-	 * of transactions and payments, and to be tied to payment processing
+	 * of transactions and payments, and to be tied to payment processing.
+	 *
+	 * Note: this method DOES NOT save the payment passed into it. It is the responsibility
+	 * of previous code to decide whether or not to save (because the payment passed into
+	 * this method might be a temporary, never-to-be-saved payment from an offline gateway,
+	 * in which case we only want that payment object for some temporary usage during this request,
+	 * but we don't want it to be saved).
 	 *
 	 * @param EE_Transaction $transaction
 	 * @param EE_Payment     $payment
@@ -286,7 +327,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @throws \EE_Error
 	 */
 	public function update_txn_based_on_payment( $transaction, $payment, $update_txn = true, $IPN = false ){
-		$do_action = FALSE;
+		$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful';
 		/** @type EE_Transaction $transaction */
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		// can we freely update the TXN at this moment?
@@ -299,32 +340,25 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				$payment
 			);
 		} else {
-			// verify payment
-			if ( $payment instanceof EE_Payment ) {
+			// verify payment and that it has been saved
+			if ( $payment instanceof EE_Payment && $payment->ID() ) {
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
+					// update TXN registrations with payment info
+					$this->process_registration_payments( $transaction, $payment );
 				}
-				// we need to save this payment in order for transaction to be updated correctly
-				// because it queries the DB to find the total amount paid, and saving puts the payment into the DB
-				$payment->save();
 				$do_action = $payment->just_approved() ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' : $do_action;
-
 			} else {
-				// there is no payment. Must be an offline gateway
-				//create a hacky payment object, but dont save it
-				$payment = EE_Payment::new_instance(
-					array(
-						'TXN_ID' 					=> $transaction->ID(),
-						'STS_ID' 					=> EEM_Payment::status_id_pending,
-						'PAY_timestamp' 	=> current_time('timestamp'),
-						'PAY_amount' 		=> 0.00,
-						'PMD_ID' 				=> $transaction->payment_method_ID()
-					)
-				);
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 				$do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
+			}
+			// if this is an IPN, then we want to know the initial TXN status prior to updating the TXN
+			// so that we know whether the status has changed and notifications should be triggered
+			if ( $IPN ) {
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->set_old_txn_status( $transaction->status_ID() );
 			}
 			if ( $payment->status() !== EEM_Payment::status_id_failed ) {
 				/** @type EE_Transaction_Payments $transaction_payments */
@@ -335,12 +369,154 @@ class EE_Payment_Processor extends EE_Processor_Base {
 				if ( $update_txn ) {
 					$this->_post_payment_processing( $transaction, $payment, $IPN );
 				}
-				// and set a hook point for others to use?
-				if ( $do_action ) {
-					do_action( $do_action, $transaction, $payment );
+			}
+			// granular hook for others to use.
+			do_action( $do_action, $transaction, $payment );
+			//global hook for others to use.
+			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
+		}
+	}
+
+
+
+	/**
+	 * update registrations REG_paid field after successful payment and link registrations with payment
+	 *
+	 * @param EE_Transaction $transaction
+	 * @param EE_Payment $payment
+	 * @param EE_Registration[] $registrations
+	 * @throws \EE_Error
+	 */
+	public function process_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $registrations = array() ) {
+		// only process if payment was successful
+		if ( $payment->status() !== EEM_Payment::status_id_approved ) {
+			return;
+		}
+		//EEM_Registration::instance()->show_next_x_db_queries();
+		if ( empty( $registrations )) {
+			// find registrations with monies owing that can receive a payment
+			$registrations = $transaction->registrations( array(
+				array(
+					// only these reg statuses can receive payments
+					'STS_ID'  => array( 'IN', EEM_Registration::reg_statuses_that_allow_payment() ),
+					'REG_final_price'  => array( '!=', 0 ),
+					'REG_final_price*' => array( '!=', 'REG_paid', true ),
+				)
+			) );
+		}
+		// still nothing ??!??
+		if ( empty( $registrations )) {
+			return;
+		}
+
+		// todo: break out the following logic into a separate strategy class
+		// todo: named something like "Sequential_Reg_Payment_Strategy"
+		// todo: which would apply payments using the capitalist "first come first paid" approach
+		// todo: then have another strategy class like "Distributed_Reg_Payment_Strategy"
+		// todo: which would be the socialist "everybody gets a piece of pie" approach,
+		// todo: which would be better for deposits, where you want a bit of the payment applied to each registration
+
+		$refund = $payment->is_a_refund();
+		// how much is available to apply to registrations?
+		$available_payment_amount = abs( $payment->amount() );
+		//EEH_Debug_Tools::printr( $available_payment_amount, '$available_payment_amount', __FILE__, __LINE__ );
+		foreach ( $registrations as $registration ) {
+			if ( $registration instanceof EE_Registration ) {
+				// nothing left?
+				if ( $available_payment_amount <= 0 ) {
+					break;
+				}
+				if ( $refund ) {
+					$available_payment_amount = $this->process_registration_refund( $registration, $payment, $available_payment_amount );
+				} else {
+					$available_payment_amount = $this->process_registration_payment( $registration, $payment, $available_payment_amount );
 				}
 			}
 		}
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after successful payment and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $available_payment_amount
+	 * @return float
+	 */
+	public function process_registration_payment( EE_Registration $registration, EE_Payment $payment, $available_payment_amount = 0.00 ) {
+		$owing = $registration->final_price() - $registration->paid();
+		//EEH_Debug_Tools::printr( $owing, '$owing', __FILE__, __LINE__ );
+		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
+		if ( $owing > 0 ) {
+			// don't allow payment amount to exceed the available payment amount, OR the amount owing
+			$payment_amount = min( $available_payment_amount, $owing );
+			// update $available_payment_amount
+			$available_payment_amount = $available_payment_amount - $payment_amount;
+			//calculate and set new REG_paid
+			$registration->set_paid( $registration->paid() + $payment_amount );
+			// now save it
+			$this->_apply_registration_payment( $registration, $payment, $payment_amount );
+		}
+		return $available_payment_amount;
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after successful payment and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $payment_amount
+	 * @return float
+	 */
+	protected function _apply_registration_payment( EE_Registration $registration, EE_Payment $payment, $payment_amount = 0.00 ) {
+		// find any existing reg payment records for this registration and payment
+		$existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
+			array( array( 'REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID() ) )
+		);
+		// if existing registration payment exists
+		if ( $existing_reg_payment instanceof EE_Registration_Payment ) {
+			// then update that record
+			$existing_reg_payment->set_amount( $payment_amount );
+			$existing_reg_payment->save();
+		} else {
+			// or add new relation between registration and payment and set amount
+			$registration->_add_relation_to( $payment, 'Payment', array( 'RPY_amount' => $payment_amount ) );
+			// make it stick
+			$registration->save();
+		}
+	}
+
+
+
+	/**
+	 * update registration REG_paid field after refund and link registration with payment
+	 *
+	 * @param EE_Registration $registration
+	 * @param EE_Payment $payment
+	 * @param float $available_refund_amount - IMPORTANT !!! SEND AVAILABLE REFUND AMOUNT AS A POSITIVE NUMBER
+	 * @return float
+	 */
+	public function process_registration_refund( EE_Registration $registration, EE_Payment $payment, $available_refund_amount = 0.00 ) {
+		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
+		if ( $registration->paid() > 0 ) {
+			// ensure $available_refund_amount is NOT negative
+			$available_refund_amount = abs( $available_refund_amount );
+			// don't allow refund amount to exceed the available payment amount, OR the amount paid
+			$refund_amount = min( $available_refund_amount, $registration->paid() );
+			// update $available_payment_amount
+			$available_refund_amount = $available_refund_amount - $refund_amount;
+			//calculate and set new REG_paid
+			$registration->set_paid( $registration->paid() - $refund_amount );
+			// convert payment amount back to a negative value for storage in the db
+			$refund_amount = abs( $refund_amount ) * -1;
+			// now save it
+			$this->_apply_registration_payment( $registration, $payment, $refund_amount );
+		}
+		return $available_refund_amount;
 	}
 
 
@@ -357,12 +533,22 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @param bool           $IPN
 	 */
 	protected function _post_payment_processing( EE_Transaction $transaction, EE_Payment $payment, $IPN = false ) {
+
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// is the Payment Options Reg Step completed ?
 		$payment_options_step_completed = $transaction_processor->reg_step_completed( $transaction, 'payment_options' );
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'             => $IPN,
+		//		'payment_options' => $payment_options_step_completed,
+		//	)
+		//);
 		// if the Payment Options Reg Step is completed...
-		$revisit = $payment_options_step_completed !== false ? true : false;
+		$revisit = $payment_options_step_completed === true ? true : false;
 		// then this is kinda sorta a revisit with regards to payments at least
 		$transaction_processor->set_revisit( $revisit );
 		// if this is an IPN, let's consider the Payment Options Reg Step completed if not already
@@ -371,45 +557,69 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_options_step_completed !== true &&
 			( $payment->is_approved() || $payment->is_pending() )
 		) {
-			$transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
+			$payment_options_step_completed = $transaction_processor->set_reg_step_completed( $transaction, 'payment_options' );
 		}
-		// DEBUG LOG
-		//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
-		/** @type EE_Transaction_Payments $transaction_payments */
-		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		// maybe update status, but don't save transaction just yet
-		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
-		//check if enough Reg Steps have been completed to warrant finalizing the TXN
-		$finalized = $transaction_processor->all_reg_steps_completed_except_final_step( $transaction );
-		//  if this is an IPN and the final step has not been initiated
-		if ( $IPN && $finalized === false ) {
-			// and if it hasn't already been set as being started...
-			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
-		}
-		// because the above will return false if the final step was not fully completed, we need to check again...
-		if ( $IPN && $finalized ) {
-			// and if we are all good to go, then send out notifications
-			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-			// DEBUG LOG
-			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
-		}
-		$transaction->save();
 		// DEBUG LOG
 		//$this->log(
 		//	__CLASS__, __FUNCTION__, __LINE__,
 		//	$transaction,
 		//	array(
-		//		'IPN'                   => $IPN,
+		//		'IPN'             => $IPN,
 		//		'payment_options' => $payment_options_step_completed,
-		//		'finalize_registration' => $finalized,
-		//		'payment'               => $payment,
+		//	)
+		//);
+		/** @type EE_Transaction_Payments $transaction_payments */
+		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+		// maybe update status, but don't save transaction just yet
+		$transaction_payments->update_transaction_status_based_on_total_paid( $transaction, false );
+		// check if 'finalize_registration' step has been completed...
+		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'       => $IPN,
+		//		'finalized' => $finalized,
+		//	)
+		//);
+		//  if this is an IPN and the final step has not been initiated
+		if ( $IPN && $payment_options_step_completed && $finalized === false ) {
+			// and if it hasn't already been set as being started...
+			$finalized = $transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
+			// DEBUG LOG
+			//$this->log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	$transaction,
+			//	array(
+			//		'IPN'                   => $IPN,
+			//		'finalized'             => $finalized,
+			//	)
+			//);
+		}
+		$transaction->save();
+		// because the above will return false if the final step was not fully completed, we need to check again...
+		if ( $IPN && $finalized !== false ) {
+			// and if we are all good to go, then send out notifications
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+			// DEBUG LOG
+			//$this->log( __CLASS__, __FUNCTION__, __LINE__, $transaction );
+			//ok, now process the transaction according to the payment
+			$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
+		}
+		// DEBUG LOG
+		//$this->log(
+		//	__CLASS__, __FUNCTION__, __LINE__,
+		//	$transaction,
+		//	array(
+		//		'IPN'  => $IPN,
+		//		'finalized' => $finalized,
+		//		'payment' => $payment,
 		//		'payment_method' => $payment->payment_method() instanceof EE_Payment_Method ? $payment->payment_method
 		//()->name() : 'off-line',
 		//		'deliver_notifications' => has_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications' ),
 		//	)
 		//);
-		//ok, now process the transaction according to the payment
-		$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $transaction, $payment );
 	}
 
 

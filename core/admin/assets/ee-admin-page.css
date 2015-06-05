@@ -279,7 +279,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	}
 }
 
-/*.medium-text  { width: 50%; }*/
 
 .display-the-hidden { /*float:right;*/ cursor : pointer; }
 .hide-the-displayed { /*float:right;*/ cursor : pointer; }
@@ -308,8 +307,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .clearfix:before, .clearfix:after { content:""; display:table; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
-
-#adminmenuwrap { z-index : 1001; }
 
 
 .validate-error,
@@ -642,6 +639,10 @@ label.error { display : block; color : #FE2A00 !important; }
 
 .wp-list-table .ee-status-strip-td {
 	min-height: 125px;
+	display: block !important;
+	height: 100% !important;
+	overflow: auto !important;
+	width: 5px;
 }
 
 .ee-table-wrap {
@@ -707,7 +708,8 @@ div.updated.ee-notices-attention {
 	text-align : right;
 }
 
-
+input.mid-text  { width: 100px; }
+/*input.medium-text  { width: 200px; }*/
 
 /******************* BUTTONS ****************** */
 
