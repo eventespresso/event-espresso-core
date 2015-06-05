@@ -118,12 +118,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *		@return EE_Session
 	 */
 	public static function instance() {
-		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( ! apply_filters( 'FHEE_load_EE_Session', true ) ) {
-			return null;
-		}
 		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EE_Session ) {
+		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
+		// add_filter( 'FHEE_load_EE_Session', '__return_false' );
+		if ( ! self::$_instance instanceof EE_Session && apply_filters( 'FHEE_load_EE_Session', true ) ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -140,7 +138,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	private function __construct( EE_Encryption $encryption = null ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		define( 'ESPRESSO_SESSION', TRUE );
+		if ( ! defined( 'ESPRESSO_SESSION' ) ) {
+			define( 'ESPRESSO_SESSION', true );
+		}
 		// default session lifespan in seconds
 		$this->_lifespan = apply_filters(
 			'FHEE__EE_Session__construct___lifespan',
