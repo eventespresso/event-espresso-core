@@ -172,12 +172,12 @@ class EE_Registry {
 
 
 	/**
-	 *private constructor to prevent direct creation
+	 *protected constructor to prevent direct creation
 	 * @Constructor
-	 * @access private
+	 * @access protected
 	 * @return \EE_Registry
 	 */
-	private function __construct() {
+	protected function __construct() {
 		$this->_class_abbreviations = array(
 			'EE_Config'          => 'CFG',
 			'EE_Session'         => 'SSN',
