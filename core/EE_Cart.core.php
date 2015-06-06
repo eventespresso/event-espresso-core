@@ -64,6 +64,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @singleton method used to instantiate class object
 	  * @access    public
 	  * @param EE_Line_Item $grand_total
+	  * @param EE_Session $session
 	  * @return \EE_Cart
 	  */
 	 public static function instance( EE_Line_Item $grand_total = null, EE_Session $session ) {
@@ -150,7 +151,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$grand_total = $transaction->total_line_item();
 		$grand_total->get_items();
 		$grand_total->tax_descendants();
-		return EE_Cart::instance( $grand_total );
+		return EE_Cart::instance( $grand_total, self::$_instance->_session );
 	}
 
 
