@@ -2,15 +2,14 @@
 /**
  * Class EE_Registry_Mock
  *
- * Description
+ * For unit testing EE_Registry
  *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
- * @since 				$VID:$
+ * @since 				4.7
  *
  */
-
 class EE_Registry_Mock extends EE_Registry {
 
 	/**
@@ -39,32 +38,6 @@ class EE_Registry_Mock extends EE_Registry {
 			self::$_instance = new EE_Registry_Mock();
 		}
 		return self::$_instance;
-	}
-
-
-
-	/**
-	 *private constructor to prevent direct creation
-	 * @Constructor
-	 * @access private
-	 */
-	private function __construct() {
-		$this->_class_abbreviations = array(
-			'EE_Config'          => 'CFG',
-			'EE_Session'         => 'SSN',
-			'EE_Capabilities'    => 'CAP',
-			'EE_Cart'            => 'CART',
-			'EE_Network_Config'  => 'NET_CFG',
-			'EE_Request_Handler' => 'REQ',
-		);
-		// class library
-		$this->LIB = new StdClass();
-		$this->addons = new StdClass();
-		$this->modules = new StdClass();
-		$this->shortcodes = new StdClass();
-		$this->widgets = new StdClass();
-		$this->load_core( 'Base', array(), true );
-		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ) );
 	}
 
 
@@ -148,4 +121,4 @@ class EE_Registry_Mock extends EE_Registry {
 
 
 // End of file EE_Registry_Mock.php
-// Location: /EE_Registry_Mock.php
+// Location: /tests/mocks/core/EE_Registry_Mock.php
