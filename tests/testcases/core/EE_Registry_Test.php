@@ -16,7 +16,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 	public function setUp() {
-		require_once EE_TESTS_DIR . 'mocks/EE_Registry_Mock.php';
+		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.php';
 		parent::setUp();
 	}
 
