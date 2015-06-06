@@ -130,12 +130,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
-	  *    private constructor to prevent direct creation
+	  * protected constructor to prevent direct creation
 	  * @Constructor
-	  * @access private
+	  * @access protected
 	  * @param \EE_Encryption $encryption
 	  */
-	private function __construct( EE_Encryption $encryption = null ) {
+	 protected function __construct( EE_Encryption $encryption = null ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! defined( 'ESPRESSO_SESSION' ) ) {
