@@ -130,6 +130,20 @@ class EE_Event_Test extends EE_UnitTestCase{
 		}
 	}
 
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_spaces_remaining_for_sale() {
+		//grab test scenarios
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
+		foreach ( $scenarios as $scenario ) {
+			if ( $scenario->get_expected( 'total_remaining_spaces' ) ) {
+				$this->assertEquals( $scenario->get_expected( 'total_remaining_spaces'), $scenario->get_scenario_object()->spaces_remaining_for_sale(), 'Testing ' . $scenario->name );
+			}
+		}
+	}
+
 }
 
 // End of file EE_Event_Test.php
