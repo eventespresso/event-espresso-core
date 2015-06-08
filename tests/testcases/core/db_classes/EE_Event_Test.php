@@ -115,6 +115,35 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$e->_remove_relation_to($d_now, 'Datetime');
 		$this->assertEquals(15,$e->get_number_of_tickets_sold());
 	}
+
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_total_available_spaces() {
+		//grab test scenarios.
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
+		foreach ( $scenarios as $scenario ) {
+			if ( $scenario->get_expected( 'total_available_spaces') ) {
+				$this->assertEquals( $scenario->get_expected( 'total_available_spaces' ), $scenario->get_scenario_object()->total_available_spaces(), 'Testing ' . $scenario->name );
+			}
+		}
+	}
+
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_spaces_remaining_for_sale() {
+		//grab test scenarios
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
+		foreach ( $scenarios as $scenario ) {
+			if ( $scenario->get_expected( 'total_remaining_spaces' ) ) {
+				$this->assertEquals( $scenario->get_expected( 'total_remaining_spaces'), $scenario->get_scenario_object()->spaces_remaining_for_sale(), 'Testing ' . $scenario->name );
+			}
+		}
+	}
+
 }
 
 // End of file EE_Event_Test.php
