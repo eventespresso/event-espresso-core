@@ -1,8 +1,11 @@
 <?php
 /**
- * meant to convert DBs between 4.6 and 4.6
+ * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
+ * going to be released before this version) to 4.8 (which basiclaly supports promotions)
  * mostly just
- * -move payment methods from EE_Config into a separate table just for them
+ * -refacotrs line item trees, so that there are subtotals for EACH event purchased,
+ * which is especially convenient for applying event-wide promotions
+ * -does NOT actually make any database schema changes
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
