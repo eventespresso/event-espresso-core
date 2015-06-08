@@ -113,16 +113,17 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return EE_Session
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 * @param \EE_Encryption $encryption
+	 *	@return EE_Session
 	 */
-	public static function instance() {
+	public static function instance( EE_Encryption $encryption = null ) {
 		// check if class object is instantiated
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
 		// add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! self::$_instance instanceof EE_Session && apply_filters( 'FHEE_load_EE_Session', true ) ) {
-			self::$_instance = new self();
+			self::$_instance = new self( $encryption );
 		}
 		return self::$_instance;
 	}
