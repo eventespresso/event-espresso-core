@@ -741,7 +741,7 @@ class EE_Event extends EE_CPT_Base {
 	 *                                              may appear to equal remaining tickets.  However, the more tickets are
 	 *                                              sold out, the more accurate the "live" total is.
 	 *
-	* @return  int|float  (Note: if INF is returned its considered a float by PHP)
+	 * @return  int|float  (Note: if INF is returned its considered a float by PHP)
 	 */
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
@@ -781,21 +781,32 @@ class EE_Event extends EE_CPT_Base {
 				return INF;
 			}
 
-			//add the sum of ticket qty and all datetimes on the ticket. Note we're ordering sums by lowest to highest.
-			$ticket_sums[$ticket->ID()]['sum'] = $remaining;
+			//multiply normalized $tkt quantity by the number of datetimes on the ticket as the "sum"
+			//also include the sum of all the datetime reg limits on the ticket for breaking ties.
+			$ticket_sums[$ticket->ID()]['sum'] = $remaining * count( $datetimes );
+			$ticket_sums[$ticket->ID()]['datetime_sums'] = 0;
 			foreach ( $datetimes as $datetime ) {
-				if ( $datetime->spaces_remaining() !== INF ) {
-					$ticket_sums[ $ticket->ID() ]['sum'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+				if ( $datetime->reg_limit() === INF ) {
+					$ticket_sums[$ticket->ID()]['datetime_sums'] = INF;
+				} else {
+					$ticket_sums[ $ticket->ID() ]['datetime_sums'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 				}
 				$datetime_limits[$datetime->ID()] = $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 			}
 			$ticket_sums[$ticket->ID()]['ticket'] = $ticket;
 		}
 
-		//reorder the tickets by lowest sum first.
+		//The order is sorted by lowest available first (which is calculated for each ticket by multiplying the normalized
+		//ticket quantity by the number of datetimes on the ticket).  For tie-breakers, then the next sort is based on the
+		//ticket with the greatest sum of all remaining datetime->spaces_remaining() ( or $datetime->reg_limit() if not
+		//$current_total_available ) for the datetimes on the ticket.
 		usort( $ticket_sums, function( $a, $b ) {
 			if ( $a['sum'] == $b['sum'] ) {
-				return 0;
+				if ( $a['datetime_sums'] == $b['datetime_sums'] ) {
+					return 0;
+				}
+
+				return $a['datetime_sums'] < $b['datetime_sums'] ? 1 : -1;
 			}
 			return ( $a['sum'] < $b['sum'] ) ? -1 : 1;
 		});
