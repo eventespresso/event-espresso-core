@@ -146,6 +146,26 @@
 													</div>
 													
 												</div>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h3>Third-party Add-ons</h3>
+															</div>
+															<div class="desc column-description">
+																<p><a href="http://eventespresso.com/third-party-addons/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_third_party_add_ons" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/third-party-addons-231x152.jpg"></a>Explore an ever growing selection of add-ons, and themes from third-party developers, that work well with, or were made especially Event Espresso 4.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="http://eventespresso.com/third-party-addons/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_third_party_add_ons" target="_blank">More Info</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
 												<h1 class="service-settings-heading">Template Views</h1>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
