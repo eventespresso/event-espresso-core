@@ -796,8 +796,10 @@ class EE_Event extends EE_CPT_Base {
 			$ticket_sums[$ticket->ID()]['ticket'] = $ticket;
 		}
 
-		//reorder the tickets by lowest sum first.  If there is a tie for lowest sum, then the ticket with the highest
-		//sum of datetime reg_limits is ordered first.
+		//The order is sorted by lowest available first (which is calculated for each ticket by multiplying the normalized
+		//ticket quantity by the number of datetimes on the ticket).  For tie-breakers, then the next sort is based on the
+		//ticket with the greatest sum of all remaining datetime->spaces_remaining() ( or $datetime->reg_limit() if not
+		//$current_total_available ) for the datetimes on the ticket.
 		usort( $ticket_sums, function( $a, $b ) {
 			if ( $a['sum'] == $b['sum'] ) {
 				if ( $a['datetime_sums'] == $b['datetime_sums'] ) {
