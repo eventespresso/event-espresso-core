@@ -89,15 +89,6 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
-		$datetimes = $ticket->datetimes();
-		$event_names = array();
-		foreach($datetimes as $datetime){
-			$event = $datetime->event();
-			$event_names[$event->ID()] = $event->name();
-		}
-		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
-		$full_description = $ticket->description().$description_addition;
-		$items_subtotal = self::get_items_subtotal( $total_line_item );
 		// add $ticket to cart
 		$datetime = $ticket->first_datetime();
 		if( $datetime instanceof EE_Datetime ){
