@@ -67,7 +67,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @param EE_Session $session
 	  * @return \EE_Cart
 	  */
-	 public static function instance( EE_Line_Item $grand_total = null, EE_Session $session ) {
+	 public static function instance( EE_Line_Item $grand_total = null, EE_Session $session = null ) {
 		 EE_Registry::instance()->load_helper( 'Line_Item' );
 		 // check if class object is instantiated
 		 if ( ! empty( $grand_total ) ) {
@@ -93,7 +93,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @param EE_Session $session
 	  * @return \EE_Cart
 	  */
-	 private function __construct( EE_Line_Item $grand_total = null, EE_Session $session ) {
+	 private function __construct( EE_Line_Item $grand_total = null, EE_Session $session = null ) {
 		 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 $this->set_session( $session );
 		 if ( $grand_total instanceof EE_Line_Item ) {
@@ -110,7 +110,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @param EE_Session $session
 	  * @return EE_Cart
 	  */
-	 public static function reset( EE_Line_Item $grand_total = null, EE_Session $session ) {
+	 public static function reset( EE_Line_Item $grand_total = null, EE_Session $session = null ) {
 		 remove_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		 if ( $session instanceof EE_Session ) {
 			 $session->reset_cart();
@@ -269,7 +269,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	/**
 	 *	deletes an item from the cart
 	 *	@access public
-	 *	@param mixed - string or array - line_item_ids
+	 *	@param array|bool|string $line_item_codes
 	 *	@return int on success, FALSE on fail
 	 */
 	public function delete_items( $line_item_codes = FALSE ) {
