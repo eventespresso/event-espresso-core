@@ -1292,7 +1292,8 @@ class EEH_Activation {
 			'ee_extra_data' => TRUE,
 			'ee_ssn_' => FALSE,
 			'ee_rss_' => FALSE,
-			'ee_rte_n_tx_' => FALSE
+			'ee_rte_n_tx_' => FALSE,
+			'ee_pers_admin_notices' => TRUE,
 		);
 
 		$undeleted_options = array();
