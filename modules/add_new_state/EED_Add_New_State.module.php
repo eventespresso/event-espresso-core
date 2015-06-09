@@ -518,20 +518,34 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function state_options( $state_options = array() ) {
-		$new_states = EE_Registry::instance()->SSN->get_session_data(
-			'new_states'
-		);
-		if ( is_array( $new_states ) && ! empty( $new_states )) {
-			foreach ( $new_states as $new_state ) {
-				if (
-					$new_state instanceof EE_State
-					&& $new_state->country() instanceof EE_Country
-				) {
-					$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
-				}
+		$new_states = EED_Add_New_State::_get_new_states();
+		foreach ( $new_states as $new_state ) {
+			if (
+				$new_state instanceof EE_State
+				&& $new_state->country() instanceof EE_Country
+			) {
+				$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
 			}
 		}
 		return $state_options;
+	}
+
+
+
+	/**
+	 *    _get_new_states
+	 *
+	 * @access        protected
+	 * @return        array
+	 */
+	protected static function _get_new_states() {
+		$new_states = array();
+		if ( EE_Registry::instance()->SSN instanceof EE_Session ) {
+			$new_states = EE_Registry::instance()->SSN->get_session_data(
+				'new_states'
+			);
+		}
+		return is_array( $new_states ) ? $new_states : array();
 	}
 
 
@@ -544,17 +558,13 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function country_options( $country_options = array() ) {
-		$new_states = EE_Registry::instance()->SSN->get_session_data(
-			'new_states'
-		);
-		if ( is_array( $new_states ) && ! empty( $new_states )) {
-			foreach ( $new_states as $new_state ) {
-				if (
-					$new_state instanceof EE_State
-					&& $new_state->country() instanceof EE_Country
-				) {
-					$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
-				}
+		$new_states = EED_Add_New_State::_get_new_states();
+		foreach ( $new_states as $new_state ) {
+			if (
+				$new_state instanceof EE_State
+				&& $new_state->country() instanceof EE_Country
+			) {
+				$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
 			}
 		}
 		return $country_options;
