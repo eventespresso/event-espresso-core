@@ -704,12 +704,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Adds the listed subsections to the form section. If $subsection_name_to_target is provided,
-	 * adds them all directly before that subsection, otherwise onto the end.
-	 * @param EE_Form_Section_Base[] $new_subsections where keys are their names
-	 * @param string $subsection_name_to_target name of the section to add these $new_subsections in front of, or null to indicate it should be added before NO other section- ie, at the very end.
-	 * (However if you set $add_before to FALSE, $new_subsections will be added AFTER $subsection_name_to_target. If $subsection_name_to_add_before is null, then $new_subsections are added to the end.)
-	 * @param boolean $add_before whether to add before $subsection_name_to_target, or whether to actually add AFTER.
+	 * add_subsections
+	 *
+	 * Adds the listed subsections to the form section.
+	 * If $subsection_name_to_target is provided,
+	 * then new subsections are added before or after that subsection,
+	 * otherwise to the start or end of the entire subsections array.
+	 *
+	 * @param EE_Form_Section_Base[] $new_subsections 	array of new form subsections where keys are their names
+	 * @param string $subsection_name_to_target 					an existing for section that $new_subsections should be added before or after
+	 * 																								IF $subsection_name_to_target is null, then $new_subsections will be added to
+	 * 																								the beginning or end of the entire subsections array
+	 * @param boolean $add_before 										whether to add $new_subsections, before or after $subsection_name_to_target,
+	 * 																								or if $subsection_name_to_target is null, before or after entire subsections array
 	 * @return void
 	 */
 	public function add_subsections( $new_subsections, $subsection_name_to_target = NULL, $add_before = true ){
