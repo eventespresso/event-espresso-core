@@ -615,6 +615,105 @@ abstract class EE_Base_Class{
 	}
 
 
+	/**
+	 * Returns the next x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function next_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the previous x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function previous_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the next EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function next( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+
+	/**
+	 * Returns the previous EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an EE_Base_Class object is returned, otherwise
+	 *                                  you can indicate just the column you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function previous( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
+
+
 
 	/**
 	 * Overrides parent because parent expects old models.
@@ -1449,7 +1548,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params   like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
@@ -1464,7 +1563,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)

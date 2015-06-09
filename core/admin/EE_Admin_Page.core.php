@@ -77,6 +77,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_route;
 	protected $_route_config;
 
+	/**
+	 * Used to hold default query args for list table routes to help preserve stickiness of filters for carried out
+	 * actions.
+	 *
+	 * @since 4.6.x
+	 * @var array.
+	 */
+	protected $_default_route_query_args;
+
 	//set via request page and action args.
 	protected $_current_page;
 	protected $_current_view;
@@ -502,13 +511,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page_view_url = add_query_arg( array( 'page' => $this->_current_page, 'action' => $this->_current_view ),  $this->_admin_base_url );
 
 		//default things
-		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box');
+		$this->_default_espresso_metaboxes = array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_ratings_request', '_espresso_sponsors_post_box' );
 
 		//set page configs
 		$this->_set_page_routes();
 		$this->_set_page_config();
 
-
+		//let's include any referrer data in our default_query_args for this route for "stickiness".
+		if ( isset( $this->_req_data['wp_referer'] ) ) {
+			$this->_default_route_query_args['wp_referer'] = $this->_req_data['wp_referer'];
+		}
 
 		//for caffeinated and other extended functionality.  If there is a _extend_page_config method then let's run that to modify the all the various page configuration arrays
 		if ( method_exists( $this, '_extend_page_config' ) )
@@ -684,7 +696,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _set_defaults() {
 		$this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = $this->_template_path = $this->_column_template_path = NULL;
 
-		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
+		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config =  $this->_default_route_query_args = array();
 
 		$this->default_nav_tab_name = 'overview';
 
@@ -874,6 +886,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			do_action( 'AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this );
 		}
 
+		//right before calling the route, let's remove _wp_http_referer from the $_SERVER[REQUEST_URI] global (its now in _req_data for route processing).
+		$_SERVER['REQUEST_URI'] = remove_query_arg( '_wp_http_referer', wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
 		if ( ! empty( $func )) {
 			$base_call = $addon_call = FALSE;
 			//try to access page route via this class
@@ -934,10 +949,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@access public
 	 *	@param array $args
 	 *	@param string $url
+	 *	@param bool $sticky if true, then the existing Request params will be appended to the generated
+	 *	                    		url in an associative array indexed by the key 'wp_referer';
+	 *	                    		Example usage:
+	 *
+	 *	                    		If the current page is:
+	 *	                    		http://mydomain.com/wp-admin/admin.php?page=espresso_registrations
+	 *	                    		&action=default&event_id=20&month_range=March%202015
+	 *	                    		&_wpnonce=5467821
+	 *
+	 *	                    		and you call:
+	 *
+	 *	                    		EE_Admin_Page::add_query_args_and_nonce(
+	 *	                    			array(
+	 *	                    				'action' => 'resend_something',
+	 *	                    				'page=>espresso_registrations'
+	 *	                    				),
+	 *	                    			$some_url,
+	 *	                    			true
+	 *	                    		 );
+	 *
+	 *	                    		It will produce a url in this structure:
+	 *
+	 *	                      		http://{$some_url}/?page=espresso_registrations&action=resend_something
+	 *	                        	&wp_referer[action]=default&wp_referer[event_id]=20&wpreferer[
+	 *	                        	month_range]=March%202015
 	 * 	@return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
+	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false ) {
 		EE_Registry::instance()->load_helper('URL');
+
+		//if there is a _wp_http_referer include the values from the request but only if sticky = true
+		if ( $sticky ) {
+			$request = $_REQUEST;
+			unset( $request['_wp_http_referer'] );
+			unset( $request['wp_referer'] );
+			foreach ( $request as $key => $value ) {
+				//do not add nonces
+				if ( strpos( $key, 'nonce' ) !== false ) {
+					continue;
+				}
+				$args['wp_referer[' . $key . ']'] = $value;
+			}
+		}
+
 		return EEH_URL::add_query_args_and_nonce($args, $url);
 	}
 
@@ -1583,8 +1638,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//helpers scripts
 		wp_register_script('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-moment-core', EE_THIRD_PARTY_URL . 'moment/moment-with-locales.min.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-moment-timezone', EE_THIRD_PARTY_URL . 'moment/moment-timezone.min.js', array('ee-moment-core'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js', array('ee-moment-timezone'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js', array('ee-moment-core'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//excanvas
@@ -1655,7 +1709,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function admin_footer_scripts_eei18n_js_strings() {
 
 		EE_Registry::$i18n_js_strings['ajax_url'] = WP_AJAX_URL;
-		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA associated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 
 		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['February'] = __( 'February', 'event_espresso' );
@@ -1971,9 +2025,39 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 
 	private function _espresso_news_post_box() {
-		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('New @ Event Espresso', 'event_espresso') );
-		add_meta_box('espresso_news_post_box', $news_box_title, array( $this, 'espresso_news_post_box'), $this->_wp_page_slug, 'side');
+		$news_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __( 'New @ Event Espresso', 'event_espresso' ) );
+		add_meta_box( 'espresso_news_post_box', $news_box_title, array(
+			$this,
+			'espresso_news_post_box'
+		), $this->_wp_page_slug, 'side' );
 	}
+
+
+	/**
+	 * Code for setting up espresso ratings request metabox.
+	 */
+	protected function _espresso_ratings_request() {
+		if ( ! apply_filters( 'FHEE_show_ratings_request_meta_box', true ) ) {
+			return '';
+		}
+		$ratings_box_title = apply_filters( 'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title', __('Keep Event Espresso Decaf Free', 'event_espresso') );
+		add_meta_box( 'espresso_ratings_request', $ratings_box_title, array(
+			$this,
+			'espresso_ratings_request'
+		), $this->_wp_page_slug, 'side' );
+	}
+
+
+	/**
+	 * Code for setting up espresso ratings request metabox content.
+	 */
+	public function espresso_ratings_request() {
+		$template_path = EE_ADMIN_TEMPLATE . 'espresso_ratings_request_content.template.php';
+		EE_Registry::instance()->load_helper( 'Template' );
+		EEH_Template::display_template( $template_path, array() );
+	}
+
+
 
 
 	public static function cached_rss_display( $rss_id, $url ) {
@@ -2033,7 +2117,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-	private function _espresso_sponsors_post_box() {
+	protected function _espresso_sponsors_post_box() {
 
 		$show_sponsors = apply_filters( 'FHEE_show_sponsors_meta_box', TRUE );
 		if ( $show_sponsors )
@@ -2094,21 +2178,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * Sets the _template_args arguments used by the _publish_post_box shortcut
 	 *
+	 * Note: currently there is no validation for this.  However if you want the delete button, the
+	 * save, and save and close buttons to work properly, then you will want to include a
+	 * values for the name and id arguments.
+	 *
+	 * @todo  Add in validation for name/id arguments.
+	 *
 	 * @param	string	$name		key used for the action ID (i.e. event_id)
-	 * @param	int		$id			id attached to the item published
+	 * @param	int		$id	id attached to the item published
 	 * @param	string	$delete	page route callback for the delete action
 	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
 	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
 	 */
 	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL, $both_btns = TRUE ) {
 
-		if ( empty( $name ) || ! $id ) {
-			//user error msg
-			$user_msg = __('A required form key or ID was not supplied.', 'event_espresso' );
-			//developer error msg
-			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
 		// if Save & Close, use a custom redirect URL or default to the main page?
 		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
 		// create the Save & Close and Save buttons
@@ -2117,21 +2200,24 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 
 
-		if ( $delete && !empty( $id ) ) {
+		if ( $delete && ! empty( $id )  ) {
 			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
 			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 
 		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
-		// create hidden id field for what is being saved
-		$hidden_field_arr[$name] = array(
-			'type' => 'hidden',
-			'value' => $id
-			);
-		$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+		if ( ! empty( $name ) && ! empty( $id ) ) {
+			$hidden_field_arr[$name] = array(
+				'type' => 'hidden',
+				'value' => $id
+				);
+			$hf = $this->_generate_admin_form_fields($hidden_field_arr, 'array');
+		} else {
+			$hf = '';
+		}
 		// add hidden field
-		$this->_template_args['publish_hidden_fields'] = $hf[$name]['field'];
+		$this->_template_args['publish_hidden_fields'] = ! empty( $hf ) ? $hf[$name]['field'] : $hf;
 
 	}
 
@@ -2798,6 +2884,37 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$redirect_url = admin_url( 'admin.php' );
 		}
 
+		//merge any default query_args set in _default_route_query_args property
+		if ( ! empty( $this->_default_route_query_args ) && ! $this->_is_UI_request ) {
+			$args_to_merge = array();
+			foreach ( $this->_default_route_query_args as $query_param => $query_value ) {
+				//is there a wp_referer array in our _default_route_query_args property?
+				if ( $query_param == 'wp_referer'  ) {
+					$query_value = (array) $query_value;
+					foreach ( $query_value as $reference => $value ) {
+						if ( strpos( $reference, 'nonce' ) !== false ) {
+							continue;
+						}
+
+						//finally we will override any arguments in the referer with
+						//what might be set on the _default_route_query_args array.
+						if ( isset( $this->_default_route_query_args[$reference] ) ) {
+							$args_to_merge[$reference] = urlencode( $this->_default_route_query_args[$reference] );
+						} else {
+							$args_to_merge[$reference] = urlencode( $value );
+						}
+					}
+					continue;
+				}
+
+				$args_to_merge[$query_param] = $query_value;
+			}
+
+			//now let's merge these arguments but override with what was specifically sent in to the
+			//redirect.
+			$query_args = array_merge( $args_to_merge, $query_args );
+		}
+
 		$this->_process_notices($query_args);
 
 
@@ -3161,6 +3278,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	/**
+	 * @return bool  value of $_is_caf property
+	 */
+	public function is_caf() {
+		return $this->_is_caf;
+	}
+
+
 
 
 	/**
@@ -3212,6 +3337,36 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _get_dir() {
 		$reflector = new ReflectionClass(get_class($this));
 		return dirname($reflector->getFileName());
+	}
+
+
+
+
+	/**
+	 * A helper for getting a "next link".
+	 *
+	 * @param string $url   The url to link to
+	 * @param string $class The class to use.
+	 *
+	 * @return string
+	 */
+	protected function _next_link( $url, $class = 'dashicons dashicons-arrow-right' ) {
+		return '<a class="' . $class . '" href="' . $url . '"></a>';
+	}
+
+
+
+
+	/**
+	 * A helper for getting a "previous link".
+	 *
+	 * @param string $url   The url to link to
+	 * @param string $class The class to use.
+	 *
+	 * @return string
+	 */
+	protected function _previous_link( $url, $class = 'dashicons dashicons-arrow-left' ) {
+		return '<a class="' . $class . '" href="' . $url . '"></a>';
 	}
 
 

@@ -25,8 +25,9 @@ class EEM_WP_User extends EEM_Base {
 	protected function __construct( $timezone = NULL ){
 		$this->singular_item = __('WP_User','event_espresso');
 		$this->plural_item = __('WP_Users','event_espresso');
+		global $wpdb;
 		$this->_tables = array(
-			'WP_User'=> new EE_Primary_Table('users', 'ID')
+			'WP_User'=> new EE_Primary_Table( $wpdb->users, 'ID', true)
 		);
 		$this->_fields = array(
 			'WP_User'=>array(
@@ -52,8 +53,32 @@ class EEM_WP_User extends EEM_Base {
 			'Ticket' => new EE_Has_Many_Relation(),
 			'Venue' => new EE_Has_Many_Relation(),
 		);
+		$this->_wp_core_model = true;
+		$this->_caps_slug = 'users';
+		$this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
+		$this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read_admin ] = 'list';
+		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ) {
+			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_WP_User();
+		}
+		//@todo: account for create_users controls whether they can create users at all
 
 		parent::__construct( $timezone );
+	}
+
+	/**
+	 * We don't need a foreign key to the WP_User model, we just need its primary key
+	 * @return string
+	 */
+	public function wp_user_field_name() {
+		return $this->primary_key_name();
+	}
+
+	/**
+	 * This WP_User model IS owned, even though it doesn't have a foreign key to itself
+	 * @return boolean
+	 */
+	public function is_owned() {
+		return true;
 	}
 }
 // End of file EEM_WP_User.model.php
