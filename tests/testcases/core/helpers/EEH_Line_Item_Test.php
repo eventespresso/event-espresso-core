@@ -38,23 +38,74 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 //		$this->assertEquals(EEM_Line_Item::type_tax, $tax->type() );
 //		$this->assertEquals( 15, $tax->percent() );
 //	}
+
+
+
+	/**
+	 * test_add_ticket_purchase
+	 */
 	public function test_add_ticket_purchase(){
-		$line_item = EEH_Line_Item::create_default_total_line_item();
-		$this->assertEquals( 0, $line_item->total() );
-
-		$ticket_line_item = EEH_Line_Item::add_ticket_purchase($line_item, $this->new_ticket( array(
-			'dollar_surcharge' => 5,
-			'percent_surcharge' => 10,
-			'datetimes' => 2
-		)), 2);
-
+		// create grand total
+		$total_line_item = EEH_Line_Item::create_default_total_line_item();
+		$this->assertEquals( 0, $total_line_item->total() );
+		// create a ticket
+		$ticket = $this->new_ticket( array(
+			'dollar_surcharge'  		=> 5,
+			'percent_surcharge' 	=> 10,
+			'datetimes'         			=> 2
+		) );
+		// need to save ticket for other tests to work
+		$ticket->save();
+		// two tickets plz
+		$ticket_line_item = EEH_Line_Item::add_ticket_purchase( $total_line_item, $ticket, 2 );
+		// confirm totals
+		$this->assertEquals( 2, $ticket_line_item->quantity() );
 		$this->assertEquals( 33, $ticket_line_item->total() );
-		$this->assertEquals( 4.95, EEH_Line_Item::get_taxes_subtotal( $line_item )->total() );
-		$this->assertEquals( 33, EEH_Line_Item::get_items_subtotal( $line_item )->total() );
-		$this->assertEquals( 37.95, $line_item->total());
-		$this->assertNotEquals( 0, $line_item->total() );
+		$this->assertEquals( 4.95, EEH_Line_Item::get_taxes_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 33, EEH_Line_Item::get_items_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 37.95, $total_line_item->total());
+		$this->assertNotEquals( 0, $total_line_item->total() );
+		// one moar ticket plz
+		$ticket_line_item = EEH_Line_Item::add_ticket_purchase( $total_line_item, $ticket );
+		// confirm totals
+		$this->assertEquals( 3, $ticket_line_item->quantity() );
+		$this->assertEquals( 49.5, $ticket_line_item->total() );
+		$this->assertEquals( 7.43, EEH_Line_Item::get_taxes_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 49.5, EEH_Line_Item::get_items_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 56.93, $total_line_item->total() );
+		$this->assertNotEquals( 0, $total_line_item->total() );
+		// total ticket line items count? should just be one ticket line item
+		$this->assertEquals( 1, count( $total_line_item->get_child_line_item( 'tickets' )->children() ) );
+		// now add a different ticket
+		$new_ticket = $this->new_ticket( array(
+			'ticket_price'  		=> 10,
+			'ticket_taxable' 	=> false,
+			'datetimes'         	=> 1
+		) );
+		$new_ticket->save();
+		// add one
+		$new_ticket_line_item = EEH_Line_Item::add_ticket_purchase( $total_line_item, $new_ticket );
+		$this->assertEquals( 1, $new_ticket_line_item->quantity() );
+		// add one moar
+		$new_ticket_line_item = EEH_Line_Item::add_ticket_purchase( $total_line_item, $new_ticket );
+		$this->assertEquals( 2, $new_ticket_line_item->quantity() );
+		// confirm totals
+		$this->assertEquals( 20, $new_ticket_line_item->total() );
+		// should be same taxes as before
+		$this->assertEquals( 7.43, EEH_Line_Item::get_taxes_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 69.5, EEH_Line_Item::get_items_subtotal( $total_line_item )->total() );
+		$this->assertEquals( 76.93, $total_line_item->total() );
+		$this->assertNotEquals( 0, $total_line_item->total() );
+		// total ticket ticket line items?
+		$this->assertEquals( 2, count( $total_line_item->get_child_line_item( 'tickets' )->children() ) );
 
 	}
+
+
+
+	/**
+	 * 	test_set_tax
+	 */
 	function test_set_tax(){
 		//first create a line item
 		$txn = $this->new_typical_transaction();
