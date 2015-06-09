@@ -140,6 +140,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 		if ( $evt_venue_id && ! isset( $ven_select[$evt_venue_id] ) ) {
 			$ven_select[$evt_venue_id] = $evt_venue->name();
+			$venues = array_merge( $venues, array( $evt_venue ) );
 		}
 
 		$template_args['venues'] = $venues;
