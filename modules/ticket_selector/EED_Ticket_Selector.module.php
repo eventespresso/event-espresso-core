@@ -62,6 +62,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	protected function set_config(){
+		$this->set_config_section( 'template_settings' );
+		$this->set_config_class( 'EE_Ticket_Selector_Config' );
+		$this->set_config_name( 'EED_Ticket_Selector' );
+	}
+
+
+
 
 
 	/**
@@ -110,6 +118,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function set_definitions() {
 		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+
+		//if config is not set, initialize
+		//If config is not set, set it.
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		}
 	}
 
 
@@ -259,6 +273,24 @@ class EED_Ticket_Selector extends  EED_Module {
 			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></div>';
 		}
 
+		$ticket_query_args = array(
+			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
+			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+		);
+
+		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets ) {
+			//use the correct applicable time query depending on what version of core is being run.
+			$current_time = method_exists( 'EEM_Datetime', 'current_time_for_query' ) ? time() : current_time('timestamp');
+			$ticket_query_args[0]['TKT_end_date'] = array( '>', $current_time );
+		}
+
+		// get all tickets for this event ordered by the datetime
+		$template_args['tickets'] = EEM_Ticket::instance()->get_all( $ticket_query_args );
+
+		if ( count( $template_args['tickets'] ) < 1 ) {
+			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all ticket sales have ended.', 'event_espresso' ) . '</span></div>';
+		}
+
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
 		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
 		if ( $template_args['max_atndz'] < 1 ) {
@@ -274,12 +306,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			return '<p><span class="important-notice">' . $sales_closed_msg . '</span></p>';
 		}
-
-		// get all tickets for this event ordered by the datetime
-		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
-			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
-		));
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
@@ -321,7 +347,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
 			EE_Registry::instance()->load_helper( 'URL' );
-			$html = '<form id="" method="GET" action="' . EEH_URL::refactor_url( $external_url ) . '">';
+			$html = '<form method="GET" action="' . EEH_URL::refactor_url( $external_url ) . '">';
 			$query_args = EEH_URL::get_query_string( $external_url );
 			foreach ( $query_args as $query_arg => $value ) {
 				$html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
@@ -336,9 +362,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
-		return '<form id="" method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		return '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
-
 
 
 
@@ -392,7 +417,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
+		$view_details_btn = '<form method="POST" action="' . self::$_event->get_permalink() . '">';
 		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __( 'View Details', 'event_espresso' ) );
 		$view_details_btn .= '<input id="ticket-selector-submit-' . self::$_event->ID() . '-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
 		$view_details_btn .= '</form>';

@@ -87,17 +87,17 @@ $has_answers = $question->has_answers();
 					<?php
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
-						$disabled = $has_answers ? ' disabled="disabled"' : $disabled;
-						$id = $has_answers ? ' _disabled' : $id;
 						echo EEH_Form_Fields::select_input( 'QST_type' . $id, $question_types, $question->type(), 'id="QST_type' . $id . '"' . $disabled );
-						if ( ! empty( $QST_system ) || $has_answers ) { ?>
+						if( ! empty( $QST_system ) ) { ?>
 							<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
+						<?php
+							$explanatory_text = __('System question! This field cannot be changed.','event_espresso');
+						}else{
+							$explanatory_text = __('Because there are currently answers for this question in the database, your options to change the question type have been limited to similar question-types.','event_espresso');
+						}
+						if ( ! empty( $QST_system ) || $has_answers ) { ?>
 							<p><span class="description" style="color:#D54E21;">
-								<?php if ( $has_answers ) : ?>
-									<?php _e('This field cannot be changed because there are currently answers for this question in the database.','event_espresso')?>
-								<?php else : ?>
-									<?php _e('System question! This field cannot be changed.','event_espresso')?>
-								<?php endif; ?>
+								<?php echo $explanatory_text; ?>
 							</span></p>
 					<?php } ?>
 

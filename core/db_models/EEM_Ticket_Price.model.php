@@ -55,6 +55,14 @@ class EEM_Ticket_Price extends EEM_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Price'=>new EE_Belongs_To_Relation()
 		);
+		$this->_model_chain_to_wp_user = 'Ticket';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('Ticket.TKT_is_default', 'Ticket.Datetime.Event' );
+		//account for default tickets in the caps
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected( 'Ticket.TKT_is_default', 'Ticket.Datetime.Event');
+		//follow the caps of the ticket
+		$this->_caps_slug = 'tickets';
 		parent::__construct( $timezone );
 
 	}

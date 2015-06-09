@@ -543,9 +543,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['amount_due'] =  FALSE;
 		}
 
-		$gateway = $this->_transaction->get_extra_meta('gateway', true, FALSE);
+		$payment_method = $this->_transaction->payment_method();
 
-		$this->_template_args['method_of_payment'] = $gateway;
+		$this->_template_args['method_of_payment_name'] = $payment_method instanceof EE_Payment_Method ? $payment_method->admin_name() : __( 'Unknown', 'event_espresso' );
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;
