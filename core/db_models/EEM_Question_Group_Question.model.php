@@ -52,6 +52,15 @@ class EEM_Question_Group_Question extends EEM_Base {
 			'Question_Group'=>new EE_Belongs_To_Relation(),
 			'Question'=>new EE_Belongs_To_Relation()
 		);
+
+		$this->_model_chain_to_wp_user = 'Question_Group';
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('Question_Group.QSG_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('Question_Group.QSG_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('Question_Group.QSG_system');
+		//use the caps for question groups
+		$this->_caps_slug = 'question_groups';
 		parent::__construct( $timezone );
 	}
 
