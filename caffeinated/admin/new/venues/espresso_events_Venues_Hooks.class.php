@@ -126,7 +126,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		}
 
 		$vnumdl = EE_Registry::instance()->load_model( 'Venue' );
-		$venues = $vnumdl->get_all( array( $vnu_where ) );
+		$venues = $vnumdl->get_all( array( $vnu_where, 'order_by' => array( 'VNU_name' => 'ASC' ) ) );
 
 		$ven_select = array();
 		$ven_select[0] = __('Select a Venue', 'event_espresso');

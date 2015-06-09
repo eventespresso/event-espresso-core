@@ -437,6 +437,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'new_registration' => array(
 				'nav' => array(
 					'label' => __('Add New Registration', 'event_espresso'),
+					'url' => '#',
 					'order' => 15,
 					'persistent' => FALSE
 					),
@@ -1084,6 +1085,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['filtered_registrations_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'event_id' => $event_id ), REG_ADMIN_URL );
 			$this->_template_args['filtered_transactions_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event_id, 'page' => 'espresso_transactions' ), admin_url( 'admin.php' ) );
 			$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $event_id ), admin_url( 'admin.php' ) );
+
+			//next and previous links
+			$next_reg = $this->_registration->next(null, array(), 'REG_ID' );
+			$this->_template_args['next_registration'] = $next_reg ? $this->_next_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $next_reg['REG_ID'] ), REG_ADMIN_URL ), 'dashicons dashicons-arrow-right ee-icon-size-22' ) : '';
+			$previous_reg = $this->_registration->previous( null, array(), 'REG_ID' );
+			$this->_template_args['previous_registration'] = $previous_reg ? $this->_previous_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $previous_reg['REG_ID'] ), REG_ADMIN_URL ), 'dashicons dashicons-arrow-left ee-icon-size-22' ) : '';
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
