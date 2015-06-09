@@ -76,7 +76,9 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 			'exclude'=>array('PMD_debug_mode'),
 		));
 		$form->add_subsections( array(
-			'slurper_area' => new EE_Form_Section_HTML_From_Template( $this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php' )
+			'slurper_area' => new EE_Form_Section_HTML_From_Template( $this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php' ),
+			null, // no specific subsection targeted
+			false // add to end
 		));
 		return $form;
 	}
