@@ -3387,6 +3387,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
+		add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		$this->_template_args['success'] = EED_Messages::process_resend( $this->_req_data );
 		do_action( 'AHEE__EE_Admin_Page___process_resend_registration', $this->_template_args['success'], $this->_req_data );
 		return $this->_template_args['success'];
