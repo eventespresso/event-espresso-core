@@ -55,7 +55,8 @@ class EED_Add_New_State  extends EED_Module {
 		add_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
 		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
 		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
-		add_filter( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
+		//add_filter( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
+		add_filter( 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', array( 'EED_Add_New_State', 'inject_new_reg_state_into_options' ), 10, 5 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', array( 'EED_Add_New_State', 'inject_new_reg_country_into_options' ), 10, 5 );
 	}
