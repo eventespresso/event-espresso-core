@@ -33,8 +33,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 
 
-	//hold objects that might be created
+	/**
+	 * hold objects that might be created
+	 *
+	 * @type EE_Registration $reg_obj
+	 */
 	public $reg_obj;
+
 
 
 	/**
@@ -42,11 +47,33 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 	 *
 	 * The data is expected to be an array that came from the $_POST and $_GET and should have at least one property from the list looked for.
 	 *
-	 * @param EE_Registration $data
+	 * @param EE_Registration|array $data
+	 * @throws \EE_Error
 	 */
-	public function __construct( EE_Registration $data ) {
+	public function __construct( $data ) {
+		$filtered_reg_status = null;
 
-		$this->reg_obj = $data;
+		if ( ! is_array( $data ) && $data instanceof EE_Registration ) {
+			$this->reg_obj = $data;
+		} else {
+			$this->reg_obj = is_array( $data ) && isset( $data[0] ) && $data[0] instanceof EE_Registration ? $data[0] : null;
+			$filtered_reg_status = is_array( $data ) && ! empty( $data[1] ) ? $data[1] : null;
+		}
+
+		if ( ! $this->reg_obj instanceof EE_Registration ) {
+			throw new EE_Error(
+				sprintf(
+					__( '%1$s requires the incoming data argument to be an instance of %2$s or an array where the first value is an instance of %2$s', 'event_espresso'),
+					'EE_Messages_REG_incoming_data',
+					'EE_Registration'
+				)
+			);
+		}
+
+		$data = array(
+			'reg_obj' => $this->reg_obj,
+			'filtered_reg_status' => $filtered_reg_status
+			);
 
 		parent::__construct($data);
 	}
@@ -60,13 +87,9 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 	protected function _setup_data() {
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
-
-		//a variable for tracking totals
-		$running_total = 0;
-
+		$this->filtered_reg_status = $this->_data['filtered_reg_status'];
 		//get txn
 		$this->txn = $this->reg_obj->transaction();
-
 		//possible session stuff?
 		$session = $this->txn->session_data();
 		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();
