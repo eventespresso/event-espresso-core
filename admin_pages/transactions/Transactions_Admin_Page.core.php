@@ -518,7 +518,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
-		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
+		$this->_template_args['amount_due'] = EEH_Template::format_currency( $amount_due, TRUE );
 		if ( EE_Registry::instance()->CFG->currency->sign_b4 ) {
 			$this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign . $this->_template_args['amount_due'];
 		} else {
