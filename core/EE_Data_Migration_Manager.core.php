@@ -729,7 +729,7 @@ class EE_Data_Migration_Manager{
 		//because if it has finished, then it obviously couldn't be the cause of this error, right? (because its all done)
 		if(isset($last_ran_migration_script_properties['class']) && isset($last_ran_migration_script_properties['_status']) && $last_ran_migration_script_properties['_status'] != self::status_completed){
 			//ok then just add this error to its list of errors
-			$last_ran_migration_script_properties['_errors'] = $error_message;
+			$last_ran_migration_script_properties['_errors'][] = $error_message;
 			$last_ran_migration_script_properties['_status'] = self::status_fatal_error;
 		}else{
 			//so we don't even know which script was last running
