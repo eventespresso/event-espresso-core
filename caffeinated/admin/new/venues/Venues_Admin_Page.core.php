@@ -523,7 +523,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __( 'Trash', 'event_espresso' ),
 				'count' => 0,
 				'bulk_action' => array(
-					'restore_venues' => __('Restore_from Trash', 'event_espresso'),
+					'restore_venues' => __('Restore from Trash', 'event_espresso'),
 					'delete_venues' => __('Delete', 'event_espresso')
 				)
 			);
