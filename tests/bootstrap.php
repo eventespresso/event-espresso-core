@@ -14,9 +14,6 @@ if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
 
 require_once WP_TESTS_DIR . '/includes/functions.php';
 
-// load PSR4 autoloader
-require_once( EE_PLUGIN_DIR . 'core/Psr4Autoloader.php' );
-
 function _install_and_load_event_espresso() {
 	require EE_TESTS_DIR . 'includes/loader.php';
 }
