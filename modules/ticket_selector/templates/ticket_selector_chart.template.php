@@ -10,7 +10,7 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 		<thead>
 			<tr>
 				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' ) ) ); ?> <span class="ee-icon ee-icon-tickets"></span>
+					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' ), $EVT_ID ) ); ?> <span class="ee-icon ee-icon-tickets"></span>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
 				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
