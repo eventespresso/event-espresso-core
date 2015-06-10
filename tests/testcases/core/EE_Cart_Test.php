@@ -28,9 +28,6 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		parent::setUp();
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Session_Mock.php';
 		$this->_session = EE_Session_Mock::instance();
-		echo "\n\n this->_session: \n ";
-		var_dump( $this->_session );
-		//add_filter( 'FHEE_load_EE_Session', '__return_true', 999 );
 		EE_Cart::reset( null, $this->_session );
 	}
 
