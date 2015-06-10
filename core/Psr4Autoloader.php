@@ -1,8 +1,6 @@
 <?php
-
 namespace EventEspresso\Core;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Class Psr4Autoloader
  *
