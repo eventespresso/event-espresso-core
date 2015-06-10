@@ -1,15 +1,15 @@
 <?php
-
 namespace EventEspresso\Tests\Testcases\Core;
 
 use EventEspresso\Tests\Mocks\Core\Psr4AutoloaderMock;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-
-
 class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
+	/**
+	 * @type Psr4AutoloaderMock $loader
+	 */
 	protected $loader;
+
 
 
 	public function setUp() {
