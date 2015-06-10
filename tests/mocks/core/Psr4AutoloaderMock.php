@@ -2,13 +2,13 @@
 
 namespace EventEspresso\Tests\Mocks\Core;
 
-use EventEspresso\Core\EE_Psr4Autoloader;
+use EventEspresso\Core\Psr4Autoloader;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 
 
-class Psr4AutoloaderMock extends EE_Psr4Autoloader {
+class Psr4AutoloaderMock extends Psr4Autoloader {
 
 	protected $files = array();
 
