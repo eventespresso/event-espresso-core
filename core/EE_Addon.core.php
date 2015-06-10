@@ -177,6 +177,13 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @return void
 	 */
 	public function initialize_db_if_no_migrations_required( $verify_schema = true ) {
+		if( $verify_schema === '' ) {
+			//wp core bug imo: if no args are passed to `do_action('some_hook_name')` besides the hook's name
+			//(ie, no 2nd or 3rd arguments), instead of calling the registered callbacks with no arguments, it
+			//calls them with an argument of an empty string (ie ""), which evaluates to false
+			//so we need to treat the empty string as if nothing had been passed, and should instead use the default
+			$verify_schema = true;
+		}
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			if( $verify_schema ) {
 				$this->initialize_db();
