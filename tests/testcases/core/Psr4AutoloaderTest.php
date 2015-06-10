@@ -13,6 +13,7 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 
 	public function setUp() {
+		parent::setUp();
 		// load PSR4 autoloader
 		require_once( EE_PLUGIN_DIR . 'core/Psr4Autoloader.php' );
 		require_once( EE_TESTS_DIR . 'mocks/core/Psr4AutoloaderMock.php' );
