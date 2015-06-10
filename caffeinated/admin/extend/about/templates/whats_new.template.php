@@ -66,7 +66,7 @@
 		<hr>
 	
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.7</h2>
-	<p>This release brought many improvements to existing core features and many new features, such as a new payments system, refactored Single Page Checkout, user capabilities system, and customizable invoices/receipts.</p>
+	<p>This release brought a few improvements to existing core features and support for a new add-on.</p>
 	<p><strong>New Features</strong></p>
 		<ul>
 			<li>Added support for the Multi Event Registration add-on</li>
@@ -77,6 +77,7 @@
 			<li>Fixed the Payment/Refund Modal (in the admin) not refreshing on save</li>
 			<li>Venues can now be trashed and restored like other EE objects</li>
 			<li>Restored the dropdown question type description field</li>
+			<li>Only allow question type changes to a question type of the same category</li>
 		</ul>
 
 
