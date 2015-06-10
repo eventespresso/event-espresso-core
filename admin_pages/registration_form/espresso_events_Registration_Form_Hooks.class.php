@@ -113,7 +113,8 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 
 					$checked = ( in_array( $QSG->ID(), $EQGids ) || $QSG->get('QSG_system') == 1 ) ? ' checked="checked"' : '';
 					$visibility = $QSG->get('QSG_system') == 1 ? ' style="visibility:hidden"' : '';
-					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
+					$edit_query_args = $this->_adminpage_obj->is_caf() ? array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->ID() ) : array( 'action' => 'question_groups' );
+					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">

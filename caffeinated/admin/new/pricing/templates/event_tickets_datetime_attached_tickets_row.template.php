@@ -27,7 +27,7 @@
 					<tbody>
 						<tr valign="top" class="add-new-ticket-shortcut-row">
 							<td>
-								<input type="text" name="add_new_ticket[TKT_name]" class="add-new-ticket-TKT_name ee-large-text-inp">
+								<input maxlength="245" type="text" name="add_new_ticket[TKT_name]" class="add-new-ticket-TKT_name ee-large-text-inp">
 							</td>
 							<td>
 								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date ee-text-inp ee-datepicker" data-context="start-ticket" data-date-field-context="#edit-event-datetime-tickets-<?php echo $dtt_row; ?>" data-related-field=".add-new-ticket-TKT_end_date" data-next-field=".add-new-ticket-TKT_end_date">
@@ -49,13 +49,18 @@
 						</tr>
 					</tbody>
 				</table>
-				<div class="save-cancel-button-container">
-					<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-primary ee-create-button">
-						<?php _e('Create Ticket', 'event_espresso'); ?>
-					</button>
-					<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
-						<?php _e('Close', 'event_espresso'); ?>
-					</button>
+				<div class="ee-editor-footer-container">
+					<div class="ee-editor-id-container">
+						<span class="ee-item-id"><?php echo $DTT_ID ? 'Datetime ID: ' . $DTT_ID : ''; ?></span>
+					</div>
+					<div class="save-cancel-button-container">
+						<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-primary ee-create-button">
+							<?php _e('Create Ticket', 'event_espresso'); ?>
+						</button>
+						<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
+							<?php _e('Close', 'event_espresso'); ?>
+						</button>
+					</div>
 				</div>
 				<div style="clear:both"></div>
 			</div>
@@ -73,4 +78,5 @@
  * $show_tickets_row
  * $datetime_tickets_list
  * $add_new_datetime_ticket_help_link
+ * $DTT_ID
  */
