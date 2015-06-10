@@ -14,6 +14,9 @@ if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
 
 require_once WP_TESTS_DIR . '/includes/functions.php';
 
+// load PSR4 autoloader
+require_once( EE_PLUGIN_DIR . 'core/Psr4Autoloader.php' );
+
 function _install_and_load_event_espresso() {
 	require EE_TESTS_DIR . 'includes/loader.php';
 }
@@ -26,5 +29,5 @@ require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
 
 require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
-//save wpdb queries in case we want to know what queries ran duting a test
+//save wpdb queries in case we want to know what queries ran during a test
 define( 'SAVEQUERIES', TRUE );
