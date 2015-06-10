@@ -658,6 +658,33 @@ class EE_Data_Migration_Manager{
 	}
 
 	/**
+	 * Determines if the database is currently at a state matching what's indicated in $slug and $version.
+	 * $slug_and_version
+	 * @param string $slug like 'Core' or 'Calendar',
+	 * @param string $version like '4.1.0'
+	 * @return boolean
+	 */
+	public function database_needs_updating_to( $slug, $version ) {
+
+		$current_database_state = get_option(self::current_database_state);
+		if( ! isset( $current_database_state[ $slug ] ) ) {
+			return true;
+		}else{
+			//just compare the first 3 parts of version string, eg "4.7.1", not "4.7.1.dev.032" because DBs shouldn't change on nano version changes
+			$version_parts_current_db_state = array_slice( explode('.', $current_database_state[ $slug ] ), 0, 3);
+			$version_parts_of_provided_db_state = array_slice( explode( '.', $version ), 0, 3 );
+			$needs_updating = false;
+			foreach($version_parts_current_db_state as $offset => $version_part_in_current_db_state ) {
+				if( $version_part_in_current_db_state < $version_parts_of_provided_db_state[ $offset ] ) {
+					$needs_updating = true;
+					break;
+				}
+			}
+			return $needs_updating;
+		}
+	}
+
+	/**
 	 * Gets all the data migration scripts available in the core folder and folders
 	 * in addons. Has the side effect of adding them for autoloading
 	 * @return array keys are expected classnames, values are their filepaths
@@ -917,14 +944,22 @@ class EE_Data_Migration_Manager{
 	 */
 	public function initialize_db_for_enqueued_ee_plugins() {
 		$queue = $this->get_db_initialization_queue();
-		foreach( $queue as $plugin_slug ){
+		foreach( $queue as $plugin_slug ) {
 			if( $plugin_slug == 'Core' ){
-				EE_System::instance()->initialize_db_if_no_migrations_required();
+				EE_System::instance()->initialize_db_if_no_migrations_required(
+						false,
+						//don't verify the schema if we know it's up-to-date
+						$this->database_needs_updating_to( 'Core', espresso_version() )
+					);
 			}else{
-				//just loop through the addons to make sure
+				//just loop through the addons to make sure their database is setup
 				foreach( EE_Registry::instance()->addons as $addon ) {
 					if( $addon->name() == $plugin_slug ) {
-						$addon->initialize_db_if_no_migrations_required();
+
+						$addon->initialize_db_if_no_migrations_required(
+								//don't verify the schema if we know it's up-to-date
+								$this->database_needs_updating_to( $plugin_slug, $addon->version() )
+						);
 						break;
 					}
 				}
