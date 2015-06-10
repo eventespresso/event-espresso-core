@@ -36,14 +36,14 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$grand_total_line_item = $transaction->total_line_item();
 		$cart = EE_Cart::reset( null, $this->_session );
 		$this->assertNotEquals( $cart->get_grand_total()->ID(), $grand_total_line_item->ID() );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEquals( $cart->get_grand_total()->ID(), $grand_total_line_item->ID() );
 	}
 
 	public function test_get_tickets(){
 		$transaction = $this->new_typical_transaction();
 		$plain_line_items = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_line_item, $transaction );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertNotEmpty( $cart->get_tickets() );
 		$this->assertEEModelObjectsEquals( $plain_line_items, $cart->get_tickets() );
 	}
@@ -51,19 +51,19 @@ class EE_Cart_Test extends EE_UnitTestCase{
 	public function test_all_ticket_quantity_count(){
 		$transaction = $this->new_typical_transaction();
 		EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_line_item, $transaction );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEquals( 1, $cart->all_ticket_quantity_count() );
 	}
 
 	public function test_get_taxes(){
 		$transaction = $this->new_typical_transaction();
 		$taxes = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_tax, $transaction );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEEModelObjectsEquals( $taxes, $cart->get_taxes() );
 	}
 	public function test_get_grand_total(){
 		$transaction = $this->new_typical_transaction();
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEEModelObjectsEquals( $transaction->total_line_item(), $cart->get_grand_total() );
 	}
 	public function test_add_ticket_to_cart(){
@@ -99,7 +99,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 
 		EE_Cart::reset( null, $this->_session )->add_ticket_to_cart( $ticket, $quantity_purchased );
 
-		$total_line_item = EE_Cart::instance()->get_grand_total();
+		$total_line_item = EE_Cart::instance( null, $this->_session )->get_grand_total();
 		$subtotals = $total_line_item->children();
 		$this->assertNotEmpty( $subtotals );
 		$items_purchased = $total_line_item->get_items();
@@ -118,25 +118,25 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$percent_surcharge_sli = array_shift( $sub_line_items );
 		$this->assertEquals( $percent_surcharge->amount(), $percent_surcharge_sli->percent() );
 		$this->assertEquals( ($base_price->amount()  + $dollar_surcharge->amount() )* $percent_surcharge->amount() / 100 * $quantity_purchased, $percent_surcharge_sli->total() );
-		$this->assertEquals($ticket->price() * $quantity_purchased, EE_Cart::instance()->get_cart_grand_total() );
+		$this->assertEquals($ticket->price() * $quantity_purchased, EE_Cart::instance( null, $this->_session )->get_cart_grand_total() );
 
 	}
 
 	public function test_get_cart_total_before_tax(){
 		$transaction = $this->new_typical_transaction();
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEquals( 10, $cart->get_cart_total_before_tax() );
 	}
 
 	public function test_get_applied_taxes(){
 		$transaction = $this->new_typical_transaction();
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEquals( 1.5, $cart->get_applied_taxes() );
 	}
 
 	public function test_get_cart_grand_total(){
 		$transaction = $this->new_typical_transaction();
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEquals( 11.5, $cart->get_cart_grand_total() );
 	}
 
@@ -148,7 +148,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$latest_line_item = EEM_Line_Item::instance()->get_one( array(
 			array( 'LIN_type' => EEM_Line_Item::type_line_item ),
 			'order_by' => array( 'LIN_ID'=>'DESC' ) ) );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 
 		$removals = $cart->delete_items( array( $latest_line_item->code() ) );
 
@@ -160,7 +160,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 
 	public function test_empty_cart(){
 		$transaction = $this->new_typical_transaction();
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
+		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
 		$this->assertEEModelObjectsEquals( $transaction->total_line_item(), $cart->get_grand_total() );
 
 		$cart->empty_cart();
@@ -171,15 +171,15 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$t1 = $this->new_typical_transaction();
 		$t1_line_item = $t1->total_line_item();
 		$t2 = $this->new_typical_transaction( array( 'ticket_types' => 2) );
-		$cart = EE_Cart::get_cart_from_txn( $t2 );
+		$cart = EE_Cart::get_cart_from_txn( $t2, $this->_session );
 		$this->assertNotEquals( $t1_line_item, $cart->get_grand_total() );
-		EE_Cart::instance()->set_grand_total_line_item( $t1_line_item );
+		EE_Cart::instance( null, $this->_session )->set_grand_total_line_item( $t1_line_item );
 		$this->assertEEModelObjectsEquals( $t1_line_item, $cart->get_grand_total() );
 	}
 
 	public function test_save_cart(){
 		$t2 = $this->new_typical_transaction( array( 'ticket_types' => 2) );
-		$cart = EE_Cart::get_cart_from_txn( $t2 );
+		$cart = EE_Cart::get_cart_from_txn( $t2, $this->_session );
 		$this->_session->reset_data( array( 'cart' ) );
 		$this->assertNotEquals( $this->_session->get_session_data( 'cart' ), $cart );
 
