@@ -13,7 +13,7 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 					<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?> <span class="ee-icon ee-icon-tickets"></span>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th">
+				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
 					<?php
 						/**
 						 * Filters the text printed for the header of the price column in the ticket selector table
@@ -23,11 +23,11 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 						 * @param string 'Price' The translatable text to display in the table header for price
 						 * @param int $EVT_ID The Event ID
 						 */
-						echo esc_html__( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ), 'event_espresso' );
+						echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID );
 					?>
 				</th>
 				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th">
+				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
 					<?php
 						/**
 						* Filters the text printed for the header of the quantity column in the ticket selector table
@@ -37,7 +37,7 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
 						* @param int $EVT_ID The Event ID
 						*/
-						echo esc_html__( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', _e( 'Qty*', 'event_espresso' ), $EVT_ID ), 'event_espresso' );
+						echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID );
 					?>
 				</th>
 			</tr>
