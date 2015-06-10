@@ -635,10 +635,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_Cart
 	 */
 	private function _get_cart_for_transaction( $transaction ) {
-		$cart = $transaction instanceof EE_Transaction ? EE_Cart::get_cart_from_txn( $transaction ) : NULL;
+		$session = EE_Registry::instance()->load_core( 'Session' );
+		$cart = $transaction instanceof EE_Transaction ? EE_Cart::get_cart_from_txn( $transaction, $session ) : NULL;
 		// verify cart
 		if ( ! $cart instanceof EE_Cart ) {
-			$cart = EE_Registry::instance()->load_core( 'Cart' );
+			$cart = EE_Registry::instance()->load_core( 'Cart', array( null, $session ) );
 		}
 		return $cart;
 	}
