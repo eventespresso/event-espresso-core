@@ -867,10 +867,11 @@ class EE_Checkout {
 			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
 			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : null;
 			//now refresh the cart, based on the TXN
-			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
+			$session = EE_Registry::instance()->load_core( 'Session' );
+			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction, $session );
 			// verify cart
 			if ( ! $this->cart instanceof EE_Cart ) {
-				$this->cart = EE_Registry::instance()->load_core( 'Cart' );
+				$this->cart = EE_Registry::instance()->load_core( 'Cart', array( null, $session ) );
 			}
 		} else {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
@@ -953,7 +954,7 @@ class EE_Checkout {
 				$this->cart->get_grand_total()
 			);
 			if ( $grand_total instanceof EE_Line_Item ) {
-				$this->cart = EE_Cart::instance( $grand_total );
+				$this->cart = EE_Cart::instance( $grand_total, EE_Registry::instance()->SSN );
 			} else {
 				EE_Error::add_error( __( 'A valid Cart was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
