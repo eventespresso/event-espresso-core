@@ -4,7 +4,7 @@ namespace EventEspresso\Core;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Psr4Autoloader
+ * Class Psr4Autoloader
  *
  * A general-purpose autoloader implementation that includes the optional
  * functionality of allowing multiple base directories for a single namespace
@@ -28,7 +28,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  *
  *      <?php
  *      // instantiate the loader
- *      $loader = new \Example\EE_Psr4Autoloader;
+ *      $loader = new \Example\Psr4Autoloader;
  *
  *      // register the autoloader
  *      $loader->register();
@@ -56,7 +56,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  * @since 				$VID:$
  *
  */
-class EE_Psr4Autoloader {
+class Psr4Autoloader {
 
 	/**
 	 * An associative array where the key is a namespace prefix and the value

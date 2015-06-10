@@ -2,18 +2,18 @@
 
 namespace EventEspresso\Tests\Testcases\Core;
 
-use EventEspresso\Tests\Mocks\Core\EE_Psr4Autoloader_Mock;
+use EventEspresso\Tests\Mocks\Core\Psr4AutoloaderMock;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 
-class EE_Psr4Autoloader_Test extends \EE_UnitTestCase {
+class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 	protected $loader;
 
 
 	public function setUp() {
-		$this->loader = new EE_Psr4Autoloader_Mock;
+		$this->loader = new Psr4AutoloaderMock;
 		$this->loader->setFiles( array(
 			'/vendor/foo.bar/src/ClassName.php',
 			'/vendor/foo.bar/src/DoomClassName.php',
@@ -84,5 +84,5 @@ class EE_Psr4Autoloader_Test extends \EE_UnitTestCase {
 
 
 }
-// End of file EE_Psr4Autoloader_Test.php
-// Location: /tests/testcases/core/EE_Psr4Autoloader_Test.php
+// End of file Psr4AutoloaderTest.php
+// Location: /tests/testcases/core/Psr4AutoloaderTest.php

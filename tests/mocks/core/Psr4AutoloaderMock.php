@@ -8,7 +8,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
 
 
 
-class EE_Psr4Autoloader_Mock extends EE_Psr4Autoloader {
+class Psr4AutoloaderMock extends EE_Psr4Autoloader {
 
 	protected $files = array();
 
@@ -25,5 +25,5 @@ class EE_Psr4Autoloader_Mock extends EE_Psr4Autoloader {
 	}
 
 }
-// End of file EE_Psr4Autoloader_Mock.php
-// Location: /tests/mocks/core/EE_Psr4Autoloader_Mock.php
+// End of file Psr4AutoloaderMock.php
+// Location: /tests/mocks/core/Psr4AutoloaderMock.php
