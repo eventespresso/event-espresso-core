@@ -145,13 +145,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  *    get_cart_from_reg_url_link
 	  * @access public
 	  * @param EE_Transaction $transaction
+	  * @param EE_Session $session
 	  * @return \EE_Cart
 	  */
-	public static function get_cart_from_txn( EE_Transaction $transaction ) {
+	public static function get_cart_from_txn( EE_Transaction $transaction, EE_Session $session = null ) {
 		$grand_total = $transaction->total_line_item();
 		$grand_total->get_items();
 		$grand_total->tax_descendants();
-		return EE_Cart::instance( $grand_total, self::$_instance->_session );
+		return EE_Cart::instance( $grand_total, $session );
 	}
 
 
