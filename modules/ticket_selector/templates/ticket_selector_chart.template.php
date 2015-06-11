@@ -2,28 +2,21 @@
 /** @type int $EVT_ID */
 /** @type int $max_atndz */
 /** @type boolean $event_is_expired */
+/** @type EE_Ticket[] $tickets */
 
-$template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
-?>
-<div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
-	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
-		<thead>
-			<tr>
-				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?> <span class="ee-icon ee-icon-tickets"></span>
-				</th>
-				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th"><?php _e( 'Price', 'event_espresso' ); ?> </th>
-				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-<?php
 
 $row = 1;
+$max = 1;
 $ticket_count = count( $tickets );
+
+if ( ! $ticket_count ) {
+	return;
+}
+
 $required_ticket_sold_out = FALSE;
+$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
+ob_start();
+
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
 		//	d( $ticket );
@@ -423,8 +416,32 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$row++;
 		}
 	}
-?>
 
+$ticket_row_html = ob_get_clean();
+// if there is only ONE ticket with a max qty of ONE... then not much need for the ticket selector
+$hide_ticket_selector = $ticket_count == 1 && $max == 1 ? true : false;
+$hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
+$table_style = $hide_ticket_selector ? ' style="display:none"' : '';
+//EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
+?>
+<div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv"<?php echo $table_style; ?>>
+	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
+		<thead>
+		<tr>
+			<th scope="col" class="ee-ticket-selector-ticket-details-th">
+				<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' ) ); ?> <span class="ee-icon ee-icon-tickets"></span>
+			</th>
+			<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', true ) ) { ?>
+				<th scope="col" class="ee-ticket-selector-ticket-price-th"><?php _e( 'Price', 'event_espresso' ); ?> </th>
+			<?php } ?>
+			<th scope="col" class="ee-ticket-selector-ticket-qty-th"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
+		</tr>
+		</thead>
+		<tbody>
+			<?php echo $ticket_row_html;?>
 		</tbody>
 	</table>
 
@@ -434,7 +451,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
-<?php if ( $max_atndz > 0 ) { ?>
+<?php  if ( $hide_ticket_selector && isset( $TKT_ID ) ) { ?>
+	<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
+	<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
+<?php } ?>
+
+<?php if ( $max_atndz > 0 && ! $hide_ticket_selector ) { ?>
 	<p class="smaller-text lt-grey-text">* <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote', sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz ));?></p>
 <?php } ?>
 
