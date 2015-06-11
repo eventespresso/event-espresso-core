@@ -189,6 +189,10 @@ abstract class EE_Addon extends EE_Configurable {
 			EE_Registry::instance()->load_helper('Activation');
 			EEH_Activation::initialize_db_content();
 			update_option( 'ee_flush_rewrite_rules', TRUE );
+			//in case there are lots of addons being activated at once, let's force garbage collection
+			//to help avoid memory limit errors
+//			EEH_Debug_Tools::instance()->measure_memory( 'done initing db for ' . get_class( $this), true );
+			gc_collect_cycles();
 		}else{
 			//ask the data migration manager to init this addon's data
 			//when migrations are finished because we can't do it now
