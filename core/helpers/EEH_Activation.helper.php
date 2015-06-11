@@ -34,7 +34,7 @@ class EEH_Activation {
 	 * This prevents doing that for EVERY single addon.
 	 * @var boolean
 	 */
-	protected static $_initialized_db_content_already_in_this_requested = false;
+	protected static $_initialized_db_content_already_in_this_request = false;
 
 
 	/**
@@ -71,10 +71,10 @@ class EEH_Activation {
 	 */
 	public static function initialize_db_content(){
 		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
-		if( EEH_Activation::$_initialized_db_content_already_in_this_requested ) {
+		if( EEH_Activation::$_initialized_db_content_already_in_this_request ) {
 			return;
 		}
-		EEH_Activation::$_initialized_db_content_already_in_this_requested = true;
+		EEH_Activation::$_initialized_db_content_already_in_this_request = true;
 
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_status_codes();
@@ -1395,7 +1395,7 @@ class EEH_Activation {
 	 */
 	public static function reset(){
 		self::$_default_creator_id = NULL;
-		self::$_initialized_db_content_already_in_this_requested = false;
+		self::$_initialized_db_content_already_in_this_request = false;
 	}
 }
 // End of file EEH_Activation.helper.php
