@@ -225,7 +225,7 @@ class EEH_Debug_Tools{
 		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
 		 $this->_memory_usage_points[ $label ] = $memory_used;
 		 if( $output_now ) {
-			 echo "\r\n<br>$label:$memory_used";
+			 echo "\r\n<br>$label : $memory_used";
 		 }
 	 }
 
@@ -236,7 +236,7 @@ class EEH_Debug_Tools{
 	  */
 	 public function convert( $size ) {
 		$unit=array('b','kb','mb','gb','tb','pb');
-		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
+		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
 	 }
 
 
