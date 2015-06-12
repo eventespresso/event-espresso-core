@@ -50,7 +50,7 @@ class EE_PUE {
 	public function __construct() {
 //		throw new EE_Error('error');
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
