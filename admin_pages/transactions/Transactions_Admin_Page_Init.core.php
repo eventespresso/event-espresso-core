@@ -1,4 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  * Event Espresso
  *
@@ -31,9 +32,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * 		@return Transactions_Admin_Page_Init
 	 */
 	public function __construct() {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		define( 'TXN_PG_SLUG', 'espresso_transactions' );
 		define( 'TXN_PG_NAME', ucwords( str_replace( '_', '', TXN_PG_SLUG )));
 		define( 'TXN_ADMIN', EE_ADMIN_PAGES . 'transactions' . DS );

@@ -1,5 +1,4 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * Event Espresso
  *
