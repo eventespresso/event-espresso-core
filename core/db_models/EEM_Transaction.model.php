@@ -199,6 +199,30 @@ class EEM_Transaction extends EEM_Base {
 		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->ensure_is_obj( $transaction_obj_or_id ));
 	}
 
+	/**
+	 * Deletes "junk" transactions that were probably added by bots. There might be TONS
+	 * of these, so we are very careful to NOT select (which the models do even when deleting),
+	 * and so we only use wpdb directly and NOT do any joins.
+	 * The downside to this approach is that is addons are listening for object deletions
+	 * on EEM_Base::delete() they won't be notified of this.
+	 * @global type $wpdb
+	 * @return type
+	 */
+	public function delete_junk_transactions() {
+		global $wpdb;
+		$time_to_leave_alone = apply_filters( 'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : HOUR_IN_SECONDS );
+		$query = $wpdb->prepare( "
+		delete t
+		from
+			" . $this->table() . " t
+		WHERE
+			t.STS_ID = %s AND
+			t.TXN_timestamp < %s",
+					EEM_Transaction::failed_status_code,
+					//use GMT time because that's what TXN_timestamps are in
+					date(  'Y-m-d H:i:s', current_time('timestamp') - $time_to_leave_alone ) );
+		return $wpdb->query( $query );
+	}
 
 
 

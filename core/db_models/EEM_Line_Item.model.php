@@ -181,6 +181,19 @@ class EEM_Line_Item extends EEM_Base {
 		)));
 	}
 
+	/**
+	 * Deletes line items with no transaction. This needs to be very efficient
+	 * because if there are spam bots afoot there will be LOTS of line items
+	 * @return int count of how many deleted
+	 */
+	public function delete_line_items_with_no_transaction(){
+		global $wpdb;
+		return $wpdb->query(
+				'DELETE li FROM ' . $this->table() . ' li LEFT JOIN ' .
+				EEM_Transaction::instance()->table() . ' t ON li.TXN_ID = t.TXN_ID
+				WHERE t.TXN_ID IS NULL ' );
+	}
+
 
 
 }

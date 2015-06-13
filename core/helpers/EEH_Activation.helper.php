@@ -23,6 +23,10 @@
  */
 class EEH_Activation {
 
+	/**
+	 * constant used to indicate a cron task is no longer in use
+	 */
+	const cron_task_no_longer_in_use = null;
 
 	private static $_default_creator_id = null;
 
@@ -68,11 +72,68 @@ class EEH_Activation {
 
 		EEH_Activation::validate_messages_system();
 		EEH_Activation::insert_default_payment_methods();
+		//in case we've
+		EEH_Activation::remove_cron_tasks();
+		EEH_Activation::create_cron_tasks();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
+	}
+	/**
+	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
+	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
+	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use (null)
+	 * @param string $include_old_cron_tasks can be 'current' (ones that are currently in use),
+	 * 'old' (only returns ones that should no longer be used),or 'all',
+	 * @return array
+	 */
+	public static function get_cron_tasks( $which_to_include ) {
+		$cron_tasks = apply_filters( 'FHEE__EEH_Activation__get_cron_tasks', array(
+			'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
+			'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use,
+			) );
+		if( $which_to_include === 'all' ) {
+			//leave as-is
+		}elseif( $which_to_include === 'old' ) {
+			$cron_tasks = array_filter( $cron_tasks, function ( $value ) {
+				return $value === EEH_Activation::cron_task_no_longer_in_use;
+			});
+		}elseif( $which_to_include === 'current' ) {
+			$cron_tasks = array_filter( $cron_tasks );
+		}elseif( WP_DEBUG ) {
+			throw new EE_Error( sprintf( __( 'Invalidate argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".', 'event_espresso' ), $which_to_include ) );
+		}else{
+			//leave as-is
+		}
+		return $cron_tasks;
+	}
+
+	/**
+	 * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
+	 */
+	public static function create_cron_tasks() {
+
+		foreach( EEH_Activation::get_cron_tasks( 'current' ) as $hook_name => $frequency ) {
+			if( ! wp_next_scheduled( $hook_name ) ) {
+				wp_schedule_event( time(), $frequency, $hook_name );
+			}
+		}
+
+	}
+
+	/**
+	 * Remove the currently-existing and now-removed crontasks.
+	 * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
+	 */
+	public static function remove_cron_tasks( $remove_all = true ) {
+		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
+		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
+			while( $scheduled_time = wp_next_scheduled( $hook_name ) ) {
+				wp_unschedule_event( $scheduled_time, $hook_name );
+			}
+		}
 	}
 
 
@@ -1183,6 +1244,8 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function plugin_deactivation() {
+		//remove cron tasks. We'll re-add them if this get re-added
+		EEH_Activation::remove_cron_tasks();
 	}
 
 

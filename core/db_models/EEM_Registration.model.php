@@ -364,6 +364,19 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return $this->count($query_params);
 	}
 
+	/**
+	 * Deletes all registrations with no transactions. Note that this needs to be very efficient
+	 * and so it uses wpdb directly
+	 * @global WPDB $wpdb
+	 * @return int number deleted
+	 */
+	public function delete_registrations_with_no_transaction() {
+		global $wpdb;
+		return $wpdb->query(
+				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' .
+				EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID
+				WHERE t.TXN_ID IS NULL ' );
+	}
 
 
 
