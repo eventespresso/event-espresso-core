@@ -213,8 +213,7 @@ class EEM_Transaction extends EEM_Base {
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		$time_to_leave_alone = apply_filters(
-			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone',
-			EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : ( HOUR_IN_SECONDS + 300 )
+			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
 		);
 		$query = $wpdb->prepare( '
 			DELETE
