@@ -233,6 +233,9 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		}
 	}
 
+	/**
+	 * @group 4710
+	 */
 	public function test_handle_payment_update__paypal_adds_taxes_and_shipping(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
@@ -250,6 +253,13 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertNotEmpty( $old_tax_total );
 		//skip IPN validation with paypal
 		add_filter( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', '__return_true' );
+
+		//pretend we sent an itemized report to paypal, and thus told them to calculate taxes on it.
+		$p->update_extra_meta( 'itemized_payment', true );
+		$tax_in_ipn = 2.80;
+		//if the old tax matches what's going to be in the IPN data, we can't verify the IPN data
+		//updated the tax can we?
+		$this->assertNotEquals( $tax_in_ipn, $old_tax_total );
 		$ipn_args = array (
 			'e_reg_url_link' => '1-203446311152995f326e9ca81b64c95b',
 			'mc_gross' => $old_pretax_total + 8 + 2.8,//pretax total plus shipping and tax
@@ -258,7 +268,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 			'item_number1' => '',
 			'item_number2' => '',
 			'payer_id' => 'DQUX5EF8CFFQ2',
-			'tax' => '2.80',//IMPORTANT
+			'tax' => "$tax_in_ipn",//IMPORTANT
 			'address_street' => '1 Maire-Victorin',
 			'payment_date' => '15:21:18 Jul 04, 2014 PDT',
 			'payment_status' => 'Completed',
