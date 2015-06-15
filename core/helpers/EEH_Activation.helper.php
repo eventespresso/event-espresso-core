@@ -103,7 +103,7 @@ class EEH_Activation {
 			'FHEE__EEH_Activation__get_cron_tasks',
 			array(
 				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
-				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use,
+//				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
 			)
 		);
 		if( $which_to_include === 'all' ) {
