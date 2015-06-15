@@ -1,6 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  * Event Espresso
  *
@@ -33,7 +32,9 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 *@return void
 	 */
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		define( 'EE_MSG_PG_SLUG', 'espresso_messages' );
 		define( 'EE_MSG_PG_NAME', ucwords( str_replace( '_', '', EE_MSG_PG_SLUG )));
 		define( 'EE_MSG_ADMIN', EE_ADMIN_PAGES . 'messages' . DS );

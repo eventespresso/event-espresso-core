@@ -1,6 +1,5 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
-/**
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * Event Espresso
  *
@@ -140,7 +139,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
 			return NULL;
 		}
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'instantiated' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
 		// default session lifespan in seconds
 		$this->_lifespan = apply_filters(
@@ -338,6 +337,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 			$this->reset_checkout();
 			$this->reset_transaction();
 		}
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
 		}  else  {
@@ -354,6 +354,9 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	  * @return 	TRUE on success, FALSE on fail
 	  */
 	public function set_session_data( $data ) {
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? bad data ??? go home!
 		if ( empty( $data ) || ! is_array( $data )) {
@@ -385,6 +388,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */
 	private function _espresso_session() {
 
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// is the SID being passed explicitly ?
 		if ( isset( $_REQUEST['EESID'] )) {
 			session_id( sanitize_text_field( $_REQUEST['EESID'] ));
@@ -393,11 +397,9 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 		if ( session_id() === '' ) {
 			//starts a new session if one doesn't already exist, or re-initiates an existing one
 			session_start();
-			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'Session Start' );
 		}
 		// grab the session ID
 		$this->_sid = session_id();
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'SID='. $this->_sid );
 		// and the visitors IP
 		$this->_ip_address = $this->_visitor_ip();
 		// set the "user agent"
@@ -442,7 +444,6 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 		}
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
-			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'Session Expired' );
 			// yer too old fer me!
 			// wipe out everything that isn't a default session datum
 			$this->clear_session( __CLASS__, __FUNCTION__ );
@@ -477,7 +478,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	  * @return TRUE on success, FALSE on fail
 	  */
 	public function update( $new_session = FALSE ) {
-
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_session_data = isset( $this->_session_data )
 			&& is_array( $this->_session_data )
 			&& isset( $this->_session_data['id'])
@@ -550,7 +551,6 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
-			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'Session Updated' );
 			// ready? let's save
 			if ( $this->_save_session_to_db() ) {
 				return TRUE;
@@ -573,7 +573,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 * 	@return bool
 	 */
 	private function _create_espresso_session( ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'Create New Session' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// use the update function for now with $new_session arg set to TRUE
 		return  $this->update( TRUE ) ? TRUE : FALSE;
 	}
@@ -588,6 +588,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 * 	@return string
 	 */
 	private function _save_session_to_db() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (
 			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
 			|| ! (
@@ -617,6 +618,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *	@return string
 	 */
 	private function _visitor_ip() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$visitor_ip = '0.0.0.0';
 		$server_keys = array(
 			'HTTP_CLIENT_IP',
@@ -650,6 +652,8 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */
 	public function _get_page_visit() {
 
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 
 		// check for request url
@@ -858,7 +862,6 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 					 if ( $results instanceof WP_Error && is_admin() ) {
 						 EE_Error::add_error( $results->get_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 					 }
-					 do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $results . ' expired sessions deleted' );
 				 }
 				 do_action( 'FHEE__EE_Session__garbage_collection___end', $expired_session_transient_delete_query_limit );
 			 }

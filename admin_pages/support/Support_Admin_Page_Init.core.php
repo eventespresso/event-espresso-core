@@ -1,7 +1,6 @@
 <?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 /**
  * Event Espresso
@@ -32,7 +31,6 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some help/support page related constants
 		define( 'EE_SUPPORT_PG_SLUG', 'espresso_support' );
 		define( 'EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=' . EE_SUPPORT_PG_SLUG ));

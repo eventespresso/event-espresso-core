@@ -1,5 +1,4 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  * Event Espresso
  *
@@ -30,7 +29,6 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 class About_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some events related constants
 		define( 'EE_ABOUT_PG_SLUG', 'espresso_about' );
 		define( 'EE_ABOUT_LABEL', __('About', 'event_espresso'));

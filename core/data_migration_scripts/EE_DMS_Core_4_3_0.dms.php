@@ -1,5 +1,4 @@
 <?php
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '', '', 'DMS' );
 /**
  * meant to convert DBs between 4.2.x to 4.3.0
  * mostly just

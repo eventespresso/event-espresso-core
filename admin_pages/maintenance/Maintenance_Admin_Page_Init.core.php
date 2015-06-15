@@ -1,7 +1,6 @@
 <?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 /**
  * Event Espresso
@@ -34,7 +33,6 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 
 
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some page related constants
 		define( 'EE_MAINTENANCE_LABEL', __('Maintenance', 'event_espresso'));
 		define( 'EE_MAINTENANCE_PG_SLUG', 'espresso_maintenance_settings' );

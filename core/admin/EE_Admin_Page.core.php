@@ -142,8 +142,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
 	 * 		@access public
+	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
+
 		if ( strpos( $this->_get_dir(), 'caffeinated' ) !== false )
 			$this->_is_caf = TRUE;
 
@@ -163,7 +165,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//set initial page props (child method)
 		$this->_init_page_props();
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $this->page_slug, 'page_slug' );
+
 		//set global defaults
 		$this->_set_defaults();
 
@@ -175,7 +177,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//other_page_hooks have to be early too.
 		$this->_do_other_page_hooks();
 
-		//This just allows us to have extending classes do something specific before the parent constructor runs _page_setup.
+		//This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
 		if ( method_exists( $this, '_before_page_setup' ) )
 			$this->_before_page_setup();
 
@@ -745,7 +747,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _verify_routes() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
@@ -888,7 +890,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$_SERVER['REQUEST_URI'] = remove_query_arg( '_wp_http_referer', wp_unslash( $_SERVER['REQUEST_URI'] ) );
 
 		if ( ! empty( $func )) {
-			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $func, 'route' );
 			$base_call = $addon_call = FALSE;
 			//try to access page route via this class
 			if ( ! is_array( $func ) && method_exists( $this, $func ) && ( $base_call = call_user_func_array( array( $this, &$func  ), $args ) ) === FALSE ) {
@@ -1301,7 +1302,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		BOOL|wp_die()
 	*/
 	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $route_to_check, '$route_to_check' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$route_to_check = empty( $route_to_check ) ? $this->_req_action : $route_to_check;
 		$capability = ! empty( $route_to_check ) && isset( $this->_page_routes[$route_to_check] ) && is_array( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
@@ -1823,7 +1824,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return array
 	*/
 	protected function _set_list_table_view() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
+
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = isset( $this->_views['in_use'] ) ? 'in_use' : 'all';
@@ -1861,7 +1864,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return array
 	 */
 	public function get_list_table_view_RLs( $extra_query_args = array() ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		if ( empty( $this->_views )) {
 			$this->_views = array();
 		}
@@ -1897,6 +1902,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
 
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$values = array( 10, 25, 50, 100 );
 		$per_page = ( ! empty( $this->_req_data['per_page'] )) ? absint( $this->_req_data['per_page'] ) : 10;
 
@@ -1962,7 +1968,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	*/
 	private function _add_registered_meta_boxes() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		//we only add meta boxes if the page_route calls for it
 		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
 
@@ -2301,7 +2308,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
 	 */
 	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $callback );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $callback );
+
 		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
 		if ( empty( $callback_args ) && $create_func ) {
 			$callback_args = array(
@@ -2385,7 +2393,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html           admin_page
 	 */
 	private function _display_admin_page($sidebar = false, $about = FALSE) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
 		do_action( 'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes' );
 
@@ -2625,6 +2634,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	public function admin_page_wrapper($about = FALSE) {
 
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		$this->_nav_tabs = $this->_get_main_nav_tabs();
 
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
@@ -2824,6 +2835,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	@return void
 	 */
 	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		//class name for actions/filters.
 		$classname = get_class($this);
 
@@ -2916,7 +2930,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_redirect_' . $classname . $this->_req_action, $query_args );
 
 		$redirect_url = apply_filters( 'FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args );
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $redirect_url, '$redirect_url' );
+
+
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
 		if ( defined('DOING_AJAX' ) ) {
 			$default_data = array(
@@ -3158,7 +3173,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $results = $wpdb->get_results( $query ) ) {
 			foreach ( $results as $result ) {
 				$transient = str_replace( '_transient_', '', $result->option_name );
-				do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $transient, '$transient' );
 				get_transient( $transient );
 				if ( is_multisite() && is_network_admin() ) {
 					get_site_transient( $transient );
@@ -3286,7 +3300,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return boolean
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $tab, '$tab' );
+
 		//remove any options that are NOT going to be saved with the config settings.
 		if ( isset( $config->core->ee_ueip_optin ) ) {
 			$config->core->ee_ueip_has_notified = TRUE;

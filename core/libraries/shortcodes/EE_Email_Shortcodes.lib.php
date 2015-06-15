@@ -133,6 +133,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		//results?
 		if ( empty($admin_details) || !is_array($admin_details) ) {
 			$msg[] = __('The admin details could not be retrieved from the database.', 'event_espresso');
+			$msg[] = sprintf( __('Query: %s', 'event_espresso'), $sql );
 			$msg[] = sprintf( __('Events Data: %s', 'event_espresso'), var_export($this->_data->events, TRUE) );
 			$msg[] = sprintf( __('Event IDS: %s', 'event_espresso'), var_export($ids, TRUE) );
 			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );

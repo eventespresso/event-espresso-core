@@ -1,5 +1,4 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  *
  * Event Espresso
@@ -98,7 +97,6 @@ class EE_Maintenance_Mode {
 	 *@return EE_Maintenance_Mode
 	 */
 	private function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// if M-Mode level 2 is engaged, we still need basic assets loaded
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_assets_required_for_m_mode' ));
 		// shut 'er down down for maintenance ?

@@ -1,7 +1,6 @@
 <?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 /**
  * Event Espresso
@@ -33,7 +32,6 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some constants
 		define( 'GEN_SET_PG_SLUG', 'espresso_general_settings' );
 		define( 'GEN_SET_LABEL', __('General Settings', 'event_espresso'));

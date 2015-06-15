@@ -1,7 +1,6 @@
 <?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 /**
  * Event Espresso
@@ -35,7 +34,6 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * @return Payments_Admin_Page_Init
 	 */
 	public function __construct() {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some page related constants
 		define( 'EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings' );
 		define( 'EE_PAYMENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EE_PAYMENTS_PG_SLUG ));

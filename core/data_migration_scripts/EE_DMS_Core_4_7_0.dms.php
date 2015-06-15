@@ -1,5 +1,4 @@
 <?php
-do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '', '', 'DMS' );
 /**
  * converts DBs to 4.7
  * Adds the esp_registration_payment table (indicating which registrations payments are for),
