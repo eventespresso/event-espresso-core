@@ -693,6 +693,7 @@ class EE_Registry {
 	 *
 	 * examines the constructor for the requested class to determine
 	 * if any dependencies exist, and if they can be injected.
+	 * PLZ NOTE: this is achieved by type hinting the constructor params
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
 	 * For example:
 	 * 		if attempting to load a class "Foo" with the following constructor:
@@ -714,20 +715,14 @@ class EE_Registry {
 		if ( ! $constructor ) {
 			return $arguments;
 		}
-		//echo "\n\n class_name: $class_name";
 		// get constructor parameters
 		$params = $constructor->getParameters();
 		// and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
 		$argument_keys = array_keys( $arguments );
-		//echo "\n\n arguments:\n";
-		//var_dump( $arguments );
-		//echo "\n argument_keys:\n";
-		//var_dump( $argument_keys );
 		// now loop thru all of the constructors expected parameters
 		foreach ( $params as $index => $param ) {
 			// is this a dependency for a specific class ?
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
-			//echo "\n\n param_class: " . $param_class;
 			if (
 				// param is not even a class
 				$param_class === null ||
@@ -757,15 +752,8 @@ class EE_Registry {
 			}
 			// did we successfully find the correct dependency ?
 			if ( $dependency instanceof $param_class ) {
-				//echo "\n\n arguments:\n";
-				//var_dump( $arguments );
-				//echo "\n index: $index";
-				//echo "\n dependency:\n";
-				//var_dump( $dependency );
 				// then let's inject it into the incoming array of arguments at the correct location
 				array_splice( $arguments, $index, 1, array( $dependency ) );
-				//echo "\n arguments:\n";
-				//var_dump( $arguments );
 			}
 		}
 		return $arguments;
