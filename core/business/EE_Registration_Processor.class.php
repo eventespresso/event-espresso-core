@@ -395,6 +395,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 					apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
 				) || (
 					$payment instanceof EE_Payment &&
+					$payment->is_approved() &&
 					// this specific registration has not yet been paid for
 					! isset( self::$_amount_paid[ $registration->ID() ] ) &&
 					// payment amount, less what we have already attributed to other registrations, is greater than this reg's final price

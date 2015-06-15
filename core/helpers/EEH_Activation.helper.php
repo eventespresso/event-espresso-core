@@ -30,6 +30,16 @@ class EEH_Activation {
 
 	private static $_default_creator_id = null;
 
+	/**
+	 * indicates whether or not we've already verified core's default data during this request,
+	 * because after migrations are done, any addons activated while in maintenance mode
+	 * will want to setup their own default data, and they might hook into core's default data
+	 * and trigger core to setup its default data. In which case they might all ask for core to init its default data.
+	 * This prevents doing that for EVERY single addon.
+	 * @var boolean
+	 */
+	protected static $_initialized_db_content_already_in_this_request = false;
+
 
 	/**
 	 * 	system_initialization
@@ -68,6 +78,12 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
+		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
+		if( EEH_Activation::$_initialized_db_content_already_in_this_request ) {
+			return;
+		}
+		EEH_Activation::$_initialized_db_content_already_in_this_request = true;
+
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::generate_default_message_templates();
@@ -1452,6 +1468,7 @@ class EEH_Activation {
 	 */
 	public static function reset(){
 		self::$_default_creator_id = NULL;
+		self::$_initialized_db_content_already_in_this_request = false;
 	}
 }
 // End of file EEH_Activation.helper.php
