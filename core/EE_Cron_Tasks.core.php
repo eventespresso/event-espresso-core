@@ -300,9 +300,11 @@ class EE_Cron_Tasks extends EE_BASE {
 	//when a transaction is initially made, schedule this check.
 	//if it has NO REG data by the time it has expired, forget about it
 	public static function clean_out_junk_transactions() {
-		EEM_Transaction::instance('')->delete_junk_transactions();
-		EEM_Registration::instance('')->delete_registrations_with_no_transaction();
-		EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
+		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
+			EEM_Transaction::instance('')->delete_junk_transactions();
+			EEM_Registration::instance('')->delete_registrations_with_no_transaction();
+			EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
+		}
 	}
 
 
