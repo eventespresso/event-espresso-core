@@ -216,12 +216,12 @@ class EEM_Transaction extends EEM_Base {
 			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone',
 			EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : ( HOUR_IN_SECONDS + 300 )
 		);
-		$query = $wpdb->prepare( "
+		$query = $wpdb->prepare( '
 			DELETE t
-			FROM $this->table()
+			FROM '. $this->table() . '
 			WHERE
 				t.STS_ID = %s AND
-				t.TXN_timestamp < %s",
+				t.TXN_timestamp < %s',
 			EEM_Transaction::failed_status_code,
 			// use GMT time because that's what TXN_timestamps are in
 			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
