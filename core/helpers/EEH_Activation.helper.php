@@ -1256,8 +1256,6 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function plugin_deactivation() {
-		//remove cron tasks. We'll re-add them if this get re-added
-		EEH_Activation::remove_cron_tasks();
 	}
 
 
