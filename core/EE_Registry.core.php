@@ -647,7 +647,7 @@ class EE_Registry {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
 			// attempt to inject dependencies ?
-			if ( $resolve_dependencies && ! $from_db && ! $load_only ) {
+			if ( $resolve_dependencies && ! $from_db && ! $load_only && ! $reflector->isSubclassOf( 'EE_Base_Class' ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
 			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
