@@ -165,10 +165,13 @@ class EEM_Line_Item extends EEM_Base {
 		)));
 	}
 
+
+
 	/**
 	 * Gets all line items unrelated to tickets that are normal line items
 	 * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
 	 * @param EE_Transaction|int $transaction
+	 * @return \EE_Base_Class[]
 	 */
 	public function get_all_non_ticket_line_items_for_transaction( $transaction ) {
 		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
@@ -187,11 +190,14 @@ class EEM_Line_Item extends EEM_Base {
 	 * @return int count of how many deleted
 	 */
 	public function delete_line_items_with_no_transaction(){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		return $wpdb->query(
-				'DELETE li FROM ' . $this->table() . ' li LEFT JOIN ' .
-				EEM_Transaction::instance()->table() . ' t ON li.TXN_ID = t.TXN_ID
-				WHERE t.TXN_ID IS NULL ' );
+			"DELETE li
+			FROM $this->table() li
+			LEFT JOIN EEM_Transaction::instance()->table() t ON li.TXN_ID = t.TXN_ID
+			WHERE t.TXN_ID IS NULL"
+		);
 	}
 
 
