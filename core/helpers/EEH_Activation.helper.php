@@ -46,6 +46,8 @@ class EEH_Activation {
 		EEH_Activation::verify_default_pages_exist();
 	}
 
+
+
 	/**
 	 * Sets the database schema and creates folders. This should
 	 * be called on plugin activation and reactivation
@@ -56,6 +58,8 @@ class EEH_Activation {
 		$good_db = EEH_Activation::create_database_tables();
 		return $good_filesystem && $good_db;
 	}
+
+
 
 	/**
 	 * assuming we have an up-to-date database schema, this will populate it
@@ -81,19 +85,27 @@ class EEH_Activation {
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
 	}
+
+
+
 	/**
 	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
 	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
 	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use (null)
-	 * @param string $include_old_cron_tasks can be 'current' (ones that are currently in use),
-	 * 'old' (only returns ones that should no longer be used),or 'all',
+	 *
+	 * @param string $which_to_include can be 'current' (ones that are currently in use),
+	 *                          'old' (only returns ones that should no longer be used),or 'all',
 	 * @return array
+	 * @throws \EE_Error
 	 */
 	public static function get_cron_tasks( $which_to_include ) {
-		$cron_tasks = apply_filters( 'FHEE__EEH_Activation__get_cron_tasks', array(
-			'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
-			'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use,
-			) );
+		$cron_tasks = apply_filters(
+			'FHEE__EEH_Activation__get_cron_tasks',
+			array(
+				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
+				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use,
+			)
+		);
 		if( $which_to_include === 'all' ) {
 			//leave as-is
 		}elseif( $which_to_include === 'old' ) {
@@ -124,7 +136,7 @@ class EEH_Activation {
 	}
 
 	/**
-	 * Remove the currently-existing and now-removed crontasks.
+	 * Remove the currently-existing and now-removed cron tasks.
 	 * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
 	 */
 	public static function remove_cron_tasks( $remove_all = true ) {
@@ -540,7 +552,7 @@ class EEH_Activation {
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
 		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
-		return $wpdb->query( 'DROP TABLE IF EXISTS '. $table_name );
+		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 	}
 
 
