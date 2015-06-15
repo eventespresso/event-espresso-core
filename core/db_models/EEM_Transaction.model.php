@@ -217,11 +217,11 @@ class EEM_Transaction extends EEM_Base {
 			EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : ( HOUR_IN_SECONDS + 300 )
 		);
 		$query = $wpdb->prepare( '
-			DELETE t
+			DELETE *
 			FROM '. $this->table() . '
 			WHERE
-				t.STS_ID = %s AND
-				t.TXN_timestamp < %s',
+				STS_ID = %s AND
+				TXN_timestamp < %s',
 			EEM_Transaction::failed_status_code,
 			// use GMT time because that's what TXN_timestamps are in
 			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
