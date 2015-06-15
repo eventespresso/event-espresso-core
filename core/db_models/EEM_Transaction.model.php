@@ -217,7 +217,7 @@ class EEM_Transaction extends EEM_Base {
 			EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : ( HOUR_IN_SECONDS + 300 )
 		);
 		$query = $wpdb->prepare( '
-			DELETE *
+			DELETE
 			FROM '. $this->table() . '
 			WHERE
 				STS_ID = %s AND
