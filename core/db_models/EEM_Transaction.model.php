@@ -136,6 +136,7 @@ class EEM_Transaction extends EEM_Base {
 	 * @return mixed
 	 */
 	public function get_revenue_per_event_report( $period = 'month' ) {
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
 
@@ -205,22 +206,26 @@ class EEM_Transaction extends EEM_Base {
 	 * and so we only use wpdb directly and NOT do any joins.
 	 * The downside to this approach is that is addons are listening for object deletions
 	 * on EEM_Base::delete() they won't be notified of this.
-	 * @global type $wpdb
-	 * @return type
+	 * @global WPDB $wpdb
+	 * @return mixed
 	 */
 	public function delete_junk_transactions() {
+		/** @type WPDB $wpdb */
 		global $wpdb;
-		$time_to_leave_alone = apply_filters( 'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : HOUR_IN_SECONDS );
+		$time_to_leave_alone = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone',
+			EE_Registry::instance()->SSN instanceof EE_Session && EE_Registry::instance()->SSN->lifespan() ? EE_Registry::instance()->SSN->lifespan() : ( HOUR_IN_SECONDS + 300 )
+		);
 		$query = $wpdb->prepare( "
-		delete t
-		from
-			" . $this->table() . " t
-		WHERE
-			t.STS_ID = %s AND
-			t.TXN_timestamp < %s",
-					EEM_Transaction::failed_status_code,
-					//use GMT time because that's what TXN_timestamps are in
-					date(  'Y-m-d H:i:s', current_time('timestamp') - $time_to_leave_alone ) );
+			DELETE t
+			FROM $this->table()
+			WHERE
+				t.STS_ID = %s AND
+				t.TXN_timestamp < %s",
+			EEM_Transaction::failed_status_code,
+			// use GMT time because that's what TXN_timestamps are in
+			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+		);
 		return $wpdb->query( $query );
 	}
 
