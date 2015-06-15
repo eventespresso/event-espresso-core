@@ -640,6 +640,12 @@ class EEH_Template {
 		$per_page = (int) $per_page;
 		$current = (int) $current;
 		$paged_arg_name = empty( $paged_arg_name ) ? 'paged' : sanitize_key( $paged_arg_name );
+		
+		//filter items_label
+		$items_label = apply_filters(
+			'FHEE__EEH_Template__get_paging_html__items_label',
+			$items_label
+		);
 
 		if ( empty( $items_label )
 		     || ! is_array( $items_label )
@@ -655,12 +661,6 @@ class EEH_Template {
 				'plural' => '%s ' . esc_html( $items_label['plural'] )
 			);
 		}
-
-		//filter items_label
-		$items_label = apply_filters(
-			'FHEE__EEH_Template__get_paging_html__items_label',
-			$items_label
-		);
 
 		$total_pages = round( ceil( $total_items ) / $per_page );
 
