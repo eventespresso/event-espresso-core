@@ -377,7 +377,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		return $wpdb->query(
-				"DELETE r FROM $this->table() r LEFT JOIN EEM_Transaction::instance()->table() t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL" );
+				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
 	}
 
 
