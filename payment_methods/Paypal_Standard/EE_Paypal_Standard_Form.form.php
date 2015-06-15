@@ -46,7 +46,8 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 					'required' => true
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
-					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
+					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso'),
+					'html_label_text' => __( 'Image URL', 'event_espresso' )
 				)),
 				'paypal_taxes' => new EE_Yes_No_Input(array(
 					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $payment_method_type->get_help_tab_link() ),

@@ -67,7 +67,8 @@ class EEM_Answer extends EEM_Base {
 			'Registration'=>new EE_Belongs_To_Relation(),
 			'Question'=>new EE_Belongs_To_Relation()
 		);
-
+		$this->_model_chain_to_wp_user = 'Registration.Event';
+		$this->_caps_slug = 'registrations';
 		parent::__construct( $timezone );
 	}
 

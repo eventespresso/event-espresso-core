@@ -129,7 +129,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
 
 			$actions = array(
-				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+				'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 				);
 		}
 

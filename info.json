@@ -47,6 +47,7 @@
 		}
 	},
 	"github" : true,
+	"demoee" : true,
 	"awsbucket" : "",
 	"awsregion" : ""
 }

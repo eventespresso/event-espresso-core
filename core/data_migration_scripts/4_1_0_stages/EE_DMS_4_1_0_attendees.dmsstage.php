@@ -521,7 +521,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'STS_ID'=>$STS_ID,
 				'REG_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'REG_final_price'=>$old_attendee['final_price'],
-				'REG_session'=>$old_attendee['attendee_session'],
+				'REG_session'=> substr( $old_attendee['attendee_session'], 0, 44 ),
 				'REG_code'=>sanitize_key($old_attendee['registration_id']),
 				'REG_url_link'=>  sanitize_key($old_attendee['registration_id'].'-'.$count),
 				'REG_count'=>$regs_on_this_event_and_txn + $count,
@@ -766,7 +766,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'PAY_amount'=>$old_attendee['amount_pd'],
 				'PAY_gateway'=>$old_attendee['txn_type'],
 				'PAY_gateway_response'=>'',
-				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],
+				'PAY_txn_id_chq_nmbr'=>substr( $old_attendee['txn_id'], 0, 32 ),
 				'PAY_via_admin'=>$by_admin,
 				'PAY_details'=>$old_attendee['transaction_details']
 

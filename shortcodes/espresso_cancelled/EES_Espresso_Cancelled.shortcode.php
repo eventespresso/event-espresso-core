@@ -73,8 +73,16 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 				}
 			}
 		}
+		do_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__clear_session' );
+		// remove all unwanted records from the db
+		if ( EE_Registry::instance()->CART instanceof EE_Cart ) {
+			EE_Registry::instance()->CART->delete_cart();
+		}
+		EE_Registry::instance()->SSN->reset_cart();
+		EE_Registry::instance()->SSN->reset_checkout();
+		EE_Registry::instance()->SSN->reset_transaction();
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
-		return EE_Registry::instance()->REQ->get_output();
+		return sprintf( __( '%sAll unsaved registration information entered during this session has been deleted.%s', 'event_espresso' ) , '<p class="ee-registrations-cancelled-pg ee-attention">', '</p>' );
 	}
 
 }

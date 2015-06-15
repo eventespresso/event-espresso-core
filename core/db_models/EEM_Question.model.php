@@ -50,26 +50,24 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is TEXTAREA
 	const QST_type_textarea = 'TEXTAREA';
 
-
-
-  	// private instance of the Attendee object
-	protected static $_instance = NULL;
-
+	/**
+	 * Question types that are interchangeable, even after answers have been provided for them.
+	 * Top-level keys are category slugs, next level is an array of question types. If question types
+	 * aren't in this array, it is assumed they AREN'T interchangeable with any other question types.
+	 * @var array
+	 */
+	protected $_question_type_categories = null;
 
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private
 	 * @var array of strings
 	 */
-	private $_allowed_question_types;
-	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
-	 * but they can be extended
-	 * @return string[]
-	 */
-	public function allowed_question_types(){
-		return $this->_allowed_question_types;
-	}
+	protected $_allowed_question_types;
+
+	// private instance of the Attendee object
+	protected static $_instance = NULL;
+
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
@@ -84,6 +82,19 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
 				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
+			)
+		);
+		$this->_question_type_categories = apply_filters(
+				'FHEE__EEM_Question__construct__question_type_categories',
+				array(
+				'text' => array(
+						self::QST_type_text,
+						self::QST_type_textarea
+					),
+				'single-answer-enum' => array(
+					self::QST_type_radio,
+					self::QST_type_dropdown
+				),
 			)
 		);
 
@@ -101,7 +112,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
 				'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
 				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
-				'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false, get_current_user_id() ),
+				'QST_wp_user'=>new EE_WP_User_Field('QST_wp_user', __('Question Creator ID','event_espresso'), false ),
 				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
 		);
@@ -109,11 +120,41 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'Question_Group'=>new EE_HABTM_Relation('Question_Group_Question'),
 			'Question_Option'=>new EE_Has_Many_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 			//for QST_order column
 			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('QST_system');
 		parent::__construct( $timezone );
+	}
+
+	/**
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO_BTN','DROPDOWN','CHECKBOX','DATE'
+	 * but they can be extended
+	 * @return string[]
+	 */
+	public function allowed_question_types(){
+		return $this->_allowed_question_types;
+	}
+	/**
+	 * Gets all the question types in the same category
+	 * @param string $question_type one of EEM_Question::allowed_question_types(
+	 * @return string[] like EEM_Question::allowed_question_types()
+	 */
+	public function question_types_in_same_category( $question_type ) {
+		$question_types = array( $question_type );
+		foreach( $this->_question_type_categories as $category => $question_types_in_category ) {
+			if( in_array( $question_type, $question_types_in_category ) ) {
+				$question_types = $question_types_in_category;
+				break;
+			}
+		}
+
+		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
 	}
 
 

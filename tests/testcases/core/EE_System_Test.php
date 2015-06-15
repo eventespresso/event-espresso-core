@@ -312,6 +312,30 @@ class EE_System_Test extends EE_UnitTestCase{
 		update_option( 'test_activation_indicator_option', TRUE );
 	}
 
+	/**
+	 * @group 8154
+	 */
+	function test__new_version_is_higher(){
+		$class = new ReflectionClass("EE_System");
+		$method = $class->getMethod("_new_version_is_higher");
+		$method->setAccessible(true);
+
+		$current_version = '4.7.0.rc.000';
+		$activation_history = array(
+			$current_version => array(
+				'2015-03-12 04:53:12'
+			),
+			'3.1.37.1.P'      =>
+        array(
+            0 => 'unknown-date',
+        ),
+		);
+		$this->assertEquals( 0, $method->invoke(EE_System::instance(), $activation_history, $current_version ) );
+		$this->assertEquals( 1, $method->invoke( EE_System::instance(), $activation_history, '4.8.0.rc.000' ) );
+		$this->assertEquals( -1, $method->invoke( EE_System::instance(), $activation_history, '4.4.0.rc.000' ) );
+		$this->assertEquals( 1, $method->invoke( EE_System::instance(), array(), '4.8.0.rc.000' ) );
+	}
+
 
 	/**
 	 * Sets the wordpress option 'espresso_db_update'

@@ -85,6 +85,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * }
 	 * @return EE_Payment updated
 	 */
+	
 	public function do_direct_payment($payment, $billing_info = null) {
 
 			// Enable test mode if needed

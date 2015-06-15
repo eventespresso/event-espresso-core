@@ -3,7 +3,7 @@
 	<td>
 		<input type="hidden" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 		<input type="hidden" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
-		<input type="text" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>">
+		<input type="text" maxlength="245" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>">
 	</td>
 	<td>
 		<input type="text" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="<?php echo $TKT_start_date; ?>" data-context="start-ticket" data-date-field-context="#edit-ticketrow-<?php echo $ticketrow; ?>" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date" value="<?php echo $TKT_start_date; ?>">

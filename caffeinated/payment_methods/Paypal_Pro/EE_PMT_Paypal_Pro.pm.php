@@ -101,13 +101,13 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Type', 'event_espresso' ))
 					),
 					'exp_month'=>new EE_Month_Input(
-						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __( 'Expiry Month', 'event_espresso' )  )
 					),
 					'exp_year'=>new EE_Credit_Card_Year_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn'  )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Expiry Year', 'event_espresso' )  )
 					),
 					'cvv'=>new EE_CVV_Input(
-						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )
+						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'CVV', 'event_espresso' ) )
 					),
 				)
 			)

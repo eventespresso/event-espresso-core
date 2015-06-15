@@ -182,12 +182,17 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
-			$request_args = array('headers' => array(
-			'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
-			'Accept'=>'application/json'
-			));
+			$request_args = array(
+				'headers' => array(
+					'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
+					'Accept'=>'application/json'
+				)
+			);
 			$response = wp_remote_get($url, $request_args );
-			$this->log( array( ' get paymetn status request_args' => $request_args, 'response' => $response ), $payment );
+			$this->log(
+				array( 'get payment status request_args' => $request_args, 'response' => $response ),
+				$payment
+			);
 			if($response && isset($response['body']) && $response_body = json_decode($response['body'])){
 				switch($response_body->status){
 					case 'paid':

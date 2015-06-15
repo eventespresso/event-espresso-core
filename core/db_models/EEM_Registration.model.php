@@ -108,7 +108,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
 				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration after all ticket/price modifications','event_espresso'), false, 0),
+				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
@@ -125,10 +126,31 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
-			'Checkin'=>new EE_Has_Many_Relation()
+			'Checkin'=>new EE_Has_Many_Relation(),
+			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
 		);
+		$this->_model_chain_to_wp_user = 'Event';
 
 		parent::__construct( $timezone );
+	}
+
+
+
+	/**
+	 * 	reg_statuses_that_allow_payment
+	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function reg_statuses_that_allow_payment() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+			)
+		);
 	}
 
 
@@ -137,7 +159,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * 		get list of registration statuses
 	 *
 	 *
-	 *		@access private
+	 *		@access public
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
 	 *		@return array
@@ -254,7 +276,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period));
-		$where = array('REG_date'=>array('>=',$sql_date) );
+
+		//don't include incomplete regs by default
+		$where = array('REG_date'=>array('>=',$sql_date), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
 		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
@@ -285,7 +309,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
 		$date_sql = date("Y-m-d H:i:s", strtotime($period));
-		$where = array( 'REG_date'=>array('>=',$date_sql ) );
+
+		//do not include incomplete registrations by default
+
+		$where = array( 'REG_date'=>array('>=',$date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}

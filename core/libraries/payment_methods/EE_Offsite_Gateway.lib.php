@@ -27,6 +27,18 @@
 abstract class EE_Offsite_Gateway extends EE_Gateway{
 
 	/**
+	 * whether or not the gateway uses an IPN
+	 * that is sent in a separate request than the returning registrant.
+	 * if false, then we need to process the payment results manually
+	 * as soon as the registrant returns from the off-site gateway
+	 *
+	 * @type bool
+	 */
+	protected $_uses_separate_IPN_request = false;
+
+
+
+	/**
 	 * @return EE_Offsite_Gateway
 	 */
 	public function __construct() {
@@ -57,6 +69,34 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 * @return EEI_Payment updated
 	 */
 	public abstract function handle_payment_update($update_info,$transaction);
+
+
+
+	/**
+	 * uses_separate_IPN_request
+	 *
+	 * return true or false for whether or not the gateway uses an IPN
+	 * that is sent in a separate request than the returning registrant.
+	 * if false, then we need to process the payment results manually
+	 * as soon as the registrant returns from the off-site gateway
+	 *
+	 * @return bool
+	 */
+	public function uses_separate_IPN_request() {
+		return $this->_uses_separate_IPN_request;
+	}
+
+
+
+	/**
+	 * set_uses_separate_IPN_request
+	 *
+	 * @access protected
+	 * @param boolean $uses_separate_IPN_request
+	 */
+	protected function set_uses_separate_IPN_request( $uses_separate_IPN_request ) {
+		$this->_uses_separate_IPN_request = filter_var( $uses_separate_IPN_request, FILTER_VALIDATE_BOOLEAN );
+	}
 
 
 

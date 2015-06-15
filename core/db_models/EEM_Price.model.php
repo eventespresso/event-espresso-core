@@ -59,17 +59,21 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
 				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 ),
-				'PRC_wp_user' => new EE_Integer_Field('PRC_wp_user', __('User who created this price', 'event_espresso'), FALSE, get_current_user_id() ),
+				'PRC_wp_user' => new EE_WP_User_Field('PRC_wp_user', __('Price Creator ID', 'event_espresso'), FALSE ),
 			)
 		);
 		$this->_model_relations = array(
 			'Ticket'=>new EE_HABTM_Relation('Ticket_Price'),
-			'Price_Type'=>new EE_Belongs_To_Relation()
+			'Price_Type'=>new EE_Belongs_To_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('PRC_is_default', 'Ticket.Datetime.Event' );
+		//account for default tickets in the caps
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected( 'PRC_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected( 'PRC_is_default', 'Ticket.Datetime.Event');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected( 'PRC_is_default', 'Ticket.Datetime.Event');
 		parent::__construct( $timezone );
-
-		require_once ( EE_CLASSES . 'EE_Price.class.php' );
-
 	}
 
 
