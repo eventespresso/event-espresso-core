@@ -2020,7 +2020,7 @@ class EE_Admin_Config extends EE_Config_Base {
 	 */
 	public function log_file_name( $reset = FALSE ) {
 		if ( empty( $this->log_file_name ) || $reset ) {
-			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( uniqid( '', TRUE ))) . '.txt';
+			$this->log_file_name = sanitize_key( 'espresso_log_' . md5( NONCE_SALT )) . '.txt';
 			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
 		}
 		return $this->log_file_name;
@@ -2035,7 +2035,7 @@ class EE_Admin_Config extends EE_Config_Base {
 	 */
 	public function debug_file_name( $reset = FALSE ) {
 		if ( empty( $this->debug_file_name ) || $reset ) {
-			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( uniqid( '', TRUE ))) . '.txt';
+			$this->debug_file_name = sanitize_key( 'espresso_debug_' . md5( NONCE_SALT )) . '.txt';
 			EE_Config::instance()->update_espresso_config( FALSE, FALSE );
 		}
 		return $this->debug_file_name;

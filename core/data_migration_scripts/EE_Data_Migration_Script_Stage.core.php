@@ -2,7 +2,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
-
+do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '', '', 'DMS' );
 /**
  * Class EE_Data_Migration_Script_Stage
  *

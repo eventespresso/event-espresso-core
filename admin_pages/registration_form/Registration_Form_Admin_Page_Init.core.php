@@ -1,6 +1,7 @@
 <?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
+do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 /**
  * Event Espresso
@@ -32,6 +33,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//define some constants
 		define( 'REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form' );
 		define( 'REGISTRATION_FORM_LABEL', __('Registration Form', 'event_espresso'));

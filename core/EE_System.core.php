@@ -153,6 +153,11 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		// enable logging?
+		if ( WP_DEBUG ) {
+			EE_Registry::instance()->load_core( 'Log' );
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'WP_DEBUG Logging Initiated' );
+		}
 		require_once EE_CORE . 'EE_Deprecated.core.php';
 		// load interfaces
 		require_once EE_CORE . 'EEI_Interfaces.php';
@@ -464,6 +469,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function load_espresso_addons() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
@@ -478,6 +484,7 @@ final class EE_System {
 	 * addons have been activated or upgraded
 	 */
 	public function detect_activations_or_upgrades(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//first off: let's make sure to handle core
 		$this->detect_if_activation_or_upgrade();
 		foreach(EE_Registry::instance()->addons as $addon){
@@ -495,6 +502,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function detect_if_activation_or_upgrade() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
 		// load M-Mode class
@@ -507,7 +515,7 @@ final class EE_System {
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
-
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $request_type, '$request_type' );
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
@@ -544,6 +552,7 @@ final class EE_System {
 	 * @param array $espresso_db_update
 	 */
 	protected function _handle_core_version_change( $espresso_db_update ){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		$this->update_list_of_installed_versions( $espresso_db_update );
 		//get ready to verify the DB is ok (provided we aren't in maintenance mode, of course)
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
@@ -562,6 +571,7 @@ final class EE_System {
 	 * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin', $espresso_db_update );
 		if( ! $espresso_db_update){
 			$espresso_db_update = get_option( 'espresso_db_update' );
@@ -616,6 +626,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE ){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, EE_Maintenance_Mode::instance()->level(), 'EE_Maintenance_Mode::instance()->level()' );
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
@@ -646,6 +657,7 @@ final class EE_System {
 	 * @return 	boolean success as to whether or not this option was changed
 	 */
 	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL) {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		if( ! $version_history ) {
 			$version_history = $this->fix_espresso_db_upgrade_option($version_history);
 		}
@@ -672,6 +684,7 @@ final class EE_System {
 	 * @return int one of the constants on EE_System::req_type_
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
 			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
@@ -691,6 +704,8 @@ final class EE_System {
 	 * @return int one of the constants on EE_System::req_type_*
 	 */
 	public static function detect_req_type_given_activation_history( $activation_history_for_addon, $activation_indicator_option_name, $version_to_upgrade_to ){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $activation_indicator_option_name, '$activation_indicator_option_name' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $version_to_upgrade_to, '$version_to_upgrade_to' );
 		$version_is_higher = self::_new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to );
 		if( $activation_history_for_addon ){
 			//it exists, so this isn't a completely new install
@@ -749,6 +764,7 @@ final class EE_System {
 	 *		1 if $version_to_upgrade_to is HIGHER (upgrade) ;
 	 */
 	protected static function _new_version_is_higher( $activation_history_for_addon, $version_to_upgrade_to ){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//find the most recently-activated version
 		$most_recently_active_version_activation = '1970-01-01 00:00:00';
 		$most_recently_active_version = '0.0.0.dev.000';
@@ -781,6 +797,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		$notices = EE_Error::get_notices( FALSE );
 		//if current user is an admin and it's not an ajax request
 		if(EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_about_default' ) && ! ( defined('DOING_AJAX') && DOING_AJAX  ) && ! isset( $notices[ 'errors' ] ) ){
@@ -806,6 +823,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function load_core_configuration(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
@@ -818,6 +836,7 @@ final class EE_System {
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			EE_Registry::instance()->load_core( 'Log' );
 		}
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// check for activation errors
 		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
 		if ( $activation_errors ) {
@@ -839,6 +858,7 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _parse_model_names(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		//get all the files in the EE_MODELS folder that end in .model.php
 		$models = glob( EE_MODELS.'*.model.php');
 		$model_names = array();
@@ -865,6 +885,7 @@ final class EE_System {
 	 */
 	private function _maybe_brew_regular() {
 		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'coffee\'s on' );
 			require_once EE_CAFF_PATH . 'brewing_regular.php';
 		}
 	}
@@ -880,6 +901,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function register_shortcodes_modules_and_widgets() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 		// check for addons using old hookpoint
 		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
@@ -895,6 +917,7 @@ final class EE_System {
 	* @return void
 	*/
 	private function _incompatible_addon_error() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// get array of classes hooking into here
 		$class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
 		if ( ! empty( $class_names )) {
@@ -925,6 +948,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function brew_espresso(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__brew_espresso__begin', $this );
 		// load some final core systems
 		add_action( 'init', array( $this, 'set_hooks_for_core' ), 1 );
@@ -955,6 +979,7 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function set_hooks_for_core() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		$this->_deactivate_incompatible_addons();
 		do_action( 'AHEE__EE_System__set_hooks_for_core' );
 	}
@@ -968,6 +993,7 @@ final class EE_System {
 	private function _deactivate_incompatible_addons(){
 		$incompatible_addons = get_option( 'ee_incompatible_addons', array() );
 		if ( ! empty( $incompatible_addons )) {
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $incompatible_addons, '$incompatible_addons' );
 			$active_plugins = get_option( 'active_plugins', array() );
 			foreach ( $active_plugins as $active_plugin ) {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
@@ -991,6 +1017,7 @@ final class EE_System {
 	 * @return    void
 	 */
 	public static function deactivate_plugin( $plugin_basename = '' ) {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $plugin_basename, '$plugin_basename' );
 		if ( ! function_exists( 'deactivate_plugins' )) {
 			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 		}
@@ -1006,6 +1033,7 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function perform_activations_upgrades_and_migrations() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' );
 	}
 
@@ -1018,10 +1046,7 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function load_CPTs_and_session() {
-//		$e = EEM_Event::instance()->get_one();
-//		EEM_Datetime::instance()->show_next_x_db_queries();
-//		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
-//
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
@@ -1041,6 +1066,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function load_controllers() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
 		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
@@ -1064,6 +1090,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function core_loaded_and_ready() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
 		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
 //		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
@@ -1081,6 +1108,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__initialize' );
 //		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
@@ -1096,6 +1124,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize_last() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		do_action( 'AHEE__EE_System__initialize_last' );
 	}
 
@@ -1181,13 +1210,11 @@ final class EE_System {
 	 * @return    void
 	 */
 	public function espresso_toolbar_items( $admin_bar ) {
-
 		// if in full M-Mode, or its an AJAX request, or user is NOT an admin
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance || defined( 'DOING_AJAX' ) || ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'ee_admin_bar_menu_top_level' )) {
 			return;
 		}
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		EE_Registry::instance()->load_helper( 'URL' );
 		$menu_class = 'espresso_menu_item_class';
 		//we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL

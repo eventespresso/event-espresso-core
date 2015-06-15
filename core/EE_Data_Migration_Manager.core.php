@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+do_action( 'AHEE_log', __FILE__, ' FILE LOADED' );
 
 /**
  *
@@ -143,6 +147,7 @@ class EE_Data_Migration_Manager{
 	 * constructor
 	 */
 	private function __construct(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$this->stati_that_indicate_to_continue_migrations = array(
 			self::status_continue,
 			self::status_completed
@@ -179,6 +184,7 @@ class EE_Data_Migration_Manager{
 	 * @return array where the first item is the plugin slug (eg 'Core','Calendar',etc) and the 2nd is the version of that plugin (eg '4.1.0')
 	 */
 	private function _get_plugin_slug_and_version_string_from_dms_option_name($option_name){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$plugin_slug_and_version_string = str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix, "", $option_name);
 		//check if $plugin_slug_and_version_string is like '4.1.0' (4.1-style) or 'Core.4.1.0' (4.2-style)
 		$parts = explode(".",$plugin_slug_and_version_string);
@@ -204,6 +210,7 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	private function _get_dms_class_from_wp_option($dms_option_name,$dms_option_value){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$data_migration_data = maybe_unserialize($dms_option_value);
 		if(isset($data_migration_data['class']) && class_exists($data_migration_data['class'])){
 			$class = new $data_migration_data['class'];
@@ -226,6 +233,7 @@ class EE_Data_Migration_Manager{
 	 * @return array where each element should be an array of EE_Data_Migration_Script_Base (but also has a few legacy arrays in there - which should probably be ignored)
 	 */
 	public function get_data_migrations_ran(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		if( ! $this->_data_migrations_ran ){
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
@@ -270,6 +278,7 @@ class EE_Data_Migration_Manager{
 	 * @return mixed string or int
 	 */
 	public function get_mapping_new_pk( $script_name, $old_table, $old_pk, $new_table){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$script = EE_Registry::instance()->load_dms($script_name);
 		$mapping = $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
 		return $mapping;
@@ -281,7 +290,8 @@ class EE_Data_Migration_Manager{
 	 * @return array
 	 */
 	 public function get_all_migration_script_options(){
-		global $wpdb;
+		 do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
+		 global $wpdb;
 		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id ASC",ARRAY_A);
 	}
 
@@ -291,6 +301,7 @@ class EE_Data_Migration_Manager{
 	 * folder name.
 	 */
 	public function get_data_migration_script_folders(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		return  apply_filters( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts') );
 	}
 
@@ -304,6 +315,7 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function script_migrates_to_version($migration_script_name){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$dms_info = $this->parse_dms_classname($migration_script_name);
 		return array(
 			'slug'=> $dms_info[ 'slug' ],
@@ -317,6 +329,7 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function parse_dms_classname($classname){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$matches = array();
 		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$classname,$matches);
 		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
@@ -332,6 +345,7 @@ class EE_Data_Migration_Manager{
 	 * @return string of current db state
 	 */
 	public function ensure_current_database_state_is_set(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$espresso_db_core_updates = get_option( 'espresso_db_update', array() );
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		if( ! $db_state ){
@@ -369,6 +383,7 @@ class EE_Data_Migration_Manager{
 	 * @return EE_Data_Migration_Script_Base[]
 	 */
 	public function check_for_applicable_data_migration_scripts(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		//get the option describing what options have already run
 		$scripts_ran = $this->get_data_migrations_ran();
 		//$scripts_ran = array('4.1.0.core'=>array('monkey'=>null));
@@ -451,6 +466,7 @@ class EE_Data_Migration_Manager{
 	 * @return EE_Data_Migration_Script_Base
 	 */
 	public function get_last_ran_script($include_completed_scripts = false){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		//make sure we've setup the class properties _last_ran_script and _last_ran_incomplete_script
 		if( ! $this->_data_migrations_ran){
 			$this->get_data_migrations_ran();
@@ -619,7 +635,8 @@ class EE_Data_Migration_Manager{
 	 * 'script'=>a pretty name of the script currently running
 	 */
 	public function response_to_migration_ajax_request(){
-//		//start output buffer just to make sure we don't mess up the json
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
+		//		//start output buffer just to make sure we don't mess up the json
 		ob_start();
 		try{
 			$response = $this->migration_step();
@@ -648,6 +665,7 @@ class EE_Data_Migration_Manager{
 	 * @return void
 	 */
 	public function update_current_database_state_to($slug_and_version = null){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		if( ! $slug_and_version ){
 			//no version was provided, assume it should be at the current code version
 			$slug_and_version = array('slug' => 'Core', 'version' => espresso_version());
@@ -663,6 +681,7 @@ class EE_Data_Migration_Manager{
 	 * @return array keys are expected classnames, values are their filepaths
 	 */
 	public function get_all_data_migration_scripts_available(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		if( ! $this->_data_migration_class_to_filepath_map){
 			$this->_data_migration_class_to_filepath_map = array();
 			foreach($this->get_data_migration_script_folders() as $folder_path){
@@ -714,6 +733,7 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function add_error_to_migrations_ran($error_message){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $error_message, '$error_message', 'DMS' );
 		//get last-ran migration script
 		global $wpdb;
 		$last_migration_script_option = $wpdb->get_row("SELECT * FROM $wpdb->options WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
@@ -751,6 +771,7 @@ class EE_Data_Migration_Manager{
 	 * @return mixed TRUE if successfully saved migrations ran, string if an error occurred
 	 */
 	protected function _save_migrations_ran(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		if($this->_data_migrations_ran == null){
 			$this->get_data_migrations_ran();
 		}
@@ -802,6 +823,7 @@ class EE_Data_Migration_Manager{
 			throw new EE_Error(sprintf(__("Properties array  has no 'class' properties. Here's what it has: %s", "event_espresso"),implode(",",$properties_array)));
 		}
 		$class_name = $properties_array['class'];
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $class_name, '$class_name', 'DMS' );
 		if( ! class_exists($class_name)){
 			throw new EE_Error(sprintf(__("There is no migration script named %s", "event_espresso"),$class_name));
 		}
@@ -820,6 +842,7 @@ class EE_Data_Migration_Manager{
 	 * @return string
 	 */
 	public function get_most_up_to_date_dms($plugin_slug = 'Core'){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $plugin_slug, '$plugin_slug', 'DMS' );
 		$class_to_filepath_map = $this->get_all_data_migration_scripts_available();
 		$most_up_to_date_dms_classname = NULL;
 		foreach($class_to_filepath_map as $classname => $filepath){
@@ -858,6 +881,7 @@ class EE_Data_Migration_Manager{
 	 * @return EE_Data_Migration_Script_Base
 	 */
 	public function get_migration_ran( $version, $plugin_slug = 'Core' ) {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $version, '$version', 'DMS' );
 		$migrations_ran = $this->get_data_migrations_ran();
 		if( isset( $migrations_ran[ $plugin_slug ] ) && isset( $migrations_ran[ $plugin_slug ][ $version ] ) ){
 			return $migrations_ran[ $plugin_slug ][ $version ];
@@ -874,6 +898,7 @@ class EE_Data_Migration_Manager{
 	 * @throws \EE_Error
 	 */
 	public function reattempt(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		//find if the last-ran script was borked
 		//set it as being non-borked (we shouldn't ever get DMSs that we don't recognize)
 		//add an 'error' saying that we attempted to reset
@@ -897,6 +922,7 @@ class EE_Data_Migration_Manager{
 	 * @return boolean
 	 */
 	public function migration_has_ran( $version, $plugin_slug = 'Core' ) {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $version, '$version', 'DMS' );
 		return $this->get_migration_ran( $version, $plugin_slug ) !== NULL;
 	}
 	/**
@@ -904,6 +930,7 @@ class EE_Data_Migration_Manager{
 	 * @param string $plugin_slug either 'Core' or EE_Addon::name()'s return value
 	 */
 	public function enqueue_db_initialization_for( $plugin_slug ) {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $plugin_slug, '$plugin_slug', 'DMS' );
 		$queue = $this->get_db_initialization_queue();
 		if( ! in_array( $plugin_slug, $queue ) ) {
 			$queue[] = $plugin_slug;
@@ -916,6 +943,7 @@ class EE_Data_Migration_Manager{
 	 * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
 	 */
 	public function initialize_db_for_enqueued_ee_plugins() {
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '', '', 'DMS' );
 		$queue = $this->get_db_initialization_queue();
 		foreach( $queue as $plugin_slug ){
 			if( $plugin_slug == 'Core' ){
@@ -942,6 +970,7 @@ class EE_Data_Migration_Manager{
 	 * @return array
 	 */
 	public function get_db_initialization_queue(){
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, self::db_init_queue_option_name, 'self::db_init_queue_option_name', 'DMS' );
 		return get_option ( self::db_init_queue_option_name, array() );
 	}
 }
