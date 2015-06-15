@@ -613,15 +613,19 @@ final class EE_System {
 	 * so that it will be done when migrations are finished
 	 * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
 	 *		however,
+	 * @param boolean $verify_db_schema if true will re-check the database tables have the correct schema. This is a resource-intensive job
+	 * so we prefer to only do it when necessary
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE ){
+	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE, $verify_schema = true ){
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
-			EEH_Activation::initialize_db_and_folders();
+			if( $verify_schema ) {
+				EEH_Activation::initialize_db_and_folders();
+			}
 			EEH_Activation::initialize_db_content();
 			if( $initialize_addons_too ) {
 				//foreach registered addon, make sure its db is up-to-date too
