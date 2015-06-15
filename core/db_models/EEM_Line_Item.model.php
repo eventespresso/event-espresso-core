@@ -193,10 +193,10 @@ class EEM_Line_Item extends EEM_Base {
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		return $wpdb->query(
-			"DELETE li
-			FROM $this->table() li
-			LEFT JOIN EEM_Transaction::instance()->table() t ON li.TXN_ID = t.TXN_ID
-			WHERE t.TXN_ID IS NULL"
+			'DELETE li
+			FROM ' . $this->table() . ' li
+			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
+			WHERE t.TXN_ID IS NULL'
 		);
 	}
 
