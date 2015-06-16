@@ -434,7 +434,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
-<?php if ( $max_atndz > 0 ) { ?>
+<?php if ( $max_atndz > 0 && apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_display_footnote', true, $max_atndz, $EVT_ID ) ) { ?>
 	<p class="smaller-text lt-grey-text">* <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote', sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz ));?></p>
 <?php } ?>
 
