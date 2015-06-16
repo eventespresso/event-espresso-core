@@ -404,8 +404,7 @@
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
 		$session_data = get_transient( 'ee_ssn_' . $this->_sid );
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, 'ee_ssn_' . $this->_sid, "session transient" );
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, ' : ' . print_r( $session_data, true ), 'serialized $session_data' );
-		if ( $session_data ) {
+		if ( $session_data !== false ) {
 			// un-encrypt the data
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 			// unserialize
