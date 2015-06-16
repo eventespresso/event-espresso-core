@@ -45,12 +45,11 @@ class EE_PUE {
 	 *	class constructor
 	 *
 	 *	@access public
-	 *	@return void
 	 */
 	public function __construct() {
 //		throw new EE_Error('error');
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
@@ -64,7 +63,7 @@ class EE_PUE {
 		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
-		//has optin been selected for datacollection?
+		//has optin been selected for data collection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
 		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
