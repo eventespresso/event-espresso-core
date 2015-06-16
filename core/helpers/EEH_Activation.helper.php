@@ -26,6 +26,16 @@ class EEH_Activation {
 
 	private static $_default_creator_id = null;
 
+	/**
+	 * indicates whether or not we've already verified core's default data during this request,
+	 * because after migrations are done, any addons activated while in maintenance mode
+	 * will want to setup their own default data, and they might hook into core's default data
+	 * and trigger core to setup its default data. In which case they might all ask for core to init its default data.
+	 * This prevents doing that for EVERY single addon.
+	 * @var boolean
+	 */
+	protected static $_initialized_db_content_already_in_this_request = false;
+
 
 	/**
 	 * 	system_initialization
@@ -60,6 +70,12 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
+		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
+		if( EEH_Activation::$_initialized_db_content_already_in_this_request ) {
+			return;
+		}
+		EEH_Activation::$_initialized_db_content_already_in_this_request = true;
+
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::generate_default_message_templates();
@@ -1222,7 +1238,7 @@ class EEH_Activation {
 	 * @param bool $remove_all
 	 * @return void
 	 */
-	public static function delete_all_espresso_tables_and_data( $remove_all = TRUE ) { // FALSE
+	public static function delete_all_espresso_tables_and_data( $remove_all = true ) {
 		global $wpdb;
 		$undeleted_tables = array();
 
@@ -1234,7 +1250,7 @@ class EEH_Activation {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
 							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
+								case false :
 									$undeleted_tables[] = $table->get_table_name();
 								break;
 								case 0 :
@@ -1264,35 +1280,36 @@ class EEH_Activation {
 
 
 		$wp_options_to_delete = array(
-			'ee_no_ticket_prices' => TRUE,
-			'ee_active_messengers' => TRUE,
-			'ee_has_activated_messenger' => TRUE,
-			'ee_flush_rewrite_rules' => TRUE,
-			'ee_config' => TRUE,
-			'ee_data_migration_current_db_state' => TRUE,
-			'ee_data_migration_mapping_' => FALSE,
-			'ee_data_migration_script_' => FALSE,
-			'ee_data_migrations' => TRUE,
-			'ee_dms_map' => FALSE,
-			'ee_notices' => TRUE,
-			'lang_file_check_' => FALSE,
-			'ee_maintenance_mode' => TRUE,
-			'ee_ueip_optin' => TRUE,
-			'ee_ueip_has_notified' => TRUE,
-			'ee_plugin_activation_errors' => TRUE,
-			'ee_id_mapping_from' => FALSE,
-			'espresso_persistent_admin_notices' => TRUE,
-			'ee_encryption_key' => TRUE,
-			'pue_force_upgrade_' => FALSE,
-			'pue_json_error_' => FALSE,
-			'pue_install_key_' => FALSE,
-			'pue_verification_error_' => FALSE,
-			'pu_dismissed_upgrade_' => FALSE,
-			'external_updates-' => FALSE,
-			'ee_extra_data' => TRUE,
-			'ee_ssn_' => FALSE,
-			'ee_rss_' => FALSE,
-			'ee_rte_n_tx_' => FALSE
+			'ee_no_ticket_prices' => true,
+			'ee_active_messengers' => true,
+			'ee_has_activated_messenger' => true,
+			'ee_flush_rewrite_rules' => true,
+			'ee_config' => true,
+			'ee_data_migration_current_db_state' => true,
+			'ee_data_migration_mapping_' => false,
+			'ee_data_migration_script_' => false,
+			'ee_data_migrations' => true,
+			'ee_dms_map' => false,
+			'ee_notices' => true,
+			'lang_file_check_' => false,
+			'ee_maintenance_mode' => true,
+			'ee_ueip_optin' => true,
+			'ee_ueip_has_notified' => true,
+			'ee_plugin_activation_errors' => true,
+			'ee_id_mapping_from' => false,
+			'espresso_persistent_admin_notices' => true,
+			'ee_encryption_key' => true,
+			'pue_force_upgrade_' => false,
+			'pue_json_error_' => false,
+			'pue_install_key_' => false,
+			'pue_verification_error_' => false,
+			'pu_dismissed_upgrade_' => false,
+			'external_updates-' => false,
+			'ee_extra_data' => true,
+			'ee_ssn_' => false,
+			'ee_rss_' => false,
+			'ee_rte_n_tx_' => false,
+			'ee_pers_admin_notices' => true,
 		);
 
 		$undeleted_options = array();
@@ -1378,6 +1395,7 @@ class EEH_Activation {
 	 */
 	public static function reset(){
 		self::$_default_creator_id = NULL;
+		self::$_initialized_db_content_already_in_this_request = false;
 	}
 }
 // End of file EEH_Activation.helper.php
