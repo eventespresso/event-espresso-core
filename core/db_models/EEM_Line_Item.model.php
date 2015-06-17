@@ -145,6 +145,7 @@ class EEM_Line_Item extends EEM_Base {
 			'Price'				=>new EE_Belongs_To_Any_Relation(),
 		);
 		$this->_model_chain_to_wp_user = 'Transaction.Registration.Event';
+		$this->_caps_slug = 'transactions';
 		parent::__construct( $timezone );
 	}
 
@@ -164,10 +165,13 @@ class EEM_Line_Item extends EEM_Base {
 		)));
 	}
 
+
+
 	/**
 	 * Gets all line items unrelated to tickets that are normal line items
 	 * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
 	 * @param EE_Transaction|int $transaction
+	 * @return \EE_Base_Class[]
 	 */
 	public function get_all_non_ticket_line_items_for_transaction( $transaction ) {
 		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
@@ -178,6 +182,22 @@ class EEM_Line_Item extends EEM_Base {
 				'OBJ_type*notticket' => array( '!=', 'Ticket'),
 				'OBJ_type*null' => array( 'IS_NULL' ))
 		)));
+	}
+
+	/**
+	 * Deletes line items with no transaction. This needs to be very efficient
+	 * because if there are spam bots afoot there will be LOTS of line items
+	 * @return int count of how many deleted
+	 */
+	public function delete_line_items_with_no_transaction(){
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		return $wpdb->query(
+			'DELETE li
+			FROM ' . $this->table() . ' li
+			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
+			WHERE t.TXN_ID IS NULL'
+		);
 	}
 
 
