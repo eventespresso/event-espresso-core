@@ -309,8 +309,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$image_size = getimagesize( $invoice_logo_url );
 		
 		//if image is wider than 200px, set the wideth to 200
-		if ( $image_size[0] > 200 ) {
-			$image_width = 200;
+		if ( $image_size[0] > 300 ) {
+			$image_width = 300;
 		}else{
 			$image_width = $image_size[0];
 		}
