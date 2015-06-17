@@ -156,6 +156,26 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 *    closed_reg_statuses
+	 * 	a filterable list of registration statuses that are considered "closed"
+	 * meaning they should not be considered in any calculations involving monies owing
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function closed_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__closed_reg_statuses',
+			array(
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
+			)
+		);
+	}
+
+
+
+	/**
 	 * 		get list of registration statuses
 	 *
 	 *
