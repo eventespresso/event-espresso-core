@@ -172,11 +172,22 @@ abstract class EE_Addon extends EE_Configurable {
 	 * Takes care of double-checking that we're not in maintenance mode, and then
 	 * initializing this addon's necessary initial data. This is called by default on new activations
 	 * and reactivations
+	 * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
+	 * This is a resource-intensive job so we prefer to only do it when necessary
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required() {
+	public function initialize_db_if_no_migrations_required( $verify_schema = true ) {
+		if( $verify_schema === '' ) {
+			//wp core bug imo: if no args are passed to `do_action('some_hook_name')` besides the hook's name
+			//(ie, no 2nd or 3rd arguments), instead of calling the registered callbacks with no arguments, it
+			//calls them with an argument of an empty string (ie ""), which evaluates to false
+			//so we need to treat the empty string as if nothing had been passed, and should instead use the default
+			$verify_schema = true;
+		}
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			$this->initialize_db();
+			if( $verify_schema ) {
+				$this->initialize_db();
+			}
 			$this->initialize_default_data();
 			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array('slug' => $this->name(), 'version' => $this->version()));
