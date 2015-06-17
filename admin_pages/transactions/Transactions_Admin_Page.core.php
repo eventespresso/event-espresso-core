@@ -860,15 +860,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			foreach ( $line_items as $item ) {
 				if ( $item instanceof EE_Line_Item ) {
 					$ticket = $item->ticket();
-					if ( empty( $ticket )) {
-						continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+					//right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+					if ( ! $ticket instanceof EE_Ticket ) {
+						continue;
 					}
 					$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-					$event = $ticket->get_first_related('Registration')->get_first_related('Event');
-					$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
-
 					$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 					foreach( $registrations as $registration ) {
+						$event = $registration->get_first_related( 'Event' );
+						$event_name = $event instanceof EE_Event ? $event->get( 'EVT_name' ) . ' - ' . $item->get( 'LIN_name' ) : '';
 						$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
 						$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
 						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
