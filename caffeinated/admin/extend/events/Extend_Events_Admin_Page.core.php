@@ -175,21 +175,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'require_nonce' => FALSE
 		);
 
-		$new_page_config['import_page'] = array(
-				'nav' => array(
-					'label' => __('Import', 'event_espresso'),
-					'order' => 30
-				),
-				'help_tabs' => array(
-					'import_help_tab' => array(
-						'title' => __('Event Espresso Import', 'event_espresso'),
-						'filename' => 'import_page'
-						)
-					),
-				'help_tour' => array('Event_Import_Help_Tour'),
-				'metaboxes' => $default_espresso_boxes,
-				'require_nonce' => FALSE
-		);
+//		$new_page_config['import_page'] = array(
+//				'nav' => array(
+//					'label' => __('Import', 'event_espresso'),
+//					'order' => 30
+//				),
+//				'help_tabs' => array(
+//					'import_help_tab' => array(
+//						'title' => __('Event Espresso Import', 'event_espresso'),
+//						'filename' => 'import_page'
+//						)
+//					),
+//				'help_tour' => array('Event_Import_Help_Tour'),
+//				'metaboxes' => $default_espresso_boxes,
+//				'require_nonce' => FALSE
+//		);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//add filters and actions

@@ -782,6 +782,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_tickets_list' => $default ? '<li class="hidden"></li>' : '',
 			'show_tickets_row' => ' style="display:none;"', //$default || $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' style="display:none;"' : '',
 			'add_new_datetime_ticket_help_link' => EEH_Template::get_help_tab_link('add_new_ticket_via_datetime', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
+			'DTT_ID' => $default ? '' : $dtt->ID()
 			);
 
 		//need to setup the list items (but only if this isnt' a default skeleton setup)
@@ -805,6 +806,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default ) {
 		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
 		$dtt_tkts = $dtt instanceof EE_Datetime && isset( $datetime_tickets[$dtt->ID()] ) ? $datetime_tickets[$dtt->ID()] : array();
+
 		$displayrow = !empty( $ticket ) ? $ticket->get('TKT_row') : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
@@ -812,7 +814,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name'),
-			'tkt_status_class' => $default && empty( $ticket ) ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_status_class' => ( $default && empty( $ticket ) ) || $this->_is_creating_event ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			);
 
 		//filter template args
