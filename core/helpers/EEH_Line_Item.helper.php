@@ -18,9 +18,12 @@
  *
  */
 class EEH_Line_Item {
-	//other functions: cancel ticket purchase
+
 	//delete ticket purchase
 	//add promotion
+
+
+
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
 	 * in the correct spot in the line item tree (also verifying it doesn't add a duplicate
@@ -183,6 +186,45 @@ class EEH_Line_Item {
 
 	}
 
+
+
+	/**
+	 * cancels an existing ticket line item,
+	 * by decrementing it's quantity by 1 and adding a new "type_cancellation" sub-line-item.
+	 * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
+	 *
+	 * @param EE_Line_Item $ticket_line_item
+	 * @param \EE_Payment  $payment
+	 * @return bool success
+	 * @throws \EE_Error
+	 */
+	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item, EE_Payment $payment = null ) {
+		// validate incoming line_item
+		if ( $ticket_line_item->type() !== 'Ticket' ) {
+			throw new EE_Error( sprintf( __( 'The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso' ), $ticket_line_item->type() ) );
+		}
+		if ( $ticket_line_item->quantity() < 1 ) {
+			throw new EE_Error( sprintf( __( 'The supplied line item has a quantity of %1$d and therefore can not be cancelled.', 'event_espresso' ), $ticket_line_item->quantity() ) );
+		}
+		// decrement ticket quantity
+		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - 1 );
+		// add $ticket to cart
+		$cancellation_line_item = EE_Line_Item::new_instance( array(
+			'LIN_name'       	=> __( 'Cancellation', 'event_espresso' ),
+			'LIN_unit_price' 	=> $ticket_line_item->unit_price(),
+			'LIN_quantity'   	=> 1,
+			'LIN_is_taxable' 	=> $ticket_line_item->is_taxable(),
+			'LIN_order'      	=> count( $ticket_line_item->children() ),
+			'LIN_total'      		=> $ticket_line_item->unit_price(),
+			'LIN_type'       		=> EEM_Line_Item::type_cancellation,
+		) );
+		if ( $payment instanceof EE_Payment ) {
+			$cancellation_line_item->set_OBJ_ID( $payment->ID() );
+			$cancellation_line_item->set_OBJ_type( 'Payment' );
+		}
+		$ticket_line_item->add_child_line_item( $cancellation_line_item );
+		return $ticket_line_item->save();
+	}
 
 
 	/**
