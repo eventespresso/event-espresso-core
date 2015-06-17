@@ -544,6 +544,41 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * update_transaction_after_canceled_or_declined_registration
+	 * readjusts TXN totals after a registration is cancelled or declined
+	 *
+	 * @param \EE_Registration $registration
+	 * @param array            $closed_reg_statuses
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function update_transaction_after_canceled_or_declined_registration( EE_Registration $registration, $closed_reg_statuses = array() ) {
+		// these reg statuses require payment (if event is not free)
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+			return;
+		}
+		//$transaction = $registration->transaction();
+		//if ( ! $transaction instanceof EE_Transaction ) {
+		//	throw new EE_Error( sprintf( __( 'Registration %1$d\'s related Transaction was not found or is invalid.', 'event_espresso' ), $registration->ID() ) );
+		//}
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		$ticket_line_item = EEM_Line_Item::instance()->get_ticket_line_item_for_transaction(
+			$registration->transaction_ID(),
+			$registration->ticket_ID()
+		);
+		if ( $ticket_line_item instanceof EE_Line_Item ) {
+			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+		}
+		//$transaction->set_total(
+		//	$transaction->total() -
+		//);
+
+	}
+
+
+
+	/**
 	 * _call_method_on_registrations_via_Registration_Processor
 	 * cycles thru related registrations and calls the requested method on each
 	 *
