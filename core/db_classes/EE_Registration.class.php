@@ -98,6 +98,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			// update status
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
+			// these reg statuses should not be considered in any calculations involving monies owing
+			$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
+			if ( in_array( $this->status_ID(), $closed_reg_statuses ) ) {
+				/** @type EE_Transaction_Processor $transaction_processor */
+				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+				$transaction_processor->update_transaction_after_canceled_or_declined_registration( $this );
+			}
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 			return TRUE;
 		}else{
@@ -106,7 +113,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
 			return TRUE;
 		}
-		return FALSE;
 	}
 
 
