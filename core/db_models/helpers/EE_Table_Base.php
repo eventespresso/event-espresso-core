@@ -12,17 +12,34 @@ abstract class EE_Table_Base{
 	 * @var string
 	 */
 	protected $_pk_column;
-	
-	function __construct($table_name, $pk_column){
+
+	/**
+	 *
+	 * @global type $wpdb
+	 * @param string $table_name with or without wpdb prefix
+	 * @param string $pk_column
+	 * @param boolean $global whether the table is "global" as in there is only 1 table on an entire multisite install,
+	 *					or whether each site on a multisite install has a copy of this table
+	 */
+	function __construct($table_name, $pk_column, $global = false ){
 		global $wpdb;
-		$this->_table_name = $wpdb->prefix . $table_name;
+		if( $global ) {
+			$prefix = $wpdb->base_prefix;
+		} else {
+			$prefix = $wpdb->prefix;
+		}
+		//if they didn't add the prefix, let's add it
+		if( strpos( $table_name, $prefix ) !== 0 ) {
+			$table_name = $prefix . $table_name;
+		}
+		$this->_table_name = $table_name;
 		$this->_pk_column = $pk_column;
 	}
-	
+
 	function _construct_finalize_with_alias($table_alias){
 		$this->_table_alias = $table_alias;
 	}
-	
+
 	function get_table_name(){
 		return $this->_table_name;
 	}
@@ -32,17 +49,17 @@ abstract class EE_Table_Base{
 		}
 		return $this->_table_alias;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return string name of column of PK
 	 */
 	function get_pk_column(){
 		return $this->_pk_column;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * returns a string with the table alias, a period, and the private key's column.
 	 * @return string

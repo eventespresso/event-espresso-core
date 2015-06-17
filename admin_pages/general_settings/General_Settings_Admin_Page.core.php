@@ -89,23 +89,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
-
-			'template_settings' => array(
-				'func' => '_template_settings',
-				'capability' => 'manage_options'
-				),
-
-			'update_template_settings' => array(
-				'func' => '_update_template_settings',
-				'capability' => 'manage_options',
-				'noheader' => TRUE,
-				),
-
-			'copy_templates' => array(
-				'func' => '_copy_templates',
-				'capability' => 'manage_options',
-				'noheader' => TRUE,
-				),
 			'default' => array(
 				'func' => '_your_organization_settings',
 				'capability' => 'manage_options',
@@ -180,23 +163,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
-
-			//template settings
-			'template_settings' => array(
-				'nav' => array(
-					'label' => __('Templates', 'event_espresso'),
-					'order' => 30
-				),
-				'metaboxes' => $this->_default_espresso_metaboxes,
-				'help_tabs' => array(
-					'general_settings_templates_help_tab' => array(
-						'title' => __('Templates', 'event_espresso'),
-						'filename' => 'general_settings_templates'
-					)
-				),
-				'help_tour' => array( 'Templates_Help_Tour' ),
-				'require_nonce' => FALSE
-			),
 			'default' => array(
 				'nav' => array(
 					'label' => __('Your Organization', 'event_espresso'),
@@ -368,21 +334,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
-
-
-	/*************		Templates 		*************/
-
-
-	protected function _template_settings() {
-		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="' . esc_attr__( 'Template Settings Preview screenshot', 'event_espresso' ) . '" />';
-		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
-		$this->display_admin_caf_preview_page( 'template_settings_tab' );
-	}
 
 
 

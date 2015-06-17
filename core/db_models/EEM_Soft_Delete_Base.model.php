@@ -152,7 +152,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param array $query_params
 	 * @return array
 	 */
-	public function alter_query_params_so_deleted_and_undeleted_items_included($query_params){
+	public function alter_query_params_so_deleted_and_undeleted_items_included( $query_params = array() ){
 		return $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 	}
 
