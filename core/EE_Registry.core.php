@@ -498,10 +498,10 @@ class EE_Registry {
 	 *
 	 * attempts to find a cached version of the requested class
 	 * by looking in the following places:
-	 * 		$this->{class_abbreviation} 		 	ie:   	$this->CART
-	 * 		$this->{$class_name}           		 	ie:    $this->Some_Class
-	 * 		$this->LIB->{$class_name}			ie: 	$this->LIB->Some_Class
-	 * 		$this->addon->{$$class_name}	ie: 	$this->addon->Some_Addon_Class
+	 * 		$this->{$class_abbreviation} 		 	ie:   	$this->CART
+	 * 		$this->{$class_name}           		 		ie:    $this->Some_Class
+	 * 		$this->LIB->{$class_name}				ie: 	$this->LIB->Some_Class
+	 * 		$this->addon->{$class_name}	ie: 	$this->addon->Some_Addon_Class
 	 *
 	 * @access protected
 	 * @param string $class_name
@@ -516,14 +516,14 @@ class EE_Registry {
 			$class_abbreviation = 'FANCY_BATMAN_PANTS';
 		}
 		// check if class has already been loaded, and return it if it has been
-		if ( isset( $this->$class_abbreviation ) && ! is_null( $this->$class_abbreviation ) ) {
-			return $this->$class_abbreviation;
+		if ( isset( $this->{$class_abbreviation} ) && ! is_null( $this->{$class_abbreviation} ) ) {
+			return $this->{$class_abbreviation};
 		} else if ( isset ( $this->{$class_name} ) ) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->LIB->$class_name ) ) {
-			return $this->LIB->$class_name;
-		} else if ( $class_prefix == 'addon' && isset ( $this->addons->$class_name ) ) {
-			return $this->addons->$class_name;
+		} else if ( isset ( $this->LIB->{$class_name} ) ) {
+			return $this->LIB->{$class_name};
+		} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
+			return $this->addons->{$class_name};
 		}
 		return null;
 	}
@@ -693,13 +693,13 @@ class EE_Registry {
 	 *
 	 * examines the constructor for the requested class to determine
 	 * if any dependencies exist, and if they can be injected.
-	 * PLZ NOTE: this is achieved by type hinting the constructor params
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
+	 * PLZ NOTE: this is achieved by type hinting the constructor params
 	 * For example:
 	 * 		if attempting to load a class "Foo" with the following constructor:
 	 *        __construct( Bar $bar_class, Fighter $grohl_class )
-	 * 		then $bar_class and $grohl_class will be added to the $arguments array
-	 * 		IF they are NOT already present in the incoming arguments array,
+	 * 		then $bar_class and $grohl_class will be added to the $arguments array,
+	 * 		but only IF they are NOT already present in the incoming arguments array,
 	 * 		and the correct classes can be loaded
 	 *
 	 * @access protected
