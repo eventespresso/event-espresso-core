@@ -56,7 +56,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_TWITTER_URL]' => __('Link to organization Twitter page', 'event_espresso'),
 			'[CO_PINTEREST_URL]' => __('Link to organization Pinterest page', 'event_espresso'),
 			'[CO_GOOGLE_URL]' => __('Link to organization Google page', 'event_espresso'),
-			'[CO_LINKEDIN_URL]' => __('Link to organization Linkedin page', 'event_espresso'),
+			'[CO_LINKEDIN_URL]' => __('Link to organization LinkedIn page', 'event_espresso'),
 			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso'),
 			'[CO_TAX_NUMBER_*]' => __('This is the shortcode used for displaying any tax number for the company.  <strong>Note: This is a special dynamic shortcode.</strong> You can use the "prefix" parameter to indicate what the prefix for this tax number is.  It defaults to "VAT/Tax Number:".  To change this prefix you do the following format for this shortcode:  [CO_TAX_NUMBER_* prefix="GST: "] and that will output: GST: 12345t56.  Also take note that if you have NO number in your settings, the prefix is not output either.', 'event_espresso')
 			);

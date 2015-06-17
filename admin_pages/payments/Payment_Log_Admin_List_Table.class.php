@@ -203,7 +203,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		if($item->object() instanceof EE_Payment){
 			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction', $item->object()->TXN_ID() )) {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->object()->TXN_ID() ), TXN_ADMIN_URL );
-				return '<a href="'.$view_txn_lnk_url.'"  title="' . sprintf( __( 'click to view transaction #%s', 'event_espresso' ),  $item->object()->TXN_ID() ) . '">' . sprintf( __( 'view txn %s', 'event_espresso' ),  $item->object()->TXN_ID() ) . '</a>';
+				return '<a href="'.$view_txn_lnk_url.'"  title="' . sprintf( esc_attr__( 'click to view transaction #%s', 'event_espresso' ),  $item->object()->TXN_ID() ) . '">' . sprintf( __( 'view txn %s', 'event_espresso' ),  $item->object()->TXN_ID() ) . '</a>';
 			}
 		} else {
 			return __("Unable to find transaction", 'event_espresso');

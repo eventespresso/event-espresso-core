@@ -47,14 +47,13 @@ class EEH_URL{
 
 	/**
 	 * Returns whether not the remote file exists.
-	 * (Sends a HEAD curl request. It would probably be better to use wp_remote_get,
-	 * but its nice
+	 * Checking via GET because HEAD requests are blocked on some server configurations.
 	 * @param string $url
 	 * @return boolean
 	 */
 	public static function remote_file_exists($url){
 		$results = wp_remote_request($url,array(
-			'method'=>'HEAD',
+			'method'=>'GET',
 			'redirection'=>1,
 		));
 		if( ! $results instanceof WP_Error &&

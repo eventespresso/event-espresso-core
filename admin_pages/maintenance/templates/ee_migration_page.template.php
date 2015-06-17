@@ -58,7 +58,7 @@ if ( $show_backup_db_text ) { ?>
 									__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.', "event_espresso"),
 									'<strong>',
 									'</strong>',
-									'<a id="migration-risks" class="" title="' . __('click for more details', "event_espresso") . '">',
+									'<a id="migration-risks" class="" title="' . esc_attr__('click for more details', "event_espresso") . '">',
 									'</a>',
 									$current_db_state,
 									$next_db_state
@@ -132,7 +132,7 @@ if ( $show_backup_db_text ) { ?>
 						<span class="dashicons dashicons-star-half ee-icon-size-22"></span>
 						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
 					</h3>
-			<?php } elseif ( $most_recent_migration->is_borked() ) {
+			<?php } elseif ( $most_recent_migration->is_broken() ) {
 					//tell the user the migration failed and they should notify EE?>
 					<h3 class="espresso-header">
 						<span class="dashicons dashicons-no ee-icon-size-22"></span>

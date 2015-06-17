@@ -243,7 +243,7 @@ final class EE_Admin {
 		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
 			return;
 
-		$initial_meta_boxes = array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
 		$hidden_meta_boxes = array();
 
 		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
@@ -469,6 +469,21 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function admin_init() {
+
+		/**
+		 * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
+		 * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
+		 * - check if doing post processing.
+		 * - check if doing post processing of one of EE CPTs
+		 * - instantiate the corresponding EE CPT model for the post_type being processed.
+		 */
+		if ( isset( $_POST['action'] ) && $_POST['action'] == 'editpost' ) {
+			if ( isset( $_POST['post_type'] ) ) {
+				EE_Registry::instance()->load_core( 'Register_CPTs' );
+				EE_Register_CPTs::instantiate_cpt_models( $_POST['post_type'] );
+			}
+		}
+
 	}
 
 

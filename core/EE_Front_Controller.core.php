@@ -532,7 +532,14 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && is_main_query() && ! is_feed() && in_the_loop() ) {
+		if (
+			apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE )
+			&& ! $shown_already
+			&& is_main_query()
+			&& ! is_feed()
+			&& in_the_loop()
+			&& EE_Registry::instance()->REQ->is_espresso_page()
+		) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
@@ -554,12 +561,14 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
-		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
-		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
-		$this->_template = basename( $this->_template_path );
-		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		return $this->_template_path;
+		if ( EE_Registry::instance()->REQ->is_espresso_page() ) {
+			$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
+			$template_path = EEH_Template::locate_template( $this->_template_path, array(), false );
+			$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
+			$this->_template = basename( $this->_template_path );
+			return $this->_template_path;
+		}
+		return $template_include_path;
 	}
 
 

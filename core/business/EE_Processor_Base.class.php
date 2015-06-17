@@ -14,11 +14,27 @@
 class EE_Processor_Base {
 
 	/**
-	 * Used to set whether SPCO is being revisited by registrant or not.
+	 * Used to indicate whether current request is for an IPN or not.
 	 *
 	 * @var bool
 	 */
-	protected $_revisit = FALSE;
+	protected static $IPN = false;
+
+	/**
+	 * Used to indicate whether SPCO is being revisited by registrant or not.
+	 *
+	 * @var bool
+	 */
+	protected $_revisit = false;
+
+
+
+	/**
+	 * @param boolean $IPN
+	 */
+	public static function set_IPN( $IPN ) {
+		self::$IPN = filter_var( $IPN, FILTER_VALIDATE_BOOLEAN );
+	}
 
 
 
@@ -28,8 +44,37 @@ class EE_Processor_Base {
 	 * @param bool $revisit
 	 * @return void
 	 */
-	public function set_revisit( $revisit = FALSE ) {
+	public function set_revisit( $revisit = false ) {
 		$this->_revisit = filter_var( $revisit, FILTER_VALIDATE_BOOLEAN );
+	}
+
+
+
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param \EE_Transaction $transaction
+	 * @param array $info
+	 * @param bool $display_request
+	 */
+	protected function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
+		EE_Registry::instance()->load_helper( 'Debug_Tools' );
+		if ( WP_DEBUG && false ) {
+			if ( $transaction instanceof EE_Transaction ) {
+				// don't serialize objects
+				$info = EEH_Debug_Tools::strip_objects( $info );
+				if ( $transaction->ID() ) {
+					$info[ 'TXN_status' ] = $transaction->status_ID();
+					$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
+					$index = 'EE_Transaction: ' . $transaction->ID();
+					EEH_Debug_Tools::log( $class, $func, $line, $info, $display_request, $index );
+				}
+			}
+		}
+
 	}
 
 

@@ -124,7 +124,7 @@ class EED_Ical  extends EED_Module {
 	 */
 	public static function download_ics_file() {
 		if ( EE_Registry::instance()->REQ->is_set( 'ics_id' )) {
-			$DTT_ID = EE_Registry::instance()->REQ->get( 'ics_id' );
+			$DTT_ID = absint( EE_Registry::instance()->REQ->get( 'ics_id' ));
 			$datetime = EE_Registry::instance()->load_model( 'Datetime' )->get_one_by_ID( $DTT_ID );
 			if ( $datetime instanceof EE_Datetime ) {
 				// get related event, venues, and event categories

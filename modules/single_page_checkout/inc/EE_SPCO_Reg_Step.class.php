@@ -151,7 +151,9 @@ abstract class EE_SPCO_Reg_Step {
 	 * set_completed - toggles $_completed to TRUE
 	 */
 	public function set_completed() {
-		$this->_completed = TRUE;
+		// DEBUG LOG
+		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+		$this->_completed = apply_filters( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', true, $this );
 	}
 
 
@@ -237,7 +239,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function is_final_step() {
-		return $this->slug() === 'finalize_registration' ? TRUE : FALSE;
+		return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
 	}
 
 
@@ -368,6 +370,10 @@ abstract class EE_SPCO_Reg_Step {
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
 		}
+		// final step has no display
+		if ( $this instanceof EE_SPCO_Reg_Step_Finalize_Registration && $action == 'display_spco_reg_step' ) {
+			$query_args[ 'action' ] = 'process_reg_step';
+		}
 		if( $this->checkout->revisit ) {
 			$query_args['revisit'] = TRUE;
 		}
@@ -450,7 +456,7 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$html .= $this->checkout->admin_request ? '' : $this->reg_form->form_open( $this->reg_step_url() );
+			$html .= ! $this->checkout->admin_request ? $this->reg_form->form_open( $this->reg_step_url() ) : '';
 			if ( EE_Registry::instance()->REQ->ajax ) {
 				$this->reg_form->localize_validation_rules();
 				$this->checkout->json_response->add_validation_rules( EE_Form_Section_Proper::js_localization() );
@@ -458,8 +464,8 @@ abstract class EE_SPCO_Reg_Step {
 			} else {
 				$html .= $this->reg_form->get_html_and_js();
 			}
-			$html .= $this->checkout->admin_request ? '' :$this->reg_step_submit_button();
-			$html .= $this->checkout->admin_request ? '' :$this->reg_form->form_close();
+			$html .= ! $this->checkout->admin_request ? $this->reg_step_submit_button() : '';
+			$html .= ! $this->checkout->admin_request ? $this->reg_form->form_close() : '';
 		}
 		return $html;
 	}
@@ -475,7 +481,7 @@ abstract class EE_SPCO_Reg_Step {
 			return '';
 		}
 		ob_start();
-		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug() );
+		do_action( 'AHEE__before_spco_whats_next_buttons', $this->slug(), $this->checkout->next_step->slug(), $this->checkout );
 		$html = ob_get_clean();
 		// generate submit button
 		$sbmt_btn = new EE_Submit_Input( array(
@@ -486,9 +492,10 @@ abstract class EE_SPCO_Reg_Step {
 			'default'							=> $this->submit_button_text()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large' );
+		$sbmt_btn_html = $sbmt_btn->get_html_for_input();
 		EE_Registry::instance()->load_helper('HTML');
 		$html .= EEH_HTML::div(
-			$sbmt_btn->get_html_for_input(),
+			apply_filters( 'FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', $sbmt_btn_html, $this ),
 			'spco-' . $this->slug() . '-whats-next-buttons-dv',
 			'spco-whats-next-buttons'
 		);
