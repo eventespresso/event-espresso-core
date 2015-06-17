@@ -171,7 +171,7 @@ class EEM_Line_Item extends EEM_Base {
 	 * Gets all line items unrelated to tickets that are normal line items
 	 * (eg shipping, promotions, and miscellaneous other stuff should probably fit in this category)
 	 * @param EE_Transaction|int $transaction
-	 * @return \EE_Base_Class[]
+	 * @return EE_Line_Item[]
 	 */
 	public function get_all_non_ticket_line_items_for_transaction( $transaction ) {
 		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
@@ -198,6 +198,42 @@ class EEM_Line_Item extends EEM_Base {
 			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
 			WHERE t.TXN_ID IS NULL'
 		);
+	}
+
+
+
+	/**
+	 * get_all_ticket_line_items_for_transaction
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_ticket_line_items_for_transaction( EE_Transaction $transaction ) {
+		return $this->get_all( array(
+			array(
+				'TXN_ID' 		=> $transaction->ID(),
+				'OBJ_type' 	=> 'Ticket',
+			)
+		) );
+	}
+
+
+
+	/**
+	 * get_ticket_line_item_for_transaction
+	 *
+	 * @param int 	$TXN_ID
+	 * @param int 	$TKT_ID
+	 * @return \EE_Line_Item
+	 */
+	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID = 0 ) {
+		return $this->get_all( array(
+			array(
+				'TXN_ID' 		=> EEM_Transaction::instance()->ensure_is_ID( $TXN_ID ),
+				'OBJ_ID' 		=> $TKT_ID,
+				'OBJ_type' 	=> 'Ticket',
+			)
+		) );
 	}
 
 
