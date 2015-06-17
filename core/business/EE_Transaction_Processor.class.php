@@ -545,7 +545,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 	/**
 	 * update_transaction_after_canceled_or_declined_registration
-	 * readjusts TXN totals after a registration is cancelled or declined
+	 * readjusts TXN and Line Item totals after a registration is cancelled or declined
 	 *
 	 * @param \EE_Registration $registration
 	 * @param array            $closed_reg_statuses
@@ -553,26 +553,49 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @throws \EE_Error
 	 */
 	public function update_transaction_after_canceled_or_declined_registration( EE_Registration $registration, $closed_reg_statuses = array() ) {
-		// these reg statuses require payment (if event is not free)
+		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
 		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
-			return;
+			return false;
 		}
-		//$transaction = $registration->transaction();
-		//if ( ! $transaction instanceof EE_Transaction ) {
-		//	throw new EE_Error( sprintf( __( 'Registration %1$d\'s related Transaction was not found or is invalid.', 'event_espresso' ), $registration->ID() ) );
-		//}
+		$transaction = $registration->transaction();
+		if ( ! $transaction instanceof EE_Transaction ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$ticket_line_item = EEM_Line_Item::instance()->get_ticket_line_item_for_transaction(
-			$registration->transaction_ID(),
+			$transaction->ID(),
 			$registration->ticket_ID()
 		);
-		if ( $ticket_line_item instanceof EE_Line_Item ) {
-			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+		if ( ! $ticket_line_item instanceof EE_Line_Item ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Ticket Line Item for Registration %1$d was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
 		}
-		//$transaction->set_total(
-		//	$transaction->total() -
-		//);
+		if ( ! EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item ) ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Ticket Line Item for Registration %1$d could not be cancelled.', 'event_espresso' ), $registration->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		$total_line_item = $transaction->total_line_item();
+		if ( ! $total_line_item instanceof EE_Line_Item ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		$new_total = $total_line_item->recalculate_total_including_taxes();
+		$transaction->set_total( $new_total );
+		$transaction->save();
 
 	}
 
