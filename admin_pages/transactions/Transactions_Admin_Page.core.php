@@ -850,7 +850,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function txn_attendees_meta_box( $post, $metabox = array( 'args' => array() )) {
-
+		EE_Registry::instance()->load_helper( 'Formatter' );
 		extract( $metabox['args'] );
 		$this->_template_args['post'] = $post;
 		$this->_template_args['event_attendees'] = array();
@@ -864,21 +864,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					if ( ! $ticket instanceof EE_Ticket ) {
 						continue;
 					}
-					$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
 					$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 					foreach( $registrations as $registration ) {
 						$event = $registration->get_first_related( 'Event' );
-						$event_name = $event instanceof EE_Event ? $event->get( 'EVT_name' ) . ' - ' . $item->get( 'LIN_name' ) : '';
+
+						$event_name = $event instanceof EE_Event ? $event->get( 'EVT_name' ) . ' - ' . $item->get( 'LIN_name' ) : $item->get( 'LIN_name' );
 						$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
 						$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
-						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+						$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= EEH_Template::format_currency( $item->get( 'LIN_unit_price' ) );
 						// attendee info
 						$attendee = $registration->get_first_related('Attendee');
 						if ( $attendee instanceof EE_Attendee ) {
 							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
 							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
 							$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= $attendee->email();
-							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+							$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= EEH_Address::format( $attendee, 'inline', false, false );
 						} else {
 							$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
 							$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
