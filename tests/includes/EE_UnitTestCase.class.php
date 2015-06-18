@@ -119,10 +119,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$current_user = $this->_orig_current_user;
 		$this->_detect_accidental_txn_commit();
 		$notices = EE_Error::get_notices( false, false, true );
+		EE_Error::reset_notices();
 		if( ! empty( $notices[ 'errors' ] ) ){
 			$this->fail(  $notices['errors'] );
 		}
-		EE_Error::reset_notices();
 	}
 
 	/**

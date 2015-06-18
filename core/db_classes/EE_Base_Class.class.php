@@ -2046,6 +2046,15 @@ abstract class EE_Base_Class{
 		}
 	}
 
+	/**
+	 * Because some other plugins, like Advanced Cron Manager, expect all objects to have this method
+	 * (probably a bad assumption they have made, oh well)
+	 * @return string
+	 */
+	public function __toString(){
+		return sprintf( '%s (%s)', $this->name(), $this->ID() );
+	}
+
 
 
 }

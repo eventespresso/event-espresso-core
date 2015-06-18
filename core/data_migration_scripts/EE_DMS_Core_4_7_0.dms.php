@@ -1,6 +1,12 @@
 <?php
 /**
  * converts DBs to 4.7
+ * Adds the esp_registration_payment table (indicating which registrations payments are for),
+ * adds fields esp_registration.REG_paid field,
+ * and recalculates esp_registration.REG_final_price to actually be the final price
+ * for that registration (before this it was just the ticket's price, NOT including
+ * taxes or other price modifiers)
+ *
  */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
@@ -39,7 +45,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.7.0.p", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
-			//new EE_DMS_4_7_0_populate_esp_registration_line_item_payment(),
+			new EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price(),
+			new EE_DMS_4_7_0_Registration_Payments(),
 		);
 		parent::__construct();
 	}
@@ -53,7 +60,12 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_array) {
 		EE_Registry::instance()->load_helper( 'Activation' );
 		$version_string = $version_array['Core'];
-		if ( ( $version_string <= '4.7.0' && $version_string >= '4.6.0' ) || ( $version_string >= '4.7.0' && ! EEH_Activation::table_exists( 'esp_registration_payment' ) ) ) {
+		if (
+			( $version_string <= '4.7.0' && $version_string >= '4.6.0' )
+			||
+			( $version_string >= '4.7.0' &&
+					! EEH_Activation::table_exists( 'esp_registration_payment' ) &&
+					EEH_Activation::table_exists( 'esp_registration' ) ) ) {
 			return true;
 		} elseif ( ! $version_string ) {
 			//no version string provided... this must be pre 4.3
@@ -86,26 +98,26 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QST_ID INT UNSIGNED NOT NULL,
 					ANS_value TEXT NOT NULL,
 					PRIMARY KEY  (ANS_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_attendee_meta';
 		$sql = "ATTM_ID INT(10) UNSIGNED NOT	NULL AUTO_INCREMENT,
 						ATT_ID BIGINT(20) UNSIGNED NOT NULL,
 						ATT_fname VARCHAR(45) NOT NULL,
 						ATT_lname VARCHAR(45) NOT	NULL,
-						ATT_address VARCHAR(45) DEFAULT	NULL,
-						ATT_address2 VARCHAR(45) DEFAULT	NULL,
+						ATT_address VARCHAR(255) DEFAULT	NULL,
+						ATT_address2 VARCHAR(255) DEFAULT	NULL,
 						ATT_city VARCHAR(45) DEFAULT	NULL,
 						STA_ID INT(10) DEFAULT	NULL,
 						CNT_ISO VARCHAR(45) DEFAULT	NULL,
 						ATT_zip VARCHAR(12) DEFAULT	NULL,
-						ATT_email VARCHAR(100) NOT NULL,
+						ATT_email VARCHAR(255) NOT NULL,
 						ATT_phone VARCHAR(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = 'esp_country';
@@ -125,7 +137,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  CNT_is_EU TINYINT(1) DEFAULT '0',
 					  CNT_active TINYINT(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
 
 		$table_name = 'esp_currency';
 		$sql = "CUR_code VARCHAR(6) COLLATE utf8_bin NOT NULL,
@@ -135,7 +147,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				CUR_dec_plc VARCHAR(1) COLLATE utf8_bin NOT NULL DEFAULT '2',
 				CUR_active TINYINT(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 		$table_name = 'esp_currency_payment_method';
@@ -143,7 +155,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				CUR_code  VARCHAR(6) COLLATE utf8_bin NOT NULL,
 				PMD_ID INT(11) NOT NULL,
 				PRIMARY KEY  (CPM_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = 'esp_datetime';
@@ -165,7 +177,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
 		$table_name = 'esp_event_meta';
 		$sql = "
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
@@ -182,7 +194,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 			EVT_external_URL VARCHAR(200) NULL,
 			EVT_donations TINYINT(1) NULL,
 			PRIMARY KEY  (EVTM_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -192,7 +204,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QSG_ID INT UNSIGNED NOT NULL,
 					EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -202,7 +214,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				VNU_ID BIGINT(20) UNSIGNED NOT NULL,
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EVV_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -213,7 +225,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				EXM_key VARCHAR(45) DEFAULT NULL,
 				EXM_value TEXT,
 				PRIMARY KEY  (EXM_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_line_item';
 		$sql="LIN_ID INT(11) NOT NULL AUTO_INCREMENT,
@@ -232,7 +244,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				OBJ_ID INT(11) DEFAULT NULL,
 				OBJ_type VARCHAR(45)DEFAULT NULL,
 				PRIMARY KEY  (LIN_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB' );
 
 		$table_name = 'esp_log';
 		$sql = "LOG_ID INT(11) NOT NULL AUTO_INCREMENT,
@@ -243,7 +255,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				LOG_message TEXT,
 				LOG_wp_user INT(11) DEFAULT NULL,
 				PRIMARY KEY  (LOG_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -253,7 +265,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					MTP_content TEXT NOT NULL,
 					PRIMARY KEY  (MTP_ID),
 					KEY GRP_ID (GRP_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
 
@@ -270,7 +282,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					MTP_is_active TINYINT(1) NOT NULL DEFAULT '1',
 					PRIMARY KEY  (GRP_ID),
 					KEY MTP_user_id (MTP_user_id)";
-		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous( $table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_event_message_template';
 		$sql = "EMT_ID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -279,7 +291,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (EMT_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY GRP_ID (GRP_ID)";
-		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous( $table_name, $sql, 'ENGINE=InnoDB');
 
 
 		$table_name = 'esp_payment';
@@ -300,7 +312,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name = 'esp_payment_method';
 		$sql = "PMD_ID INT(11) NOT NULL AUTO_INCREMENT,
@@ -318,7 +330,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
 				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = "esp_ticket_price";
@@ -326,7 +338,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  TKT_ID INT(10) UNSIGNED NOT NULL,
 					  PRC_ID INT(10) UNSIGNED NOT NULL,
 					  PRIMARY KEY  (TKP_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -336,7 +348,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  DTT_ID INT(10) UNSIGNED NOT NULL,
 					  TKT_ID INT(10) UNSIGNED NOT NULL,
 					  PRIMARY KEY  (DTK_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 		$table_name = "esp_ticket_template";
@@ -345,7 +357,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  TTM_description TEXT,
 					  TTM_file VARCHAR(45),
 					  PRIMARY KEY  (TTM_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -360,7 +372,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QST_wp_user BIGINT UNSIGNED NULL,
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_question_group_question';
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -368,7 +380,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QST_ID INT UNSIGNED NOT NULL,
 					QGQ_order INT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QGQ_ID) ";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -380,7 +392,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QSO_order INT UNSIGNED NOT NULL DEFAULT 0,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSO_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -409,7 +421,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -433,7 +445,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
 					CHK_timestamp DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 					PRIMARY KEY  (CHK_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -444,7 +456,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  STA_name VARCHAR(100) COLLATE utf8_bin NOT NULL,
 					  STA_active TINYINT(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -457,7 +469,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  STS_open TINYINT(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -474,7 +486,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -484,8 +496,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_venue_meta';
 		$sql = "VNUM_ID INT(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-			VNU_address VARCHAR(100) DEFAULT NULL,
-			VNU_address2 VARCHAR(100) DEFAULT NULL,
+			VNU_address VARCHAR(255) DEFAULT NULL,
+			VNU_address2 VARCHAR(255) DEFAULT NULL,
 			VNU_city VARCHAR(100) DEFAULT NULL,
 			STA_ID INT(11) DEFAULT NULL,
 			CNT_ISO VARCHAR(2) DEFAULT NULL,
@@ -500,7 +512,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (VNUM_ID),
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
 		//modified tables
 		$table_name = "esp_price";
@@ -516,7 +528,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  PRC_wp_user BIGINT UNSIGNED NULL,
 					  PRC_parent INT(10) UNSIGNED DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name = "esp_price_type";
 		$sql = "PRT_ID TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -528,7 +540,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				  PRT_deleted TINYINT(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = "esp_ticket";
@@ -553,7 +565,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  TKT_parent INT(10) UNSIGNED DEFAULT '0',
 					  TKT_deleted TINYINT(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
 
 		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
@@ -570,7 +582,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QSG_wp_user BIGINT UNSIGNED NULL,
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
 
 		/** @var EE_DMS_Core_4_1_0 $script_4_1_defaults */
 		$script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');

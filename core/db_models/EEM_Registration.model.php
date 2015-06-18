@@ -137,10 +137,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 * 	reg_statuses_that_allow_payment
+	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function reg_statuses_that_allow_payment() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+			)
+		);
+	}
+
+
+
+	/**
 	 * 		get list of registration statuses
 	 *
 	 *
-	 *		@access private
+	 *		@access public
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
 	 *		@return array
@@ -161,6 +180,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	private function _get_registration_status_array( $exclude = array() ) {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
@@ -233,17 +253,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		retrieve registration for a specific transaction attendee from db
 	*
 	* 		@access		public
-	* 		@param		$TXN_ID
-	* 		@param		$ATT_ID
-	* 		@param		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
+	* 		@param	int	$TXN_ID
+	* 		@param    int		$ATT_ID
+	* 		@param    int		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
+	public function get_registration_for_transaction_attendee( $TXN_ID = 0, $ATT_ID = 0, $att_nmbr = 0 ) {
 		return $this->get_one(array(
 			array(
 				'TXN_ID'=>$TXN_ID,
-				'ATT_ID'=>$ATT_ID),
-			'limit'=>array($att_nmbr-1,1)
+				'ATT_ID'=>$ATT_ID
+			),
+			'limit'=>array( min( ( $att_nmbr-1 ), 0 ), 1 )
 		));
 	}
 
@@ -260,7 +281,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
 		$where = array( 'REG_date' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
-		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
@@ -285,6 +306,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
+	 * @param $period string which can be passed to php's strtotime function (eg "-1 month")
 	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
@@ -317,7 +339,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @param int $TXN_ID
 	 * @return EE_Registration
 	 */
-	public function get_primary_registration_for_transaction_ID( $TXN_ID = FALSE){
+	public function get_primary_registration_for_transaction_ID( $TXN_ID = 0){
 		if( ! $TXN_ID ){
 			return false;
 		}
@@ -343,6 +365,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return $this->count($query_params);
 	}
 
+	/**
+	 * Deletes all registrations with no transactions. Note that this needs to be very efficient
+	 * and so it uses wpdb directly
+	 * @global WPDB $wpdb
+	 * @return int number deleted
+	 */
+	public function delete_registrations_with_no_transaction() {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		return $wpdb->query(
+				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
+	}
 
 
 

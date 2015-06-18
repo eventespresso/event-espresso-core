@@ -148,7 +148,7 @@ class EEH_Line_Item {
 			$event = $datetime->event();
 			$event_names[ $event->ID() ] = $event->name();
 		}
-		$description_addition = " (For " . implode( ", ", $event_names ) . ")";
+		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
 		$full_description = $ticket->description() . $description_addition;
 		$items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $total_line_item );
 		// add $ticket to cart

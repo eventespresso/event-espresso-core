@@ -141,7 +141,9 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return string
 	 */
 	public function generate_reg_url_link( $att_nmbr, $item ) {
-		return $item instanceof EE_Line_Item ? $att_nmbr . '-' . $item->code() :  $att_nmbr . '-' . $item;
+		$reg_url_link = $item instanceof EE_Line_Item ? $item->code() : $item;
+		$reg_url_link = $att_nmbr . '-' . md5( $reg_url_link . microtime() );
+		return $reg_url_link;
 	}
 
 
@@ -154,12 +156,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function generate_reg_code( EE_Registration $registration ) {
 	// figure out where to start parsing the reg code
-		$chars = strpos( $registration->reg_url_link(), '-' ) + 4;
+		$chars = strpos( $registration->reg_url_link(), '-' ) + 5;
 		// TXN_ID + TKT_ID + first 3 and last 3 chars of reg_url_link
 		$new_reg_code = array(
 			$registration->transaction_ID(),
 			$registration->ticket_ID(),
-			substr( $registration->reg_url_link(), 0, $chars ) . substr( $registration->reg_url_link(), - 3 )
+			substr( $registration->reg_url_link(), 0, $chars )
 		);
 		// now put it all together
 		$new_reg_code = implode( '-', $new_reg_code );
@@ -393,6 +395,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 					apply_filters( 'FHEE__EE_Registration_Processor__toggle_registration_status_if_no_monies_owing', false, $registration )
 				) || (
 					$payment instanceof EE_Payment &&
+					$payment->is_approved() &&
 					// this specific registration has not yet been paid for
 					! isset( self::$_amount_paid[ $registration->ID() ] ) &&
 					// payment amount, less what we have already attributed to other registrations, is greater than this reg's final price

@@ -418,18 +418,25 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param string $engine_string
 	 */
 	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=InnoDB '){
-		//we want to know if we are currently performing a migration. We could just believe what was set on the _migrating property, but let's double-check (ie the script should apply and we should be in MM)
-		$currently_migrating = $this->_migrating &&
-				$this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() ) &&
-				EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance;
-		if( $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation  || $currently_migrating ){
-			$drop_pre_existing_tables = true;
-		}else{
-			$drop_pre_existing_tables = false;
-		}
-		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $drop_pre_existing_tables );
+//		EEH_Debug_Tools::instance()->start_timer( '_table_is_new_in_this_version_' . $table_name );
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $this->_pre_existing_table_should_be_dropped(  true ) );
+//		EEH_Debug_Tools::instance()->stop_timer( '_table_is_new_in_this_version_' . $table_name  );
 	}
 
+	/**
+	 * Like _table_is_new_in_this_version and _table_should_exist_previously, this function verifies the given table exists.
+	 * But we understand that this table has CHANGED in this version since the previous version. So it's not completely new,
+	 * but it's different. So we need to treat it like a new table in terms of verifying it's schema is correct on
+	 * activations, migrations, upgrades; but if it exists when it shouldn't, we need to be as lenient as _table_should_exist_previously
+	 * @param string $table_name
+	 * @param string $table_definition_sql
+	 * @param string $engine_string
+	 */
+	protected function _table_is_changed_in_this_version($table_name,$table_definition_sql,$engine_string = 'ENGINE=MyISAM'){
+//		EEH_Debug_Tools::instance()->start_timer( '_table_is_changed_in_this_version' . $table_name );
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $this->_pre_existing_table_should_be_dropped(  false ) );
+//		EEH_Debug_Tools::instance()->stop_timer( '_table_is_changed_in_this_version' . $table_name  );
+	}
 
 
 	/**
@@ -446,24 +453,74 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
 	/**
+	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
+	 * as these are significantly more efficient.
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
 	 * new activation. Otherwise, we'll always set $drop_pre_existing_tables to FALSE
 	 * because the table should have existed. Note, if the table is being MODIFIED in this
-	 * version being activated or migrated to, then this is the right option (because
-	 * you wouldn't want to nuke ALL the table's old info just because you're adding a column, right?)
+	 * version being activated or migrated to, then you want _table_is_changed_in_this_version NOT this one.
+	 * We don't check this table's structure during migrations because apparently it hasn't changed since the previous one, right?
 	 * @param string $table_name
 	 * @param string $table_definition_sql
 	 * @param string $engine_string
 	 */
 	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string = 'ENGINE=MyISAM'){
+//		EEH_Debug_Tools::instance()->start_timer( '_table_should_exist_previously' . $table_name );
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $this->_pre_existing_table_should_be_dropped(  false ) );
+//		EEH_Debug_Tools::instance()->stop_timer( '_table_should_exist_previously' . $table_name );
+	}
 
-		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation))){
-			$drop_pre_existing_tables = true;
-		}else{
-			$drop_pre_existing_tables = false;
+	/**
+	 * Exactly the same as _table_should_exist_previously(), except if this migration script is currently doing
+	 * a migration, we skip checking this table's structure in the database and just assume it's correct.
+	 * So this is useful only to improve efficiency when doing migrations (not a big deal for single site installs,
+	 * but important for multisite where migrations can take a very long time otherwise).
+	 * If the table is known to have changed since previous version, use _table_is_changed_in_this_version().
+	 * @param string $table_name
+	 * @param string $table_definition_sql
+	 * @param string $engine_string
+	 */
+	protected function _table_has_not_changed_since_previous( $table_name,$table_definition_sql,$engine_string = 'ENGINE=MyISAM'){
+		if( $this->_currently_migrating() ) {
+			//if we're doing a migration, and this table apparently already exists, then we don't need do anything right?
+//			EEH_Debug_Tools::instance()->stop_timer( '_table_should_exist_previously' . $table_name );
+			return;
 		}
-		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $drop_pre_existing_tables );
+		$this->_create_table_and_catch_errors($table_name, $table_definition_sql, $engine_string, $this->_pre_existing_table_should_be_dropped(  false ) );
+	}
+
+	/**
+	 * Returns whether or not this migration script is being used as part of an actual migration
+	 * @return boolean
+	 */
+	protected function _currently_migrating() {
+		//we want to know if we are currently performing a migration. We could just believe what was set on the _migrating property, but let's double-check (ie the script should apply and we should be in MM)
+		return $this->_migrating &&
+					$this->can_migrate_from_version( EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set() ) &&
+					EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance;
+	}
+
+	/**
+	 * Determines if a table should be dropped, based on whether it's reported to be new in $table_is_new,
+	 * and the plugin's request type
+	 * @param boolean $table_is_new
+	 * @return boolean
+	 */
+	protected function _pre_existing_table_should_be_dropped( $table_is_new ) {
+		if( $table_is_new ) {
+			if( $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation  || $this->_currently_migrating() ){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation))){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 	/**

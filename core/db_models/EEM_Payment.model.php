@@ -90,6 +90,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 			'Registration' => new EE_HABTM_Relation( 'Registration_Payment' ),
 		);
 		$this->_model_chain_to_wp_user = 'Payment_Method';
+		$this->_caps_slug = 'transactions';
 		parent::__construct( $timezone );
 	}
 
