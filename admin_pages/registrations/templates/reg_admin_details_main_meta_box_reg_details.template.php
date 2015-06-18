@@ -1,8 +1,8 @@
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 
+	<br/>
 	<?php echo $view_transaction_button; ?>
 	<?php echo $resend_registration_button; ?>
-	<br/>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span><?php _e( 'Registration Items', 'event_espresso' );?></h4>
 
@@ -10,38 +10,43 @@
 		<table class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
-					<th class="jst-left"><?php _e( 'Line Item ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
+					<!--<th class="jst-left">--><?php //_e( 'Item & ID', 'event_espresso' );?><!--</th>-->
+					<th class="jst-left"><?php _e( 'Event ID & Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Date', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Ticket ID & Name', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Price', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $line_items as $item ) :
-?>
+		<?php foreach ( $line_items as $item ) : ?>
+			<?php if ( $item instanceof EE_Line_Item ) :?>
+				<?php $red_text = $item->type() == EEM_Line_Item::type_cancellation ? ' important-notice' : ''; ?>
+				<?php $negative = $item->type() == EEM_Line_Item::type_cancellation ? '- ' : ''; ?>
 			<tr>
-				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><a href="<?php echo $event_link; ?>"><?php echo $item->ticket_event_name();?></a></td>
+				<!--<td class="jst-left">--><?php //echo $item->OBJ_ID() ? $item->OBJ_type() . ' ' . $item->OBJ_ID() : '';?><!--</td>-->
+				<td class="jst-left">
+					<span class="grey-text"><?php echo $event_id; ?>) </span> <a href="<?php echo $event_link; ?>"><?php echo $item->ticket_event_name();?></a>
+				</td>
 				<td class="jst-left"><?php echo $item->ticket_datetime_start('Y-m-d','h:i a'); ?></td>
-				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item->get('LIN_unit_price') );?></td>
-				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total'));?></td>
+				<td class="jst-left"><span class="grey-text"><?php echo $item->OBJ_ID(); ?>) </span > <?php echo $item->name();?></td>
+				<td class="jst-rght<?php echo $red_text; ?>"><?php echo $negative . EEH_Template::format_currency( $item->unit_price() );?></td>
+				<td class="jst-rght"><?php echo $item->quantity();?></td>
+				<td class="jst-rght<?php echo $red_text; ?>"><?php echo $negative . EEH_Template::format_currency( $item->total() );?></td>
 			</tr>
+			<?php endif; // $items?>
 		<?php endforeach; // $items?>
 		<?php if ( $taxes ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr>
-					<th class=" jst-rght" colspan="6"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax->get('LIN_total'));?></th>
+					<th class=" jst-rght" colspan="5"><?php echo $tax[ 'name' ];?> (<?php echo $tax[ 'rate' ]; ?>%)</th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax[ 'amount' ] );?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
-					<th class=" jst-rght" colspan="6"><?php _e( 'Grand Total', 'event_espresso' );?></th>
+					<th class=" jst-rght" colspan="5"><?php _e( 'Grand Total', 'event_espresso' );?></th>
 					<th class=" jst-rght"><?php echo $grand_total; ?></th>
 				</tr>
 			</tbody>
