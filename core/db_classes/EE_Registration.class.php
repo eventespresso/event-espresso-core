@@ -98,16 +98,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			// update status
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			// these reg statuses should not be considered in any calculations involving monies owing
 			$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
 			if ( in_array( $this->status_ID(), $closed_reg_statuses ) ) {
-				/** @type EE_Transaction_Processor $transaction_processor */
-				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-				$transaction_processor->update_transaction_after_canceled_or_declined_registration( $this );
+				$transaction_processor->update_transaction_after_canceled_or_declined_registration( $this, null, false );
 			}
+			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
+			$transaction_payments->update_transaction_status_based_on_total_paid( $this->transaction(), true );
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 			return TRUE;
-		}else{
+		} else {
 			//even though the old value matches the new value, it's still good to
 			//allow the parent set method to have a say
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
