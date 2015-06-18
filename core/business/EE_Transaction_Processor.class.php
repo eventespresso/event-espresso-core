@@ -549,10 +549,15 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *
 	 * @param \EE_Registration $registration
 	 * @param array            $closed_reg_statuses
+	 * @param bool             $update_txn
 	 * @return bool
 	 * @throws \EE_Error
 	 */
-	public function update_transaction_after_canceled_or_declined_registration( EE_Registration $registration, $closed_reg_statuses = array() ) {
+	public function update_transaction_after_canceled_or_declined_registration(
+		EE_Registration $registration,
+		$closed_reg_statuses = array(),
+		$update_txn = true
+	) {
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
 		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
@@ -573,32 +578,56 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		);
 		if ( ! $ticket_line_item instanceof EE_Line_Item ) {
 			EE_Error::add_error(
-				sprintf( __( 'The Ticket Line Item for Registration %1$d was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
+				sprintf(
+					__( 'The Line Item for Transaction %1$d and Ticket %2$d was not found or is invalid.', 'event_espresso' ),
+					$transaction->ID(),
+					$registration->ticket_ID()
+				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 			return false;
 		}
-		if ( ! EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item ) ) {
+		try {
+			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+			return true;
+		} catch ( EE_Error $e ) {
 			EE_Error::add_error(
-				sprintf( __( 'The Ticket Line Item for Registration %1$d could not be cancelled.', 'event_espresso' ), $registration->ID() ),
+				sprintf(
+					__( 'The Ticket Line Item for Registration %1$d could not be cancelled because :%2$s%3$s', 'event_espresso' ),
+					$registration->ID(),
+					'<br />',
+					$e->getMessage()
+				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 			return false;
 		}
-		$total_line_item = $transaction->total_line_item();
-		if ( ! $total_line_item instanceof EE_Line_Item ) {
-			EE_Error::add_error(
-				sprintf( __( 'The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return false;
-		}
-		$new_total = $total_line_item->recalculate_total_including_taxes();
-		$transaction->set_total( $new_total );
-		$transaction->save();
-
 	}
 
+
+
+	/**
+	 * cancel_transaction_if_all_registrations_canceled
+	 * cycles thru related registrations and checks their statuses
+	 * if ALL registrations are Cancelled or Declined, then this sets the TXN status to
+	 *
+	 * @access private
+	 * @param EE_Transaction 	$transaction
+	 * @param array          			$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @return boolean				true if TXN status was updated, false if not
+	 */
+	public function toggle_transaction_status_if_all_registrations_canceled_or_declined( EE_Transaction $transaction, $registration_query_params = array() ) {
+		// make sure some query params are set for retrieving registrations
+		$this->_set_registration_query_params( $registration_query_params );
+		// these reg statuses should not be considered in any calculations involving monies owing
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
+		// loop through cached registrations
+		foreach ( $transaction->registrations( $this->_registration_query_params ) as $registration ) {
+			if ( $registration instanceof EE_Registration && ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+				return false;
+			}
+		}
+	}
 
 
 	/**
