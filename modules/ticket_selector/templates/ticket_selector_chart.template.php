@@ -13,12 +13,36 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 		<thead>
 			<tr>
 				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?> <span class="ee-icon ee-icon-tickets"></span>
+					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' ), $EVT_ID ) ); ?> <span class="ee-icon ee-icon-tickets"></span>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th"><?php _e( 'Price', 'event_espresso' ); ?> </th>
+				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+					<?php
+						/**
+						 * Filters the text printed for the header of the price column in the ticket selector table
+						 *
+						 * @since 4.7.2
+						 *
+						 * @param string 'Price' The translatable text to display in the table header for price
+						 * @param int $EVT_ID The Event ID
+						 */
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
 				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
+				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+					<?php
+						/**
+						* Filters the text printed for the header of the quantity column in the ticket selector table
+						*
+						* @since 4.7.2
+						*
+						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param int $EVT_ID The Event ID
+						*/
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -438,7 +462,18 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
 <?php if ( $max_atndz > 0 ) { ?>
-	<p class="smaller-text lt-grey-text">* <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote', sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz ));?></p>
+	<?php
+	echo apply_filters(
+		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
+		'<p class="smaller-text lt-grey-text" >*' .
+		sprintf(
+			__( 'Please note that a maximum number of %1$d tickets can be purchased for this event per order.', 'event_espresso' ),
+			$max_atndz
+		)
+		. '</p>'
+	);
+
+	?>
 <?php } ?>
 
 	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>

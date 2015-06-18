@@ -524,7 +524,7 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
-			if( $line_item_with_same_code instanceof EE_Line_Item ) {
+			if( $line_item_with_same_code instanceof EE_Line_Item && $line_item_with_same_code !== $line_item ) {
 				$this->delete_child_line_item( $line_item_with_same_code->code() );
 			}
 			$line_item->set_parent_ID( $this->ID() );

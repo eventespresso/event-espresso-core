@@ -23,8 +23,22 @@
  */
 class EEH_Activation {
 
+	/**
+	 * constant used to indicate a cron task is no longer in use
+	 */
+	const cron_task_no_longer_in_use = null;
 
 	private static $_default_creator_id = null;
+
+	/**
+	 * indicates whether or not we've already verified core's default data during this request,
+	 * because after migrations are done, any addons activated while in maintenance mode
+	 * will want to setup their own default data, and they might hook into core's default data
+	 * and trigger core to setup its default data. In which case they might all ask for core to init its default data.
+	 * This prevents doing that for EVERY single addon.
+	 * @var boolean
+	 */
+	protected static $_initialized_db_content_already_in_this_request = false;
 
 
 	/**
@@ -42,6 +56,8 @@ class EEH_Activation {
 		EEH_Activation::verify_default_pages_exist();
 	}
 
+
+
 	/**
 	 * Sets the database schema and creates folders. This should
 	 * be called on plugin activation and reactivation
@@ -53,6 +69,8 @@ class EEH_Activation {
 		return $good_filesystem && $good_db;
 	}
 
+
+
 	/**
 	 * assuming we have an up-to-date database schema, this will populate it
 	 * with default and initial data. This should be called
@@ -60,6 +78,12 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
+		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
+		if( EEH_Activation::$_initialized_db_content_already_in_this_request ) {
+			return;
+		}
+		EEH_Activation::$_initialized_db_content_already_in_this_request = true;
+
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::generate_default_message_templates();
@@ -68,11 +92,76 @@ class EEH_Activation {
 
 		EEH_Activation::validate_messages_system();
 		EEH_Activation::insert_default_payment_methods();
+		//in case we've
+		EEH_Activation::remove_cron_tasks();
+		EEH_Activation::create_cron_tasks();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
+	}
+
+
+
+	/**
+	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
+	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
+	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use (null)
+	 *
+	 * @param string $which_to_include can be 'current' (ones that are currently in use),
+	 *                          'old' (only returns ones that should no longer be used),or 'all',
+	 * @return array
+	 * @throws \EE_Error
+	 */
+	public static function get_cron_tasks( $which_to_include ) {
+		$cron_tasks = apply_filters(
+			'FHEE__EEH_Activation__get_cron_tasks',
+			array(
+				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
+//				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
+			)
+		);
+		if( $which_to_include === 'all' ) {
+			//leave as-is
+		}elseif( $which_to_include === 'old' ) {
+			$cron_tasks = array_filter( $cron_tasks, function ( $value ) {
+				return $value === EEH_Activation::cron_task_no_longer_in_use;
+			});
+		}elseif( $which_to_include === 'current' ) {
+			$cron_tasks = array_filter( $cron_tasks );
+		}elseif( WP_DEBUG ) {
+			throw new EE_Error( sprintf( __( 'Invalidate argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".', 'event_espresso' ), $which_to_include ) );
+		}else{
+			//leave as-is
+		}
+		return $cron_tasks;
+	}
+
+	/**
+	 * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
+	 */
+	public static function create_cron_tasks() {
+
+		foreach( EEH_Activation::get_cron_tasks( 'current' ) as $hook_name => $frequency ) {
+			if( ! wp_next_scheduled( $hook_name ) ) {
+				wp_schedule_event( time(), $frequency, $hook_name );
+			}
+		}
+
+	}
+
+	/**
+	 * Remove the currently-existing and now-removed cron tasks.
+	 * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
+	 */
+	public static function remove_cron_tasks( $remove_all = true ) {
+		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
+		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
+			while( $scheduled_time = wp_next_scheduled( $hook_name ) ) {
+				wp_unschedule_event( $scheduled_time, $hook_name );
+			}
+		}
 	}
 
 
@@ -492,7 +581,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
 		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
-		return $wpdb->query( 'DROP TABLE IF EXISTS '. $table_name );
+		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 	}
 
 
@@ -1235,7 +1324,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 * @param bool $remove_all
 	 * @return void
 	 */
-	public static function delete_all_espresso_tables_and_data( $remove_all = TRUE ) { // FALSE
+	public static function delete_all_espresso_tables_and_data( $remove_all = true ) {
 		global $wpdb;
 		$undeleted_tables = array();
 
@@ -1247,7 +1336,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
 							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
+								case false :
 									$undeleted_tables[] = $table->get_table_name();
 								break;
 								case 0 :
@@ -1277,35 +1366,36 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 
 		$wp_options_to_delete = array(
-			'ee_no_ticket_prices' => TRUE,
-			'ee_active_messengers' => TRUE,
-			'ee_has_activated_messenger' => TRUE,
-			'ee_flush_rewrite_rules' => TRUE,
-			'ee_config' => TRUE,
-			'ee_data_migration_current_db_state' => TRUE,
-			'ee_data_migration_mapping_' => FALSE,
-			'ee_data_migration_script_' => FALSE,
-			'ee_data_migrations' => TRUE,
-			'ee_dms_map' => FALSE,
-			'ee_notices' => TRUE,
-			'lang_file_check_' => FALSE,
-			'ee_maintenance_mode' => TRUE,
-			'ee_ueip_optin' => TRUE,
-			'ee_ueip_has_notified' => TRUE,
-			'ee_plugin_activation_errors' => TRUE,
-			'ee_id_mapping_from' => FALSE,
-			'espresso_persistent_admin_notices' => TRUE,
-			'ee_encryption_key' => TRUE,
-			'pue_force_upgrade_' => FALSE,
-			'pue_json_error_' => FALSE,
-			'pue_install_key_' => FALSE,
-			'pue_verification_error_' => FALSE,
-			'pu_dismissed_upgrade_' => FALSE,
-			'external_updates-' => FALSE,
-			'ee_extra_data' => TRUE,
-			'ee_ssn_' => FALSE,
-			'ee_rss_' => FALSE,
-			'ee_rte_n_tx_' => FALSE
+			'ee_no_ticket_prices' => true,
+			'ee_active_messengers' => true,
+			'ee_has_activated_messenger' => true,
+			'ee_flush_rewrite_rules' => true,
+			'ee_config' => true,
+			'ee_data_migration_current_db_state' => true,
+			'ee_data_migration_mapping_' => false,
+			'ee_data_migration_script_' => false,
+			'ee_data_migrations' => true,
+			'ee_dms_map' => false,
+			'ee_notices' => true,
+			'lang_file_check_' => false,
+			'ee_maintenance_mode' => true,
+			'ee_ueip_optin' => true,
+			'ee_ueip_has_notified' => true,
+			'ee_plugin_activation_errors' => true,
+			'ee_id_mapping_from' => false,
+			'espresso_persistent_admin_notices' => true,
+			'ee_encryption_key' => true,
+			'pue_force_upgrade_' => false,
+			'pue_json_error_' => false,
+			'pue_install_key_' => false,
+			'pue_verification_error_' => false,
+			'pu_dismissed_upgrade_' => false,
+			'external_updates-' => false,
+			'ee_extra_data' => true,
+			'ee_ssn_' => false,
+			'ee_rss_' => false,
+			'ee_rte_n_tx_' => false,
+			'ee_pers_admin_notices' => true,
 		);
 
 		$undeleted_options = array();
@@ -1391,6 +1481,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 */
 	public static function reset(){
 		self::$_default_creator_id = NULL;
+		self::$_initialized_db_content_already_in_this_request = false;
 	}
 }
 // End of file EEH_Activation.helper.php

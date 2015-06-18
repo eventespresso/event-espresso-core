@@ -781,7 +781,12 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @return EE_Ticket
 	 */
 	public function new_ticket( $options = array() ) {
-		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => '16.5', 'TKT_taxable' => TRUE ) );
+		// grab ticket price or set to default of 16.50
+		$ticket_price = isset( $options[ 'ticket_price' ] ) && is_numeric( $options[ 'ticket_price' ] ) ? $options[ 'ticket_price' ] : 16.5;
+		// apply taxes? default = true
+		$ticket_taxable = isset( $options[ 'ticket_taxable' ] ) ? filter_var( $options[ 'ticket_taxable' ], FILTER_VALIDATE_BOOLEAN ) : true;
+		/** @type EE_Ticket $ticket */
+		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => $ticket_price, 'TKT_taxable' => $ticket_taxable ) );
 		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
 		$this->assertInstanceOf( 'EE_Price_Type', $base_price_type );
 
@@ -806,12 +811,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}
 		}
 
-		if( isset( $options[ 'datetimes'] ) ){
-			$datetimes = $options[ 'datetimes' ];
-		}else{
-			$datetimes = 1;
-		}
-
 		if ( isset( $options[ 'TKT_price' ] ) ) {
 			$ticket->set( 'TKT_price', $options['TKT_price'] );
 			//set the base price
@@ -823,6 +822,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if ( isset( $options[ 'TKT_taxable'] ) ) {
 			$ticket->set( 'TKT_taxable', $options['TKT_taxable'] );
 		}
+
+		// set datetimes, default = 1
+		$datetimes = isset( $options[ 'datetimes' ] ) ? $options[ 'datetimes' ] : 1;
 
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		for( $i = 0; $i <= $datetimes; $i++ ){

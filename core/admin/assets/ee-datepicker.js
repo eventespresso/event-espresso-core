@@ -184,9 +184,9 @@ var dttPickerHelper = {
 					if ( doingstart )
 						//use the already calculated diff to set the new endDate or startDate.
 						if ( dttPickerHelper.endobj instanceof jQuery )
-							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract(diff, 'minutes').format(dttPickerHelper.momentFormat ));
+							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract( diff, 'minutes' ).format(dttPickerHelper.momentFormat ));
 					else
-						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract(diff, 'minutes').format(dttPickerHelper.momentFormat ) );
+						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract( diff, 'minutes' ).format(dttPickerHelper.momentFormat ) );
 				}
                 //trigger the dttPicker close event
                 dttPickerHelper.pickerobj.trigger({ type:'datepickerclose',dateText:dateText, dttinst:dpinst } );

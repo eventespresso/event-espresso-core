@@ -262,7 +262,13 @@ class EE_Maintenance_Mode {
 	 */
 	public function display_maintenance_mode_notice() {
 		// check if M-mode is engaged and for EE shortcode
-		if ( $this->real_level() && current_user_can( 'administrator' ) && ! is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
+		if (
+			$this->real_level() &&
+			current_user_can( 'administrator' ) &&
+			! is_admin() &&
+			! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+			&& EE_Registry::instance()->REQ->is_espresso_page()
+		) {
 			$admin_bar_adjustment = is_admin_bar_showing() ? ' style="top:32px;"' : '';
 			printf(
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),

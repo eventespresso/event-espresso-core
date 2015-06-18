@@ -560,7 +560,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// fallback
 			default :
-				return new EE_Text_Input( $input_constructor_args );
+				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $question->type(), $question, $input_constructor_args );
+				if( ! $default_input ){
+					$default_input = new EE_Text_Input( $input_constructor_args );
+				}
+				return $default_input;
 		}
 	}
 
@@ -852,12 +856,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} elseif ( $answer_is_obj ) {
 			// save this data to the answer object
 			$answers[ $answer_cache_id ]->set_value( $input_value );
-			return $answers[ $answer_cache_id ]->save();
+			$result = $answers[ $answer_cache_id ]->save();
+			return $result !== false ? true : false;
 		} else {
 			foreach ( $answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 					$answer->set_value( $input_value );
-					return $answer->save() !== FALSE ? TRUE : FALSE;
+					$result = $answer->save();
+					return $result !== false ? true : false;
 				}
 			}
 		}

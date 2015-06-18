@@ -1,6 +1,6 @@
 
 	<h4 id="reg-page-totals-hdr" class="">
-		<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count;?>
+		<span class="drk-grey-text"><?php _e('Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count;?>
 	</h4>
 
 	<div class="spco-payment-info-dv">

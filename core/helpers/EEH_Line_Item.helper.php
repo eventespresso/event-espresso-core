@@ -89,46 +89,97 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
-		// add $ticket to cart
-		$datetime = $ticket->first_datetime();
-		if( $datetime instanceof EE_Datetime ){
-			$event_name = $datetime->event() instanceof EE_Datetime ? $datetime->event()->name() : __( 'Unknown', 'event_espresso' );
-		}else{
-			$event_name = __( 'Unknown', 'event_espresso' );
+		$line_item = self::increment_ticket_qty_if_already_in_cart( $total_line_item, $ticket, $qty );
+		if ( ! $line_item instanceof EE_Line_Item ) {
+			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
 		}
+		self::add_item( $total_line_item, $line_item );
+		return $line_item;
+	}
 
-		$line_item = EE_Line_Item::new_instance(
-			array(
-				'LIN_name'			=> $ticket->name(),
-				'LIN_desc'			=> $ticket->description() . sprintf( __( 'ticket for %1$s', 'event_espresso' ), $event_name ),
-				'LIN_unit_price'	=> $ticket->price(),
-				'LIN_quantity'		=> $qty,
-				'LIN_is_taxable'	=> $ticket->taxable(),
-				'LIN_total'			=> $ticket->price() * $qty,
-				'LIN_type'			=> EEM_Line_Item::type_line_item,
-				'OBJ_ID'				=> $ticket->ID(),
-				'OBJ_type'			=> 'Ticket'
-			)
-		);
+
+
+	/**
+	 * Returns the new line item created by adding a purchase of the ticket
+	 * @param \EE_Line_Item $total_line_item
+	 * @param EE_Ticket $ticket
+	 * @param int $qty
+	 * @return \EE_Line_Item
+	 * @throws \EE_Error
+	 */
+	public static function increment_ticket_qty_if_already_in_cart( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
+		$line_item = null;
+		if ( $total_line_item instanceof EE_Line_Item && $total_line_item->is_total() ) {
+			$tickets_subtotal_line_item = $total_line_item->get_child_line_item( 'tickets' );
+			if ( $tickets_subtotal_line_item instanceof EE_Line_Item && $tickets_subtotal_line_item->is_sub_total() ) {
+				$ticket_line_items = $total_line_item->get_child_line_item( 'tickets' )->children();
+				foreach ( (array)$ticket_line_items as $ticket_line_item ) {
+					if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
+						$line_item = $ticket_line_item;
+						break;
+					}
+				}
+			}
+		}
+		if ( $line_item instanceof EE_Line_Item ) {
+			$qty += $line_item->quantity();
+			$line_item->set_quantity( $qty );
+			$line_item->set_total( $line_item->unit_price() * $qty );
+			$line_item->save();
+			return $line_item;
+		}
+		return null;
+	}
+
+
+
+	/**
+	 * Returns the new line item created by adding a purchase of the ticket
+	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+	 * @param EE_Ticket $ticket
+	 * @param int $qty
+	 * @return \EE_Line_Item
+	 * @throws \EE_Error
+	 */
+	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
+		$datetimes = $ticket->datetimes();
+		$event_names = array();
+		foreach ( $datetimes as $datetime ) {
+			$event = $datetime->event();
+			$event_names[ $event->ID() ] = $event->name();
+		}
+		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
+		$full_description = $ticket->description() . $description_addition;
+		$items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $total_line_item );
+		// add $ticket to cart
+		$line_item = EE_Line_Item::new_instance( array(
+			'LIN_name'       => $ticket->name(),
+			'LIN_desc'       => $full_description,
+			'LIN_unit_price' => $ticket->price(),
+			'LIN_quantity'   => $qty,
+			'LIN_is_taxable' => $ticket->taxable(),
+			'LIN_order'      => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
+			'LIN_total'      => $ticket->price() * $qty,
+			'LIN_type'       => EEM_Line_Item::type_line_item,
+			'OBJ_ID'         => $ticket->ID(),
+			'OBJ_type'       => 'Ticket'
+		) );
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
-		foreach( $ticket->prices( array( 'order_by'=>array( 'PRC_order' => 'ASC' ))) as $price ) {
+		foreach ( $ticket->prices( array( 'order_by' => array( 'PRC_order' => 'ASC' ) ) ) as $price ) {
 			$sign = $price->is_discount() ? -1 : 1;
 			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount() * $qty;
-
-			$sub_line_item = EE_Line_Item::new_instance(
-				array(
-					'LIN_name'       	=> $price->name(),
-					'LIN_desc'       		=> $price->desc(),
-					'LIN_quantity'   	=> $price->is_percent() ? NULL : $qty,
-					'LIN_is_taxable' 	=> FALSE,
-					'LIN_order' 			=> $price->order(),
-					'LIN_total' 			=> $sign * $price_total,
-					'LIN_type' 			=> EEM_Line_Item::type_sub_line_item,
-					'OBJ_ID' 				=> $price->ID(),
-					'OBJ_type' 			=> 'Price'
-				)
-			);
+			$sub_line_item = EE_Line_Item::new_instance( array(
+				'LIN_name'       => $price->name(),
+				'LIN_desc'       => $price->desc(),
+				'LIN_quantity'   => $price->is_percent() ? null : $qty,
+				'LIN_is_taxable' => false,
+				'LIN_order'      => $price->order(),
+				'LIN_total'      => $sign * $price_total,
+				'LIN_type'       => EEM_Line_Item::type_sub_line_item,
+				'OBJ_ID'         => $price->ID(),
+				'OBJ_type'       => 'Price'
+			) );
 			if ( $price->is_percent() ) {
 				$sub_line_item->set_percent( $sign * $price->amount() );
 			} else {
