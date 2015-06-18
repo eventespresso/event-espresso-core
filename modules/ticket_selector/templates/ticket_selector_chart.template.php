@@ -462,12 +462,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<?php
 	echo apply_filters(
 		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
+		'<p class="smaller-text lt-grey-text" >*' .
 		sprintf(
-			__( '%2$sPlease note that a maximum number of %1$d tickets can be purchased for this event per order.%3$s', 'event_espresso' ),
-			$max_atndz,
-			'<p class="smaller-text lt-grey-text" >*',
-			'</p>'
+			__( 'Please note that a maximum number of %1$d tickets can be purchased for this event per order.', 'event_espresso' ),
+			$max_atndz
 		)
+		. '</p>'
 	);
 
 	?>
