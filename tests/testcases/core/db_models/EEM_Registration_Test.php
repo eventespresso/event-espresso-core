@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 /**
  * Contains test class for /core/db_models/EEM_Registration.model.php
  *
