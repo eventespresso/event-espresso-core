@@ -226,8 +226,8 @@ class EEM_Line_Item extends EEM_Base {
 	 * @param int 	$TKT_ID
 	 * @return \EE_Line_Item
 	 */
-	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID = 0 ) {
-		return $this->get_all( array(
+	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID ) {
+		return $this->get_one( array(
 			array(
 				'TXN_ID' 		=> EEM_Transaction::instance()->ensure_is_ID( $TXN_ID ),
 				'OBJ_ID' 		=> $TKT_ID,
