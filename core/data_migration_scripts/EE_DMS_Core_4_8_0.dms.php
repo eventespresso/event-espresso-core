@@ -62,7 +62,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if( $version_string <= '4.8.0' && $version_string >= '4.6.0' ){
+		if( $version_string <= '4.8.0' && $version_string >= '4.7.0' ){
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
@@ -91,22 +91,19 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function schema_changes_before_migration() {
 		//the schema is actually the same as the last DMS
-
-
-		/** @var EE_DMS_Core_4_6_0 $script_4_1_defaults */
-		$script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
-
+		/** @var EE_DMS_Core_4_7_0 $script_4_7_defaults */
+		$script_4_7_defaults = EE_Registry::instance()->load_dms('Core_4_7_0');
 		//(because many need to convert old string states to foreign keys into the states table)
-		return $script_4_6_defaults->schema_changes_before_migration();
+		return $script_4_7_defaults->schema_changes_before_migration();
 	}
 	/**
 	 * @return boolean
 	 */
 	public function schema_changes_after_migration() {
 		//this is actually the same as the last DMS
-		/** @var EE_DMS_Core_4_6_0 $script_4_1_defaults */
-		$script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
-		return $script_4_6_defaults->schema_changes_after_migration();
+		/** @var EE_DMS_Core_4_7_0 $script_4_7_defaults */
+		$script_4_7_defaults = EE_Registry::instance()->load_dms('Core_4_7_0');
+		return $script_4_7_defaults->schema_changes_after_migration();
 	}
 
 	public function migration_page_hooks(){
