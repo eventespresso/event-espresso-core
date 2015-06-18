@@ -43,7 +43,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @var  array $_incompatible_addons
 	 * @access    protected
 	 */
-	protected static $_incompatible_addons = array( 'EE_Promotions' );
+	protected static $_incompatible_addons = array();
 
 
 
