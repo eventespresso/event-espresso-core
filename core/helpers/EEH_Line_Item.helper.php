@@ -200,7 +200,7 @@ class EEH_Line_Item {
 	 */
 	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item, EE_Payment $payment = null ) {
 		// validate incoming line_item
-		if ( $ticket_line_item->type() !== 'Ticket' ) {
+		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
 			throw new EE_Error( sprintf( __( 'The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso' ), $ticket_line_item->type() ) );
 		}
 		if ( $ticket_line_item->quantity() < 1 ) {
@@ -211,6 +211,7 @@ class EEH_Line_Item {
 		// add $ticket to cart
 		$cancellation_line_item = EE_Line_Item::new_instance( array(
 			'LIN_name'       	=> __( 'Cancellation', 'event_espresso' ),
+			'LIN_desc' 			=> sprintf( __( 'Cancelled %1$s', 'event_espresso' ), $ticket_line_item->name() ),
 			'LIN_unit_price' 	=> $ticket_line_item->unit_price(),
 			'LIN_quantity'   	=> 1,
 			'LIN_is_taxable' 	=> $ticket_line_item->is_taxable(),
