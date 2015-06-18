@@ -807,6 +807,16 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
+	 * returns the cancellation line item if this item was cancelled
+	 * @return EE_Line_Item[]
+	 */
+	function get_cancellations() {
+		return $this->_get_descendants_of_type( EEM_Line_Item::type_cancellation );
+	}
+
+
+
+	/**
 	 * Gets all descendants of the specified type
 	 * @param string $type one of the constants on EEM_Line_Item
 	 * @return EE_Line_Item[]
