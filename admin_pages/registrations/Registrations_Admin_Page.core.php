@@ -1131,29 +1131,110 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return string
 	*/
 	public function set_reg_status_buttons_metabox() {
+		$this->_set_registration_object();
+		$change_reg_status_form = $this->_generate_reg_status_change_form();
+		echo $change_reg_status_form->form_open( REG_ADMIN_URL );
+		echo $change_reg_status_form->get_html_and_js();
+		echo $change_reg_status_form->form_close();
 
-		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
-		$is_complete = $this->_registration->transaction()->is_completed();
+	}
 
-		//let's get an array of all possible buttons that we can just reference
-		$status_buttons = $this->_get_reg_status_buttons();
-		$template_args[ 'reg_status_value' ] = $this->_registration->pretty_status();
-		$template_args[ 'reg_status_class' ] = 'status-' . $this->_registration->status_ID();
-		$template_args['attendee'] = $this->_registration->attendee();
-		$template = REG_TEMPLATE_PATH . 'reg_status_change_buttons.template.php';
-		if ( $this->_set_registration_object() ) {
-			$current_status = $this->_registration->status_ID();
-			unset( $status_buttons[$current_status] );
-			if ( $current_status != EEM_Registration::status_id_pending_payment && $is_complete ) {
-				unset( $status_buttons[EEM_Registration::status_id_pending_payment] );
-			}
-			$template_args['status_buttons'] = implode( "\n", $status_buttons );
-		}
-		$template_args['form_url'] = REG_ADMIN_URL;
-		$template_args['REG_ID'] = $this->_registration->ID();
-		$template_args['nonce'] = wp_nonce_field( 'change_reg_status_nonce',  'change_reg_status_nonce', FALSE, FALSE );
 
-		EEH_Template::display_template( $template, $template_args );
+
+
+	/**
+	 * @return EE_Form_Section_Proper
+	 */
+	protected function _generate_reg_status_change_form() {
+		return new EE_Form_Section_Proper(
+			array(
+				'name'            => 'reg_status_change_form',
+				'html_id'         => 'reg-status-change-form',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+				'subsections'     => array(
+					'action'             => new EE_Hidden_Input( array(
+						'name'    => 'action',
+						'default' => 'change_reg_status'
+					) ),
+					'return'             => new EE_Hidden_Input( array(
+						'name'    => 'return',
+						'default' => 'view_registration'
+					) ),
+					'nonce'              => new EE_Hidden_Input( array(
+						'name'    => 'nonce',
+						'default' => wp_nonce_field( 'change_reg_status_nonce', 'change_reg_status_nonce', false, false )
+					) ),
+					'REG_ID'             => new EE_Hidden_Input( array(
+						'name'    => 'REG_ID',
+						'default' => $this->_registration->ID()
+					) ),
+					'current_status'     => new EE_Form_Section_HTML(
+						EEH_HTML::tr(
+							EEH_HTML::th(
+								EEH_HTML::label(
+									EEH_HTML::strong( __( 'Current Registration Status', 'event_espresso' ) )
+								)
+							) .
+							EEH_HTML::td(
+								EEH_HTML::strong(
+									$this->_registration->pretty_status(),
+									'', 'status-' . $this->_registration->status_ID(), 'line-height: 1em; font-size: 1.5em; font-weight: bold;'
+								)
+							)
+						)
+					),
+					'reg_status'         => new EE_Select_Input(
+						$this->_get_reg_statuses(),
+						array(
+							'html_label_text' => __( 'Change Registration Status to', 'event_espresso' ),
+							'default'         => $this->_registration->status_ID(),
+						)
+					),
+					'send_notifications' => new EE_Yes_No_Input(
+						array(
+							'html_label_text' => __( 'Send Related Messages', 'event_espresso' ),
+							'default'         => false,
+							'html_help_text'  => __( 'If set to "Yes", then the related messages will be sent to the registrant.', 'event_espresso' ),
+						)
+					),
+					'submit'             => new EE_Submit_Input( array(
+						'html_class'      => 'button-primary',
+						'html_label_text' => '&nbsp;',
+						'default'         => __( 'Update Registration Status', 'event_espresso' )
+					) ),
+				),
+			)
+		);
+	}
+
+
+
+
+	/**
+	 * Returns an array of all the buttons for the various statuses and switch status actions
+	 * @return string
+	 */
+	protected function _get_current_reg_status_help_text( $STS_ID = '' ) {
+		//$reg_status_help_text = array(
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//	'RAP' => __( 'XXXXXXXXXXX', 'event_espresso' ),
+		//);
+		//Approved
+    //An approved registration allows payments and may have a transaction status of incomplete or complete . The registration is marked as active and a space is reserved for the registrant .
+		//Cancelled
+		//	A {
+		//	cancelled} registration is performed by the registrant . Payments are not allowed, the registration is inactive, and no space is reserved .
+		//Declined
+    //A declined registration is performed by the event admin . Payments are not allowed, the registration is inactive, and not space is reserved .
+		//Not Approved
+    //A not approved registration is performed by the event admin . Payments are not allowed, the registration is active, and no space is reserved .
+		//Pending Payment
+    //A pending registration allows payments . The status will be automatically toggled to approved if the {
+		//	payment} is made in full by registrant .
 
 	}
 
@@ -1164,17 +1245,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * Returns an array of all the buttons for the various statuses and switch status actions
 	 * @return array
 	 */
-	private function _get_reg_status_buttons() {
-
-		$buttons = array(
-			EEM_Registration::status_id_approved => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_pending_payment => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_not_approved => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_declined => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_cancelled =>'<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) . '">',
-			);
-		return $buttons;
+	protected function _get_reg_statuses() {
+		$reg_status_array = EEM_Registration::instance()->reg_status_array();
+		// get current reg status
+		$current_status = $this->_registration->status_ID();
+		// is registration for free event? This will determine whether to display the pending payment option
+		if ( $current_status != EEM_Registration::status_id_pending_payment && $this->_registration->transaction()->is_free() ) {
+			unset( $reg_status_array[ EEM_Registration::status_id_pending_payment ] );
+		}
+		foreach ( $reg_status_array as $STS_ID => $reg_status ) {
+			$reg_status_array[ $STS_ID ] = EEH_HTML::span( $reg_status, '', 'status-' . $STS_ID );
+		}		return $reg_status_array;
 	}
+
 
 
 	/**
@@ -1288,7 +1371,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_req_data['return'] = 'view_registration';
 
 		//set notify based on whether the send notifications toggle is set or not
-		$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
+		$notify = ! empty( $this->_req_data['reg_status_change_form']['send_notifications'] );
 
 		switch ( $this->_req_data['_reg_status_id'] ) {
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :
@@ -1391,16 +1474,33 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_session = $transaction->session_data();
 
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
-		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
-
+		//$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		$ticket_line_item = EEM_Line_Item::instance()->get_ticket_line_item_for_transaction(
+			$transaction->ID(),
+			$this->_registration->ticket_ID()
+		);
+		$this->_template_args['line_items'] = array( $ticket_line_item ) + $ticket_line_item->get_cancellations();
+		$grand_total  = $ticket_line_item->unit_price() * $ticket_line_item->quantity();
 
 		$attendee = $this->_registration->attendee();
 
 		// process taxes
-		if ( $transaction ) {
+		if ( $ticket_line_item->is_taxable() ) {
 			//get all "tax" line items for this transaction and we'll use them for the tax display.
-			$taxes = $transaction->get_many_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_tax ) ) );
-			$this->_template_args['taxes'] = !empty($taxes) ? $taxes : array();
+			$tax_line_items = $transaction->get_many_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_tax ) ) );
+			if ( ! empty( $tax_line_items ) ) {
+				foreach ( $tax_line_items as $tax_line_item ) {
+					if ( $tax_line_item instanceof EE_Line_Item ) {
+						$this->_template_args[ 'taxes' ][ $tax_line_item->ID() ]['name'] = $tax_line_item->name();
+						$this->_template_args[ 'taxes' ][ $tax_line_item->ID() ]['rate'] = $tax_line_item->get_pretty( 'LIN_percent' );
+						$tax = ( $tax_line_item->percent() * $ticket_line_item->unit_price() ) / 100;
+						$this->_template_args[ 'taxes' ][ $tax_line_item->ID() ]['amount'] = $tax;
+						$grand_total += $tax;
+					}
+				}
+
+			}
 		} else {
 			$this->_template_args['taxes'] = array();
 		}
@@ -1408,7 +1508,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
 		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
-		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
+		$this->_template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
@@ -1454,6 +1554,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
 
 		$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'event_id' => $this->_registration->event_ID()), REG_ADMIN_URL );
+		$this->_template_args['event_id'] = $this->_registration->event_ID();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
