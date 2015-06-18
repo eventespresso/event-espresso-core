@@ -640,7 +640,7 @@ class EEH_Template {
 		$per_page = (int) $per_page;
 		$current = (int) $current;
 		$paged_arg_name = empty( $paged_arg_name ) ? 'paged' : sanitize_key( $paged_arg_name );
-		
+
 		//filter items_label
 		$items_label = apply_filters(
 			'FHEE__EEH_Template__get_paging_html__items_label',
@@ -671,7 +671,7 @@ class EEH_Template {
 
 		$output = '<span class="displaying-num">' . $item_label . '</span>';
 
-		if ( $current === 1 )
+		if ( $current === 1 ) {
 			$disable_first = ' disabled';
 		}
 		if ( $current == $total_pages ) {
@@ -695,7 +695,7 @@ class EEH_Template {
 
 		if ( ! $show_num_field ) {
 			$html_current_page = $current;
-		else
+		} else {
 			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
 				esc_attr__( 'Current page' ),
 				$current,
