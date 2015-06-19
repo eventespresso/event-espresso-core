@@ -82,6 +82,8 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
+	 * ensures that ticket line item is saved, and that cart total has been recalculated
+	 *
 	 * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
@@ -95,6 +97,7 @@ class EEH_Line_Item {
 		if ( ! $line_item instanceof EE_Line_Item ) {
 			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
 		}
+		$total_line_item->recalculate_total_including_taxes();
 		return $line_item;
 	}
 
@@ -111,14 +114,11 @@ class EEH_Line_Item {
 	public static function increment_ticket_qty_if_already_in_cart( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$line_item = null;
 		if ( $total_line_item instanceof EE_Line_Item && $total_line_item->is_total() ) {
-			$tickets_subtotal_line_item = $total_line_item->get_child_line_item( 'tickets' );
-			if ( $tickets_subtotal_line_item instanceof EE_Line_Item && $tickets_subtotal_line_item->is_sub_total() ) {
-				$ticket_line_items = $total_line_item->get_child_line_item( 'tickets' )->children();
-				foreach ( (array)$ticket_line_items as $ticket_line_item ) {
-					if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
-						$line_item = $ticket_line_item;
-						break;
-					}
+			$ticket_line_items = EEH_Line_Item::get_ticket_line_items( $total_line_item );
+			foreach ( (array)$ticket_line_items as $ticket_line_item ) {
+				if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_ID() == $ticket->ID() ) {
+					$line_item = $ticket_line_item;
+					break;
 				}
 			}
 		}
@@ -126,7 +126,6 @@ class EEH_Line_Item {
 			$qty += $line_item->quantity();
 			$line_item->set_quantity( $qty );
 			$line_item->set_total( $line_item->unit_price() * $qty );
-			$line_item->save();
 			return $line_item;
 		}
 		return null;
@@ -194,7 +193,6 @@ class EEH_Line_Item {
 			throw new EE_Error( sprintf( __( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
 		}
 		$events_sub_total->add_child_line_item( $line_item );
-		$total_line_item->recalculate_total_including_taxes();
 		return $line_item;
 	}
 
@@ -593,7 +591,7 @@ class EEH_Line_Item {
 
 
 	/**
-	 * Gets all descendants that are event subtotals
+	 * Gets all descendants that are tickets
 	 *
 	 * @uses  EEH_Line_Item::get_line_items_of_object_type()
 	 * @param \EE_Line_Item $parent_line_item - the line item to find descendants of
