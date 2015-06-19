@@ -25,7 +25,7 @@
  */
 abstract class EEM_Base extends EE_Base{
 
-		//admin posty
+	//admin posty
 	//basic -> grants access to mine -> if they don't have it, select none
 	//*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
 	//*_private -> grants full access -> if dont have it, select all mine and others' non-private
@@ -345,13 +345,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_entity_map;
 
-	/**
-	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
-	 * table column, and one for just the table column). This is primarily only used to speed up querying
-	 *
-	 * @var EE_Model_Field_Base[]
-	 */
-	private $_model_fields_sorted_by_db_col = NULL;
 
 
 
@@ -510,30 +503,6 @@ abstract class EEM_Base extends EE_Base{
 }
 
 
-
-
-	/**
-	 * This sets the _timezone property after model object has been instantiated.
-	 * @param string $timezone valid PHP DateTimeZone timezone string
-	 */
-	public function set_timezone( $timezone ) {
-		if($timezone !== NULL){
-			$this->_timezone = $timezone;
-		}
-
-		//note we need to loop through relations and set the timezone on those objects as well.
-		foreach ( $this->_model_relations as $relation ) {
-			$relation->set_timezone($timezone);
-		}
-
-		//and finally we do the same for any datetime fields
-		foreach ( $this->_fields as $field ) {
-			if ( $field instanceof EE_Datetime_Field ) {
-				$field->set_timezone( $timezone );
-			}
-		}
-	}
-
 	/**
 	 *		This function is a singleton method used to instantiate the Espresso_model object
 	 *
@@ -560,6 +529,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * resets the model and returns it
+	 * @param null | string $timezone
 	 * @return static
 	 */
 	public static function reset(  $timezone = NULL ){
@@ -733,15 +703,15 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Modifies the query parameters so we only get back model objects
 	 * that "belong" to the current user
-	 * @param array $query_parms @see EEM_Base::get_all()
+	 * @param array $query_params @see EEM_Base::get_all()
 	 * @return array like EEM_Base::get_all
 	 */
-	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
+	function alter_query_params_to_only_include_mine( $query_params = array() ) {
 		$wp_user_field_name = $this->wp_user_field_name();
 		if( $wp_user_field_name ){
-			$query_parms[0][ $wp_user_field_name ] = get_current_user_id();
+			$query_params[0][ $wp_user_field_name ] = get_current_user_id();
 		}
-		return $query_parms;
+		return $query_params;
 	}
 
 	/**
@@ -813,7 +783,7 @@ abstract class EEM_Base extends EE_Base{
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
 	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
-	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		//remember the custom selections, if any
@@ -1089,14 +1059,157 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * This sets the _timezone property after model object has been instantiated.
+	 * @param null | string $timezone valid PHP DateTimeZone timezone string
+	 */
+	public function set_timezone( $timezone ) {
+		if ( $timezone !== null ) {
+			$this->_timezone = $timezone;
+		}
+		//note we need to loop through relations and set the timezone on those objects as well.
+		foreach ( $this->_model_relations as $relation ) {
+			$relation->set_timezone( $timezone );
+		}
+		//and finally we do the same for any datetime fields
+		foreach ( $this->_fields as $field ) {
+			if ( $field instanceof EE_Datetime_Field ) {
+				$field->set_timezone( $timezone );
+			}
+		}
+	}
+
+
+
+	/**
 	 * This just returns whatever is set for the current timezone.
 	 *
 	 * @access public
 	 * @return string
 	 */
 	public function get_timezone() {
+		//first validate if timezone is set.  If not, then let's set it be whatever is set on the model fields.
+		if ( empty( $this->_timezone ) ) {
+			foreach( $this->_fields as $field ) {
+				if ( $field instanceof EE_Datetime_Field ) {
+					$this->set_timezone($field->get_timezone());
+					break;
+				}
+			}
+		}
+
+		//if timezone STILL empty then return the default timezone for the site.
+		if ( empty( $this->_timezone ) ) {
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$this->set_timezone( EEH_DTT_Helper::get_timezone() );
+		}
 		return $this->_timezone;
 	}
+
+
+
+	/**
+	 * This returns the date formats set for the given field name and also ensures that
+	 * $this->_timezone property is set correctly.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The name of the field the formats are being retrieved for.
+	 * @param bool   $pretty          Whether to return the pretty formats (true) or not (false).
+	 * @throws EE_Error   If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return array formats in an array with the date format first, and the time format last.
+	 */
+	public function get_formats_for( $field_name, $pretty = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then throw error
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
+		}
+
+		//while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
+		//the field.
+		$this->_timezone = $field_settings->get_timezone();
+
+		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
+	}
+
+
+
+	/**
+	 * This returns the current time in a format setup for a query on this model.
+	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
+	 * it will return:
+	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
+	 *  - or a unixtimestamp (equivalent to time())
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The field the currrent time is needed for.
+	 * @param bool   $timestamp  True means to return a unix timestamp. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will
+	 *                           		 be returned.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 *
+	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+	 *                    	     exception is triggered.
+	 */
+	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {
+		$formats = $this->get_formats_for( $field_name );
+
+		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
+
+		if ( $timestamp ) {
+			return $DateTime->format( 'U' );
+		}
+
+		//not returning timestamp, so return formatted string in timezone.
+		switch( $what ) {
+			case 'time' :
+				return $DateTime->format( $formats[1] );
+				break;
+			case 'date' :
+				return $DateTime->format( $formats[0] );
+				break;
+			default :
+				return $DateTime->format( implode( ' ', $formats ) );
+				break;
+		}
+	}
+
+
+
+
+
+	/**
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
+	 * for the model are.  Returns a DateTime object.
+	 *
+	 * Note: a gotcha for when you send in unixtimestamp.  Remember a unixtimestamp is already timezone agnostic,
+	 * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is ignored.
+	 *
+	 * @param string $field_name The field being setup.
+	 * @param string $timestring   The date timestring being used.
+	 * @param string $incoming_format        The format for the time string.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
+	 *                           		the blog.  If this is not the case, then it can be specified here.  If incoming format is
+	 *                           		'U', this is ignored.
+	 * @return DateTime
+	 */
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+
+		//just using this to ensure the timezone is set correctly internally
+		$this->get_formats_for( $field_name );
+
+		//load EEH_DTT_Helper
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
+
+		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) );
+	}
+
 
 
 
@@ -1317,6 +1430,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string of SQL
 	 */
 	function _construct_update_sql($fields_n_values){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		$cols_n_values = array();
 		foreach($fields_n_values as $field_name => $value){
@@ -1598,6 +1712,7 @@ abstract class EEM_Base extends EE_Base{
 		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.", "event_espresso")));
 		}
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
@@ -2077,6 +2192,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _prepare_value_for_use_in_db($value, $field){
 		if($field && $field instanceof EE_Model_Field_Base){
 			switch( $this->_values_already_prepared_by_model_object ){
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case self::not_prepared_by_model_object:
 					$value = $field->prepare_for_set($value);
 					//purposefully left out "return"
@@ -2279,6 +2395,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _create_model_query_info_carrier($query_params){
+		if( ! is_array( $query_params ) ){
+			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+			$query_params = array();
+		}
 		if( isset( $query_params[0] ) ) {
 			$where_query_params = $query_params[0];
 		}else{
@@ -2288,10 +2408,6 @@ abstract class EEM_Base extends EE_Base{
 		//because the caps might require us to do extra joins
 		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
 			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->caps_where_conditions( $query_params[ 'caps' ] ) );
-		}
-		if( ! is_array( $query_params ) ){
-			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
-			$query_params = array();
 		}
 		$query_object = $this->_extract_related_models_from_query($query_params);
 
@@ -2619,6 +2735,7 @@ abstract class EEM_Base extends EE_Base{
 				);
 			}
 		}
+
 		//check if it's a custom selection
 		elseif(array_key_exists($query_param,$this->_custom_selections)){
 			return;
@@ -2957,6 +3074,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return false|null|string
 	 */
 	private function _wpdb_prepare_using_field($value,$field_obj){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if($field_obj instanceof EE_Model_Field_Base){
 			return $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
@@ -3433,23 +3551,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * _get_cached_acceptable_table_columns
-	 * @return EE_Model_Field_Base[]|null
-	 */
-	private function _get_cached_acceptable_table_columns(){
-		if( $this->_model_fields_sorted_by_db_col === NULL ){
-			foreach( $this->field_settings() as $field_obj ){
-				if( ! $field_obj->is_db_only_field() ){
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_qualified_column() ] = $field_obj;
-//					$this->_model_fields_sorted_by_db_col[ $field->get_table_column() ] = $field_obj;
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_table_column() ] = $field_obj;
-				}
-			}
-		}
-		return $this->_model_fields_sorted_by_db_col;
-	}
-
-	/**
 	 *
 	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
 	 * or an stdClass where each property is the name of a column,
@@ -3570,7 +3671,9 @@ abstract class EEM_Base extends EE_Base{
 			if( $table_obj->get_pk_column() && $table_pk_value === NULL ){
 				foreach( $this->_get_fields_for_table( $table_alias ) as $field_name => $field_obj ) {
 					if( ! $field_obj->is_db_only_field() ){
-						$this_model_fields_n_values[$field_name] = $field_obj->get_default_value();
+						//prepare field as if its coming from db
+						$prepared_value = $field_obj->prepare_for_set( $field_obj->get_default_value() );
+						$this_model_fields_n_values[$field_name] = $field_obj->prepare_for_use_in_db( $prepared_value );
 					}
 				}
 			}else{

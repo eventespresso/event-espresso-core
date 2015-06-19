@@ -160,6 +160,8 @@ class EED_Events_Archive  extends EED_Module {
 			}
 			// if NOT a custom template
 			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+				// don't display entry meta because the existing theme will take care of that
+				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
 				// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
