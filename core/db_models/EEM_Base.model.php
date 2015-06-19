@@ -563,8 +563,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return static
 	 */
 	public static function reset(  $timezone = NULL ){
-		static::$_instance = NULL;
-		return self::instance( $timezone );
+		if ( ! is_null( static::$_instance ) ) {
+			static::$_instance = null;
+
+			return self::instance( $timezone );
+		}
+		return null;
 	}
 
 	/**
