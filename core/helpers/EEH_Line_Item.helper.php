@@ -89,11 +89,12 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		// either increment the qty for an existing ticket
 		$line_item = self::increment_ticket_qty_if_already_in_cart( $total_line_item, $ticket, $qty );
+		// or add a new one
 		if ( ! $line_item instanceof EE_Line_Item ) {
 			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
 		}
-		self::add_item( $total_line_item, $line_item );
 		return $line_item;
 	}
 
