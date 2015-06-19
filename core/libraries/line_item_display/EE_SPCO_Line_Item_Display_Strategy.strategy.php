@@ -243,7 +243,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$line_item,
 			$options
 		);
-		$name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
+		$name_and_desc .= $line_item->is_taxable() ? '<span class="smaller-text lt-grey-text">' . __( ' * taxable item', 'event_espresso' ) . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l' );
 		// quantity td
@@ -468,7 +468,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				if ( ! $registration instanceof EE_Registration ) {
 					break;
 				}
-				//EEH_Debug_Tools::printr( $registration, '$registration', __FILE__, __LINE__ );
 				if ( $registration->owes_monies_and_can_pay() ) {
 					$this->_billable[ $registration->ID() ] = $registration->ticket_ID();
 				} else {
@@ -502,11 +501,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				if ( $line_item->OBJ_ID() === $TKT_ID ) {
 					//echo '<h5 style="color:#2EA2CC;">billable : <span style="color:#E76700">' . $line_item->unit_price() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 					$this->_billable_total += $line_item->unit_price();
-					//$this->_total_items += $line_item->quantity();
+					$this->_total_items += $line_item->quantity();
 					if ( $line_item->is_taxable() ) {
 						$this->_billable_tax_total += $line_item->unit_price();
 					}
-					$this->_total_items++;
+					//$this->_total_items++;
 					$billable++;
 					unset( $this->_do_not_bill[ $REG_ID ] );
 				}
