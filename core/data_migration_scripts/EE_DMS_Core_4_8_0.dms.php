@@ -46,6 +46,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		$this->_migration_stages = array(
 			new EE_DMS_4_8_0_pretax_totals(),
 			new EE_DMS_4_8_0_event_subtotals(),
+			new EE_DMS_4_8_0_Email_System_Question(),
 		);
 		parent::__construct();
 	}
