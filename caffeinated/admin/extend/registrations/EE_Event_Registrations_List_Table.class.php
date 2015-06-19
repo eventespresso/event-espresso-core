@@ -277,7 +277,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_final_price
 	*/
 	function column__REG_final_price(EE_Registration $item){
-		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';
+		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_final_price() . '</span>';
 	}
 
 
