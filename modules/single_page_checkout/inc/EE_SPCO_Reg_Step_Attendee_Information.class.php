@@ -567,8 +567,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			case EEM_Question::QST_type_decimal :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_Float_Validation_Strategy();
 				return new EE_Text_Input( $input_constructor_args );
-			case EEM_Question::QST_type_yes_no :
-				return new EE_Yes_No_Input( $input_constructor_args );
 			case EEM_Question::QST_type_url :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_URL_Validation_Strategy();
 				return new EE_Text_Input( $input_constructor_args );
@@ -579,10 +577,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__early_range', 100, $question ),
 						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__end_range', 100, $question )
 						);
-			case EEM_Question::QST_type_month :
-				return new EE_Month_Input(
-						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__month_question_leading_zeros', true ),
-						$input_constructor_args );
 			case EEM_Question::QST_type_multi_select :
 				return new EE_Select_Multiple_Input( $question->options(), $input_constructor_args );
 			default :
