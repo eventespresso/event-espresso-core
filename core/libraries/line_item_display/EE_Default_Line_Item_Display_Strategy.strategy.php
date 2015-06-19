@@ -153,7 +153,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$line_item,
 			$options
 		);
-		$name_and_desc .= $line_item->is_taxable() ? '<span class="smaller-text lt-grey-text">' . __( ' * taxable item', 'event_espresso' ) . '</span>' : '';
+		$name_and_desc .= $line_item->is_taxable() ? '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">' . __( ' * taxable item', 'event_espresso' ) . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l' );
 		// quantity td

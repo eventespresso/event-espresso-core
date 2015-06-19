@@ -243,7 +243,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$line_item,
 			$options
 		);
-		$name_and_desc .= $line_item->is_taxable() ? '<span class="smaller-text lt-grey-text">' . __( ' * taxable item', 'event_espresso' ) . '</span>' : '';
+		$name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l' );
 		// quantity td
@@ -303,7 +303,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item tax-total' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= '<span class="tiny-text" style="margin:0 0 0 2em;">' . __( ' * taxable items', 'event_espresso' ) . '</span>';
+		$name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">' . __( ' * taxable items', 'event_espresso' ) . '</span>';
 		$name_and_desc .= $options[ 'show_desc' ] ? '<br/>' . $line_item->desc() : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item', '', ' colspan="2"' );
