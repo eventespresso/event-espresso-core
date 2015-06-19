@@ -46,7 +46,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	 */
 	public function test_add_ticket_purchase(){
 		// create grand total
-		$total_line_item = EEH_Line_Item::create_default_total_line_item();
+		$total_line_item = EEH_Line_Item::create_total_line_item();
 		$this->assertEquals( 0, $total_line_item->total() );
 		// create a ticket
 		$ticket = $this->new_ticket( array(
