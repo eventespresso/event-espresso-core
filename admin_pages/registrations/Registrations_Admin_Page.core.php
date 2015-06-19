@@ -576,7 +576,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
-		wp_localize_script( 'espresso_reg', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 

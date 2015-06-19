@@ -301,8 +301,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
-		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
 	}
 
 
