@@ -31,7 +31,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * for children line items (currently not a normal relation)
 	 * @type EE_Line_Item[]
 	 */
-	protected $_Line_Item;
+	protected $_children;
 
 
 
@@ -363,10 +363,10 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->get_all( array( array( 'LIN_parent' => $this->ID() ) ) );
 		} else {
-			if ( !is_array( $this->_Line_Item ) ) {
-				$this->_Line_Item = array();
+			if ( ! is_array( $this->_children ) ) {
+				$this->_children = array();
 			}
-			return $this->_Line_Item;
+			return $this->_children;
 		}
 	}
 
@@ -533,7 +533,7 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 			return $line_item->save();
 		} else {
-			$this->_Line_Item[ $line_item->code() ] = $line_item;
+			$this->_children[ $line_item->code() ] = $line_item;
 			return TRUE;
 		}
 	}
@@ -551,7 +551,7 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->get_one( array( array( 'LIN_parent' => $this->ID(), 'LIN_code' => $code ) ) );
 		} else {
-			return isset( $this->_Line_Item[ $code ] ) ? $this->_Line_Item[ $code ] : null;
+			return isset( $this->_children[ $code ] ) ? $this->_children[ $code ] : null;
 		}
 	}
 
@@ -565,8 +565,8 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->delete( array( array( 'LIN_parent' => $this->ID() ) ) );
 		} else {
-			$count = count( $this->_Line_Item );
-			$this->_Line_Item = array();
+			$count = count( $this->_children );
+			$this->_children = array();
 			return $count;
 		}
 	}
@@ -597,8 +597,8 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 			return $items_deleted;
 		} else {
-			if( isset( $this->_Line_Item[ $code ] ) ) {
-				unset( $this->_Line_Item[ $code ] );
+			if( isset( $this->_children[ $code ] ) ) {
+				unset( $this->_children[ $code ] );
 				return 1;
 			}else{
 				return 0;
