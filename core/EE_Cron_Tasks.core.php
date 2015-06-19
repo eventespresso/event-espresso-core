@@ -47,6 +47,11 @@ class EE_Cron_Tasks extends EE_BASE {
 			array( 'EE_Cron_Tasks', 'check_for_abandoned_transactions' ),
 			10, 1
 		);
+		// CLEAN OUT JUNK TRANSACTIONS AND RELATED DATA
+		add_action(
+				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
+				array( 'EE_Cron_Tasks', 'clean_out_junk_transactions' )
+		);
 	}
 
 
@@ -290,6 +295,17 @@ class EE_Cron_Tasks extends EE_BASE {
 
 	/*************  END OF FINALIZE ABANDONED TRANSACTIONS  *************/
 
+	/************* START CLEAN UP BOT TRANSACTIONS **********************/
+
+	//when a transaction is initially made, schedule this check.
+	//if it has NO REG data by the time it has expired, forget about it
+	public static function clean_out_junk_transactions() {
+		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
+			EEM_Transaction::instance('')->delete_junk_transactions();
+			EEM_Registration::instance('')->delete_registrations_with_no_transaction();
+			EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
+		}
+	}
 
 
 }

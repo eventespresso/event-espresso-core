@@ -110,8 +110,8 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 		//first let's see if we have a venue already
 		$evt_venues = !empty( $evt_id ) ? $evt_obj->venues() : array();
-		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
-		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
+		$evt_venue = $evt_venues && is_array( $evt_venues ) ? reset( $evt_venues ) : null;
+		$evt_venue_id = $evt_venue instanceof EE_Venue ? $evt_venue->ID() : null;
 
 		//possibly private venues.
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
@@ -126,13 +126,21 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		}
 
 		$vnumdl = EE_Registry::instance()->load_model( 'Venue' );
-		$venues = $vnumdl->get_all( array( $vnu_where ) );
+		$venues = $vnumdl->get_all( array( $vnu_where, 'order_by' => array( 'VNU_name' => 'ASC' ) ) );
 
 		$ven_select = array();
 		$ven_select[0] = __('Select a Venue', 'event_espresso');
 		//setup venues for selector
 		foreach ( $venues as $venue ) {
 			$ven_select[$venue->ID()] = $venue->name();
+		}
+
+		//if $ven_select does not have the existing venue attached to event then let's add that because we'll always
+		//show existing attached venues even if it's trashed (or some other restricted status).
+
+		if ( $evt_venue_id && ! isset( $ven_select[$evt_venue_id] ) ) {
+			$ven_select[$evt_venue_id] = $evt_venue->name();
+			$venues = array_merge( $venues, array( $evt_venue ) );
 		}
 
 		$template_args['venues'] = $venues;
