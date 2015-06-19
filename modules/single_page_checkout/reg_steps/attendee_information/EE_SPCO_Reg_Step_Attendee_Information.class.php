@@ -77,7 +77,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$primary_registrant = NULL;
 		// autoload Line_Item_Display classes
 		EEH_Autoloader::register_line_item_display_autoloaders();
-		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
+		$Line_Item_Display = new EE_Line_Item_Display();
+		// calculate taxes
+		$Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total(), array( 'set_tax_rate' => true ) );
 		EE_Registry::instance()->load_helper('Line_Item');
 		/** @var $subsections EE_Form_Section_Proper[] */
 		$subsections = array(
