@@ -139,24 +139,6 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 
 
 
-	/**
-	 * Utility function for pretending/testing capabilities deregistered
-	 */
-	private function _pretend_capabilities_deregistered() {
-		//setup registered caps first
-		$this->_pretend_capabilities_registered();
-
-		//now let's add filter verify that new cap map doesn't have the mapped items after de-registering.
-		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok_after_deregister' ), 100 );
-		add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( $this, '_verify_new_meta_cap_ok_after_deregister' ), 200 );
-
-		//now deregister
-		EE_Register_Capabilities::deregister( 'Test_Capabilities' );
-
-		//remove filters
-		remove_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok_after_deregister' ), 100 );
-		remove_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( $this, '_verify_new_meta_cap_ok_after_deregister' ), 200 );
-	}
 
 	/**
 	 * Verify that the $incoming_cap_map looks normal after EE_Register_Capabilities has played with it
@@ -342,8 +324,21 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase {
 	}
 
 
-	function test_capability_maps_deregistered() {
-		$this->_pretend_capabilities_deregistered();
+	function test_capability_maps_deregistered() {//setup registered caps first
+		$this->_pretend_capabilities_registered();
+
+		//now let's add filter verify that new cap map doesn't have the mapped items after de-registering. The callback
+		//on these filters should get called when EE_Register_Capabilities::deregister calls the EE_Capability::init_caps() method
+		//so at that point they'll verify that the items that should be removed were actually removed.
+		add_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok_after_deregister' ), 100 );
+		add_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( $this, '_verify_new_meta_cap_ok_after_deregister' ), 200 );
+
+		//now deregister
+		EE_Register_Capabilities::deregister( 'Test_Capabilities' );
+
+		//remove filters
+		remove_filter( 'FHEE__EE_Capabilities__init_caps_map__caps', array( $this, '_verify_new_cap_map_ok_after_deregister' ), 100 );
+		remove_filter( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', array( $this, '_verify_new_meta_cap_ok_after_deregister' ), 200 );
 	}
 
 	public function tearDown(){
