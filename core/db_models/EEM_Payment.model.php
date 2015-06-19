@@ -166,16 +166,17 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		if ( ( ! empty( $start_date ) || ! empty( $end_date ) ) && empty( $format ) ) {
 			throw new EE_Error( __('You included a start date and/or a end date for this method but did not include a format string.  The format string is needed for setting up the query', 'event_espresso' ) );
 		}
+		$now = new DateTime( 'now' );
 		// setup timezone objects once
 		$modelDateTimeZone = new DateTimeZone( $this->_timezone );
 		$passedDateTimeZone = new DateTimeZone( $timezone );
 		// setup start date
-		$start_date = ! empty( $start_date ) ? date_create_from_format( $format, $start_date, $passedDateTimeZone ) : new DateTime( 'now' );
+		$start_date = ! empty( $start_date ) ? date_create_from_format( $format, $start_date, $passedDateTimeZone ) : $now;
 		$start_date->setTimeZone( $modelDateTimeZone );
 		$start_date = $start_date->format( 'Y-m-d' ) . ' 00:00:00';
 		$start_date = strtotime( $start_date );
 		// setup end date
-		$end_date = ! empty( $end_date ) ? date_create_from_format( $format, $end_date, $passedDateTimeZone ) : new DateTime( 'now' );
+		$end_date = ! empty( $end_date ) ? date_create_from_format( $format, $end_date, $passedDateTimeZone ) : $now;
 		$end_date->setTimeZone( $modelDateTimeZone );
 		$end_date = $end_date->format('Y-m-d') . ' 23:59:59';
 		$end_date = strtotime( $end_date );
