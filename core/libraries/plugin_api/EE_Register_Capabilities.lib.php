@@ -37,7 +37,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 *                              @type array $capabilities 	An array mapping capability strings to core WP Role.  Something like array( 'administrator' => array( 'read_cap', 'edit_cap', 'delete_cap'), 'author' => array( 'read_cap' ) ).
 	 *                              @type array $capability_maps EE_Meta_Capability_Map[]   @see EE_Capabilities.php for php docs on these objects.  Should be indexed by the classname for the capability map and values representing the arguments for the map.
 	 * }
-	 *
+	 * @throws EE_Error
 	 * @return void
 	 */
 	public static function register( $cap_reference = NULL, $setup_args = array() ) {
@@ -84,7 +84,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter.
 	 * Takes care of registering additional capabilities to the caps map.   Note, that this also on the initial registration ensures that new capabilities are added to existing roles.
 	 *
-	 * @param array $caps_and_cap_map The original caps map.
+	 * @param array $incoming_caps The original caps map.
 	 *
 	 * @return array merged in new caps.
 	 */
@@ -96,7 +96,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	}
 
 
-
 	/**
 	 * Callback for the 'FHEE__EE_Capabilities___set_meta_caps__meta_caps' filter which regsiters an array of capability maps for the WP meta_caps filter called in EE_Capabilities.
 	 *
@@ -105,6 +104,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 * @param EE_Meta_Capability_Map[] $cap_maps The existing cap maps array.
 	 *
 	 * @return EE_Meta_Capability_Map[]
+	 * @throws EE_Error
 	 */
 	public static function register_cap_maps( $cap_maps ) {
 		//loop through and instantiate cap maps.
