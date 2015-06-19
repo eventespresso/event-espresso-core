@@ -162,7 +162,11 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 
 
 	public static function deregister( $cap_reference = NULL ) {
-		if ( !empty( self::$_registry[$cap_reference] ) )
-    		unset( self::$_registry[$cap_reference] );
+		if ( !empty( self::$_registry[$cap_reference] ) ) {
+			unset( self::$_registry[ $cap_reference ] );
+		}
+
+		//re init caps to grab the changes due to removed caps.
+		EE_Capabilities::instance()->init_caps();
 	}
 }
