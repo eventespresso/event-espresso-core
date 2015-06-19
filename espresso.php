@@ -46,11 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-<<<<<<< HEAD
 		return '4.8.0.rc.004';
-=======
-		return '4.7.3.rc.000';
->>>>>>> master
 	}
 } else {
 	unset( $_GET['activate'] );
