@@ -188,8 +188,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//verify new caps are in the role
 		$role = get_role( 'administrator' );
 		$this->assertContains(
-				array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
-				$role->capabilities );
+			array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
+			$role->capabilities );
 	}
 
 	/**

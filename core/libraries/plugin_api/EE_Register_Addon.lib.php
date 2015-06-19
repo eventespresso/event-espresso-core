@@ -483,7 +483,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 					EE_Register_Message_Type::deregister( $message_type );
 				}
 			}
-			if ( ! empty( self::$_settings[$addon_name]['capabilities']) || ! empty( self::$_settings[$addon_name]['capability_maps'])) {
+			//deregister capabilities for addon
+			if ( ! empty( self::$_settings[$addon_name]['capabilities'] ) || ! empty( self::$_settings[$addon_name]['capability_maps']) ) {
 				EE_Register_Capabilities::deregister( $addon_name );
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
