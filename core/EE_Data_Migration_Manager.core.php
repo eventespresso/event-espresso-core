@@ -495,6 +495,7 @@ class EE_Data_Migration_Manager{
 					//but dont forget to make sure initial data is there
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					//saving migrations ran should actually be unnecessary, but leaving in place just in case
 					//remember this migration was finished (even if we timeout initing db for core and plugins)
 					$this->_save_migrations_ran();
 					//make sure DB was updated AFTER we've recorded the migration was done
