@@ -495,9 +495,11 @@ class EE_Data_Migration_Manager{
 					//but dont forget to make sure initial data is there
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-					$this->initialize_db_for_enqueued_ee_plugins();
-					//make sure the datetime and ticket total sold are correct
+					//saving migrations ran should actually be unnecessary, but leaving in place just in case
+					//remember this migration was finished (even if we timeout initing db for core and plugins)
 					$this->_save_migrations_ran();
+					//make sure DB was updated AFTER we've recorded the migration was done
+					$this->initialize_db_for_enqueued_ee_plugins();
 					return array(
 						'records_to_migrate'=>1,
 						'records_migrated'=>1,
@@ -537,6 +539,8 @@ class EE_Data_Migration_Manager{
 			}
 			//do what we came to do!
 			$currently_executing_script->migration_step($step_size);
+			//can we wrap it up and verify default data?
+			$init_dbs = false;
 			switch($currently_executing_script->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
@@ -563,7 +567,7 @@ class EE_Data_Migration_Manager{
 						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure initial data is there
-						$this->initialize_db_for_enqueued_ee_plugins();
+						$init_dbs = true;
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
@@ -602,6 +606,10 @@ class EE_Data_Migration_Manager{
 			//however, if we throw an exception, and return that, then the next request
 			//won't have as much info in it, and it may be able to save
 			throw new EE_Error(sprintf(__("The error '%s' occurred updating the status of the migration. This is a FATAL ERROR, but the error is preventing the system from remembering that. Please contact event espresso support.", "event_espresso"),$successful_save));
+		}
+		//if we're all done, initialize EE plugins' default data etc.
+		if( $init_dbs ) {
+			$this->initialize_db_for_enqueued_ee_plugins();
 		}
 		return $response_array;
 	}
