@@ -53,7 +53,7 @@ class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage{
 		global $wpdb;
 		$rows_updated = $wpdb->update(
 				$this->_line_item_table_name,
-				array( 'LIN_code' => 'pre-tax-total' ),
+				array( 'LIN_code' => 'pre-tax-subtotal' ),
 				array( 'LIN_code' => 'tickets' ),
 				array( '%s' ),
 				array( '%s' ) );
