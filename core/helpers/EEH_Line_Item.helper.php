@@ -91,6 +91,9 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		if ( ! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total() ) {
+			throw new EE_Error( sprintf( __( 'A valid line item total is required in order to add tickets. A line item of type "%s" was passed.', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
+		}
 		// either increment the qty for an existing ticket
 		$line_item = self::increment_ticket_qty_if_already_in_cart( $total_line_item, $ticket, $qty );
 		// or add a new one
@@ -150,19 +153,23 @@ class EEH_Line_Item {
 		}
 		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
 		$full_description = $ticket->description() . $description_addition;
-		$items_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $total_line_item );
+		// get event subtotal line 
+		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
+		if ( ! $events_sub_total instanceof EE_Line_Item ) {
+			throw new EE_Error( sprintf( __( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
+		}
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance( array(
-			'LIN_name'       => $ticket->name(),
-			'LIN_desc'       => $full_description,
-			'LIN_unit_price' => $ticket->price(),
-			'LIN_quantity'   => $qty,
-			'LIN_is_taxable' => $ticket->taxable(),
-			'LIN_order'      => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
-			'LIN_total'      => $ticket->price() * $qty,
-			'LIN_type'       => EEM_Line_Item::type_line_item,
-			'OBJ_ID'         => $ticket->ID(),
-			'OBJ_type'       => 'Ticket'
+			'LIN_name'       	=> $ticket->name(),
+			'LIN_desc'       		=> $full_description,
+			'LIN_unit_price' 	=> $ticket->price(),
+			'LIN_quantity'   	=> $qty,
+			'LIN_is_taxable' 	=> $ticket->taxable(),
+			'LIN_order'      	=> count( $events_sub_total->children() ),
+			'LIN_total'      		=> $ticket->price() * $qty,
+			'LIN_type'       		=> EEM_Line_Item::type_line_item,
+			'OBJ_ID'         		=> $ticket->ID(),
+			'OBJ_type'       	=> 'Ticket'
 		) );
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
@@ -170,15 +177,15 @@ class EEH_Line_Item {
 			$sign = $price->is_discount() ? -1 : 1;
 			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount() * $qty;
 			$sub_line_item = EE_Line_Item::new_instance( array(
-				'LIN_name'       => $price->name(),
-				'LIN_desc'       => $price->desc(),
-				'LIN_quantity'   => $price->is_percent() ? null : $qty,
-				'LIN_is_taxable' => false,
-				'LIN_order'      => $price->order(),
-				'LIN_total'      => $sign * $price_total,
-				'LIN_type'       => EEM_Line_Item::type_sub_line_item,
-				'OBJ_ID'         => $price->ID(),
-				'OBJ_type'       => 'Price'
+				'LIN_name'       	=> $price->name(),
+				'LIN_desc'       		=> $price->desc(),
+				'LIN_quantity'   	=> $price->is_percent() ? null : $qty,
+				'LIN_is_taxable' 	=> false,
+				'LIN_order'      	=> $price->order(),
+				'LIN_total'      		=> $sign * $price_total,
+				'LIN_type'       		=> EEM_Line_Item::type_sub_line_item,
+				'OBJ_ID'         		=> $price->ID(),
+				'OBJ_type'       	=> 'Price'
 			) );
 			if ( $price->is_percent() ) {
 				$sub_line_item->set_percent( $sign * $price->amount() );
@@ -187,10 +194,6 @@ class EEH_Line_Item {
 			}
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
-		}
-		$events_sub_total = self::get_event_line_item_for_ticket($total_line_item, $ticket);
-		if( ! $events_sub_total ){
-			throw new EE_Error( sprintf( __( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
 		}
 		$events_sub_total->add_child_line_item( $line_item );
 		return $line_item;
@@ -206,7 +209,7 @@ class EEH_Line_Item {
 	 */
 	public static function add_item( EE_Line_Item $total_line_item, EE_Line_Item $item ){
 		$pre_tax_subtotal = self::get_pre_tax_subtotal( $total_line_item );
-		if($pre_tax_subtotal){
+		if ( $pre_tax_subtotal instanceof EE_Line_Item ){
 			$success = $pre_tax_subtotal->add_child_line_item($item);
 		}else{
 			return FALSE;
@@ -362,7 +365,6 @@ class EEH_Line_Item {
 	  * @return EE_Line_Item
 	  */
 	public static function get_event_line_item_for_ticket( EE_Line_Item $grand_total, EE_Ticket $ticket ) {
-
 		$first_datetime = $ticket->first_datetime();
 		if( ! $first_datetime instanceof EE_Datetime ){
 			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no datetimes', 'event_espresso' ), $ticket->ID() ) );
@@ -372,25 +374,27 @@ class EEH_Line_Item {
 			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no event data associated with it.','event_espresso' ), $ticket->ID() ) );
 		}
 		$event_line_item = NULL;
+		$found = false;
 		foreach ( EEH_Line_Item::get_event_subtotals( $grand_total ) as $event_line_item ) {
 			// default event subtotal, we should only ever find this the first time this method is called
 			if ( ! $event_line_item->OBJ_ID() ) {
 				// let's use this! but first... set the event details
 				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
+				$found = true;
 				break;
 			} else if ( $event_line_item->OBJ_ID() === $event->ID() ) {
 				// found existing line item for this event in the cart, so break out of loop and use this one
-				break;
-			} else {
-				//there is no event sub-total yet, so add it
-				$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $grand_total );
-				// create a new "event" subtotal below that
-				$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, NULL, $event );
-				// and set the event details
-				EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
-				// found existing line item for this event in the cart, so break out of loop and use this one
+				$found = true;
 				break;
 			}
+		}
+		if ( ! $found ) {
+			//there is no event sub-total yet, so add it
+			$pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $grand_total );
+			// create a new "event" subtotal below that
+			$event_line_item = EEH_Line_Item::create_event_subtotal( $pre_tax_subtotal, null, $event );
+			// and set the event details
+			EEH_Line_Item::set_event_subtotal_details( $event_line_item, $event );
 		}
 		return $event_line_item;
 	}
