@@ -47,6 +47,10 @@ class EEH_Line_Item {
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 			'LIN_code' => $code,
 		));
+		$line_item = apply_filters(
+			'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
+			$line_item
+		);
 		return self::add_item( $parent_line_item, $line_item );
 	}
 
@@ -64,7 +68,7 @@ class EEH_Line_Item {
 	 * @return boolean success
 	 */
 	public static function add_percentage_based_item( EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = FALSE ){
-		$sub_line_item = EE_Line_Item::new_instance(array(
+		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
 			'LIN_unit_price' => 0,
@@ -75,7 +79,11 @@ class EEH_Line_Item {
 			'LIN_type'=>  EEM_Line_Item::type_line_item,
 			'LIN_parent' => $parent_line_item->ID()
 		));
-		return self::add_item( $parent_line_item, $sub_line_item );
+		$line_item = apply_filters(
+			'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
+			$line_item
+		);
+		return self::add_item( $parent_line_item, $line_item );
 	}
 
 
@@ -153,7 +161,7 @@ class EEH_Line_Item {
 		}
 		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
 		$full_description = $ticket->description() . $description_addition;
-		// get event subtotal line 
+		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
 			throw new EE_Error( sprintf( __( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
@@ -171,6 +179,10 @@ class EEH_Line_Item {
 			'OBJ_ID'         		=> $ticket->ID(),
 			'OBJ_type'       	=> 'Ticket'
 		) );
+		$line_item = apply_filters(
+			'FHEE__EEH_Line_Item__create_ticket_line_item__line_item',
+			$line_item
+		);
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
 		foreach ( $ticket->prices( array( 'order_by' => array( 'PRC_order' => 'ASC' ) ) ) as $price ) {
@@ -187,6 +199,10 @@ class EEH_Line_Item {
 				'OBJ_ID'         		=> $price->ID(),
 				'OBJ_type'       	=> 'Price'
 			) );
+			$sub_line_item = apply_filters(
+				'FHEE__EEH_Line_Item__create_ticket_line_item__sub_line_item',
+				$sub_line_item
+			);
 			if ( $price->is_percent() ) {
 				$sub_line_item->set_percent( $sign * $price->amount() );
 			} else {
@@ -269,16 +285,20 @@ class EEH_Line_Item {
 	 * @return \EE_Line_Item of type total
 	 */
 	public static function create_total_line_item( $transaction = NULL ){
-		$line_item = EE_Line_Item::new_instance( array(
+		$total_line_item = EE_Line_Item::new_instance( array(
 			'LIN_code'	=> 'total',
 			'LIN_name'	=> __('Grand Total', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_total,
 			'OBJ_type'	=>'Transaction'
 		));
-		self::set_TXN_ID( $line_item, $transaction );
-		self::create_pre_tax_subtotal( $line_item, $transaction );
-		self::create_taxes_subtotal( $line_item, $transaction );
-		return $line_item;
+		$total_line_item = apply_filters(
+			'FHEE__EEH_Line_Item__create_total_line_item__total_line_item',
+			$total_line_item
+		);
+		self::set_TXN_ID( $total_line_item, $transaction );
+		self::create_pre_tax_subtotal( $total_line_item, $transaction );
+		self::create_taxes_subtotal( $total_line_item, $transaction );
+		return $total_line_item;
 	}
 
 
@@ -295,6 +315,10 @@ class EEH_Line_Item {
 			'LIN_name' 	=> __( 'Pre-Tax Subtotal', 'event_espresso' ),
 			'LIN_type' 	=> EEM_Line_Item::type_sub_total
 		) );
+		$pre_tax_line_item = apply_filters(
+			'FHEE__EEH_Line_Item__create_pre_tax_subtotal__pre_tax_line_item',
+			$pre_tax_line_item
+		);
 		self::set_TXN_ID( $pre_tax_line_item, $transaction );
 		$total_line_item->add_child_line_item( $pre_tax_line_item );
 		self::create_event_subtotal( $pre_tax_line_item, $transaction );
@@ -316,6 +340,10 @@ class EEH_Line_Item {
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
 			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total
 		));
+		$tax_line_item = apply_filters(
+			'FHEE__EEH_Line_Item__create_taxes_subtotal__tax_line_item',
+			$tax_line_item
+		);
 		self::set_TXN_ID( $tax_line_item, $transaction );
 		$total_line_item->add_child_line_item( $tax_line_item );
 		//and lastly, add the actual taxes
@@ -340,6 +368,10 @@ class EEH_Line_Item {
 			'OBJ_type' 	=> 'Event',
 			'OBJ_ID' 		=>  $event instanceof EE_Event ? $event->ID() : 0
 		));
+		$event_line_item = apply_filters(
+			'FHEE__EEH_Line_Item__create_event_subtotal__event_line_item',
+			$event_line_item
+		);
 		self::set_TXN_ID( $event_line_item, $transaction );
 		$pre_tax_line_item->add_child_line_item( $event_line_item );
 		return $event_line_item;
@@ -438,21 +470,24 @@ class EEH_Line_Item {
 		foreach ( $ordered_taxes as $order => $taxes ) {
 			foreach ( $taxes as $tax ) {
 				if ( $tax instanceof EE_Price ) {
-					$taxes_line_item->add_child_line_item(
-						EE_Line_Item::new_instance(
-							array(
-								'LIN_name'			=> $tax->name(),
-								'LIN_desc'			=> $tax->desc(),
-								'LIN_percent'		=> $tax->amount(),
-								'LIN_is_taxable'	=> false,
-								'LIN_order'			=> $order,
-								'LIN_total'			=> 0,
-								'LIN_type'			=> EEM_Line_Item::type_tax,
-								'OBJ_type'			=> 'Price',
-								'OBJ_ID'				=> $tax->ID()
-							)
+					$tax_line_item = EE_Line_Item::new_instance(
+						array(
+							'LIN_name'       => $tax->name(),
+							'LIN_desc'       => $tax->desc(),
+							'LIN_percent'    => $tax->amount(),
+							'LIN_is_taxable' => false,
+							'LIN_order'      => $order,
+							'LIN_total'      => 0,
+							'LIN_type'       => EEM_Line_Item::type_tax,
+							'OBJ_type'       => 'Price',
+							'OBJ_ID'         => $tax->ID()
 						)
 					);
+					$tax_line_item = apply_filters(
+						'FHEE__EEH_Line_Item__apply_taxes__tax_line_item',
+						$tax_line_item
+					);
+					$taxes_line_item->add_child_line_item( $tax_line_item );
 				}
 			}
 		}
@@ -549,7 +584,7 @@ class EEH_Line_Item {
 		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
 		$tax_subtotal->delete_children_line_items();
 		$taxable_total = $total_line_item->taxable_total();
-		$new_tax = EE_Line_Item::new_instance(array(
+		$new_tax_subtotal = EE_Line_Item::new_instance(array(
 			'TXN_ID' => $total_line_item->TXN_ID(),
 			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
 			'LIN_desc' => $description ? $description : '',
@@ -558,11 +593,15 @@ class EEH_Line_Item {
 			'LIN_parent' => $tax_subtotal->ID(),
 			'LIN_type' => EEM_Line_Item::type_tax
 		));
-		$new_tax->save();
+		$new_tax_subtotal = apply_filters(
+			'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
+			$new_tax_subtotal
+		);
+		$new_tax_subtotal->save();
 		$tax_subtotal->set_total( $amount );
 		$tax_subtotal->save();
 		$total_line_item->recalculate_total_including_taxes();
-		return $new_tax;
+		return $new_tax_subtotal;
 	}
 
 
