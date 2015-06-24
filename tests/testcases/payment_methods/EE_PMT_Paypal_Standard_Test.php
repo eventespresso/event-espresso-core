@@ -172,6 +172,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Payment', $p_in_map );
 		//skip IPN validation with paypal
 		add_filter( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', '__return_true' );
+		add_filter( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', '__return_false' );
 		$ppg->handle_payment_update(
 			array (
 				'e_reg_url_link' => '1-bfcffeb307c5f5e275643de154fe7192',
