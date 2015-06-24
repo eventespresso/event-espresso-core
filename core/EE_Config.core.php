@@ -258,6 +258,10 @@ final class EE_Config {
 			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
 			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
+				//call configs populate method to ensure any defaults are set for empty values.
+				if ( method_exists( $settings, 'populate' ) ) {
+					$this->$config->populate();
+				}
 			}
 		}
 		if ( $update ) {
@@ -1333,6 +1337,25 @@ class EE_Config_Base{
 	}
 
 
+
+	public function populate() {
+		//grab defaults via a new instance of this class.
+		$class_name = get_class( $this );
+		$defaults = new $class_name;
+
+		//loop through the properties for this class and see if they are set.  If they are NOT, then grab the
+		//default from our $defaults object.
+		foreach ( get_object_vars( $defaults ) as $property => $value ) {
+			if ( is_null( $this->$property ) ) {
+				$this->$property = $value;
+			}
+		}
+
+		//cleanup
+		unset( $defaults );
+	}
+
+
 	/**
 	 *		@ override magic methods
 	 *		@ return void
@@ -1407,6 +1430,10 @@ class EE_Core_Config extends EE_Config_Base {
 	public $thank_you_page_url;
 	public $cancel_page_url;
 
+	/**
+	 * The next vars relate to the custom slugs for EE CPT routes
+	 */
+	public $event_cpt_slug;
 
 
 	/**
@@ -1437,6 +1464,8 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = FALSE;
 		$this->thank_you_page_url = FALSE;
 		$this->cancel_page_url = FALSE;
+		//cpt slugs
+		$this->event_cpt_slug = __('events', 'event_espresso');
 
 		//ueip constant check
 		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
