@@ -30,7 +30,7 @@
 .mceContentBody .not-really-a-table  { border:none!important; }
 
 .mceContentBody #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
-.mceContentBody #logo-dv img { max-width:200px!important; border: none; }
+.mceContentBody #logo-dv img { max-width:300px!important; border: none; }
 
 .mceContentBody #comments{padding-top:1cm; line-height:1.2em; }
 
