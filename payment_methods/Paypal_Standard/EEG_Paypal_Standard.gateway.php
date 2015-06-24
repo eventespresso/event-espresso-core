@@ -233,7 +233,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			case 'Partially_Refunded' :
 				// even though it's a refund, we consider the payment as approved, it just has a negative value
 				$status = $this->_pay_model->approved_status();
-				$gateway_response = __( 'The payment has been refunded. We do not yet fully support automatic refunds. You will want to manually cancel the payment and possible change the registrations\' statuses.', 'event_espresso' );
+				$gateway_response = __( 'The payment has been refunded. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 			case 'Voided' :
@@ -241,7 +241,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			case 'Canceled_Reversal' :
 			default :
 				$status = $this->_pay_model->cancelled_status();
-				$gateway_response = __( 'The payment was cancelled, reversed, or voided.', 'event_espresso' );
+				$gateway_response = __( 'The payment was cancelled, reversed, or voided. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 		}
@@ -275,6 +275,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				),
 					$payment );
 			}
+		}
+		// kill request here if this is a refund
+		if ( $update_info[ 'payment_status' ] == 'Refunded' || $update_info[ 'payment_status' ] == 'Partially_Refunded'   ) {
+			header( 'HTTP/1.0 200 OK' );
+			exit();
 		}
 		return $payment;
 	}
