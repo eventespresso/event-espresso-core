@@ -244,8 +244,8 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
-	 * get_redeemable_scope_promos
-	 * searches the cart for any items that this promotion applies to
+	 * get_existing_promotion_line_item
+	 * searches the cart for any existing line items for this promotion
 	 *
 	 * @since   1.0.0
 	 *
@@ -260,6 +260,27 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_parent' 	=> $parent_line_item->ID(),
 				'OBJ_type' 		=> 'Promotion',
 				'OBJ_ID' 			=> $promotion->ID()
+			)
+		));
+	}
+
+
+
+	/**
+	 * get_any_promotion_line_item
+	 * searches the cart for any existing promotion line items
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param EE_Line_Item $parent_line_item
+	 * @return EE_Line_Item
+	 */
+	public function get_any_promotion_line_item( EE_Line_Item $parent_line_item ) {
+		return $this->get_one( array(
+			array(
+				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
+				'LIN_parent' 	=> $parent_line_item->ID(),
+				'OBJ_type' 		=> 'Promotion'
 			)
 		));
 	}
