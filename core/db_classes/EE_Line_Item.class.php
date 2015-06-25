@@ -720,6 +720,8 @@ class EE_Line_Item extends EE_Base_Class {
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_tax_total();
 		$total = $pre_tax_total + $tax_total;
+		// no negative totals plz
+		$total = max( $total, 0 );
 		$this->set_total( $total );
 		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
@@ -766,6 +768,8 @@ class EE_Line_Item extends EE_Base_Class {
 			//we only want to update sub-totals if we're including non-taxable items
 			//and grand totals shouldn't be updated when calculating pre-tax totals
 			if( $this->is_sub_total() ){
+				// no negative totals plz
+				$total = max( $total, 0 );
 				$this->set_total( $total );
 			}
 		}
