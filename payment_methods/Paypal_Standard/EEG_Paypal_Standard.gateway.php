@@ -259,7 +259,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_gateway_response( $gateway_response );
 				$payment->set_details( $update_info );
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
-				$payment->save();
 				$message_log = sprintf( __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ) );
 			}
 			$this->log(
