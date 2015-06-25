@@ -233,7 +233,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			case 'Partially_Refunded' :
 				// even though it's a refund, we consider the payment as approved, it just has a negative value
 				$status = $this->_pay_model->approved_status();
-				$gateway_response = __( 'The payment has been refunded. We do not yet fully support automatic refunds. You will want to manually cancel the payment and possible change the registrations\' statuses.', 'event_espresso' );
+				$gateway_response = __( 'The payment has been refunded. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 			case 'Voided' :
@@ -241,7 +241,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			case 'Canceled_Reversal' :
 			default :
 				$status = $this->_pay_model->cancelled_status();
-				$gateway_response = __( 'The payment was cancelled, reversed, or voided.', 'event_espresso' );
+				$gateway_response = __( 'The payment was cancelled, reversed, or voided. Please update registrations accordingly.', 'event_espresso' );
 				break;
 
 		}
@@ -250,16 +250,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if ( $payment instanceof EEI_Payment ) {
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if ( $payment->status() == $status && $payment->amount() == $update_info[ 'mc_gross' ] ) {
-				//echo "duplicated ipn! dont bother updating transaction foo!";
-				$this->log(
-					array(
-						'url'      		=> $this->_process_response_url(),
-						'message'  	=> sprintf( __( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ), $payment->ID() ),
-						'payment'  	=> $payment->model_field_array(),
-						'IPN data' 	=> $update_info
-					),
-					$payment
-				);
+				// DUPLICATED IPN! dont bother updating transaction foo!;
+				$message_log = sprintf( __( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ), $payment->ID() );
 			} else {
 				// new payment yippee !!!
 				$payment->set_status( $status );
@@ -267,13 +259,24 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_gateway_response( $gateway_response );
 				$payment->set_details( $update_info );
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
-				$this->log( array(
+				$message_log = sprintf( __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ) );
+			}
+			$this->log(
+				array(
 					'url'      		=> $this->_process_response_url(),
-					'message'  	=> sprintf( __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ) ),
+					'message'  	=> $message_log,
 					'payment'  	=> $payment->model_field_array(),
 					'IPN_data' 	=> $update_info
 				),
-					$payment );
+				$payment
+			);
+		}
+		do_action( 'FHEE__EEG_Paypal_Standard__handle_payment_update__payment_processed', $payment, $this );
+		// kill request here if this is a refund
+		if ( $update_info[ 'payment_status' ] == 'Refunded' || $update_info[ 'payment_status' ] == 'Partially_Refunded'   ) {
+			if ( apply_filters( 'FHEE__EEG_Paypal_Standard__handle_payment_update__kill_refund_request', true ) ) {
+				status_header( 200 );
+				exit();
 			}
 		}
 		return $payment;
@@ -283,7 +286,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 	/**
 	 * Validate the IPN notification
-	 *
+	 *y gon
 	 * @param array                  $update_info like $_REQUEST
 	 * @param EE_Payment|EEI_Payment $payment
 	 * @return boolean
