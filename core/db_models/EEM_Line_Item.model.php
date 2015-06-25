@@ -245,7 +245,7 @@ class EEM_Line_Item extends EEM_Base {
 
 	/**
 	 * get_existing_promotion_line_item
-	 * searches the cart for any existing line items for this promotion
+	 * searches the cart for existing line items for the specified promotion
 	 *
 	 * @since   1.0.0
 	 *
@@ -267,15 +267,15 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
-	 * get_any_promotion_line_item
-	 * searches the cart for any existing promotion line items
+	 * get_all_promotion_line_items
+	 * searches the cart for any and all existing promotion line items
 	 *
 	 * @since   1.0.0
 	 *
 	 * @param EE_Line_Item $parent_line_item
 	 * @return EE_Line_Item
 	 */
-	public function get_any_promotion_line_item( EE_Line_Item $parent_line_item ) {
+	public function get_all_promotion_line_items( EE_Line_Item $parent_line_item ) {
 		return $this->get_one( array(
 			array(
 				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
