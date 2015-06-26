@@ -105,7 +105,7 @@
 </ul>
 <h4 class="wp-people-group"><?php _e('Contributor Recognition', 'event_espresso'); ?></h4>
 <p class="description">
-	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a GitHub pull request. Want to see your name listed here? %sApply for access to our GitHub repo.%s When you submit a pull request that gets included in a major release, we\'ll add your name here linked to your GitHub profile.', 'event_espresso'), '<a href="http://eventespresso.com/developers/request-repo-access/">', '</a>' ); ?>
+	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a GitHub pull request. Want to see your name listed here? %sWhen you submit a pull request that gets included in a major release%s, we\'ll add your name here linked to your GitHub profile.', 'event_espresso'), '<a href="https://github.com/eventespresso/event-espresso-core" title="Contribute to Event Espresso by making a pull request via GitHub">', '</a>' ); ?>
 </p>
 <p class="wp-credits-list">
 	<ul>
