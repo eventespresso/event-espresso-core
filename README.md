@@ -8,7 +8,7 @@
 
 ## Event Espresso 4 - Event Ticketing and Registration System
 
-Event Espresso is an event ticketing and registration manager for [WordPress event manager](http://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=WordPress+event+manager), which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. 
+Event Espresso is an event ticketing and registration manager for [WordPress](http://wordpress.org/), which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. 
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8](Some features not available in all versions)
 
@@ -17,7 +17,8 @@ Event Espresso is an event ticketing and registration manager for [WordPress eve
 **This is the full version of the plugin** and provides everything that you need to [sell tickets](http://eventespresso.com/features/multiple-ticket-pricing-options/#tabEventEspresso4), [collect payments](http://eventespresso.com/features/payment-options/), and [http://eventespresso.com/features/event-management/] [manage events](http://eventespresso.com/features/event-management/) all from within your WordPress dashboard.
 
 
-Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign= ee4_github_plugin_description_homepage)** to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4), and [premium support](http://eventespresso.com/support/)).
+Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign= ee4_github_plugin_description_homepage)** to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=WordPress+event+manager), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4), and [premium support](http://eventespresso.com/support/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=WordPress+event+manager)).
+
 **Note:** for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically only include bug fixes and minor features.  Releases including bigger features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-stable release candidate version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
 ***
