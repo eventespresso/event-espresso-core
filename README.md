@@ -10,8 +10,6 @@
 
 Event Espresso is an event ticketing and registration manager for [WordPress](http://wordpress.org/), which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. 
 
-[youtube http://www.youtube.com/watch?v=K_yVwWnTjL8](Some features not available in all versions)
-
 ## Developers
 
 **This is the full version of the plugin** and provides everything that you need to [sell tickets](http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=sell-tickets#tabEventEspresso4), [collect payments](http://eventespresso.com/features/payment-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=WordPress+event+manager), and [manage events](http://eventespresso.com/features/event-management/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=collect+payments) all from within your WordPress dashboard.
