@@ -706,11 +706,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _get_registrations( EE_Transaction $transaction ) {
 		// first step: grab the registrants  { : o
-		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, true );
 		// verify registrations have been set
 		if ( empty( $registrations )) {
 			// if no cached registrations, then check the db
-			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, false );
 			// still nothing ? well as long as this isn't a revisit
 			if ( empty( $registrations ) && ! $this->checkout->revisit ) {
 				// generate new registrations from scratch
