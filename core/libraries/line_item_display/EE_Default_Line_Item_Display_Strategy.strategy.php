@@ -149,7 +149,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		);
 		$name_and_desc .= apply_filters(
 			'FHEE__EE_Default_Line_Item_Display_Strategy__item_row__desc',
-			( $options['show_desc'] ? '<span class="line-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '' ),
+			( $options['show_desc'] ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '' ),
 			$line_item,
 			$options
 		);
@@ -185,7 +185,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = EEH_HTML::tr( '', 'item sub-item-row' );
 		// name && desc
 		$name_and_desc = $line_item->name();
-		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text"> : ' . $line_item->desc() . '</span>' : '';
+		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
