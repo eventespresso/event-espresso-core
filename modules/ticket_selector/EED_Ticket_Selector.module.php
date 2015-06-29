@@ -539,6 +539,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
+						EE_Registry::instance()->CART->get_grand_total()->recalculate_total_including_taxes();
 						EE_Registry::instance()->CART->save_cart();
 						EE_Registry::instance()->SSN->update();
 						// just return TRUE for registrations being made from admin
