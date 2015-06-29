@@ -273,10 +273,10 @@ class EEM_Line_Item extends EEM_Base {
 	 * @since   1.0.0
 	 *
 	 * @param EE_Line_Item $parent_line_item
-	 * @return EE_Line_Item
+	 * @return EE_Line_Item[]
 	 */
 	public function get_all_promotion_line_items( EE_Line_Item $parent_line_item ) {
-		return $this->get_one( array(
+		return $this->get_all( array(
 			array(
 				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
 				'LIN_parent' 	=> $parent_line_item->ID(),
