@@ -15,7 +15,6 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  */
 class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
-	const help_tab_link = 'ee_new_payment_method_onsite_help';
 
 	/**
 	 *
@@ -30,24 +29,55 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 	}
 
 	/**
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array
+	 */
+	public function help_tabs_config(){
+		return array(
+			$this->get_help_tab_name() => array(
+				'title' => __('New Payment Method Onsite Settings', 'event_espresso'),
+				'filename' => 'new_payment_method_onsite'
+				),
+		);
+	}
+
+	/**
 	 * @param \EE_Transaction $transaction
 	 * @return \EE_Billing_Attendee_Info_Form
 	 */
-	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
-		$form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
-			'name'=>'New_Payment_Method_Onsite_Form',
-			'subsections'=>array(
-				'status' => new EE_Select_Input( array( 'Approved' => 'Approved', 'Pending' => 'Pending', 'Declined' => 'Declined' ), array('html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ))),//this will become the payments status when processing payments on this mock object
-				'credit_card'=>new EE_Credit_Card_Input(array(
-					'required'=>false
-				)),
-				'exp_month'=>new EE_Month_Input(true, array(
-					'required'=>false
-				)),
-				'exp_year'=>new EE_Year_Input(),
-				'cvv'=>new EE_CVV_Input(),
+	public function generate_new_billing_form( EE_Transaction $transaction = null ) {
+		$form = new EE_Billing_Attendee_Info_Form( $this->_pm_instance, array(
+			'name'        => 'New_Payment_Method_Onsite_Form',
+			'subsections' => array(
+				//this will become the payments status when processing payments on this mock object
+				'status'      => new EE_Select_Input(
+					array(
+						'Approved' => 'Approved',
+						'Pending'  => 'Pending',
+						'Declined' => 'Declined',
+						'Failed'   => 'Failed'
+					),
+					array( 'html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ) )
+				),
+				'credit_card' => new EE_Credit_Card_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'Credit Card', 'event_espresso' ),
+				) ),
+				'exp_month'   => new EE_Credit_Card_Month_Input( true, array(
+					'required'        => false,
+					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
+				) ),
+				'exp_year'    => new EE_Credit_Card_Year_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
+				) ),
+				'cvv'         => new EE_CVV_Input( array(
+					'required'        => false,
+					'html_label_text' => __( 'CVV', 'event_espresso' )
+				) ),
 			)
-		));
+		) );
 		return $form;
 	}
 
@@ -60,11 +90,9 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_link))
+					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"), $this->get_help_tab_link() )
 				)))));
 		return $form;
 	}
-
 }
-
 // End of file EE_PMT_Onsite.php
