@@ -1563,6 +1563,22 @@ class EE_Core_Config extends EE_Config_Base {
 
 
 
+	protected function _reset_urls() {
+		$this->reg_page_url = false;
+		$this->txn_page_url = false;
+		$this->cancel_page_url = false;
+		$this->thank_you_page_url = false;
+
+	}
+
+
+
+	public function __sleep() {
+		//reset all url properties
+		$this->_reset_urls();
+		//return what to set
+		return array_keys( get_object_vars( $this ) );
+	}
 
 }
 
