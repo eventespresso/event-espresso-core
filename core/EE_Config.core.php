@@ -1562,7 +1562,10 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 
-
+	/**
+	 * Resets all critical page urls to their original state.  Used primarily by the __sleep() magic method currently.
+	 * @since 4.7.5
+	 */
 	protected function _reset_urls() {
 		$this->reg_page_url = false;
 		$this->txn_page_url = false;
@@ -1572,11 +1575,15 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 
-
+	/**
+	 * Currently used to ensure critical page urls have initial values saved to the db instead of any current set values
+	 * on the object.
+	 * @return array
+	 */
 	public function __sleep() {
 		//reset all url properties
 		$this->_reset_urls();
-		//return what to set
+		//return what to save to db
 		return array_keys( get_object_vars( $this ) );
 	}
 
