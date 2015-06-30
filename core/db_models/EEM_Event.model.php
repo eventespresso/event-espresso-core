@@ -492,8 +492,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_end'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 		}
 		$query_params[0] = $where_params;
-		$events = $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
-		return $events;
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 
@@ -530,7 +530,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_start'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
 		}
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 
@@ -590,7 +591,8 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		$where_params['AND'] = $and_condition;
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID', true) : $this->get_all( $query_params );
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 
@@ -633,7 +635,8 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		$query_params[0] = $where_params;
-		return $count ? $this->count( $query_params, 'EVT_ID', true ) : $this->get_all( $query_params );
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 

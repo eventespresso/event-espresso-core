@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Simple_HTML_Validation_Strategy
+ * Class EE_Full_HTML_Validation_Strategy
  *
  * Makes sure there are only 'simple' html tags in the normalized value. Eg, line breaks, lists, links. No js etc though
  *
@@ -10,20 +10,19 @@
  * @since 				4.6
  *
  */
-class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
+class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 	/**
 	 * @param null $validation_error_message
 	 */
 	public function __construct( $validation_error_message = NULL ) {
-		if( ! $validation_error_message ){
-			global $allowedtags;
-			$allowedtags['ol']=array();
-			$allowedtags['ul']=array();
-			$allowedtags['li']=array();
-			$allowedtags['br']=array();
-			$allowedtags['p']=array();
-			$validation_error_message = sprintf( __( "Only simple HTML tags are allowed. Eg, %s", "event_espresso" ), implode( ",", array_keys( $allowedtags ) ) );
+		if ( ! $validation_error_message ) {
+			global $allowedposttags;
+			$validation_error_message = sprintf(
+				__( 'Only the following HTML tags are allowed:%1$s%2$s', "event_espresso" ),
+				'<br />',
+				implode( ",", array_keys( $allowedposttags ) )
+			);
 		}
 		parent::__construct( $validation_error_message );
 	}
@@ -35,10 +34,10 @@ class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @throws \EE_Validation_Error
 	 */
 	public function validate($normalized_value) {
-		global $allowedtags;
-		parent::validate($normalized_value);
-		$normalized_value_sans_tags =  wp_kses("$normalized_value",$allowedtags);
-		if(strlen($normalized_value) > strlen($normalized_value_sans_tags)){
+		global $allowedposttags;
+		parent::validate( $normalized_value );
+		$normalized_value_sans_tags =  wp_kses( "$normalized_value", $allowedposttags );
+		if ( strlen( $normalized_value ) > strlen( $normalized_value_sans_tags ) ) {
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'complex_html_tags' );
 		}
 	}
