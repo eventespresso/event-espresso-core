@@ -1455,15 +1455,15 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
 		// critical EE page IDs
-		$this->reg_page_id = FALSE;
-		$this->txn_page_id = FALSE;
-		$this->thank_you_page_id = FALSE;
-		$this->cancel_page_id = FALSE;
+		$this->reg_page_id = 0;
+		$this->txn_page_id = 0;
+		$this->thank_you_page_id = 0;
+		$this->cancel_page_id = 0;
 		// critical EE page URLs
-		$this->reg_page_url = FALSE;
-		$this->txn_page_url = FALSE;
-		$this->thank_you_page_url = FALSE;
-		$this->cancel_page_url = FALSE;
+		$this->reg_page_url = '';
+		$this->txn_page_url = '';
+		$this->thank_you_page_url = '';
+		$this->cancel_page_url = '';
 		//cpt slugs
 		$this->event_cpt_slug = __('events', 'event_espresso');
 
@@ -1562,7 +1562,30 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 
+	/**
+	 * Resets all critical page urls to their original state.  Used primarily by the __sleep() magic method currently.
+	 * @since 4.7.5
+	 */
+	protected function _reset_urls() {
+		$this->reg_page_url = '';
+		$this->txn_page_url = '';
+		$this->cancel_page_url = '';
+		$this->thank_you_page_url = '';
 
+	}
+
+
+	/**
+	 * Currently used to ensure critical page urls have initial values saved to the db instead of any current set values
+	 * on the object.
+	 * @return array
+	 */
+	public function __sleep() {
+		//reset all url properties
+		$this->_reset_urls();
+		//return what to save to db
+		return array_keys( get_object_vars( $this ) );
+	}
 
 }
 
