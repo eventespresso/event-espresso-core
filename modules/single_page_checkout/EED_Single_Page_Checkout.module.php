@@ -515,7 +515,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _load_and_instantiate_reg_steps() {
 		// have reg_steps already been instantiated ?
-		if ( empty( $this->checkout->reg_steps )) {
+		if (
+			empty( $this->checkout->reg_steps ) ||
+			apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reload_reg_steps', false, $this->checkout )
+		) {
 			// if not, then loop through raw reg steps array
 			foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
 				if ( ! $this->_load_and_instantiate_reg_step( $reg_step, $order )) {
