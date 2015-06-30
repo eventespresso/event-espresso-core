@@ -1129,7 +1129,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
 		} else {
-			if ( ! isset( $where['status'] ) ) {
 				if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
 					$where['OR'] = array(
 						'status*restrict_private' => array( '!=', 'private' ),
@@ -1139,7 +1138,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						)
 					);
 				}
-			}
 		}
 
 
