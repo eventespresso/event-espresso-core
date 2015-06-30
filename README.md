@@ -1,14 +1,14 @@
 #Event Espresso 4 Core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.6.28.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
-[![WordPress](https://img.shields.io/badge/WordPress-v4.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
+[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.7.5.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
+[![WordPress](https://img.shields.io/badge/WordPress-v4.2.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
 
 ## Event Espresso 4 - Event Ticketing and Registration System
 
-[Event Espresso](http://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=event+espresso+link) is an event ticketing and registration platform for [WordPress](http://wordpress.org/). Event Espresso makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. 
+[Event Espresso](http://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=event+espresso+link) is an event ticketing and registration platform for [WordPress](http://wordpress.org/). Event Espresso makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports.
 
 ## Developers
 
@@ -25,7 +25,7 @@ Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4/?
 
 ***
 
-This is the Core for Event Espresso 4. This README.md file is targeted for display with our Github repo.  For detailed information via traditional readme, see the readme.txt file.
+This is the Core for Event Espresso 4. This README.md file is targeted for display with our GitHub repo.  For detailed information via traditional readme, see the readme.txt file.
 
 > Extra:  The code structure and phpdoc parsed documentation can be found at http://code.eventespresso.com
 >
@@ -42,9 +42,9 @@ At Event Espresso we follow a set pattern for releases:
 
 
 ## Testing
-For all testers on Github, please take note of the following when reporting issues.
+For all testers on GitHub, please take note of the following when reporting issues.
 
-1. There is a difference between a feature and a bug, we consider a bug is something that reveals brokenness in intended functionality.  A feature, is something beyond intended functionality.  To help determine the difference, think about your issue like this, "I know A does C, however I *wish* it did D."  If you find yourself saying that, its a feature.  For Event Espresso,  Github is not the place to suggest a new feature UNLESS you've already got a pull request to implement it (see pull requests section below).  Info on sponsoring new features can [be found here](http://eventespresso.com/rich-features/sponsor-new-features/).  If you aren't sure whether something is a feature or bug feel free to post the issue - however we give priority to bug issues here.
+1. There is a difference between a feature and a bug, we consider a bug is something that reveals brokenness in intended functionality.  A feature, is something beyond intended functionality.  To help determine the difference, think about your issue like this, "I know A does C, however I *wish* it did D."  If you find yourself saying that, its a feature.  For Event Espresso,  GitHub is not the place to suggest a new feature UNLESS you've already got a pull request to implement it (see pull requests section below).  Info on sponsoring new features can [be found here](http://eventespresso.com/rich-features/sponsor-new-features/).  If you aren't sure whether something is a feature or bug feel free to post the issue - however we give priority to bug issues here.
 2. UI/UX issues may be considered a bug but not if it requires a major change in design.  Feel free to report things you find confusing or needing improvement however reports accompanied by a pull request will likely get faster attention.
 3. Report your issue as clearly as possible.  By "clear" we mean:
 
@@ -59,7 +59,7 @@ For all testers on Github, please take note of the following when reporting issu
 4. Don't "bump" bug reports if we don't respond right away.  We see every report coming in, but we'll only reply if we need clarification or if we think its invalid.  Otherwise, we're likely working on a fix and the issue will be updated when the fix is complete.
 
 ## Pull Requests
-One of the reasons we created this private repo on Github is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. Github makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the Github help/documentation.
+One of the reasons we created this private repo on GitHub is because we wanted to open up EE development to 3rd party developers who might want to contribute to the codebase. GitHub makes this really easy to do so via pull requests.  If you don't know what pull requests are, please read up on them via the GitHub help/documentation.
 
 Here's how we deal with pull requests for our repo:
 
