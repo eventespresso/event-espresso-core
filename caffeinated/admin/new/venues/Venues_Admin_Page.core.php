@@ -1109,11 +1109,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
+		$where = array();
 
-		$where = array(
-			'status' => isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ? $this->_req_data['status'] : array('IN', array('publish', 'draft') )
-			//todo add filter by category
-			);
+		//only set initial status if it is in the incoming request.  Otherwise the "all" view display's all statuses.
+		if ( isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ) {
+			$where['status'] = $this->_req_data['status'];
+		}
 
 		if ( isset( $this->_req_data['venue_status'] ) ) {
 			$where['status'] = $this->_req_data['venue_status'];
@@ -1139,6 +1140,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					);
 				}
 		}
+
+
 
 
 		if ( isset( $this->_req_data['s'] ) ) {
