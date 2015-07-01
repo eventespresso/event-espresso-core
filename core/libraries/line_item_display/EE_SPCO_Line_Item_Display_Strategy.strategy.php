@@ -478,7 +478,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	private function _total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
 		$html = '';
-		if ( $line_item->total() ) {
+		//if ( $line_item->total() ) {
 			// start of row
 			$html = EEH_HTML::tr( '', '', 'spco-grand-total total_tr odd' );
 			// total td
@@ -488,7 +488,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_grand_total, false, false ), '',  'total jst-rght' );
 			// end of row
 			$html .= EEH_HTML::trx();
-		}
+		//}
 		return $html;
 	}
 
