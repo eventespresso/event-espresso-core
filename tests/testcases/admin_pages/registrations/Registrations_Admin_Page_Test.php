@@ -94,7 +94,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		}*/
 
 		$this->_load_requirements();
-		// baseline dates using Utah's timezone
+		// baseline DateTime objects
 		$now = new DateTime( 'now', new DateTimeZone( 'America/Vancouver' ) );
 		$prev_month = $this->_get_date_one_month_ago( $now );
 		$next_month = $this->_get_date_one_month_from_now( $now );
