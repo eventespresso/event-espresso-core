@@ -1109,27 +1109,39 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
+		$where = array();
 
-		$where = array(
-			'status' => isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ? $this->_req_data['status'] : array('IN', array('publish', 'draft') )
-			//todo add filter by category
-			);
+		//only set initial status if it is in the incoming request.  Otherwise the "all" view display's all statuses.
+		if ( isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ) {
+			$where['status'] = $this->_req_data['status'];
+		}
+
+		if ( isset( $this->_req_data['venue_status'] ) ) {
+			$where['status'] = $this->_req_data['venue_status'];
+		}
+
 
 		if ( $category ) {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
-
-		//cap checks
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
-			if ( ! empty( $where['status'][0] ) && $where['status'][0] == 'IN' ) {
-				$where['status'][1][] = 'private';
-			}
-		}
+		
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
+		} else {
+				if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+					$where['OR'] = array(
+						'status*restrict_private' => array( '!=', 'private' ),
+						'AND'                     => array(
+							'status*inclusive' => array( '=', 'private' ),
+							'VNU_wp_user'      => get_current_user_id()
+						)
+					);
+				}
 		}
+
+
 
 
 		if ( isset( $this->_req_data['s'] ) ) {
