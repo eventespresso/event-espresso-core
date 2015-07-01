@@ -394,6 +394,126 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
+	/**
+	 * _get_one_month_period_offset_in_days
+	 *
+	 * returns a period offset of one month
+	 * for example : P31D, P30D, etc
+	 * this can be used to calculate a date that is guaranteed to occur LAST month
+	 *
+	 * Note, the reason for using this instead of P1M is because
+	 * the PHP Interval for a month is calculated based on either
+	 * the previous or next month depending on if you are
+	 * subtracting or adding a date interval.
+	 * So subtracting a month, would subtract the number of days for the previous month,
+	 * and adding a month will add the number of days for the next month.
+	 * Example:
+	 * if today's date is March 31st, and you want to subtract P1M,
+	 * PHP would subtract the number of days in February (the previous month),
+	 * so 31 - 28 = 3, leaving you with a date of March 03.
+	 *
+	 * Similarly, if you were to add P1M to Feb 1st,
+	 * PHP would add 31 days, because the next month, March, has 31 days
+	 * so, Feb 1 + 31 days = March 4th or 5th depending on the leap year
+	 *
+	 * There is a weird PHP behaviour where subtracting one month
+	 * will result in a date remaining in March.
+	 * see http://php.net/manual/en/datetime.sub.php#example-2469
+	 *
+	 * @param \DateTime $now
+	 * @param bool      $adding_interval
+	 * @return string
+	 */
+	protected function _get_one_month_period_offset_in_days( DateTime $now, $adding_interval = true ) {
+		$year 		= (int)$now->format( 'Y' );
+		$month 	= (int)$now->format( 'n' );
+		$day 		= (int)$now->format( 'j' );
+		// determine how to increment or decrement the year and month
+		if ( $adding_interval && $month == 12 ) {
+			// adding a month to december?
+			$year++;
+			$month = 1;
+		} else if ( $adding_interval ) {
+			$month++;
+		} else if ( $month == 1 ) {
+			$year--;
+			$month = 12;
+		} else {
+			$month--;
+		}
+		// create a date for the first day in the offset month (actual day doesn't really matter)
+		$offset_month = new DateTime( "{$year}-{$month}-01" );
+		// get the number of days in the offset month
+		$days_in_offset_month = (int)$offset_month->format( 't' );
+		// get the number of days in the original passed month
+		$days_in_month = (int)$now->format( 't' );
+		// now figure out what period to actually return
+		// by looking at whether we are adding or subtract a time period
+		// and also comparing the days in each month,
+		// as well as the day on the month we are currently on
+		if ( $adding_interval && $day > $days_in_offset_month ) {
+			// add 1 month to Jan 31, but wait....
+			// adding 31 days would take us into March !!!
+			// so just add the number of days in February
+			//echo "\n add days_in_offset_month : " . $days_in_offset_month;
+			return "P{$days_in_offset_month}D";
+		} else if ( $adding_interval ) {
+			// all other additions can safely just use the number of days in the current month
+			// ie: Jan 27 can add 31 days
+			//echo "\n add days_in_month : " . $days_in_month;
+			return "P{$days_in_month}D";
+		} else if ( $day > $days_in_offset_month ) {
+			// subtract 1 month from March 28, but wait...
+			// subtracting 31 days could take us to Feb 25 !!!
+			// so just subtract the day of the month we are on
+			//echo "\n subtract day : " . $day;
+			return "P{$day}D";
+		} else {
+			// all other subtractions can safely just use the number of days in the current month
+			//echo "\n subtract days_in_month : " . $days_in_month;
+			return "P{$days_in_offset_month}D";
+		}
+	}
+
+
+
+	/**
+	 * _get_date_one_month_ago
+	 *
+	 * correctly calculates a date that is slightly more than one month in the past from passed date
+	 *
+	 * @param \DateTime $now
+	 * @return \DateTime
+	 */
+	protected function _get_date_one_month_ago( DateTime $now ) {
+		// clone passed date so as not to modify it
+		$last_month = clone $now;
+		// one month period in days
+		$one_month_period = $this->_get_one_month_period_offset_in_days( $last_month, false );
+		// now set $last_month back by our one month period
+		return $last_month->sub( new DateInterval( $one_month_period ) );
+	}
+
+
+
+	/**
+	 * _get_date_one_month_from_now
+	 *
+	 * correctly calculates a date that is slightly more than one month in the future from passed date
+	 *
+	 * @param \DateTime $now
+	 * @return \DateTime
+	 */
+	protected function _get_date_one_month_from_now( DateTime $now ) {
+		// clone passed date so as not to modify it
+		$next_month = clone $now;
+		// one month period in days
+		$one_month_period = $this->_get_one_month_period_offset_in_days( $next_month );
+		// set $next_month ahead by our one month period
+		return $next_month->add( new DateInterval( $one_month_period ) );
+	}
+
+
 
 	/**
 	 * This sets up some save data for use in testing updates and saves via the event editor.
