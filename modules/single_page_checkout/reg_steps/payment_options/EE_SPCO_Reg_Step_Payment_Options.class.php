@@ -145,6 +145,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
 				$this->checkout->reset_reg_steps();
+				$this->checkout->generate_reg_form = false;
 				// DEBUG LOG
 				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 				return;
@@ -403,7 +404,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						'extra_hidden_inputs' 	=> $this->_extra_hidden_inputs( FALSE )
 					),
 					'layout_strategy'	=> new EE_Template_Layout( array(
-							'layout_template_file' 	=> $this->_template, 
+							'layout_template_file' 	=> $this->_template,
 							'template_args'  				=> apply_filters(
 								'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__template_args',
 								array(
@@ -943,7 +944,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function process_reg_step() {
 		// how have they chosen to pay?
-		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		$this->checkout->selected_method_of_payment = $this->checkout->transaction->is_free() ? 'no_payment_required' : $this->_get_selected_method_of_payment( TRUE );
 		// choose your own adventure based on method_of_payment
 		switch(  $this->checkout->selected_method_of_payment ) {
 
