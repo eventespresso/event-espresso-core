@@ -55,52 +55,94 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 	 * -- testing month range queries.
 	 */
 	public function test_get_registrations() {
+		// to view how dates are added or subtracted, uncomment the following
+		/*foreach( array( '01', '15', '31' ) as $day ) {
+			echo "\n\n\n ADD DATES";
+			$date = "2015-01-{$day}";
+			$now = DateTime::createFromFormat( 'Y-m-d', $date );
+			echo "\n\n starting : " . $now->format( 'M d, Y' );
+			for ( $x = 1; $x <= 12; $x++ ) {
+				echo "\n\n now : " . $now->format( 'M d, Y' );
+				$prev_month = $this->_get_date_one_month_ago( $now );
+				echo "\n prev: " . $prev_month->format( 'M d, Y' );
+				$next_month = $this->_get_date_one_month_from_now( $now );
+				echo "\n next: " . $next_month->format( 'M d, Y' );
+				$year = (int)$now->format( 'Y' );
+				$month = (int)$now->format( 'n' );
+				$month++;
+				$days_in_month = (int)$next_month->format( 't' );
+				$now_day = $day > $days_in_month ? $days_in_month : $day;
+				$now = DateTime::createFromFormat( 'Y-m-d', "{$year}-{$month}-{$now_day}" );
+
+			}
+			echo "\n\n\n SUBTRACT DATES";
+			$now = DateTime::createFromFormat( 'Y-m-d', $date );
+			echo "\n\n starting : " . $now->format( 'M d, Y' );
+			for ( $x = 12; $x > 0; $x-- ) {
+				echo "\n\n now : " . $now->format( 'M d, Y' );
+				$prev_month = $this->_get_date_one_month_ago( $now );
+				echo "\n prev: " . $prev_month->format( 'M d, Y' );
+				$next_month = $this->_get_date_one_month_from_now( $now );
+				echo "\n next: " . $next_month->format( 'M d, Y' );
+				$year = (int)$now->format( 'Y' );
+				$month = (int)$now->format( 'n' );
+				$month++;
+				$days_in_month = (int)$next_month->format( 't' );
+				$now_day = $day > $days_in_month ? $days_in_month : $day;
+				$now = DateTime::createFromFormat( 'Y-m-d', "{$year}-{$month}-{$now_day}" );
+			}
+		}*/
+
 		$this->_load_requirements();
-
-		//baseline dates
-		$now = new DateTime( 'now' );
-		$nowEST = new DateTime( 'now', new DateTimeZone( 'America/Toronto' ) );
-
+		// baseline dates using Utah's timezone
+		$now = new DateTime( 'now', new DateTimeZone( 'America/Vancouver' ) );
+		$prev_month = $this->_get_date_one_month_ago( $now );
+		$next_month = $this->_get_date_one_month_from_now( $now );
+		//echo "\n\n now : " . $now->format( 'M j, Y g:i a' );
+		//echo "\n prev: " . $prev_month->format( 'M j, Y g:i a' );
+		//echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
 		//let's setup some registrations to test.
 		$registrations = $this->factory->registration->create_many( 4 );
-
 		$this->assertEquals( 4, count( $registrations ) );
-
 		//create an event and add to the registrations
 		$event = $this->factory->event->create( array( 'EVT_wp_user' => 0 ) );
-		foreach ( $registrations as $registration ) {
-			$registration->set( 'STS_ID', EEM_Registration::status_id_pending_payment );
-			$registration->save();
-			$event->_add_relation_to( $registration, 'Registration' );
-			$event->save();
+		if ( $event instanceof EE_Event ) {
+			foreach ( $registrations as $registration ) {
+				if ( $registration instanceof EE_Registration ) {
+					$registration->set( 'STS_ID', EEM_Registration::status_id_pending_payment );
+					$registration->save();
+					$event->_add_relation_to( $registration, 'Registration' );
+					$event->save();
+				}
+			}
 		}
-
-		//let's modify the first registration so it happened two months ago.  Note, the reason why I am doing this
-		//instead of one month is because if today's date is March 31st, March 30th, or March 29th.  There is
-		//wierd PHP behaviour where subtracting one month will result in a date remaining in March.
-		//@see http://php.net/manual/en/datetime.sub.php#example-2469
+		// let's modify the first registration so it happened one months ago,
 		$first_registration = reset( $registrations );
-		$first_registration->set( 'REG_date', $now->sub( new DateInterval('P31D') )->format('U') );
+		$first_registration->set( 'REG_date', $prev_month->format('U') );
 		$first_registration->save();
-
-		//modify the last registration so it happens next month.
+		// modify the last registration so it happens next month.
 		$last_registration = end( $registrations );
-		$last_registration->set( 'REG_date', $now->add( new DateInterval('P62D') )-> format( 'U' ) );
+		$last_registration->set( 'REG_date', $next_month-> format( 'U' ) );
 		$last_registration->save();
-
+		//foreach ( $registrations as $registration ) {
+		//	if ( $registration instanceof EE_Registration ) {
+		//		echo "\n registration date: " . $registration->date();
+		//	}
+		//}
 		//let's test queries for today
 		$_REQUEST['status'] = 'today';
-		$this->assertEquals(2, count( $this->_admin_page->get_registrations() ) );
-
+		$this->assertEquals( 2, count( $this->_admin_page->get_registrations() ) );
 		//test queries for this month
 		$_REQUEST['status'] = 'month';
-		$this->assertEquals(2, count( $this->_admin_page->get_registrations() ) );
-
-		//test queries for month range
+		$this->assertEquals( 2, count( $this->_admin_page->get_registrations() ) );
+		// test queries for month range using last month
 		unset( $_REQUEST['status'] );
-		$_REQUEST['month_range'] = $now->sub( new DateInterval('P1M') )->format('F') . ' ' . $now->format('Y');
-		$this->assertEquals(2, count( $this->_admin_page->get_registrations() ) );
+		$_REQUEST['month_range'] = $prev_month->format('F Y');
+		//echo "\n month_range: " . $_REQUEST[ 'month_range' ];
+		$this->assertEquals( 1, count( $this->_admin_page->get_registrations() ) );
 	}
 
 
-} //end Registrations_Admin_Page_Test
+}
+//end Registrations_Admin_Page_Test
+// Location: /tests/testcases/admin_pages/registrations/Registrations_Admin_Page_Test.php
