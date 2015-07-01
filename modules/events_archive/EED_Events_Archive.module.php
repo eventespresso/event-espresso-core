@@ -116,7 +116,6 @@ class EED_Events_Archive  extends EED_Module {
 		);
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
-		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 	}
 
 
@@ -369,15 +368,16 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function load_event_list_assets() {
-	do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
-	add_filter( 'FHEE_load_EE_Session', '__return_true' );
-	add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
-	if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-		EE_Registry::instance()->load_helper( 'Maps' );
-		add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
+		do_action( 'AHEE__EED_Events_Archive__before_load_assets' );
+		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
+			EE_Registry::instance()->load_helper( 'Maps' );
+			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
+		}
+		EE_Registry::instance()->load_helper( 'Event_View' );
 	}
-	EE_Registry::instance()->load_helper( 'Event_View' );
-}
 
 
 
