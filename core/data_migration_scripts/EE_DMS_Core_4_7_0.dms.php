@@ -280,7 +280,6 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -596,8 +595,6 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TKT_ID),
 					  KEY TKT_start_date (TKT_start_date)";
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
-
-		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
