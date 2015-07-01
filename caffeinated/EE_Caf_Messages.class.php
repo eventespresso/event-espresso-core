@@ -37,6 +37,10 @@ class EE_Caf_Messages  {
 		add_filter('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( $this, 'messages_autoload_paths'), 5 );
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
+		add_filter( 'FHEE__EE_Html_messenger__get_template_fields', array( $this, 'html_messenger_template_fields' ), 5, 2 );
+		add_filter( 'FHEE__EE_Html_messenger__get_validator_config', array( $this, 'html_messenger_validator_config' ), 5, 2 );
+		add_filter( 'FHEE__EE_Pdf_messenger__get_template_fields', array( $this, 'pdf_messenger_template_fields' ), 5, 2 );
+		add_filter( 'FHEE__EE_Pdf_messenger__get_validator_config', array( $this, 'pdf_messenger_validator_config' ), 5, 2 );
 		add_filter('FHEE__EE_Messages_Template_Pack__get_specific_template__contents', array( $this, 'new_default_templates'), 5, 7 );
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 5, 2 );
 
@@ -91,6 +95,34 @@ class EE_Caf_Messages  {
 
 
 
+	public function html_messenger_validator_config( $validator_config, EE_Html_messenger $messenger ) {
+		$validator_config['attendee_list'] = array(
+			'shortcodes' => array('attendee', 'question_list'),
+			'required' => array('[ATTENDEE_LIST]')
+		);
+		$validator_config['question_list'] = array(
+			'shortcodes' => array('question'),
+			'required' => array('[QUESTION_LIST]')
+		);
+		return $validator_config;
+	}
+
+
+
+	public function pdf_messenger_validator_config( $validator_config, EE_Pdf_messenger $messenger ) {
+		$validator_config['attendee_list'] = array(
+			'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
+			'required' => array('[ATTENDEE_LIST]')
+		);
+		$validator_config['question_list'] = array(
+			'shortcodes' => array('question'),
+			'required' => array('[QUESTION_LIST]')
+		);
+		return $validator_config;
+	}
+
+
+
 
 	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
@@ -104,6 +136,39 @@ class EE_Caf_Messages  {
 						'rows' => '5',
 						'shortcodes_required' => array('[QUESTION_LIST]')
 					);
+		return $template_fields;
+	}
+
+
+	public function html_messenger_template_fields( $template_fields, EE_Html_messenger $messenger ) {
+		$template_fields['extra']['content']['question_list'] = array(
+			'input' => 'textarea',
+			'label' => '[QUESTION_LIST]',
+			'type' => 'string',
+			'required' => TRUE,
+			'validation' => TRUE,
+			'format' => '%s',
+			'css_class' => 'large-text',
+			'rows' => '5',
+			'shortcodes_required' => array('[QUESTION_LIST]')
+		);
+		return $template_fields;
+	}
+
+
+
+	public function pdf_messenger_template_fields( $template_fields, EE_Pdf_messenger $messenger ) {
+		$template_fields['extra']['content']['question_list'] = array(
+			'input' => 'textarea',
+			'label' => '[QUESTION_LIST]',
+			'type' => 'string',
+			'required' => TRUE,
+			'validation' => TRUE,
+			'format' => '%s',
+			'css_class' => 'large-text',
+			'rows' => '5',
+			'shortcodes_required' => array('[QUESTION_LIST]')
+		);
 		return $template_fields;
 	}
 
@@ -171,6 +236,13 @@ class EE_Caf_Messages  {
 					$contents = EEH_Template::display_template( $path, array(), true );
 					break;
 			}
+		} elseif ( $messenger->name == 'html' && $message_type->name == 'receipt' ) {
+			switch  ( $template_file_prefix ) {
+				case 'attendee_list_purchaser' :
+					$path = $base_path . $msg_prefix . 'attendee_list.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+			}
 		}
 
 		return $contents;
@@ -192,7 +264,9 @@ class EE_Caf_Messages  {
 			'payment',
 			'payment_reminder',
 			'pending_approval',
-			'registration_summary'
+			'registration_summary',
+			'invoice',
+			'receipt'
 			);
 		if ( $msg instanceof EE_message_type && in_array( $msg->name, $include_with )) {
 			$contexts = array_keys($msg->get_contexts());

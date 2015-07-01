@@ -175,7 +175,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[TOTAL_OWING]" :
-				$total_owing = isset( $transaction ) && is_object($transaction) ? $transaction->remaining() : $transaction->total();
+				$total_owing = $transaction->remaining();
 				return EEH_Template::format_currency( $total_owing );
 				break;
 

@@ -22,6 +22,7 @@ class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 			$allowedtags['ul']=array();
 			$allowedtags['li']=array();
 			$allowedtags['br']=array();
+			$allowedtags['p']=array();
 			$validation_error_message = sprintf( __( "Only simple HTML tags are allowed. Eg, %s", "event_espresso" ), implode( ",", array_keys( $allowedtags ) ) );
 		}
 		parent::__construct( $validation_error_message );
