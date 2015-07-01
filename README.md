@@ -10,6 +10,9 @@
 
 [Event Espresso](http://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=event+espresso+link) is an event ticketing and registration platform for [WordPress](http://wordpress.org/). Event Espresso makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports.
 
+## Support License
+Purchase a [Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license) to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
+
 ## Installing Event Espresso
 Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP. 
 
