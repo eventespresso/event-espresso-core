@@ -450,7 +450,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		// now figure out what period to actually return
 		// by looking at whether we are adding or subtract a time period
 		// and also comparing the days in each month,
-		// as well as the day on the month we are currently on
+		// as well as the day of the month we are currently on
 		if ( $adding_interval && $day > $days_in_offset_month ) {
 			// add 1 month to Jan 31, but wait....
 			// adding 31 days would take us into March !!!
@@ -466,6 +466,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			// subtract 1 month from March 28, but wait...
 			// subtracting 31 days could take us to Feb 25 !!!
 			// so just subtract the day of the month we are on
+			// Mar 31 - 31 = Mar 30 - 30 = Mar 29 - 29 = Feb 28 (or 29th if a leap year)
 			//echo "\n subtract day : " . $day;
 			return "P{$day}D";
 		} else {
