@@ -116,10 +116,10 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 						ATT_email VARCHAR(255) NOT NULL,
 						ATT_phone VARCHAR(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
-								KEY ATT_fname (ATT_fname),
-								KEY ATT_lname (ATT_lname),
+								KEY ATT_ID (ATT_ID),
 								KEY ATT_email (ATT_email),
-								KEY ATT_ID (ATT_ID)";
+								KEY ATT_lname (ATT_lname),
+								KEY ATT_fname (ATT_fname)";
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
@@ -176,9 +176,9 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				  DTT_parent INT(10) UNSIGNED DEFAULT 0,
 				  DTT_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 						PRIMARY KEY  (DTT_ID),
+						KEY DTT_EVT_start (DTT_EVT_start),
 						KEY EVT_ID (EVT_ID),
-						KEY DTT_is_primary (DTT_is_primary),
-						KEY DTT_EVT_start (DTT_EVT_start)";
+						KEY DTT_is_primary (DTT_is_primary)";
 
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
 
@@ -322,8 +322,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					PAY_redirect_url VARCHAR(300),
 					PAY_redirect_args TEXT,
 					PRIMARY KEY  (PAY_ID),
-					KEY TXN_ID (TXN_ID),
-					KEY PAY_timestamp (PAY_timestamp)";
+					KEY PAY_timestamp (PAY_timestamp),
+					KEY TXN_ID (TXN_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name = 'esp_payment_method';
@@ -436,13 +436,13 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  REG_att_is_going TINYINT(1) DEFAULT '0',
 					  REG_deleted TINYINT(1) DEFAULT '0',
 					  PRIMARY KEY  (REG_ID),
-					  KEY EVT_ID (EVT_ID),
-					  KEY ATT_ID (ATT_ID),
-					  KEY TXN_ID (TXN_ID),
-					  KEY TKT_ID (TKT_ID),
-					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
-					  KEY REG_code (REG_code)";
+					  KEY REG_code (REG_code),
+					  KEY TXN_ID (TXN_ID),
+					  KEY ATT_ID (ATT_ID),
+					  KEY TKT_ID (TKT_ID),
+					  KEY EVT_ID (EVT_ID),
+					  KEY STS_ID (STS_ID)";
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
@@ -480,8 +480,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					  STA_name VARCHAR(100) COLLATE utf8_bin NOT NULL,
 					  STA_active TINYINT(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID),
-					  KEY CNT_ISO (CNT_ISO),
-					  KEY STA_abbrev (STA_abbrev)";
+					  KEY STA_abbrev (STA_abbrev),
+					  KEY CNT_ISO (CNT_ISO)";
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
