@@ -725,7 +725,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$this->set_total( $total );
 		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
+			$this->transaction()->save();
 		}
+		$this->maybe_save();
 		return $total;
 	}
 
@@ -753,6 +755,7 @@ class EE_Line_Item extends EE_Base_Class {
 				$total = $this->unit_price() * $this->quantity();
 			}
 			$this->set_total( $total );
+			$this->maybe_save();
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
@@ -771,6 +774,7 @@ class EE_Line_Item extends EE_Base_Class {
 				// no negative totals plz
 				$total = max( $total, 0 );
 				$this->set_total( $total );
+				$this->maybe_save();
 			}
 		}
 		return $total;
@@ -949,6 +953,8 @@ class EE_Line_Item extends EE_Base_Class {
 		return EEH_Line_Item::get_descendants_of_type( $this, $type );
 	}
 
+
+
 	/**
 	 * @deprecated
 	 * @param string $type like one of the EEM_Line_Item::type_*
@@ -959,6 +965,21 @@ class EE_Line_Item extends EE_Base_Class {
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
+
+
+
+	/**
+	 * If this item has an ID, then this saves it again to update the db
+	 *
+	 * @return int count of items saved
+	 */
+	public function maybe_save() {
+		if ( $this->ID() ) {
+			return $this->save();
+		}
+		return false;
+	}
+
 
 
 }
