@@ -294,7 +294,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
-		wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
+		//wp_localize_script( 'espresso_txn', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 
@@ -654,21 +654,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$reg_steps = '<ul>';
 		foreach ( $this->_transaction->reg_steps() as $reg_step => $reg_step_status ) {
-//			EEH_Debug_Tools::printr( $reg_step, '$reg_step', __FILE__, __LINE__ );
-			switch ( $reg_step_status ) {
-				case $reg_step_status === true :
-					$reg_steps .= '<li>' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
-					break;
-				case $reg_step_status === false :
-					$reg_steps .= '<li>' . sprintf( __( '%1$s : Never Initiated', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
-					break;
-				case is_numeric( $reg_step_status ) :
-					$reg_steps .= '<li>' . sprintf(
+			if ( $reg_step_status === true ) {
+				$reg_steps .= '<li style="color:#70cc50">' . sprintf( __( '%1$s : Completed', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
+			} else if ( is_numeric( $reg_step_status ) && $reg_step_status !== false ) {
+					$reg_steps .= '<li style="color:#2EA2CC">' . sprintf(
 							__( '%1$s : Initiated %2$s', 'event_espresso' ),
 							ucwords( str_replace( '_', ' ', $reg_step ) ),
-							gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $reg_step_status + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) )
+							gmdate( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), ( $reg_step_status + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) )
 						) . '</li>';
-					break;
+				} else {
+				$reg_steps .= '<li style="color:#E76700">' . sprintf( __( '%1$s : Never Initiated', 'event_espresso' ), ucwords( str_replace( '_', ' ', $reg_step ) ) ) . '</li>';
 			}
 		}
 		$reg_steps .= '</ul>';
