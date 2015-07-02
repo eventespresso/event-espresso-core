@@ -309,6 +309,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if ( count( $keyval ) == 2 )
 				$update_info[ $keyval[ 0 ] ] = urldecode( $keyval[ 1 ] );
 		}
+		// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
+		// plz see: https://events.codebasehq.com/projects/event-espresso/tickets/8444
 		$update_info[ 'user-agent' ] = 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url();
 		// read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
 		$req = 'cmd=_notify-validate';
