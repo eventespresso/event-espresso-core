@@ -309,9 +309,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if ( count( $keyval ) == 2 )
 				$update_info[ $keyval[ 0 ] ] = urldecode( $keyval[ 1 ] );
 		}
-		// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
-		// plz see: https://events.codebasehq.com/projects/event-espresso/tickets/8444
-		$update_info[ 'user-agent' ] = 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url();
 		// read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
 		$req = 'cmd=_notify-validate';
 		$get_magic_quotes_exists = function_exists( 'get_magic_quotes_gpc' ) ? true : false;
@@ -324,7 +321,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$req .= "&$key=$value";
 		}
 		// HTTP POST the complete, unaltered IPN back to PayPal
-		$response = wp_remote_post( $this->_gateway_url, array( 'body' => $req, 'sslverify' => false, 'timeout' => 60 ) );
+		$response = wp_remote_post(
+			$this->_gateway_url,
+			array(
+				'body' 				=> $req,
+				'sslverify' 		=> false,
+				'timeout' 		=> 60 ,
+				// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
+				// plz see: https://events.codebasehq.com/projects/event-espresso/tickets/8444
+				'user-agent' 	=> 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url(),
+			)
+		);
 		// then check the response
 		if ( ! is_wp_error( $response ) && array_key_exists( 'body', $response ) && strcmp( $response[ 'body' ], "VERIFIED" ) == 0 ) {
 			return true;
