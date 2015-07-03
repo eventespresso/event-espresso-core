@@ -723,6 +723,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	public function clear_session( $class = '', $function = '' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
+		$this->reset_cart();
+		$this->reset_checkout();
+		$this->reset_transaction();
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
 		// reset initial site access time and the session expiration

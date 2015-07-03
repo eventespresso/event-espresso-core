@@ -137,6 +137,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
 				'_REG_final_price' => __( 'Price', 'event_espresso' ),
+				'_REG_paid' => __( 'Paid', 'event_espresso' ),
 				'actions' => __( 'Actions', 'event_espresso' )
 			);
 			$this->_bottom_buttons = array(
@@ -283,10 +284,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$time_end = ' 23:59:59';
 		$this_month_r = date('m', current_time('timestamp'));
 		$days_this_month = date( 't', current_time('timestamp') );
+		//setup date query.
+		$beginning_string = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s' );
+		$end_string = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end, 'Y-m-d H:i:s' );
 		$_where['REG_date']= array('BETWEEN',
 			array(
-				strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
-				strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
+				$beginning_string,
+				$end_string
 		));
 		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
@@ -308,8 +312,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$time_end = ' 23:59:59';
 		$_where['REG_date']= array('BETWEEN',
 			array(
-				strtotime($current_date . $time_start),
-				strtotime($current_date . $time_end)
+				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_start, 'Y-m-d H:i:s' ),
+				EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $current_date . $time_end, 'Y-m-d H:i:s' )
 		));
 		$_where['STS_ID'] = array( '!=', EEM_Registration::status_id_incomplete );
 		return EEM_Registration::instance()->count(array( $_where ) );
@@ -339,8 +343,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
     function column_cb($item){
 	/** checkbox/lock **/
-	$t = $item->get_first_related('Transaction');
-	$payment_count = $t instanceof EE_Transaction ?  $t->count_related('Payment') : 0;
+	$transaction = $item->get_first_related( 'Transaction' );
+	$payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
 	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
@@ -485,7 +489,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column__REG_count(EE_Registration $item){
-		return  sprintf(__( '%1$s of %2$s', 'event_espresso' ), $item->count(), $item->group_size());
+		return  sprintf(__( '%1$s / %2$s', 'event_espresso' ), $item->count(), $item->group_size());
 	}
 
 
@@ -515,8 +519,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$content = isset( $_GET['event_id'] ) && $ticket instanceof EE_Ticket ? '<span class="TKT_name">' . $ticket->name() . '</span><br />' : '';
 
-		if ( $item->price_paid() > 0 ) {
-			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';
+		if ( $item->final_price() > 0 ) {
+			$content .= '<span class="reg-pad-rght">' . $item->pretty_final_price() . '</span>';
 		} else {
 			// free event
 			$content .= '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
@@ -539,9 +543,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$ticket = $item->ticket();
 		$content = isset( $_GET['event_id'] ) || ! $ticket instanceof EE_Ticket ? '' : '<span class="TKT_name">' . $ticket->name() . '</span><br />';
 
-		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';
+		$content .= '<span class="reg-pad-rght">' .  $item->pretty_final_price() . '</span>';
 		return $content;
 
+	}
+
+
+
+	/**
+	 * column__REG_paid
+	 *
+	 * @access public
+	 * @param \EE_Registration $item
+	 * @return string
+	 */
+	function column__REG_paid(EE_Registration $item){
+		return '<span class="reg-pad-rght">' .  $item->pretty_paid() . '</span>';
 	}
 
 

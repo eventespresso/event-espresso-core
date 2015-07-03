@@ -26,22 +26,27 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @return EE_Payment
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		return $has_object ? $has_object : new self( $props_n_values );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values
-	 * @param null  $timezone
-	 * @return EE_Payment
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = NULL ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -285,6 +290,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	/**
 	 *        get Payment Amount
 	 * @access        public
+	 * @return float
 	 */
 	public function amount() {
 		return $this->get( 'PAY_amount' );
@@ -482,6 +488,16 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 */
 	public function is_failed() {
 		return $this->status_is( EEM_Payment::status_id_failed );
+	}
+
+
+
+	/**
+	 * For determining if the payment is actually a refund ( ie: has a negative value )
+	 * @return boolean
+	 */
+	public function is_a_refund() {
+		return $this->amount() < 0 ? true : false;
 	}
 
 

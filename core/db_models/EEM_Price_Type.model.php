@@ -106,7 +106,10 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 			'Price'=>new EE_Has_Many_Relation(),
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		//all price types are "default" in terms of capability names
+		$this->_caps_slug = 'default_price_types';
 		parent::__construct( $timezone );
 
 	}

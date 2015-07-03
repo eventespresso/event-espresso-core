@@ -1,6 +1,10 @@
-<?php
-
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
+ *
+ * EE_Model_Field_Base class
+ *
  * Base class for all EE_*_Field classes. These classes are for providing information and functions specific to each
  * field. They define the field's data type for insertion into the db (eg, if the value should be treated as an int, float, or string),
  * what values for the field are acceptable (eg, if setting EVT_ID to a float is acceptable), and generally any functionality within
@@ -9,6 +13,10 @@
  * should be serialized before insertion into the db (prepare_for_insertion_into_db()),
  * should be considered a string when inserting, updating, or using in a where clause for any queries (get_wpdb_data_type()),
  * should be unserialized when being retrieved from the db (prepare_for_set_from_db()), and whatever else.
+ *
+ * @package 			Event Espresso
+ * @subpackage    /core/db_models/fields/EE_Model_Field_Base.php
+ * @author 				Michael Nelson
  */
 abstract class EE_Model_Field_Base{
 	var $_table_alias;
@@ -33,9 +41,12 @@ abstract class EE_Model_Field_Base{
 		$this->_default_value = $default_value;
 	}
 
+
+
 	/**
 	 * @param $table_alias
 	 * @param $name
+	 * @param $model_name
 	 */
 	function _construct_finalize($table_alias, $name, $model_name){
 		$this->_table_alias = $table_alias;

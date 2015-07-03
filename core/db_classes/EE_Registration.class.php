@@ -12,23 +12,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 *
-	 * @param array  $props_n_values
-	 * @param string $timezone
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
 	 * @return EE_Registration
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values
-	 * @param string  $timezone
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
 	 * @return EE_Registration
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -365,22 +369,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *    Set final Price Paid for ticket after all modifications
+	 *    Set final price owing for this registration after all ticket/price modifications
 	 *
 	 * @access    public
 	 * @param    float $REG_final_price
 	 */
-	public function set_price_paid( $REG_final_price = 0.00 ) {
+	public function set_final_price( $REG_final_price = 0.00 ) {
 		$this->set( 'REG_final_price', $REG_final_price );
 	}
 
 
 
 	/**
-	 * @return string of price, with correct decimal places and currency symbol
+	 *    Set amount paid towards this registration's final price
+	 *
+	 * @access    public
+	 * @param    float $REG_paid
 	 */
-	public function pretty_price_paid() {
-		return $this->get_pretty( 'REG_final_price' );
+	public function set_paid( $REG_paid = 0.00 ) {
+		$this->set( 'REG_paid', $REG_paid );
 	}
 
 
@@ -650,11 +657,69 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *        get Price Paid
+	 * final_price
+	 * total owing for this registration after all ticket/price modifications
 	 * @access        public
+	 * @return    float
 	 */
-	public function price_paid() {
+	public function final_price() {
 		return $this->get( 'REG_final_price' );
+	}
+
+
+
+	/**
+	 * pretty_final_price
+	 *  final price as formatted string, with correct decimal places and currency symbol
+	 * @return string
+	 */
+	public function pretty_final_price() {
+		return $this->get_pretty( 'REG_final_price' );
+	}
+
+
+
+	/**
+	 * get paid (yeah)
+	 * @access        public
+	 * @return 	float
+	 */
+	public function paid() {
+		return $this->get( 'REG_paid' );
+	}
+
+
+
+	/**
+	 * pretty_paid
+	 * @access        public
+	 * @return 	float
+	 */
+	public function pretty_paid() {
+		return $this->get_pretty( 'REG_paid' );
+	}
+
+
+
+	/**
+	 * owes_monies_and_can_pay
+	 * whether or not this registration has monies owing and it's' status allows payment
+	 * @access        public
+	 * @param array $requires_payment
+	 * @return bool
+	 */
+	public function owes_monies_and_can_pay( $requires_payment = array()) {
+		// these reg statuses require payment (if event is not free)
+		$requires_payment = ! empty( $requires_payment ) ? $requires_payment : EEM_Registration::reg_statuses_that_allow_payment();
+		if (
+			in_array( $this->status_ID(), $requires_payment ) &&
+			$this->final_price() != 0 &&
+			$this->final_price() != $this->paid()
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -1020,7 +1085,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 * Returns all other registrations in the same group as this registrant.
+	 * Returns all other registrations in the same group as this registrant who have the same ticket option.
+	 *
+	 * Note, if you want to just get all registrations in the same transaction (group), use:
+	 * 	$registration->transaction()->registrations();
 	 *
 	 * @since 4.5.0
 	 *
@@ -1040,6 +1108,45 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$registrations = $this->get_model()->get_all( $query );
 		return $registrations;
 	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @access 	public
+	 */
+	public function price_paid() {
+		EE_Error::doing_it_wrong( 'EE_Registration::price_paid()', __( 'This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso' ), '4.7.0' );
+		return $this->final_price();
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @access    public
+	 * @param    float $REG_final_price
+	 */
+	public function set_price_paid( $REG_final_price = 0.00 ) {
+		EE_Error::doing_it_wrong( 'EE_Registration::set_price_paid()', __( 'This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso' ), '4.7.0' );
+		$this->set_final_price( $REG_final_price );
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @since 4.7.0
+	 * @return string
+	 */
+	public function pretty_price_paid() {
+		EE_Error::doing_it_wrong( 'EE_Registration::pretty_price_paid()', __( 'This method is deprecated, please use EE_Registration::pretty_final_price() instead.', 'event_espresso' ), '4.7.0' );
+		return $this->pretty_final_price();
+	}
+
+
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */

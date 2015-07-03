@@ -175,21 +175,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'require_nonce' => FALSE
 		);
 
-		$new_page_config['import_page'] = array(
-				'nav' => array(
-					'label' => __('Import', 'event_espresso'),
-					'order' => 30
-				),
-				'help_tabs' => array(
-					'import_help_tab' => array(
-						'title' => __('Event Espresso Import', 'event_espresso'),
-						'filename' => 'import_page'
-						)
-					),
-				'help_tour' => array('Event_Import_Help_Tour'),
-				'metaboxes' => $default_espresso_boxes,
-				'require_nonce' => FALSE
-		);
+//		$new_page_config['import_page'] = array(
+//				'nav' => array(
+//					'label' => __('Import', 'event_espresso'),
+//					'order' => 30
+//				),
+//				'help_tabs' => array(
+//					'import_help_tab' => array(
+//						'title' => __('Event Espresso Import', 'event_espresso'),
+//						'filename' => 'import_page'
+//						)
+//					),
+//				'help_tour' => array('Event_Import_Help_Tour'),
+//				'metaboxes' => $default_espresso_boxes,
+//				'require_nonce' => FALSE
+//		);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//add filters and actions
@@ -301,8 +301,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
-		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
 	}
 
 
@@ -936,14 +934,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return int
 	 */
 	public function total_events_today() {
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -958,14 +956,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this_year_r = date('Y');
 		$this_month_r = date('m');
 		$days_this_month = date('t');
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-01 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 

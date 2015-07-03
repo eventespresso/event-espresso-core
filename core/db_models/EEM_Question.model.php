@@ -65,17 +65,12 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is a decimal (float)
 	const QST_type_decimal = 'DECIMAL';
 
-	// constant used to indicate that the question type can only have the options Yes or No
-	const QST_type_yes_no = 'YES_NO';
-
 	// constant used to indicate that the question type is a valid URL
 	const QST_type_url = 'URL';
 
 	// constant used to indicate that the question type is a YEAR
 	const QST_type_year = 'YEAR';
 
-	// constant used to indicate that the question type is a valid month
-	const QST_type_month = 'MONTH';
 
 	// constant used to indicate that the question type is a multi-select
 	const QST_type_multi_select = 'MULTI_SELECT';
@@ -120,10 +115,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_us_phone => __( 'USA-Format Phone', 'event_espresso' ),
 				EEM_Question::QST_type_int => __( 'Integer Number', 'event_espresso' ),
 				EEM_Question::QST_type_decimal => __( 'Decimal Number', 'event_espresso' ),
-				EEM_Question::QST_type_yes_no => __( 'Yes/No', 'event_espresso' ),
 				EEM_Question::QST_type_url => __( 'Valid URL', 'event_espresso' ),
 				EEM_Question::QST_type_year => __( 'Year', 'event_espresso' ),
-				EEM_Question::QST_type_month => __( 'Month', 'event_espresso' ),
 				EEM_Question::QST_type_multi_select => __( 'Multi Select', 'event_espresso' )
 			)
 		);
@@ -177,7 +170,11 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			//for QST_order column
 			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('QST_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('QST_system');
 		parent::__construct( $timezone );
 	}
 
