@@ -831,10 +831,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
-		// update the cart because inaccurate totals are not so much fun
-		if ( $this->checkout->cart instanceof EE_Cart ) {
-			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
-		}
 		return true;
 	}
 
