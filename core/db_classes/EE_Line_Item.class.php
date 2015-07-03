@@ -725,7 +725,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$this->set_total( $total );
 		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
-			$this->transaction()->save();
+			if ( $this->transaction()->ID() ) {
+				$this->transaction()->save();
+			}
 		}
 		$this->maybe_save();
 		return $total;
