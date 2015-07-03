@@ -1548,7 +1548,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params   like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
@@ -1563,7 +1563,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)
@@ -1939,6 +1939,15 @@ abstract class EE_Base_Class{
 				);
 			}
 		}
+	}
+
+	/**
+	 * Because some other plugins, like Advanced Cron Manager, expect all objects to have this method
+	 * (probably a bad assumption they have made, oh well)
+	 * @return string
+	 */
+	public function __toString(){
+		return sprintf( '%s (%s)', $this->name(), $this->ID() );
 	}
 
 
