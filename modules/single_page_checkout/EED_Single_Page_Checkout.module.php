@@ -865,7 +865,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
-		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		return true;
 	}
 
