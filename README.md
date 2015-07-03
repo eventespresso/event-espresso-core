@@ -16,12 +16,12 @@ Purchase a [Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee
 ## Installing Event Espresso
 Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP. 
 
-[View EE4 Install Documentation →](http://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
+[View Event Espresso 4 Install Documentation →](http://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
 
 ## Documentation
 Resources on Event Espresso 4 for a beginner to advanced users. 
 
-[View EE4 Documentation →](http://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
+[View Event Espresso 4 Documentation →](http://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
 
 ## Developers

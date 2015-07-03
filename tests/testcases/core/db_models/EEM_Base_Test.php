@@ -212,6 +212,37 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
+	 *
+	 * @group 7151
+	 */
+	function test_refresh_entity_map_from_db__serialized_object() {
+		//get an object purposefully out-of-sync with the DB
+		//call this and make sure it's wiped clean and
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array( 'PAY_amount' => 25 ) );
+		$p->save();
+		$this->assertEquals( $p, EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+		//ok now remember that ID, serialize the payment, and otherwise remove the object
+		$p_id = $p->ID();
+		$p_serialized = serialize( $p );
+		unset( $p );
+		EEM_Payment::reset();
+		//now manually update it in teh DB, but not the model object
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "update {$wpdb->prefix}esp_payment SET PAY_amount = 100, TXN_ID = 0 WHERE PAY_ID = %d", $p_id ) );
+		$this->assertEquals( 1, $affected );
+		//now unserialize it and verify it's what we thought it was
+		$p_unserialized = unserialize( $p_serialized );
+		$this->assertEquals( $p_id, $p_unserialized->ID() );
+		$this->assertEquals( 25, $p_unserialized->get( 'PAY_amount' ) );
+		//and when it's refreshed, its PAY_amount should be updated too and it should no longer have any transaction cached or even findable
+		$p_unserialized = EEM_Payment::instance()->refresh_entity_map_from_db( $p_unserialized->ID() );
+		$this->assertEquals( 100, $p_unserialized->get( 'PAY_amount' ) );
+		$this->assertEquals( 0, $p_unserialized->get( 'TXN_ID' ) );
+		$this->assertEquals( array(), $p_unserialized->get_all_from_cache( 'Transaction' ) );
+		$this->assertEquals( null, $p_unserialized->transaction() );
+	}
+
+	/**
 	 * @group 7151
 	 */
 	function test_fresh_entity_map_with(){

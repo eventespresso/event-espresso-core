@@ -883,8 +883,10 @@ class EE_Checkout {
 			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : $this->payment_method;
 			//now refresh the cart, based on the TXN
 			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
-			// verify cart
-			if ( ! $this->cart instanceof EE_Cart ) {
+			// verify and update the cart because inaccurate totals are not so much fun
+			if ( $this->cart instanceof EE_Cart ) {
+				$this->cart->get_grand_total()->recalculate_total_including_taxes();
+			} else {
 				$this->cart = EE_Registry::instance()->load_core( 'Cart' );
 			}
 		} else {
@@ -962,9 +964,11 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+		// verify and update the cart because inaccurate totals are not so much fun
 		if ( $this->cart instanceof EE_Cart ) {
 			$grand_total = $this->cart->get_grand_total();
 			if ( $grand_total instanceof EE_Line_Item && $grand_total->ID() ) {
+				$grand_total->recalculate_total_including_taxes();
 				$grand_total = $grand_total->get_model()->refresh_entity_map_with(
 					$this->cart->get_grand_total()->ID(),
 					$this->cart->get_grand_total()
