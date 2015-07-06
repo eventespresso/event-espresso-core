@@ -504,7 +504,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
-				return new EE_Text_Area_Input( $input_constructor_args );
+				$input_constructor_args[ 'validation_strategies' ][ ] = new EE_Simple_HTML_Validation_Strategy();
+				$input = new EE_Text_Area_Input( $input_constructor_args );
+				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
+				return $input;
 				break;
 			// Radio Buttons
 			case EEM_Question::QST_type_radio :
@@ -552,7 +555,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				return new EE_Datepicker_Input( $input_constructor_args );
 				break;
 			case EEM_Question::QST_type_html_textarea :
-				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Full_HTML_Validation_Strategy();
 				$input =  new EE_Text_Area_Input( $input_constructor_args );
 				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				return $input;
