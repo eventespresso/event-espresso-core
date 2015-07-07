@@ -133,8 +133,8 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$html = EEH_HTML::table( '','', $options['table_css_class'] );
 		$html .= EEH_HTML::thead();
 		$html .= EEH_HTML::tr();
-		$html .= EEH_HTML::th( __( 'Type', 'event_espresso'), '', 'jst-left' );
 		$html .= EEH_HTML::th( __( 'Name', 'event_espresso' ), '', 'jst-left' );
+		$html .= EEH_HTML::th( __( 'Type', 'event_espresso'), '', 'jst-left' );
 		$html .= EEH_HTML::th( __( 'Amount', 'event_espresso' ), '', 'jst-cntr' );
 		$html .= EEH_HTML::th( __( 'Qty', 'event_espresso' ), '', 'jst-cntr' );
 		$html .= EEH_HTML::th( __( 'Line Total', 'event_espresso'), '', 'jst-cntr' );
@@ -169,10 +169,6 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
 
-		//Type Column
-		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
-		$type_html .= '<span class="ee-line-item-id">' . $line_item->code() . '</span>';
-		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
 
 		//Name Column
 		$name_link = $line_item_related_object instanceof EEI_Admin_Links ? $line_item_related_object->get_admin_details_link() : '';
@@ -184,7 +180,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->get_object_name() : $line_item->name();
 		$name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
 		$name_html .= $line_item->is_taxable() ? ' *' : '';
-		$name_html .= '<br>';
+		//maybe preface with icon?
+		$name_html = $line_item_related_object instanceof EEI_Visual_Representation ? $line_item_related_object->get_icon() . $name_html : $name_html;
+		$name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
 		$name_html .=  sprintf(
 			_x( '%1$sfor the %2$s, %3$s%4$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
@@ -193,6 +191,12 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 			'</span>'
 		);
 		$html .= EEH_HTML::td( $name_html, '', 'jst-left' );
+
+		//Type Column
+		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
+		$type_html .= '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $line_item->code() ) . '</span>';
+		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
+
 
 		//Amount Column
 		if ( $line_item->is_percent() ) {
