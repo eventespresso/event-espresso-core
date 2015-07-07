@@ -273,11 +273,10 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * 	_total_row
 	 *
 	 * @param EE_Line_Item $line_item
-	 * @param string       $text
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
+	private function _total_row( EE_Line_Item $line_item, $options = array() ) {
 		$html = '';
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
