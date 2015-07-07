@@ -24,7 +24,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Visual_Representation {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon {
 
 	/**
 	 * cached value for the the logical active status for the event
@@ -1136,7 +1136,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
-	 * Implementation for EEI_Visual_Representation interface method.
+	 * Implementation for EEI_Has_Icon interface method.
 	 * @see EEI_Visual_Representation for comments
 	 * @return string
 	 */

@@ -24,7 +24,7 @@
  * @subpackage 	includes/classes/EE_Ticket.class.php
  * @author             Darren Ethier
  */
-class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation, EEI_Visual_Representation {
+class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation, EEI_Has_Icon {
 
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
@@ -969,7 +969,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
 	/**
-	 * Implementation for EEI_Visual_Representation interface method.
+	 * Implementation for EEI_Has_Icon interface method.
 	 * @see EEI_Visual_Representation for comments
 	 * @return string
 	 */
