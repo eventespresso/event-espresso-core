@@ -609,7 +609,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_transaction_object();
 		$this->_template_args['TXN_ID'] = $this->_transaction->ID();
-		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
+		$this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration ? $this->_transaction->primary_registration()->attendee() : null;
 
 		//get line items from transaction
 		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
