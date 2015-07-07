@@ -15,13 +15,13 @@ interface EEI_Line_Item_Object {
 	 * Return the name representing the object (i.e. Event Title, or Ticket Name).
 	 * @return string
 	 */
-	public function get_object_name();
+	public function name();
 
 
 	/**
 	 * Return the ID representation for the object.
 	 * @return mixed int|string
 	 */
-	public function get_ID();
+	public function ID();
 
 } //end EEI_Line_Item_Object interface

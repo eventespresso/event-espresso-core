@@ -1110,29 +1110,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	}
 
 
-	/**
-	 * Implementation for EEI_Line_Item object method.
-	 * @see EEI_Line_Item_Object for comments
-	 * @return string
-	 */
-	public function get_object_name() {
-		return $this->name();
-	}
-
-
-
-
-
-	/**
-	 * Implementation for EEI_Line_Item object method.
-	 * @see EEI_Line_Item_Object for comments
-	 * @return int
-	 */
-	public function get_ID() {
-		return $this->ID();
-	}
-
-
 
 
 	/**

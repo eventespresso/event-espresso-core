@@ -175,10 +175,10 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_link = $line_item_related_object instanceof EEI_Admin_Links ? $line_item_related_object->get_admin_details_link() : '';
 
 		//related object scope.
-		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->get_object_name() : $line_item->parent()->name();
+		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : $line_item->parent()->name();
 		$parent_related_object_link = $parent_line_item_related_object instanceof EEI_Admin_Links ? $parent_line_item_related_object->get_admin_details_link() : '';
 
-		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->get_object_name() : $line_item->name();
+		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->name() : $line_item->name();
 		$name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
 		$name_html .= $line_item->is_taxable() ? ' *' : '';
 		//maybe preface with icon?

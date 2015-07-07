@@ -947,26 +947,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	}
 
 
-	/**
-	 * Implementation for EEI_Line_Item object method.
-	 * @see EEI_Line_Item_Object for comments
-	 * @return string
-	 */
-	public function get_object_name() {
-		return $this->name();
-	}
-
-
-	/**
-	 * Implementation for EEI_Line_Item object method.
-	 * @see EEI_Line_Item_Object for comments
-	 * @return int
-	 */
-	public function get_ID() {
-		return $this->ID();
-	}
-
-
 
 	/**
 	 * Implementation for EEI_Has_Icon interface method.
