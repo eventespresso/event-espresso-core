@@ -186,10 +186,11 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html .= $line_item->is_taxable() ? ' *' : '';
 		$name_html .= '<br>';
 		$name_html .=  sprintf(
-			_x( '%1$sfor the %2$s, %3$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
+			_x( '%1$sfor the %2$s, %3$s%4$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
 			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : __( 'Item', 'event_espresso' ),
-			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name
+			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
+			'</span>'
 		);
 		$html .= EEH_HTML::td( $name_html, '', 'jst-left' );
 
