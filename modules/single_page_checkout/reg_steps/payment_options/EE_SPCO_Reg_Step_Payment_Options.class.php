@@ -145,7 +145,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
 				$this->checkout->reset_reg_steps();
-				$this->checkout->generate_reg_form = false;
+				if ( $this->is_current_step() ) {
+					$this->checkout->generate_reg_form = false;
+				}
 				// DEBUG LOG
 				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 				return;
