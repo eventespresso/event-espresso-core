@@ -24,7 +24,7 @@
  * @subpackage 	includes/classes/EE_Ticket.class.php
  * @author             Darren Ethier
  */
-class EE_Ticket extends EE_Soft_Delete_Base_Class {
+class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation {
 
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
@@ -945,4 +945,62 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	public function count_registrations( $query_params = array() ) {
 		return $this->count_related('Registration', $query_params);
 	}
+
+
+	/**
+	 * Implementation for EEI_Line_Item object method.
+	 * @see EEI_Line_Item_Object for comments
+	 * @return string
+	 */
+	public function get_object_name() {
+		return $this->name();
+	}
+
+
+	/**
+	 * Implementation for EEI_Line_Item object method.
+	 * @see EEI_Line_Item_Object for comments
+	 * @return int
+	 */
+	public function get_ID() {
+		return $this->ID();
+	}
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return EE_Event|null
+	 */
+	public function get_related_event() {
+		//get one datetime to use for getting the event
+		$datetime = $this->first_datetime();
+		if ( $datetime instanceof EE_Datetime ) {
+			return $datetime->event();
+		}
+		return null;
+	}
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return string
+	 */
+	public function get_event_name() {
+		$event = $this->get_related_event();
+		return $event instanceof EE_Event ? $event->name() : '';
+	}
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return int
+	 */
+	public function get_event_ID() {
+		$event = $this->get_related_event();
+		return $event instanceof EE_Event ? $event->ID() : 0;
+	}
+
 } //end EE_Ticket class
