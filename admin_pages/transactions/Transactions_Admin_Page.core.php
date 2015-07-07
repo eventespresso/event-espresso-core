@@ -616,8 +616,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['TXN_ID'] = $this->_transaction->ID();
 		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
 
-		//get line items from transaction
-		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
+		//get line table
+		EEH_Autoloader::register_line_item_display_autoloaders();
+		$Line_Item_Display = new EE_Line_Item_Display( 'admin_table', 'EE_Admin_Table_Line_Item_Display_Strategy' );
+		$this->_template_args['line_item_table'] = $Line_Item_Display->display_line_item( $this->_transaction->total_line_item() );
 		$this->_template_args['REG_code'] = $this->_transaction->get_first_related('Registration')->get('REG_code');
 
 		// process taxes
