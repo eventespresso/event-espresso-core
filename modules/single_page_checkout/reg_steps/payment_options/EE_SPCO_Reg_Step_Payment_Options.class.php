@@ -145,7 +145,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
 				$this->checkout->reset_reg_steps();
-				$this->checkout->generate_reg_form = false;
+				if ( $this->is_current_step() ) {
+					$this->checkout->generate_reg_form = false;
+				}
 				// DEBUG LOG
 				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
 				return;
@@ -234,6 +236,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $this->checkout->amount_owing > 0 ) {
 				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
 			}
+		} else {
+			$this->_hide_reg_step_submit_button_if_revisit();
+
 		}
 		return new EE_Form_Section_Proper(
 			array(
@@ -249,6 +254,21 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
+	 * _hide_reg_step_submit_button
+	 * removes the html for the reg step submit button
+	 * by replacing it with an empty string via filter callback
+	 *
+	 * @return void
+	 */
+	protected function _hide_reg_step_submit_button_if_revisit() {
+		if ( $this->checkout->revisit ) {
+			add_filter( 'FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', '__return_empty_string' );
+		}
+	}
+
+
+
+	/**
 	 * sold_out_events
 	 * @param \EE_Event[] $sold_out_events_array
 	 * @return \EE_Form_Section_Proper
@@ -256,7 +276,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _sold_out_events( $sold_out_events_array = array() ) {
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'events_sold_out';
-
 		$sold_out_events = '';
 		foreach ( $sold_out_events_array as $sold_out_event ) {
 			$sold_out_events .= EEH_HTML::li( EEH_HTML::span( $sold_out_event->name(), '', 'dashicons dashicons-marker ee-icon-size-16 pink-text' ));
@@ -715,7 +734,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 			return apply_filters(
 				'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
-				$billing_form
+				$billing_form,
+				$payment_method
 			);
 		}
 		// no actual billing form, so return empty HTML form section
