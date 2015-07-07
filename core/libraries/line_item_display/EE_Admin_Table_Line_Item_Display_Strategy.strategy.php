@@ -276,7 +276,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	private function _total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
 		$html = '';
 		// start of row
-		$html = EEH_HTML::tr( '', '', 'admin-primary-mbxo-total-tr' );
+		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
 		// Total th label
 		$total_label = sprintf( __( 'Transaction Total %s', 'event_espresso' ),  '(' . EE_Registry::instance()->CFG->currency->code . ')' );
 		$html .= EEH_HTML::th( $total_label, '',  'jst-rght',  '',  ' colspan="4"' );
