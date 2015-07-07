@@ -127,7 +127,6 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	/**
 	 * Table header for display.
 	 * @since   4.8
-	 * @options array Array of options for the table.
 	 * @param array $options
 	 * @return string
 	 */
