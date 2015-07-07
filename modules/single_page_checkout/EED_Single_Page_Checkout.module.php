@@ -415,6 +415,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::$_initialized = TRUE;
 		// set no cache headers and constants
 		EE_System::do_not_cache();
+		// add anchor
+		add_action( 'loop_start', array( $this, 'set_checkout_anchor' ), 1 );
 		// remove transaction lock
 		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
@@ -1330,6 +1332,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			exit();
 		}
 	}
+
+
+
+	/**
+	 *   set_checkout_anchor
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function set_checkout_anchor() {
+		echo '<a id="checkout"/>';
+	}
+
+
 
 }
 // End of file EED_Single_Page_Checkout.module.php
