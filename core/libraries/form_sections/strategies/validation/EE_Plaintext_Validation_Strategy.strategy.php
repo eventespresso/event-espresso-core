@@ -28,7 +28,7 @@ class EE_Plaintext_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	public function validate($normalized_value) {
 		$no_tags = wp_strip_all_tags( $normalized_value );
-		if( strlen( $no_tags ) < strlen( $normalized_value ) ) {
+		if( strlen( $no_tags ) < strlen( trim( $normalized_value ) ) ) {
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'no_html_tags' );
 		}
 		parent::validate($normalized_value);
