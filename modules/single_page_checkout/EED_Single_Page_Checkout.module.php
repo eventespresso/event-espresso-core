@@ -486,14 +486,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    _get_first_step
-	 *  gets slug for first step in $_reg_steps_array
+	 *  _display_request_vars
 	 *
-	 * @access    private
-	 * @throws EE_Error
-	 * @return    array
+	 * @access    protected
+	 * @return    void
 	 */
 	protected function _display_request_vars() {
+		if ( ! WP_DEBUG ) {
+			return;
+		}
 		EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->step, '$this->checkout->step', __FILE__, __LINE__ );
 		EEH_Debug_Tools::printr( $this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__ );
@@ -1139,33 +1140,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				array(
 					'name' 	=> 'single-page-checkout',
 					'html_id' 	=> 'ee-single-page-checkout-dv',
-					'layout_strategy' =>
-						new EE_Template_Layout(
-							array(
-								'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
-								'template_args' => array(
-									'empty_cart' 		=> count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params )) < 1 ? TRUE : FALSE,
-									'revisit' 				=> $this->checkout->revisit,
-									'reg_steps' 			=> $this->checkout->reg_steps,
-									'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
-									'empty_msg' 		=> apply_filters(
-										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
-										sprintf(
-											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-											'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
-											'">',
-											'</a>'
-										)
-									),
-									'registration_time_limit' =>
-										$this->checkout->get_registration_time_limit(),
-									'session_expiration' =>
-										gmdate( 'M d, Y H:i:s',
-											EE_Registry::instance()
-											->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+					'layout_strategy' => new EE_Template_Layout(
+						array(
+							'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
+							'template_args' => array(
+								'empty_cart' 		=> count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params )) < 1 ? TRUE : FALSE,
+								'revisit' 				=> $this->checkout->revisit,
+								'reg_steps' 			=> $this->checkout->reg_steps,
+								'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
+								'empty_msg' 		=> apply_filters(
+									'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
+									sprintf(
+										__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
+										'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
+										'">',
+										'</a>'
+									)
+								),
+								'registration_time_limit' =>
+									$this->checkout->get_registration_time_limit(),
+								'session_expiration' => gmdate(
+									'M d, Y H:i:s',
+									EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
 								)
 							)
 						)
+					)
 				)
 			);
 			// load template and add to output sent that gets filtered into the_content()
