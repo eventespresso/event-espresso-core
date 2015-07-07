@@ -110,6 +110,11 @@ abstract class EE_PMT_Base{
 			EE_Registry::instance()->load_helper( 'Money' );
 			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
+		// by default, On Site gateways have a billing form
+		if ( $this->payment_occurs() == EE_PMT_Base::onsite ) {
+			$this->_has_billing_form = true;
+		}
+
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
 		}
