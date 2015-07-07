@@ -110,7 +110,7 @@ class EEM_Line_Item extends EEM_Base {
 		$this->_tables = array(
 			'Line_Item'=>new EE_Primary_Table('esp_line_item','LIN_ID')
 		);
-		$line_items_can_be_for = array('Ticket','Price');
+		$line_items_can_be_for = apply_filters( 'FHEE__EEM_Line_Item__line_items_can_be_for', array('Ticket','Price', 'Event' ) );
 		$this->_fields = array(
 			'Line_Item' => array(
 				'LIN_ID' 				=> new EE_Primary_Key_Int_Field( 'LIN_ID', __( "ID", "event_espresso" ) ),
@@ -143,6 +143,7 @@ class EEM_Line_Item extends EEM_Base {
 			'Transaction'	=>new EE_Belongs_To_Relation(),
 			'Ticket'				=>new EE_Belongs_To_Any_Relation(),
 			'Price'				=>new EE_Belongs_To_Any_Relation(),
+			'Event' => new EE_Belongs_To_Any_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Transaction.Registration.Event';
 		$this->_caps_slug = 'transactions';
