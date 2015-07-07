@@ -24,7 +24,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Visual_Representation {
 
 	/**
 	 * cached value for the the logical active status for the event
@@ -1130,6 +1130,18 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 */
 	public function get_ID() {
 		return $this->ID();
+	}
+
+
+
+
+	/**
+	 * Implementation for EEI_Visual_Representation interface method.
+	 * @see EEI_Visual_Representation for comments
+	 * @return string
+	 */
+	public function get_icon() {
+		return '<span class="dashicons dashicons-calendar"></span>';
 	}
 
 
