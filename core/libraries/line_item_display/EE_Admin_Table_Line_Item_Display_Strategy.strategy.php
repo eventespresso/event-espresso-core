@@ -123,10 +123,12 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	}
 
 
+
 	/**
 	 * Table header for display.
-	 * @since 4.8
+	 * @since   4.8
 	 * @options array Array of options for the table.
+	 * @param array $options
 	 * @return string
 	 */
 	protected function _table_header( $options ) {
@@ -277,7 +279,6 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @return mixed
 	 */
 	private function _total_row( EE_Line_Item $line_item, $options = array() ) {
-		$html = '';
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
 		// Total th label
