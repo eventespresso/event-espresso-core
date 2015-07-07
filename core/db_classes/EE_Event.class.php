@@ -1141,7 +1141,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return string
 	 */
 	public function get_icon() {
-		return '<span class="dashicons dashicons-calendar"></span>';
+		return '<span class="dashicons dashicons-flag"></span>';
 	}
 
 
