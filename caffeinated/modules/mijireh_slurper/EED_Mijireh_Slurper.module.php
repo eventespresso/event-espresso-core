@@ -161,7 +161,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 			 array(
 				 'mijireh_image_url'=> $mijireh_payment_method->button_url(),
 				 'access_key'=>$access_key,
-				 'slurp_action_link'=> esc_url( add_query_arg('mijireh_slurp_now','true', add_query_arg( $wp->query_string, '',  '?'.$_SERVER['QUERY_STRING'] )))
+				 'slurp_action_link'=> esc_url_raw( add_query_arg('mijireh_slurp_now','true', add_query_arg( $wp->query_string, '',  '?'.$_SERVER['QUERY_STRING'] )))
 			 )
 		 );
 	   }

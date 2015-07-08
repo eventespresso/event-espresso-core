@@ -634,15 +634,15 @@ input.ee-register-button {
 	cursor: pointer;
 	font-size: 21px;
 	font-weight: bold;
-	height: 30px;
-	line-height: 24px;
+	height: 26px;
+	line-height: 20px;
 	padding: 0;
 	position: absolute;
-	right: -15px;
+	right: -12px;
 	text-align: center;
-	top: -15px;
+	top: -12px;
 	vertical-align: middle;
-	width: 30px;
+	width: 26px;
 }
 .close-espresso-notice:hover {
 	background: #ffffff;
@@ -894,10 +894,10 @@ input.ee-register-button {
 	margin:0 0 .5em;
 }
 
-#ee-m-mode-admin-notice-dv {
+.ee-really-important-notice-dv {
 	position: fixed;
-	z-index: 999999;
-	top: 0;
+	z-index: 9999;
+	bottom: 0;
 	left: 0;
 	width: 100%;
 	padding: .5em;
@@ -914,18 +914,18 @@ input.ee-register-button {
 	box-sizing: border-box;
 }
 
-#ee-m-mode-admin-notice-dv p {
+.ee-really-important-notice-dv p {
 	margin: 0;
 }
-#ee-m-mode-admin-notice-dv a {
+.ee-really-important-notice-dv a {
 	color:#FEDF6C;
 	text-shadow:0 1px 1px rgba( 0, 0, 0, 0.4 );
 }
-#ee-m-mode-admin-notice-dv a:hover {
+.ee-really-important-notice-dv a:hover {
 	color: #F8D755;
 	text-shadow:0 .5px 0  rgba( 0, 0, 0, 0.2 );
 }
-#ee-m-mode-admin-notice-dv a:active {
+.ee-really-important-notice-dv a:active {
 	color: #F8D755;
 	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 }
