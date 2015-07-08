@@ -112,7 +112,11 @@ abstract class EE_PMT_Base{
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
 			// by default, On Site gateways have a billing form
-			$this->_has_billing_form = $this->payment_occurs() == EE_PMT_Base::onsite ? true : false;
+			if ( $this->payment_occurs() == EE_PMT_Base::onsite ) {
+				$this->set_has_billing_form( true );
+			} else {
+				$this->set_has_billing_form( false );
+			}
 		}
 
 		if( ! $this->_pretty_name){
@@ -122,6 +126,15 @@ abstract class EE_PMT_Base{
 		if( $this->_default_button_url === NULL){
 			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
+	}
+
+
+
+	/**
+	 * @param boolean $has_billing_form
+	 */
+	public function set_has_billing_form( $has_billing_form ) {
+		$this->_has_billing_form = filter_var( $has_billing_form, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
