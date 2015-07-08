@@ -290,22 +290,22 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	private static function _process_recaptcha_response() {
 		// verify library is loaded
-		if ( ! class_exists( 'ReCaptcha' )) {
-			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );
+		if ( ! class_exists( '\\ReCaptcha\\ReCaptcha' )) {
+			require_once( RECAPTCHA_BASE_PATH . DS . 'autoload.php' );
 		}
 		// The response from reCAPTCHA
 		EED_Recaptcha::_get_recaptcha_response();
 		$recaptcha_response = EED_Recaptcha::$_recaptcha_response;
 		// Was there a reCAPTCHA response?
 		if ( $recaptcha_response ) {
-			$reCaptcha = new ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_privatekey );
-			$recaptcha_response = $reCaptcha->verifyResponse(
+			$reCaptcha = new \ReCaptcha\ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_privatekey );
+			$recaptcha_response = $reCaptcha->verify(
 				$_SERVER['REMOTE_ADDR'],
 				EED_Recaptcha::$_recaptcha_response
 			);
 		}
 		// sorry... it appears you can't read gibberish chicken scratches !!!
-		if ( $recaptcha_response instanceof ReCaptchaResponse && $recaptcha_response->success ) {
+		if ( $recaptcha_response instanceof \ReCaptcha\Response && $recaptcha_response->isSuccess() ) {
 			return TRUE;
 		}
 		return FALSE;
