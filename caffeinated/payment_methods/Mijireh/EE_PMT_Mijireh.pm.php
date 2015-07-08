@@ -66,20 +66,31 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
-		$form = new EE_Payment_Method_Form(array(
-			'extra_meta_inputs'=>array(
-				'access_key'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  $this->get_help_tab_link()),
-					'required' => true
-				)),
+		$form = new EE_Payment_Method_Form(
+			array(
+				'extra_meta_inputs' => array(
+					'access_key' => new EE_Text_Input(
+						array(
+							'html_label_text' => sprintf(
+								__( "Mijireh Access Key %s", 'event_espresso' ),
+								$this->get_help_tab_link()
+							),
+							'required'        => true
+						)
+					),
+				),
+				'exclude'           => array( 'PMD_debug_mode' ),
+			)
+		);
+		$form->add_subsections(
+			array(
+				'slurper_area' => new EE_Form_Section_HTML_From_Template(
+					$this->file_folder() . DS . 'templates' . DS . 'mijireh_settings_after_form.template.php'
+				)
 			),
-			'exclude'=>array('PMD_debug_mode'),
-		));
-		$form->add_subsections( array(
-			'slurper_area' => new EE_Form_Section_HTML_From_Template( $this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php' ),
 			null, // no specific subsection targeted
 			false // add to end
-		));
+		);
 		return $form;
 	}
 
