@@ -514,6 +514,24 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
 	}
 
+	/**
+	 * Updates the registration' final prices based on the current line item tree (taking into account
+	 * discounts, taxes, and other line items unrelated to tickets.)
+	 * @param EE_Transaction $transaction
+	 */
+	public function update_registration_final_prices( $transaction ) {
+		$reg_final_price_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item(), $save_regs = true );
+		foreach( $transaction->registrations() as $registration ) {
+			$line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
+			if( isset( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] ) ) {
+				$registration->set_final_price( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] );
+				if( $save_regs ) {
+					$registration->save();
+				}
+			}
+		}
+	}
+
 
 
 }
