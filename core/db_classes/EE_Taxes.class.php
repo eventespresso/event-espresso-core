@@ -58,7 +58,7 @@ class EE_Taxes extends EE_BASE {
 	public static function get_total_taxes_percentage() {
 		$total_tax_percent = 0;
 		foreach( self::get_taxes_for_admin() as $tax_price ) {
-			$total_tax_percent += $tax->get( 'PRC_amount' );
+			$total_tax_percent += $tax_price->get( 'PRC_amount' );
 		}
 		return $total_tax_percent;
 	}
