@@ -107,7 +107,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'contact_list_export'=>  __("Export Data", "event_espresso"),
 				),
 			'publishbox' => array(
-				'add_new_attendee' => __("Update Contact Record", 'event_espresso'),
+				'add_new_attendee' => __("Add Contact Record", 'event_espresso'),
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
 				),
 			'hide_add_button_on_cpt_route' => array(
