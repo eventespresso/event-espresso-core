@@ -829,7 +829,7 @@ class EEH_Line_Item {
 		for( $i = 0; $i < $indentation; $i++ ){
 			echo "-";
 		}
-		echo $line_item->name() . ": " . $line_item->type() . " $" . $line_item->total();
+		echo $line_item->name() . "(" . $line_item->ID() . "): " . $line_item->type() . " $" . $line_item->total() . "($" . $line_item->unit_price() . "x" . $line_item->quantity() . ")";
 		if( $line_item->is_taxable() ){
 			echo " taxable";
 		}
@@ -893,6 +893,86 @@ class EEH_Line_Item {
 	public static function create_default_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL) {
 		EE_Error::doing_it_wrong( 'EEH_Line_Item::create_default_taxes_subtotal()', __('Method replaced with EEH_Line_Item::create_taxes_subtotal()', 'event_espresso'), '4.6.0' );
 		return self::create_taxes_subtotal( $total_line_item, $transaction );
+	}
+
+	/**
+	 * Calculates the registration's final price, taking into account that they
+	 * need to not only help pay for their OWN ticket, but also any transactio-wide surcharges and taxes,
+	 * and receive a portion of any transaction-wide discounts.
+	 * eg1, if I buy a $1 ticket and brent buys a $9 ticket, and we receive a $5 discount
+	 * then I'll get 1/10 of that $5 discount, which is $0.50, and brent will get
+	 * 9/10ths of that $5 discount, which is $4.50. So my final price should be $0.50
+	 * and brent's final price should be $5.50.
+	 *
+	 * In order to do this, we basically need to traverse the line item tree calculating
+	 * the running totals (just as if we were recalculating the total), but when we identify
+	 * regular line items, we need to keep track of their share of the grand total.
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @param array $running_totals array exactly like the return value (client code usually shouldn't provide this)
+	 * @param float $tax_percent_decimal (client code usually shouldn't provide this)
+	 * @return array keys are ticket IDs and values are their share of the running total,
+	 * plus the key 'total'. Eg
+	 * array(
+	 *	12 => 4.3
+	 *	23 => 8.0
+	 *	'total' => 16.6
+	 * ).
+	 * So to find which registrations have which final price, we need to find which line item
+	 * is theirs, which can be done with
+	 * `EEM_Line_Item::instance()->get_line_item_for_registration( $registration );`
+	 */
+	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $running_totals = array(), $tax_percent_decimal = null ) {
+		//init running grand total if not already
+		if( ! isset( $running_totals[ 'total' ] ) ) {
+			$running_totals[ 'total' ] = 0;
+		}
+		//find how much tax to add onto taxable items as we go too eh
+		//(and don't just grab it from the prices table. This transaction might have old prices on it)
+		if( $tax_percent_decimal === null ) {
+			$taxes_subtotal_line_item = EEH_Line_Item::get_taxes_subtotal( $line_item );
+			if( $taxes_subtotal_line_item instanceof EE_Line_Item &&
+					$taxes_subtotal_line_item->type() === EEM_Line_Item::type_tax_sub_total ) {
+				if( $taxes_subtotal_line_item->percent() != 0 ){
+					$tax_percent_decimal = $taxes_subtotal_line_item->percent() / 100;
+				} else {
+					$tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
+				}
+			}
+		}
+		foreach( $line_item->children() as $child_line_item ) {
+			if( $child_line_item->type() === EEM_Line_Item::type_line_item &&
+					$child_line_item->OBJ_type() === 'Ticket' ) {
+				if( $child_line_item->is_taxable() ) {
+					$percent_tax_to_add_onto_this_line_item = $tax_percent_decimal;
+				}else{
+					$percent_tax_to_add_onto_this_line_item = 0;
+				}
+				if( isset( $running_totals[ $child_line_item->ID() ] ) ) {
+					//huh? that shouldn't happen.
+				}else{//its not in our running totals yet. great.
+					$running_totals[ $child_line_item->ID() ] = ( 1 + $percent_tax_to_add_onto_this_line_item ) * $child_line_item->unit_price();
+				}
+				$running_totals[ 'total' ] += ( 1 + $percent_tax_to_add_onto_this_line_item ) * $child_line_item->total();
+			}elseif( $child_line_item->type() === EEM_Line_Item::type_sub_total ) {
+				$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $running_totals, $tax_percent_decimal );
+				//combine arrays but preserve numeric keys
+				//also note that when using the UNION operator, duplicate keys in the 2nd array are discarded
+				$running_totals =  $running_totals_from_subtotal + $running_totals ;
+			}elseif( $child_line_item->type() === EEM_Line_Item::type_line_item ) {
+				//it's some other type of item added to the cart
+				//it should affect the running totals
+				//basically we want to convert it into a PERCENT modifier. Because
+				//more clearly affect all registration's final price equally
+				$line_items_percent_of_running_total = $child_line_item->total() / $running_totals[ 'total' ];
+				foreach( $running_totals as $line_item_id => $running_total ) {
+					//update the running totals
+					//yes this actually even works for the running grand total!
+					$running_totals[ $line_item_id ] = ( 1 + $line_items_percent_of_running_total ) * $running_total;
+				}
+			}
+		}
+		return $running_totals;
 	}
 
 

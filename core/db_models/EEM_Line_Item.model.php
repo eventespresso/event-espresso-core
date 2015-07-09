@@ -286,6 +286,21 @@ class EEM_Line_Item extends EEM_Base {
 		));
 	}
 
+	/**
+	 * Gets the registration's corresponding line item
+	 * @param EE_Registration $registration
+	 * @return EEM_Line_ITem
+	 */
+	public function get_line_item_for_registration( EE_Registration $registration ) {
+		return $this->get_one( array(
+			array(
+				'OBJ_ID' => $registration->ticket_ID(),
+				'OBJ_type' => 'Ticket',
+				'TXN_ID' => $registration->transaction_ID()
+			)
+		));
+	}
+
 
 
 }

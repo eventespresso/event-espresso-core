@@ -235,6 +235,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function is_percent() {
+		if( $this->is_tax_sub_total() ) {
+			//tax subttoals HAVE a percent on them, that percentage only applies
+			//to taxable items, so its' an exception. Treat it like a flat line item
+			return false;
+		}
 		$unit_price = $this->get( 'LIN_unit_price' );
 		$percent = $this->get( 'LIN_percent' );
 		if ( $unit_price < .001 && $percent ) {
@@ -719,6 +724,7 @@ class EE_Line_Item extends EE_Base_Class {
 	function recalculate_total_including_taxes() {
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_tax_total();
+
 		$total = $pre_tax_total + $tax_total;
 		// no negative totals plz
 		$total = max( $total, 0 );
@@ -814,13 +820,16 @@ class EE_Line_Item extends EE_Base_Class {
 	private function _recalculate_tax_sub_total() {
 		if ( $this->is_tax_sub_total() ) {
 			$total = 0;
+			$total_percent = 0;
 			//simply loop through all its children (which should be taxes) and sum their total
 			foreach ( $this->children() as $child_tax ) {
 				if ( $child_tax instanceof EE_Line_Item ) {
 					$total += $child_tax->total();
+					$total_percent += $child_tax->percent();
 				}
 			}
 			$this->set_total( $total );
+			$this->set_percent( $total_percent );
 		} elseif ( $this->is_total() ) {
 			foreach ( $this->children() as $maybe_tax_subtotal ) {
 				if ( $maybe_tax_subtotal instanceof EE_Line_Item ) {

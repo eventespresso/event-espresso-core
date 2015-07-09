@@ -133,6 +133,256 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( $tax_before_recalculations, $new_tax->total() );
 		$this->assertEquals( $tax_total_before_recalculation, $old_tax_subtotal->total() );
 	}
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__1_nontaxable_ticket() {
+		$transaction = $this->new_typical_transaction(
+				array(
+					'taxable_tickets' => 0
+				));
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		$this->assertEquals( $transaction->total(), $totals[ 'total' ] );
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'LIN_type' => EEM_Line_Item::type_line_item
+					)
+				));
+		$this->assertEquals( 1, count( $ticket_line_items ) );
+		$ticket_line_item = reset( $ticket_line_items );
+		$this->assertEquals( 1, $ticket_line_item->quantity() );
+		$this->assertEquals( $ticket_line_item->total(), $totals[ $ticket_line_item->ID() ] );
+	}
+
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__1_taxable_ticket() {
+		$transaction = $this->new_typical_transaction();
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		$this->assertEquals( $transaction->total(), $totals[ 'total' ] );
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'LIN_type' => EEM_Line_Item::type_line_item
+					)
+				));
+		$this->assertEquals( 1, count( $ticket_line_items ) );
+		$ticket_line_item = reset( $ticket_line_items );
+		$this->assertEquals( 1, $ticket_line_item->quantity() );
+		$ticket = $ticket_line_item->ticket();
+		$this->assertEquals( $ticket->get_ticket_total_with_taxes(), $totals[ $ticket_line_item->ID() ] );
+	}
+
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__1_taxable_ticket_with_quantity_of_2() {
+		$transaction = $this->new_typical_transaction();
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'LIN_type' => EEM_Line_Item::type_line_item
+					)
+				));
+		$this->assertEquals( 1, count( $ticket_line_items ) );
+		$ticket_line_item = reset( $ticket_line_items );
+		$ticket_line_item->set_quantity( 2 );
+		$transaction->total_line_item()->recalculate_total_including_taxes();
+		$this->assertEquals( 2, $ticket_line_item->quantity() );
+		$ticket = $ticket_line_item->ticket();
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		$this->assertEquals( $transaction->total(), $totals[ 'total' ] );
+		$this->assertEquals( $ticket->get_ticket_total_with_taxes(), $totals[ $ticket_line_item->ID() ] );
+	}
+
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__1_taxable_ticket_with_a_discount() {
+		$transaction = $this->new_typical_transaction();
+		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Some Discount', -5 );
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		$this->assertEquals( $transaction->total(), $totals[ 'total' ] );
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'LIN_type' => EEM_Line_Item::type_line_item,
+						'OBJ_type' => 'Ticket'
+					)
+				));
+		$this->assertEquals( 1, count( $ticket_line_items ) );
+		$ticket_line_item = reset( $ticket_line_items );
+		$this->assertEquals( 6.50, $totals[ $ticket_line_item->ID() ] );
+
+//		honestly the easiest way to confirm the total was right is to visualize the tree
+//		EEH_Line_Item::visualize( $transaction->total_line_item() );
+	}
+
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__3_taxable_tickets_with_a_discount() {
+		$transaction = $this->new_typical_transaction(
+				array(
+					'ticket_types' => 2
+				));
+		//add another ticket purchase for one of the same events
+		$event1 = EEM_Event::instance()->get_one(
+				array(
+					array(
+						'Registration.TXN_ID' => $transaction->ID()
+					)
+				));
+		$dtt = $event1->get_first_related( 'Datetime' );
+		$new_tkt = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price' => 6 ) );
+		$new_tkt->_add_relation_to( $dtt, 'Datetime' );
+		$quantity_of_new_tks_purchased = 2;
+		EEH_Line_Item::add_ticket_purchase( $transaction->total_line_item(), $new_tkt, $quantity_of_new_tks_purchased );
+		for( $i = 0; $i < 2; $i++ ) {
+			$this->new_model_obj_with_dependencies( 'Registration',
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'EVT_ID' => $dtt->get( 'EVT_ID' ),
+						'TKT_ID' => $new_tkt->ID(),
+					));
+		}
+		//and add an unrelated purchase
+		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+
+		//		honestly the easiest way to confirm the total was right is to visualize the tree
+//		var_dump( $totals );
+//		EEH_Line_Item::visualize( $transaction->total_line_item() );
+
+		//verify that if we added the REG_final_prices onto the regs as derived from $totals,
+		//that it would equal the grand total
+		$sum_of_regs_final_prices = 0;
+		foreach( $transaction->registrations() as $reg ) {
+			$ticket_line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $reg );
+			$sum_of_regs_final_prices += $totals[ $ticket_line_item->ID() ];
+		}
+		$this->assertEquals( $totals[ 'total' ], $sum_of_regs_final_prices );
+
+		//ok now let's verify the 'REG_final_price' for each ticket's line item is what we expect it to be
+		//so there should be 3 ticket line items right?
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'OBJ_type' => 'Ticket'
+					)
+				));
+		//one ticket should be 10 pre-tax
+		$ten_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
+			array(
+				'TXN_ID' => $transaction->ID(),
+				'LIN_unit_price' => 10
+			)
+		));
+		$this->assertEquals( 10.26, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
+		//one ticket should be 20 pre-tax
+		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
+			array(
+				'TXN_ID' => $transaction->ID(),
+				'LIN_unit_price' => 20
+			)
+		));
+		$this->assertEquals( 20.53, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
+		//one ticket should be for 6 pre-tax (although its non-taxable anyway)
+		$six_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
+			array(
+				'TXN_ID' => $transaction->ID(),
+				'LIN_unit_price' => 6
+			)
+		));
+		$this->assertEquals( 5.35, round( $totals[ $six_dollar_ticket->ID() ], 2 ) );
+	}
+
+	/**
+	 * @group 8193
+	 */
+	public function test_calculate_reg_final_prices_per_line_item__3_taxable_tickets_with_an_event_wide_discount() {
+		$transaction = $this->new_typical_transaction(
+				array(
+					'ticket_types' => 2
+				));
+		//add another ticket purchase for one of the same events
+		$event1 = EEM_Event::instance()->get_one(
+				array(
+					array(
+						'Registration.TXN_ID' => $transaction->ID()
+					)
+				));
+		$event_line_item = EEM_Line_Item::instance()->get_one(
+						array(
+							array(
+								'TXN_ID' => $transaction->ID(),
+								'OBJ_type' => 'Event',
+								'OBJ_ID' => $event1->ID() )));
+		$discount = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_name' => 'event discount',
+					'LIN_total' => -8,
+					'LIN_unit_price' => -8,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $event_line_item->ID()
+				));
+		//and add an unrelated purchase
+		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+
+		//		honestly the easiest way to confirm the total was right is to visualize the tree
+//		var_dump( $totals );
+//		EEH_Line_Item::visualize( $transaction->total_line_item() );
+
+		//verify that if we added the REG_final_prices onto the regs as derived from $totals,
+		//that it would equal the grand total
+		$sum_of_regs_final_prices = 0;
+		foreach( $transaction->registrations() as $reg ) {
+			$ticket_line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $reg );
+			$sum_of_regs_final_prices += $totals[ $ticket_line_item->ID() ];
+		}
+		$this->assertEquals( $totals[ 'total' ], $sum_of_regs_final_prices );
+
+		//ok now let's verify the 'REG_final_price' for each ticket's line item is what we expect it to be
+		//so there should be 3 ticket line items right?
+		$ticket_line_items = EEM_Line_Item::instance()->get_all(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID(),
+						'OBJ_type' => 'Ticket'
+					)
+				));
+		//one ticket should be 10 pre-tax
+		$ten_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
+			array(
+				'TXN_ID' => $transaction->ID(),
+				'LIN_unit_price' => 10
+			)
+		));
+		$this->assertEquals( 2.84, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
+		//one ticket should be 20 pre-tax
+		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
+			array(
+				'TXN_ID' => $transaction->ID(),
+				'LIN_unit_price' => 20
+			)
+		));
+		$this->assertEquals( 18.66, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
+	}
+
+
 }
 
 // End of file EEH_Line_Item_Test.php
