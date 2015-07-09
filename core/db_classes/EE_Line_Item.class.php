@@ -236,7 +236,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function is_percent() {
 		if( $this->is_tax_sub_total() ) {
-			//tax subttoals HAVE a percent on them, that percentage only applies
+			//tax subtotals HAVE a percent on them, that percentage only applies
 			//to taxable items, so its' an exception. Treat it like a flat line item
 			return false;
 		}
