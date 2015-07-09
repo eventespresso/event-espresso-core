@@ -429,7 +429,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function get_object() {
 		$model_name_of_related_obj = $this->OBJ_type();
-		return EE_Registry::instance()->is_model_name( $model_name_of_related_obj ) ? $this->get_first_related( $model_name_of_related_obj ) : NULL;
+		return $this->get_model()->has_relation(  $model_name_of_related_obj ) ? $this->get_first_related( $model_name_of_related_obj ) : NULL;
 	}
 
 

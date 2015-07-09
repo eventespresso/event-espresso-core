@@ -24,7 +24,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon {
 
 	/**
 	 * cached value for the the logical active status for the event
@@ -1110,4 +1110,83 @@ class EE_Event extends EE_CPT_Base {
 	}
 
 
+
+
+	/**
+	 * Implementation for EEI_Has_Icon interface method.
+	 * @see EEI_Visual_Representation for comments
+	 * @return string
+	 */
+	public function get_icon() {
+		return '<span class="dashicons dashicons-flag"></span>';
+	}
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_details_link() {
+		return $this->get_admin_edit_link();
+	}
+
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return return string
+	 */
+	public function get_admin_edit_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'edit',
+			'post' => $this->ID()
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_settings_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default_event_settings'
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_overview_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default'
+		),
+			admin_url( 'admin.php' )
+		);
+	}
 }

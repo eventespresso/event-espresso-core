@@ -5,47 +5,7 @@
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
-		<table class="admin-primary-mbox-tbl">
-			<thead>
-				<tr>
-					<th class="jst-left"><?php _e( 'Line Item ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
-				</tr>
-			</thead>
-			<tbody>
-		<?php foreach ( $line_items as $item ) : ?>
-			<?php
-				$event = $item->ticket_event();
-				$event_name = $item->ticket_event_name();
-				$event_link = $event instanceof EE_Event ? '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ), TXN_ADMIN_URL ) . '">' . $event_name . '</a>' : $event_name;
-			?>
-			<tr>
-				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><?php echo $event_link;?></td>
-				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price'), FALSE, FALSE ); ?></td>
-				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total'), FALSE, FALSE ); ?></td>
-			</tr>
-		<?php endforeach; // $items?>
-		<?php if ( is_array($taxes) ) : ?>
-			<?php foreach ( $taxes as $tax ) : ?>
-				<tr class="admin-primary-mbox-taxes-tr">
-					<th class=" jst-rght" colspan="5"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency($tax->get('LIN_total'), FALSE, FALSE );?></th>
-				</tr>
-			<?php endforeach; // $taxes?>
-		<?php endif; // $taxes?>
-				<tr class="admin-primary-mbox-total-tr">
-					<th class=" jst-rght" colspan="5"><?php printf( __( 'Transaction Total %s', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')');?></th>
-					<th class=" jst-rght"><?php echo $grand_total;?></th>
-				</tr>
-			</tbody>
-		</table>
+		<?php echo $line_item_table; ?>
 		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>
 

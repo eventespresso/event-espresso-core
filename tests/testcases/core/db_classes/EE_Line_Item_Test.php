@@ -85,6 +85,24 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		//temporarily commented out because this throws an error.
 		//$this->assertNotEquals( $pretax_total, $total_line_item->get_child_line_item('tickets')->total() );
 	}
+
+	/**
+	 * @group 8464
+	 * Verifies that if the line item is for a relation that isn't currently defined
+	 * (and in core there is no promotion model) that we don't get an exception or warning, just null
+	 */
+	public function test_get_object__non_existent_model_name() {
+		$li = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'OBJ_ID' => 123, 'OBJ_type' => 'Promotion' ) );
+		$this->assertNull( $li->get_object() );
+	}
+	/**
+	 * @group 8464
+	 * Verifies that if the line item is for a relation that isn't currently RELATED but IS defined
+	 */
+	public function test_get_object__non_related_model_name() {
+		$li = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'OBJ_ID' => 123, 'OBJ_type' => 'Answer' ) );
+		$this->assertNull( $li->get_object() );
+	}
 }
 
 // End of file EE_Line_Item_Test.php

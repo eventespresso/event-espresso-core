@@ -33,7 +33,7 @@ abstract class EE_PMT_Base{
 	/**
 	 * @var boolean
 	 */
-	protected $_has_billing_form = FALSE;
+	protected $_has_billing_form;
 
 	/**
 	 * @var EE_Gateway
@@ -110,6 +110,15 @@ abstract class EE_PMT_Base{
 			EE_Registry::instance()->load_helper( 'Money' );
 			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
+		if ( ! isset( $this->_has_billing_form ) ) {
+			// by default, On Site gateways have a billing form
+			if ( $this->payment_occurs() == EE_PMT_Base::onsite ) {
+				$this->set_has_billing_form( true );
+			} else {
+				$this->set_has_billing_form( false );
+			}
+		}
+
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
 		}
@@ -117,6 +126,15 @@ abstract class EE_PMT_Base{
 		if( $this->_default_button_url === NULL){
 			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
+	}
+
+
+
+	/**
+	 * @param boolean $has_billing_form
+	 */
+	public function set_has_billing_form( $has_billing_form ) {
+		$this->_has_billing_form = filter_var( $has_billing_form, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
