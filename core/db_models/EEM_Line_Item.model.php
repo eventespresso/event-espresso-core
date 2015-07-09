@@ -287,7 +287,10 @@ class EEM_Line_Item extends EEM_Base {
 	}
 
 	/**
-	 * Gets the registration's corresponding line item
+	 * Gets the registration's corresponding line item.
+	 * Note: basically does NOT support having multiple line items for a single ticket,
+	 * which would happen if some of the registrations had a price modifier while others didn't.
+	 * In order to support that, we'd probably need a LIN_ID on registrations or something.
 	 * @param EE_Registration $registration
 	 * @return EEM_Line_ITem
 	 */

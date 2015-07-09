@@ -45,6 +45,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	protected static $_amount_paid = array();
 
+	/**
+	 * Cache of the reg final price for registrations corresponding to a ticket line item
+	 * @var array @see EEH_Line_Item::calculate_reg_final_prices_per_line_item()'s return value
+	 */
+	protected $_reg_final_price_per_tkt_line_item = null;
+
 
 
 	/**
@@ -108,6 +114,10 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			return null;
 		}
 		$reg_url_link = $this->generate_reg_url_link( $att_nmbr, $line_item );
+
+		if( $this->_reg_final_price_per_tkt_line_item === null ) {
+			$this->_reg_final_price_per_tkt_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		}
 		// now create a new registration for the ticket
 		$registration = EE_Registration::new_instance(
 			array(
@@ -116,7 +126,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				'TKT_ID'          => $ticket->ID(),
 				'STS_ID'          => EEM_Registration::status_id_incomplete,
 				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => $ticket->get_ticket_total_with_taxes(),
+				'REG_final_price' => isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ? $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] : 0,
 				'REG_session'     => EE_Registry::instance()->SSN->id(),
 				'REG_count'       => $att_nmbr,
 				'REG_group_size'  => $total_ticket_count,
