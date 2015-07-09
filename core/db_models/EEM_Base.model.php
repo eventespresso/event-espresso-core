@@ -1672,7 +1672,7 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_sum name of field (array key in $_fields array)
-	 * @return int
+	 * @return float
 	 */
 	function sum($query_params, $field_to_sum = NULL){
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -1688,7 +1688,7 @@ abstract class EEM_Base extends EE_Base{
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		$return_value = $this->_do_wpdb_query('get_var',array( $SQL ) );
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
-			return (int)$return_value;
+			return (float)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
 		}
@@ -1913,7 +1913,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $model_name like 'Event', or 'Registration'
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by. By default, uses primary key
-	 * @return int
+	 * @return float
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);

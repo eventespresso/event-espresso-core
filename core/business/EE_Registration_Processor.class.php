@@ -543,6 +543,48 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				}
 			}
 		}
+		//and make sure there's no rounding problem
+		$this->fix_reg_final_price_rounding_issue( $transaction );
+	}
+
+	/**
+	 * Makes sure there is no rounding errors for the REG_final_prices.
+	 * Eg, if we have 3 registrations for $1, and there is a $0.01 discount between the three of them,
+	 * they will each be for $0.99333333, which gets rounded to $1 again.
+	 * So the transaction total will be $2.99, but each registration will be for $1,
+	 * so if each registrant paid individually they will have overpaid by $0.01.
+	 * So in order to overcome this, we check for any difference, and if there is a difference
+	 * we just grab one registrant at random and make them responsible for it.
+	 * This should be used after setting REG_final_prices (it's done automatically as part of
+	 * EE_Rregistration_Processor::update_registration_final_prices())
+	 * @param EE_Transaction $transaction
+	 * @return boolean success verifying that there is NO difference after this method is done
+	 */
+	public function fix_reg_final_price_rounding_issue( $transaction ) {
+		$reg_final_price_sum = floatval( EEM_Registration::instance()->sum(
+				array(
+					array(
+						'TXN_ID' => $transaction->ID()
+					)
+				),
+				'REG_final_price' ) );
+		$diff =  $transaction->total() - $reg_final_price_sum;
+		//ok then, just grab one of the registrations
+		if( $diff != 0 ) {
+			$a_reg = EEM_Registration::instance()->get_one(
+					array(
+						array(
+							'TXN_ID' => $transaction->ID()
+						)
+					));
+			$success = $a_reg->save(
+					array(
+						'REG_final_price' => ( $a_reg->final_price() + $diff )
+					));
+			return $success ? true : false;
+		} else {
+			return true;
+		}
 	}
 
 
