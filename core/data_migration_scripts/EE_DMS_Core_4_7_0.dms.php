@@ -602,6 +602,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults->add_default_admin_only_payments();
 		$script_4_6_defaults->insert_default_currencies();
 
+		$this->verify_new_countries();
+
 		return true;
 	}
 
@@ -616,6 +618,45 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 
 	public function migration_page_hooks(){
 
+	}
+
+	/**
+	 * verifies each of the new countries exists that somehow we missed in 4.1
+	 */
+	public function verify_new_countries() {
+		//CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
+		//('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
+		$newer_countries = array(
+			array( )
+		);
+		global $wpdb;
+		$country_table = $wpdb->prefix."esp_country";
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
+			foreach( $newer_countries as $country ) {
+				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
+				$countries = $wpdb->get_var($SQL);
+				if ( ! $countries ) {
+					$wpdb->insert( $country_table,
+							$country,
+							array(
+								'%s',//CNT_ISO
+								'%s',//CNT_ISO3
+								'%d',//RGN_ID
+								'%s',//CNT_name
+								'%s',//CNT_cur_code
+								'%s',//CNT_cur_single
+								'%s',//CNT_cur_plural
+								'%s',//CNT_cur_sign
+								'%d',//CNT_cur_sign_b4
+								'%d',//CNT_cur_dec_plc
+								'%s',//CNT_tel_code
+								'%d',//CNT_is_EU
+								'%d',//CNT_active
+							)
+							);
+				}
+			}
+		}
 	}
 
 
