@@ -613,6 +613,11 @@ label.error { display : block; color : #FE2A00 !important; }
 	width: 256px;
 }
 
+.dashicons-star-filled::before {
+	color: #e6b800;
+	font-size: 18px;
+}
+
 /** EE-status thingies **/
 .ee-status {
 	display          : block;

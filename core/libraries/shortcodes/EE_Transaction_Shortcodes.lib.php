@@ -175,7 +175,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[TOTAL_OWING]" :
-				$total_owing = isset( $transaction ) && is_object($transaction) ? $transaction->remaining() : $transaction->total();
+				$total_owing = $transaction->remaining();
 				return EEH_Template::format_currency( $total_owing );
 				break;
 
@@ -307,7 +307,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//image tags have been requested.
 		$image_size = getimagesize( $invoice_logo_url );
-		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+		
+		//if image is wider than 200px, set the wideth to 200
+		if ( $image_size[0] > 300 ) {
+			$image_width = 300;
+		}else{
+			$image_width = $image_size[0];
+		}
+
+		return '<img class="logo screen" src="' . $invoice_logo_url . '" width="' . $image_width . '" alt="logo" />';
 	}
 
 
