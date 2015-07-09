@@ -586,8 +586,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_admin_js');
 		wp_enqueue_script('ee_msgs_edit_js');
 
-		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
 		//add in special css for tiny_mce
 		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
 	}

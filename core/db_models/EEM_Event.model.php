@@ -149,6 +149,8 @@ class EEM_Event  extends EEM_CPT_Base{
 		);
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 		parent::__construct( $timezone );
 	}
 
@@ -460,10 +462,10 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
 		$where_params['status'] = 'publish';
-		$where_params['Datetime.DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
-		$where_params['Datetime.DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+		$where_params['Datetime.DTT_EVT_start'] = array('<',  date('Y-m-d H:i:s', current_time( 'timestamp' ) ) );
+		$where_params['Datetime.DTT_EVT_end'] = array('>', date('Y-m-d H:i:s', current_time( 'timestamp' ) ) );
 		$query_params[0] = $where_params;
-		$events = $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		$events = $count ? $this->count( array( $where_params ), 'EVT_ID', true) : $this->get_all( $query_params );
 		return $events;
 	}
 
@@ -489,9 +491,9 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
 		$where_params['status'] = 'publish';
-		$where_params['Datetime.DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+		$where_params['Datetime.DTT_EVT_start'] = array('>', date('Y-m-d H:i:s', current_time( 'timestamp' ) ) );
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 
@@ -514,9 +516,9 @@ class EEM_Event  extends EEM_CPT_Base{
 		//let's add specific query_params for active_events - keep in mind this will override any sent status in the query AND any date queries.
 		if ( isset( $where_params['status'] ) )
 			unset( $where_params['status'] );
-		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'AND' => array('status' => 'publish', 'Datetime.DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'AND' => array('status' => 'publish', 'Datetime.DTT_EVT_end' => array( '<',  date('Y-m-d H:i:s', current_time( 'timestamp' ) ) ) ) );
 		$query_params[0] = $where_params;
-		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true) : $this->get_all( $query_params );
 	}
 
 
@@ -541,9 +543,9 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		//we check for events that are not published OR are expired.
 
-		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'Datetime.DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'Datetime.DTT_EVT_end' => array( '<', date('Y-m-d H:i:s', current_time( 'timestamp' ) ) ) );
 		$query_params[0] = $where_params;
-		return $count ? $this->count( $query_params, 'EVT_ID' ) : $this->get_all( $query_params );
+		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
 

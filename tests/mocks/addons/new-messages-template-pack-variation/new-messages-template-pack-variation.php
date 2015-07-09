@@ -54,7 +54,7 @@ function ee_new_variations_test_register_new_variation() {
 
 	//setup variations array for all known message types.
 	$message_types = array(
-		'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration', 'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
+		'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration', 'registration_summary', 'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
 		);
 	$vtions = array();
 	foreach ( $message_types as $message_type ) {

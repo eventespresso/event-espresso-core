@@ -82,8 +82,8 @@
 }
 
 .datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(5) {
-   width: 5%;
-   text-align: right;
+    width: 5%;
+    text-align: right;
 }
 
 .datetime-edit .datetime-edit-table .datetime-editing-dtts-tbody td:last-child {
@@ -110,7 +110,7 @@
 }
 
 @media all and (min-width: 900px) {
-     .table-padding-top {
+    .table-padding-top {
         position: relative;
         top: 20px;
     }
@@ -140,7 +140,7 @@
 
 
 .ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon:before, .datetime-editing-dtts-tbody .trash-icon, .datetime-editing-dtts-tbody .clone-icon:before {
-   margin-top: 6px;
+    margin-top: 6px;
 }
 
 .ticket-table .ticket-row .gear-icon, .datetime-editing-dtts-tbody .ticket-icon {
@@ -152,6 +152,10 @@
 .ticket-table .ticket-row .ee-lock-icon:before {
     margin-left: 5px;
     margin-top: 5px;
+}
+
+.ee-editor-footer-container {
+    margin-top: 20px;
 }
 
 .ee-editing-container {
@@ -168,10 +172,21 @@
 }
 
 .datetime-edit-table .ee-lock-icon:before {
-   margin-left: 9px;
-   font-size: 18px;
-   vertical-align: middle;
+    margin-left: 9px;
+    font-size: 18px;
+    vertical-align: middle;
 }/**/
+
+.ee-editor-id-container {
+    float: left;
+    margin-top: 25px;
+}
+
+.ee-editor-id-container .ee-item-id {
+    color: #889;
+    font-size: 1.3em;
+    font-weight: 900;
+}
 
 .ticket-icon:before, .clone-icon:before, .trash-icon:before, .gear-icon:before {
     font-size: 18px;
@@ -203,7 +218,7 @@
 }
 
 .button-column {
-   padding-left: 10px;
+    padding-left: 10px;
 }
 
 
@@ -225,7 +240,7 @@
 }
 
 .edit-price-PRC_desc {
-   /* height: 70px;*/
+    /* height: 70px;*/
 }
 
 
@@ -278,17 +293,17 @@
     background-color: #9d7;
 }
 
-    /**
-     * ticket selected background color for various wp3.8+ admin themes
-     */
-    .admin-color-fresh .ticket-selected { background-color: #333; color: #fff;}
-    .admin-color-light .ticket-selected { background-color:  #999; color: #fff;}
-    .admin-color-blue .ticket-selected { background-color: #4796b3; color: #fff;}
-    .admin-color-coffee .ticket-selected { background-color: #59524c; color: #fff;}
-    .admin-color-ectoplasm .ticket-selected { background-color: #523f6d; color: #fff;}
-    .admin-color-midnight .ticket-selected { background-color: #363b3f; color: #fff;}
-    .admin-color-ocean .ticket-selected { background-color: #738e96; color: #fff;}
-    .admin-color-sunrise .ticket-selected { background-color: #cf4944; color: #fff;}
+/**
+ * ticket selected background color for various wp3.8+ admin themes
+ */
+.admin-color-fresh .ticket-selected { background-color: #333; color: #fff;}
+.admin-color-light .ticket-selected { background-color:  #999; color: #fff;}
+.admin-color-blue .ticket-selected { background-color: #4796b3; color: #fff;}
+.admin-color-coffee .ticket-selected { background-color: #59524c; color: #fff;}
+.admin-color-ectoplasm .ticket-selected { background-color: #523f6d; color: #fff;}
+.admin-color-midnight .ticket-selected { background-color: #363b3f; color: #fff;}
+.admin-color-ocean .ticket-selected { background-color: #738e96; color: #fff;}
+.admin-color-sunrise .ticket-selected { background-color: #cf4944; color: #fff;}
 
 .event-tickets-container {
     width: 100%;
@@ -305,8 +320,8 @@
 }
 
 .ticket-table tbody td {
-   height: 1.7em;
-   padding:.25em;
+    height: 1.7em;
+    padding:.25em;
 }
 
 
@@ -332,9 +347,9 @@
     margin: 0;
 }
 .ticket-table tbody .ticket-row td:first-child span {
-   display: block;
-   height:2.8em;
-   padding:0;
+    display: block;
+    height:2.8em;
+    padding:0;
 }/**/
 
 /*Ticket Title */
@@ -352,9 +367,9 @@
     width: 5%;
 }
 
-    .ticket-table tbody .ticket-row td:nth-child(5) input {
-        text-align: right;
-    }
+.ticket-table tbody .ticket-row td:nth-child(5) input {
+    text-align: right;
+}
 
 /* Qty */
 .ticket-table tbody .ticket-row td:nth-child(6) {
@@ -382,8 +397,8 @@
 
 .ee-status-strip-td {
     /*padding: 50% 0 150% 0;*/
-   /* padding:0;
-    height: 1.4em;*/
+    /* padding:0;
+     height: 1.4em;*/
 }
 
 .tkt-status-TKS {
@@ -396,10 +411,10 @@
     border-color: #00B1CA; /*pending*/
 }
 .tkt-status-TKA{
-   border-color: #8A549A; /*archived*/
+    border-color: #8A549A; /*archived*/
 }
 .tkt-status-TKE {
-   border-color: #A39D9C; /*expired*/
+    border-color: #A39D9C; /*expired*/
 }
 
 
@@ -479,7 +494,7 @@
 }
 
 .basic-ticket-info input {
-   text-align: right;
+    text-align: right;
 }
 
 .basic-ticket-info tbody tr td {
@@ -512,13 +527,25 @@
 
 .save-cancel-button-container {
     float: right;
-    margin-top: 10px;
 }
 
 .save-cancel-button-container .button-secondary {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.ticket-fieldset .save-cancel-button-container {
+    margin-top: 20px;
+}
+
+.ticket-fieldset .button-secondary {
+    margin-top: -5px;
+}
+
+.ticket-fieldset .edit-ticket-TKT_is_default_selector {
+    margin-top: 1px;
+}
+
 
 .save-cancel-button-container input {
     margin-right: 10px;

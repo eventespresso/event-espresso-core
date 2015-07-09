@@ -276,7 +276,7 @@ final class EE_Front_Controller {
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 							}
 							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
-							break;
+							continue;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
@@ -287,7 +287,7 @@ final class EE_Front_Controller {
 								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								break;
+								continue;
 							}
 							// and pass the request object to the run method
 							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
@@ -532,7 +532,14 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && is_main_query() && ! is_feed() && in_the_loop() ) {
+		if (
+			apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE )
+			&& ! $shown_already
+			&& is_main_query()
+			&& ! is_feed()
+			&& in_the_loop()
+			&& EE_Registry::instance()->REQ->is_espresso_page()
+		) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
