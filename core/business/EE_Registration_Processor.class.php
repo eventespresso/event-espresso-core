@@ -118,6 +118,19 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		if( $this->_reg_final_price_per_tkt_line_item === null ) {
 			$this->_reg_final_price_per_tkt_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
 		}
+		//ok now find this new registration's final price
+		if( isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
+			$final_price = $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ;
+		}else{
+			$message = sprintf( 'Huh? The ticket line item had no entry in the reg_final_price_per_tkt_line_item array. Thats really weird. ', $line_item->ID() );
+			if( WP_DEBUG ){
+				throw new EE_Error( $message );
+			}else{
+				EE_Log::instance()->log(__CLASS__, __FUNCTION__, $message );
+			}
+			$final_price = $ticket->get_ticket_total_with_taxes();
+
+		}
 		// now create a new registration for the ticket
 		$registration = EE_Registration::new_instance(
 			array(
@@ -126,7 +139,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				'TKT_ID'          => $ticket->ID(),
 				'STS_ID'          => EEM_Registration::status_id_incomplete,
 				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ? $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] : 0,
+				'REG_final_price' => $final_price,
 				'REG_session'     => EE_Registry::instance()->SSN->id(),
 				'REG_count'       => $att_nmbr,
 				'REG_group_size'  => $total_ticket_count,
