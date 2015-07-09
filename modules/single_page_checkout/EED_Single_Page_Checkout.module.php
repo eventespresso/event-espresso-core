@@ -515,7 +515,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _load_and_instantiate_reg_steps() {
 		// have reg_steps already been instantiated ?
-		if ( empty( $this->checkout->reg_steps )) {
+		if (
+			empty( $this->checkout->reg_steps ) ||
+			apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reload_reg_steps', false, $this->checkout )
+		) {
 			// if not, then loop through raw reg steps array
 			foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
 				if ( ! $this->_load_and_instantiate_reg_step( $reg_step, $order )) {
@@ -706,11 +709,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _get_registrations( EE_Transaction $transaction ) {
 		// first step: grab the registrants  { : o
-		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, true );
 		// verify registrations have been set
 		if ( empty( $registrations )) {
 			// if no cached registrations, then check the db
-			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, false );
 			// still nothing ? well as long as this isn't a revisit
 			if ( empty( $registrations ) && ! $this->checkout->revisit ) {
 				// generate new registrations from scratch
@@ -827,10 +830,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Error::add_error( __( 'We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
-		}
-		// update the cart because inaccurate totals are not so much fun
-		if ( $this->checkout->cart instanceof EE_Cart ) {
-			$this->checkout->cart->get_grand_total()->recalculate_total_including_taxes();
 		}
 		return true;
 	}

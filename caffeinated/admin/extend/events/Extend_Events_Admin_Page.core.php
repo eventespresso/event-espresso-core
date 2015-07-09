@@ -175,21 +175,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'require_nonce' => FALSE
 		);
 
-		$new_page_config['import_page'] = array(
-				'nav' => array(
-					'label' => __('Import', 'event_espresso'),
-					'order' => 30
-				),
-				'help_tabs' => array(
-					'import_help_tab' => array(
-						'title' => __('Event Espresso Import', 'event_espresso'),
-						'filename' => 'import_page'
-						)
-					),
-				'help_tour' => array('Event_Import_Help_Tour'),
-				'metaboxes' => $default_espresso_boxes,
-				'require_nonce' => FALSE
-		);
+//		$new_page_config['import_page'] = array(
+//				'nav' => array(
+//					'label' => __('Import', 'event_espresso'),
+//					'order' => 30
+//				),
+//				'help_tabs' => array(
+//					'import_help_tab' => array(
+//						'title' => __('Event Espresso Import', 'event_espresso'),
+//						'filename' => 'import_page'
+//						)
+//					),
+//				'help_tour' => array('Event_Import_Help_Tour'),
+//				'metaboxes' => $default_espresso_boxes,
+//				'require_nonce' => FALSE
+//		);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//add filters and actions
@@ -301,8 +301,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
-		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
 	}
 
 
@@ -697,8 +695,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		 */
 		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 
+
+		//update custom post type slugs and detect if we need to flush rewrite rules
+		$old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
+		EE_Registry::instance()->CFG->core->event_cpt_slug = empty( $this->_req_data['event_cpt_slug'] ) ? EE_Registry::instance()->CFG->core->event_cpt_slug : sanitize_title_with_dashes( $this->_req_data['event_cpt_slug'] );
+
+
 		$what = 'Template Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
+
+
+		if ( EE_Registry::instance()->CFG->core->event_cpt_slug != $old_slug ) {
+			update_option( 'ee_flush_rewrite_rules', true );
+		}
+
+
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 
 	}
