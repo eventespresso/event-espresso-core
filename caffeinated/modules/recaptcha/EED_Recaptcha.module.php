@@ -305,14 +305,14 @@ class EED_Recaptcha  extends EED_Module {
 				$request_method
 			);
 			$recaptcha_response = $recaptcha->verify(
-				$_SERVER['REMOTE_ADDR'],
-				EED_Recaptcha::$_recaptcha_response
+				EED_Recaptcha::$_recaptcha_response,
+				$_SERVER[ 'REMOTE_ADDR' ]
 			);
 		}
-		// sorry... it appears you can't read gibberish chicken scratches !!!
 		if ( $recaptcha_response instanceof \ReCaptcha\Response && $recaptcha_response->isSuccess() ) {
 			return TRUE;
 		}
+		// sorry... it appears you can't don't know what soup or hamburgers are !!!
 		return FALSE;
 	}
 
