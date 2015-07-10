@@ -546,6 +546,7 @@ class EE_Error extends Exception {
 	*/
 	public static function add_error( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
+		self::$_error_count++;
 	}
 
 

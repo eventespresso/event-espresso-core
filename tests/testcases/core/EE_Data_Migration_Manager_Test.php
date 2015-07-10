@@ -85,8 +85,8 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	}
 	public function test_get_most_up_to_date_dms(){
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
-		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_6_0',$dms_classname);
+		// yes, this test will need to be updated every time we add a new core DMS
+		$this->assertEquals('EE_DMS_Core_4_7_0',$dms_classname);
 	}
 
 	/**
@@ -207,6 +207,37 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_db_initialization_queue(){
 		update_option( EE_Data_Migration_Manager::db_init_queue_option_name, array( 'MockA', 'MockB' ) );
 		$this->assertEquals( array( 'MockA', 'MockB' ), EE_Data_Migration_Manager::instance()->get_db_initialization_queue() );
+	}
+
+	/**
+	 * @group 8328
+	 */
+	public function test_database_needs_updating_to__exact_matches(){
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => 'Core', 'version' => '4.9.0' ) );
+		$this->assertFalse( EE_Data_Migration_Manager::instance()->database_needs_updating_to( array( 'slug' => 'Core', 'version' =>   '4.9.0' ) ) );
+	}
+
+	/**
+	 * @group 8328
+	 */
+	public function test_database_needs_updating_to__first_3_version_parts_matches(){
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => 'Core', 'version' => '4.9.0.dev.123' ) );
+		$this->assertFalse( EE_Data_Migration_Manager::instance()->database_needs_updating_to( array( 'slug' => 'Core', 'version' =>  '4.9.0.beta.432' ) ) );
+	}
+	/**
+	 * @group 8328
+	 */
+	public function test_database_needs_updating_to__current_version_is_greater(){
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => 'Core', 'version' => '4.9.0.dev.123' ) );
+		$this->assertTrue( EE_Data_Migration_Manager::instance()->database_needs_updating_to( array( 'slug' => 'Core', 'version' =>  '4.9.3.dev.123' ) ) );
+	}
+
+	/**
+	 * @group 8328
+	 */
+	public function test_database_needs_updating_to__current_version_is_lower(){
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => 'Core', 'version' => '4.9.0' ) );
+		$this->assertFalse( EE_Data_Migration_Manager::instance()->database_needs_updating_to( array( 'slug' => 'Core', 'version' => '4.4.0.p'  ) ) );
 	}
 }
 
