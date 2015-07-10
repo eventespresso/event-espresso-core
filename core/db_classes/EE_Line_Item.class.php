@@ -905,9 +905,14 @@ class EE_Line_Item extends EE_Base_Class {
 		$total = 0;
 		if ( $this->children() ) {
 			foreach ( $this->children() as $child_line_item ) {
-
 				if ( $child_line_item->type() == EEM_Line_Item::type_line_item && $child_line_item->is_taxable()) {
-					$total += $child_line_item->total();
+					//if it's a percent item, only take into account the percent
+					//that's taxable too (the taxable total so far)
+					if( $child_line_item->is_percent() ) {
+						$total = $total + ( $total * $child_line_item->percent() / 100 );
+					}else{
+						$total += $child_line_item->total();
+					}
 				}elseif( $child_line_item->type() == EEM_Line_Item::type_sub_total ){
 					$total += $child_line_item->taxable_total();
 				}
