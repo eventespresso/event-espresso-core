@@ -298,8 +298,13 @@ class EED_Recaptcha  extends EED_Module {
 		$recaptcha_response = EED_Recaptcha::$_recaptcha_response;
 		// Was there a reCAPTCHA response?
 		if ( $recaptcha_response ) {
-			$reCaptcha = new \ReCaptcha\ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_privatekey );
-			$recaptcha_response = $reCaptcha->verify(
+			// if allow_url_fopen is Off, then set a different request method
+			$request_method = ! ini_get( 'allow_url_fopen' ) ? new \ReCaptcha\RequestMethod\SocketPost() : null;
+			$recaptcha = new \ReCaptcha\ReCaptcha(
+				EE_Registry::instance()->CFG->registration->recaptcha_privatekey,
+				$request_method
+			);
+			$recaptcha_response = $recaptcha->verify(
 				$_SERVER['REMOTE_ADDR'],
 				EED_Recaptcha::$_recaptcha_response
 			);
