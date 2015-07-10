@@ -366,7 +366,10 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function children() {
 		if ( $this->ID() ) {
-			return $this->get_model()->get_all( array( array( 'LIN_parent' => $this->ID() ) ) );
+			return $this->get_model()->get_all(
+					array(
+						array( 'LIN_parent' => $this->ID() ),
+						'order_by' => array( 'LIN_order' => 'ASC' ) ) );
 		} else {
 			if ( ! is_array( $this->_children ) ) {
 				$this->_children = array();
