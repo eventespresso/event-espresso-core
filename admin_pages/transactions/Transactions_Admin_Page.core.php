@@ -552,9 +552,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 		//next and previous links
-		$next_txn = $this->_transaction->next(null, array(), 'TXN_ID' );
+		$next_txn = $this->_transaction->next(null, array( array( 'STS_ID' => array( '!=', EEM_Transaction::failed_status_code ) ) ), 'TXN_ID' );
 		$this->_template_args['next_transaction'] = $next_txn ? $this->_next_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_transaction', 'TXN_ID' => $next_txn['TXN_ID'] ), TXN_ADMIN_URL ), 'dashicons dashicons-arrow-right ee-icon-size-22' ) : '';
-		$previous_txn = $this->_transaction->previous( null, array(), 'TXN_ID' );
+		$previous_txn = $this->_transaction->previous( null, array( array( 'STS_ID' => array( '!=', EEM_Transaction::failed_status_code ) ) ), 'TXN_ID' );
 		$this->_template_args['previous_transaction'] = $previous_txn ? $this->_previous_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_transaction', 'TXN_ID' => $previous_txn['TXN_ID'] ), TXN_ADMIN_URL ), 'dashicons dashicons-arrow-left ee-icon-size-22' ) : '';
 
 
@@ -609,7 +609,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_transaction_object();
 		$this->_template_args['TXN_ID'] = $this->_transaction->ID();
-		$this->_template_args['attendee'] = $this->_transaction->primary_registration()->attendee();
+		$this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration ? $this->_transaction->primary_registration()->attendee() : null;
 
 		//get line items from transaction
 		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
