@@ -556,19 +556,20 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * So in order to overcome this, we check for any difference, and if there is a difference
 	 * we just grab one registrant at random and make them responsible for it.
 	 * This should be used after setting REG_final_prices (it's done automatically as part of
-	 * EE_Rregistration_Processor::update_registration_final_prices())
+	 * EE_Registration_Processor::update_registration_final_prices())
 	 * @param EE_Transaction $transaction
 	 * @return boolean success verifying that there is NO difference after this method is done
 	 */
 	public function fix_reg_final_price_rounding_issue( $transaction ) {
-		$reg_final_price_sum = floatval( EEM_Registration::instance()->sum(
+		$reg_final_price_sum = EEM_Registration::instance()->sum(
+			array(
 				array(
-					array(
-						'TXN_ID' => $transaction->ID()
-					)
-				),
-				'REG_final_price' ) );
-		$diff =  $transaction->total() - $reg_final_price_sum;
+					'TXN_ID' => $transaction->ID()
+				)
+			),
+			'REG_final_price'
+		);
+		$diff =  $transaction->total() - floatval( $reg_final_price_sum );
 		//ok then, just grab one of the registrations
 		if( $diff != 0 ) {
 			$a_reg = EEM_Registration::instance()->get_one(
@@ -577,10 +578,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 							'TXN_ID' => $transaction->ID()
 						)
 					));
-			$success = $a_reg->save(
-					array(
-						'REG_final_price' => ( $a_reg->final_price() + $diff )
-					));
+			$success = $a_reg instanceof EE_Registration ? $a_reg->save(
+				array(
+					'REG_final_price' => ( $a_reg->final_price() + $diff )
+				)
+			) : false;
 			return $success ? true : false;
 		} else {
 			return true;
