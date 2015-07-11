@@ -634,13 +634,13 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 			array( 'MN', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 1  ),
 			array( 'AX', 'ALA', 0, 'Alan Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 1 ),
 			array( 'CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 1 ),
-			array( 'GG', 'GGY', 0, 'Gurnsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 1 ),
+			array( 'GG', 'GGY', 0, 'Guernsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 1 ),
 			array( 'IM', 'IMN', 0, 'Isle of Man', 'GBP', 'Pound', 'Pounds', '£', 1, 2,  '+44', 0, 1  ),
 			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 1  ),
 			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+381', 0, 1 ),
 			array( 'BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
 			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
-			array( 'SX', 'SXM', 0, 'Sin Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 1 ),
+			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 1 ),
 			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '', 1, 2, '+211', 0, 1 ),
 		);
 		global $wpdb;
