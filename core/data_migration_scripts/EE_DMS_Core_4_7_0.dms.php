@@ -624,35 +624,51 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	 * verifies each of the new countries exists that somehow we missed in 4.1
 	 */
 	public function verify_new_countries() {
+		//a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+		//how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+		//currency symbols: http://www.xe.com/symbols.php
 		//CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
 		//('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
 		$newer_countries = array(
-			array( )
+			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+941', 1, 1   ),
+			array( 'MN', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 1  ),
+			array( 'AX', 'ALA', 0, 'Alan Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 1 ),
+			array( 'CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 1 ),
+			array( 'GG', 'GGY', 0, 'Gurnsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 1 ),
+			array( 'IM', 'IMN', 0, 'Isle of Man', 'GBP', 'Pound', 'Pounds', '£', 1, 2,  '+44', 0, 1  ),
+			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 1  ),
+			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+381', 0, 1 ),
+			array( 'BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
+			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
+			array( 'SX', 'SXM', 0, 'Sin Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 1 ),
+			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '', 1, 2, '+211', 0, 1 ),
 		);
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
+		$country_format = array(
+							"CNT_ISO" => '%s',
+							"CNT_ISO3" => '%s',
+							"RGN_ID" => '%d',
+							"CNT_name" => '%s',
+							"CNT_cur_code" => '%s',
+							"CNT_cur_single" => '%s',
+							"CNT_cur_plural" => '%s',
+							"CNT_cur_sign" => '%s',
+							"CNT_cur_sign_b4" => '%d',
+							"CNT_cur_dec_plc" => '%d',
+							"CNT_tel_code" => '%s',
+							"CNT_is_EU" => '%d',
+							"CNT_active" => '%d',
+						);
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
 				if ( ! $countries ) {
+
 					$wpdb->insert( $country_table,
-							$country,
-							array(
-								'%s',//CNT_ISO
-								'%s',//CNT_ISO3
-								'%d',//RGN_ID
-								'%s',//CNT_name
-								'%s',//CNT_cur_code
-								'%s',//CNT_cur_single
-								'%s',//CNT_cur_plural
-								'%s',//CNT_cur_sign
-								'%d',//CNT_cur_sign_b4
-								'%d',//CNT_cur_dec_plc
-								'%s',//CNT_tel_code
-								'%d',//CNT_is_EU
-								'%d',//CNT_active
-							)
+							array_combine( array_keys( $country_format), $country ),
+							$country_format
 							);
 				}
 			}
