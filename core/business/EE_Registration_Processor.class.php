@@ -45,6 +45,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	protected static $_amount_paid = array();
 
+	/**
+	 * Cache of the reg final price for registrations corresponding to a ticket line item
+	 * @var array @see EEH_Line_Item::calculate_reg_final_prices_per_line_item()'s return value
+	 */
+	protected $_reg_final_price_per_tkt_line_item = null;
+
 
 
 	/**
@@ -108,6 +114,23 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			return null;
 		}
 		$reg_url_link = $this->generate_reg_url_link( $att_nmbr, $line_item );
+
+		if( $this->_reg_final_price_per_tkt_line_item === null ) {
+			$this->_reg_final_price_per_tkt_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		}
+		//ok now find this new registration's final price
+		if( isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
+			$final_price = $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ;
+		}else{
+			$message = sprintf( __( 'The ticket line item had no entry in the reg_final_price_per_tkt_line_item array. Thats very strange. The line items ID is %d', 'event_espresso' ), $line_item->ID() );
+			if( WP_DEBUG ){
+				throw new EE_Error( $message );
+			}else{
+				EE_Log::instance()->log(__CLASS__, __FUNCTION__, $message );
+			}
+			$final_price = $ticket->get_ticket_total_with_taxes();
+
+		}
 		// now create a new registration for the ticket
 		$registration = EE_Registration::new_instance(
 			array(
@@ -116,7 +139,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				'TKT_ID'          => $ticket->ID(),
 				'STS_ID'          => EEM_Registration::status_id_incomplete,
 				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => $ticket->get_ticket_total_with_taxes(),
+				'REG_final_price' => $final_price,
 				'REG_session'     => EE_Registry::instance()->SSN->id(),
 				'REG_count'       => $att_nmbr,
 				'REG_group_size'  => $total_ticket_count,
@@ -502,6 +525,68 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
 		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+	}
+
+	/**
+	 * Updates the registration' final prices based on the current line item tree (taking into account
+	 * discounts, taxes, and other line items unrelated to tickets.)
+	 * @param EE_Transaction $transaction
+	 */
+	public function update_registration_final_prices( $transaction ) {
+		$reg_final_price_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item(), $save_regs = true );
+		foreach( $transaction->registrations() as $registration ) {
+			$line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
+			if( isset( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] ) ) {
+				$registration->set_final_price( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] );
+				if( $save_regs ) {
+					$registration->save();
+				}
+			}
+		}
+		//and make sure there's no rounding problem
+		$this->fix_reg_final_price_rounding_issue( $transaction );
+	}
+
+	/**
+	 * Makes sure there is no rounding errors for the REG_final_prices.
+	 * Eg, if we have 3 registrations for $1, and there is a $0.01 discount between the three of them,
+	 * they will each be for $0.99333333, which gets rounded to $1 again.
+	 * So the transaction total will be $2.99, but each registration will be for $1,
+	 * so if each registrant paid individually they will have overpaid by $0.01.
+	 * So in order to overcome this, we check for any difference, and if there is a difference
+	 * we just grab one registrant at random and make them responsible for it.
+	 * This should be used after setting REG_final_prices (it's done automatically as part of
+	 * EE_Registration_Processor::update_registration_final_prices())
+	 * @param EE_Transaction $transaction
+	 * @return boolean success verifying that there is NO difference after this method is done
+	 */
+	public function fix_reg_final_price_rounding_issue( $transaction ) {
+		$reg_final_price_sum = EEM_Registration::instance()->sum(
+			array(
+				array(
+					'TXN_ID' => $transaction->ID()
+				)
+			),
+			'REG_final_price'
+		);
+		$diff =  $transaction->total() - floatval( $reg_final_price_sum );
+		//ok then, just grab one of the registrations
+		if( $diff != 0 ) {
+			$a_reg = EEM_Registration::instance()->get_one(
+					array(
+						array(
+							'TXN_ID' => $transaction->ID()
+						)
+					));
+			$success = $a_reg instanceof EE_Registration ? $a_reg->save(
+				array(
+					'REG_final_price' => ( $a_reg->final_price() + $diff )
+				)
+			) : false;
+			return $success ? true : false;
+		} else {
+			return true;
+		}
 	}
 
 

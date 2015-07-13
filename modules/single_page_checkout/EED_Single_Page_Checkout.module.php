@@ -808,6 +808,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				}
 			}
+			$registration_processor->fix_reg_final_price_rounding_issue( $transaction );
 		}
 		return $registrations;
 	}
