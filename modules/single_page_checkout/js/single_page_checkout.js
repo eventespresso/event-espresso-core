@@ -132,6 +132,8 @@ jQuery(document).ready( function($) {
 		get_next_step : true,
 		// whether form has been validated successfully
 		form_is_valid : false,
+		// amount to be paid during this TXN
+		payment_amount : 0,
 
 
 
@@ -941,6 +943,13 @@ jQuery(document).ready( function($) {
 					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
 						// remove any previously applied validation rules for each html form, before it gets removed
 						SPCO.remove_previous_validation_rules();
+					}
+					// if any new validation rules were sent...
+					if ( typeof response.return_data.payment_amount !== 'undefined' ) {
+						SPCO.payment_amount = parseFloat( response.return_data.payment_amount );
+						//console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
+						// trigger a custom event so that other JS functions can add listeners for the "spco_process_response" event
+						SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
 					}
 					// process valid response data
 					if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
