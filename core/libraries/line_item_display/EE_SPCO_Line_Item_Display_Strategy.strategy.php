@@ -581,11 +581,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			foreach ( $this->_billable as $REG_ID => $TKT_ID ) {
 				if ( $line_item->OBJ_ID() === $TKT_ID ) {
 					$this->_billable_total += $line_item->unit_price();
-					$this->_total_items += $line_item->quantity();
+					$this->_total_items++;
 					if ( $line_item->is_taxable() ) {
 						$this->_billable_tax_total += $line_item->unit_price();
 					}
-					//$this->_total_items++;
 					$billable++;
 					unset( $this->_do_not_bill[ $REG_ID ] );
 				}

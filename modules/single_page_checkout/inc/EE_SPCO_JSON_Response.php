@@ -136,6 +136,10 @@ class EE_SPCO_JSON_Response {
 		if ( $this->registration_time_limit() ) {
 			$JSON_response['registration_time_limit'] = $this->registration_time_limit();
 		}
+		// set payment_amount, IF it exists
+		if ( $this->payment_amount() !== null ) {
+			$JSON_response[ 'payment_amount' ] = $this->payment_amount();
+		}
 		// grab generic return data
 		$return_data = $this->return_data();
 		// add billing form validation rules
@@ -157,10 +161,6 @@ class EE_SPCO_JSON_Response {
 		// set redirect_form, IF it exists
 		if ( $this->redirect_form() ) {
 			$return_data['redirect_form'] = $this->redirect_form();
-		}
-		// set payment_amount, IF it exists
-		if ( $this->payment_amount() !== null ) {
-			$return_data['payment_amount'] = $this->payment_amount();
 		}
 		// and finally, add return_data array to main JSON response array, IF it contains anything
 		// why did we add some of the above properties to the return data array?

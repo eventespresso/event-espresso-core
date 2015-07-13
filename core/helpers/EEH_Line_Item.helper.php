@@ -913,7 +913,8 @@ class EEH_Line_Item {
 				//it should affect the running totals
 				//basically we want to convert it into a PERCENT modifier. Because
 				//more clearly affect all registration's final price equally
-				$line_items_percent_of_running_total = $child_line_item->total() / $running_totals[ 'total' ];
+				$total_including_taxes = $child_line_item->is_taxable() ? ( 1 + $percent_tax_to_add_onto_this_line_item ) * $child_line_item->total() : $child_line_item->total();
+				$line_items_percent_of_running_total = $total_including_taxes / $running_totals[ 'total' ];
 				foreach ( $running_totals as $line_item_id => $running_total ) {
 					//update the running totals
 					//yes this actually even works for the running grand total!
