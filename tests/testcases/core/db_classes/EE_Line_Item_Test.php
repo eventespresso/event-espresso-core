@@ -103,6 +103,58 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$li = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'OBJ_ID' => 123, 'OBJ_type' => 'Answer' ) );
 		$this->assertNull( $li->get_object() );
 	}
+
+	/**
+	 * @group 8488
+	 */
+	public function test_taxable_total__percent_items() {
+		$parent_li = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'total',
+					'LIN_type' => EEM_Line_Item::type_sub_total,
+				));
+		//create 2 childline items, one taxable and one not
+		$taxable = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'taxable',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_percent' => 0,
+					'LIN_quantity' => 1,
+					'LIN_is_taxable' => true,
+					'LIN_parent' => $parent_li->ID()
+				));
+		$nontaxable = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'nontaxable',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_percent' => 0,
+					'LIN_quantity' => 1,
+					'LIN_is_taxable' => false,
+					'LIN_parent' => $parent_li->ID()
+				));
+		//and then a percent line item that is taxable
+		$discount = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'discount',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_total' => -10,
+					'LIN_unit_price' => 0,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_is_taxable' => true,
+					'LIN_parent' => $parent_li->ID()
+				));
+		//so when we ask their parent for the taxable total, it should only
+		//factor in the taxable portion of the percent item
+		//only half of the 10 dollar discount (so 5) should be facotred into taxes
+		//so the taxable total should be the taxable ticket (10) minus half the discount (5)
+		//so it should equal 5
+		$this->assertEquals( 5, $parent_li->taxable_total() );
+	}
 }
 
 // End of file EE_Line_Item_Test.php
