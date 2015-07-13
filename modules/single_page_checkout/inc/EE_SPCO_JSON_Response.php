@@ -64,6 +64,11 @@ class EE_SPCO_JSON_Response {
 	protected $_method_of_payment = '';
 
 	/**
+	 * @var float
+	 */
+	protected $_payment_amount;
+
+	/**
 	 * @var array
 	 */
 	protected $_return_data = array();
@@ -152,6 +157,10 @@ class EE_SPCO_JSON_Response {
 		// set redirect_form, IF it exists
 		if ( $this->redirect_form() ) {
 			$return_data['redirect_form'] = $this->redirect_form();
+		}
+		// set payment_amount, IF it exists
+		if ( $this->payment_amount() !== null ) {
+			$return_data['payment_amount'] = $this->payment_amount();
 		}
 		// and finally, add return_data array to main JSON response array, IF it contains anything
 		// why did we add some of the above properties to the return data array?
@@ -253,6 +262,25 @@ class EE_SPCO_JSON_Response {
 	 */
 	public function method_of_payment() {
 		return $this->_method_of_payment;
+	}
+
+
+
+	/**
+	 * @return float
+	 */
+	public function payment_amount() {
+		return $this->_payment_amount;
+	}
+
+
+
+	/**
+	 * @param float $payment_amount
+	 */
+	public function set_payment_amount( $payment_amount ) {
+		EE_Registry::instance()->load_helper( 'Money' );
+		$this->_payment_amount = EEH_Money::convert_to_float_from_localized_money( $payment_amount );
 	}
 
 
