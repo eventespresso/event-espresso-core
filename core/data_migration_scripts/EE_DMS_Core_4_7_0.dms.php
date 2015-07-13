@@ -640,6 +640,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+381', 0, 1 ),
 			array( 'BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
 			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 1 ),
+			array( 'MYT', 'YT', 0, 'Mayotte', 'EUR', 'Euro', 'Euros', '€',0,2, '+262', 1, 1),
 			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 1 ),
 			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '', 1, 2, '+211', 0, 1 ),
 		);
