@@ -49,13 +49,14 @@ class EEH_URL{
 	 * Returns whether not the remote file exists.
 	 * Checking via GET because HEAD requests are blocked on some server configurations.
 	 * @param string $url
+	 * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
 	 * @return boolean
 	 */
-	public static function remote_file_exists($url){
-		$results = wp_remote_request($url,array(
+	public static function remote_file_exists( $url, $args = array() ){
+		$results = wp_remote_request($url,array_merge( array(
 			'method'=>'GET',
-			'redirection'=>1,
-		));
+			'redirection'=>1
+		), $args ) );
 		if( ! $results instanceof WP_Error &&
 				isset($results['response']) &&
 				isset($results['response']['code']) &&
