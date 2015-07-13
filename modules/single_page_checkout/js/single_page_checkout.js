@@ -926,6 +926,13 @@ jQuery(document).ready( function($) {
 			if ( typeof response === 'object' ) {
 				// trigger a custom event so that other JS functions can add listeners for the "spco_process_response" event
 				SPCO.main_container.trigger( 'spco_process_response', [ next_step, response ] );
+				//  check for payment_amount
+				if ( typeof response.payment_amount !== 'undefined' ) {
+					SPCO.payment_amount = parseFloat( response.payment_amount );
+					//console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
+					// trigger a custom event so that other JS functions can add listeners for the "spco_payment_amount" event
+					SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
+				}
 				// process response
 				if ( typeof response.errors !== 'undefined' ) {
                    // no response...
@@ -943,13 +950,6 @@ jQuery(document).ready( function($) {
 					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
 						// remove any previously applied validation rules for each html form, before it gets removed
 						SPCO.remove_previous_validation_rules();
-					}
-					// if any new validation rules were sent...
-					if ( typeof response.return_data.payment_amount !== 'undefined' ) {
-						SPCO.payment_amount = parseFloat( response.return_data.payment_amount );
-						//console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
-						// trigger a custom event so that other JS functions can add listeners for the "spco_process_response" event
-						SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
 					}
 					// process valid response data
 					if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
