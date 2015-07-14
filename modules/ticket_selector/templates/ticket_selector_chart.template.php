@@ -466,7 +466,6 @@ $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->E
 			</tr>
 		</thead>
 		<tbody>
-<?php
 			<?php echo $ticket_row_html;?>
 		</tbody>
 	</table>
