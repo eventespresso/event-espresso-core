@@ -42,7 +42,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return int
 	 */
-	function GRP_ID() {
+	public function GRP_ID() {
 		return $this->get( 'GRP_ID' );
 	}
 
@@ -53,7 +53,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param int $GRP_ID
 	 */
-	function set_GRP_ID( $GRP_ID ) {
+	public function set_GRP_ID( $GRP_ID ) {
 		$this->set( 'GRP_ID', $GRP_ID );
 	}
 
@@ -65,7 +65,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function messenger() {
+	public function messenger() {
 		return $this->get( 'MSG_messenger' );
 	}
 
@@ -76,7 +76,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $messenger
 	 */
-	function set_messenger( $messenger ) {
+	public function set_messenger( $messenger ) {
 		$this->set( 'MSG_messenger', $messenger );
 	}
 
@@ -87,7 +87,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function message_type() {
+	public function message_type() {
 		return $this->get( 'MSG_message_type' );
 	}
 
@@ -98,7 +98,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $message_type
 	 */
-	function set_message_type( $message_type ) {
+	public function set_message_type( $message_type ) {
 		$this->set( 'MSG_message_type', $message_type );
 	}
 
@@ -109,7 +109,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function context() {
+	public function context() {
 		return $this->get( 'MSG_context' );
 	}
 
@@ -120,7 +120,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $context
 	 */
-	function set_context( $context ) {
+	public function set_context( $context ) {
 		$this->set( 'MSG_context', $context );
 	}
 
@@ -131,7 +131,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return int
 	 */
-	function recipient_ID() {
+	public function recipient_ID() {
 		return $this->get( 'MSG_recipient_ID' );
 	}
 
@@ -142,7 +142,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $recipient_ID
 	 */
-	function set_recipient_ID( $recipient_ID ) {
+	public function set_recipient_ID( $recipient_ID ) {
 		$this->set( 'MSG_recipient_ID', $recipient_ID );
 	}
 
@@ -153,7 +153,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function recipient_type() {
+	public function recipient_type() {
 		return $this->get( 'MSG_recipient_type' );
 	}
 
@@ -164,7 +164,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $recipient_type
 	 */
-	function set_recipient_type( $recipient_type ) {
+	public function set_recipient_type( $recipient_type ) {
 		$this->set( 'MSG_recipient_type', $recipient_type );
 	}
 
@@ -175,7 +175,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function content() {
+	public function content() {
 		return $this->get( 'MSG_content' );
 	}
 
@@ -186,7 +186,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $content
 	 */
-	function set_content( $content ) {
+	public function set_content( $content ) {
 		$this->set( 'MSG_content', $content );
 	}
 
@@ -197,7 +197,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function subject() {
+	public function subject() {
 		return $this->get( 'MSG_subject' );
 	}
 
@@ -208,7 +208,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $subject
 	 */
-	function set_subject( $subject ) {
+	public function set_subject( $subject ) {
 		$this->set( 'MSG_subject', $subject );
 	}
 
@@ -219,7 +219,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function address_to() {
+	public function address_to() {
 		return $this->get( 'MSG_address_to' );
 	}
 
@@ -230,7 +230,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $address_to
 	 */
-	function set_address_to( $address_to ) {
+	public function set_address_to( $address_to ) {
 		$this->set( 'MSG_address_to', $address_to );
 	}
 
@@ -241,7 +241,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function address_from() {
+	public function address_from() {
 		return $this->get( 'MSG_address_from' );
 	}
 
@@ -252,9 +252,10 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $address_from
 	 */
-	function set_address_from( $address_from ) {
+	public function set_address_from( $address_from ) {
 		$this->set( 'MSG_address_from', $address_from );
 	}
+	
 
 
 
@@ -263,7 +264,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return int
 	 */
-	function priority() {
+	public function priority() {
 		return $this->get( 'MSG_priority' );
 	}
 
@@ -274,7 +275,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param int $priority
 	 */
-	function set_priority( $priority ) {
+	public function set_priority( $priority ) {
 		$this->set( 'MSG_priority', $priority );
 	}
 
@@ -285,7 +286,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function STS_ID() {
+	public function STS_ID() {
 		return $this->get( 'STS_ID' );
 	}
 
@@ -296,7 +297,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $STS_ID
 	 */
-	function set_STS_ID( $STS_ID ) {
+	public function set_STS_ID( $STS_ID ) {
 		$this->set( 'STS_ID', $STS_ID );
 	}
 
@@ -307,7 +308,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function created() {
+	public function created() {
 		return $this->get( 'MSG_created' );
 	}
 
@@ -318,7 +319,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $created
 	 */
-	function set_created( $created ) {
+	public function set_created( $created ) {
 		$this->set( 'MSG_created', $created );
 	}
 
@@ -329,7 +330,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @return string
 	 */
-	function modified() {
+	public function modified() {
 		return $this->get( 'MSG_modified' );
 	}
 
@@ -340,7 +341,7 @@ class EE_Message extends EE_Base_Class {
 	 *
 	 * @param string $modified
 	 */
-	function set_modified( $modified ) {
+	public function set_modified( $modified ) {
 		$this->set( 'MSG_modified', $modified );
 	}
 
