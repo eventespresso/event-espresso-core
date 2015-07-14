@@ -288,7 +288,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				'LIN_unit_price' => 10
 			)
 		));
-		$this->assertEquals( 10.26, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
+		$this->assertEquals( 10.31, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
 		//one ticket should be 20 pre-tax
 		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
@@ -296,7 +296,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				'LIN_unit_price' => 20
 			)
 		));
-		$this->assertEquals( 20.53, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
+		$this->assertEquals( 20.62, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
 		//one ticket should be for 6 pre-tax (although its non-taxable anyway)
 		$six_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
@@ -304,11 +304,12 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				'LIN_unit_price' => 6
 			)
 		));
-		$this->assertEquals( 5.35, round( $totals[ $six_dollar_ticket->ID() ], 2 ) );
+		$this->assertEquals( 5.29, round( $totals[ $six_dollar_ticket->ID() ], 2 ) );
 	}
 
 	/**
 	 * @group 8193
+	 * @group current
 	 */
 	public function test_calculate_reg_final_prices_per_line_item__3_taxable_tickets_with_an_event_wide_discount() {
 		$transaction = $this->new_typical_transaction(
@@ -371,7 +372,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				'LIN_unit_price' => 10
 			)
 		));
-		$this->assertEquals( 2.84, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
+		$this->assertEquals( 3.05, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
 		//one ticket should be 20 pre-tax
 		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
@@ -379,7 +380,83 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				'LIN_unit_price' => 20
 			)
 		));
-		$this->assertEquals( 18.66, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
+		$this->assertEquals( 18.45, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
+	}
+
+	/**
+	 * This tests the case where we buy 1 taxable $10 ticket and a nontaxable $10 ticket,
+	 * and apply a 50% taxable discount (ie, taxes factor it in), and there is a 10% tax.
+	 * After teh discount, each should cost $5, and the taxable one should add 10% onto it.
+	 * So we shoudl end up with one costing $5.50 and one $5.
+	 * @group 8193
+	 */
+	function test_calculate_reg_final_prices_per_line_item__percent_discount_partially_taxable() {
+		$grand_total = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'total',
+					'LIN_type' => EEM_Line_Item::type_total,
+					'LIN_total' => 0
+				));
+		$subtotal = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'subtotal',
+					'LIN_type' => EEM_Line_Item::type_sub_total,
+					'LIN_total' => 0,
+					'LIN_unit_price' => 0,
+					'LIN_quantity' => 0,
+					'LIN_parent' => $grand_total->ID(),
+					'LIN_order' => 0,
+				));
+		$taxable = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'taxable',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => true,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal->ID(),
+					'LIN_order' => 1,
+					'OBJ_type' => 'Ticket',
+				));
+		$nontaxable = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'taxable',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal->ID(),
+					'LIN_order' => 2,
+					'OBJ_type' => 'Ticket',
+				));
+		$discount = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'discount',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => true,
+					'LIN_total' => -10,
+					'LIN_unit_price' => 0,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal->ID(),
+					'LIN_order' => 3,
+				));
+		$taxes_subtotal = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'taxes',
+					'LIN_type' => EEM_Line_Item::type_tax_sub_total,
+					'LIN_percent' => 10,
+					'LIN_parent' => $grand_total->ID(),
+					'LIN_order' => 1,
+				));
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $grand_total );
+		$this->assertEquals( 5.5, $totals[ $taxable->ID() ] );
+		$this->assertEquals( 5, $totals[ $nontaxable->ID() ] );
+//		var_dump($totals);
+//		EEH_Line_Item::visualize( $subtotal );
 	}
 
 
