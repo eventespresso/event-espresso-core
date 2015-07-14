@@ -603,6 +603,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults->insert_default_currencies();
 
 		$this->verify_new_countries();
+		$this->verify_new_currencies();
 
 		return true;
 	}
@@ -670,6 +671,43 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					$wpdb->insert( $country_table,
 							array_combine( array_keys( $country_format), $country ),
 							$country_format
+							);
+				}
+			}
+		}
+	}
+
+	/**
+	 * verifies each of the new currencies exists that somehow we missed in 4.6
+	 */
+	public function verify_new_currencies() {
+		//a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+		//how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+		//currency symbols: http://www.xe.com/symbols.php
+		// CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active
+		//( 'EUR',  'Euro',  'Euros',  '€',  2,1),
+		$newer_currencies = array(
+			array( 'RSD', 'Dinar', 'Dinars', '', 3, 1 ),
+		);
+		global $wpdb;
+		$currency_table = $wpdb->prefix."esp_currency";
+		$currency_format = array(
+							"CUR_code" => '%s',
+							"CUR_single" => '%s',
+							"CUR_plural" => '%s',
+							"CUR_sign" => '%s',
+							"CUR_dec_plc" => '%d',
+							"CUR_active" => '%d',
+						);
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+			foreach( $newer_currencies as $currency ) {
+				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
+				$countries = $wpdb->get_var($SQL);
+				if ( ! $countries ) {
+
+					$wpdb->insert( $currency_table,
+							array_combine( array_keys( $currency_format), $currency ),
+							$currency_format
 							);
 				}
 			}
