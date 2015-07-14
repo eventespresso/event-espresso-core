@@ -948,7 +948,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRT' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
@@ -982,7 +982,11 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 					('PFL', 'FAILED', 'payment', 0, NULL, 0),
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
-					('ESN', 'SENT', 'email', 0, NULL, 1);";
+					('ESN', 'SENT', 'email', 0, NULL, 1),
+					('MSN', 'SENT', 'message', 0, NULL, 0),
+					('MFL', 'FAIL', 'message', 0, NULL, 1),
+					('MID', 'IDLE', 'message', 0, NULL, 1),
+					('MRT', 'RETRY', 'message', 0, NULL, 1);";
 			$wpdb->query($SQL);
 
 		}

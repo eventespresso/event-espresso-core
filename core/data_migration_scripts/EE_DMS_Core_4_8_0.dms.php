@@ -90,7 +90,40 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function schema_changes_before_migration() {
-		//the schema is actually the same as the last DMS
+
+		$table_name = 'esp_message';
+		$sql="MSG_ID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+					GRP_ID INT(10) UNSIGNED NOT NULL,
+					MSG_messenger VARCHAR(30) NOT NULL,
+					MSG_message_type VARCHAR(50) NOT NULL,
+					MSG_context VARCHAR(50) NOT NULL,
+					MSG_recipient_ID BIGINT(20) NULL,
+					MSG_recipient_type VARCHAR(45) NULL,
+					MSG_content TEXT NOT NULL,
+					MSG_address_to VARCHAR(255) NOT NULL,
+					MSG_address_from VARCHAR(255) NOT NULL,
+					MSG_subject VARCHAR(255) NULL,
+					MSG_priority TINYINT(1) NOT NULL DEFAULT 1,
+					STS_ID VARCHAR(3) NOT NULL DEFAULT 'MID',
+					MSG_created DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+					MSG_modified DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+					PRIMARY KEY  (MSG_ID),
+					KEY GRP_ID (GRP_ID),
+					KEY MSG_messenger (MSG_messenger),
+					KEY MSG_message_type (MSG_message_type),
+					KEY MSG_context (MSG_context),
+					KEY MSG_recipient_ID (MSG_recipient_ID),
+					KEY MSG_recipient_type (MSG_recipient_type),
+					KEY MSG_address_to (MSG_address_to),
+					KEY MSG_address_from (MSG_address_from),
+					KEY MSG_subject (MSG_subject),
+					KEY MSG_priority (MSG_priority),
+					KEY STS_ID (STS_ID),
+					KEY MSG_created (MSG_created),
+					KEY MSG_modified (MSG_modified)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
+
+		//load 4.7 default schema
 		/** @var EE_DMS_Core_4_7_0 $script_4_7_defaults */
 		$script_4_7_defaults = EE_Registry::instance()->load_dms('Core_4_7_0');
 		//(because many need to convert old string states to foreign keys into the states table)
