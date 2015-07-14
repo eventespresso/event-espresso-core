@@ -40,10 +40,20 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	protected static $_settings = array();
 
 	/**
-	 * @var  array $_incompatible_addons
+	 * @var  array $_incompatible_addons keys are addon SLUGS
+	 * (first argument passed to EE_Register_Addon::register()), keys are
+	 * their MINIMUM VERSION (with all 5 parts. Eg 1.2.3.rc.004).
+	 * Generally this should be used sparingly, as we don't want to muddle up
+	 * EE core with knowledge of ALL the addons out there.
+	 * If you want NO versions of an addon to run with a certain version of core,
+	 * it's usually best to define the addon's "min_core_version" as part of its call
+	 * to EE_Register_Addon::register(), rather than using this array with a super high value for its
+	 * minimum plugin version.
 	 * @access    protected
 	 */
-	protected static $_incompatible_addons = array();
+	protected static $_incompatible_addons = array(
+			'Promotions' => '1.0.0.rc.084'
+		);
 
 
 
@@ -208,11 +218,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
 		);
 		//check whether this addon version is compatible with EE core
-		if ( in_array( $class_name, EE_Register_Addon::$_incompatible_addons ) ) {
+		if ( isset( EE_Register_Addon::$_incompatible_addons[ $addon_name ] ) &&
+				! self::_meets_min_core_version_requirement( EE_Register_Addon::$_incompatible_addons[ $addon_name ], $addon_settings[ 'version' ] ) ) {
 			$incompatibility_message = sprintf(
-				__( 'The Event Espresso "%1$s" addon could not be activated because it is incompatible with your version of Event Espresso Core.%2$sThis can happen when attempting to run beta versions or release candidates with older versions of core.%2$sPlease upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+				__( 'The Event Espresso "%1$s" addon was deactivated because it is incompatible with this version of core.%2$s Only version %3$s or higher of "%1$s" can run with this version of core. This can happen when attempting to run beta versions or release candidates with older versions of core, or running old versions of addons with a newer version of core.%2$sPlease upgrade Event Espresso Core and the "%1$s" addon, then re-attempt activating it.', 'event_espresso' ),
 				$addon_name,
-				'<br />'
+				'<br />',
+				EE_Register_Addon::$_incompatible_addons[ $addon_name ]
 			);
 		} else if ( ! self::_meets_min_core_version_requirement( $setup_args[ 'min_core_version' ], espresso_version() ) ) {
 			$incompatibility_message = sprintf(
