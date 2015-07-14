@@ -289,6 +289,33 @@ class EE_Message extends EE_Base_Class {
 
 
 	/**
+	 * This sets the column value on the db column if it exists for the given $column_name or
+	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
+	 *
+	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
+	 *
+	 * @param string $column_name
+	 * @param mixed  $column_value
+	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
+	 */
+	public function set_column_value( $column_name, $column_value ) {
+		$model_fields = $this->get_model()->field_settings( false );
+		//add prefix to column name
+		$column_name = 'MSG_' . $column_name;
+		if ( isset( $model_fields[$column_name] ) ) {
+			$this->set( $column_name, $column_value );
+			return $this->save();
+		} else {
+			//ensure this object is saved first so that extra meta can be properly related.
+			$this->save();
+			return $this->update_extra_meta( $column_name, $column_value );
+		}
+	}
+
+
+
+
+	/**
 	 * Gets priority
 	 *
 	 * @return int
