@@ -54,8 +54,9 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			);
 		$this->_model_relations = array(
 			'Message_Template' => new EE_Has_Many_Relation(),
+			'Message' => new EE_Has_Many_Relation(),
 			'Event' => new EE_HABTM_Relation('Event_Message_Template'),
-			'WP_User' => new EE_Belongs_To_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation()
 			);
 		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ){
 			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_Global( 'MTP_is_global');

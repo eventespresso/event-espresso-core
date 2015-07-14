@@ -202,7 +202,24 @@ class EEM_Status extends EEM_Base {
 	  		EE_Datetime::postponed => array(
 	  			__('postponed', 'event_espresso'),
 	  			__('postponed', 'event_espresso')
-	  			)
+	  			),
+			//messages related
+			EEM_Message::status_sent => array(
+				__('sent', 'event_espresso'),
+				__('sent', 'event_espresso')
+			),
+			EEM_Message::status_idle => array(
+				__('idle', 'event_espresso'),
+				__('idle', 'event_espresso'),
+			),
+	        EEM_Message::status_failed => array(
+		        __('failed', 'event_espresso'),
+		        __('failed', 'event_espresso'),
+	        ),
+	        EEM_Message::status_retry => array(
+		        __('retried', 'event_espresso'),
+		        __('retried', 'event_espresso'),
+	        )
 	    );
 
 		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
