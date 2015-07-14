@@ -215,45 +215,45 @@ class EE_Message extends EE_Base_Class {
 
 
 	/**
-	 * Gets address_to
+	 * Gets to
 	 *
 	 * @return string
 	 */
-	public function address_to() {
-		return $this->get( 'MSG_address_to' );
+	public function to() {
+		return $this->get( 'MSG_to' );
 	}
 
 
 
 	/**
-	 * Sets address_to
+	 * Sets to
 	 *
-	 * @param string $address_to
+	 * @param string $to
 	 */
-	public function set_address_to( $address_to ) {
-		$this->set( 'MSG_address_to', $address_to );
+	public function set_to( $to ) {
+		$this->set( 'MSG_to', $to );
 	}
 
 
 
 	/**
-	 * Gets address_from
+	 * Gets from
 	 *
 	 * @return string
 	 */
-	public function address_from() {
-		return $this->get( 'MSG_address_from' );
+	public function from() {
+		return $this->get( 'MSG_from' );
 	}
 
 
 
 	/**
-	 * Sets address_from
+	 * Sets from
 	 *
-	 * @param string $address_from
+	 * @param string $from
 	 */
-	public function set_address_from( $address_from ) {
-		$this->set( 'MSG_address_from', $address_from );
+	public function set_from( $from ) {
+		$this->set( 'MSG_from', $from );
 	}
 	
 
