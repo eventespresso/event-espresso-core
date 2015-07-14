@@ -255,7 +255,36 @@ class EE_Message extends EE_Base_Class {
 	public function set_from( $from ) {
 		$this->set( 'MSG_from', $from );
 	}
-	
+
+
+
+	/**
+	 * This retrieves the value of the db column set on this class or if that's not present
+	 * it will attempt to retrieve from extra_meta if found.
+	 *
+	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
+	 * also have additional main fields specific to the messenger.  The system accomodates those extra
+	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
+	 * value for those extra fields dynamically via the EE_message object.
+	 *
+	 * @param string $column_name  expecting the column name without the 'MSG_' prefix.
+	 * @return mixed|null  value for the column if found.  null if not found.
+	 */
+	public function get_column_value( $column_name ) {
+		$model_fields = $this->get_model()->field_settings( false );
+		$column_value = null;
+		//add prefix to column name
+		$column_name = 'MSG_' . $column_name;
+		if ( isset( $model_fields[$column_name] ) ) {
+			$column_value = $this->get( $column_name );
+		} else {
+			//This isn't a column in the main table, let's see if it is in the extra meta.
+			$column_value = $this->get_extra_meta( $column_name, true, null );
+		}
+		return $column_value;
+	}
+
 
 
 
