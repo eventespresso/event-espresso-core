@@ -301,8 +301,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
 		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
-		wp_localize_script( 'event_editor_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
 	}
 
 
@@ -697,8 +695,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		 */
 		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 
+
+		//update custom post type slugs and detect if we need to flush rewrite rules
+		$old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
+		EE_Registry::instance()->CFG->core->event_cpt_slug = empty( $this->_req_data['event_cpt_slug'] ) ? EE_Registry::instance()->CFG->core->event_cpt_slug : sanitize_title_with_dashes( $this->_req_data['event_cpt_slug'] );
+
+
 		$what = 'Template Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
+
+
+		if ( EE_Registry::instance()->CFG->core->event_cpt_slug != $old_slug ) {
+			update_option( 'ee_flush_rewrite_rules', true );
+		}
+
+
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 
 	}
@@ -936,14 +947,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return int
 	 */
 	public function total_events_today() {
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -958,14 +969,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this_year_r = date('Y');
 		$this_month_r = date('m');
 		$days_this_month = date('t');
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-01 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
 		return $count;
 	}
 

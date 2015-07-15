@@ -259,8 +259,21 @@ class EEM_Payment_Method extends EEM_Base {
 					'default' => str_replace( "https://", "http://", $payment_method->type_obj()->default_button_url() ),
 				) );
 				foreach( $buttons_urls_to_try as $button_url_to_try ) {
-					if( $button_url_to_try &&
-						EEH_URL::remote_file_exists( $button_url_to_try )	) {
+					if(
+							(//this is the current url and it exists, regardless of SSL issues
+								$button_url_to_try == $current_button_url &&
+								EEH_URL::remote_file_exists(
+										$button_url_to_try,
+										array(
+											'sslverify' => false,
+											'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
+											) )
+							)
+							||
+							(//this is NOT the current url and it exists with a working SSL cert
+								$button_url_to_try != $current_button_url &&
+								EEH_URL::remote_file_exists( $button_url_to_try )
+							) ) {
 						if( $current_button_url != $button_url_to_try ){
 							$payment_method->save( array( 'PMD_button_url' => $button_url_to_try ) );
 							EE_Error::add_attention( sprintf( __( "Payment Method %s's button url was set to %s, because the old image either didnt exist or SSL was recently enabled.", "event_espresso" ), $payment_method->name(), $button_url_to_try ) );
@@ -302,7 +315,17 @@ class EEM_Payment_Method extends EEM_Base {
 				//so deactivate it and move on
 				$payment_method->deactivate();
 				$payment_method->save();
-				EE_Error::add_attention( sprintf( __( "There is no payment method type '%s', so the payment method '%s' was deactivated", "event_espresso" ), $payment_method->type(), $payment_method->name() ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_attention(
+					sprintf(
+						__( 'An error occurred while attempting to use the "%1$s" payment method, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated?%2$sIt can be reactivated on the %3$sPlugins admin page%4$s||%2$sThe actual error was:%2$s%5$s', 'event_espresso' ),
+						$payment_method->name(),
+						'<br />',
+						'<a href="' . admin_url('plugins.php') . '">',
+						'</a>',
+						$e->getMessage()
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 			}
 		}
 		return $usable_payment_methods;

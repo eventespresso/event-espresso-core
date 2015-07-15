@@ -110,7 +110,7 @@ class EEM_Line_Item extends EEM_Base {
 		$this->_tables = array(
 			'Line_Item'=>new EE_Primary_Table('esp_line_item','LIN_ID')
 		);
-		$line_items_can_be_for = array('Ticket','Price');
+		$line_items_can_be_for = apply_filters( 'FHEE__EEM_Line_Item__line_items_can_be_for', array('Ticket','Price', 'Event' ) );
 		$this->_fields = array(
 			'Line_Item' => array(
 				'LIN_ID' 				=> new EE_Primary_Key_Int_Field( 'LIN_ID', __( "ID", "event_espresso" ) ),
@@ -143,6 +143,7 @@ class EEM_Line_Item extends EEM_Base {
 			'Transaction'	=>new EE_Belongs_To_Relation(),
 			'Ticket'				=>new EE_Belongs_To_Any_Relation(),
 			'Price'				=>new EE_Belongs_To_Any_Relation(),
+			'Event' => new EE_Belongs_To_Any_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Transaction.Registration.Event';
 		$this->_caps_slug = 'transactions';
@@ -198,6 +199,109 @@ class EEM_Line_Item extends EEM_Base {
 			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
 			WHERE t.TXN_ID IS NULL'
 		);
+	}
+
+
+
+	/**
+	 * get_line_item_for_transaction_object
+	 * Gets a transaction's line item record for a specific object such as a EE_Event or EE_Ticket
+	 *
+	 * @param int $TXN_ID
+	 * @param \EE_Base_Class $object
+	 * @return EE_Line_Item[]
+	 */
+	public function get_line_item_for_transaction_object( $TXN_ID, EE_Base_Class $object ){
+		return $this->get_all( array( array(
+			'TXN_ID' 		=> $TXN_ID,
+			'OBJ_type' 	=> str_replace( 'EE_', '', get_class( $object )),
+			'OBJ_ID' 		=> $object->ID()
+		)));
+	}
+
+
+
+	/**
+	 * get_object_line_items_for_transaction
+	 * Gets all of the the object line items for a transaction, based on an object type plus an array of object IDs
+	 *
+	 * @param int $TXN_ID
+	 * @param string $OBJ_type
+	 * @param array $OBJ_IDs
+	 * @return EE_Line_Item[]
+	 */
+	public function get_object_line_items_for_transaction( $TXN_ID, $OBJ_type = 'Event', $OBJ_IDs = array() ){
+		$query_params = array(
+			'OBJ_type' 	=> $OBJ_type,
+			// if incoming $OBJ_IDs is an array, then make sure it is formatted correctly for the query
+			'OBJ_ID' 		=> is_array( $OBJ_IDs ) && ! isset( $OBJ_IDs['IN'] ) ? array( 'IN', $OBJ_IDs ) : $OBJ_IDs
+		);
+		if ( $TXN_ID ) {
+			$query_params['TXN_ID'] = $TXN_ID;
+		}
+		return $this->get_all( array( $query_params ));
+	}
+
+
+
+	/**
+	 * get_existing_promotion_line_item
+	 * searches the cart for existing line items for the specified promotion
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param EE_Line_Item $parent_line_item
+	 * @param EE_Promotion $promotion
+	 * @return EE_Line_Item
+	 */
+	public function get_existing_promotion_line_item( EE_Line_Item $parent_line_item, EE_Promotion $promotion ) {
+		return $this->get_one( array(
+			array(
+				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
+				'LIN_parent' 	=> $parent_line_item->ID(),
+				'OBJ_type' 		=> 'Promotion',
+				'OBJ_ID' 			=> $promotion->ID()
+			)
+		));
+	}
+
+
+
+	/**
+	 * get_all_promotion_line_items
+	 * searches the cart for any and all existing promotion line items
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param EE_Line_Item $parent_line_item
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_promotion_line_items( EE_Line_Item $parent_line_item ) {
+		return $this->get_all( array(
+			array(
+				'TXN_ID' 			=> $parent_line_item->TXN_ID(),
+				'LIN_parent' 	=> $parent_line_item->ID(),
+				'OBJ_type' 		=> 'Promotion'
+			)
+		));
+	}
+
+	/**
+	 * Gets the registration's corresponding line item.
+	 * Note: basically does NOT support having multiple line items for a single ticket,
+	 * which would happen if some of the registrations had a price modifier while others didn't.
+	 * In order to support that, we'd probably need a LIN_ID on registrations or something.
+	 * @param EE_Registration $registration
+	 * @return EEM_Line_ITem
+	 */
+	public function get_line_item_for_registration( EE_Registration $registration ) {
+		return $this->get_one( array(
+			array(
+				'OBJ_ID' => $registration->ticket_ID(),
+				'OBJ_type' => 'Ticket',
+				'TXN_ID' => $registration->transaction_ID()
+			)
+		));
 	}
 
 

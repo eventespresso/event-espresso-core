@@ -255,7 +255,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
 		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->_reg_url_link;
-		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
+		EE_Registry::$i18n_js_strings['initial_access'] = time();
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
 		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
 		EE_Registry::$i18n_js_strings['TXN_incomplete'] = EEM_Transaction::incomplete_status_code;
@@ -456,7 +456,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
 			}
 			// reset time to check for payments
-			$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
+			$response['espresso_thank_you_page']['get_payments_since'] = time();
 		} else {
 			$response['espresso_thank_you_page']['get_payments_since'] = $since;
 		}
@@ -475,7 +475,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	private function _update_server_wait_time( $thank_you_page_data = array() ) {
 		$response['espresso_thank_you_page'] = array (
-			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? current_time('timestamp') - $thank_you_page_data['initial_access'] : 0,
+			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? time() - $thank_you_page_data['initial_access'] : 0,
 			'txn_status' => $this->_current_txn->status_ID()
 		);
 		return $response;
@@ -738,11 +738,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
 			'STS_ID'=>EEM_Payment::status_id_pending,
-			'PAY_timestamp'=>current_time('timestamp'),
+			'PAY_timestamp'=>time(),
 			'PAY_amount'=>$this->_current_txn->total(),
 			'PMD_ID'=>$this->_current_txn->payment_method_ID()
 		));
-		$template_args['gateway_content'] = $this->_current_txn->payment_method()->type_obj()->payment_overview_content($payment);//EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
+		$payment_method = $this->_current_txn->payment_method();
+		if ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base ) {
+			$template_args[ 'gateway_content' ] = $payment_method->type_obj()->payment_overview_content( $payment );
+		} else {
+			$template_args[ 'gateway_content' ] = '';
+		}
 		// link to SPCO payment_options
 		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
 		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;

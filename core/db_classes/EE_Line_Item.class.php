@@ -31,29 +31,33 @@ class EE_Line_Item extends EE_Base_Class {
 	 * for children line items (currently not a normal relation)
 	 * @type EE_Line_Item[]
 	 */
-	protected $_Line_Item;
+	protected $_children;
 
 
 
 	/**
 	 *
-	 * @param array  $props_n_values
-	 * @param string $timezone
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
 	 * @return EE_Line_Item
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array  $props_n_values
-	 * @param string $timezone
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
 	 * @return EE_Line_Item
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -67,7 +71,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ) {
 		parent::__construct( $fieldValues, $bydb, $timezone );
-		if ( !$this->get( 'LIN_code' ) ) {
+		if ( ! $this->get( 'LIN_code' ) ) {
 			$this->set_code( $this->generate_code() );
 		}
 	}
@@ -231,6 +235,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function is_percent() {
+		if( $this->is_tax_sub_total() ) {
+			//tax subtotals HAVE a percent on them, that percentage only applies
+			//to taxable items, so its' an exception. Treat it like a flat line item
+			return false;
+		}
 		$unit_price = $this->get( 'LIN_unit_price' );
 		$percent = $this->get( 'LIN_percent' );
 		if ( $unit_price < .001 && $percent ) {
@@ -285,6 +294,16 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
+	}
+
+
+
+	/**
+	 * Sets order
+	 * @param int $order
+	 */
+	function set_order( $order ) {
+		$this->set( 'LIN_order', $order );
 	}
 
 
@@ -347,12 +366,15 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function children() {
 		if ( $this->ID() ) {
-			return $this->get_model()->get_all( array( array( 'LIN_parent' => $this->ID() ) ) );
+			return $this->get_model()->get_all(
+					array(
+						array( 'LIN_parent' => $this->ID() ),
+						'order_by' => array( 'LIN_order' => 'ASC' ) ) );
 		} else {
-			if ( !is_array( $this->_Line_Item ) ) {
-				$this->_Line_Item = array();
+			if ( ! is_array( $this->_children ) ) {
+				$this->_children = array();
 			}
-			return $this->_Line_Item;
+			return $this->_children;
 		}
 	}
 
@@ -401,18 +423,16 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
-	 * Gets the object that this model-joins-to. Eg, if this line item join model object
-	 * is for a ticket, this will return the ticket object
-	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
+	 * Gets the object that this model-joins-to.
+	 * returns one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object
+	 *
+	 * 		Eg, if this line item join model object is for a ticket, this will return the EE_Ticket object
+	 *
+	 * @return EE_Base_Class | NULL
 	 */
 	function get_object() {
 		$model_name_of_related_obj = $this->OBJ_type();
-		$is_model_name = EE_Registry::instance()->is_model_name( $model_name_of_related_obj );
-		if ( !$is_model_name ) {
-			return NULL;
-		} else {
-			return $this->get_first_related( $model_name_of_related_obj );
-		}
+		return $this->get_model()->has_relation(  $model_name_of_related_obj ) ? $this->get_first_related( $model_name_of_related_obj ) : NULL;
 	}
 
 
@@ -428,6 +448,25 @@ class EE_Line_Item extends EE_Base_Class {
 		$remove_defaults = array( 'default_where_conditions' => 'none' );
 		$query_params = array_merge( $remove_defaults, $query_params );
 		return $this->get_first_related( 'Ticket', $query_params );
+	}
+
+
+
+	/**
+	 * Gets the EE_Datetime that's related to the ticket, IF this is for a ticket
+	 * @return EE_Datetime | NULL
+	 */
+	function get_ticket_datetime() {
+		if ( $this->OBJ_type() === 'Ticket' ) {
+			$ticket = $this->ticket();
+			if ( $ticket instanceof EE_Ticket ) {
+				$datetime = $ticket->first_datetime();
+				if ( $datetime instanceof EE_Datetime ) {
+					return $datetime;
+				}
+			}
+		}
+		return NULL;
 	}
 
 
@@ -473,12 +512,9 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function ticket_datetime_start( $date_format = '', $time_format = '' ) {
 		$first_datetime_string = __( "Unknown", "event_espresso" );
-		$ticket = $this->ticket();
-		if ( $ticket instanceof EE_Ticket ) {
-			$first_datetime = $ticket->first_datetime();
-			if ( $first_datetime ) {
-				$first_datetime_string = $first_datetime->start_date_and_time( $date_format, $time_format );
-			}
+		$datetime = $this->get_ticket_datetime();
+		if ( $datetime ) {
+			$first_datetime_string = $datetime->start_date_and_time( $date_format, $time_format );
 		}
 		return $first_datetime_string;
 	}
@@ -492,6 +528,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
+		$line_item->set_order( count( $this->children() ) );
 		if ( $this->ID() ) {
 			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
@@ -504,7 +541,7 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 			return $line_item->save();
 		} else {
-			$this->_Line_Item[ $line_item->code() ] = $line_item;
+			$this->_children[ $line_item->code() ] = $line_item;
 			return TRUE;
 		}
 	}
@@ -522,7 +559,7 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->get_one( array( array( 'LIN_parent' => $this->ID(), 'LIN_code' => $code ) ) );
 		} else {
-			return isset( $this->_Line_Item[ $code ] ) ? $this->_Line_Item[ $code ] : null;
+			return isset( $this->_children[ $code ] ) ? $this->_children[ $code ] : null;
 		}
 	}
 
@@ -536,8 +573,8 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->ID() ) {
 			return $this->get_model()->delete( array( array( 'LIN_parent' => $this->ID() ) ) );
 		} else {
-			$count = count( $this->_Line_Item );
-			$this->_Line_Item = array();
+			$count = count( $this->_children );
+			$this->_children = array();
 			return $count;
 		}
 	}
@@ -546,16 +583,50 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * If this line item has been saved to the DB, deletes its child with LIN_code == $code. If this line
-	 * HAS NOT been saved to the DB, removes the child line item with index $code
+	 * HAS NOT been saved to the DB, removes the child line item with index $code.
+	 * Also searches through the child's children for a matching line item. However, once a line item has been found
+	 * and deleted, stops searching (so if there are line items with duplicate codes, only the first one found will be deleted)
 	 * @param string $code
+	 * @param bool $stop_search_once_found
 	 * @return int count of items deleted (or simply removed from the line item's cache, if not has not been saved to the DB yet)
 	 */
-	function delete_child_line_item( $code ) {
+	function delete_child_line_item( $code, $stop_search_once_found = true ) {
 		if ( $this->ID() ) {
-			return $this->get_model()->delete( array( array( 'LIN_code' => $code, 'LIN_parent' => $this->ID() ) ) );
+			$items_deleted = 0;
+			if( $this->code() == $code ) {
+				$items_deleted += EEH_Line_Item::delete_all_child_items( $this );
+				$items_deleted += intval( $this->delete() );
+				if( $stop_search_once_found ){
+					return $items_deleted;
+				}
+			}
+			foreach( $this->children() as $child_line_item ) {
+				$items_deleted += $child_line_item->delete_child_line_item( $code, $stop_search_once_found );
+			}
+			return $items_deleted;
 		} else {
-			unset( $this->_Line_Item[ $code ] );
-			return 1;
+			if( isset( $this->_children[ $code ] ) ) {
+				unset( $this->_children[ $code ] );
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}
+
+	/**
+	 * If this line item is in the database, is of the type subtotal, and
+	 * has no children, why do we have it? It should be deleted so this function
+	 * does that
+	 * @return boolean
+	 */
+	public function delete_if_childless_subtotal() {
+		if( $this->ID() &&
+				$this->type() == EEM_Line_Item::type_sub_total &&
+				! $this->children() ) {
+			return $this->delete();
+		} else {
+			return false;
 		}
 	}
 
@@ -656,11 +727,18 @@ class EE_Line_Item extends EE_Base_Class {
 	function recalculate_total_including_taxes() {
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_tax_total();
+
 		$total = $pre_tax_total + $tax_total;
+		// no negative totals plz
+		$total = max( $total, 0 );
 		$this->set_total( $total );
 		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
+			if ( $this->transaction()->ID() ) {
+				$this->transaction()->save();
+			}
 		}
+		$this->maybe_save();
 		return $total;
 	}
 
@@ -670,20 +748,25 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @throws EE_Error
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return float
+	 * @throws \EE_Error
 	 */
-	function recalculate_pre_tax_total( ) {
+	function recalculate_pre_tax_total( EE_Line_Item $parent_line_item = null ) {
 		$total = 0;
 		//completely ignore tax sub-totals when calculating the pre-tax-total
 		if ( $this->is_tax_sub_total() ) {
 			return 0;
 		} elseif ( $this->is_sub_line_item() ) {
-			throw new EE_Error( sprintf( __( "Calculating the pretax-total on subline items doesn't make sense right now. You were trying to calculate it on %s", "event_espresso" ), d( $this ) ) );
+			throw new EE_Error( sprintf( __( 'Calculating the pretax-total on sub-line items doesn\'t make sense right now. You were trying to calculate it on %s', "event_espresso" ), print_r( $this, TRUE ) ) );
 		} elseif ( $this->is_line_item() ) {
-			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
-			$total = $this->unit_price() * $this->quantity();
+			if ( $this->is_percent() && $parent_line_item instanceof EE_Line_Item ) {
+				$total += $parent_line_item->total() * $this->percent() / 100;
+			} else {
+				$total = $this->unit_price() * $this->quantity();
+			}
 			$this->set_total( $total );
+			$this->maybe_save();
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
@@ -692,14 +775,17 @@ class EE_Line_Item extends EE_Base_Class {
 					if ( $child_line_item->is_percent() ) {
 						$total += $total * $child_line_item->percent() / 100;
 					} else {
-						$total += $child_line_item->recalculate_pre_tax_total();
+						$total += $child_line_item->recalculate_pre_tax_total( $this );
 					}
 				}
 			}
 			//we only want to update sub-totals if we're including non-taxable items
 			//and grand totals shouldn't be updated when calculating pre-tax totals
 			if( $this->is_sub_total() ){
+				// no negative totals plz
+				$total = max( $total, 0 );
 				$this->set_total( $total );
+				$this->maybe_save();
 			}
 		}
 		return $total;
@@ -737,13 +823,16 @@ class EE_Line_Item extends EE_Base_Class {
 	private function _recalculate_tax_sub_total() {
 		if ( $this->is_tax_sub_total() ) {
 			$total = 0;
+			$total_percent = 0;
 			//simply loop through all its children (which should be taxes) and sum their total
 			foreach ( $this->children() as $child_tax ) {
 				if ( $child_tax instanceof EE_Line_Item ) {
 					$total += $child_tax->total();
+					$total_percent += $child_tax->percent();
 				}
 			}
 			$this->set_total( $total );
+			$this->set_percent( $total_percent );
 		} elseif ( $this->is_total() ) {
 			foreach ( $this->children() as $maybe_tax_subtotal ) {
 				if ( $maybe_tax_subtotal instanceof EE_Line_Item ) {
@@ -763,7 +852,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$this->_recalculate_tax_sub_total();
 		$total = 0;
 		foreach ( $this->tax_descendants() as $tax_line_item ) {
-			$total += $tax_line_item->total();
+			if ( $tax_line_item instanceof EE_Line_Item ) {
+				$total += $tax_line_item->total();
+			}
 		}
 		return $total;
 	}
@@ -775,7 +866,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function get_items_total() {
 		$total = 0;
-		foreach ( $this->_get_descendants_of_type( EEM_Line_Item::type_line_item ) as $item ) {
+		foreach ( $this->get_items() as $item ) {
 			if ( $item instanceof EE_Line_Item ) {
 				$total += $item->total();
 			}
@@ -791,7 +882,8 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants() {
-		return $this->_get_descendants_of_type( EEM_Line_Item::type_tax );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		return EEH_Line_Item::get_tax_descendants( $this );
 	}
 
 
@@ -801,50 +893,8 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return EE_Line_Item[]
 	 */
 	function get_items() {
-		return $this->_get_descendants_of_type( EEM_Line_Item::type_line_item );
-	}
-
-
-
-	/**
-	 * Gets all descendants of the specified type
-	 * @param string $type one of the constants on EEM_Line_Item
-	 * @return EE_Line_Item[]
-	 */
-	protected function _get_descendants_of_type( $type ) {
-		$line_items_of_type = array();
-		foreach ( $this->children() as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
-				if ( $child_line_item->type() == $type ) {
-					$line_items_of_type[ ] = $child_line_item;
-				} else {
-					//go-through-all-its children looking for taxes
-					$line_items_of_type = array_merge( $line_items_of_type, $child_line_item->_get_descendants_of_type( $type ) );
-				}
-			}
-		}
-		return $line_items_of_type;
-	}
-
-	/**
-	 * Uses a breadth-first-search in order to find the nearest descendant of
-	 * the specified type and returns it, else NULL
-	 * @param string $type like one of the EEM_Line_Item::type_*
-	 * @return EE_Line_Item
-	 */
-	public function get_nearest_descendant_of_type( $type ) {
-		foreach( $this->children() as $child ){
-			if( $child->type() == $type ){
-				return $child;
-			}
-		}
-		foreach($this->children() as $child ){
-			$descendant_found = $child->get_nearest_descendant_of_type( $type );
-			if( $descendant_found ){
-				return $descendant_found;
-			}
-		}
-		return NULL;
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		return EEH_Line_Item::get_line_item_descendants( $this );
 	}
 
 
@@ -858,9 +908,14 @@ class EE_Line_Item extends EE_Base_Class {
 		$total = 0;
 		if ( $this->children() ) {
 			foreach ( $this->children() as $child_line_item ) {
-
 				if ( $child_line_item->type() == EEM_Line_Item::type_line_item && $child_line_item->is_taxable()) {
-					$total += $child_line_item->total();
+					//if it's a percent item, only take into account the percent
+					//that's taxable too (the taxable total so far)
+					if( $child_line_item->is_percent() ) {
+						$total = $total + ( $total * $child_line_item->percent() / 100 );
+					}else{
+						$total += $child_line_item->total();
+					}
 				}elseif( $child_line_item->type() == EEM_Line_Item::type_sub_total ){
 					$total += $child_line_item->taxable_total();
 				}
@@ -903,6 +958,47 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 		}
 	}
+
+
+
+	/**
+	 * @deprecated
+	 * @param string $type one of the constants on EEM_Line_Item
+	 * @return EE_Line_Item[]
+	 */
+	protected function _get_descendants_of_type( $type ) {
+		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		return EEH_Line_Item::get_descendants_of_type( $this, $type );
+	}
+
+
+
+	/**
+	 * @deprecated
+	 * @param string $type like one of the EEM_Line_Item::type_*
+	 * @return EE_Line_Item
+	 */
+	public function get_nearest_descendant_of_type( $type ) {
+		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
+	}
+
+
+
+	/**
+	 * If this item has an ID, then this saves it again to update the db
+	 *
+	 * @return int count of items saved
+	 */
+	public function maybe_save() {
+		if ( $this->ID() ) {
+			return $this->save();
+		}
+		return false;
+	}
+
 
 
 }

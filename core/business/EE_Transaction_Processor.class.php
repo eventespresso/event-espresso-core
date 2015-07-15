@@ -276,7 +276,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return boolean
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		$current_time = (int)current_time( 'timestamp' );
+		$current_time = time();
 		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
 	}
 
@@ -423,9 +423,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
-			// set incoming TXN_Status
 			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
-			$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			// if a contact record for the primary registrant has been created
+			if ( $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+				$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
+			} else {
+				// no contact record? yer abandoned!
+				$transaction->set_status( EEM_Transaction::abandoned_status_code );
+				$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
+			}
 			return TRUE;
 		}
 		return FALSE;

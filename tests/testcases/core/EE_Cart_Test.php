@@ -58,6 +58,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 	public function test_add_ticket_to_cart(){
 		//let's make an interesting ticket, with multiple datetimes, multiple prices etc
 		$quantity_purchased = 4;
+		/** @type EE_Ticket $ticket */
 		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => '16.5', 'TKT_taxable' => FALSE ) );
 		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
 		$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
@@ -81,10 +82,10 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$ticket->_add_relation_to( $ddt2, 'Datetime' );
 		$this->assertArrayContains( $ddt1, $ticket->datetimes() );
 		$this->assertArrayContains( $ddt2, $ticket->datetimes() );
-
-		EE_Cart::reset()->add_ticket_to_cart( $ticket, $quantity_purchased );
-
-		$total_line_item = EE_Cart::instance()->get_grand_total();
+		// reset cart
+		$cart = EE_Cart::reset();
+		$cart->add_ticket_to_cart( $ticket, $quantity_purchased );
+		$total_line_item = $cart->get_grand_total();
 		$subtotals = $total_line_item->children();
 		$this->assertNotEmpty( $subtotals );
 		$items_purchased = $total_line_item->get_items();
@@ -103,7 +104,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$percent_surcharge_sli = array_shift( $sub_line_items );
 		$this->assertEquals( $percent_surcharge->amount(), $percent_surcharge_sli->percent() );
 		$this->assertEquals( ($base_price->amount()  + $dollar_surcharge->amount() )* $percent_surcharge->amount() / 100 * $quantity_purchased, $percent_surcharge_sli->total() );
-		$this->assertEquals($ticket->price() * $quantity_purchased, EE_Cart::instance()->get_cart_grand_total() );
+		$this->assertEquals($ticket->price() * $quantity_purchased, $cart->get_cart_grand_total() );
 
 	}
 
@@ -172,6 +173,8 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$this->assertEquals( EE_Registry::instance()->SSN->get_session_data( 'cart' ), $cart );
 	}
 
-}
 
+
+}
 // End of file EE_Cart_Test.php
+// Location: /tests/testcases/core/EE_Cart_Test.php
