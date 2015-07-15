@@ -94,6 +94,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_message';
 		$sql="MSG_ID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 					GRP_ID INT(10) UNSIGNED NOT NULL,
+					TXN_ID INT(10) UNSIGNED NOT NULL,
 					MSG_messenger VARCHAR(30) NOT NULL,
 					MSG_message_type VARCHAR(50) NOT NULL,
 					MSG_context VARCHAR(50) NOT NULL,

@@ -94,6 +94,7 @@ class EEM_Transaction extends EEM_Base {
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
+			'Message' => new EE_Has_Many_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Registration.Event';
 		parent::__construct( $timezone );

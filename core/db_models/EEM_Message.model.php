@@ -82,6 +82,7 @@ class EEM_Message extends EEM_Base {
 			'Message'=>array(
 				'MSG_ID'=>new EE_Primary_Key_Int_Field('MSG_ID', __('Message ID','event_espresso')),
 				'GRP_ID'=>new EE_Foreign_Key_Int_Field( 'GRP_ID', __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso' ), false, 0, 'Message_Template_Group' ),
+				'TXN_ID' => new EE_Foreign_Key_Int_Field( 'TXN_ID', __( 'Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message', 'event_espresso' ), false, 0, 'Transaction' ),
 				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resends of the message.', 'event_espresso' ), false ),
 				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso' ), false ),
 				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), false ),
@@ -100,7 +101,8 @@ class EEM_Message extends EEM_Base {
 		$this->_model_relations = array(
 			'Attendee' => new EE_Belongs_To_Any_Relation(),
 			'Registration' => new EE_Belongs_To_Any_Relation(),
-			'Message_Template_Group' => new EE_Belongs_To_Relation()
+			'Message_Template_Group' => new EE_Belongs_To_Relation(),
+			'Transaction' => new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
 	}
