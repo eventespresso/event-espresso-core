@@ -860,7 +860,6 @@ class EEH_Line_Item {
 	 *
 	 * @param EE_Line_Item $line_item
 	 * @param array        $running_totals      array exactly like the return value (client code usually shouldn't provide this)
-	 * @param float        $tax_percent_decimal (client code usually shouldn't provide this)
 	 * @return array keys are ticket IDs and values are their share of the running total,
 	 *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
 	 *                                          array(
