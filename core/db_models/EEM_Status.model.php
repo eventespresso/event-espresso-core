@@ -216,9 +216,13 @@ class EEM_Status extends EEM_Base {
 		        __('failed', 'event_espresso'),
 		        __('failed', 'event_espresso'),
 	        ),
-	        EEM_Message::status_retry => array(
+	        EEM_Message::status_resend => array(
 		        __('retried', 'event_espresso'),
 		        __('retried', 'event_espresso'),
+	        ),
+	        EEM_Message::status_incomplete => array(
+		        __('incomplete', 'event_espresso'),
+		        __('incomplete', 'event_espresso'),
 	        )
 	    );
 

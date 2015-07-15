@@ -15,9 +15,9 @@ class EEM_Message extends EEM_Base {
 	/**
 	 * priority constants.
 	 */
-	const priority_high = 0;
-	const priority_medium = 1;
-	const priority_low = 2;
+	const priority_high = 1;
+	const priority_medium = 2;
+	const priority_low = 3;
 
 	/**
 	 * indicates this message was sent at the time modified
@@ -39,9 +39,16 @@ class EEM_Message extends EEM_Base {
 
 
 	/**
-	 * indicates the message was successfully resent at the time modified
+	 * indicates the message has been flagged for resending (at the time modified).
 	 */
-	const status_retry = 'MRT';
+	const status_resend = 'MRS';
+
+
+	/**
+	 * indicates the message has been flagged for generation but has not been generated yet.  Messages always start as this
+	 * status when added to the queue.
+	 */
+	const status_incomplete = "MIC";
 
 
 
@@ -85,7 +92,7 @@ class EEM_Message extends EEM_Base {
 				'MSG_from' => new EE_Plain_Text_Field( 'MSG_address_from', __( 'Address From', 'event_espresso' ), true ),
 				'MSG_subject' => new EE_Full_Html_Field( 'MSG_subject', __( 'Subject', 'event_espresso' ), true, '' ),
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), false, self::priority_medium, $allowed_priority ),
-				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_idle, 'Status' ),
+				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_, 'Status' ),
 				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, time() ),
 				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, time() )
 			)
@@ -136,7 +143,7 @@ class EEM_Message extends EEM_Base {
 	 * @return array of strings for possible stati
 	 */
 	public function stati_indicating_sent(){
-		return apply_filters( 'FHEE__EEM_Message__stati_indicating_sent', array( self::status_sent, self::status_retry ) );
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_sent', array( self::status_sent ) );
 	}
 
 }
