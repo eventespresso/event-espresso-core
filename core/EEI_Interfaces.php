@@ -271,8 +271,9 @@ interface EEHI_Line_Item{
 	 * Adds an item to the purchase in the right spot
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $line_item
+	 * @param boolean $update_totals
 	 */
-	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item );
+	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item, $update_totals = true );
 	/**
 	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
 	 * tax and updates the total line item accordingly

@@ -32,9 +32,10 @@ class EEH_Line_Item {
 	 * @param int $quantity
 	 * @param boolean $taxable
 	 * @param boolean $code if set to a value, ensures there is only one line item with that code
+	 * @param boolean $update_totals whether to update the totals, transaction total and registrations or not
 	 * @return boolean success
 	 */
-	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL  ){
+	public static function add_unrelated_item( EE_Line_Item $parent_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = NULL, $update_totals = true  ){
 		$items_subtotal = self::get_pre_tax_subtotal( $parent_line_item );
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
@@ -51,7 +52,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
 			$line_item
 		);
-		return self::add_item( $parent_line_item, $line_item );
+		return self::add_item( $parent_line_item, $line_item, $update_totals );
 	}
 
 
@@ -65,9 +66,10 @@ class EEH_Line_Item {
 	 * @param float        $percentage_amount
 	 * @param string       $description
 	 * @param boolean      $taxable
+	 * @param boolean $update_totals
 	 * @return boolean success
 	 */
-	public static function add_percentage_based_item( EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = FALSE ){
+	public static function add_percentage_based_item( EE_Line_Item $parent_line_item, $name, $percentage_amount, $description = '', $taxable = FALSE, $update_totals = true ){
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name' => $name,
 			'LIN_desc' => $description,
@@ -83,7 +85,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
 			$line_item
 		);
-		return self::add_item( $parent_line_item, $line_item );
+		return self::add_item( $parent_line_item, $line_item, $update_totals );
 	}
 
 
@@ -95,10 +97,11 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
 	 * @param int $qty
+	 * @param boolean $update_totals
 	 * @return \EE_Line_Item
 	 * @throws \EE_Error
 	 */
-	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1, $update_totals = true){
 		if ( ! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total() ) {
 			throw new EE_Error( sprintf( __( 'A valid line item total is required in order to add tickets. A line item of type "%s" was passed.', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
 		}
@@ -108,7 +111,9 @@ class EEH_Line_Item {
 		if ( ! $line_item instanceof EE_Line_Item ) {
 			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
 		}
-		$total_line_item->recalculate_total_including_taxes();
+		if( $update_totals ) {
+			$total_line_item->recalculate_total_including_taxes();
+		}
 		return $line_item;
 	}
 
@@ -221,16 +226,19 @@ class EEH_Line_Item {
 	 * Adds the specified item under the pre-tax-sub-total line item and recalculates the line item totals, and updates the transaction and registration totals
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $item to be added
+	 * @param boolean $update_totals whether to update the subtotals, totals, transaction total and registration final prices
 	 * @return boolean
 	 */
-	public static function add_item( EE_Line_Item $total_line_item, EE_Line_Item $item ){
+	public static function add_item( EE_Line_Item $total_line_item, EE_Line_Item $item, $update_totals = true ){
 		$pre_tax_subtotal = self::get_pre_tax_subtotal( $total_line_item );
 		if ( $pre_tax_subtotal instanceof EE_Line_Item ){
 			$success = $pre_tax_subtotal->add_child_line_item($item);
 		}else{
 			return FALSE;
 		}
+		if( $update_totals ) {
 			$total_line_item->recalculate_total_including_taxes();
+		}
 		return $success;
 	}
 
