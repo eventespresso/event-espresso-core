@@ -379,6 +379,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * Updates the transaction and line items based on the payment IPN data from PayPal,
 	 * like the taxes or shipping
 	 * @param EEI_Payment $payment
+	 * @return boolean indicating whether we actually changed the transaction and line items or not
 	 */
 	public function update_txn_based_on_payment( $payment ) {
 		$update_info = $payment->details();
@@ -419,9 +420,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$grand_total_needs_resaving = TRUE;
 		}
 
-		if( $grand_total_needs_resaving ){
-			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
-		}
 		$this->log(
 			array(
 				'url' 													=> $this->_process_response_url(),
