@@ -282,6 +282,8 @@ abstract class EE_Gateway{
 	 * at that point. Instead, you should store any info you need on the payment during those
 	 * functions, and use that information at this step, which client code will decide
 	 * for you when it should be called.
+	 * This method may add, remove, or change line items for the transaction. It should use $this->_line_item
+	 * for this (and those functions should automatically update the transaction, registrations, and keep the line item tree correct).
 	 * @param EE_Payment $payment
 	 * @return void
 	 */
