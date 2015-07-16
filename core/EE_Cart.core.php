@@ -194,11 +194,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@access public
 	 *	@param EE_Ticket $ticket
 	 *	@param int $qty
-	 *	@param boolean $update_totals
 	 *	@return TRUE on success, FALSE on fail
 	 */
-	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1, $update_totals = true ) {
-		EEH_Line_Item::add_ticket_purchase( $this->get_grand_total(), $ticket, $qty, $update_totals );
+	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
+		EEH_Line_Item::add_ticket_purchase( $this->get_grand_total(), $ticket, $qty );
 		return $this->save_cart() ? TRUE : FALSE;
 	}
 

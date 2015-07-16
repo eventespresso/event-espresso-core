@@ -523,8 +523,8 @@ class EED_Ticket_Selector extends  EED_Module {
 						$tckts_slctd = TRUE;
 						//						d( $valid['ticket_obj'][$x] );
 						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
-							// then add ticket to cart; but don't bother updating the totals until we've added them all
-							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x], false );
+							// then add ticket to cart
+							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
 							$success = ! $ticket_added ? FALSE : $success;
 							if ( EE_Error::has_error() ) {
 								break;
@@ -719,10 +719,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @access   private
 	 * @param EE_Ticket $ticket
 	 * @param int       $qty
-	 * @param boolean $update_totals
 	 * @return TRUE on success, FALSE on fail
 	 */
-	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1, $update_totals = true ) {
+	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get the number of spaces left for this datetime ticket
 		$available_spaces = self::_ticket_datetime_availability( $ticket );
@@ -733,7 +732,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				return false;
 			}
 			// add event to cart
-			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty, $update_totals )) {
+			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
 				return true;
 			} else {
