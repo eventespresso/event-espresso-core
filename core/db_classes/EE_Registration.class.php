@@ -10,6 +10,28 @@
  */
 class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration {
 
+
+	/**
+	 * Used to reference when a registration has never been checked in.
+	 * @type int
+	 */
+	const checkin_status_never = 0;
+
+	/**
+	 * Used to reference when a registration has been checked in.
+	 * @type int
+	 */
+	const checkin_status_in = 1;
+
+
+	/**
+	 * Used to reference when a registration has been checked out.
+	 * @type int
+	 */
+	const checkin_status_out = 2;
+
+
+
 	/**
 	 *
 	 * @param array  $props_n_values
@@ -922,12 +944,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
+		$status_paths = array(
+			EE_Registration::checkin_status_never => EE_Registration::checkin_status_in,
+			EE_Registration::checkin_status_in => EE_Registration::checkin_status_out,
+			EE_Registration::checkin_status_out => EE_Registration::checkin_status_in
+		);
 		//start by getting the current status so we know what status we'll be changing to.
 		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
 		$status_to = $status_paths[ $cur_status ];
 		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
-		$new_status = $status_to == 2 ? 0 : $status_to;
+		$new_status = $status_to == EE_Registration::checkin_status_out ? false : $status_to;
 		$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
 		$checkin = EE_Checkin::new_instance( $chk_data );
 		$updated = $checkin->save();
@@ -971,12 +997,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
-				return 1; //checked in
+				return EE_Registration::checkin_status_in; //checked in
 			} else {
-				return 2; //had checked in but is now checked out.
+				return EE_Registration::checkin_status_out; //had checked in but is now checked out.
 			}
 		} else {
-			return 0; //never been checked in
+			return EE_Registration::checkin_status_never; //never been checked in
 		}
 	}
 
@@ -998,13 +1024,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			$cur_status = $this->check_in_status_for_datetime( $DTT_ID );
 			//what is the status message going to be?
 			switch ( $cur_status ) {
-				case 0 :
+				case EE_Registration::checkin_status_never :
 					return sprintf( __( "%s has been removed from Check-in records", "event_espresso" ), $attendee->full_name() );
 					break;
-				case 1 :
+				case EE_Registration::checkin_status_in :
 					return sprintf( __( '%s has been checked in', 'event_espresso' ), $attendee->full_name() );
 					break;
-				case 2 :
+				case EE_Registration::checkin_status_out :
 					return sprintf( __( '%s has been checked out', 'event_espresso' ), $attendee->full_name() );
 					break;
 			}
