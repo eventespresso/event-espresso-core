@@ -982,7 +982,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * PLEASE NOTE:
 	 * to represent the check in statuses ( never, in, out )
 	 * EE internally uses values ( 0, 1, 2 ) as defined by the class constants,
-	 * but the db uses ( null, 0, 1 ) where the absence of a record ( null )
+	 * but the db uses ( null, 0, 1 ) where 0 equals checked OUT,
+	 * 1 equals checked IN, and the absence of a record ( null )
 	 * indicates that the registrant has never checked in
 	 *
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
