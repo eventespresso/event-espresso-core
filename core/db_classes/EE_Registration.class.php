@@ -12,27 +12,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 * Used to reference when a registration has never been checked in.
-	 * @type int
-	 */
-	const checkin_status_never = 0;
-
-	/**
-	 * Used to reference when a registration has been checked in.
-	 * @type int
-	 */
-	const checkin_status_in = 1;
-
-
-	/**
-	 * Used to reference when a registration has been checked out.
-	 * @type int
-	 */
-	const checkin_status_out = 2;
-
-
-
-	/**
 	 *
 	 * @param array  $props_n_values
 	 * @param string $timezone
@@ -1008,20 +987,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			return false;
 		}
 		$status_paths = array(
-			EE_Registration::checkin_status_never => EE_Registration::checkin_status_in,
-			EE_Registration::checkin_status_in => EE_Registration::checkin_status_out,
-			EE_Registration::checkin_status_out => EE_Registration::checkin_status_in
+			0 => 1,
+			1 => 2,
+			2 => 1
 		);
 		//start by getting the current status so we know what status we'll be changing to.
 		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
 		$status_to = $status_paths[ $cur_status ];
 		// database only records true for checked IN or false for checked OUT
 		// no record ( null ) means checked in NEVER, but we obviously don't save that
-		$new_status = $status_to == EE_Registration::checkin_status_in ? true : false;
+		$new_status = $status_to == 1 ? true : false;
 		// add relation - note Check-ins are always creating new rows
 		// because we are keeping track of Check-ins over time.
-		// Eventually we'll probably want to show a list table
-		// for the individual Check-ins so that they can be managed.
 		$checkin = EE_Checkin::new_instance( array(
 				'REG_ID' => $this->ID(),
 				'DTT_ID' => $DTT_ID,
@@ -1076,12 +1053,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
 		if ( $checkin instanceof EE_Checkin ) {
 			if ( $checkin->get( 'CHK_in' ) ) {
-				return EE_Registration::checkin_status_in; //checked in
+				return 1; //checked in
 			} else {
-				return EE_Registration::checkin_status_out; //had checked in but is now checked out.
+				return 2; //had checked in but is now checked out.
 			}
 		} else {
-			return EE_Registration::checkin_status_never; //never been checked in
+			return 0; //never been checked in
 		}
 	}
 
@@ -1103,13 +1080,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			$cur_status = $this->check_in_status_for_datetime( $DTT_ID );
 			//what is the status message going to be?
 			switch ( $cur_status ) {
-				case EE_Registration::checkin_status_never :
+				case 0 :
 					return sprintf( __( "%s has been removed from Check-in records", "event_espresso" ), $attendee->full_name() );
 					break;
-				case EE_Registration::checkin_status_in :
+				case 1 :
 					return sprintf( __( '%s has been checked in', 'event_espresso' ), $attendee->full_name() );
 					break;
-				case EE_Registration::checkin_status_out :
+				case 2 :
 					return sprintf( __( '%s has been checked out', 'event_espresso' ), $attendee->full_name() );
 					break;
 			}
