@@ -975,7 +975,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * toggle Check-in status for this registration
 	 *
 	 * Check-ins are toggled in the following order:
-	 * never checked in -> checkedin
+	 * never checked in -> checked in
 	 * checked in -> checked out
 	 * checked out -> never checked in
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
