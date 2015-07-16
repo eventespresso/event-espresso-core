@@ -218,7 +218,7 @@ class EEH_Line_Item {
 
 
 	/**
-	 * Adds the specified item under the pre-tax-sub-total line item and recalculates the line item totals, and updates the transaction and registration totals
+	 * Adds the specified item under the pre-tax-sub-total line item
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
@@ -230,7 +230,7 @@ class EEH_Line_Item {
 		}else{
 			return FALSE;
 		}
-			$total_line_item->recalculate_total_including_taxes();
+		$total_line_item->recalculate_total_including_taxes();
 		return $success;
 	}
 

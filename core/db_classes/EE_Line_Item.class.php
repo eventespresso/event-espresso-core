@@ -721,7 +721,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Gets the final total on this item, taking taxes into account.
 	 * Has the side-effect of setting the sub-total as it was just calculated.
 	 * If this is used on a grand-total line item, also updates the transaction's
-	 * TXN_total, and the registrations' REG_final_prices
+	 * TXN_total
 	 * @return float
 	 */
 	function recalculate_total_including_taxes() {
@@ -736,8 +736,6 @@ class EE_Line_Item extends EE_Base_Class {
 			$this->transaction()->set_total( $total );
 			if ( $this->transaction()->ID() ) {
 				$this->transaction()->save();
-				$reg_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-				$reg_processor->update_registration_final_prices( $this->transaction() );
 			}
 		}
 		$this->maybe_save();
