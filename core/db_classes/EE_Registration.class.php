@@ -978,18 +978,33 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * never checked in -> checked in
 	 * checked in -> checked out
 	 * checked out -> never checked in
+	 *
+	 * PLEASE NOTE:
+	 * to represent the check in statuses ( never, in, out )
+	 * EE internally uses values ( 0, 1, 2 ) as defined by the class constants,
+	 * but the db uses ( null, 0, 1 ) where the absence of a record ( null )
+	 * indicates that the registrant has never checked in
+	 *
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
 	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
-	public function toggle_checkin_status( $DTT_ID = NULL, $verify = FALSE ) {
+	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
-		//verify the registration can checkin for the given DTT_ID
+		// verify the registration can checkin for the given DTT_ID
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
-			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			EE_Error::add_error(
+					sprintf(
+						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d),
+						because the registration does not have access', 'event_espresso'),
+						$this->ID(),
+						$DTT_ID
+					),
+					__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
 		}
 		$status_paths = array(
 			EE_Registration::checkin_status_never => EE_Registration::checkin_status_in,
@@ -999,13 +1014,32 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		//start by getting the current status so we know what status we'll be changing to.
 		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
 		$status_to = $status_paths[ $cur_status ];
-		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
-		$new_status = $status_to == EE_Registration::checkin_status_out ? false : $status_to;
-		$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
-		$checkin = EE_Checkin::new_instance( $chk_data );
-		$updated = $checkin->save();
-		if ( $updated === 0 ) {
-			$status_to = FALSE;
+		// database only records true for checked IN or false for checked OUT
+		// no record ( null ) means checked in NEVER, but we obviously don't save that
+		$new_status = $status_to == EE_Registration::checkin_status_in ? true : false;
+		// add relation - note Check-ins are always creating new rows
+		// because we are keeping track of Check-ins over time.
+		// Eventually we'll probably want to show a list table
+		// for the individual Check-ins so that they can be managed.
+		$checkin = EE_Checkin::new_instance( array(
+				'REG_ID' => $this->ID(),
+				'DTT_ID' => $DTT_ID,
+				'CHK_in' => $new_status
+		) );
+		// if the record could not be saved then return false
+		if ( $checkin->save() === 0 ) {
+			if ( WP_DEBUG ) {
+				global $wpdb;
+				$error = sprintf(
+					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 	'event_espresso' ),
+					'<br />',
+					$wpdb->last_error
+				);
+			} else {
+				$error = __( 'Registration check in update failed because of an unknown database error', 'event_espresso' );
+			}
+			EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		return $status_to;
 	}
