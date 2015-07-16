@@ -915,11 +915,59 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
 
 		//first check registration status
-		if (  $check_approved && ! $this->is_approved() ) {
+		if (  ( $check_approved && ! $this->is_approved() ) || ! $DTT_ID ) {
 			return false;
 		}
 		//is there a datetime ticket that matches this dtt_ID?
-		return EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
+		if ( ! ( EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) ) ) ) {
+			return false;
+		}
+
+		//final check is against TKT_uses
+		return $this->verify_can_checkin_against_TKT_uses( $DTT_ID );
+	}
+
+
+	/**
+	 * This method verifies whether the user can checkin for the given datetime considering the max uses value set on the ticket.
+	 *
+	 * To do this,  a query is done to get the count of the datetime records already checked into.  If the datetime given does
+	 * not have a check-in record and checking in for that datetime will exceed the allowed uses, then return false.  Otherwise return true.
+	 *
+	 * @param int | EE_Datetime  $DTT_OR_ID  The datetime the registration is being checked against
+	 * @return bool   true means can checkin.  false means cannot checkin.
+	 */
+	public function verify_can_checkin_against_TKT_uses( $DTT_OR_ID ) {
+		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
+
+		if ( ! $DTT_ID ) {
+			return false;
+		}
+
+		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : INF;
+
+		// if max uses is not set or equals infinity then return true cause its not a factor for whether user can check-in
+		// or not.
+		if ( ! $max_uses || $max_uses === INF ) {
+			return true;
+		}
+
+		//does this datetime have a checkin record?  If so, then the dtt count has already been verified so we can just
+		//go ahead and toggle.
+		if ( EEM_Checkin::instance()->exists( array( array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID ) ) ) ) {
+			return true;
+		}
+
+		//made it here so the last check is whether the number of checkins per unique datetime on this registration
+		//disallows further check-ins.
+		$count_unique_dtt_checkins = EEM_Checkin::instance()->count( array( array( 'REG_ID' => $this->ID(), 'CHK_in' => true ) ), 'DTT_ID', true );
+
+		$can_checkin = $count_unique_dtt_checkins < $max_uses;
+
+		if ( ! $can_checkin ) {
+			EE_Error::add_error( __( 'Check-in denied because number of datetime uses for the ticket has been exceeded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		return $can_checkin;
 	}
 
 
