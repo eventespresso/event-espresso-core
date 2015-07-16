@@ -10,6 +10,7 @@
  */
 class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration {
 
+
 	/**
 	 *
 	 * @param array  $props_n_values
@@ -106,7 +107,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
 			return TRUE;
 		}
-		return FALSE;
 	}
 
 
@@ -893,11 +893,59 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
 
 		//first check registration status
-		if (  $check_approved && ! $this->is_approved() ) {
+		if (  ( $check_approved && ! $this->is_approved() ) || ! $DTT_ID ) {
 			return false;
 		}
 		//is there a datetime ticket that matches this dtt_ID?
-		return EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) );
+		if ( ! ( EEM_Datetime_Ticket::instance()->exists( array( array( 'TKT_ID' => $this->get('TKT_ID' ), 'DTT_ID' => $DTT_ID ) ) ) ) ) {
+			return false;
+		}
+
+		//final check is against TKT_uses
+		return $this->verify_can_checkin_against_TKT_uses( $DTT_ID );
+	}
+
+
+	/**
+	 * This method verifies whether the user can checkin for the given datetime considering the max uses value set on the ticket.
+	 *
+	 * To do this,  a query is done to get the count of the datetime records already checked into.  If the datetime given does
+	 * not have a check-in record and checking in for that datetime will exceed the allowed uses, then return false.  Otherwise return true.
+	 *
+	 * @param int | EE_Datetime  $DTT_OR_ID  The datetime the registration is being checked against
+	 * @return bool   true means can checkin.  false means cannot checkin.
+	 */
+	public function verify_can_checkin_against_TKT_uses( $DTT_OR_ID ) {
+		$DTT_ID = EEM_Datetime::instance()->ensure_is_ID( $DTT_OR_ID );
+
+		if ( ! $DTT_ID ) {
+			return false;
+		}
+
+		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : INF;
+
+		// if max uses is not set or equals infinity then return true cause its not a factor for whether user can check-in
+		// or not.
+		if ( ! $max_uses || $max_uses === INF ) {
+			return true;
+		}
+
+		//does this datetime have a checkin record?  If so, then the dtt count has already been verified so we can just
+		//go ahead and toggle.
+		if ( EEM_Checkin::instance()->exists( array( array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID ) ) ) ) {
+			return true;
+		}
+
+		//made it here so the last check is whether the number of checkins per unique datetime on this registration
+		//disallows further check-ins.
+		$count_unique_dtt_checkins = EEM_Checkin::instance()->count( array( array( 'REG_ID' => $this->ID(), 'CHK_in' => true ) ), 'DTT_ID', true );
+		// checkins have already reached their max number of uses
+		// so registrant can NOT checkin
+		if ( $count_unique_dtt_checkins >= $max_uses ) {
+			EE_Error::add_error( __( 'Check-in denied because number of datetime uses for the ticket has been reached or exceeded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+		return true;
 	}
 
 
@@ -906,33 +954,70 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * toggle Check-in status for this registration
 	 *
 	 * Check-ins are toggled in the following order:
-	 * never checked in -> checkedin
+	 * never checked in -> checked in
 	 * checked in -> checked out
 	 * checked out -> never checked in
+	 *
+	 * PLEASE NOTE:
+	 * to represent the check in statuses ( never, in, out )
+	 * EE internally uses values ( 0, 1, 2 ) as defined by the class constants,
+	 * but the db uses ( null, 0, 1 ) where 0 equals checked OUT,
+	 * 1 equals checked IN, and the absence of a record ( null )
+	 * indicates that the registrant has never checked in
+	 *
 	 * @param  int $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
 	 * @param  bool $verify  If true then can_checkin() is used to verify whether the person can be checked in or not.  Otherwise this forces change in checkin status.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
-	public function toggle_checkin_status( $DTT_ID = NULL, $verify = FALSE ) {
+	public function toggle_checkin_status( $DTT_ID = null, $verify = false ) {
 		if ( empty( $DTT_ID ) ) {
 			$datetime = $this->get_related_primary_datetime();
 			$DTT_ID = $datetime->ID();
-		//verify the registration can checkin for the given DTT_ID
+		// verify the registration can checkin for the given DTT_ID
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
-			EE_Error::add_error( sprintf( __( 'The given registration (ID:%d) can not be checked in to the given DTT_ID (%d), because the registration does not have access', 'event_espresso'), $this->ID(), $DTT_ID ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			EE_Error::add_error(
+					sprintf(
+						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d),
+						because the registration does not have access', 'event_espresso'),
+						$this->ID(),
+						$DTT_ID
+					),
+					__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
 		}
-		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
+		$status_paths = array(
+			0 => 1,
+			1 => 2,
+			2 => 1
+		);
 		//start by getting the current status so we know what status we'll be changing to.
 		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
 		$status_to = $status_paths[ $cur_status ];
-		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
-		$new_status = $status_to == 2 ? 0 : $status_to;
-		$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
-		$checkin = EE_Checkin::new_instance( $chk_data );
-		$updated = $checkin->save();
-		if ( $updated === 0 ) {
-			$status_to = FALSE;
+		// database only records true for checked IN or false for checked OUT
+		// no record ( null ) means checked in NEVER, but we obviously don't save that
+		$new_status = $status_to == 1 ? true : false;
+		// add relation - note Check-ins are always creating new rows
+		// because we are keeping track of Check-ins over time.
+		$checkin = EE_Checkin::new_instance( array(
+				'REG_ID' => $this->ID(),
+				'DTT_ID' => $DTT_ID,
+				'CHK_in' => $new_status
+		) );
+		// if the record could not be saved then return false
+		if ( $checkin->save() === 0 ) {
+			if ( WP_DEBUG ) {
+				global $wpdb;
+				$error = sprintf(
+					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 	'event_espresso' ),
+					'<br />',
+					$wpdb->last_error
+				);
+			} else {
+				$error = __( 'Registration check in update failed because of an unknown database error', 'event_espresso' );
+			}
+			EE_Error::add_error( $error, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		return $status_to;
 	}
@@ -963,9 +1048,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} elseif ( ! $checkin instanceof EE_Checkin && ! $this->can_checkin( $DTT_ID, false ) ) {
-			EE_Error::add_error( sprintf( __( 'The checkin status for the given registration (ID:%d) and DTT_ID (%d) cannot be retrieved because the registration does not have access to that date and time.  So there is no status for this registration.', 'event_espresso'), $this->ID(), $DTT_ID ) );
-			return false;
 		}
 		//get checkin object (if exists)
 		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );

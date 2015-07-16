@@ -95,6 +95,7 @@ jQuery(document).ready(function($) {
 							$(setup.where).html(content);
 						} else {
 							$(setup.where).html(resp.notices);
+							$('.espresso-notices').show();
 							thisitem.attr('class', content);
 						}
 					}
