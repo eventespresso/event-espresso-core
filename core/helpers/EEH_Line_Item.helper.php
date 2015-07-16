@@ -305,7 +305,7 @@ class EEH_Line_Item {
 		);
 		self::set_TXN_ID( $total_line_item, $transaction );
 		self::create_pre_tax_subtotal( $total_line_item, $transaction );
-		self::create_taxes_subtotal( $total_line_item, $transaction, false );
+		self::create_taxes_subtotal( $total_line_item, $transaction );
 		return $total_line_item;
 	}
 
@@ -340,10 +340,9 @@ class EEH_Line_Item {
 	 * and applies taxes to it
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
 	 * @param EE_Transaction $transaction
-	 * @param boolean $update_totals
 	 * @return EE_Line_Item
 	 */
-	protected static function create_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL, $update_totals = true ){
+	protected static function create_taxes_subtotal( EE_Line_Item $total_line_item, $transaction = NULL ){
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'taxes',
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
@@ -356,7 +355,7 @@ class EEH_Line_Item {
 		self::set_TXN_ID( $tax_line_item, $transaction );
 		$total_line_item->add_child_line_item( $tax_line_item );
 		//and lastly, add the actual taxes
-		self::apply_taxes( $total_line_item, $update_totals );
+		self::apply_taxes( $total_line_item );
 		return $tax_line_item;
 	}
 
@@ -465,9 +464,8 @@ class EEH_Line_Item {
 	 * and recalculates the taxes sub-total and the grand total. Resets the taxes, so
 	 * any old taxes are removed
 	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-	 * @param boolean $update_totals
 	 */
-	public static function apply_taxes( EE_Line_Item $total_line_item, $update_totals = true ){
+	public static function apply_taxes( EE_Line_Item $total_line_item ){
 		/** @type EEM_Price $EEM_Price */
 		$EEM_Price = EE_Registry::instance()->load_model( 'Price' );
 		// get array of taxes via Price Model
@@ -501,9 +499,7 @@ class EEH_Line_Item {
 				}
 			}
 		}
-		if( $update_totals ){
-			$total_line_item->recalculate_total_including_taxes();
-		}
+		$total_line_item->recalculate_total_including_taxes();
 	}
 
 
