@@ -279,7 +279,7 @@ class EE_messages {
 	 *
 	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
 	 */
-	private function _is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
+	public function is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
 		$generating_msgrs = array();
 		//get the $messengers the message type says it can be used with.
 		$used_with = $message_type->with_messengers();
@@ -302,7 +302,7 @@ class EE_messages {
 	 * @param  string $sending_messenger if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
 	 * @param string $generating_messenger if included then this messenger is used for generating the message templates (but not for sending).
 	 * @param string $context If included then only a message type for a specific context will be generated.
-	  * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
+	 * @param bool  $send 			       Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
 	 * @return bool
 	 */
 	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $send = TRUE ) {
