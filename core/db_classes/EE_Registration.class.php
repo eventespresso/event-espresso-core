@@ -128,7 +128,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
 			return TRUE;
 		}
-		return FALSE;
 	}
 
 
@@ -961,13 +960,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		//made it here so the last check is whether the number of checkins per unique datetime on this registration
 		//disallows further check-ins.
 		$count_unique_dtt_checkins = EEM_Checkin::instance()->count( array( array( 'REG_ID' => $this->ID(), 'CHK_in' => true ) ), 'DTT_ID', true );
-
-		$can_checkin = $count_unique_dtt_checkins < $max_uses;
-
-		if ( ! $can_checkin ) {
-			EE_Error::add_error( __( 'Check-in denied because number of datetime uses for the ticket has been exceeded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		// checkins have already reached their max number of uses
+		// so registrant can NOT checkin
+		if ( $count_unique_dtt_checkins >= $max_uses ) {
+			EE_Error::add_error( __( 'Check-in denied because number of datetime uses for the ticket has been reached or exceeded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
 		}
-		return $can_checkin;
+		return true;
 	}
 
 
@@ -1037,7 +1036,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			$DTT_ID = $datetime->ID();
 		//verify the registration can checkin for the given DTT_ID
-		} 
+		}
 		//get checkin object (if exists)
 		$checkin = $checkin instanceof EE_Checkin ? $checkin : $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
 		if ( $checkin instanceof EE_Checkin ) {
