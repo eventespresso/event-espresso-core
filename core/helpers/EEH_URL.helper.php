@@ -153,6 +153,21 @@ class EEH_URL{
 
 
 
+
+	/**
+	 * This generates a unique site-specific string.
+	 * An example usage for this string would be to save as a unique identifier for a record in the db for usage in urls.
+	 *
+	 * @param   string $prefix Use this to prefix the string with something.
+	 * @return string
+	 */
+	public static function generate_unique_token( $prefix = '' ) {
+		$token =  md5( uniqid() . mt_rand() );
+		return $prefix ? $prefix . '_' . $token : $token;
+	}
+
+
+
 	/**
 	 * add_nocache_headers
 	 * @return void
