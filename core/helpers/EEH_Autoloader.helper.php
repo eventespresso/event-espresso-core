@@ -139,6 +139,7 @@ class EEH_Autoloader {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_INTERFACES, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_REPOSITORIES, true );
 		EEH_Autoloader::register_form_sections_autoloaders();
 	}
 
