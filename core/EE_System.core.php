@@ -680,6 +680,7 @@ final class EE_System {
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
 			$this->_req_type = $this->detect_req_type_given_activation_history( $espresso_db_update, 'ee_espresso_activation', espresso_version() );
 		}
+		echo "Detected request type. it was " . $this->_req_type;
 		return $this->_req_type;
 	}
 

@@ -59,7 +59,8 @@ class EE_DMS_Core_4_8_1 extends EE_Data_Migration_Script_Base{
 		$version_string = $version_array['Core'];
 		global $wpdb;
 		$email_question_type = $wpdb->get_var( "SELECT QST_type FROM {$wpdb->prefix}esp_question WHERE QST_system = 'email' LIMIT 1" );
-		if( version_compare( $version_string, '4.8.1', '<=') && version_compare( $version_string, '4.8.0', '>=' ) && $email_question_type === 'TEXT' ){
+		//we need to compare the version array's version to 4.8.0.beta because if its 4.8.0.beta.123, that is considered HIGHER than 4.8.0
+		if( version_compare( $version_string, '4.8.1', '<=') && version_compare( $version_string, '4.8.0.beta', '>=' ) && $email_question_type === 'TEXT' ){
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
