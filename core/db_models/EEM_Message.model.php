@@ -68,6 +68,9 @@ class EEM_Message extends EEM_Base {
 		$this->singular_item = __('Message','event_espresso');
 		$this->plural_item = __('Messages','event_espresso');
 
+		//used for token generator
+		EE_Registry::instance()->load_helper( 'URL' );
+
 		$this->_tables = array(
 			'Message'=>new EE_Primary_Table('esp_message','MSG_ID')
 		);
@@ -81,6 +84,7 @@ class EEM_Message extends EEM_Base {
 		$this->_fields = array(
 			'Message'=>array(
 				'MSG_ID'=>new EE_Primary_Key_Int_Field('MSG_ID', __('Message ID','event_espresso')),
+				'MSG_token' => new EE_Plain_Text_Field( 'MSG_token', __('Unique Token used to represent this row in publicly viewable contexts (eg. a url).', 'event_espresso' ), false, EEH_URL::generate_unique_token() ),
 				'GRP_ID'=>new EE_Foreign_Key_Int_Field( 'GRP_ID', __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso' ), false, 0, 'Message_Template_Group' ),
 				'TXN_ID' => new EE_Foreign_Key_Int_Field( 'TXN_ID', __( 'Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message', 'event_espresso' ), false, 0, 'Transaction' ),
 				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resends of the message.', 'event_espresso' ), false ),
@@ -93,7 +97,7 @@ class EEM_Message extends EEM_Base {
 				'MSG_from' => new EE_Plain_Text_Field( 'MSG_address_from', __( 'Address From', 'event_espresso' ), true ),
 				'MSG_subject' => new EE_Full_Html_Field( 'MSG_subject', __( 'Subject', 'event_espresso' ), true, '' ),
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), false, self::priority_medium, $allowed_priority ),
-				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_, 'Status' ),
+				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_incomplete, 'Status' ),
 				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, time() ),
 				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, time() )
 			)

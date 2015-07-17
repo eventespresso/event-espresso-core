@@ -19,6 +19,12 @@ class EE_Message extends EE_Base_Class {
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+
+		//if object doesn't exist, let's generate a unique token on instantiation so that its available even before saving to db.
+		if ( ! $has_object ) {
+			EE_Registry::instance()->load_helper( 'URL' );
+			$props_n_values['MSG_token'] = EEH_URL::generate_unique_token();
+		}
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -32,6 +38,28 @@ class EE_Message extends EE_Base_Class {
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, true, $timezone );
+	}
+
+
+
+	/**
+	 * Gets MSG_token
+	 *
+	 * @return int
+	 */
+	public function MSG_token() {
+		return $this->get( 'MSG_token' );
+	}
+
+
+
+	/**
+	 * Sets MSG_token
+	 *
+	 * @param int $MSG_token
+	 */
+	public function set_MSG_token( $MSG_token) {
+		$this->set( 'MSG_token', $MSG_token );
 	}
 
 
@@ -55,6 +83,29 @@ class EE_Message extends EE_Base_Class {
 	 */
 	public function set_GRP_ID( $GRP_ID ) {
 		$this->set( 'GRP_ID', $GRP_ID );
+	}
+
+
+
+
+	/**
+	 * Gets TXN_ID
+	 *
+	 * @return int
+	 */
+	public function TXN_ID() {
+		return $this->get( 'TXN_ID' );
+	}
+
+
+
+	/**
+	 * Sets TXN_ID
+	 *
+	 * @param int $TXN_ID
+	 */
+	public function set_TXN_ID( $TXN_ID) {
+		$this->set( 'TXN_ID', $TXN_ID );
 	}
 
 
