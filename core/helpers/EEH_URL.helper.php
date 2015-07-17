@@ -162,7 +162,7 @@ class EEH_URL{
 	 * @return string
 	 */
 	public static function generate_unique_token( $prefix = '' ) {
-		$token =  md5( site_url() . uniqid() . mt_rand() );
+		$token =  md5( uniqid() . mt_rand() );
 		return $prefix ? $prefix . '_' . $token : $token;
 	}
 
