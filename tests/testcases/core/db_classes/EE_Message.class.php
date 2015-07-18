@@ -309,61 +309,6 @@ class EE_Message extends EE_Base_Class {
 
 
 
-	/**
-	 * This retrieves the value of the db column set on this class or if that's not present
-	 * it will attempt to retrieve from extra_meta if found.
-	 *
-	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
-	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
-	 * also have additional main fields specific to the messenger.  The system accomodates those extra
-	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
-	 * value for those extra fields dynamically via the EE_message object.
-	 *
-	 * @param string $column_name  expecting the column name without the 'MSG_' prefix.
-	 * @return mixed|null  value for the column if found.  null if not found.
-	 */
-	public function get_column_value( $column_name ) {
-		$model_fields = $this->get_model()->field_settings( false );
-		$column_value = null;
-		//add prefix to column name
-		$column_name = 'MSG_' . $column_name;
-		if ( isset( $model_fields[$column_name] ) ) {
-			$column_value = $this->get( $column_name );
-		} else {
-			//This isn't a column in the main table, let's see if it is in the extra meta.
-			$column_value = $this->get_extra_meta( $column_name, true, null );
-		}
-		return $column_value;
-	}
-
-
-
-
-	/**
-	 * This sets the column value on the db column if it exists for the given $column_name or
-	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
-	 *
-	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
-	 *
-	 * @param string $column_name
-	 * @param mixed  $column_value
-	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
-	 */
-	public function set_column_value( $column_name, $column_value ) {
-		$model_fields = $this->get_model()->field_settings( false );
-		//add prefix to column name
-		$column_name = 'MSG_' . $column_name;
-		if ( isset( $model_fields[$column_name] ) ) {
-			$this->set( $column_name, $column_value );
-			return $this->save();
-		} else {
-			//ensure this object is saved first so that extra meta can be properly related.
-			$this->save();
-			return $this->update_extra_meta( $column_name, $column_value );
-		}
-	}
-
-
 
 
 	/**

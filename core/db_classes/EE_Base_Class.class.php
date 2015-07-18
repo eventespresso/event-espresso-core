@@ -270,6 +270,65 @@ abstract class EE_Base_Class{
 
 
 
+
+
+	/**
+	 * This sets the field value on the db column if it exists for the given $column_name or
+	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
+	 *
+	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
+	 *
+	 * @param string $column_name Must be the exact column name.
+	 * @param mixed  $column_value  The value to set.
+	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
+	 */
+	public function set_field_or_extra_meta( $field_name, $field_value ) {
+		if ( $this->_get_model()->has_field( $field_name ) ) {
+			$this->set( $field_name, $field_value );
+			return $this->save();
+		} else {
+			//ensure this object is saved first so that extra meta can be properly related.
+			$this->save();
+			return $this->update_extra_meta( $field_name, $field_value );
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * This retrieves the value of the db column set on this class or if that's not present
+	 * it will attempt to retrieve from extra_meta if found.
+	 *
+	 * Example Usage:
+	 * Via EE_Message child class:
+	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
+	 * also have additional main fields specific to the messenger.  The system accommodates those extra
+	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
+	 * value for those extra fields dynamically via the EE_message object.
+	 *
+	 * @param  string $field_name  expecting the fully qualified field name.
+	 * @return mixed|null  value for the field if found.  null if not found.
+	 */
+	public function get_field_or_extra_meta( $field_name ) {
+		if ( $this->_get_model()->has_field( $field_name ) ) {
+			$column_value = $this->get( $field_name );
+		} else {
+			//This isn't a column in the main table, let's see if it is in the extra meta.
+			$column_value = $this->get_extra_meta( $field_name, true, null );
+		}
+		return $column_value;
+	}
+
+
+
+
+
+
+
 	/**
 	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to reference what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
 	 *  This is available to all child classes that may be using the EE_Datetime_Field for a field data type.
