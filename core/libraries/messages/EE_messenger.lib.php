@@ -578,7 +578,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * Sets up the message for sending.
 	 * @param  stdClass $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
-	 * @return bool | WP_Error
+	 * @return bool Very important that all messengers return bool for successful send or not.  Error messages can be
+	 *              added to EE_Error.
 	 */
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
