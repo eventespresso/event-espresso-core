@@ -467,7 +467,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
 					  KEY PAY_ID (PAY_ID)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -495,7 +495,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 
 		$table_name = 'esp_status';
-		$sql = "STS_ID VARCHAR(3) COLLATE NOT NULL,
+		$sql = "STS_ID VARCHAR(3) NOT NULL,
 					  STS_code VARCHAR(45) NOT NULL,
 					  STS_type VARCHAR(45) NOT NULL,
 					  STS_can_edit TINYINT(1) NOT NULL DEFAULT 0,
