@@ -7,23 +7,9 @@
  * @package    Event Espresso
  * @subpackage messages
  * @author     Darren Ethier
- * @since      4.8.0
+ * @since      4.9.0
  */
 class EE_Messages_Processor {
-
-	/**
-	 * Sets the limit of how many messages are generated per process.
-	 * @type int
-	 */
-	protected $_batch_count;
-
-
-	/**
-	 * Sets the limit of how many messages can be sent per hour.
-	 * @type int
-	 */
-	protected $_rate_limit;
-
 
 
 	/**
@@ -33,6 +19,21 @@ class EE_Messages_Processor {
 	protected $_EEMSG;
 
 
+	/**
+	 * @type EE_Message_Queue
+	 */
+	protected $_queue;
+
+
+
+
+
+	/**
+	 * @type  EE_Messages_Generator
+	 */
+	protected $_generator;
+
+
 
 
 	/**
@@ -40,10 +41,29 @@ class EE_Messages_Processor {
 	 * @param EE_messages $ee_messages
 	 */
 	public function __construct( EE_messages $ee_messages ) {
-		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Processor___batch_count', 50 );
-		$this->_rate_limit = apply_filters( 'FHEE__EE_Messages_Processor___rate_limit', 200 );
 		$this->_EEMSG = $ee_messages;
+		$this->_queue = new EE_Messages_Queue();
 	}
+
+
+
+
+
+	/**
+	 *  Calls the EE_Messages_Queue::get_batch_to_generate() method and iterates sending to the generator.
+	 */
+	public function generate_from_queue() {}
+
+
+
+
+	/**
+	 * Calls the EE_Message_Queue::get_batch_to_send() method and then immediately just calls EE_Message_Queue::execute()
+	 * to iterate and send unsent messages.
+	 */
+	public function send_from_queue() {}
+
+
 
 
 	/**
@@ -66,7 +86,7 @@ class EE_Messages_Processor {
 	 *
 	 * @return bool
 	 */
-	public function queue_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $queue_only = true ) {
+	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $queue_only = true ) {
 
 		$error = FALSE;
 		$installed_message_types = $this->_EEMSG->get_installed_message_types();
