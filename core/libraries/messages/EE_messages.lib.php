@@ -294,6 +294,17 @@ class EE_messages {
 	}
 
 
+	/**
+	 * This returns the corresponding EE_messenger object for the given string if it is active.
+	 *
+	 * @param string    $messenger
+	 * @return EE_messenger | null
+	 */
+	public function get_messenger_if_active( $messenger ) {
+		return ! empty( $this->_active_messengers[$messenger] ) ? $this->_active_messengers[$messenger] : null;
+	}
+
+
 
 	/**
 	 * delegates message sending to messengers
