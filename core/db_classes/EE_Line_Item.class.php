@@ -901,7 +901,9 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Returns the amount taxable among this line item's children (or if it has no children,
-	 * how much of it is taxable). Does not recalculate totals or subtotals
+	 * how much of it is taxable). Does not recalculate totals or subtotals.
+	 * If the taxable total is negative, (eg, if none of the tickets were taxable,
+	 * but there is a "Taxable" discount), returns 0.
 	 * @return float
 	 */
 	function taxable_total() {
@@ -921,7 +923,7 @@ class EE_Line_Item extends EE_Base_Class {
 				}
 			}
 		}
-		return $total;
+		return max( $total, 0 );
 	}
 
 
