@@ -50,9 +50,24 @@ class EE_Messages_Processor {
 
 
 	/**
-	 *  Calls the EE_Messages_Queue::get_batch_to_generate() method and iterates sending to the generator.
+	 *  Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
+	 * @return EE_Messages_Queue | bool  return false if nothing generated.  This returns a new EE_Message_Queue with
+	 *                                   generated messages.
 	 */
-	public function generate_from_queue() {}
+	public function batch_generate_from_queue() {
+		if ( $this->_queue->get_batch_to_generate() ) {
+			$generator = new EE_Messages_Generator( $this->_queue );
+			$new_queue = $generator->generate();
+			if ( $new_queue instanceof EE_Messages_Queue ) {
+				//unlock queue
+				$this->_queue->unlock();
+				return $new_queue;
+			}
+		} else {
+			$this->_queue->unlock();
+			return false;
+		}
+	}
 
 
 
@@ -60,8 +75,40 @@ class EE_Messages_Processor {
 	/**
 	 * Calls the EE_Message_Queue::get_batch_to_send() method and then immediately just calls EE_Message_Queue::execute()
 	 * to iterate and send unsent messages.
+	 * @return EE_Messages_Queue
 	 */
-	public function send_from_queue() {}
+	public function batch_send_from_queue() {
+		//get messages to send and execute.
+		$this->_queue->get_batch_to_send();
+		//note: callers can use the EE_Messages_Queue::count_STS_in_queue() method to find out if there were any failed
+		//messages in the queue and decide how to handle at that point.
+		return $this->_queue;
+	}
+
+
+
+
+
+
+	/**
+	 * This immediately generates messages using the given data and returns the
+	 * EE_Message_Queue with the generated messages for the caller to work with.  Note, this does NOT save the generated
+	 * messages in the queue, leaving it up to the caller to do so.
+	 *
+	 * @param string $generating_messenger  The messenger taking care of generating the messages that will be returned.
+	 * @param string $context               The context being generated. Optional.
+	 * @param mixed  $data                  Data being sent in for parsing the message.
+	 */
+	public function generate_and_return(  $generating_messenger, $data, $context = '' ) {
+
+	}
+
+
+
+
+
+
+	public function queue_ungenerated( $sending_messenger, $generating_messenger, $context, $data ) {}
 
 
 

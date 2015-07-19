@@ -195,10 +195,10 @@ class EED_Messages  extends EED_Module {
 		//made it here so let's do the requested action.
 		if ( $cron_type == 'generate' ) {
 			//batch generation requested.
-			self::$_MSGPROCESSOR->generate_from_queue();
+			self::$_MSGPROCESSOR->batch_generate_from_queue();
 		} elseif ( $cron_type == 'send' ) {
 			//batch sending requested.
-			self::$_MSGPROCESSOR->send_from_queue();
+			self::$_MSGPROCESSOR->batch_send_from_queue();
 		} else {
 			//no matching task
 			wp_die( __('There is no task corresponding to this route', 'event_espresso' ) );
