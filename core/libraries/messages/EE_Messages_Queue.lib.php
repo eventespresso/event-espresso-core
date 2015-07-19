@@ -210,7 +210,7 @@ class EE_Messages_Queue {
 		$this->execute();
 
 		//release lock
-		$this->_unlock_queue( 'sending' );
+		$this->unlock_queue( 'sending' );
 	}
 
 
@@ -233,7 +233,7 @@ class EE_Messages_Queue {
 	 *
 	 * @param   string  $type   The type of queue being unlocked.
 	 */
-	protected function _unlock_queue( $type = 'generation' ) {
+	public function unlock_queue( $type = 'generation' ) {
 		delete_transient( $this->_get_lock_key( $type ) );
 	}
 
@@ -405,4 +405,27 @@ class EE_Messages_Queue {
 			$this->save();
 		}
 	}
+
+
+	/**
+	 * The intention of this method is to count how many EE_Message objects
+	 * are in the queue with a given status.
+	 *
+	 * Example usage:
+	 * After a caller calls the "EE_Message_Queue::execute()" method, the caller can check if there were any failed sends
+	 * by calling $queue->count_STS_in_queue( EEM_Message_Queue::status_failed ).
+	 *
+	 * @param string $status  The STS_ID for the status being checked.
+	 * @return int  Count of EE_Message's matching the given status.
+	 */
+	public function count_STS_in_queue( $status ) {
+		$count = 0;
+		foreach( $this->_queue as $message ) {
+			if ( $message->STS_ID() === $status ) {
+				$count++;
+			}
+		}
+		return $count;
+	}
+
 }
