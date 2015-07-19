@@ -30,6 +30,14 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
+	 * This holds the EE_Messages_Processor business class.
+	 *
+	 * @type EE_Messages_Processor
+	 */
+	protected static $_MSGPROCESSOR;
+
+
+	/**
 	 * holds all the paths for various messages components.
 	 * Utilized by autoloader registry
 	 *
@@ -114,6 +122,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _register_routes() {
 		EE_Config::register_route( 'msg_url_trigger', 'Messages', 'run' );
+		EE_Config::register_route( 'msg_cron_trigger', 'Messages', 'run_cron' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
 	}
 
@@ -166,6 +175,36 @@ class EED_Messages  extends EED_Module {
 			$error_msg .= '||' . $e->getMessage();
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+
+	/**
+	 * This is triggered by the 'msg_cron_trigger' route.
+	 * @param WP $WP
+	 */
+	public function run_cron( $WP ) {
+		//get required vars
+		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
+		$nonce = EE_Registry::instance()->REQ->get( '_nonce' );
+
+		//now let's verify nonce, if not valid exit immediately
+		if ( ! wp_verify_nonce( $nonce, 'EE_Messages_Scheduler_' . $cron_type ) ) {
+			wp_die( __( 'Invalid Nonce', 'event_espresso' ) );
+		}
+
+		//made it here so let's do the requested action.
+		if ( $cron_type == 'generate' ) {
+			//batch generation requested.
+			self::$_MSGPROCESSOR->generate_from_queue();
+		} elseif ( $cron_type == 'send' ) {
+			//batch sending requested.
+			self::$_MSGPROCESSOR->send_from_queue();
+		} else {
+			//no matching task
+			wp_die( __('There is no task corresponding to this route', 'event_espresso' ) );
+		}
+		header("HTTP/1.1 200 OK");
+		exit();
 	}
 
 
@@ -324,6 +363,7 @@ class EED_Messages  extends EED_Module {
 		if ( ! self::$_EEMSG instanceof EE_messages ) {
 			self::set_autoloaders();
 			self::$_EEMSG = new EE_messages();
+			self::$_MSGPROCESSOR = new EE_Messages_Processor( self::$_EEMSG );
 		}
 	}
 
