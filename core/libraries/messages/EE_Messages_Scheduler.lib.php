@@ -52,7 +52,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 			array(
 				'ee' => 'msg_cron_trigger',
 				'type' => $task,
-				'nonce' => $nonce
+				'_nonce' => $nonce
 			),
 			site_url()
 		);
