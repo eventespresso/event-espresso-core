@@ -52,6 +52,9 @@ class EE_Cron_Tasks extends EE_BASE {
 				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
 				array( 'EE_Cron_Tasks', 'clean_out_junk_transactions' )
 		);
+
+		//load other cron schedule classes
+		EE_Registry::instance()->load_lib( 'Messages_Scheduler' );
 	}
 
 
