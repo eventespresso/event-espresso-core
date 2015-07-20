@@ -119,7 +119,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			$this->_reg_final_price_per_tkt_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
 		}
 		//ok now find this new registration's final price
-		if( true || isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
+		if( isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
 			$final_price = $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ;
 		}else{
 			$message = sprintf( __( 'The ticket line item (ID:%1$d) had no entry in the reg_final_price_per_tkt_line_item array.', 'event_espresso' ), $line_item->ID() );
