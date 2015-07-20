@@ -305,6 +305,33 @@ class EE_messages {
 	}
 
 
+	/**
+	 * This validates whether the given EE_Message object can be used for either sending or generation.
+	 * This is done by grabbing the messenger and message type on the EE_Message and verifying that both are installed
+	 * and active.
+	 *
+	 * @param EE_Message $message
+	 *
+	 * @return array  An array with 'messenger' and 'message_type' as the index and the corresponding valid object if
+	 *                available.
+	 *                Eg. Valid Messenger and Message Type:
+	 *                array(
+	 *                  'messenger' => new EE_Email_messenger(),
+	 *                  'message_type' => new EE_Registration_Approved_message_type()
+	 *                )
+	 *                Valid Messenger and Invalid Message Type:
+	 *                array(
+	 *                  'messenger' => new EE_Email_messenger(),
+	 *                  'message_type' => null
+	 *                )
+	 */
+	public function validate_for_use( EE_Message $message ) {
+		$validated_for_use['messenger'] = $this->get_messenger_if_active($message->messenger());
+		$validated_for_use['message_type'] = $this->get_active_message_type( $message->messenger(), $message->message_type() );
+		return $validated_for_use;
+	}
+
+
 
 	/**
 	 * delegates message sending to messengers
