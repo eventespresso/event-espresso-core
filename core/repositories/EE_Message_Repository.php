@@ -62,6 +62,10 @@ class EE_Message_Repository extends EE_Object_Repository {
 		$this->rewind();
 		$save_tracking = array( 'updated' => 0, 'notupdated' => 0, 'errors' => array() );
 		while( $this->valid() ) {
+
+			//maybe persist generation data if this is an incomplete EE_Message.
+			$this->_maybe_persist_generation_data();
+
 			$saved = $this->current()->save();
 			if ( $saved === false ) {
 				$save_tracking['errors'][] = $this->current()->MSG_token();
@@ -74,6 +78,8 @@ class EE_Message_Repository extends EE_Object_Repository {
 		}
 
 	}
+
+
 
 
 
@@ -99,5 +105,43 @@ class EE_Message_Repository extends EE_Object_Repository {
 	}
 
 
+
+
+
+	/**
+	 * This retrieves any data required for generation that may be saved with the current EE_Message in storage.
+	 *
+	 * @return array();
+	 */
+	public function get_generation_data() {
+		//first verify we're at a valid iterator point.
+		if ( ! $this->valid() ) {
+			return array();
+		}
+		$info = $this->getInfo();
+
+		return isset( $info['data'] ) && isset( $info['data']['MSG_generation_data'] ) ? $info['data']['MSG_generation_data'] : array();
+	}
+
+
+
+
+
+
+	/**
+	 *  This checks if the current EE_Message in the iterator is incomplete. If it is, then
+	 *  data is attached for later retrieval (batch generation).
+	 */
+	protected function _maybe_persist_generation_data() {
+		if ( ! $this->valid() ) {
+			return;
+		}
+
+		$info = $this->getInfo();
+		$data = isset( $info['data'] ) ? $info['data'] : array();
+		if ( $data && $this->current()->STS_ID() === EEM_Message::status_incomplete ) {
+			$this->current()->set_field_or_extra_meta( 'MSG_generation_data', $data );
+		}
+	}
 
 }
