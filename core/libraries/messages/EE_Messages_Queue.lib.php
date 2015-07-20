@@ -397,7 +397,7 @@ class EE_Messages_Queue {
 				$msg = __( 'Message was not sent successfully.', 'event_espresso' );
 				$msg = $msg . "\n" . implode( "\n", $error_msg );
 				$message->set_STS_ID( EEM_Message::status_failed );
-				$message->set_field_or_extra_meta( 'MSG_error', $msg );
+				$message->set_error_message( $msg );
 			}
 		}
 

@@ -399,6 +399,25 @@ class EE_Message extends EE_Base_Class {
 
 
 
+
+	/**
+	 * Gets any error message.
+	 * @return mixed|null
+	 */
+	public function error_message() {
+		return $this->get_field_or_extra_meta( 'MSG_error' );
+	}
+
+
+	/**
+	 * Sets an error message.
+	 * @param $message
+	 * @return bool|int
+	 */
+	public function set_error_message( $message ) {
+		return $this->set_field_or_extra_meta( 'MSG_error', $message );
+	}
+
 }
 /* End of file EE_Message.class.php */
 /* Location: /core/db_classes/EE_Message.class.php */
