@@ -27,7 +27,6 @@ class EE_Message_Repository extends EE_Object_Repository {
 	 * @return bool
 	 */
 	public function add( EE_Message $message, $info = null, $preview = false ) {
-		$data['token'] = $message->MSG_token();
 		$data['preview'] = $preview;
 		if ( $info ) {
 			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
@@ -102,7 +101,7 @@ class EE_Message_Repository extends EE_Object_Repository {
 		$this->rewind();
 		while( $this->valid() ) {
 			$data = $this->getInfo();
-			if ( isset( $data['token'] ) && $data['token'] === $token ) {
+			if ( $this->current()->MSG_token() === $token ) {
 				$message = $this->current();
 				$this->rewind();
 				return $message;
