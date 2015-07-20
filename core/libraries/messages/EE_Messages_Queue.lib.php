@@ -80,10 +80,11 @@ class EE_Messages_Queue {
 	 * @param array         $data     This will be an array of data to attach to the object in the repository.  If the
 	 *                                object is persisted, this data will be saved on an extra_meta object related to
 	 *                                EE_Message.
+	 * @param  bool         $preview  Whether this EE_Message represents a preview or not.
 	 * @return bool          Whether the message was successfully added to the repository or not.
 	 */
-	public function add( EE_Message $message, $data = array() ) {
-		return $this->_queue->add( $message, $data );
+	public function add( EE_Message $message, $data = array(), $preview = false ) {
+		return $this->_queue->add( $message, $data, $preview );
 	}
 
 

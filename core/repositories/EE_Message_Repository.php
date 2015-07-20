@@ -21,12 +21,20 @@ class EE_Message_Repository extends EE_Object_Repository {
 	 *
 	 * @param EE_Message $message
 	 * @param mixed      $info     Any included data is saved in the attached object info array indexed by 'data'
+	 * @param bool       $preview  Whether the saved EE_Message is for a preview.  Note: the preview flag is NEVER persisted
+	 *                             automatically to the database because previews are considered to be transient.  So if you
+	 *                             want the preview flag to persist it must be handled manually.
 	 * @return bool
 	 */
-	public function add( EE_Message $message, $info = null ) {
+	public function add( EE_Message $message, $info = null, $preview = false ) {
 		$data['token'] = $message->MSG_token();
+		$data['preview'] = $preview;
 		if ( $info ) {
-			$data['data'] = $info;
+			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
+				$data['data']['MSG_generation_data'] = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : $info;
+			} else {
+				$data['data'] = $info;
+			}
 		}
 		return $this->addObject( $message, $data );
 	}
@@ -122,6 +130,22 @@ class EE_Message_Repository extends EE_Object_Repository {
 
 		return isset( $info['data'] ) && isset( $info['data']['MSG_generation_data'] ) ? $info['data']['MSG_generation_data'] : array();
 	}
+
+
+
+
+
+	/**
+	 *  Returns whether this EE_Message is for a preview or not.
+	 */
+	public function is_preview() {
+		if ( ! $this->valid() ) {
+			return;
+		}
+		$info = $this->getInfo();
+		return $info['preview'];
+	}
+
 
 
 
