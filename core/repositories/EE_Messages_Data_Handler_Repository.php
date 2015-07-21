@@ -70,7 +70,7 @@ class EE_Messages_Data_Handler_Repository extends EE_Object_Repository {
 	 *
 	 * @return null|EE_Messages_incoming_data
 	 */
-	public function get_handler_by_key( $key ) {
+	public function get_by_key( $key ) {
 		$this->rewind();
 		while( $this->valid() ) {
 			$data = $this->getInfo();
