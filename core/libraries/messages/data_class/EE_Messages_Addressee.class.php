@@ -42,6 +42,22 @@ class EE_Messages_Addressee extends EE_Base {
 
 
 	/**
+	 * This is should represent the data object that can be used to regenerate this addressee if needed.
+	 * It is saved to the MSG_recipient_ID column in the generated EE_Message using this data.
+	 * @type int
+	 */
+	public $recipient_ID;
+
+
+	/**
+	 * This represents the reference to the EE_Base_Class child that the $recipient_ID is for (eg. 'Registration', 'Attendee')
+	 * It is saved to the MSG_recipient_type colum in the generated EE_Message using this data.
+	 * @type string
+	 */
+	public $recipient_type;
+
+
+	/**
 	 * communication related
 	 */
 	public $attendee_email;

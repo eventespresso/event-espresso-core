@@ -750,9 +750,13 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$aee = array(
 				'user_id' => $event_admin,
 				'events' => $admin_events[$event_admin],
-				'attendees' => $this->_data->attendees
+				'attendees' => $this->_data->attendees,
+				'recipient_id' => $event_admin,
+				'recipient_type' => 'WP_User'
 				);
 			$aee = array_merge( $this->_default_addressee_data, $aee );
+
+
 			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
 
@@ -771,6 +775,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
 		$aee['attendees'] = $this->_data->attendees;
+		$aee['recipient_id'] = $aee['primary_att_obj'] instanceof EE_Attendee ? $aee['primary_att_obj']->ID() : 0;
+		$aee['recipient_type'] = 'Attendee';
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
@@ -832,6 +838,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$aee['reg_obj'] = reset($this->_data->attendees[$att_id]['reg_objs']);
 
 			$aee['attendees'] = $this->_data->attendees;
+
+			$aee['recipient_id'] = $att_id;
+			$aee['recipient_type'] = 'Attendee';
 
 			//merge in the primary attendee data
 			$aee = array_merge( $this->_default_addressee_data, $aee );
