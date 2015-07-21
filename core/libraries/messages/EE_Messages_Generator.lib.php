@@ -176,6 +176,14 @@ class EE_Messages_Generator {
 			$this->_generation_queue->get_queue()->next();
 		}
 
+		//generation queue is ALWAYS saved to record any errors in the generation process.
+		$this->_generation_queue->save();
+
+		//save _ready_queue if flag set
+		if ( $save ) {
+			$this->_ready_queue->save();
+		}
+
 		return $this->_ready_queue;
 	}
 
