@@ -186,10 +186,11 @@ class EE_Messages_Queue {
 		$batch = $this->_batch_count < $this->_rate_limit ? $this->_batch_count : $this->_rate_limit;
 
 		$where = array(
-			'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
+			'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_to_send() )
 		);
 
 		$query_args = array(
+			0 => $where,
 			'orderby' => $this->_get_priority_orderby(),
 			'limit' => $batch
 		);
