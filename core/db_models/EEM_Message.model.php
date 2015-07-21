@@ -153,6 +153,17 @@ class EEM_Message extends EEM_Base {
 		return apply_filters( 'FHEE__EEM_Message__stati_indicating_sent', array( self::status_sent ) );
 	}
 
+
+
+
+	/**
+	 * Returns stati that indicate the message is waiting to be sent.
+	 * @return array of strings for possible stati.
+	 */
+	public function stati_indicating_to_send() {
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_to_send', array( self::status_idle, self::status_resend ) );
+	}
+
 }
 // End of file EEM_Message.model.php
 // Location: /includes/models/EEM_Message.model.php
