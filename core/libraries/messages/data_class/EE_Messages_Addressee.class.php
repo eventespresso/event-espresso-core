@@ -46,7 +46,7 @@ class EE_Messages_Addressee extends EE_Base {
 	 * It is saved to the MSG_recipient_ID column in the generated EE_Message using this data.
 	 * @type int
 	 */
-	public $recipient_ID;
+	public $recipient_id;
 
 
 	/**
