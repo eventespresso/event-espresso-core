@@ -368,7 +368,12 @@ class EE_Messages_Queue {
 		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
 		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
 		$did_hook = array();
+		$this->_queue->rewind();
 		foreach( $this->_queue as $message ) {
+			//if the message in the queue does not have a send status then skip
+			if ( ! in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
+				continue;
+			}
 			$error_message = array();
 			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
