@@ -192,13 +192,9 @@ class EED_Messages  extends EED_Module {
 			wp_die( __( 'Invalid Nonce', 'event_espresso' ) );
 		}
 
-		//made it here so let's do the requested action.
-		if ( $cron_type == 'generate' ) {
-			//batch generation requested.
-			self::$_MSGPROCESSOR->batch_generate_from_queue();
-		} elseif ( $cron_type == 'send' ) {
-			//batch sending requested.
-			self::$_MSGPROCESSOR->batch_send_from_queue();
+		$method = 'batch_' . $cron_type . '_from_queue';
+		if ( method_exists( self::$_MSGPROCESSOR, $method ) ) {
+			self::$_MSGPROCESSOR->$method;
 		} else {
 			//no matching task
 			wp_die( __('There is no task corresponding to this route', 'event_espresso' ) );
