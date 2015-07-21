@@ -25,6 +25,12 @@ class EEH_Line_Item {
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item
 	 * in the correct spot in the line item tree (also verifying it doesn't add a duplicate based on the LIN_code)
+	 * beneath the pre-tax-total (alongside event subtotals).
+	 * Automatically re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item $parent_line_item
 	 * @param string $name
 	 * @param float $unit_price
@@ -58,7 +64,12 @@ class EEH_Line_Item {
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
-	 * in the correct spot in the line item tree.
+	 * in the correct spot in the line item tree. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 *
 	 * @param EE_Line_Item $parent_line_item
 	 * @param string       $name
@@ -90,7 +101,13 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
-	 * ensures that ticket line item is saved, and that cart total has been recalculated
+	 * ensures that ticket line item is saved, and that cart total has been recalculated.
+	 * If this ticket has already been purchased, just increments its count.
+	 * Automatically re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 *
 	 * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
@@ -218,7 +235,12 @@ class EEH_Line_Item {
 
 
 	/**
-	 * Adds the specified item under the pre-tax-sub-total line item
+	 * Adds the specified item under the pre-tax-sub-total line item. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
@@ -525,6 +547,7 @@ class EEH_Line_Item {
 				$deleted += EEH_Line_Item::delete_all_child_items( $child_line_item );
 				if ( $child_line_item->ID() ) {
 					$child_line_item->delete();
+					unset( $child_line_item );
 				} else {
 					$parent_line_item->delete_child_line_item( $child_line_item->code() );
 				}
@@ -538,7 +561,12 @@ class EEH_Line_Item {
 
 	/**
 	 * Deletes the line items as indicated by the line item code(s) provided,
-	 * regardless of where they're found in the line item tree
+	 * regardless of where they're found in the line item tree. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item      $total_line_item of type EEM_Line_Item::type_total
 	 * @param array|bool|string $line_item_codes
 	 * @return int number of items successfully removed
@@ -860,7 +888,6 @@ class EEH_Line_Item {
 	 *
 	 * @param EE_Line_Item $line_item
 	 * @param array        $running_totals      array exactly like the return value (client code usually shouldn't provide this)
-	 * @param float        $tax_percent_decimal (client code usually shouldn't provide this)
 	 * @return array keys are ticket IDs and values are their share of the running total,
 	 *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
 	 *                                          array(
