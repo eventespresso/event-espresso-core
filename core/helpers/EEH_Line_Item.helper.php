@@ -547,6 +547,7 @@ class EEH_Line_Item {
 				$deleted += EEH_Line_Item::delete_all_child_items( $child_line_item );
 				if ( $child_line_item->ID() ) {
 					$child_line_item->delete();
+					unset( $child_line_item );
 				} else {
 					$parent_line_item->delete_child_line_item( $child_line_item->code() );
 				}
