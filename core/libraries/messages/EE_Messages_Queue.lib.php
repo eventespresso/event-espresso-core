@@ -416,6 +416,9 @@ class EE_Messages_Queue {
 				$message->set_STS_ID( EEM_Message::status_failed );
 				$message->set_error_message( $msg );
 			}
+
+			//add modified time
+			$message->set_modified( time() );
 		}
 
 		if ( $save ) {
