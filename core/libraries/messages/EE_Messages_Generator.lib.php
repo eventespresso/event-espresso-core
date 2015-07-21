@@ -579,8 +579,7 @@ class EE_Messages_Generator {
 
 		$generation_data = $this->_generation_queue->get_queue()->get_generation_data();
 
-		$message_type = $this->_generation_queue->get_queue()->current()->message_type();
-		$data_handler= $message_type->get_data_handler( $generation_data );
+		$data_handler= $this->_current_message_type->get_data_handler( $generation_data );
 
 		//If this EE_Message is for a preview, then let's switch out to the preview data handler.
 		if ( $this->_generation_queue->get_queue()->is_preview() ) {
@@ -608,7 +607,7 @@ class EE_Messages_Generator {
 	 * Sets the $_current_data_handler property that is used for generating the current EE_Message in the queue, and
 	 * adds it to the _data repository.
 	 *
-	 * @param mixed     $generating_data        This will data expected by the instantiated data handler.
+	 * @param mixed     $generating_data        This is data expected by the instantiated data handler.
 	 * @param string    $data_handler_reference This is the reference string indicating what data handler is being
 	 *                                          instantiated.
 	 * @return void.
@@ -652,7 +651,7 @@ class EE_Messages_Generator {
 				__('The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
 				$data_handler_reference,
 				$classname );
-			$classname = ''; //clear out classname so caller know this isn't valid.
+			$classname = ''; //clear out classname so caller knows this isn't valid.
 		}
 
 		return $classname;
