@@ -179,7 +179,13 @@ class EE_Messages_Generator {
 		//generation queue is ALWAYS saved to record any errors in the generation process.
 		$this->_generation_queue->save();
 
-		//save _ready_queue if flag set
+		/**
+		 * save _ready_queue if flag set.
+		 * Note: The EE_Message objects have values set via the EE_Base_Class::set_field_or_extra_meta() method.  This
+		 * means if a field was added that is not a valid database column.  The EE_Message was already saved to the db
+		 * so a EE_Extra_Meta entry could be created and attached to the EE_Message.  In those cases the save flag is
+		 * irrelevant.
+		 */
 		if ( $save ) {
 			$this->_ready_queue->save();
 		}
