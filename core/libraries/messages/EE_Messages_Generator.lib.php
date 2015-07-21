@@ -547,13 +547,13 @@ class EE_Messages_Generator {
 		$validated_for_use = $this->_EEMSG->validate_for_use( $this->_generation_queue->get_queue()->current() );
 
 		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $msg->messenger() );
+			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->_generation_queue->get_queue()->current()->messenger() );
 		} else {
 			$this->_current_messenger = $validated_for_use['messenger'];
 		}
 
 		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $msg->message_type() );
+			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $this->_generation_queue->get_queue()->current()->message_type() );
 		} else {
 			$this->_current_message_type = $validated_for_use['message_type'];
 		}
