@@ -25,6 +25,23 @@ class EE_Messages_Scheduler extends EE_BASE {
 			add_action( 'AHEE__EE_Messages_Scheduler__generation', array( 'EE_Messages_Scheduler', 'batch_generation') );
 			add_action( 'AHEE__EE_Messages_Scheduler__sending', array( 'EE_Messages_Scheduler', 'batch_sending' ) );
 		}
+
+		//add custom schedules
+		add_filter( 'cron_schedules', array( 'EE_Messages', 'custom_schedules' ) );
+	}
+
+
+
+
+	/**
+	 * Add custom schedules for wp_cron
+	 * @param $schedules
+	 */
+	public function custom_schedules( $schedules ) {
+		$schedules['ten_minute'] = array(
+				'interval' => 36000, //10 min in seconds
+				'display' => __( 'Once every 10 minutes', 'event_espresso' )
+		);
 	}
 
 
@@ -34,8 +51,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @return array
 	 */
 	protected function register_scheduled_tasks( $tasks ) {
-		$tasks['AHEE__EE_Messages_Scheduler__generation'] = 'hourly';
-		$tasks['AHEE__EE_Messages_Scheduler__sending'] = 'hourly';
+		$tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ten_minute';
+		$tasks['AHEE__EE_Messages_Scheduler__sending'] = 'ten_minute';
 		return $tasks;
 	}
 
