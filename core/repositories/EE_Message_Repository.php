@@ -68,6 +68,12 @@ class EE_Message_Repository extends EE_Object_Repository {
 	public function saveAll() {
 		$this->rewind();
 		$save_tracking = array( 'updated' => 0, 'notupdated' => 0, 'errors' => array() );
+
+		//exit early if there is nothing to save.
+		if ( ! $this-count() > 0 ) {
+			return $save_tracking;
+		}
+
 		while( $this->valid() ) {
 
 			//maybe persist generation data if this is an incomplete EE_Message.
@@ -83,7 +89,7 @@ class EE_Message_Repository extends EE_Object_Repository {
 			}
 			$this->next();
 		}
-
+		return $save_tracking;
 	}
 
 
