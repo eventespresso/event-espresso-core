@@ -90,8 +90,8 @@ class EEM_Message extends EEM_Base {
 				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resends of the message.', 'event_espresso' ), false ),
 				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso' ), false ),
 				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), false ),
-				'MSG_recipient_ID' => new EE_Foreign_Key_Int_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), true, null, array( 'Registration', 'Attendee' ) ),
-				'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSG_recipient_type', __( 'Recipient Type', 'event_espresso' ), true, null, array( 'Registration', 'Attendee' ) ),
+				'MSG_recipient_ID' => new EE_Foreign_Key_Int_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), true, null, array( 'Registration', 'Attendee', 'WP_User' ) ),
+				'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSG_recipient_type', __( 'Recipient Type', 'event_espresso' ), true, null, array( 'Registration', 'Attendee', 'WP_User' ) ),
 				'MSG_content' => new EE_Full_HTML_Field( 'MSG_content', __( 'Content', 'event_espresso' ), false, '' ),
 				'MSG_to' => new EE_Plain_Text_Field( 'MSG_to', __( 'Address To', 'event_espresso' ), true ),
 				'MSG_from' => new EE_Plain_Text_Field( 'MSG_from', __( 'Address From', 'event_espresso' ), true ),
@@ -105,6 +105,7 @@ class EEM_Message extends EEM_Base {
 		$this->_model_relations = array(
 			'Attendee' => new EE_Belongs_To_Any_Relation(),
 			'Registration' => new EE_Belongs_To_Any_Relation(),
+			'WP_User' => new EE_Belongs_To_Any_Relation(),
 			'Message_Template_Group' => new EE_Belongs_To_Relation(),
 			'Transaction' => new EE_Belongs_To_Relation()
 		);
